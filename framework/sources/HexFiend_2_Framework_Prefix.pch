@@ -1,0 +1,49 @@
+//
+// Prefix header for all source files of the 'HexFiend_2' target in the 'HexFiend_2' project
+//
+
+#ifdef __OBJC__
+    #import <Cocoa/Cocoa.h>
+    #import <HexFiend/HFTypes.h>
+    #import <HexFiend/HFFunctions.h>
+#endif
+
+#define PRIVATE_EXTERN __private_extern__
+
+#include <assert.h>
+
+#ifndef NDEBUG
+#define HFASSERT(a) assert(a)
+#else
+/* define an assert() replacement that doesn't produce unused-variable warnings in Deployment builds */
+#define HFASSERT(val) do { if (0 && (val)); } while (0)
+#endif
+
+#define UNIMPLEMENTED_VOID() [NSException raise:NSGenericException \
+                                         format:@"Message %@ sent to instance of class %@, "\
+                                                @"which does not implement that method",\
+                                                NSStringFromSelector(_cmd), [[self class] description]]
+
+#define UNIMPLEMENTED() UNIMPLEMENTED_VOID(); return 0
+
+/* Macro to "use" a variable to prevent unused variable warnings. */
+#define USE(x) if (0) x=x
+
+#define check_malloc(x) ({ size_t _count = x; void* result = malloc(_count); if (! result) { fprintf(stderr, "Out of memory allocating %u bytes", (unsigned)_count); exit(EXIT_FAILURE); } result; })
+
+#define REQUIRE_NOT_NULL(a) do { \
+	if ((a)==NULL) {\
+		fprintf(stderr, "REQUIRE_NOT_NULL failed: NULL value for parameter " #a " on line %d in file %s\n", __LINE__, __FILE__);\
+			abort();\
+	}\
+} while (0)
+
+
+#define EXPECT_CLASS(e, c) do { \
+	if (! [(e) isKindOfClass:[c class]]) {\
+		fprintf(stderr, "EXPECT_CLASS failed: Expression " #e " is %s on line %d in file %s\n", (e) ? "(nil)" : [[e description] cString], __LINE__, __FILE__);\
+			abort();\
+	}\
+} while (0)
+
+#define FOREACH(type, var, exp) NSEnumerator *enum_ ## var = [exp objectEnumerator]; type var ; while ((var = [enum_ ## var nextObject]))

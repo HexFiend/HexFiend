@@ -1,0 +1,21 @@
+//
+// Prefix header for all source files of the 'HexFiend_2' target in the 'HexFiend_2' project
+//
+
+#ifdef __OBJC__
+    #import <Cocoa/Cocoa.h>
+    #import <HexFiend/HexFiend.h>
+#endif
+
+#ifndef NDEBUG
+#define HFASSERT(a) assert(a)
+#else
+/* Define an assert() replacement that doesn't produce unused-variable warnings in Deployment builds */
+#define HFASSERT(val) do { if (0 && (val)); } while (0)
+#endif
+
+/* Macro to "use" a variable to prevent unused variable warnings. */
+#define USE(x) if (0) x=x
+
+/* Nasty FOREACH macro */
+#define FOREACH(type, var, exp) NSEnumerator *enum_ ## var = [exp objectEnumerator]; type var ; while ((var = [enum_ ## var nextObject]))
