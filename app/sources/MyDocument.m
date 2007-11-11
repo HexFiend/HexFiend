@@ -26,8 +26,26 @@
     return [NSArray arrayWithObjects:debugRepresenter, hexRepresenter, asciiRepresenter, scrollRepresenter, nil];
 }
 
+
+- (void)showViewForRepresenter:(HFRepresenter *)rep {
+    NSView *repView = [rep view];
+    HFASSERT([repView superview] == nil && [repView window] == nil);
+    NSRect containerBounds = [containerView bounds];
+    NSRect viewFrame = containerBounds;
+    [repView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
+    [repView setFrame:viewFrame];
+    [containerView addSubview:repView];
+}
+
+- (void)hideViewForRepresenter:(HFRepresenter *)rep {
+    NSView *repView = [rep view];
+    HFASSERT([repView superview] == containerView && [repView window] == [self window]);
+    [repView removeFromSuperview];
+}
+
 - (void)windowControllerDidLoadNib:(NSWindowController *)windowController {
     USE(windowController);
+    [self showViewForRepresenter:hexRepresenter];
 }
 
 - init {
@@ -91,14 +109,10 @@
         HFRepresenter *rep = [representers objectAtIndex:arrayIndex];
         NSView *repView = [rep view];
         if ([repView window] == [self window]) {
-            [repView removeFromSuperview];
+            [self hideViewForRepresenter:rep];
         }
         else {
-            NSRect containerBounds = [containerView bounds];
-            NSRect viewFrame = containerBounds;
-            [repView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
-            [repView setFrame:viewFrame];
-            [containerView addSubview:repView];
+            [self showViewForRepresenter:rep];
         }
     }
 }

@@ -8,7 +8,6 @@
 
 #import "HFRepresenterHexTextView.h"
 
-
 @implementation HFRepresenterHexTextView
 
 - (void)drawRect:(NSRect)rect {

@@ -42,6 +42,10 @@
 		D0A436590CDC811D000F7550 /* HFFunctions.m in Sources */ = {isa = PBXBuildFile; fileRef = D0A436570CDC8115000F7550 /* HFFunctions.m */; };
 		D0A4373A0CDD4EDD000F7550 /* HFTextRepresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = D0A437380CDD4EDD000F7550 /* HFTextRepresenter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D0A4373B0CDD4EDD000F7550 /* HFTextRepresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = D0A437390CDD4EDD000F7550 /* HFTextRepresenter.m */; };
+		D0B125550CE677A60046E707 /* HFRepresenterTextLayoutManager.h in Headers */ = {isa = PBXBuildFile; fileRef = D0B125530CE677A60046E707 /* HFRepresenterTextLayoutManager.h */; };
+		D0B125560CE677A60046E707 /* HFRepresenterTextLayoutManager.m in Sources */ = {isa = PBXBuildFile; fileRef = D0B125540CE677A60046E707 /* HFRepresenterTextLayoutManager.m */; };
+		D0B125860CE6C1000046E707 /* HFRepresenterHexTypesetter.h in Headers */ = {isa = PBXBuildFile; fileRef = D0B125840CE6C1000046E707 /* HFRepresenterHexTypesetter.h */; };
+		D0B125870CE6C1000046E707 /* HFRepresenterHexTypesetter.m in Sources */ = {isa = PBXBuildFile; fileRef = D0B125850CE6C1000046E707 /* HFRepresenterHexTypesetter.m */; };
 		D0D828E50CDE89E500C2AB82 /* HFByteSlice.h in Headers */ = {isa = PBXBuildFile; fileRef = D08F5E220CDE843E007EFFE8 /* HFByteSlice.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D0D828E60CDE89E800C2AB82 /* HFFullMemoryByteSlice.h in Headers */ = {isa = PBXBuildFile; fileRef = D08F5E370CDE84F4007EFFE8 /* HFFullMemoryByteSlice.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D0D829110CDE969F00C2AB82 /* HFByteArray.h in Headers */ = {isa = PBXBuildFile; fileRef = D08F5DEF0CDE8223007EFFE8 /* HFByteArray.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -116,6 +120,10 @@
 		D0A436570CDC8115000F7550 /* HFFunctions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFFunctions.m; path = framework/sources/HFFunctions.m; sourceTree = "<group>"; };
 		D0A437380CDD4EDD000F7550 /* HFTextRepresenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFTextRepresenter.h; path = framework/sources/HFTextRepresenter.h; sourceTree = "<group>"; };
 		D0A437390CDD4EDD000F7550 /* HFTextRepresenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFTextRepresenter.m; path = framework/sources/HFTextRepresenter.m; sourceTree = "<group>"; };
+		D0B125530CE677A60046E707 /* HFRepresenterTextLayoutManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFRepresenterTextLayoutManager.h; path = framework/sources/HFRepresenterTextLayoutManager.h; sourceTree = "<group>"; };
+		D0B125540CE677A60046E707 /* HFRepresenterTextLayoutManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFRepresenterTextLayoutManager.m; path = framework/sources/HFRepresenterTextLayoutManager.m; sourceTree = "<group>"; };
+		D0B125840CE6C1000046E707 /* HFRepresenterHexTypesetter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFRepresenterHexTypesetter.h; path = framework/sources/HFRepresenterHexTypesetter.h; sourceTree = "<group>"; };
+		D0B125850CE6C1000046E707 /* HFRepresenterHexTypesetter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFRepresenterHexTypesetter.m; path = framework/sources/HFRepresenterHexTypesetter.m; sourceTree = "<group>"; };
 		D0D828FE0CDE8ABE00C2AB82 /* HFFullMemoryByteArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFFullMemoryByteArray.h; path = framework/sources/HFFullMemoryByteArray.h; sourceTree = "<group>"; };
 		D0D828FF0CDE8ABE00C2AB82 /* HFFullMemoryByteArray.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFFullMemoryByteArray.m; path = framework/sources/HFFullMemoryByteArray.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -230,6 +238,10 @@
 				D026C7BF0CDD54D00082279E /* HFHexTextRepresenter.m */,
 				D0A437380CDD4EDD000F7550 /* HFTextRepresenter.h */,
 				D0A437390CDD4EDD000F7550 /* HFTextRepresenter.m */,
+				D0B125530CE677A60046E707 /* HFRepresenterTextLayoutManager.h */,
+				D0B125540CE677A60046E707 /* HFRepresenterTextLayoutManager.m */,
+				D0B125840CE6C1000046E707 /* HFRepresenterHexTypesetter.h */,
+				D0B125850CE6C1000046E707 /* HFRepresenterHexTypesetter.m */,
 			);
 			name = "Text Representers";
 			sourceTree = "<group>";
@@ -297,6 +309,7 @@
 				D01E7BF00CDC564B00943F9E /* HexFiend.h in Headers */,
 				D01E7BEC0CDC55D000943F9E /* HFController.h in Headers */,
 				D01E7C3D0CDC6A3100943F9E /* HFTypes.h in Headers */,
+				D0B125860CE6C1000046E707 /* HFRepresenterHexTypesetter.h in Headers */,
 				D0A435730CDC71DF000F7550 /* HFRepresenter.h in Headers */,
 				D0A435AB0CDC74BE000F7550 /* HFTestRepresenter.h in Headers */,
 				D0A4373A0CDD4EDD000F7550 /* HFTextRepresenter.h in Headers */,
@@ -305,6 +318,7 @@
 				D026C7C00CDD54D00082279E /* HFHexTextRepresenter.h in Headers */,
 				D082AC910CDEBD5300554EB7 /* HFByteArray_Internal.h in Headers */,
 				D082AF4C0CDF242500554EB7 /* HFByteArray_ToString.h in Headers */,
+				D0B125550CE677A60046E707 /* HFRepresenterTextLayoutManager.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -415,6 +429,8 @@
 				D08F5E510CDE872C007EFFE8 /* HFFullMemoryByteSlice.m in Sources */,
 				D082AB440CDE97DC00554EB7 /* HFFullMemoryByteArray.m in Sources */,
 				D082AF4D0CDF242500554EB7 /* HFByteArray_ToString.m in Sources */,
+				D0B125560CE677A60046E707 /* HFRepresenterTextLayoutManager.m in Sources */,
+				D0B125870CE6C1000046E707 /* HFRepresenterHexTypesetter.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
