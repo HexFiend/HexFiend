@@ -17,7 +17,8 @@ enum
     HFControllerContentValue = 1 << 0,
     HFControllerContentLength = 1 << 1,
     HFControllerDisplayedRange = 1 << 2,
-    HFControllerSelectedRange = 1 << 3
+    HFControllerSelectedRange = 1 << 3,
+    HFControllerBytesPerLine = 1 << 4
 };
 
 typedef NSUInteger HFControllerPropertyBits;
@@ -28,6 +29,7 @@ typedef NSUInteger HFControllerPropertyBits;
     HFByteArray *byteArray;
     NSMutableArray *selectedContentsRanges;
     HFRange displayedContentsRange;
+    NSUInteger bytesPerLine;
 }
 
 /* Methods for dealing with representers */
@@ -46,5 +48,11 @@ typedef NSUInteger HFControllerPropertyBits;
 /* Methods for setting a byte array */
 - (void)setByteArray:(HFByteArray *)val;
 - (HFByteArray *)byteArray;
+
+/* Line oriented representers can use this */
+- (NSUInteger)bytesPerLine;
+
+/* Callback for a representer-initiated change to some property */
+- (void)representer:(HFRepresenter *)rep changedProperties:(HFControllerPropertyBits)properties;
 
 @end

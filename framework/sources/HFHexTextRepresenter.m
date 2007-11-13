@@ -15,8 +15,4 @@
     return [HFRepresenterHexTextView class];
 }
 
-- (HFByteArrayDataStringType)byteArrayDataStringType {
-    return HFHexDataStringType;
-}
-
 @end

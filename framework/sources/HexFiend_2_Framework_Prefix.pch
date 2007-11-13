@@ -29,7 +29,8 @@
 /* Macro to "use" a variable to prevent unused variable warnings. */
 #define USE(x) if (0) x=x
 
-#define check_malloc(x) ({ size_t _count = x; void* result = malloc(_count); if (! result) { fprintf(stderr, "Out of memory allocating %u bytes", (unsigned)_count); exit(EXIT_FAILURE); } result; })
+#define check_malloc(x) ({ size_t _count = x; void* result = malloc(_count); if (! result) { fprintf(stderr, "Out of memory allocating %lu bytes\n", (unsigned long)_count); exit(EXIT_FAILURE); } result; })
+#define check_calloc(x) ({ size_t _count = x; void* result = calloc(_count, 1); if (! result) { fprintf(stderr, "Out of memory allocating %lu bytes\n", (unsigned long)_count); exit(EXIT_FAILURE); } result; })
 
 #define REQUIRE_NOT_NULL(a) do { \
 	if ((a)==NULL) {\
@@ -47,3 +48,19 @@
 } while (0)
 
 #define FOREACH(type, var, exp) NSEnumerator *enum_ ## var = [exp objectEnumerator]; type var ; while ((var = [enum_ ## var nextObject]))
+
+/* Create a stack or dynamic array of the given size.  This memory is NOT scanned and is NOT collected!  Anything you put in here must have external references! */
+#define NEW_ARRAY(type, name, number) \
+    type name ## static_ [256];\
+    type * name = ((number) <= 256 ? name ## static_ : check_calloc((number) * sizeof(type)))
+    
+#define FREE_ARRAY(name) \
+    if (name != name ## static_) free(name)
+
+#if !defined(MIN)
+    #define MIN(A,B)	({ __typeof__(A) __a = (A); __typeof__(B) __b = (B); __a < __b ? __a : __b; })
+#endif
+
+#if !defined(MAX)
+    #define MAX(A,B)	({ __typeof__(A) __a = (A); __typeof__(B) __b = (B); __a < __b ? __b : __a; })
+#endif

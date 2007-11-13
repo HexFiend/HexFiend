@@ -21,11 +21,18 @@ static inline BOOL HFSumDoesNotOverflow(unsigned long long a, unsigned long long
     return a + b >= a;
 }
 
+static inline NSString *HFDescribeAffineTransform(CGAffineTransform t) {
+    return [NSString stringWithFormat:@"%f %f 0\n%f %f 0\n%f %f 1", t.a, t.b, t.c, t.d, t.tx, t.ty];
+}
+
+BOOL HFStringEncodingIsSupersetOfASCII(NSStringEncoding encoding);
+
 static inline unsigned long ll2l(unsigned long long val) { assert(val <= UINT_MAX); return (unsigned long)val; }
 
 static inline BOOL HFRangeEqualsRange(HFRange a, HFRange b) {
     return a.location == b.location && a.length == b.length;
 }
+
 
 @interface HFRangeWrapper : NSObject {
     @public

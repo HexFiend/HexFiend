@@ -15,6 +15,8 @@
     
 }
 
-- (HFByteArrayDataStringType)byteArrayDataStringType;
+// HFTextRepresenter forwards these messages to its HFRepresenterTextView
+- (NSUInteger)maximumBytesPerLineForViewWidth:(CGFloat)viewWidth;
+- (CGFloat)minimumViewWidthForBytesPerLine:(NSUInteger)bytesPerLine;
 
 @end

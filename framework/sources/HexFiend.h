@@ -5,4 +5,6 @@
 #import <HexFiend/HFFullMemoryByteArray.h>
 #import <HexFiend/HFFullMemoryByteSlice.h>
 #import <HexFiend/HFHexTextRepresenter.h>
+#import <HexFiend/HFStringEncodingTextRepresenter.h>
+#import <HexFiend/HFVerticalScrollerRepresenter.h>
 #import <HexFiend/HFByteArray_ToString.h>

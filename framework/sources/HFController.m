@@ -16,6 +16,7 @@
 
 - (id)init {
     [super init];
+    bytesPerLine = 16;
     representers = [[NSMutableArray alloc] init];
     selectedContentsRanges = [[NSMutableArray alloc] initWithObjects:[HFRangeWrapper withRange:HFRangeMake(0, 0)], nil];
     byteArray = [[HFFullMemoryByteArray alloc] init];
@@ -45,12 +46,14 @@
     HFASSERT([representer controller] == nil);
     [representer _setController:self];
     [representers addObject:representer];
+    [representer controllerDidChange: -1];
 }
 
 - (void)removeRepresenter:(HFRepresenter *)representer {
     REQUIRE_NOT_NULL(representer);    
     HFASSERT([representers indexOfObjectIdenticalTo:representer] != NSNotFound);
     [representers removeObjectIdenticalTo:representer];
+    [representer _setController:nil];
 }
 
 - (HFRange)displayedContentsRange {
@@ -89,6 +92,51 @@
 
 - (HFByteArray *)byteArray {
     return byteArray;
+}
+
+- (NSUInteger)bytesPerLine {
+    return bytesPerLine;
+}
+
+- (void)_updateBytesPerLine {
+    NSUInteger newBytesPerLine = ULONG_MAX;
+    FOREACH(HFRepresenter*, rep, representers) {
+        NSView *view = [rep view];
+        CGFloat width = [view frame].size.width;
+        NSUInteger repMaxBytesPerLine = [rep maximumBytesPerLineForViewWidth:width];
+        newBytesPerLine = MIN(repMaxBytesPerLine, newBytesPerLine);
+    }
+    if (newBytesPerLine != bytesPerLine) {
+        HFASSERT(newBytesPerLine > 0);
+        bytesPerLine = newBytesPerLine;
+        [self notifyRepresentersOfChanges:HFControllerBytesPerLine];
+    }
+}
+
+- (void)_updateDisplayedRange {
+    NSUInteger maxBytesForViewSize = ULONG_MAX;
+    FOREACH(HFRepresenter*, rep, representers) {
+        NSView *view = [rep view];
+        NSUInteger repMaxBytesPerLine = [rep maximumNumberOfBytesForViewSize:[view frame].size];
+        maxBytesForViewSize = MIN(repMaxBytesPerLine, maxBytesForViewSize);
+    }
+    LongRange proposedNewDisplayRange = HFRangeMake(displayedContentsRange.location, maxBytesForViewSize);
+    
+}
+
+- (void)representer:(HFRepresenter *)rep changedProperties:(HFControllerPropertyBits)properties {
+    USE(rep);
+    if (properties & HFControllerBytesPerLine) {
+        [self _updateBytesPerLine];
+        properties &= ~HFControllerBytesPerLine;
+    }
+    if (properties & HFControllerDisplayedRange) {
+        [self _updateDisplayedRange];
+        properties &= ~HFControllerDisplayedRange;
+    }
+    if (properties) {
+        NSLog(@"Unknown properties: %lx", properties);
+    }
 }
 
 #ifndef NDEBUG

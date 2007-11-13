@@ -43,4 +43,34 @@
     USE(bits);
 }
 
+- (NSUInteger)bytesPerLine {
+    return [[self controller] bytesPerLine];
+}
+
+- (NSUInteger)maximumBytesPerLineForViewWidth:(CGFloat)viewWidth {
+    USE(viewWidth);
+    return ULONG_MAX;
+}
+
+- (CGFloat)minimumViewWidthForBytesPerLine:(NSUInteger)bytesPerLine {
+    USE(bytesPerLine);
+    return 0;
+}
+
+- (NSUInteger)maximumAvailableLinesForViewHeight:(CGFloat)viewHeight {
+    USE(viewHeight);
+    return ULONG_MAX;
+}
+
+- (NSUInteger)maximumNumberOfBytesForViewSize:(NSSize)viewSize {
+    NSUInteger bytesPerLine = [self maximumBytesPerLineForViewWidth:viewSize.width];
+    NSUInteger availableLines = [self maximumAvailableLinesForViewHeight:viewSize.height];
+    if (bytesPerLine == ULONG_MAX || availableLines == ULONG_MAX) return ULONG_MAX;
+    else return bytesPerLine * availableLines;
+}
+
+- (void)viewChangedProperties:(HFControllerPropertyBits)properties {
+    [[self controller] representer:self changedProperties:properties];
+}
+
 @end
