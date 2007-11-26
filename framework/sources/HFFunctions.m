@@ -10,6 +10,71 @@
     return [result autorelease];
 }
 
++ (NSArray *)withRanges:(const HFRange *)ranges count:(NSUInteger)count {
+    HFASSERT(count == 0 || ranges != NULL);
+    NSUInteger i;
+    NSArray *result;
+    NEW_ARRAY(HFRangeWrapper *, wrappers, count);
+    for (i=0; i < count; i++) wrappers[i] = [self withRange:ranges[i]];
+    result = [NSArray arrayWithObjects:wrappers count:count];
+    FREE_ARRAY(wrappers);
+    return result;
+}
+
+- (BOOL)isEqual:(id)obj {
+    HFASSERT(obj != NULL);
+    if (! [obj isKindOfClass:[HFRangeWrapper class]]) return NO;
+    else return HFRangeEqualsRange(range, [obj HFRange]);
+}
+
+- (NSString *)description {
+    return HFRangeToString(range);
+}
+
+
+static int hfrange_compare(const void *ap, const void *bp) {
+    const HFRange *a = ap;
+    const HFRange *b = bp;
+    if (a->location < b->location) return -1;
+    else if (a->location > b->location) return 1;
+    else if (a->length < b->length) return -1;
+    else if (a->length > b->length) return 1;
+    else return 0;
+}
+
++ (NSArray *)organizeAndMergeRanges:(NSArray *)inputRanges {
+    HFASSERT(inputRanges != NULL);
+    NSUInteger leading = 0, trailing = 0, length = [inputRanges count];
+    if (length == 0) return [NSArray array];
+    else if (length == 1) return inputRanges;
+    
+    NEW_ARRAY(HFRange, ranges, length);
+    [self getRanges:ranges fromArray:inputRanges];
+    qsort(ranges, length, sizeof ranges[0], hfrange_compare);
+    leading = 0;
+    while (leading < length) {
+        leading++;
+        if (leading < length) {
+            HFRange leadRange = ranges[leading], trailRange = ranges[trailing];
+            if (HFIntersectsRange(leadRange, trailRange) || HFMaxRange(leadRange) == trailRange.location || HFMaxRange(trailRange) == leadRange.location) {
+                ranges[trailing] = HFUnionRange(leadRange, trailRange);
+            }
+            else {
+                trailing++;
+                ranges[trailing] = ranges[leading];
+            }
+        }
+    }
+    NSArray *result = [HFRangeWrapper withRanges:ranges count:trailing + 1];
+    FREE_ARRAY(ranges);
+    return result;
+}
+
++ (void)getRanges:(HFRange *)ranges fromArray:(NSArray *)array {
+    HFASSERT(ranges != NULL || [array count] > 0);
+    FOREACH(HFRangeWrapper*, wrapper, array) *ranges++ = [wrapper HFRange];
+}
+
 @end
 
 BOOL HFStringEncodingIsSupersetOfASCII(NSStringEncoding encoding) {
@@ -159,4 +224,3 @@ BOOL HFStringEncodingIsSupersetOfASCII(NSStringEncoding encoding) {
             return NO;
     }
 }
-

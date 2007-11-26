@@ -32,7 +32,7 @@
             NSUInteger glyphCount = [self _glyphsForString:string withGeneratingTextView:textView glyphs:glyphs];
             if (glyphCount == 1) {
                 glyphTable[byteValue] = glyphs[0];
-                glyphAdvancement = fmax(glyphAdvancement, [font advancementForGlyph:glyphs[0]].width);
+                glyphAdvancement = HFMax(glyphAdvancement, [font advancementForGlyph:glyphs[0]].width);
             }
         }
         [string release];
@@ -61,7 +61,7 @@
 - (void)extractGlyphsForBytes:(const unsigned char *)bytes count:(NSUInteger)numBytes intoArray:(CGGlyph *)glyphs resultingGlyphCount:(NSUInteger *)resultGlyphCount {
     HFASSERT(bytes != NULL);
     HFASSERT(glyphs != NULL);
-    HFASSERT(numBytes <= ULONG_MAX);
+    HFASSERT(numBytes <= NSUIntegerMax);
     HFASSERT(resultGlyphCount != NULL);
     NSUInteger glyphIndex = 0, byteIndex = 0;
     while (byteIndex < numBytes) {
@@ -71,6 +71,14 @@
         glyphs[glyphIndex++] = glyph;
     }
     *resultGlyphCount = glyphIndex;
+}
+
+- (CGFloat)spaceBetweenBytes {
+    return 0;
+}
+
+- (CGFloat)advancePerByte {
+    return glyphAdvancement;
 }
 
 - (void)drawGlyphs:(CGGlyph *)glyphs count:(NSUInteger)glyphCount {
@@ -88,44 +96,31 @@
     FREE_ARRAY(advances);
 }
 
-- (void)drawRect:(NSRect)clip {
-    NSUInteger bytesPerLine = [self bytesPerLine];
-    if (bytesPerLine == 0) return;
-
-    NSRect bounds = [self bounds];
-    
-    [super drawRect:clip];
-    
+- (void)drawTextWithClip:(NSRect)clip {
     CGContextRef ctx = [[NSGraphicsContext currentContext] graphicsPort];
-    
-    NSData *data = [self data];
-    const unsigned char *bytePtr = [data bytes];
-    NSUInteger byteIndex, byteCount = [data length];
-    
-    NSFont *font = [[self font] screenFont];
-    [font set];
-    
-    NSColor *textColor = [NSColor blackColor];
-    
-    CGFloat lineHeight = [self lineHeight];
-    CGFloat horizontalContainerInset = [self horizontalContainerInset];
-    
-    NSRect lineRectInBoundsSpace = NSMakeRect(NSMinX(bounds), NSMinY(bounds), NSWidth(bounds), lineHeight);
-    
-    [self _drawLineBackgrounds:clip withLineHeight:lineHeight maxLines: MIN((byteCount + bytesPerLine - 1) / bytesPerLine, (NSUInteger)ceil(NSHeight(bounds) / lineHeight))];
-    
-    CGContextSaveGState(ctx);
     CGAffineTransform textTransform = CGContextGetTextMatrix(ctx);
     CGContextSetTextDrawingMode(ctx, kCGTextFill);
 
+    NSRect bounds = [self bounds];
+    NSData *data = [self data];
+    const unsigned char *bytePtr = [data bytes];
+    NSUInteger byteIndex, byteCount = [data length];
+    NSUInteger bytesPerLine = [self bytesPerLine];
+    NSFont *font = [[self font] screenFont];
+    [font set];
+
+    CGFloat lineHeight = [self lineHeight];
+    
+    NSRect lineRectInBoundsSpace = NSMakeRect(NSMinX(bounds), NSMinY(bounds), NSWidth(bounds), lineHeight);
+    
     /* Start us off with the horizontal inset and move the baseline down by the ascender so our glyphs just graze the top of our view */
-    CGContextTranslateCTM(ctx, horizontalContainerInset, [font ascender]);
+    textTransform.tx += [self horizontalContainerInset];
+    textTransform.ty += [font ascender];
     NSUInteger lineIndex = 0;
     NEW_ARRAY(CGGlyph, glyphs, bytesPerLine);
     for (byteIndex = 0; byteIndex < byteCount; byteIndex += bytesPerLine) {
         if (byteIndex > 0) {
-            CGContextSetTextMatrix(ctx, textTransform);
-            CGContextTranslateCTM(ctx, 0, lineHeight);
+            textTransform.ty += lineHeight;
             lineRectInBoundsSpace.origin.y += lineHeight;
         }
         if (NSIntersectsRect(lineRectInBoundsSpace, clip)) {
@@ -133,26 +128,16 @@
             NSUInteger resultGlyphCount = 0;
             [self extractGlyphsForBytes:bytePtr + byteIndex count:numBytes intoArray:glyphs resultingGlyphCount:&resultGlyphCount];
             HFASSERT(resultGlyphCount > 0);
-            [textColor set];
+            CGContextSetTextMatrix(ctx, textTransform);
             [self drawGlyphs:glyphs count:resultGlyphCount];
+        }
+        else if (NSMinY(lineRectInBoundsSpace) > NSMaxY(clip)) {
+            break;
         }
         lineIndex++;
     }
     FREE_ARRAY(glyphs);
-    
-    CGContextRestoreGState(ctx);
-}
 
-- (NSUInteger)maximumBytesPerLineForViewWidth:(CGFloat)viewWidth {
-    CGFloat availableSpace = viewWidth - 2. * [self horizontalContainerInset];
-    //spaceRequiredForNBytes = N * glyphAdvancement
-    CGFloat fractionalBytesPerLine = availableSpace / glyphAdvancement;
-    return (NSUInteger)fmax(1., floor(fractionalBytesPerLine));
-}
-
-- (CGFloat)minimumViewWidthForBytesPerLine:(NSUInteger)bytesPerLine {
-    HFASSERT(bytesPerLine > 0);
-    return 2. * [self horizontalContainerInset] + bytesPerLine * glyphAdvancement;
 }
 
 @end

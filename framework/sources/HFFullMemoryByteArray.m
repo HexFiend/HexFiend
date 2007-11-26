@@ -40,11 +40,11 @@
 }
 
 - (void)insertByteSlice:(HFByteSlice *)slice inRange:(HFRange)lrange {
-    HFASSERT([slice length] <= ULONG_MAX);
+    HFASSERT([slice length] <= NSUIntegerMax);
     NSUInteger length = ll2l([slice length]);
     NSRange range;
-    HFASSERT(lrange.location <= ULONG_MAX);
-    HFASSERT(lrange.length <= ULONG_MAX);
+    HFASSERT(lrange.location <= NSUIntegerMax);
+    HFASSERT(lrange.length <= NSUIntegerMax);
     HFASSERT(HFSumDoesNotOverflow(lrange.location, lrange.length));
     range.location = ll2l(lrange.location);
     range.length = ll2l(lrange.length);

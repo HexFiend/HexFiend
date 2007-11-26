@@ -8,30 +8,62 @@
 
 #import <Cocoa/Cocoa.h>
 
-@class HFRepresenter;
+@class HFTextRepresenter;
 
 /* The base class for HFTextRepresenter views - such as the hex or ASCII text view */
 @interface HFRepresenterTextView : NSView {
     @private;
-    HFRepresenter *representer;
+    HFTextRepresenter *representer;
     NSFont *font;
     NSData *data;
     CGFloat horizontalContainerInset;
     CGFloat defaultLineHeight;
+    NSTimer *caretTimer;
+    NSRect lastDrawnCaretRect;
+    NSRect caretRectToDraw;
+    NSUInteger bytesBetweenVerticalGuides;
+    
+    struct  {
+        unsigned editable:1;
+        unsigned caretVisible:1;
+        unsigned registeredForAppNotifications:1;
+        unsigned receivedMouseUp:1;
+        unsigned reserved1:28;
+        unsigned reserved2:32;
+    } _hftvflags;
 }
 
-- initWithRepresenter:(HFRepresenter *)rep;
-- (HFRepresenter *)representer;
+- initWithRepresenter:(HFTextRepresenter *)rep;
+- (HFTextRepresenter *)representer;
 
 - (NSFont *)font;
 - (void)setFont:(NSFont *)font;
 
+/* Set and get data.  setData: will invalidate the correct regions (perhaps none) */
 - (NSData *)data;
 - (void)setData:(NSData *)data;
+
+- (BOOL)isEditable;
+- (void)setEditable:(BOOL)val;
+
+- (NSRect)caretRect;
+
+- (NSPoint)originForCharacterAtIndex:(NSUInteger)index;
+- (NSUInteger)indexOfCharacterAtPoint:(NSPoint)point;
 
 /* The amount of padding space to inset from the left and right side. */
 - (CGFloat)horizontalContainerInset;
 - (void)setHorizontalContainerInset:(CGFloat)inset;
+
+/* Set the number of bytes between vertical guides.  Pass 0 to not draw the guides. */
+- (void)setBytesBetweenVerticalGuides:(NSUInteger)val;
+- (NSUInteger)bytesBetweenVerticalGuides;
+
+/* To be invoked from drawRect:. */
+- (void)drawCaretIfNecessaryWithClip:(NSRect)clipRect;
+- (void)drawSelectionIfNecessaryWithClip:(NSRect)clipRect;
+
+- (void)updateSelectedRanges;
 
 /* The background color for the line at the given index.  You may override this to return different colors.  You may return nil to draw no color in this line (and then the empty space color will appear) */
 - (NSColor *)backgroundColorForLine:(NSUInteger)line;
@@ -42,12 +74,15 @@
 
 - (CGFloat)lineHeight;
 
+- (CGFloat)advancePerByte;
+- (CGFloat)spaceBetweenBytes;
+
 /* Returns the number of lines that could be shown in this view at its given height (expressed in its local coordinate space) */
 - (NSUInteger)maximumAvailableLinesForViewHeight:(CGFloat)viewHeight;
 
-/* Abstract methods - must be implemented by subclasses */
 - (NSUInteger)maximumBytesPerLineForViewWidth:(CGFloat)viewWidth;
 - (CGFloat)minimumViewWidthForBytesPerLine:(NSUInteger)bytesPerLine;
 
+- (IBAction)selectAll:sender;
 
 @end

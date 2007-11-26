@@ -84,7 +84,7 @@ static NSString* const sASCIIStrings[] __attribute__ ((unused)) = {
     
     NSUInteger numLineBreaks;
     if (bytesPerLine == 0) numLineBreaks = 0;
-    else numLineBreaks = count / bytesPerLine + !! (count % bytesPerLine);
+    else numLineBreaks = HFDivideULRoundingUp(count, bytesPerLine);
     NSMutableString* result = [NSMutableString stringWithCapacity:count + numLineBreaks];
     
     NSUInteger i;

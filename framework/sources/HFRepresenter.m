@@ -49,7 +49,7 @@
 
 - (NSUInteger)maximumBytesPerLineForViewWidth:(CGFloat)viewWidth {
     USE(viewWidth);
-    return ULONG_MAX;
+    return NSUIntegerMax;
 }
 
 - (CGFloat)minimumViewWidthForBytesPerLine:(NSUInteger)bytesPerLine {
@@ -59,14 +59,22 @@
 
 - (NSUInteger)maximumAvailableLinesForViewHeight:(CGFloat)viewHeight {
     USE(viewHeight);
-    return ULONG_MAX;
+    return NSUIntegerMax;
 }
 
 - (NSUInteger)maximumNumberOfBytesForViewSize:(NSSize)viewSize {
     NSUInteger bytesPerLine = [self maximumBytesPerLineForViewWidth:viewSize.width];
     NSUInteger availableLines = [self maximumAvailableLinesForViewHeight:viewSize.height];
-    if (bytesPerLine == ULONG_MAX || availableLines == ULONG_MAX) return ULONG_MAX;
+    if (bytesPerLine == NSUIntegerMax || availableLines == NSUIntegerMax) return NSUIntegerMax;
     else return bytesPerLine * availableLines;
+}
+
+- (void)scrollWheel:(NSEvent *)event {
+    [[self controller] scrollWithScrollEvent:event];
+}
+
+- (void)selectAll:sender {
+    [[self controller] selectAll:sender];
 }
 
 - (void)viewChangedProperties:(HFControllerPropertyBits)properties {

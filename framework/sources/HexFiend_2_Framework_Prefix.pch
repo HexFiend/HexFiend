@@ -5,7 +5,6 @@
 #ifdef __OBJC__
     #import <Cocoa/Cocoa.h>
     #import <HexFiend/HFTypes.h>
-    #import <HexFiend/HFFunctions.h>
 #endif
 
 #define PRIVATE_EXTERN __private_extern__
@@ -63,4 +62,9 @@
 
 #if !defined(MAX)
     #define MAX(A,B)	({ __typeof__(A) __a = (A); __typeof__(B) __b = (B); __a < __b ? __b : __a; })
+#endif
+
+#ifdef __OBJC__
+    #import <HexFiend/HFFunctions.h>
+    #import <HexFiend/HFFunctions_Private.h>
 #endif

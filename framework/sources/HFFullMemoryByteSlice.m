@@ -27,8 +27,8 @@
 
 - (void)copyBytes:(unsigned char *)dst range:(HFRange)lrange  {
     NSRange range;
-    assert(lrange.location <= ULONG_MAX);
-    assert(lrange.length <= ULONG_MAX);
+    assert(lrange.location <= NSUIntegerMax);
+    assert(lrange.length <= NSUIntegerMax);
     assert(lrange.location + lrange.length >= lrange.location);
     range.location = ll2l(lrange.location);
     range.length = ll2l(lrange.length);
@@ -39,8 +39,8 @@
     assert(range.length > 0);
     assert(range.location < [self length]);
     assert([self length] - range.location >= range.length);
-    assert(range.location <= ULONG_MAX);
-    assert(range.length <= ULONG_MAX);
+    assert(range.location <= NSUIntegerMax);
+    assert(range.length <= NSUIntegerMax);
     return [[[[self class] alloc] initWithData:[data subdataWithRange:NSMakeRange(ll2l(range.location), ll2l(range.length))]] autorelease];
 }
 

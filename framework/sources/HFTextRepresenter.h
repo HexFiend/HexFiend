@@ -19,4 +19,10 @@
 - (NSUInteger)maximumBytesPerLineForViewWidth:(CGFloat)viewWidth;
 - (CGFloat)minimumViewWidthForBytesPerLine:(NSUInteger)bytesPerLine;
 
+- (NSArray *)displayedSelectedContentsRanges; //returns an array of NSValues representing the selected ranges clipped to the displayed range.
+
+- (void)beginSelectionWithEvent:(NSEvent *)event forCharacterIndex:(NSUInteger)characterIndex;
+- (void)continueSelectionWithEvent:(NSEvent *)event forCharacterIndex:(NSUInteger)characterIndex;
+- (void)endSelectionWithEvent:(NSEvent *)event forCharacterIndex:(NSUInteger)characterIndex;
+
 @end

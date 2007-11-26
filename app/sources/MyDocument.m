@@ -45,7 +45,7 @@
     NSArray *visibleViews = [self visibleViews];
     NSView *hexView = [hexRepresenter view], *asciiView = [asciiRepresenter view], *scrollerView = [scrollRepresenter view];
     NSRect hexViewFrame = NSZeroRect, asciiViewFrame = NSZeroRect, scrollerViewFrame = NSZeroRect;
-    CGFloat maxXSoFar = 0;
+    double maxXSoFar = 0;
     
     if ([visibleViews containsObject:hexView]) {
         [hexView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable | NSViewMaxXMargin];
@@ -62,7 +62,7 @@
     }
     if ([visibleViews containsObject:scrollerView]) {
         [scrollerView setAutoresizingMask:NSViewMinXMargin | NSViewHeightSizable];
-        scrollerViewFrame.origin.x = maxXSoFar;
+        scrollerViewFrame.origin.x = (CGFloat)maxXSoFar;
         scrollerViewFrame.size.height = contentHeight;
         scrollerViewFrame.size.width = [NSScroller scrollerWidthForControlSize:NSRegularControlSize];
         maxXSoFar = fmax(maxXSoFar, NSMaxX(scrollerViewFrame));
@@ -73,8 +73,8 @@
     }
     
     NSRect containerFrame = NSZeroRect;
-    containerFrame.size.width = maxXSoFar;    
-    containerFrame.size.height = fmax(NSHeight(hexViewFrame), NSHeight(asciiViewFrame));
+    containerFrame.size.width = (CGFloat)maxXSoFar;    
+    containerFrame.size.height = (CGFloat)fmax(NSHeight(hexViewFrame), NSHeight(asciiViewFrame));
 
     //don't use setContentSize: because it triggers an immediate redisplay
     NSSize windowFrameSize = [window frameRectForContentRect:(NSRect){NSZeroPoint, containerFrame.size}].size;
@@ -110,6 +110,8 @@
 - (void)windowControllerDidLoadNib:(NSWindowController *)windowController {
     USE(windowController);
     [self showViewForRepresenter:hexRepresenter];
+    [self showViewForRepresenter:asciiRepresenter];
+    [self showViewForRepresenter:scrollRepresenter];
 }
 
 - init {

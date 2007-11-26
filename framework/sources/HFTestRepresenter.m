@@ -20,7 +20,7 @@
 
 - (void)drawRect:(NSRect)rect {
     [[NSGraphicsContext currentContext] setCompositingOperation:NSCompositeSourceOver];
-    [[NSColor colorWithCalibratedRed:.8 green:1 blue:.8 alpha:1] set];
+    [[NSColor colorWithCalibratedRed:(CGFloat).8 green:(CGFloat)1 blue:(CGFloat).8 alpha:(CGFloat)1] set];
     NSRectFill(rect);
     
     [[NSColor blackColor] set];

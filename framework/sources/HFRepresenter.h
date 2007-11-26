@@ -33,16 +33,20 @@
 // Cover method for NSController
 - (NSUInteger)bytesPerLine;
 
-// Returns the maximum number of bytes per line for the given view size.  Representers that don't care should return ULONG_MAX, which is the default value.
+// Returns the maximum number of bytes per line for the given view size.  Representers that don't care should return NSUIntegerMax, which is the default value.
 - (NSUInteger)maximumBytesPerLineForViewWidth:(CGFloat)viewWidth;
 
 // Returns the minimum view frame size for the given bytes per line.  Default is to return 0.  Fixed width views should return their fixed width.
 - (CGFloat)minimumViewWidthForBytesPerLine:(NSUInteger)bytesPerLine;
 
-// Returns the maximum number of lines that could be displayed at once for a given view height.  Default is to return ULONG_MAX.
+// Returns the maximum number of lines that could be displayed at once for a given view height.  Default is to return NSUIntegerMax.
 - (NSUInteger)maximumAvailableLinesForViewHeight:(CGFloat)viewHeight;
 
 - (NSUInteger)maximumNumberOfBytesForViewSize:(NSSize)viewSize;
+
+- (void)scrollWheel:(NSEvent *)event;
+
+- (void)selectAll:sender;
 
 // Called by the view to indicate that one or more properties has changed
 - (void)viewChangedProperties:(HFControllerPropertyBits)properties;

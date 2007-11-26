@@ -15,4 +15,9 @@
     return [HFRepresenterHexTextView class];
 }
 
+- (void)initializeView {
+    [super initializeView];
+    [[self view] setBytesBetweenVerticalGuides:4];
+}
+
 @end
