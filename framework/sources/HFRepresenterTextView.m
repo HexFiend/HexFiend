@@ -226,6 +226,7 @@ static const NSTimeInterval HFCaretBlinkFrequency = 0.56;
         NSLayoutManager *manager = [[NSLayoutManager alloc] init];
         defaultLineHeight = [manager defaultLineHeightForFont:font];
         [manager release];
+        NSLog(@"Set font to %@ (%f)", font, defaultLineHeight);
     }
 }
 
@@ -285,8 +286,14 @@ static const NSTimeInterval HFCaretBlinkFrequency = 0.56;
     [caretTimer release];
     [font release];
     [data release];
+    NSWindow *window = [self window];
+    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+    if (window) {
+        NSLog(@"Removing for %p", window);
+        [center removeObserver:self name:NSWindowDidBecomeKeyNotification object:window];
+        [center removeObserver:self name:NSWindowDidResignKeyNotification object:window];        
+    }
     if (_hftvflags.registeredForAppNotifications) {
-        NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
         [center removeObserver:self name:NSApplicationDidBecomeActiveNotification object:nil];
         [center removeObserver:self name:NSApplicationDidResignActiveNotification object:nil];
     }
@@ -472,14 +479,15 @@ static const NSTimeInterval HFCaretBlinkFrequency = 0.56;
     [self _updateCaretTimer];
     NSWindow *newWindow = [self window];
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
-    [center addObserver:self selector:@selector(_windowDidChangeKeyStatus:) name:NSWindowDidBecomeKeyNotification object:newWindow];
-    [center addObserver:self selector:@selector(_windowDidChangeKeyStatus:) name:NSWindowDidResignKeyNotification object:newWindow];
+    if (newWindow) {
+        [center addObserver:self selector:@selector(_windowDidChangeKeyStatus:) name:NSWindowDidBecomeKeyNotification object:newWindow];
+        [center addObserver:self selector:@selector(_windowDidChangeKeyStatus:) name:NSWindowDidResignKeyNotification object:newWindow];
+    }
     if (! _hftvflags.registeredForAppNotifications) {
-        [center addObserver:self selector:@selector(_windowDidChangeKeyStatus:) name:NSApplicationDidBecomeActiveNotification object:newWindow];
-        [center addObserver:self selector:@selector(_windowDidChangeKeyStatus:) name:NSApplicationDidResignActiveNotification object:newWindow];        
+        [center addObserver:self selector:@selector(_windowDidChangeKeyStatus:) name:NSApplicationDidBecomeActiveNotification object:nil];
+        [center addObserver:self selector:@selector(_windowDidChangeKeyStatus:) name:NSApplicationDidResignActiveNotification object:nil];        
         _hftvflags.registeredForAppNotifications = YES;
     }
-
     [super viewDidMoveToWindow];
 }
 
@@ -548,7 +556,7 @@ static const NSTimeInterval HFCaretBlinkFrequency = 0.56;
 
 - (void)insertText:(id)string {
     if ([string isKindOfClass:[NSAttributedString class]]) string = [string string];
-    NSLog(@"Insert %@", string);
+    [[self representer] insertText:string];
 }
 
 - (void)doCommandBySelector:(SEL)sel {

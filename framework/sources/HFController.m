@@ -21,6 +21,9 @@
 #define VALIDATE_SELECTION() do { } while (0)
 #endif
 
+#define BEGIN_TRANSACTION() NSUInteger token = [self beginPropertyChangeTransaction]
+#define END_TRANSACTION() [self endPropertyChangeTransaction:token]
+
 
 static const CGFloat kScrollMultiplier = (CGFloat)1.5;
 
@@ -35,6 +38,7 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
     selectedContentsRanges = [[NSMutableArray alloc] initWithObjects:[HFRangeWrapper withRange:HFRangeMake(0, 0)], nil];
     byteArray = [[HFFullMemoryByteArray alloc] init];
     selectionAnchor = NO_SELECTION;
+    [self setFont:[NSFont fontWithName:@"Monaco" size:10.f]];
     return self;
 }
 
@@ -56,6 +60,32 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
     }
 }
 
+- (void)_firePropertyChanges {
+    if (propertiesToUpdateInCurrentTransaction != 0) {
+        HFControllerPropertyBits propertiesToUpdate = propertiesToUpdateInCurrentTransaction;
+        propertiesToUpdateInCurrentTransaction = 0;
+        [self notifyRepresentersOfChanges:propertiesToUpdate];
+    }
+}
+
+- (void)_addPropertyChangeBits:(HFControllerPropertyBits)bits {
+    propertiesToUpdateInCurrentTransaction |= bits;
+    if (currentPropertyChangeToken == 0) {
+        [self _firePropertyChanges];
+    }
+}
+
+- (NSUInteger)beginPropertyChangeTransaction {
+    HFASSERT(currentPropertyChangeToken < NSUIntegerMax);
+    return ++currentPropertyChangeToken;
+}
+
+- (void)endPropertyChangeTransaction:(NSUInteger)token {
+    HFASSERT(token > 0);
+    HFASSERT(currentPropertyChangeToken == token);
+    if (--currentPropertyChangeToken == 0) [self _firePropertyChanges];
+}
+
 - (void)addRepresenter:(HFRepresenter *)representer {
     REQUIRE_NOT_NULL(representer);
     HFASSERT([representers indexOfObjectIdenticalTo:representer] == NSNotFound);
@@ -72,14 +102,50 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
     [representer _setController:nil];
 }
 
+- (HFRange)_maximumDisplayedRangeSet {
+    unsigned long long contentsLength = [self contentsLength];
+    HFRange maximumDisplayedRangeSet = HFRangeMake(0, HFRoundUpToNextMultiple(contentsLength, bytesPerLine));
+    return maximumDisplayedRangeSet;
+}
+
 - (HFRange)displayedContentsRange {
+    HFASSERT(HFRangeIsSubrangeOfRange(displayedContentsRange, [self _maximumDisplayedRangeSet]));
     return displayedContentsRange;
 }
 
 - (void)setDisplayedContentsRange:(HFRange)range {
-    HFASSERT(HFRangeIsSubrangeOfRange(range, HFRangeMake(0, [self contentsLength])));
-    displayedContentsRange = range;
-    [self notifyRepresentersOfChanges:HFControllerDisplayedRange];
+    HFASSERT(HFRangeIsSubrangeOfRange(range, [self _maximumDisplayedRangeSet]));
+    if (! HFRangeEqualsRange(displayedContentsRange, range)) {
+        displayedContentsRange = range;
+        [self _addPropertyChangeBits:HFControllerDisplayedRange];
+    }
+}
+
+
+- (CGFloat)lineHeight {
+    return lineHeight;
+}
+
+- (NSFont *)font {
+    return font;
+}
+
+- (void)setFont:(NSFont *)val {
+    if (val != font) {
+        CGFloat priorLineHeight = [self lineHeight];
+        
+        [font release];
+        font = [val copy];
+        
+        NSLayoutManager *manager = [[NSLayoutManager alloc] init];
+        lineHeight = [manager defaultLineHeightForFont:font];
+        [manager release];
+        
+        HFControllerPropertyBits bits = HFControllerFont;
+        if (lineHeight != priorLineHeight) bits |= HFControllerLineHeight;
+        
+        [self _addPropertyChangeBits:bits];
+    }
 }
 
 - (BOOL)_shouldInvertSelectedRangesByAnchorRange {
@@ -164,6 +230,24 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
 }
 #endif
 
+- (void)_setSingleSelectedContentsRange:(HFRange)newSelection {
+    HFASSERT(HFRangeIsSubrangeOfRange(newSelection, HFRangeMake(0, [self contentsLength])) || (newSelection.location == [self contentsLength] && newSelection.length == 0));
+    BOOL selectionChanged;
+    if ([selectedContentsRanges count] == 1) {
+        selectionChanged = ! HFRangeEqualsRange([[selectedContentsRanges objectAtIndex:0] HFRange], newSelection);
+    }
+    else {
+        selectionChanged = YES;
+    }
+    
+    if (selectionChanged) {
+        [selectedContentsRanges removeAllObjects];
+        [selectedContentsRanges addObject:[HFRangeWrapper withRange:newSelection]];
+        [self _addPropertyChangeBits:HFControllerSelectedRanges];
+    }
+    VALIDATE_SELECTION();
+}
+
 - (NSArray *)selectedContentsRanges {
     VALIDATE_SELECTION();
     if ([self _shouldInvertSelectedRangesByAnchorRange]) return [self _invertedSelectedContentsRanges];
@@ -182,23 +266,28 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
 }
 
 - (void)_updateDisplayedRange {
-    const unsigned long long contentLength = [self contentsLength];
-    unsigned long long  maxDisplayedBytes;
-    unsigned long long displayedRangeLocation = displayedContentsRange.location;
+    HFRange proposedNewDisplayRange;
+    HFRange maxRangeSet = [self _maximumDisplayedRangeSet];
     NSUInteger maxBytesForViewSize = NSUIntegerMax;
     FOREACH(HFRepresenter*, rep, representers) {
         NSView *view = [rep view];
         NSUInteger repMaxBytesPerLine = [rep maximumNumberOfBytesForViewSize:[view frame].size];
         maxBytesForViewSize = MIN(repMaxBytesPerLine, maxBytesForViewSize);
     }
-    
-    maxDisplayedBytes = MIN(contentLength, maxBytesForViewSize);
-    displayedRangeLocation = MIN(displayedContentsRange.location, contentLength - maxDisplayedBytes);
-    HFRange proposedNewDisplayRange = HFRangeMake(displayedRangeLocation, maxDisplayedBytes);
-    HFASSERT(HFRangeIsSubrangeOfRange(proposedNewDisplayRange, HFRangeMake(0, contentLength)));
+    if (maxBytesForViewSize == NSUIntegerMax) {
+        proposedNewDisplayRange = HFRangeMake(0, 0);
+    }
+    else {
+        unsigned long long maximumDisplayedBytes = MIN(maxRangeSet.length, maxBytesForViewSize);
+        HFASSERT(HFMaxRange(maxRangeSet) >= maximumDisplayedBytes);
+        
+        proposedNewDisplayRange.location = MIN(HFMaxRange(maxRangeSet) - maximumDisplayedBytes, displayedContentsRange.location);
+        proposedNewDisplayRange.length = MIN(HFMaxRange(maxRangeSet) - proposedNewDisplayRange.location, maxBytesForViewSize);
+    }
+    HFASSERT(HFRangeIsSubrangeOfRange(proposedNewDisplayRange, maxRangeSet));
     if (! HFRangeEqualsRange(proposedNewDisplayRange, displayedContentsRange)) {
         displayedContentsRange = proposedNewDisplayRange;
-        propertiesToUpdate |= HFControllerDisplayedRange;
+        [self _addPropertyChangeBits:HFControllerDisplayedRange];
     }
 }
 
@@ -209,17 +298,22 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
         HFASSERT(displayedContentsRange.location % bytesPerLine == 0);
         if (location < displayedContentsRange.location) {
             unsigned long long bytesDifference = displayedContentsRange.location - location;
+            NSLog(@"Lines: %llu", HFDivideULLRoundingUp(bytesDifference, bytesPerLine));
             unsigned long long bytesToScroll = bytesPerLine * HFDivideULLRoundingUp(bytesDifference, bytesPerLine);
             HFASSERT(displayedContentsRange.location >= bytesToScroll); //we should never think we need to scroll up more than our location
             displayedContentsRange.location -= bytesToScroll;
         }
         else {
-            unsigned long long bytesDifference = HFMaxRange(displayedContentsRange) - location;
+            unsigned long long bytesDifference = location - HFMaxRange(displayedContentsRange);
             unsigned long long bytesToScroll = bytesPerLine * HFDivideULLRoundingUp(bytesDifference, bytesPerLine);
             displayedContentsRange.location += bytesToScroll;
+            NSLog(@"BYTES TO SCROLL DOWN: %llu", bytesToScroll);
         }
+        [self _updateDisplayedRange];
     }
-    [self notifyRepresentersOfChanges: HFControllerDisplayedRange];
+    HFASSERT(HFRangeIsSubrangeOfRange(displayedContentsRange, [self _maximumDisplayedRangeSet]));
+    HFASSERT(displayedContentsRange.location % bytesPerLine == 0);
+    [self _addPropertyChangeBits:HFControllerDisplayedRange];
 }
 
 - (void)setByteArray:(HFByteArray *)val {
@@ -227,9 +321,8 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
     [val retain];
     [byteArray release];
     byteArray = val;
-    propertiesToUpdate = HFControllerContentValue | HFControllerContentLength;
     [self _updateDisplayedRange];
-    [self notifyRepresentersOfChanges: propertiesToUpdate];
+    [self _addPropertyChangeBits: HFControllerContentValue | HFControllerContentLength];
 }
 
 - (HFByteArray *)byteArray {
@@ -247,7 +340,7 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
 - (void)setEditable:(BOOL)flag {
     if (flag != _hfflags.editable) {
         _hfflags.editable = flag;
-        [self notifyRepresentersOfChanges:HFControllerEditable];
+        [self _addPropertyChangeBits:HFControllerEditable];
     }
 }
 
@@ -262,13 +355,13 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
     if (newBytesPerLine != bytesPerLine) {
         HFASSERT(newBytesPerLine > 0);
         bytesPerLine = newBytesPerLine;
-        propertiesToUpdate |= HFControllerBytesPerLine;
+        [self _addPropertyChangeBits:HFControllerBytesPerLine];
     }
 }
 
 - (void)representer:(HFRepresenter *)rep changedProperties:(HFControllerPropertyBits)properties {
     USE(rep);
-    propertiesToUpdate = 0;
+    BEGIN_TRANSACTION();
     if (properties & HFControllerBytesPerLine) {
         [self _updateBytesPerLine];
         properties &= ~HFControllerBytesPerLine;
@@ -280,7 +373,7 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
     if (properties) {
         NSLog(@"Unknown properties: %lx", properties);
     }
-    if (propertiesToUpdate) [self notifyRepresentersOfChanges:propertiesToUpdate];
+    END_TRANSACTION();
 }
 
 /* Flattens the selected range to a single range (the selected range becomes any character within or between the selected ranges).  Modifies the selectedContentsRanges and returns the new single HFRange.  Does not call notifyRepresentersOfChanges: */
@@ -299,12 +392,10 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
         }
         if (HFRangeExtendsPastRange(selectedRange, resultRange)) {
             HFASSERT(selectedRange.location >= resultRange.location); //must be true by if statement above
-            HFASSERT(HFSumDoesNotOverflow(selectedRange.location - resultRange.location, selectedRange.length));
-            resultRange.length = selectedRange.location - resultRange.location + selectedRange.length;
+            resultRange.length = HFSum(selectedRange.location - resultRange.location, selectedRange.length);
         }
     }
-    [selectedContentsRanges removeAllObjects];
-    [selectedContentsRanges addObject:[HFRangeWrapper withRange:resultRange]];
+    [self _setSingleSelectedContentsRange:resultRange];
     return resultRange;
 }
 
@@ -334,8 +425,7 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
     HFASSERT(direction == HFControllerDirectionLeft || direction == HFControllerDirectionRight);
     resultRange.location = (direction == HFControllerDirectionLeft ? [self _minimumSelectionLocation] : [self _maximumSelectionLocation]);
     resultRange.length = 0;
-    [selectedContentsRanges removeAllObjects];
-    [selectedContentsRanges addObject:[HFRangeWrapper withRange:resultRange]];
+    [self _setSingleSelectedContentsRange:resultRange];
     return resultRange;
 }
 
@@ -373,22 +463,17 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
             /* Push the "start back" */
             selectedRange.location = selectedRange.location + selectedRange.length - distanceFromRangeEnd;
             selectedRange.length = distanceFromRangeEnd;
-            HFASSERT(HFSumDoesNotOverflow(selectedRange.length, selectedRange.location));
-            selectionAnchor = selectedRange.length + selectedRange.location;
+            selectionAnchor = HFSum(selectedRange.length, selectedRange.location);
         }
         HFASSERT(HFRangeIsSubrangeOfRange(selectedRange, HFRangeMake(0, [self contentsLength])));
         selectionAnchorRange = selectedRange;
-        [selectedContentsRanges removeAllObjects];
-        [selectedContentsRanges addObject:[HFRangeWrapper withRange:selectedRange]];
+        [self _setSingleSelectedContentsRange:selectedRange];
     }
     else {
         /* No modifier key selection.  The selection anchor is not used.  */
-        [selectedContentsRanges removeAllObjects];
-        [selectedContentsRanges addObject:[HFRangeWrapper withRange:HFRangeMake(characterIndex, 0)]];
+        [self _setSingleSelectedContentsRange:HFRangeMake(characterIndex, 0)];
         selectionAnchor = characterIndex;
     }
-    
-    [self notifyRepresentersOfChanges:HFControllerSelectedRanges];
 }
 
 - (void)continueSelectionWithEvent:(NSEvent *)event forByteIndex:(unsigned long long)characterIndex {
@@ -406,8 +491,7 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
         if (! HFLocationInRange(characterIndex, selectionAnchorRange)) {
             /* The character index is outside of the selection anchor range.  The new range is just the selected anchor range combined with the character index. */
             range.location = MIN(characterIndex, selectionAnchorRange.location);
-            HFASSERT(HFSumDoesNotOverflow(selectionAnchorRange.location, selectionAnchorRange.length));
-            unsigned long long rangeEnd = MAX(characterIndex, selectionAnchorRange.location + selectionAnchorRange.length);
+            unsigned long long rangeEnd = MAX(characterIndex, HFSum(selectionAnchorRange.location, selectionAnchorRange.length));
             HFASSERT(rangeEnd >= range.location);
             range.length = rangeEnd - range.location;
         }
@@ -416,18 +500,15 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
             range.location = MIN(selectionAnchor, characterIndex);
             range.length = HFAbsoluteDifference(selectionAnchor, characterIndex);
         }
-        [selectedContentsRanges removeAllObjects];
-        [selectedContentsRanges addObject:[HFRangeWrapper withRange:range]];
+        [self _setSingleSelectedContentsRange:range];
     }
     else {
         /* No modifier key selection */
         HFRange range;
         range.location = MIN(characterIndex, selectionAnchor);
         range.length = MAX(characterIndex, selectionAnchor) - range.location;
-        [selectedContentsRanges removeAllObjects];
-        [selectedContentsRanges addObject:[HFRangeWrapper withRange:range]];
+        [self _setSingleSelectedContentsRange:range];
     }
-    [self notifyRepresentersOfChanges:HFControllerSelectedRanges];
 }
 
 - (void)endSelectionWithEvent:(NSEvent *)event forByteIndex:(unsigned long long)characterIndex {
@@ -449,8 +530,7 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
         if (! HFLocationInRange(characterIndex, selectionAnchorRange)) {
             /* The character index is outside of the selection anchor range.  The new range is just the selected anchor range combined with the character index. */
             range.location = MIN(characterIndex, selectionAnchorRange.location);
-            HFASSERT(HFSumDoesNotOverflow(selectionAnchorRange.location, selectionAnchorRange.length));
-            unsigned long long rangeEnd = MAX(characterIndex, selectionAnchorRange.location + selectionAnchorRange.length);
+            unsigned long long rangeEnd = MAX(characterIndex, HFSum(selectionAnchorRange.location, selectionAnchorRange.length));
             HFASSERT(rangeEnd >= range.location);
             range.length = rangeEnd - range.location;
         }
@@ -459,24 +539,20 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
             range.location = MIN(selectionAnchor, characterIndex);
             range.length = HFAbsoluteDifference(selectionAnchor, characterIndex);
         }
-        [selectedContentsRanges removeAllObjects];
-        [selectedContentsRanges addObject:[HFRangeWrapper withRange:range]];
+        [self _setSingleSelectedContentsRange:range];
     }
     else {
         /* No modifier key selection */
         HFRange range;
         range.location = MIN(characterIndex, selectionAnchor);
         range.length = MAX(characterIndex, selectionAnchor) - range.location;
-        [selectedContentsRanges removeAllObjects];
-        [selectedContentsRanges addObject:[HFRangeWrapper withRange:range]];
+        [self _setSingleSelectedContentsRange:range];
     }
 
     _hfflags.selectionInProgress = NO;    
     _hfflags.shiftExtendSelection = NO;
     _hfflags.commandExtendSelection = NO;
     selectionAnchor = NO_SELECTION;
-    
-    [self notifyRepresentersOfChanges:HFControllerSelectedRanges];
 }
 
 - (void)scrollWithScrollEvent:(NSEvent *)scrollEvent {
@@ -486,44 +562,35 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
 #if NSUIntegerMax >= LLONG_MAX
     HFASSERT(bytesPerLine <= LLONG_MAX);
 #endif
+    BEGIN_TRANSACTION();
     long long amountToScroll = ((long long)bytesPerLine) * (long long)HFRound( - scrollY);
     if (amountToScroll == 0) amountToScroll = (signbit(scrollY) ? (long long)bytesPerLine : - (long long)bytesPerLine); //minimum of one line of scroll
     NSLog(@"Amount to scroll: %lld", amountToScroll);
-    unsigned long long contentsLength = [self contentsLength];
-    HFRange newDisplayedContentsRange = displayedContentsRange;
+    HFRange originalDisplayedContentsRange = displayedContentsRange;
     if (amountToScroll != 0) {
-        HFASSERT(newDisplayedContentsRange.length <= [self contentsLength]);
         if (amountToScroll < 0) {
             unsigned long long unsignedAmountToScroll = (unsigned long long)( - amountToScroll);
             unsignedAmountToScroll -= unsignedAmountToScroll % bytesPerLine;
-
-            newDisplayedContentsRange.location -= MIN(newDisplayedContentsRange.location, unsignedAmountToScroll);
+            displayedContentsRange.location -= MIN(displayedContentsRange.location, unsignedAmountToScroll);
         }
         else {
             /* amountToScroll > 0 */
             unsigned long long unsignedAmountToScroll = (unsigned long long)amountToScroll;
             unsignedAmountToScroll -= unsignedAmountToScroll % bytesPerLine;
-            
-            HFASSERT(contentsLength >= newDisplayedContentsRange.length);
-            unsigned long long maxScroll = contentsLength - newDisplayedContentsRange.length;
-            maxScroll -= maxScroll % bytesPerLine;
-            HFASSERT(HFSumDoesNotOverflow(newDisplayedContentsRange.location, unsignedAmountToScroll));
-            newDisplayedContentsRange.location = MIN(newDisplayedContentsRange.location + unsignedAmountToScroll, maxScroll);
+            displayedContentsRange.location = HFSum(displayedContentsRange.location, unsignedAmountToScroll);
+        }
+        [self _updateDisplayedRange];
+        if (! HFRangeEqualsRange(originalDisplayedContentsRange, displayedContentsRange)) {
+            [self _addPropertyChangeBits:HFControllerDisplayedRange];
         }
     }
-    
-    if (! HFRangeEqualsRange(newDisplayedContentsRange, displayedContentsRange)) {
-        displayedContentsRange = newDisplayedContentsRange;
-        [self notifyRepresentersOfChanges:HFControllerDisplayedRange];
-    }
+    END_TRANSACTION();
 }
 
 - (IBAction)selectAll:sender {
     USE(sender);
     if (_hfflags.selectable) {
-        [selectedContentsRanges removeAllObjects];
-        [selectedContentsRanges addObject:[HFRangeWrapper withRange:HFRangeMake(0, [self contentsLength])]];
-        [self notifyRepresentersOfChanges:HFControllerSelectedRanges];
+        [self _setSingleSelectedContentsRange:HFRangeMake(0, [self contentsLength])];
     }
 }
 
@@ -557,8 +624,7 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
     if (rangeIndex == 0) {
         /* We removed all of our range.  Telescope us. */
         HFASSERT(cursorLocation <= [self contentsLength]);
-        [selectedContentsRanges removeAllObjects];
-        [selectedContentsRanges addObject:[HFRangeWrapper withRange:HFRangeMake(cursorLocation, 0)]];
+        [self _setSingleSelectedContentsRange:HFRangeMake(cursorLocation, 0)];
     }
     else {
         wrappers = [HFRangeWrapper withRanges:tempRanges count:rangeIndex];
@@ -569,6 +635,7 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
 }
 
 - (void)_moveDirectionWithoutModifyingSelection:(HFControllerMovementDirection)direction {
+    BEGIN_TRANSACTION();
     BOOL selectionWasEmpty = ([selectedContentsRanges count] == 1 && [[selectedContentsRanges objectAtIndex:0] HFRange].length == 0);
     /* Vertical movement always telescopes left. */
     HFRange selectedRange = [self _telescopeSelectionRangeInDirection: (direction == HFControllerDirectionRight ? HFControllerDirectionRight : HFControllerDirectionLeft)];
@@ -588,11 +655,9 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
             break;
     }
     selectionAnchor = NO_SELECTION;
-    [selectedContentsRanges removeAllObjects];
-    [selectedContentsRanges addObject:[HFRangeWrapper withRange:selectedRange]];
-    propertiesToUpdate = HFControllerSelectedRanges;
+    [self _setSingleSelectedContentsRange:selectedRange];
     [self _ensureVisibilityOfLocation:selectedRange.location];
-    [self notifyRepresentersOfChanges:propertiesToUpdate];
+    END_TRANSACTION();
 }
 
 - (void)_moveDirectionWhileModifyingSelection:(HFControllerMovementDirection)direction {
@@ -601,43 +666,57 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
     unsigned long long maxSelection = [self _maximumSelectionLocation];
     BOOL selectionChanged = NO;
     unsigned long long locationToMakeVisible = NO_SELECTION;
+    NSUInteger amountToMove;
+    if (direction == HFControllerDirectionUp || direction == HFControllerDirectionDown) amountToMove = bytesPerLine;
+    else amountToMove = 1;
+    unsigned long long contentsLength = [self contentsLength];
     if (selectionAnchor == NO_SELECTION) {
         /* Pick the anchor opposite the choice of direction */
         if (direction == HFControllerDirectionLeft || direction == HFControllerDirectionUp) selectionAnchor = maxSelection;
         else selectionAnchor = minSelection;
     }
-    if (direction == HFControllerDirectionLeft) {
+    if (direction == HFControllerDirectionLeft || direction == HFControllerDirectionUp) {
         if (minSelection >= selectionAnchor && maxSelection > minSelection) {
-            [self _removeRangeFromSelection:HFRangeMake(maxSelection-1, 1) withCursorLocationIfAllSelectionRemoved:minSelection];
+            NSUInteger amountToRemove = ll2l(llmin(maxSelection - selectionAnchor, amountToMove));
+            NSUInteger amountToAdd = amountToMove - amountToRemove;
+            if (amountToRemove > 0) [self _removeRangeFromSelection:HFRangeMake(maxSelection - amountToRemove, amountToRemove) withCursorLocationIfAllSelectionRemoved:minSelection];
+            if (amountToAdd > 0) [self _addRangeToSelection:HFRangeMake(selectionAnchor - amountToAdd, amountToAdd)];
             selectionChanged = YES;
-            locationToMakeVisible = maxSelection - 1;
+            locationToMakeVisible = (amountToAdd > 0 ? selectionAnchor - amountToAdd : maxSelection - amountToRemove);
         }
         else {
             if (minSelection > 0) {
-                [self _addRangeToSelection:HFRangeMake(minSelection-1, 1)];
+                NSUInteger amountToAdd = ll2l(llmin(minSelection, amountToMove));
+                if (amountToAdd > 0) [self _addRangeToSelection:HFRangeMake(minSelection - amountToAdd, amountToAdd)];
                 selectionChanged = YES;
-                locationToMakeVisible = minSelection - 1;
+                locationToMakeVisible = minSelection - amountToAdd;
             }
         }
     }
-    else if (direction == HFControllerDirectionRight) {
+    else if (direction == HFControllerDirectionRight || direction == HFControllerDirectionDown) {
         if (maxSelection <= selectionAnchor && maxSelection > minSelection) {
-            [self _removeRangeFromSelection:HFRangeMake(minSelection, 1) withCursorLocationIfAllSelectionRemoved:maxSelection];
+            HFASSERT(contentsLength >= maxSelection);
+            NSUInteger amountToRemove = ll2l(llmin(contentsLength - maxSelection, amountToMove));
+            NSUInteger amountToAdd = amountToMove - amountToRemove;
+            if (amountToRemove > 0) [self _removeRangeFromSelection:HFRangeMake(minSelection, amountToRemove) withCursorLocationIfAllSelectionRemoved:maxSelection];
+            if (amountToAdd > 0) [self _addRangeToSelection:HFRangeMake(maxSelection, amountToAdd)];
             selectionChanged = YES;
-            locationToMakeVisible = minSelection + 1;
+            locationToMakeVisible = llmin(contentsLength, (amountToAdd > 0 ? maxSelection + amountToAdd : minSelection + amountToRemove));
         }
         else {
-            if (maxSelection < [self contentsLength]) {
-                [self _addRangeToSelection:HFRangeMake(maxSelection, 1)];
+            if (maxSelection < contentsLength) {
+                NSUInteger amountToAdd = ll2l(llmin(contentsLength - maxSelection, amountToMove));
+                [self _addRangeToSelection:HFRangeMake(maxSelection, amountToAdd)];
                 selectionChanged = YES;
-                locationToMakeVisible = maxSelection;
+                locationToMakeVisible = maxSelection + amountToAdd;
             }
         }
     }
     if (selectionChanged) {
-        propertiesToUpdate = HFControllerSelectedRanges;
+        BEGIN_TRANSACTION();
+        [self _addPropertyChangeBits:HFControllerSelectedRanges];
         if (locationToMakeVisible != NO_SELECTION) [self _ensureVisibilityOfLocation:locationToMakeVisible];
-        [self notifyRepresentersOfChanges:propertiesToUpdate];
+        END_TRANSACTION();
     }
 }
 
@@ -648,6 +727,99 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
     }
     else {
         [self _moveDirectionWhileModifyingSelection:direction];
+    }
+}
+
+- (void)deleteSelection {
+    /* Delete all the selection - in reverse order */
+    unsigned long long minSelection = ULLONG_MAX;
+    BOOL somethingWasDeleted = NO;
+    NSArray *rangesToDelete = [HFRangeWrapper organizeAndMergeRanges:[self selectedContentsRanges]];
+    NSUInteger rangeIndex = [rangesToDelete count];
+    HFASSERT(rangeIndex > 0);
+    while (rangeIndex--) {
+        HFRange range = [[rangesToDelete objectAtIndex:rangeIndex] HFRange];
+        minSelection = llmin(range.location, minSelection);
+        if (range.length > 0) {
+            [byteArray deleteBytesInRange:range];
+            somethingWasDeleted = YES;
+        }
+    }
+    
+    HFASSERT(minSelection != ULLONG_MAX);
+    if (somethingWasDeleted) {
+        BEGIN_TRANSACTION();
+        [self _addPropertyChangeBits:HFControllerContentValue | HFControllerContentLength];
+        [self _setSingleSelectedContentsRange:HFRangeMake(minSelection, 0)];
+        [self _updateDisplayedRange];
+        END_TRANSACTION();
+    }
+}
+
+- (void)insertData:(NSData *)data {
+    REQUIRE_NOT_NULL(data);
+    
+    BEGIN_TRANSACTION();
+    
+    unsigned long long amountDeleted = 0, amountAdded = [data length];
+    
+    /* Delete all the selection - in reverse order - except the last one, which we will overwrite */
+    NSArray *rangesToDelete = [HFRangeWrapper organizeAndMergeRanges:[self selectedContentsRanges]];
+    HFRange rangeToReplace = [[rangesToDelete objectAtIndex:0] HFRange];
+    HFASSERT(rangeToReplace.location == [self _minimumSelectionLocation]);
+    NSUInteger rangeIndex, rangeCount = [rangesToDelete count];
+    HFASSERT(rangeCount > 0);
+    for (rangeIndex = rangeCount - 1; rangeIndex > 0; rangeIndex--) {
+        HFRange range = [[rangesToDelete objectAtIndex:rangeIndex] HFRange];
+        if (range.length > 0) {
+            amountDeleted = HFSum(amountDeleted, range.length);
+            [byteArray deleteBytesInRange:range];
+        }
+    }
+    amountDeleted = HFSum(amountDeleted, rangeToReplace.length);
+    
+    /* Insert data */
+    HFByteSlice *slice = [[HFFullMemoryByteSlice alloc] initWithData:data];
+    [byteArray insertByteSlice:slice inRange:rangeToReplace];
+    [slice release];
+    
+    [self _addPropertyChangeBits:HFControllerContentValue];
+    
+    /* Update our selection */
+    [self _setSingleSelectedContentsRange:HFRangeMake(HFSum(rangeToReplace.location, amountAdded), 0)];
+    [self _ensureVisibilityOfLocation:rangeToReplace.location];
+    
+    if (amountAdded != amountDeleted) [self _addPropertyChangeBits:HFControllerContentLength];
+    [self _updateDisplayedRange];
+    
+    END_TRANSACTION();
+}
+
+- (void)deleteDirection:(HFControllerMovementDirection)direction {
+    HFASSERT(direction == HFControllerDirectionLeft || direction == HFControllerDirectionRight);
+    unsigned long long minSelection = [self _minimumSelectionLocation];
+    unsigned long long maxSelection = [self _maximumSelectionLocation];
+    if (maxSelection != minSelection) {
+        [self deleteSelection];
+    }
+    else {
+        HFRange rangeToDelete = HFRangeMake(minSelection, 1);
+        BOOL rangeIsValid;
+        if (direction == HFControllerDirectionLeft) {
+            rangeIsValid = (rangeToDelete.location > 0);
+            rangeToDelete.location--;
+        }
+        else {
+            rangeIsValid = (rangeToDelete.location < [self contentsLength]);
+        }
+        if (rangeIsValid) {
+            BEGIN_TRANSACTION();
+            [byteArray deleteBytesInRange:rangeToDelete];
+            [self _setSingleSelectedContentsRange:HFRangeMake(rangeToDelete.location, 0)];
+            [self _updateDisplayedRange];
+            [self _addPropertyChangeBits:HFControllerSelectedRanges | HFControllerContentValue | HFControllerContentLength];
+            END_TRANSACTION();
+        }
     }
 }
 
@@ -695,6 +867,11 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
     HFTEST(HFSumDoesNotOverflow(ULLONG_MAX / 2, ULLONG_MAX / 2));
     HFTEST(HFSumDoesNotOverflow(0, 0));
     HFTEST(ll2l((unsigned long long)UINT_MAX) == UINT_MAX);
+    
+    HFTEST(HFRoundUpToNextMultiple(0, 2) == 2);
+    HFTEST(HFRoundUpToNextMultiple(2, 2) == 4);
+    HFTEST(HFRoundUpToNextMultiple(200, 200) == 400);
+    HFTEST(HFRoundUpToNextMultiple(1304, 600) == 1800);
     
     const HFRange dirtyRanges1[] = { {4, 6}, {6, 2}, {7, 3} };
     const HFRange cleanedRanges1[] = { {4, 6} };

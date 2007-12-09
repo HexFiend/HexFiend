@@ -29,4 +29,15 @@
     [[self view] setEncoding:NSMacOSRomanStringEncoding];
 }
 
+- (void)insertText:(NSString *)text {
+    REQUIRE_NOT_NULL(text);
+    NSData *data = [text dataUsingEncoding:[self encoding] allowLossyConversion:NO];
+    if (! data) {
+        NSBeep();
+    }
+    else {
+        [[self controller] insertData:data];
+    }
+}
+
 @end

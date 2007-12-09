@@ -19,7 +19,9 @@ enum
     HFControllerDisplayedRange = 1 << 2,
     HFControllerSelectedRanges = 1 << 3,
     HFControllerBytesPerLine = 1 << 4,
-    HFControllerEditable = 1 << 5
+    HFControllerEditable = 1 << 5,
+    HFControllerFont = 1 << 6,
+    HFControllerLineHeight = 1 << 7 
 };
 typedef NSUInteger HFControllerPropertyBits;
 
@@ -49,7 +51,11 @@ typedef NSUInteger HFControllerMovementQuantity;
     NSMutableArray *selectedContentsRanges;
     HFRange displayedContentsRange;
     NSUInteger bytesPerLine;
-    HFControllerPropertyBits propertiesToUpdate;
+    NSFont *font;
+    CGFloat lineHeight;
+    
+    NSUInteger currentPropertyChangeToken;
+    HFControllerPropertyBits propertiesToUpdateInCurrentTransaction;
     
     unsigned long long selectionAnchor;
     HFRange selectionAnchorRange;
@@ -70,9 +76,18 @@ typedef NSUInteger HFControllerMovementQuantity;
 - (void)addRepresenter:(HFRepresenter *)representer;
 - (void)removeRepresenter:(HFRepresenter *)representer;
 
+/* Property transaction methods.  There is a property transaction stack, and all property changes are collected until the last token is popped off the stack, at which point all representers are notified of all collected changes via viewChangedProperties:.  Tokens cannot be popped out of order - they are used as a correctness check. */
+- (NSUInteger)beginPropertyChangeTransaction;
+- (void)endPropertyChangeTransaction:(NSUInteger)token;
+
 /* Methods for obtaining information about the current contents state */
 - (HFRange)displayedContentsRange;
 - (void)setDisplayedContentsRange:(HFRange)range;
+
+- (NSFont *)font;
+- (void)setFont:(NSFont *)font;
+
+- (CGFloat)lineHeight;
 
 - (NSArray *)selectedContentsRanges; //returns an array of HFRangeWrappers
 - (unsigned long long)contentsLength; //returns total length of contents
@@ -105,8 +120,15 @@ typedef NSUInteger HFControllerMovementQuantity;
 /* Action methods */
 - (IBAction)selectAll:sender;
 
-
 /* Keyboard navigation */
 - (void)moveDirection:(HFControllerMovementDirection)direction andModifySelection:(BOOL)extendSelection;
+
+/* Text editing.  All of the following methods are undoable. */
+
+/* Replaces the selection with the given data. */
+- (void)insertData:(NSData *)data;
+
+/* Deletes the selection */
+- (void)deleteSelection;
 
 @end

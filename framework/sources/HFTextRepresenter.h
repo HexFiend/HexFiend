@@ -25,4 +25,7 @@
 - (void)continueSelectionWithEvent:(NSEvent *)event forCharacterIndex:(NSUInteger)characterIndex;
 - (void)endSelectionWithEvent:(NSEvent *)event forCharacterIndex:(NSUInteger)characterIndex;
 
+// Must be implemented by subclasses
+- (void)insertText:(NSString *)text;
+
 @end

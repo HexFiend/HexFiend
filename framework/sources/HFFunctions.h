@@ -22,6 +22,17 @@ static inline BOOL HFSumDoesNotOverflow(unsigned long long a, unsigned long long
     return a + b >= a;
 }
 
+static inline unsigned long long HFSum(unsigned long long a, unsigned long long b) {
+    assert(HFSumDoesNotOverflow(a, b));
+    return a + b;
+}
+
+/* Returns the smallest multiple of B larger than A */
+static inline unsigned long long HFRoundUpToNextMultiple(unsigned long long a, unsigned long long b) {
+    assert(b > 0);
+    return HFSum(a, b - a % b);
+}
+
 static inline unsigned long long HFMaxRange(HFRange a) {
     assert(HFSumDoesNotOverflow(a.location, a.length));
     return a.location + a.length;

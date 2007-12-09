@@ -13,3 +13,7 @@ static inline NSUInteger HFIndexOfFirstByteThatDiffers(const unsigned char *a, N
     if (len1 != len2) return endIndex;
     return NSUIntegerMax;
 }
+
+static inline unsigned long long llmin(unsigned long long a, unsigned long long b) {
+    return a < b ? a : b;
+}

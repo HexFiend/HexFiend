@@ -31,13 +31,12 @@
 
 - (void)scrollToUnclippedLocation:(unsigned long long)location {
     HFController *controller = [self controller];
-    unsigned long long length = [controller contentsLength];
+    unsigned long long contentsLength = [controller contentsLength];
     NSUInteger bytesPerLine = [controller bytesPerLine];
     HFRange displayedRange = [controller displayedContentsRange];
-    HFASSERT(displayedRange.length <= length);
-    displayedRange.location = MIN(location, length - displayedRange.length);
+
+    displayedRange.location = MIN(location, HFRoundUpToNextMultiple(contentsLength, bytesPerLine) - displayedRange.length);
     displayedRange.location -= displayedRange.location % bytesPerLine;
-    HFASSERT(HFRangeIsSubrangeOfRange(displayedRange, HFRangeMake(0, length)));
     [controller setDisplayedContentsRange:displayedRange];
 }
 
@@ -59,13 +58,11 @@
     HFRange displayedRange = [[self controller] displayedContentsRange];
     if (bytes < 0) {
         unsigned long long unsignedBytes = (unsigned long long)(- bytes);
-        if (unsignedBytes >= displayedRange.location) newLocation = 0;
-        else newLocation = displayedRange.location - unsignedBytes;
+        newLocation = displayedRange.location - MIN(unsignedBytes, displayedRange.location);
     }
     else {
         unsigned long long unsignedBytes = (unsigned long long)bytes;
-        HFASSERT(HFSumDoesNotOverflow(displayedRange.location, unsignedBytes));
-        newLocation = displayedRange.location + unsignedBytes;
+        newLocation = HFSum(displayedRange.location, unsignedBytes);
     }
     [self scrollToUnclippedLocation:newLocation];
 }
@@ -99,7 +96,7 @@
         }
         else {
             NSUInteger bytesPerLine = [controller bytesPerLine];
-            unsigned long long availableLines = HFDivideULLRoundingUp(length, bytesPerLine);
+            unsigned long long availableLines = HFDivideULLRoundingUp(HFSum(length, 1), bytesPerLine);
             unsigned long long consumedLines = MAX(1ULL, HFDivideULLRoundingUp(displayedRange.length, bytesPerLine));
             proportion = (CGFloat)((double)consumedLines / (double)availableLines);
             

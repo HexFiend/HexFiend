@@ -17,11 +17,8 @@
 
 - (NSView *)createView {
     HFRepresenterTextView *view = [[[self _textViewClass] alloc] initWithRepresenter:self];
-    NSFont *font = [NSFont fontWithName:@"Monaco" size:(CGFloat)10.];
-    [view setFont:font];
     return view;
 }
-
 
 - (HFByteArrayDataStringType)byteArrayDataStringType {
     UNIMPLEMENTED();
@@ -30,21 +27,39 @@
 - (void)updateText {
     HFController *controller = [self controller];
     HFASSERT(controller != NULL);
-    HFRange displayedContentsRange = [controller displayedContentsRange];
-    HFASSERT(displayedContentsRange.length < NSUIntegerMax);
-    NSUInteger length = ll2l(displayedContentsRange.length);
-    unsigned char *buffer = check_malloc(length);
-    [controller copyBytes:buffer range:displayedContentsRange];
     HFRepresenterTextView *view = [self view];
-    [view setData:[NSData dataWithBytesNoCopy:buffer length:length freeWhenDone:YES]];
+    HFRange contentsRange = HFRangeMake(0, [controller contentsLength]);
+    HFRange displayedRange = [controller displayedContentsRange];
+    if (displayedRange.length > 0 && contentsRange.length > 0) {
+        HFASSERT(displayedRange.length < NSUIntegerMax);
+        HFASSERT(HFIntersectsRange(displayedRange, contentsRange));
+        HFRange displayedContentsRange = HFIntersectionRange(displayedRange, contentsRange);
+        
+        NSUInteger length = ll2l(displayedContentsRange.length);
+        unsigned char *buffer = check_malloc(length);
+        [controller copyBytes:buffer range:displayedContentsRange];
+        [view setData:[NSData dataWithBytesNoCopy:buffer length:length freeWhenDone:YES]];
+    }
+    else {
+        [view setData:[NSData data]];
+    }
 }
 
 - (void)initializeView {
     [super initializeView];
-    if ([self controller]) [self updateText];
+    if ([self controller]) {
+        [[self view] setFont:[[self controller] font]];
+        [self updateText];
+    }
+    else {
+        [[self view] setFont:[NSFont fontWithName:@"Monaco" size:(CGFloat)10.]];
+    }
 }
 
 - (void)controllerDidChange:(HFControllerPropertyBits)bits {
+    if (bits & (HFControllerFont | HFControllerLineHeight)) {
+        [[self view] setFont:[[self controller] font]];
+    }
     if (bits & (HFControllerContentValue | HFControllerDisplayedRange)) {
         [self updateText];
     }
@@ -126,6 +141,11 @@
     unsigned long long byteIndex = displayedRange.location + characterIndex;
     HFASSERT(HFLocationInRange(byteIndex, displayedRange) || byteIndex == displayedRange.location + displayedRange.length);
     [controller endSelectionWithEvent:event forByteIndex:byteIndex];
+}
+
+- (void)insertText:(NSString *)text {
+    USE(text);
+    UNIMPLEMENTED_VOID();
 }
 
 @end

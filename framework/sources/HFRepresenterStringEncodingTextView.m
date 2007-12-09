@@ -137,7 +137,7 @@
         lineIndex++;
     }
     FREE_ARRAY(glyphs);
-
 }
+
 
 @end

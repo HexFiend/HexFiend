@@ -155,7 +155,11 @@ FORWARD(scrollLineUp)
 FORWARD(scrollLineDown)
 FORWARD(transpose)
 FORWARD(transposeWords)
-FORWARD(selectAll)
+
+- (void)selectAll:sender {
+    [[self controller] selectAll:sender];
+}
+
 FORWARD(selectParagraph)
 FORWARD(selectLine)
 FORWARD(selectWord)
