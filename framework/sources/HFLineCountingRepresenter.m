@@ -31,13 +31,16 @@ static NSUInteger digit_count(unsigned long long val) {
 
 - (id)init {
     if ((self = [super init])) {
-        minimumDigitCount = 3;
+        minimumDigitCount = 2;
+        digitsToRepresentContentsLength = minimumDigitCount;
     }
     return self;
 }
 
 - (NSView *)createView {
-    return [[HFLineCountingView alloc] initWithFrame:NSMakeRect(0, 0, 60, 10)];
+    NSView *result = [[HFLineCountingView alloc] initWithFrame:NSMakeRect(0, 0, 60, 10)];
+    [result setAutoresizingMask:NSViewHeightSizable];
+    return result;
 }
 
 - (void)updateFontAndLineHeight {
@@ -84,6 +87,11 @@ static NSUInteger digit_count(unsigned long long val) {
     }
 }
 
+- (CGFloat)minimumViewWidthForBytesPerLine:(NSUInteger)bytesPerLine {
+    USE(bytesPerLine);
+    return [self preferredWidth];
+}
+
 - (void)initializeView {
     [self updateFontAndLineHeight];
     [self updateBytesPerLine];
@@ -105,6 +113,10 @@ static NSUInteger digit_count(unsigned long long val) {
 
 - (NSUInteger)minimumDigitCount {
     return minimumDigitCount;
+}
+
++ (NSPoint)defaultLayoutPosition {
+    return NSMakePoint(-1, 0);
 }
 
 @end

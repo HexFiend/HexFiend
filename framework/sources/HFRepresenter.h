@@ -13,12 +13,13 @@
     @private
     id view;
     HFController *controller;
+    NSPoint layoutPosition;
 }
 
 // Accessor method for returning the view displaying this representation.  Not useful to override, but useful to call.
 - (id)view;
 
-// Override point for creating the view displaying this representation; must be overridden.  Should return a retained view.
+// Override point for creating the view displaying this representation; must be overridden.  This follows the "create" rule, and so it should return a retained view.
 - (NSView *)createView;
 
 // Override point for initialization of view, after the HFRepresenter has it as its view property.  You may override this, but you should call super.
@@ -51,5 +52,10 @@
 
 // Called by the view to indicate that one or more properties has changed
 - (void)viewChangedProperties:(HFControllerPropertyBits)properties;
+
+// Method for simple auto-layout by HFRepresenterLayoutView.  See HFRepresenterLayoutView for comments.
++ (NSPoint)defaultLayoutPosition;
+- (void)setLayoutPosition:(NSPoint)position;
+- (NSPoint)layoutPosition;
 
 @end

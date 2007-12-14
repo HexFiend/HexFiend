@@ -43,6 +43,10 @@ enum
 };
 typedef NSUInteger HFControllerMovementQuantity;
 
+typedef struct {
+    long double location;
+    long double length;
+} HFFPRange;
 
 @interface HFController : NSObject {
     @private
@@ -79,6 +83,8 @@ typedef NSUInteger HFControllerMovementQuantity;
 /* Property transaction methods.  There is a property transaction stack, and all property changes are collected until the last token is popped off the stack, at which point all representers are notified of all collected changes via viewChangedProperties:.  Tokens cannot be popped out of order - they are used as a correctness check. */
 - (NSUInteger)beginPropertyChangeTransaction;
 - (void)endPropertyChangeTransaction:(NSUInteger)token;
+
+- (HFFPRange)displayedLineRange;
 
 /* Methods for obtaining information about the current contents state */
 - (HFRange)displayedContentsRange;

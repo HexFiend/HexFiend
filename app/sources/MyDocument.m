@@ -38,85 +38,28 @@
     return result;
 }
 
-- (void)layoutViewsWithBytesPerLine:(NSUInteger)bytesPerLine contentHeight:(CGFloat)contentHeight {
-    NSWindow *window = [self window];
-    NSDisableScreenUpdates();
-    
-    NSArray *visibleViews = [self visibleViews];
-    NSView *countView = [lineCountingRepresenter view], *hexView = [hexRepresenter view], *asciiView = [asciiRepresenter view], *scrollerView = [scrollRepresenter view];
-    NSRect countViewFrame = NSZeroRect, hexViewFrame = NSZeroRect, asciiViewFrame = NSZeroRect, scrollerViewFrame = NSZeroRect;
-    double maxXSoFar = 0;
-    
-    if ([visibleViews containsObject:countView]) {
-        [countView setAutoresizingMask:NSViewHeightSizable | NSViewMaxXMargin];
-        countViewFrame.size.width = 60;
-        countViewFrame.size.height = contentHeight;
-        maxXSoFar = fmax(maxXSoFar, NSMaxX(countViewFrame));
-    }
-    if ([visibleViews containsObject:hexView]) {
-        [hexView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable | NSViewMaxXMargin];
-        hexViewFrame.origin.x = (CGFloat)maxXSoFar;
-        hexViewFrame.size.width = [hexRepresenter minimumViewWidthForBytesPerLine:bytesPerLine];
-        hexViewFrame.size.height = contentHeight;
-        maxXSoFar = fmax(maxXSoFar, NSMaxX(hexViewFrame));
-    }
-    if ([visibleViews containsObject:asciiView]) {
-        [asciiView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable | NSViewMinXMargin];
-        asciiViewFrame.origin.x = (CGFloat)maxXSoFar;
-        asciiViewFrame.size.width = [asciiRepresenter minimumViewWidthForBytesPerLine:bytesPerLine];
-        asciiViewFrame.size.height = contentHeight;
-        maxXSoFar = fmax(maxXSoFar, NSMaxX(asciiViewFrame));
-    }
-    if ([visibleViews containsObject:scrollerView]) {
-        [scrollerView setAutoresizingMask:NSViewMinXMargin | NSViewHeightSizable];
-        scrollerViewFrame.origin.x = (CGFloat)maxXSoFar;
-        scrollerViewFrame.size.height = contentHeight;
-        scrollerViewFrame.size.width = [NSScroller scrollerWidthForControlSize:NSRegularControlSize];
-        maxXSoFar = fmax(maxXSoFar, NSMaxX(scrollerViewFrame));
-    }
-    
-    if (! NSIsEmptyRect(hexViewFrame) && ! NSIsEmptyRect(asciiViewFrame)) {
-        asciiViewFrame.origin.x += 0;
-    }
-    
-    NSRect containerFrame = NSZeroRect;
-    containerFrame.size.width = (CGFloat)maxXSoFar;    
-    containerFrame.size.height = (CGFloat)fmax(NSHeight(hexViewFrame), NSHeight(asciiViewFrame));
-
-    //don't use setContentSize: because it triggers an immediate redisplay
-    NSSize windowFrameSize = [window frameRectForContentRect:(NSRect){NSZeroPoint, containerFrame.size}].size;
-    NSPoint windowFrameOrigin = [window frame].origin;
-    [window setFrame:(NSRect){windowFrameOrigin, windowFrameSize} display:NO];
-    
-    if ([visibleViews containsObject:countView]) [countView setFrame:countViewFrame];
-    if ([visibleViews containsObject:hexView]) [hexView setFrame:hexViewFrame];
-    if ([visibleViews containsObject:asciiView]) [asciiView setFrame:asciiViewFrame];
-    if ([visibleViews containsObject:scrollerView]) [scrollerView setFrame:scrollerViewFrame];
-    [containerView setFrame:containerFrame];
-    
-    [window display];
-    
-    NSEnableScreenUpdates();
-}
-
 - (void)showViewForRepresenter:(HFRepresenter *)rep {
     NSView *repView = [rep view];
     HFASSERT([repView superview] == nil && [repView window] == nil);
-    [containerView addSubview:[rep view]];
-    [self layoutViewsWithBytesPerLine:[controller bytesPerLine] contentHeight:NSHeight([containerView bounds])];
+    [layoutRepresenter addRepresenter:rep];
     [controller addRepresenter:rep];
 }
 
 - (void)hideViewForRepresenter:(HFRepresenter *)rep {
-    NSView *repView = [rep view];
-    HFASSERT([repView superview] == containerView && [repView window] == [self window]);
+    HFASSERT(rep != NULL);
+    HFASSERT([[layoutRepresenter representers] indexOfObjectIdenticalTo:rep] != NSNotFound);
     [controller removeRepresenter:rep];
-    [repView removeFromSuperview];
-    [self layoutViewsWithBytesPerLine:[controller bytesPerLine] contentHeight:NSHeight([containerView bounds])];
+    [layoutRepresenter removeRepresenter:rep];
 }
 
 - (void)windowControllerDidLoadNib:(NSWindowController *)windowController {
     USE(windowController);
+    
+    NSView *layoutView = [layoutRepresenter view];
+    [layoutView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
+    [layoutView setFrame:[containerView bounds]];
+    [containerView addSubview:layoutView];
+    
     [self showViewForRepresenter:hexRepresenter];
     [self showViewForRepresenter:asciiRepresenter];
     [self showViewForRepresenter:scrollRepresenter];
@@ -134,10 +77,15 @@
     hexRepresenter = [[HFHexTextRepresenter alloc] init];
     asciiRepresenter = [[HFStringEncodingTextRepresenter alloc] init];
     scrollRepresenter = [[HFVerticalScrollerRepresenter alloc] init];
+    layoutRepresenter = [[HFLayoutRepresenter alloc] init];
+    
+    [[hexRepresenter view] setAutoresizingMask:NSViewHeightSizable];
+    [[asciiRepresenter view] setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(lineCountingViewChangedWidth:) name:HFLineCountingRepresenterMinimumViewWidthChanged object:lineCountingRepresenter];
     
     controller = [[HFController alloc] init];
+    [controller addRepresenter:layoutRepresenter];
     return self;
 }
 
@@ -209,8 +157,7 @@
         }
         else {
             HFRepresenter *rep = [representers objectAtIndex:arrayIndex];
-            NSView *repView = [rep view];
-            [item setState: ([repView window] == [self window])];
+            [item setState:[[controller representers] containsObject:rep]];
             return YES;
         }
     }

@@ -40,4 +40,8 @@
     }
 }
 
++ (NSPoint)defaultLayoutPosition {
+    return NSMakePoint(1, 0);
+}
+
 @end

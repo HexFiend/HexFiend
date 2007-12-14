@@ -81,8 +81,9 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
 }
 
 - (void)endPropertyChangeTransaction:(NSUInteger)token {
-    HFASSERT(token > 0);
-    HFASSERT(currentPropertyChangeToken == token);
+    if (currentPropertyChangeToken != token) {
+        [NSException raise:NSInvalidArgumentException format:@"endPropertyChangeTransaction passed token %lu, but expected token %lu", (unsigned long)token, (unsigned long)currentPropertyChangeToken];
+    }
     if (--currentPropertyChangeToken == 0) [self _firePropertyChanges];
 }
 
@@ -121,6 +122,15 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
     }
 }
 
+- (HFFPRange)displayedLineRange {
+    HFFPRange result;
+    HFRange displayedRange = [self displayedContentsRange];
+    HFASSERT(displayedRange.location % bytesPerLine == 0);
+    HFASSERT(displayedRange.length % bytesPerLine == 0);
+    result.location = displayedRange.location / bytesPerLine;
+    result.length = displayedRange.length / bytesPerLine;
+    return result;
+}
 
 - (CGFloat)lineHeight {
     return lineHeight;
@@ -271,8 +281,10 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
     NSUInteger maxBytesForViewSize = NSUIntegerMax;
     FOREACH(HFRepresenter*, rep, representers) {
         NSView *view = [rep view];
-        NSUInteger repMaxBytesPerLine = [rep maximumNumberOfBytesForViewSize:[view frame].size];
-        maxBytesForViewSize = MIN(repMaxBytesPerLine, maxBytesForViewSize);
+        NSUInteger repMaxLines = [rep maximumAvailableLinesForViewHeight:NSHeight([view frame])];
+        if (repMaxLines != NSUIntegerMax) {
+            maxBytesForViewSize = MIN(HFProductInt(repMaxLines, bytesPerLine), maxBytesForViewSize);
+        }
     }
     if (maxBytesForViewSize == NSUIntegerMax) {
         proposedNewDisplayRange = HFRangeMake(0, 0);
@@ -282,9 +294,17 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
         HFASSERT(HFMaxRange(maxRangeSet) >= maximumDisplayedBytes);
         
         proposedNewDisplayRange.location = MIN(HFMaxRange(maxRangeSet) - maximumDisplayedBytes, displayedContentsRange.location);
+        proposedNewDisplayRange.location -= proposedNewDisplayRange.location % bytesPerLine;
         proposedNewDisplayRange.length = MIN(HFMaxRange(maxRangeSet) - proposedNewDisplayRange.location, maxBytesForViewSize);
+        if (maxBytesForViewSize % bytesPerLine != 0) {
+            NSLog(@"Bad max bytes: %lu (%lu)", maxBytesForViewSize, bytesPerLine);
+        }
+        if ((HFMaxRange(maxRangeSet) - proposedNewDisplayRange.location) % bytesPerLine != 0) {
+            NSLog(@"Bad max range minus: %llu (%lu)", HFMaxRange(maxRangeSet) - proposedNewDisplayRange.location, bytesPerLine);
+        }
     }
     HFASSERT(HFRangeIsSubrangeOfRange(proposedNewDisplayRange, maxRangeSet));
+    HFASSERT(proposedNewDisplayRange.location % bytesPerLine == 0);
     if (! HFRangeEqualsRange(proposedNewDisplayRange, displayedContentsRange)) {
         displayedContentsRange = proposedNewDisplayRange;
         [self _addPropertyChangeBits:HFControllerDisplayedRange];
@@ -361,17 +381,18 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
 
 - (void)representer:(HFRepresenter *)rep changedProperties:(HFControllerPropertyBits)properties {
     USE(rep);
+    HFControllerPropertyBits remainingProperties = properties;
     BEGIN_TRANSACTION();
-    if (properties & HFControllerBytesPerLine) {
+    if (remainingProperties & HFControllerBytesPerLine) {
         [self _updateBytesPerLine];
-        properties &= ~HFControllerBytesPerLine;
+        remainingProperties &= ~HFControllerBytesPerLine;
     }
-    if (properties & HFControllerDisplayedRange) {
+    if (remainingProperties & HFControllerDisplayedRange) {
         [self _updateDisplayedRange];
-        properties &= ~HFControllerDisplayedRange;
+        remainingProperties &= ~HFControllerDisplayedRange;
     }
-    if (properties) {
-        NSLog(@"Unknown properties: %lx", properties);
+    if (remainingProperties) {
+        NSLog(@"Unknown properties: %lx", remainingProperties);
     }
     END_TRANSACTION();
 }

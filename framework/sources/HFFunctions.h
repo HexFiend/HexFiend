@@ -22,6 +22,12 @@ static inline BOOL HFSumDoesNotOverflow(unsigned long long a, unsigned long long
     return a + b >= a;
 }
 
+static inline NSUInteger HFProductInt(NSUInteger a, NSUInteger b) {
+    NSUInteger result = a * b;
+    assert(a == 0 || result / a == b); //detect overflow
+    return result;
+}
+
 static inline unsigned long long HFSum(unsigned long long a, unsigned long long b) {
     assert(HFSumDoesNotOverflow(a, b));
     return a + b;
@@ -146,6 +152,18 @@ static inline NSString *HFDescribeAffineTransform(CGAffineTransform t) {
 BOOL HFStringEncodingIsSupersetOfASCII(NSStringEncoding encoding);
 
 static inline unsigned long ll2l(unsigned long long val) { assert(val <= NSUIntegerMax); return (unsigned long)val; }
+
+static inline CGFloat ld2f(long double val) {
+#if ! NDEBUG
+     if (isfinite(val)) {
+        assert(val <= CGFLOAT_MAX);
+        assert(val >= -CGFLOAT_MAX);
+        if (val > 0) assert(val >= CGFLOAT_MIN);
+        if (val < 0) assert(val <= -CGFLOAT_MIN);
+     }
+#endif
+    return (CGFloat)val;
+}
 
 /* Returns the quotient of a divided by b, rounding up.  Will not overflow. */
 static inline unsigned long long HFDivideULLRoundingUp(unsigned long long a, unsigned long long b) {

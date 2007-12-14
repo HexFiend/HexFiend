@@ -20,4 +20,8 @@
     [[self view] setBytesBetweenVerticalGuides:4];
 }
 
++ (NSPoint)defaultLayoutPosition {
+    return NSMakePoint(0, 0);
+}
+
 @end

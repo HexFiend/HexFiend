@@ -139,5 +139,4 @@
     FREE_ARRAY(glyphs);
 }
 
-
 @end

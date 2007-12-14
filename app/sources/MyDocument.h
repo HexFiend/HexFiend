@@ -8,7 +8,7 @@
 
 #import <Cocoa/Cocoa.h>
 
-@class HFRepresenter, HFLineCountingRepresenter;
+@class HFRepresenter, HFLineCountingRepresenter, HFLayoutRepresenter;
 
 @interface MyDocument : NSDocument {
     IBOutlet NSView *containerView;
@@ -19,6 +19,7 @@
     HFRepresenter *hexRepresenter;
     HFRepresenter *asciiRepresenter;
     HFRepresenter *scrollRepresenter;
+    HFLayoutRepresenter *layoutRepresenter;
 }
 
 @end

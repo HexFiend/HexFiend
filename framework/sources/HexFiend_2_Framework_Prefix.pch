@@ -46,7 +46,11 @@
 	}\
 } while (0)
 
-#define FOREACH(type, var, exp) NSEnumerator *enum_ ## var = [exp objectEnumerator]; type var ; while ((var = [enum_ ## var nextObject]))
+/* Helper macros used by FOREACH */
+#define FOREACH_LINE(type, var, exp, line) NSEnumerator *enum_ ## var ## line = [exp objectEnumerator]; type var ; while ((var = [enum_ ## var ## line nextObject]))
+#define FOREACH_TEMP(type, var, exp, line) FOREACH_LINE(type, var, exp, line)
+
+#define FOREACH(type, var, exp) FOREACH_TEMP(type, var, exp, __LINE__)
 
 /* Create a stack or dynamic array of the given size.  This memory is NOT scanned and is NOT collected!  Anything you put in here must have external references! */
 #define NEW_ARRAY(type, name, number) \

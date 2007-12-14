@@ -17,6 +17,7 @@
 
 - (NSView *)createView {
     HFRepresenterTextView *view = [[[self _textViewClass] alloc] initWithRepresenter:self];
+    [view setAutoresizingMask:NSViewHeightSizable];
     return view;
 }
 

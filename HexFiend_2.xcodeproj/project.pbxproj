@@ -39,6 +39,8 @@
 		D08F5E4F0CDE872C007EFFE8 /* HFByteArray.m in Sources */ = {isa = PBXBuildFile; fileRef = D08F5DF00CDE8223007EFFE8 /* HFByteArray.m */; };
 		D08F5E500CDE872C007EFFE8 /* HFByteSlice.m in Sources */ = {isa = PBXBuildFile; fileRef = D08F5E230CDE843E007EFFE8 /* HFByteSlice.m */; };
 		D08F5E510CDE872C007EFFE8 /* HFFullMemoryByteSlice.m in Sources */ = {isa = PBXBuildFile; fileRef = D08F5E380CDE84F4007EFFE8 /* HFFullMemoryByteSlice.m */; };
+		D0A402F30D0D43F4006BC574 /* HFLayoutRepresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = D0A402F10D0D43F4006BC574 /* HFLayoutRepresenter.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D0A402F40D0D43F4006BC574 /* HFLayoutRepresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = D0A402F20D0D43F4006BC574 /* HFLayoutRepresenter.m */; };
 		D0A435730CDC71DF000F7550 /* HFRepresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = D01E7C330CDC646800943F9E /* HFRepresenter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D0A435AA0CDC74B9000F7550 /* HFTestRepresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = D0A435A40CDC7463000F7550 /* HFTestRepresenter.m */; };
 		D0A435AB0CDC74BE000F7550 /* HFTestRepresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = D0A435A30CDC7463000F7550 /* HFTestRepresenter.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -126,6 +128,8 @@
 		D08F5E230CDE843E007EFFE8 /* HFByteSlice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFByteSlice.m; path = framework/sources/HFByteSlice.m; sourceTree = "<group>"; };
 		D08F5E370CDE84F4007EFFE8 /* HFFullMemoryByteSlice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFFullMemoryByteSlice.h; path = framework/sources/HFFullMemoryByteSlice.h; sourceTree = "<group>"; };
 		D08F5E380CDE84F4007EFFE8 /* HFFullMemoryByteSlice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFFullMemoryByteSlice.m; path = framework/sources/HFFullMemoryByteSlice.m; sourceTree = "<group>"; };
+		D0A402F10D0D43F4006BC574 /* HFLayoutRepresenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFLayoutRepresenter.h; path = framework/sources/HFLayoutRepresenter.h; sourceTree = "<group>"; };
+		D0A402F20D0D43F4006BC574 /* HFLayoutRepresenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFLayoutRepresenter.m; path = framework/sources/HFLayoutRepresenter.m; sourceTree = "<group>"; };
 		D0A435A30CDC7463000F7550 /* HFTestRepresenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFTestRepresenter.h; path = framework/sources/HFTestRepresenter.h; sourceTree = "<group>"; };
 		D0A435A40CDC7463000F7550 /* HFTestRepresenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFTestRepresenter.m; path = framework/sources/HFTestRepresenter.m; sourceTree = "<group>"; };
 		D0A4360B0CDC7B65000F7550 /* HFRepresenter_Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFRepresenter_Internal.h; path = framework/sources/HFRepresenter_Internal.h; sourceTree = "<group>"; };
@@ -245,6 +249,8 @@
 				D01E7C330CDC646800943F9E /* HFRepresenter.h */,
 				D0A4360B0CDC7B65000F7550 /* HFRepresenter_Internal.h */,
 				D01E7C340CDC646800943F9E /* HFRepresenter.m */,
+				D0A402F10D0D43F4006BC574 /* HFLayoutRepresenter.h */,
+				D0A402F20D0D43F4006BC574 /* HFLayoutRepresenter.m */,
 				D0A435A30CDC7463000F7550 /* HFTestRepresenter.h */,
 				D0A435A40CDC7463000F7550 /* HFTestRepresenter.m */,
 			);
@@ -351,6 +357,7 @@
 				D04327A40CF081CD00C14250 /* HFFunctions_Private.h in Headers */,
 				D0A9F3F10CFBEA9F0077D577 /* HFLineCountingRepresenter.h in Headers */,
 				D0A9F3FD0CFBEAD50077D577 /* HFLineCountingView.h in Headers */,
+				D0A402F30D0D43F4006BC574 /* HFLayoutRepresenter.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -467,6 +474,7 @@
 				D08399AF0CF85A540030DBF0 /* HFTextRepresenter_KeyBinding.m in Sources */,
 				D0A9F3F20CFBEA9F0077D577 /* HFLineCountingRepresenter.m in Sources */,
 				D0A9F3FE0CFBEAD50077D577 /* HFLineCountingView.m in Sources */,
+				D0A402F40D0D43F4006BC574 /* HFLayoutRepresenter.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

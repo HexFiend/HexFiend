@@ -22,6 +22,12 @@
     
 }
 
+- init {
+    [super init];
+    [self setLayoutPosition:[[self class] defaultLayoutPosition]];
+    return self;
+}
+
 - (void)dealloc {
     [view release];
     [super dealloc];
@@ -79,6 +85,18 @@
 
 - (void)viewChangedProperties:(HFControllerPropertyBits)properties {
     [[self controller] representer:self changedProperties:properties];
+}
+
+- (void)setLayoutPosition:(NSPoint)position {
+    layoutPosition = position;
+}
+
+- (NSPoint)layoutPosition {
+    return layoutPosition;
+}
+
++ (NSPoint)defaultLayoutPosition {
+    return NSMakePoint(0, 0);
 }
 
 @end

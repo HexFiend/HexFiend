@@ -19,6 +19,7 @@
     [scroller setTarget:self];
     [scroller setAction:@selector(scrollerDidChangeValue:)];
     [scroller setFloatValue:(CGFloat).3 knobProportion:(CGFloat).4];
+    [scroller setAutoresizingMask:NSViewHeightSizable];
     return scroller;
 }
 
@@ -83,6 +84,7 @@
 - (void)updateScrollerValue {
     HFController *controller = [self controller];
     CGFloat value, proportion;
+    NSScroller *scroller = [self view];
     if (controller == nil) {
         value = 0;
         proportion = 0;
@@ -90,27 +92,43 @@
     else {
         unsigned long long length = [controller contentsLength];
         HFRange displayedRange = [controller displayedContentsRange];
+        HFFPRange lineRange = [controller displayedLineRange];
+        HFASSERT(lineRange.location >= 0 && lineRange.length >= 0);
         if (length == 0) {
             value = 0;
             proportion = 1;
         }
         else {
             NSUInteger bytesPerLine = [controller bytesPerLine];
-            unsigned long long availableLines = HFDivideULLRoundingUp(HFSum(length, 1), bytesPerLine);
-            unsigned long long consumedLines = MAX(1ULL, HFDivideULLRoundingUp(displayedRange.length, bytesPerLine));
-            proportion = (CGFloat)((double)consumedLines / (double)availableLines);
+            long double availableLines = (long double)HFDivideULLRoundingUp(HFSum(length, 1), bytesPerLine);
+            long double consumedLines = MAX(1., lineRange.length);
+            proportion = ld2f(lineRange.length / (long double)availableLines);
             
-            unsigned long long currentScroll = displayedRange.location / bytesPerLine;
             unsigned long long maxScroll = availableLines - consumedLines;
-            HFASSERT(maxScroll >= currentScroll);
-            value = (CGFloat)((double)currentScroll / (double)maxScroll);
+            HFASSERT((long double)maxScroll >= lineRange.location);
+            value = ld2f(lineRange.location / maxScroll);
         }
     }
-    [[self view] setFloatValue:value knobProportion:proportion];
+#if __LP64__
+    // must be >= 10_5
+    [scroller setDoubleValue:value];
+    [scroller setKnobProportion:proportion];
+#else
+    [scroller setFloatValue:value knobProportion:proportion];
+#endif
+}
+
+- (CGFloat)minimumViewWidthForBytesPerLine:(NSUInteger)bytesPerLine {
+    USE(bytesPerLine);
+    return [NSScroller scrollerWidthForControlSize:[[self view] controlSize]];
 }
 
 - (void)controllerDidChange:(HFControllerPropertyBits)bits {
     if (bits & (HFControllerContentLength | HFControllerDisplayedRange)) [self updateScrollerValue];
+}
+
++ (NSPoint)defaultLayoutPosition {
+    return NSMakePoint(2, 0);
 }
 
 @end
