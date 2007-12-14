@@ -926,17 +926,17 @@ static NSData *randomDataOfLength(NSUInteger length) {
     unsigned numUsedRandBits = 31;
     for (i=0; i < wordCount; i++) {
         if (numUsedRandBits >= 31) {
-            randBits = random();
+            randBits = (unsigned)random();
             numUsedRandBits = 0;
         }
-        unsigned randVal = random() << 1;
+        unsigned randVal = (unsigned)random() << 1;
         randVal |= (randBits & 1);
         randBits >>= 1;
         numUsedRandBits++;
         word[i] = randVal;
     }
     
-    unsigned byteIndex = wordCount * sizeof *word;
+    NSUInteger byteIndex = wordCount * sizeof *word;
     while (byteIndex < length) {
         buff[byteIndex++] = random() & 0xFF;
     }
@@ -958,7 +958,7 @@ static NSData *randomDataOfLength(NSUInteger length) {
     unsigned i;
     for (i=1; i <= opCount; i++) {
 	NSAutoreleasePool* pool=[[NSAutoreleasePool alloc] init];
-	unsigned op;
+	NSUInteger op;
 	const unsigned long long length = [first length];
 	unsigned long long offset;
 	unsigned long long number;
