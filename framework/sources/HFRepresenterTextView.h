@@ -78,7 +78,7 @@
 - (CGFloat)spaceBetweenBytes;
 
 /* Returns the number of lines that could be shown in this view at its given height (expressed in its local coordinate space) */
-- (NSUInteger)maximumAvailableLinesForViewHeight:(CGFloat)viewHeight;
+- (double)maximumAvailableLinesForViewHeight:(CGFloat)viewHeight;
 
 - (NSUInteger)maximumBytesPerLineForViewWidth:(CGFloat)viewWidth;
 - (CGFloat)minimumViewWidthForBytesPerLine:(NSUInteger)bytesPerLine;

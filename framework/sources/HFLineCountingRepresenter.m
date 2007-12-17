@@ -71,7 +71,7 @@ static NSUInteger digit_count(unsigned long long val) {
 }
 
 - (CGFloat)preferredWidth {
-    return digitsToRepresentContentsLength * (CGFloat)12.;
+    return (CGFloat)10. + digitsToRepresentContentsLength * (CGFloat)12.;
 }
 
 - (void)updateMinimumViewWidth {

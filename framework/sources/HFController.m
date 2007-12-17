@@ -179,13 +179,14 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
         if (range.location < selectionAnchorRange.location) {
             HFRange clippedRange;
             clippedRange.location = range.location;
+            HFASSERT(MIN(HFMaxRange(range), selectionAnchorRange.location) >= clippedRange.location);
             clippedRange.length = MIN(HFMaxRange(range), selectionAnchorRange.location) - clippedRange.location;
             [result addObject:[HFRangeWrapper withRange:clippedRange]];
         }
         if (HFMaxRange(range) > HFMaxRange(selectionAnchorRange)) {
             HFRange clippedRange;
             clippedRange.location = MAX(range.location, HFMaxRange(selectionAnchorRange));
-            HFASSERT(HFMaxRange(range) > clippedRange.location);
+            HFASSERT(HFMaxRange(range) >= clippedRange.location);
             clippedRange.length = HFMaxRange(range) - clippedRange.location;
             [result addObject:[HFRangeWrapper withRange:clippedRange]];
         }
@@ -277,17 +278,21 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
 
 - (void)_updateDisplayedRange {
     HFRange proposedNewDisplayRange;
+    HFFPRange proposedNewLineRange;
     HFRange maxRangeSet = [self _maximumDisplayedRangeSet];
     NSUInteger maxBytesForViewSize = NSUIntegerMax;
+    double maxLines = DBL_MAX;
     FOREACH(HFRepresenter*, rep, representers) {
         NSView *view = [rep view];
-        NSUInteger repMaxLines = [rep maximumAvailableLinesForViewHeight:NSHeight([view frame])];
-        if (repMaxLines != NSUIntegerMax) {
-            maxBytesForViewSize = MIN(HFProductInt(repMaxLines, bytesPerLine), maxBytesForViewSize);
+        double repMaxLines = [rep maximumAvailableLinesForViewHeight:NSHeight([view frame])];
+        if (repMaxLines != DBL_MAX) {
+            maxBytesForViewSize = MIN(HFProductInt((NSUInteger)repMaxLines, bytesPerLine), maxBytesForViewSize);
         }
+        maxLines = MIN(repMaxLines, maxLines);
     }
-    if (maxBytesForViewSize == NSUIntegerMax) {
+    if (maxLines == DBL_MAX) {
         proposedNewDisplayRange = HFRangeMake(0, 0);
+        proposedNewLineRange = (HFFPRange){0, 0};
     }
     else {
         unsigned long long maximumDisplayedBytes = MIN(maxRangeSet.length, maxBytesForViewSize);
@@ -302,11 +307,15 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
         if ((HFMaxRange(maxRangeSet) - proposedNewDisplayRange.location) % bytesPerLine != 0) {
             NSLog(@"Bad max range minus: %llu (%lu)", HFMaxRange(maxRangeSet) - proposedNewDisplayRange.location, bytesPerLine);
         }
+
+        proposedNewLineRange.location = proposedNewDisplayRange.location / bytesPerLine;
+        proposedNewLineRange.length = proposedNewDisplayRange.location / bytesPerLine;
     }
     HFASSERT(HFRangeIsSubrangeOfRange(proposedNewDisplayRange, maxRangeSet));
     HFASSERT(proposedNewDisplayRange.location % bytesPerLine == 0);
     if (! HFRangeEqualsRange(proposedNewDisplayRange, displayedContentsRange)) {
         displayedContentsRange = proposedNewDisplayRange;
+        displayedLineRange = proposedNewLineRange;
         [self _addPropertyChangeBits:HFControllerDisplayedRange];
     }
 }
@@ -502,8 +511,16 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
     HFASSERT(_hfflags.selectionInProgress);
     HFASSERT(characterIndex <= [self contentsLength]);
     if (_hfflags.commandExtendSelection) {
+#if 0
+        /* Clear any zero-length ranges */
+        NSUInteger rangeIndex = [selectedContentsRanges count];
+        while (rangeIndex-- > 0) {
+            if ([[selectedContentsRanges objectAtIndex:rangeIndex] HFRange].length == 0) [selectedContentsRanges removeObjectAtIndex:rangeIndex];
+        }
+#endif
         selectionAnchorRange.location = MIN(characterIndex, selectionAnchor);
         selectionAnchorRange.length = MAX(characterIndex, selectionAnchor) - selectionAnchorRange.location;
+        [self _addPropertyChangeBits:HFControllerSelectedRanges];
     }
     else if (_hfflags.shiftExtendSelection) {
         HFASSERT(selectionAnchorRange.location != NO_SELECTION);

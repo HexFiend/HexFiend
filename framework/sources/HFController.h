@@ -43,17 +43,13 @@ enum
 };
 typedef NSUInteger HFControllerMovementQuantity;
 
-typedef struct {
-    long double location;
-    long double length;
-} HFFPRange;
-
 @interface HFController : NSObject {
     @private
     NSMutableArray *representers;
     HFByteArray *byteArray;
     NSMutableArray *selectedContentsRanges;
     HFRange displayedContentsRange;
+    HFFPRange displayedLineRange;
     NSUInteger bytesPerLine;
     NSFont *font;
     CGFloat lineHeight;

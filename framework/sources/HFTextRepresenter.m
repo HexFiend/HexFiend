@@ -70,7 +70,7 @@
     [super controllerDidChange:bits];
 }
 
-- (NSUInteger)maximumAvailableLinesForViewHeight:(CGFloat)viewHeight {
+- (double)maximumAvailableLinesForViewHeight:(CGFloat)viewHeight {
     return [[self view] maximumAvailableLinesForViewHeight:viewHeight];
 }
 

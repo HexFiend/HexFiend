@@ -1,5 +1,7 @@
 #import <Cocoa/Cocoa.h>
 
+@class HFController;
+
 static inline BOOL HFIsRunningOnLeopardOrLater(void) {
     return NSAppKitVersionNumber >= 860.;
 }
@@ -17,3 +19,5 @@ static inline NSUInteger HFIndexOfFirstByteThatDiffers(const unsigned char *a, N
 static inline unsigned long long llmin(unsigned long long a, unsigned long long b) {
     return a < b ? a : b;
 }
+
+NSImage *HFImageNamed(NSString *name);

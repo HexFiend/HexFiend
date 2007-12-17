@@ -64,6 +64,7 @@
     [self showViewForRepresenter:asciiRepresenter];
     [self showViewForRepresenter:scrollRepresenter];
     [self showViewForRepresenter:lineCountingRepresenter];
+    [self showViewForRepresenter:statusBarRepresenter];
 }
 
 - (void)lineCountingViewChangedWidth:(NSNotification *)note {
@@ -78,6 +79,7 @@
     asciiRepresenter = [[HFStringEncodingTextRepresenter alloc] init];
     scrollRepresenter = [[HFVerticalScrollerRepresenter alloc] init];
     layoutRepresenter = [[HFLayoutRepresenter alloc] init];
+    statusBarRepresenter = [[HFStatusBarRepresenter alloc] init];
     
     [[hexRepresenter view] setAutoresizingMask:NSViewHeightSizable];
     [[asciiRepresenter view] setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];

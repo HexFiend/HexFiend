@@ -40,8 +40,10 @@
     
     /* Replacement glyph */
     CGGlyph glyphs[GLYPH_BUFFER_SIZE];
-    [self _glyphsForString:@"." withGeneratingTextView:textView glyphs:glyphs];
+    unichar replacementChar = '.';
+    [self _glyphsForString:[NSString stringWithCharacters:&replacementChar length:1] withGeneratingTextView:textView glyphs:glyphs];
     replacementGlyph = glyphs[0];
+//    replacementGlyph = 0;
 }
 
 - (void)setFont:(NSFont *)font {

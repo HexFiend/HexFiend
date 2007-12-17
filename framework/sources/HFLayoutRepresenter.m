@@ -20,6 +20,11 @@
 @end
 
 @implementation HFRepresenterLayoutViewInfo
+
+- (NSString *)description {
+    return [NSString stringWithFormat:@"<%@ : %@>", view, NSStringFromRect(frame)];
+}
+
 @end
 
 @implementation HFLayoutRepresenter
@@ -69,7 +74,7 @@ static NSInteger sortByLayoutPosition(id a, id b, void *self) {
     HFASSERT(infos != NULL);
     HFASSERT([infos count] > 0);
     FOREACH(HFRepresenterLayoutViewInfo *, info, infos) {
-        if (info->autoresizingMask & NSViewHeightSizable) result = MAX(result, NSHeight([info->view frame]));
+        if (! (info->autoresizingMask & NSViewHeightSizable)) result = MAX(result, NSHeight([info->view frame]));
     }
     return result;
 }
@@ -214,9 +219,11 @@ static NSInteger sortByLayoutPosition(id a, id b, void *self) {
     else bytesPerLine = [controller bytesPerLine];
     
     CGFloat yPosition = NSMinY(layoutRect);
+    NSLog(@"Start");
     FOREACH(NSArray *, layoutInfos, arraysOfLayoutInfos) {
         HFASSERT([layoutInfos count] > 0);
         CGFloat minHeight = [self _computeMinHeightForLayoutInfos:layoutInfos];
+        NSLog(@"Y position: %f minHeight %f for %@", yPosition, minHeight, layoutInfos);
         [self _applyYLocation:yPosition andMinHeight:minHeight toInfos:layoutInfos];
         yPosition += minHeight;
         [self _layoutInfosHorizontally:layoutInfos inRect:layoutRect withBytesPerLine:bytesPerLine];

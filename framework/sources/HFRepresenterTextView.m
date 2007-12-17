@@ -411,19 +411,16 @@ static const NSTimeInterval HFCaretBlinkFrequency = 0.56;
     return (NSUInteger)result;
 }
 
-- (NSUInteger)maximumAvailableLinesForViewHeight:(CGFloat)viewHeight {
-    CGFloat result = (CGFloat)ceil(viewHeight / [self lineHeight]);
-    HFASSERT(result >= 0.);
-    HFASSERT(result <= NSUIntegerMax);
-    return (NSUInteger)result;
+- (double)maximumAvailableLinesForViewHeight:(CGFloat)viewHeight {
+    return viewHeight / [self lineHeight];
 }
 
 - (void)setFrameSize:(NSSize)size {
     NSUInteger currentBytesPerLine = [self bytesPerLine];
-    NSUInteger currentLineCount = [self maximumAvailableLinesForViewHeight:NSHeight([self bounds])];
+    double currentLineCount = [self maximumAvailableLinesForViewHeight:NSHeight([self bounds])];
     [super setFrameSize:size];
     NSUInteger newBytesPerLine = [self maximumBytesPerLineForViewWidth:size.width];
-    NSUInteger newLineCount = [self maximumAvailableLinesForViewHeight:NSHeight([self bounds])];
+    double newLineCount = [self maximumAvailableLinesForViewHeight:NSHeight([self bounds])];
     HFControllerPropertyBits bits = 0;
     if (newBytesPerLine != currentBytesPerLine) bits |= (HFControllerBytesPerLine | HFControllerDisplayedRange);
     if (newLineCount != currentLineCount) bits |= HFControllerDisplayedRange;
@@ -556,6 +553,7 @@ static const NSTimeInterval HFCaretBlinkFrequency = 0.56;
 
 - (void)insertText:(id)string {
     if ([string isKindOfClass:[NSAttributedString class]]) string = [string string];
+    [NSCursor setHiddenUntilMouseMoves:YES];
     [[self representer] insertText:string];
 }
 

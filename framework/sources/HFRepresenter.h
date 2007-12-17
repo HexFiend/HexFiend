@@ -40,10 +40,10 @@
 // Returns the minimum view frame size for the given bytes per line.  Default is to return 0.  Fixed width views should return their fixed width.
 - (CGFloat)minimumViewWidthForBytesPerLine:(NSUInteger)bytesPerLine;
 
-// Returns the maximum number of lines that could be displayed at once for a given view height.  Default is to return NSUIntegerMax.
-- (NSUInteger)maximumAvailableLinesForViewHeight:(CGFloat)viewHeight;
+// Returns the maximum number of lines that could be displayed at once for a given view height.  Default is to return DBL_MAX.
+- (double)maximumAvailableLinesForViewHeight:(CGFloat)viewHeight;
 
-// Returns the maximum number of total bytes that can be displayed for the given view size.  Default is to return maximumBytesPerLineForViewWidth * maximumAvailableLinesForViewHeight, capped at NSUIntegerMax.
+// Returns the maximum number of total bytes that can be displayed for the given view size.  Default is to return maximumBytesPerLineForViewWidth * maximumAvailableLinesForViewHeight, rounded up, capped at NSUIntegerMax.
 - (NSUInteger)maximumNumberOfBytesForViewSize:(NSSize)viewSize;
 
 - (void)scrollWheel:(NSEvent *)event;

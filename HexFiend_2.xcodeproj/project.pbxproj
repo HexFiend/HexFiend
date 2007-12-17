@@ -29,6 +29,7 @@
 		D026C7C00CDD54D00082279E /* HFHexTextRepresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = D026C7BE0CDD54D00082279E /* HFHexTextRepresenter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D026C7C10CDD54D00082279E /* HFHexTextRepresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = D026C7BF0CDD54D00082279E /* HFHexTextRepresenter.m */; };
 		D04327A40CF081CD00C14250 /* HFFunctions_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = D04327A30CF081CD00C14250 /* HFFunctions_Private.h */; };
+		D06B1DB10D13EE1D00B9A206 /* HFMetalGradient.tiff in Resources */ = {isa = PBXBuildFile; fileRef = D06B1DB00D13EE1D00B9A206 /* HFMetalGradient.tiff */; };
 		D082AB440CDE97DC00554EB7 /* HFFullMemoryByteArray.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D828FF0CDE8ABE00C2AB82 /* HFFullMemoryByteArray.m */; };
 		D082ABCF0CDEB3F800554EB7 /* HFRepresenter_Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = D0A4360B0CDC7B65000F7550 /* HFRepresenter_Internal.h */; };
 		D082ABD40CDEB40F00554EB7 /* HFFullMemoryByteArray.h in Headers */ = {isa = PBXBuildFile; fileRef = D0D828FE0CDE8ABE00C2AB82 /* HFFullMemoryByteArray.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -48,6 +49,9 @@
 		D0A436590CDC811D000F7550 /* HFFunctions.m in Sources */ = {isa = PBXBuildFile; fileRef = D0A436570CDC8115000F7550 /* HFFunctions.m */; };
 		D0A4373A0CDD4EDD000F7550 /* HFTextRepresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = D0A437380CDD4EDD000F7550 /* HFTextRepresenter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D0A4373B0CDD4EDD000F7550 /* HFTextRepresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = D0A437390CDD4EDD000F7550 /* HFTextRepresenter.m */; };
+		D0A90B050D160414008975B9 /* HFStatusBarRepresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = D0A90B030D160414008975B9 /* HFStatusBarRepresenter.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D0A90B060D160414008975B9 /* HFStatusBarRepresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = D0A90B040D160414008975B9 /* HFStatusBarRepresenter.m */; };
+		D0A90B670D161816008975B9 /* HFMetalGradientVertical.tiff in Resources */ = {isa = PBXBuildFile; fileRef = D0A90B660D161816008975B9 /* HFMetalGradientVertical.tiff */; };
 		D0A9F3F10CFBEA9F0077D577 /* HFLineCountingRepresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = D0A9F3EF0CFBEA9F0077D577 /* HFLineCountingRepresenter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D0A9F3F20CFBEA9F0077D577 /* HFLineCountingRepresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = D0A9F3F00CFBEA9F0077D577 /* HFLineCountingRepresenter.m */; };
 		D0A9F3FD0CFBEAD50077D577 /* HFLineCountingView.h in Headers */ = {isa = PBXBuildFile; fileRef = D0A9F3FB0CFBEAD50077D577 /* HFLineCountingView.h */; settings = {ATTRIBUTES = (); }; };
@@ -117,6 +121,7 @@
 		D026C7BE0CDD54D00082279E /* HFHexTextRepresenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFHexTextRepresenter.h; path = framework/sources/HFHexTextRepresenter.h; sourceTree = "<group>"; };
 		D026C7BF0CDD54D00082279E /* HFHexTextRepresenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFHexTextRepresenter.m; path = framework/sources/HFHexTextRepresenter.m; sourceTree = "<group>"; };
 		D04327A30CF081CD00C14250 /* HFFunctions_Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFFunctions_Private.h; path = framework/sources/HFFunctions_Private.h; sourceTree = "<group>"; };
+		D06B1DB00D13EE1D00B9A206 /* HFMetalGradient.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = HFMetalGradient.tiff; path = framework/resources/HFMetalGradient.tiff; sourceTree = "<group>"; };
 		D082AC900CDEBD5300554EB7 /* HFByteArray_Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFByteArray_Internal.h; path = framework/sources/HFByteArray_Internal.h; sourceTree = "<group>"; };
 		D082AF4A0CDF242500554EB7 /* HFByteArray_ToString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFByteArray_ToString.h; path = framework/sources/HFByteArray_ToString.h; sourceTree = "<group>"; };
 		D082AF4B0CDF242500554EB7 /* HFByteArray_ToString.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFByteArray_ToString.m; path = framework/sources/HFByteArray_ToString.m; sourceTree = "<group>"; };
@@ -137,6 +142,9 @@
 		D0A436570CDC8115000F7550 /* HFFunctions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFFunctions.m; path = framework/sources/HFFunctions.m; sourceTree = "<group>"; };
 		D0A437380CDD4EDD000F7550 /* HFTextRepresenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFTextRepresenter.h; path = framework/sources/HFTextRepresenter.h; sourceTree = "<group>"; };
 		D0A437390CDD4EDD000F7550 /* HFTextRepresenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFTextRepresenter.m; path = framework/sources/HFTextRepresenter.m; sourceTree = "<group>"; };
+		D0A90B030D160414008975B9 /* HFStatusBarRepresenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFStatusBarRepresenter.h; path = framework/sources/HFStatusBarRepresenter.h; sourceTree = "<group>"; };
+		D0A90B040D160414008975B9 /* HFStatusBarRepresenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFStatusBarRepresenter.m; path = framework/sources/HFStatusBarRepresenter.m; sourceTree = "<group>"; };
+		D0A90B660D161816008975B9 /* HFMetalGradientVertical.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = HFMetalGradientVertical.tiff; path = framework/resources/HFMetalGradientVertical.tiff; sourceTree = "<group>"; };
 		D0A9F3EF0CFBEA9F0077D577 /* HFLineCountingRepresenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFLineCountingRepresenter.h; path = framework/sources/HFLineCountingRepresenter.h; sourceTree = "<group>"; };
 		D0A9F3F00CFBEA9F0077D577 /* HFLineCountingRepresenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFLineCountingRepresenter.m; path = framework/sources/HFLineCountingRepresenter.m; sourceTree = "<group>"; };
 		D0A9F3FB0CFBEAD50077D577 /* HFLineCountingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFLineCountingView.h; path = framework/sources/HFLineCountingView.h; sourceTree = "<group>"; };
@@ -231,6 +239,8 @@
 		D01E7C010CDC569F00943F9E /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				D06B1DB00D13EE1D00B9A206 /* HFMetalGradient.tiff */,
+				D0A90B660D161816008975B9 /* HFMetalGradientVertical.tiff */,
 				D01E7BB90CDC530C00943F9E /* HexFiend_Framework-Info.plist */,
 			);
 			name = Resources;
@@ -240,6 +250,8 @@
 			isa = PBXGroup;
 			children = (
 				D026C7B60CDD54410082279E /* Text Representers */,
+				D0A90B030D160414008975B9 /* HFStatusBarRepresenter.h */,
+				D0A90B040D160414008975B9 /* HFStatusBarRepresenter.m */,
 				D00EBA710CE866D50020E2D7 /* HFVerticalScrollerRepresenter.h */,
 				D00EBA720CE866D50020E2D7 /* HFVerticalScrollerRepresenter.m */,
 				D0A9F3EF0CFBEA9F0077D577 /* HFLineCountingRepresenter.h */,
@@ -287,9 +299,9 @@
 				D04327A30CF081CD00C14250 /* HFFunctions_Private.h */,
 				D0A436570CDC8115000F7550 /* HFFunctions.m */,
 				D026C7A70CDD4FD30082279E /* Representers */,
+				D08F5DF40CDE822D007EFFE8 /* ByteArray */,
 				D01E7BEA0CDC55D000943F9E /* HFController.h */,
 				D01E7BEB0CDC55D000943F9E /* HFController.m */,
-				D08F5DF40CDE822D007EFFE8 /* ByteArray */,
 				D01E7BC60CDC53B300943F9E /* HexFiend_2_Framework_Prefix.pch */,
 				D01E7C010CDC569F00943F9E /* Resources */,
 			);
@@ -358,6 +370,7 @@
 				D0A9F3F10CFBEA9F0077D577 /* HFLineCountingRepresenter.h in Headers */,
 				D0A9F3FD0CFBEAD50077D577 /* HFLineCountingView.h in Headers */,
 				D0A402F30D0D43F4006BC574 /* HFLayoutRepresenter.h in Headers */,
+				D0A90B050D160414008975B9 /* HFStatusBarRepresenter.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -436,6 +449,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D06B1DB10D13EE1D00B9A206 /* HFMetalGradient.tiff in Resources */,
+				D0A90B670D161816008975B9 /* HFMetalGradientVertical.tiff in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -475,6 +490,7 @@
 				D0A9F3F20CFBEA9F0077D577 /* HFLineCountingRepresenter.m in Sources */,
 				D0A9F3FE0CFBEAD50077D577 /* HFLineCountingView.m in Sources */,
 				D0A402F40D0D43F4006BC574 /* HFLayoutRepresenter.m in Sources */,
+				D0A90B060D160414008975B9 /* HFStatusBarRepresenter.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

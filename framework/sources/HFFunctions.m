@@ -1,4 +1,29 @@
 #import <HexFiend/HFFunctions.h>
+#import <HexFiend/HFController.h>
+
+NSImage *HFImageNamed(NSString *name) {
+    HFASSERT(name != NULL);
+    NSImage *image = [NSImage imageNamed:name];
+    if (image == NULL) {
+        NSString *imagePath = [[NSBundle bundleForClass:[HFController class]] pathForResource:name ofType:@"tiff"];
+        if (! imagePath) {
+            NSLog(@"Unable to find image named %@.tiff", name);
+        }
+        else {
+            image = [[NSImage alloc] initByReferencingFile:imagePath];
+            if (image == nil || ! [image isValid]) {
+                NSLog(@"Couldn't load image at path %@", imagePath);
+                [image release];
+                image = nil;
+            }
+            else {
+                [image retain];
+                [image setName:name];
+            }
+        }
+    }
+    return image;
+}
 
 @implementation HFRangeWrapper
 

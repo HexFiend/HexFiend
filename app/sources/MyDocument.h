@@ -20,6 +20,7 @@
     HFRepresenter *asciiRepresenter;
     HFRepresenter *scrollRepresenter;
     HFLayoutRepresenter *layoutRepresenter;
+    HFStatusBarRepresenter *statusBarRepresenter;
 }
 
 @end
