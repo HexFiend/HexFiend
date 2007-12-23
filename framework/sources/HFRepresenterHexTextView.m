@@ -139,10 +139,11 @@
     const unsigned char *bytePtr = [data bytes];
 
     NSRect lineRectInBoundsSpace = NSMakeRect(NSMinX(bounds), NSMinY(bounds), NSWidth(bounds), lineHeight);
+    lineRectInBoundsSpace.origin.y -= [self verticalOffset] * lineHeight;
 
     /* Start us off with the horizontal inset and move the baseline down by the ascender so our glyphs just graze the top of our view */
     textTransform.tx += [self horizontalContainerInset];
-    textTransform.ty += [font ascender];
+    textTransform.ty += [font ascender] - lineHeight * [self verticalOffset];
     NSUInteger lineIndex = 0;
     NEW_ARRAY(CGGlyph, glyphs, bytesPerLine*2);
     for (byteIndex = 0; byteIndex < byteCount; byteIndex += bytesPerLine) {

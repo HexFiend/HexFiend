@@ -10,7 +10,9 @@
 
 @interface HFStatusBarView : NSView {
     NSCell *cell;
+    NSSize cellSize;
     HFStatusBarRepresenter *representer;
+    NSDictionary *cellAttributes;
 }
 
 - (void)setRepresenter:(HFStatusBarRepresenter *)rep;
@@ -22,12 +24,17 @@
 
 - (void)dealloc {
     [cell release];
+    [cellAttributes release];
     [super dealloc];
 }
 
 - initWithFrame:(NSRect)frame {
     [super initWithFrame:frame];
+    NSMutableParagraphStyle *style = [[[NSParagraphStyle defaultParagraphStyle] mutableCopy] autorelease];
+    [style setAlignment:NSCenterTextAlignment];
+    cellAttributes = [[NSDictionary alloc] initWithObjectsAndKeys:[NSColor darkGrayColor], NSForegroundColorAttributeName, [NSFont labelFontOfSize:10], NSFontAttributeName, style, NSParagraphStyleAttributeName, nil];
     cell = [[NSCell alloc] initTextCell:@""];
+    [cell setAlignment:NSCenterTextAlignment];
     return self;
 }
 
@@ -36,14 +43,18 @@
 }
 
 - (void)setString:(NSString *)string {
-    [cell setStringValue:string];
+    [cell setAttributedStringValue:[[[NSAttributedString alloc] initWithString:string attributes:cellAttributes] autorelease]];
+    cellSize = [cell cellSize];
     [self setNeedsDisplay:YES];
 }
 
 - (void)drawRect:(NSRect)rect {
+    USE(rect);
     NSImage *image = HFImageNamed(@"HFMetalGradientVertical");
     [image drawInRect:[self bounds] fromRect:NSZeroRect operation:NSCompositeSourceOver fraction:1];
-    [cell drawWithFrame:[self bounds] inView:self];
+    NSRect bounds = [self bounds];
+    NSRect cellRect = NSMakeRect(NSMinX(bounds), HFFloor(NSMidY(bounds) - cellSize.height / 2), NSWidth(bounds), cellSize.height);
+    [cell drawWithFrame:cellRect inView:self];
 }
 
 @end
@@ -62,13 +73,13 @@
     HFController *controller = [self controller];
     if (controller) {
         unsigned long long length = [controller contentsLength];
-        string = [NSString stringWithFormat:@"llu byte%@", length, (length == 1 ? @"" : @"s")];
+        string = [NSString stringWithFormat:@"%llu byte%@", length, (length == 1 ? @"" : @"s")];
     }
     [[self view] setString:string];
 }
 
 - (void)controllerDidChange:(HFControllerPropertyBits)bits {
-    if (bits & (HFControllerContentLength & HFControllerSelectedRanges)) {
+    if (bits & (HFControllerContentLength | HFControllerSelectedRanges)) {
         [self updateString];
     }
 }

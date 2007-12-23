@@ -55,13 +55,10 @@ static NSUInteger digit_count(unsigned long long val) {
 }
 
 - (void)updateLineRangeToDraw {
-    HFRange lineRange = {0, 0};
+    HFFPRange lineRange = {0, 0};
     HFController *controller = [self controller];
     if (controller) {
-        HFRange displayedRange = [controller displayedContentsRange];
-        NSUInteger bytesPerLine = [controller bytesPerLine];
-        lineRange.location = displayedRange.location / bytesPerLine;
-        lineRange.length = displayedRange.length / bytesPerLine;
+        lineRange = [controller displayedLineRange];
     }
     [[self view] setLineRangeToDraw:lineRange];
 }

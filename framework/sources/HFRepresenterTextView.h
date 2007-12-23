@@ -16,19 +16,22 @@
     HFTextRepresenter *representer;
     NSFont *font;
     NSData *data;
+    CGFloat verticalOffset;
     CGFloat horizontalContainerInset;
     CGFloat defaultLineHeight;
     NSTimer *caretTimer;
     NSRect lastDrawnCaretRect;
     NSRect caretRectToDraw;
     NSUInteger bytesBetweenVerticalGuides;
+    NSUInteger startingLineBackgroundColorIndex;
     
     struct  {
         unsigned editable:1;
         unsigned caretVisible:1;
         unsigned registeredForAppNotifications:1;
+        unsigned withinMouseDown:1;
         unsigned receivedMouseUp:1;
-        unsigned reserved1:28;
+        unsigned reserved1:27;
         unsigned reserved2:32;
     } _hftvflags;
 }
@@ -42,6 +45,12 @@
 /* Set and get data.  setData: will invalidate the correct regions (perhaps none) */
 - (NSData *)data;
 - (void)setData:(NSData *)data;
+
+- (CGFloat)verticalOffset;
+- (void)setVerticalOffset:(CGFloat)val;
+
+- (NSUInteger)startingLineBackgroundColorIndex;
+- (void)setStartingLineBackgroundColorIndex:(NSUInteger)val;
 
 - (BOOL)isEditable;
 - (void)setEditable:(BOOL)val;

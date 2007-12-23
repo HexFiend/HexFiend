@@ -12,7 +12,7 @@
 @interface HFLineCountingView : NSView {
     NSFont *font;
     CGFloat lineHeight;
-    HFRange lineRangeToDraw;
+    HFFPRange lineRangeToDraw;
     NSUInteger bytesPerLine;
 }
 
@@ -22,8 +22,8 @@
 - (void)setLineHeight:(CGFloat)height;
 - (CGFloat)lineHeight;
 
-- (void)setLineRangeToDraw:(HFRange)range;
-- (HFRange)lineRangeToDraw;
+- (void)setLineRangeToDraw:(HFFPRange)range;
+- (HFFPRange)lineRangeToDraw;
 
 - (void)setBytesPerLine:(NSUInteger)val;
 - (NSUInteger)bytesPerLine;

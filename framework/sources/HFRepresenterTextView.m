@@ -48,20 +48,20 @@ static const NSTimeInterval HFCaretBlinkFrequency = 0.56;
 - (NSPoint)originForCharacterAtIndex:(NSUInteger)index {
     NSPoint result;
     NSUInteger bytesPerLine = [self bytesPerLine];
-    result.y = (index / bytesPerLine) * [self lineHeight];
+    result.y = (index / bytesPerLine - [self verticalOffset]) * [self lineHeight];
     result.x = [self horizontalContainerInset] + (index % bytesPerLine) * ([self advancePerByte] + [self spaceBetweenBytes]);
     return result;
 }
 
 - (NSUInteger)indexOfCharacterAtPoint:(NSPoint)point {
     NSUInteger bytesPerLine = [self bytesPerLine];
-    CGFloat floatRow = (CGFloat)floor(point.y / [self lineHeight]);
+    CGFloat floatRow = (CGFloat)floor([self verticalOffset] + point.y / [self lineHeight]);
     CGFloat floatColumn = (CGFloat)round((point.x - [self horizontalContainerInset]) / ([self advancePerByte] + [self spaceBetweenBytes]));
     floatColumn = (CGFloat)fmax(floatColumn, 0); //to handle the case of dragging within the container inset
     HFASSERT(floatRow >= 0 && floatRow <= NSUIntegerMax);
     HFASSERT(floatColumn >= 0 && floatColumn <= NSUIntegerMax);
     NSUInteger row = (NSUInteger)floatRow;
-    NSUInteger column = (NSUInteger)floatColumn;
+    NSUInteger column = MIN((NSUInteger)floatColumn, bytesPerLine);
     return row * bytesPerLine + column;
 }
 
@@ -273,6 +273,25 @@ static const NSTimeInterval HFCaretBlinkFrequency = 0.56;
     }
 }
 
+- (void)setVerticalOffset:(CGFloat)val {
+    if (val != verticalOffset) {
+        verticalOffset = val;
+        [self setNeedsDisplay:YES];
+    }
+}
+
+- (CGFloat)verticalOffset {
+    return verticalOffset;
+}
+
+- (NSUInteger)startingLineBackgroundColorIndex {
+    return startingLineBackgroundColorIndex;
+}
+
+- (void)setStartingLineBackgroundColorIndex:(NSUInteger)val {
+    startingLineBackgroundColorIndex = val;
+}
+
 - (BOOL)isFlipped {
     return YES;
 }
@@ -307,7 +326,7 @@ static const NSTimeInterval HFCaretBlinkFrequency = 0.56;
 - (NSColor *)backgroundColorForLine:(NSUInteger)line {
     NSArray *colors = [NSColor controlAlternatingRowBackgroundColors];
     NSUInteger colorCount = [colors count];
-    NSUInteger colorIndex = line % colorCount;
+    NSUInteger colorIndex = (line + startingLineBackgroundColorIndex) % colorCount;
     if (colorIndex == 0) return nil; //will be drawn by empty space
     else return [colors objectAtIndex:colorIndex]; 
 }
@@ -321,6 +340,7 @@ static const NSTimeInterval HFCaretBlinkFrequency = 0.56;
     NSRect bounds = [self bounds];
     NSUInteger lineIndex;
     NSRect lineRect = NSMakeRect(NSMinX(bounds), NSMinY(bounds), NSWidth(bounds), lineHeight);
+    lineRect.origin.y -= [self verticalOffset] * [self lineHeight];
     NSUInteger drawableLineIndex = 0;
     NEW_ARRAY(NSRect, lineRects, maxLines);
     NEW_ARRAY(NSColor*, lineColors, maxLines);
@@ -385,15 +405,13 @@ static const NSTimeInterval HFCaretBlinkFrequency = 0.56;
     [[self backgroundColorForEmptySpace] set];
     NSRectFill(clip);
     
-    NSRect bounds = [self bounds];
-    CGFloat lineHeight = [self lineHeight];
 
     NSUInteger bytesPerLine = [self bytesPerLine];
     if (bytesPerLine == 0) return;
     NSUInteger byteCount = [data length];
     [[font screenFont] set];
     
-    [self _drawLineBackgrounds:clip withLineHeight:[self lineHeight] maxLines:MIN((byteCount + bytesPerLine - 1) / bytesPerLine, (NSUInteger)ceil(NSHeight(bounds) / lineHeight))];
+    [self _drawLineBackgrounds:clip withLineHeight:[self lineHeight] maxLines:ll2l(HFRoundUpToNextMultiple(byteCount, bytesPerLine) / bytesPerLine)];
     [self drawSelectionIfNecessaryWithClip:clip];
 
     NSColor *textColor = [NSColor blackColor];
@@ -509,6 +527,8 @@ static const NSTimeInterval HFCaretBlinkFrequency = 0.56;
 }
 
 - (void)mouseDown:(NSEvent *)event {
+    HFASSERT(_hftvflags.withinMouseDown == 0);
+    _hftvflags.withinMouseDown = 1;
     [self _forceCaretOnIfHasCaretTimer];
     NSPoint location = [self convertPoint:[event locationInWindow] fromView:nil];
     NSUInteger characterIndex = [self indexOfCharacterAtPoint:[self pointInBoundsClosestToPoint:location]];
@@ -525,9 +545,11 @@ static const NSTimeInterval HFCaretBlinkFrequency = 0.56;
         [pool drain];
     }
     _hftvflags.receivedMouseUp = NO;
+    _hftvflags.withinMouseDown = 0;
 }
 
 - (void)mouseDragged:(NSEvent *)event {
+    if (! _hftvflags.withinMouseDown) return;
     NSPoint location = [self convertPoint:[event locationInWindow] fromView:nil];
     NSUInteger characterIndex = [self indexOfCharacterAtPoint:[self pointInBoundsClosestToPoint:location]];
     characterIndex = MIN(characterIndex, [[self data] length]);
@@ -535,6 +557,7 @@ static const NSTimeInterval HFCaretBlinkFrequency = 0.56;
 }
 
 - (void)mouseUp:(NSEvent *)event {
+    if (! _hftvflags.withinMouseDown) return;
     NSPoint location = [self convertPoint:[event locationInWindow] fromView:nil];
     NSUInteger characterIndex = [self indexOfCharacterAtPoint:[self pointInBoundsClosestToPoint:location]];
     characterIndex = MIN(characterIndex, [[self data] length]);

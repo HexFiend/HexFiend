@@ -57,6 +57,8 @@ typedef NSUInteger HFControllerMovementQuantity;
     NSUInteger currentPropertyChangeToken;
     HFControllerPropertyBits propertiesToUpdateInCurrentTransaction;
     
+    NSUndoManager *undoManager;
+    
     unsigned long long selectionAnchor;
     HFRange selectionAnchorRange;
     
@@ -66,7 +68,8 @@ typedef NSUInteger HFControllerMovementQuantity;
         unsigned selectionInProgress:1;
         unsigned shiftExtendSelection:1;
         unsigned commandExtendSelection:1;
-        unsigned reserved1:27;
+        unsigned typingUndoOptimizationIsActive:1;
+        unsigned reserved1:26;
         unsigned reserved2:32;
     } _hfflags;
 }
@@ -81,6 +84,10 @@ typedef NSUInteger HFControllerMovementQuantity;
 - (void)endPropertyChangeTransaction:(NSUInteger)token;
 
 - (HFFPRange)displayedLineRange;
+- (void)setDisplayedLineRange:(HFFPRange)range;
+
+/* Returns all lines on which the cursor may be placed.  This is equivalent to (unsigned long long)(HFRoundUpToNextMultiple(contentsLength, bytesPerLine) / bytesPerLine) */
+- (unsigned long long)totalLineCount;
 
 /* Methods for obtaining information about the current contents state */
 - (HFRange)displayedContentsRange;
@@ -95,11 +102,16 @@ typedef NSUInteger HFControllerMovementQuantity;
 - (unsigned long long)contentsLength; //returns total length of contents
 
 /* Methods for getting at data */
+- (NSData *)dataForRange:(HFRange)range;
 - (void)copyBytes:(unsigned char *)bytes range:(HFRange)range;
 
 /* Methods for setting a byte array */
 - (void)setByteArray:(HFByteArray *)val;
 - (HFByteArray *)byteArray;
+
+/* Methods for setting an undo manager.  If one is not set, undo does not occur. */
+- (void)setUndoManager:(NSUndoManager *)manager;
+- (NSUndoManager *)undoManager;
 
 /* Set/get editable property */
 - (BOOL)isEditable;

@@ -41,7 +41,7 @@
 
 #define EXPECT_CLASS(e, c) do { \
 	if (! [(e) isKindOfClass:[c class]]) {\
-		fprintf(stderr, "EXPECT_CLASS failed: Expression " #e " is %s on line %d in file %s\n", (e) ? "(nil)" : [[e description] cString], __LINE__, __FILE__);\
+		fprintf(stderr, "EXPECT_CLASS failed: Expression " #e " is %s on line %d in file %s\n", (e) ? "(nil)" : [[e description] UTF8String], __LINE__, __FILE__);\
 			abort();\
 	}\
 } while (0)

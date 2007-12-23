@@ -27,6 +27,10 @@
 
 static const CGFloat kScrollMultiplier = (CGFloat)1.5;
 
+@interface HFController (ForwardDeclarations)
+- (void)_commandSelectAndInsertByteArrays:(NSArray *)byteArrays inRanges:(NSArray *)ranges;
+@end
+
 @implementation HFController
 
 - (id)init {
@@ -109,6 +113,10 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
     return maximumDisplayedRangeSet;
 }
 
+- (unsigned long long)totalLineCount {
+    return HFRoundUpToNextMultiple([self contentsLength], bytesPerLine) / bytesPerLine;
+}
+
 - (HFRange)displayedContentsRange {
     HFASSERT(HFRangeIsSubrangeOfRange(displayedContentsRange, [self _maximumDisplayedRangeSet]));
     return displayedContentsRange;
@@ -123,13 +131,24 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
 }
 
 - (HFFPRange)displayedLineRange {
-    HFFPRange result;
-    HFRange displayedRange = [self displayedContentsRange];
-    HFASSERT(displayedRange.location % bytesPerLine == 0);
-    HFASSERT(displayedRange.length % bytesPerLine == 0);
-    result.location = displayedRange.location / bytesPerLine;
-    result.length = displayedRange.length / bytesPerLine;
-    return result;
+#if ! NDEBUG
+    HFASSERT(displayedLineRange.location >= 0);
+    HFASSERT(displayedLineRange.length >= 0);
+    HFASSERT(displayedLineRange.location + displayedLineRange.length <= HFULToFP([self totalLineCount]));
+#endif
+    return displayedLineRange;
+}
+
+- (void)setDisplayedLineRange:(HFFPRange)range {
+#if ! NDEBUG
+    HFASSERT(range.location >= 0);
+    HFASSERT(range.length >= 0);
+    HFASSERT(range.location + range.length <= HFULToFP([self totalLineCount]));
+#endif
+    if (! HFFPRangeEqualsRange(range, displayedLineRange)) {
+        displayedLineRange = range;
+        [self _addPropertyChangeBits:HFControllerDisplayedRange];
+    }
 }
 
 - (CGFloat)lineHeight {
@@ -270,6 +289,15 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
     else return [byteArray length];
 }
 
+- (NSData *)dataForRange:(HFRange)range {
+    HFASSERT(range.length <= NSUIntegerMax); // it doesn't make sense to ask for a buffer larger than can be stored in memory
+    HFASSERT(HFRangeIsSubrangeOfRange(range, HFRangeMake(0, [self contentsLength])));
+    NSUInteger length = ll2l(range.length);
+    unsigned char *data = check_malloc(length);
+    [byteArray copyBytes:data range:range];
+    return [NSData dataWithBytesNoCopy:data length:length freeWhenDone:YES];
+}
+
 - (void)copyBytes:(unsigned char *)bytes range:(HFRange)range {
     HFASSERT(range.length <= NSUIntegerMax); // it doesn't make sense to ask for a buffer larger than can be stored in memory
     HFASSERT(HFRangeIsSubrangeOfRange(range, HFRangeMake(0, [self contentsLength])));
@@ -286,7 +314,7 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
         NSView *view = [rep view];
         double repMaxLines = [rep maximumAvailableLinesForViewHeight:NSHeight([view frame])];
         if (repMaxLines != DBL_MAX) {
-            maxBytesForViewSize = MIN(HFProductInt((NSUInteger)repMaxLines, bytesPerLine), maxBytesForViewSize);
+            maxBytesForViewSize = MIN(HFProductInt((NSUInteger)ceil(repMaxLines), bytesPerLine), maxBytesForViewSize);
         }
         maxLines = MIN(repMaxLines, maxLines);
     }
@@ -308,12 +336,13 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
             NSLog(@"Bad max range minus: %llu (%lu)", HFMaxRange(maxRangeSet) - proposedNewDisplayRange.location, bytesPerLine);
         }
 
-        proposedNewLineRange.location = proposedNewDisplayRange.location / bytesPerLine;
-        proposedNewLineRange.length = proposedNewDisplayRange.location / bytesPerLine;
+        long double lastLine = HFULToFP([self totalLineCount]);
+        proposedNewLineRange.length = MIN(maxLines, lastLine);
+        proposedNewLineRange.location = MIN(displayedLineRange.location, lastLine - proposedNewLineRange.length);
     }
     HFASSERT(HFRangeIsSubrangeOfRange(proposedNewDisplayRange, maxRangeSet));
     HFASSERT(proposedNewDisplayRange.location % bytesPerLine == 0);
-    if (! HFRangeEqualsRange(proposedNewDisplayRange, displayedContentsRange)) {
+    if (! HFRangeEqualsRange(proposedNewDisplayRange, displayedContentsRange) || ! HFFPRangeEqualsRange(proposedNewLineRange, displayedLineRange)) {
         displayedContentsRange = proposedNewDisplayRange;
         displayedLineRange = proposedNewLineRange;
         [self _addPropertyChangeBits:HFControllerDisplayedRange];
@@ -322,27 +351,20 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
 
 - (void)_ensureVisibilityOfLocation:(unsigned long long)location {
     HFASSERT(location <= [self contentsLength]);
-    if (! HFLocationInRange(location, displayedContentsRange)) {
-        HFASSERT(location < displayedContentsRange.location || location >= HFMaxRange(displayedContentsRange));
-        HFASSERT(displayedContentsRange.location % bytesPerLine == 0);
-        if (location < displayedContentsRange.location) {
-            unsigned long long bytesDifference = displayedContentsRange.location - location;
-            NSLog(@"Lines: %llu", HFDivideULLRoundingUp(bytesDifference, bytesPerLine));
-            unsigned long long bytesToScroll = bytesPerLine * HFDivideULLRoundingUp(bytesDifference, bytesPerLine);
-            HFASSERT(displayedContentsRange.location >= bytesToScroll); //we should never think we need to scroll up more than our location
-            displayedContentsRange.location -= bytesToScroll;
-        }
-        else {
-            unsigned long long bytesDifference = location - HFMaxRange(displayedContentsRange);
-            unsigned long long bytesToScroll = bytesPerLine * HFDivideULLRoundingUp(bytesDifference, bytesPerLine);
-            displayedContentsRange.location += bytesToScroll;
-            NSLog(@"BYTES TO SCROLL DOWN: %llu", bytesToScroll);
-        }
-        [self _updateDisplayedRange];
+    unsigned long long lineInt = location / bytesPerLine;
+    long double line = HFULToFP(lineInt);
+    HFASSERT(line >= 0);
+    HFASSERT(line <= HFULToFP([self totalLineCount]));
+    HFFPRange lineRange = [self displayedLineRange];
+    HFFPRange newLineRange = lineRange;
+    if (line < lineRange.location) {
+        newLineRange.location = line;
     }
-    HFASSERT(HFRangeIsSubrangeOfRange(displayedContentsRange, [self _maximumDisplayedRangeSet]));
-    HFASSERT(displayedContentsRange.location % bytesPerLine == 0);
-    [self _addPropertyChangeBits:HFControllerDisplayedRange];
+    else if (line >= lineRange.location + lineRange.length) {
+        HFASSERT(lineRange.location + lineRange.length > 1);
+        newLineRange.location = lineRange.location + (line - (lineRange.location + lineRange.length - 1));
+    }
+    [self setDisplayedLineRange:newLineRange];
 }
 
 - (void)setByteArray:(HFByteArray *)val {
@@ -356,6 +378,16 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
 
 - (HFByteArray *)byteArray {
     return byteArray;
+}
+
+- (void)setUndoManager:(NSUndoManager *)manager {
+    [manager retain];
+    [undoManager release];
+    undoManager = manager;
+}
+
+- (NSUndoManager *)undoManager {
+    return undoManager;
 }
 
 - (NSUInteger)bytesPerLine {
@@ -596,6 +628,22 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
 - (void)scrollWithScrollEvent:(NSEvent *)scrollEvent {
     HFASSERT(scrollEvent != NULL);
     HFASSERT([scrollEvent type] == NSScrollWheel);
+    HFFPRange lineRange = [self displayedLineRange];
+    long double scrollY = - kScrollMultiplier * [scrollEvent deltaY];
+    HFASSERT(HFULToFP([self totalLineCount]) >= lineRange.length);
+    long double maxScroll = HFULToFP([self totalLineCount]) - lineRange.length;
+    if (scrollY < 0) {
+        lineRange.location -= MIN(-scrollY, lineRange.location);
+    }
+    else {
+        lineRange.location = MIN(maxScroll, lineRange.location + scrollY);
+    }
+    [self setDisplayedLineRange:lineRange];
+}
+
+- (void)scrollWithScrollEventOld:(NSEvent *)scrollEvent {
+    HFASSERT(scrollEvent != NULL);
+    HFASSERT([scrollEvent type] == NSScrollWheel);
     CGFloat scrollY = kScrollMultiplier * [scrollEvent deltaY];
 #if NSUIntegerMax >= LLONG_MAX
     HFASSERT(bytesPerLine <= LLONG_MAX);
@@ -603,7 +651,6 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
     BEGIN_TRANSACTION();
     long long amountToScroll = ((long long)bytesPerLine) * (long long)HFRound( - scrollY);
     if (amountToScroll == 0) amountToScroll = (signbit(scrollY) ? (long long)bytesPerLine : - (long long)bytesPerLine); //minimum of one line of scroll
-    NSLog(@"Amount to scroll: %lld", amountToScroll);
     HFRange originalDisplayedContentsRange = displayedContentsRange;
     if (amountToScroll != 0) {
         if (amountToScroll < 0) {
@@ -758,21 +805,55 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
     }
 }
 
-- (void)moveDirection:(HFControllerMovementDirection)direction andModifySelection:(BOOL)extendSelection {
-    HFASSERT(direction == HFControllerDirectionLeft || direction == HFControllerDirectionRight || direction == HFControllerDirectionUp || direction == HFControllerDirectionDown);
-    if (! extendSelection) {
-        [self _moveDirectionWithoutModifyingSelection:direction];
+#if ! NDEBUG
+static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
+    unsigned long long index = 0;
+    HFRangeWrapper *rangeWrapper;
+    while ((rangeWrapper = [rangeEnumerator nextObject])) {
+        HFRange range = [rangeWrapper HFRange];
+        if (range.location < index) return NO;
+        index = HFSum(range.location, range.length);
     }
-    else {
-        [self _moveDirectionWhileModifyingSelection:direction];
+    return YES;
+}
+#endif
+
+- (BOOL)_registerCondemnedRangesForUndo:(NSArray *)ranges {
+    HFASSERT(ranges != NULL);
+    HFASSERT(ranges != selectedContentsRanges); //selectedContentsRanges is mutable - we really don't want to stash it away with undo
+    BOOL result = NO;
+    NSUndoManager *manager = [self undoManager];
+    NSUInteger rangeCount = [ranges count];
+    if (! manager || ! rangeCount) return NO;
+    
+    HFASSERT(rangesAreInAscendingOrder([ranges objectEnumerator]));
+    
+    NSMutableArray *rangesToRestore = [NSMutableArray arrayWithCapacity:rangeCount];
+    NSMutableArray *correspondingByteArrays = [NSMutableArray arrayWithCapacity:rangeCount];
+    HFByteArray *bytes = [self byteArray];
+    
+    /* Enumerate the ranges in forward order so when we insert them, we insert later ranges before earlier ones, so we don't have to worry about shifting indexes */
+    FOREACH(HFRangeWrapper *, rangeWrapper, ranges) {
+        HFRange range = [rangeWrapper HFRange];
+        if (range.length > 0) {
+            [rangesToRestore addObject:[HFRangeWrapper withRange:HFRangeMake(range.location, 0)]];
+            [correspondingByteArrays addObject:[bytes subarrayWithRange:range]];
+            result = YES;
+        }
     }
+    
+    if (result) [[manager prepareWithInvocationTarget:self] _commandSelectAndInsertByteArrays:correspondingByteArrays inRanges:rangesToRestore];
+    
+    return result;
 }
 
-- (void)deleteSelection {
+- (void)_commandDeleteRanges:(NSArray *)rangesToDelete {
+    HFASSERT(rangesToDelete != selectedContentsRanges); //selectedContentsRanges is mutable - we really don't want to stash it away with undo
+    HFASSERT(rangesAreInAscendingOrder([rangesToDelete objectEnumerator]));
     /* Delete all the selection - in reverse order */
     unsigned long long minSelection = ULLONG_MAX;
     BOOL somethingWasDeleted = NO;
-    NSArray *rangesToDelete = [HFRangeWrapper organizeAndMergeRanges:[self selectedContentsRanges]];
+    [self _registerCondemnedRangesForUndo:rangesToDelete];
     NSUInteger rangeIndex = [rangesToDelete count];
     HFASSERT(rangeIndex > 0);
     while (rangeIndex--) {
@@ -792,11 +873,53 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
         [self _updateDisplayedRange];
         END_TRANSACTION();
     }
+    else {
+        NSBeep();
+    }
+}
+
+- (void)_commandSelectAndInsertByteArrays:(NSArray *)byteArrays inRanges:(NSArray *)ranges {
+    REQUIRE_NOT_NULL(byteArrays);
+    REQUIRE_NOT_NULL(ranges);
+    HFASSERT([ranges count] == [byteArrays count]);
+    NSUInteger index, max = [ranges count];
+    HFByteArray *bytes = [self byteArray];
+    HFASSERT(rangesAreInAscendingOrder([ranges objectEnumerator]));
+    [selectedContentsRanges removeAllObjects];
+    for (index = 0; index < max; index++) {
+        HFRange range = [[ranges objectAtIndex:index] HFRange];
+        HFByteArray *newBytes = [byteArrays objectAtIndex:index];
+        EXPECT_CLASS(newBytes, [HFByteArray class]);
+        [bytes insertByteArray:newBytes inRange:range];
+        [selectedContentsRanges addObject:[HFRangeWrapper withRange:HFRangeMake(range.location, [newBytes length])]];
+    }
+    VALIDATE_SELECTION();
+    NSArray *rangesToDeleteOnUndo = [HFRangeWrapper organizeAndMergeRanges:selectedContentsRanges];
+    [[[self undoManager] prepareWithInvocationTarget:self] _commandDeleteRanges:rangesToDeleteOnUndo];
+    [self _addPropertyChangeBits:HFControllerContentValue | HFControllerContentLength | HFControllerSelectedRanges];
+}
+
+- (void)_activateTypingUndoOptimizationWithRange:(HFRange)range {
+    HFASSERT(HFRangeIsSubrangeOfRange(range, HFRangeMake(0, [self contentsLength])) || (range.location == [self contentsLength] && range.length == 0));
+    //[[self undoManager] prepareWithInvocationTarget:self] _re
+}
+
+- (void)moveDirection:(HFControllerMovementDirection)direction andModifySelection:(BOOL)extendSelection {
+    HFASSERT(direction == HFControllerDirectionLeft || direction == HFControllerDirectionRight || direction == HFControllerDirectionUp || direction == HFControllerDirectionDown);
+    if (! extendSelection) {
+        [self _moveDirectionWithoutModifyingSelection:direction];
+    }
+    else {
+        [self _moveDirectionWhileModifyingSelection:direction];
+    }
+}
+
+- (void)deleteSelection {
+    [self _commandDeleteRanges:[HFRangeWrapper organizeAndMergeRanges:selectedContentsRanges]];
 }
 
 - (void)insertData:(NSData *)data {
     REQUIRE_NOT_NULL(data);
-    
     BEGIN_TRANSACTION();
     
     unsigned long long amountDeleted = 0, amountAdded = [data length];
@@ -815,6 +938,9 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
         }
     }
     amountDeleted = HFSum(amountDeleted, rangeToReplace.length);
+    
+    /* Start undo */
+    [self _activateTypingUndoOptimizationWithRange:rangeToReplace];
     
     /* Insert data */
     HFByteSlice *slice = [[HFFullMemoryByteSlice alloc] initWithData:data];

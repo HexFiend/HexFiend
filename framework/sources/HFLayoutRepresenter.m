@@ -219,11 +219,9 @@ static NSInteger sortByLayoutPosition(id a, id b, void *self) {
     else bytesPerLine = [controller bytesPerLine];
     
     CGFloat yPosition = NSMinY(layoutRect);
-    NSLog(@"Start");
     FOREACH(NSArray *, layoutInfos, arraysOfLayoutInfos) {
         HFASSERT([layoutInfos count] > 0);
         CGFloat minHeight = [self _computeMinHeightForLayoutInfos:layoutInfos];
-        NSLog(@"Y position: %f minHeight %f for %@", yPosition, minHeight, layoutInfos);
         [self _applyYLocation:yPosition andMinHeight:minHeight toInfos:layoutInfos];
         yPosition += minHeight;
         [self _layoutInfosHorizontally:layoutInfos inRect:layoutRect withBytesPerLine:bytesPerLine];

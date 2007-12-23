@@ -27,7 +27,7 @@
     NSMutableString *stats;
     if (! [representer controller]) stats = nil;
     else {
-        stats = [NSMutableString stringWithFormat:@"displayedContentsRange:\t%@", HFRangeToString([[representer controller] displayedContentsRange])];
+        stats = [NSMutableString stringWithFormat:@"displayedLineRange:\t%@", HFRangeToString([[representer controller] displayedContentsRange])];
         [stats appendFormat:@"\nselectedContentsRanges:"];
         FOREACH(HFRangeWrapper*, wrapper, [[representer controller] selectedContentsRanges]) {
             [stats appendFormat:@"\n\t%@", HFRangeToString([wrapper HFRange])];

@@ -71,7 +71,7 @@ static int hfrange_compare(const void *ap, const void *bp) {
     HFASSERT(inputRanges != NULL);
     NSUInteger leading = 0, trailing = 0, length = [inputRanges count];
     if (length == 0) return [NSArray array];
-    else if (length == 1) return inputRanges;
+    else if (length == 1) return [NSArray arrayWithArray:inputRanges];
     
     NEW_ARRAY(HFRange, ranges, length);
     [self getRanges:ranges fromArray:inputRanges];

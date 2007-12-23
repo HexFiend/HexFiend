@@ -11,7 +11,11 @@ static inline BOOL HFLocationInRange(unsigned long long location, HFRange range)
 }
 
 static inline NSString* HFRangeToString(HFRange range) {
-	return [NSString stringWithFormat:@"{%llu, %llu}", range.location, range.length];
+    return [NSString stringWithFormat:@"{%llu, %llu}", range.location, range.length];
+}
+
+static inline NSString* HFFPRangeToString(HFFPRange range) {
+    return [NSString stringWithFormat:@"{%Lf, %Lf}", range.location, range.length];
 }
 
 static inline BOOL HFRangeEqualsRange(HFRange a, HFRange b) {
@@ -28,12 +32,18 @@ static inline NSUInteger HFProductInt(NSUInteger a, NSUInteger b) {
     return result;
 }
 
+static inline unsigned long long HFProductULL(unsigned long long a, unsigned long long b) {
+    unsigned long long result = a * b;
+    assert(a == 0 || result / a == b); //detect overflow
+    return result;
+}
+
 static inline unsigned long long HFSum(unsigned long long a, unsigned long long b) {
     assert(HFSumDoesNotOverflow(a, b));
     return a + b;
 }
 
-/* Returns the smallest multiple of B larger than A */
+/* Returns the smallest multiple of B strictly larger than A */
 static inline unsigned long long HFRoundUpToNextMultiple(unsigned long long a, unsigned long long b) {
     assert(b > 0);
     return HFSum(a, b - a % b);
@@ -144,6 +154,24 @@ static inline CGFloat HFMax(CGFloat a, CGFloat b) {
     else return (CGFloat)fmax((double)a, (double)b);    
 }
 
+static inline BOOL HFFPRangeEqualsRange(HFFPRange a, HFFPRange b) {
+    return a.location == b.location && a.length == b.length;
+}
+
+/* Converts a long double to unsigned long long.  Assumes that val is already an integer - use floorl or ceill */
+static inline unsigned long long HFFPToUL(long double val) {
+    assert(val >= 0);
+    assert(val <= ULLONG_MAX);
+    unsigned long long result = (unsigned long long)val;
+    assert((long double)result == val);
+    return result;
+}
+
+static inline long double HFULToFP(unsigned long long val) {
+    long double result = (long double)val;
+    assert(HFFPToUL(result) == val);
+    return result;
+}
 
 static inline NSString *HFDescribeAffineTransform(CGAffineTransform t) {
     return [NSString stringWithFormat:@"%f %f 0\n%f %f 0\n%f %f 1", t.a, t.b, t.c, t.d, t.tx, t.ty];
@@ -158,8 +186,9 @@ static inline CGFloat ld2f(long double val) {
      if (isfinite(val)) {
         assert(val <= CGFLOAT_MAX);
         assert(val >= -CGFLOAT_MAX);
-        if (val > 0) assert(val >= CGFLOAT_MIN);
-        if (val < 0) assert(val <= -CGFLOAT_MIN);
+        if ((val > 0 && val < CGFLOAT_MIN) || (val < 0 && val > -CGFLOAT_MIN)) {
+            NSLog(@"Warning - conversion of long double %Lf to CGFloat will result in the non-normal CGFloat %f", val, (CGFloat)val);
+        }
      }
 #endif
     return (CGFloat)val;

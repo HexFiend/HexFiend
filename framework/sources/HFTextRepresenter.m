@@ -25,25 +25,31 @@
     UNIMPLEMENTED();
 }
 
+- (HFRange)entireDisplayedRange {
+    HFController *controller = [self controller];
+    unsigned long long contentsLength = [controller contentsLength];
+    HFASSERT(controller != NULL);
+    HFFPRange displayedLineRange = [controller displayedLineRange];
+    NSUInteger bytesPerLine = [controller bytesPerLine];
+    unsigned long long lineStart = HFFPToUL(floorl(displayedLineRange.location));
+    unsigned long long lineEnd = HFFPToUL(ceill(displayedLineRange.location + displayedLineRange.length));
+    HFASSERT(lineEnd >= lineStart);
+    HFRange byteRange = HFRangeMake(HFProductULL(bytesPerLine, lineStart), HFProductULL(lineEnd - lineStart, bytesPerLine));
+    HFASSERT(byteRange.location <= contentsLength);
+    byteRange.length = MIN(byteRange.length, contentsLength - byteRange.location);
+    HFASSERT(HFRangeIsSubrangeOfRange(byteRange, HFRangeMake(0, [controller contentsLength])));
+    return byteRange;
+}
+
 - (void)updateText {
     HFController *controller = [self controller];
-    HFASSERT(controller != NULL);
     HFRepresenterTextView *view = [self view];
-    HFRange contentsRange = HFRangeMake(0, [controller contentsLength]);
-    HFRange displayedRange = [controller displayedContentsRange];
-    if (displayedRange.length > 0 && contentsRange.length > 0) {
-        HFASSERT(displayedRange.length < NSUIntegerMax);
-        HFASSERT(HFIntersectsRange(displayedRange, contentsRange));
-        HFRange displayedContentsRange = HFIntersectionRange(displayedRange, contentsRange);
-        
-        NSUInteger length = ll2l(displayedContentsRange.length);
-        unsigned char *buffer = check_malloc(length);
-        [controller copyBytes:buffer range:displayedContentsRange];
-        [view setData:[NSData dataWithBytesNoCopy:buffer length:length freeWhenDone:YES]];
-    }
-    else {
-        [view setData:[NSData data]];
-    }
+    [view setData:[controller dataForRange:[self entireDisplayedRange]]];
+    HFFPRange lineRange = [controller displayedLineRange];
+    long double offsetLongDouble = lineRange.location - floorl(lineRange.location);
+    CGFloat offset = ld2f(offsetLongDouble);
+    [view setVerticalOffset:offset];
+    [view setStartingLineBackgroundColorIndex:ll2l(HFFPToUL(floorl(lineRange.location)) % NSUIntegerMax)];
 }
 
 - (void)initializeView {
@@ -86,7 +92,8 @@
     HFController *controller = [self controller];
     NSArray *result;
     NSArray *selectedRanges = [controller selectedContentsRanges];
-    HFRange displayedRange = [controller displayedContentsRange];
+    HFRange displayedRange = [self entireDisplayedRange];
+
     HFASSERT(displayedRange.length <= NSUIntegerMax);
     NEW_ARRAY(NSValue *, clippedSelectedRanges, [selectedRanges count]);
     NSUInteger clippedRangeIndex = 0;
@@ -96,7 +103,8 @@
         NSRange clippedSelectedRange;
         /* Necessary because zero length ranges do not intersect anything */
         if (selectedRange.length == 0) {
-            clippedRangeIsVisible = HFRangeIsSubrangeOfRange(selectedRange, displayedRange);
+            /* Remember that {6, 0} is not considered a subrange of {3, 3} */
+            clippedRangeIsVisible = HFRangeIsSubrangeOfRange(selectedRange, displayedRange) || selectedRange.location == HFSum(displayedRange.length, displayedRange.location);
             if (clippedRangeIsVisible) {
                 HFASSERT(selectedRange.location >= displayedRange.location);
                 clippedSelectedRange.location = ll2l(selectedRange.location - displayedRange.location);
@@ -120,28 +128,24 @@
     return result;
 }
 
-- (void)beginSelectionWithEvent:(NSEvent *)event forCharacterIndex:(NSUInteger)characterIndex {
+- (unsigned long long)byteIndexForCharacterIndex:(NSUInteger)characterIndex {
     HFController *controller = [self controller];
-    HFRange displayedRange = [controller displayedContentsRange];
-    unsigned long long byteIndex = displayedRange.location + characterIndex;
-    HFASSERT(HFLocationInRange(byteIndex, displayedRange) || byteIndex == displayedRange.location + displayedRange.length);
-    [controller beginSelectionWithEvent:event forByteIndex:byteIndex];
+    HFFPRange lineRange = [controller displayedLineRange];
+    unsigned long long scrollAmount = HFFPToUL(floorl(lineRange.location));
+    unsigned long long byteIndex = HFProductULL(scrollAmount, [controller bytesPerLine]) + characterIndex;
+    return byteIndex;
+}
+
+- (void)beginSelectionWithEvent:(NSEvent *)event forCharacterIndex:(NSUInteger)characterIndex {
+    [[self controller] beginSelectionWithEvent:event forByteIndex:[self byteIndexForCharacterIndex:characterIndex]];
 }
 
 - (void)continueSelectionWithEvent:(NSEvent *)event forCharacterIndex:(NSUInteger)characterIndex {
-    HFController *controller = [self controller];
-    HFRange displayedRange = [controller displayedContentsRange];
-    unsigned long long byteIndex = displayedRange.location + characterIndex;
-    HFASSERT(HFLocationInRange(byteIndex, displayedRange) || byteIndex == displayedRange.location + displayedRange.length);
-    [controller continueSelectionWithEvent:event forByteIndex:byteIndex];
+    [[self controller] continueSelectionWithEvent:event forByteIndex:[self byteIndexForCharacterIndex:characterIndex]];
 }
 
 - (void)endSelectionWithEvent:(NSEvent *)event forCharacterIndex:(NSUInteger)characterIndex {
-    HFController *controller = [self controller];
-    HFRange displayedRange = [controller displayedContentsRange];
-    unsigned long long byteIndex = displayedRange.location + characterIndex;
-    HFASSERT(HFLocationInRange(byteIndex, displayedRange) || byteIndex == displayedRange.location + displayedRange.length);
-    [controller endSelectionWithEvent:event forByteIndex:byteIndex];
+    [[self controller] endSelectionWithEvent:event forByteIndex:[self byteIndexForCharacterIndex:characterIndex]];
 }
 
 - (void)insertText:(NSString *)text {

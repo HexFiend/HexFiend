@@ -19,5 +19,7 @@
 - (void)copyBytes:(unsigned char *)dst range:(HFRange)range;
 - (void)deleteBytesInRange:(HFRange)range;
 - (void)insertByteSlice:(HFByteSlice *)slice inRange:(HFRange)lrange;
+- (void)insertByteArray:(HFByteArray *)array inRange:(HFRange)lrange;
+- (HFByteArray *)subarrayWithRange:(HFRange)range;
 
 @end

@@ -43,8 +43,6 @@
 		D0A402F30D0D43F4006BC574 /* HFLayoutRepresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = D0A402F10D0D43F4006BC574 /* HFLayoutRepresenter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D0A402F40D0D43F4006BC574 /* HFLayoutRepresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = D0A402F20D0D43F4006BC574 /* HFLayoutRepresenter.m */; };
 		D0A435730CDC71DF000F7550 /* HFRepresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = D01E7C330CDC646800943F9E /* HFRepresenter.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		D0A435AA0CDC74B9000F7550 /* HFTestRepresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = D0A435A40CDC7463000F7550 /* HFTestRepresenter.m */; };
-		D0A435AB0CDC74BE000F7550 /* HFTestRepresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = D0A435A30CDC7463000F7550 /* HFTestRepresenter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		D0A436310CDC7EB1000F7550 /* HFFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = D0A436300CDC7EAA000F7550 /* HFFunctions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D0A436590CDC811D000F7550 /* HFFunctions.m in Sources */ = {isa = PBXBuildFile; fileRef = D0A436570CDC8115000F7550 /* HFFunctions.m */; };
 		D0A4373A0CDD4EDD000F7550 /* HFTextRepresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = D0A437380CDD4EDD000F7550 /* HFTextRepresenter.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -135,8 +133,6 @@
 		D08F5E380CDE84F4007EFFE8 /* HFFullMemoryByteSlice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFFullMemoryByteSlice.m; path = framework/sources/HFFullMemoryByteSlice.m; sourceTree = "<group>"; };
 		D0A402F10D0D43F4006BC574 /* HFLayoutRepresenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFLayoutRepresenter.h; path = framework/sources/HFLayoutRepresenter.h; sourceTree = "<group>"; };
 		D0A402F20D0D43F4006BC574 /* HFLayoutRepresenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFLayoutRepresenter.m; path = framework/sources/HFLayoutRepresenter.m; sourceTree = "<group>"; };
-		D0A435A30CDC7463000F7550 /* HFTestRepresenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFTestRepresenter.h; path = framework/sources/HFTestRepresenter.h; sourceTree = "<group>"; };
-		D0A435A40CDC7463000F7550 /* HFTestRepresenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFTestRepresenter.m; path = framework/sources/HFTestRepresenter.m; sourceTree = "<group>"; };
 		D0A4360B0CDC7B65000F7550 /* HFRepresenter_Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFRepresenter_Internal.h; path = framework/sources/HFRepresenter_Internal.h; sourceTree = "<group>"; };
 		D0A436300CDC7EAA000F7550 /* HFFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFFunctions.h; path = framework/sources/HFFunctions.h; sourceTree = "<group>"; };
 		D0A436570CDC8115000F7550 /* HFFunctions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFFunctions.m; path = framework/sources/HFFunctions.m; sourceTree = "<group>"; };
@@ -263,8 +259,6 @@
 				D01E7C340CDC646800943F9E /* HFRepresenter.m */,
 				D0A402F10D0D43F4006BC574 /* HFLayoutRepresenter.h */,
 				D0A402F20D0D43F4006BC574 /* HFLayoutRepresenter.m */,
-				D0A435A30CDC7463000F7550 /* HFTestRepresenter.h */,
-				D0A435A40CDC7463000F7550 /* HFTestRepresenter.m */,
 			);
 			name = Representers;
 			sourceTree = "<group>";
@@ -356,7 +350,6 @@
 				D01E7C3D0CDC6A3100943F9E /* HFTypes.h in Headers */,
 				D0CDB7330CE7338E0084926B /* HFRepresenterTextView_Internal.h in Headers */,
 				D0A435730CDC71DF000F7550 /* HFRepresenter.h in Headers */,
-				D0A435AB0CDC74BE000F7550 /* HFTestRepresenter.h in Headers */,
 				D0A4373A0CDD4EDD000F7550 /* HFTextRepresenter.h in Headers */,
 				D026C7B00CDD50ED0082279E /* HFRepresenterTextView.h in Headers */,
 				D026C7BB0CDD546C0082279E /* HFRepresenterHexTextView.h in Headers */,
@@ -472,7 +465,6 @@
 			files = (
 				D01E7BED0CDC55D000943F9E /* HFController.m in Sources */,
 				D01E7C960CDC700400943F9E /* HFRepresenter.m in Sources */,
-				D0A435AA0CDC74B9000F7550 /* HFTestRepresenter.m in Sources */,
 				D0A436590CDC811D000F7550 /* HFFunctions.m in Sources */,
 				D0A4373B0CDD4EDD000F7550 /* HFTextRepresenter.m in Sources */,
 				D026C7B10CDD50ED0082279E /* HFRepresenterTextView.m in Sources */,
@@ -629,6 +621,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = framework/sources/HexFiend_2_Framework_Prefix.pch;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = YES;
 				INFOPLIST_FILE = "HexFiend_Framework-Info.plist";
 				INSTALL_PATH = "$(HOME)/Library/Frameworks";
 				LD_DYLIB_INSTALL_NAME = "@executable_path/../Frameworks/HexFiend.framework/Versions/A/HexFiend";
@@ -643,6 +636,7 @@
 				WARNING_CFLAGS = (
 					"-W",
 					"-Wall",
+					"-Winit-self",
 				);
 				ZERO_LINK = YES;
 			};
@@ -662,6 +656,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = framework/sources/HexFiend_2_Framework_Prefix.pch;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = YES;
 				INFOPLIST_FILE = "HexFiend_Framework-Info.plist";
 				INSTALL_PATH = "$(HOME)/Library/Frameworks";
 				LD_DYLIB_INSTALL_NAME = "@executable_path/../Frameworks/HexFiend.framework/Versions/A/HexFiend";
@@ -676,6 +671,7 @@
 				WARNING_CFLAGS = (
 					"-W",
 					"-Wall",
+					"-Winit-self",
 				);
 				ZERO_LINK = NO;
 			};

@@ -35,6 +35,16 @@
     memmove(dst, bytes + ll2l(range.location), ll2l(range.length));
 }
 
+- (HFByteArray *)subarrayWithRange:(HFRange)lrange {
+    HFASSERT(HFRangeIsSubrangeOfRange(lrange, HFRangeMake(0, [self length])));
+    NSRange range;
+    range.location = ll2l(lrange.location);
+    range.length = ll2l(lrange.length);
+    HFFullMemoryByteArray* result = [[[self class] alloc] init];
+    [result->data setData:[data subdataWithRange:range]];
+    return [result autorelease];
+}
+
 - (NSArray *)byteSlices {
     return [NSArray arrayWithObject:[[[HFFullMemoryByteSlice alloc] initWithData:data] autorelease]];
 }

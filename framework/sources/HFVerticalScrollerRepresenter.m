@@ -25,57 +25,52 @@
 
 - (NSUInteger)visibleLines {
     HFController *controller = [self controller];
-    NSUInteger bytesPerLine = [controller bytesPerLine];
-    HFRange displayedRange = [controller displayedContentsRange];
-    return ll2l(HFDivideULLRoundingUp(displayedRange.length, bytesPerLine));
-}
-
-- (void)scrollToUnclippedLocation:(unsigned long long)location {
-    HFController *controller = [self controller];
-    unsigned long long contentsLength = [controller contentsLength];
-    NSUInteger bytesPerLine = [controller bytesPerLine];
-    HFRange displayedRange = [controller displayedContentsRange];
-
-    displayedRange.location = MIN(location, HFRoundUpToNextMultiple(contentsLength, bytesPerLine) - displayedRange.length);
-    displayedRange.location -= displayedRange.location % bytesPerLine;
-    [controller setDisplayedContentsRange:displayedRange];
+    HFASSERT(controller != NULL);
+    return ll2l(HFFPToUL(ceill([controller displayedLineRange].length)));
 }
 
 - (void)scrollByKnobToValue:(double)newValue {
+    HFASSERT(newValue >= 0. && newValue <= 1.);
     HFController *controller = [self controller];
-    unsigned long long length = [controller contentsLength];
-    HFRange displayedRange = [controller displayedContentsRange];
-    HFASSERT(displayedRange.length <= length);
-    unsigned long long maxLocation = length - displayedRange.length;
-    double newFLocation = round(maxLocation * newValue);
-    unsigned long long newLocation = (unsigned long long)newFLocation;
-    [self scrollToUnclippedLocation:newLocation];
+    unsigned long long contentsLength = [controller contentsLength];
+    NSUInteger bytesPerLine = [controller bytesPerLine];
+    HFASSERT(bytesPerLine > 0);
+    unsigned long long totalLineCountTimesBytesPerLine = HFRoundUpToNextMultiple(contentsLength, bytesPerLine);
+    HFASSERT(totalLineCountTimesBytesPerLine % bytesPerLine == 0);
+    unsigned long long totalLineCount = totalLineCountTimesBytesPerLine / bytesPerLine;
+    HFFPRange currentLineRange = [controller displayedLineRange];
+    HFASSERT(currentLineRange.length < HFULToFP(totalLineCount));
+    long double maxScroll = totalLineCount - currentLineRange.length;
+    long double newScroll = maxScroll * (long double)newValue;
+    [controller setDisplayedLineRange:(HFFPRange){newScroll, currentLineRange.length}];
 }
 
-- (void)scrollByBytes:(long long)bytes {
-    if (bytes == 0) return;
+
+- (void)scrollByLines:(long long)linesInt {
+    if (linesInt == 0) return;
     
-    unsigned long long newLocation;
-    HFRange displayedRange = [[self controller] displayedContentsRange];
-    if (bytes < 0) {
-        unsigned long long unsignedBytes = (unsigned long long)(- bytes);
-        newLocation = displayedRange.location - MIN(unsignedBytes, displayedRange.location);
+    long double lines = HFULToFP(linesInt);
+    
+    HFController *controller = [self controller];
+    HFASSERT(controller != NULL);
+    HFFPRange displayedRange = [[self controller] displayedLineRange];
+    if (lines < 0) {
+        displayedRange.location -= MIN(lines, displayedRange.location);
     }
     else {
-        unsigned long long unsignedBytes = (unsigned long long)bytes;
-        newLocation = HFSum(displayedRange.location, unsignedBytes);
+        long double availableLines = HFULToFP([controller totalLineCount]);
+        displayedRange.location = MIN(availableLines - displayedRange.length, displayedRange.location + lines);
     }
-    [self scrollToUnclippedLocation:newLocation];
+    [controller setDisplayedLineRange:displayedRange];
 }
 
 - (void)scrollerDidChangeValue:(NSScroller *)scroller {
     assert(scroller == [self view]);
-    NSUInteger bytesPerLine = [[self controller] bytesPerLine];
     switch ([scroller hitPart]) {
-	case NSScrollerDecrementPage: [self scrollByBytes: -(long long)(bytesPerLine * [self visibleLines])]; break;
-	case NSScrollerIncrementPage: [self scrollByBytes: (long long)(bytesPerLine * [self visibleLines])]; break;
-	case NSScrollerDecrementLine: [self scrollByBytes: -(long long)bytesPerLine]; break;
-	case NSScrollerIncrementLine: [self scrollByBytes: (long long)bytesPerLine]; break;
+	case NSScrollerDecrementPage: [self scrollByLines: -(long long)[self visibleLines]]; break;
+	case NSScrollerIncrementPage: [self scrollByLines: (long long)[self visibleLines]]; break;
+	case NSScrollerDecrementLine: [self scrollByLines: -1LL]; break;
+	case NSScrollerIncrementLine: [self scrollByLines: 1LL]; break;
 	case NSScrollerKnob: [self scrollByKnobToValue:[scroller doubleValue]]; break;
 	default: break;
     }
@@ -91,7 +86,6 @@
     }
     else {
         unsigned long long length = [controller contentsLength];
-        HFRange displayedRange = [controller displayedContentsRange];
         HFFPRange lineRange = [controller displayedLineRange];
         HFASSERT(lineRange.location >= 0 && lineRange.length >= 0);
         if (length == 0) {
@@ -99,13 +93,12 @@
             proportion = 1;
         }
         else {
-            NSUInteger bytesPerLine = [controller bytesPerLine];
-            long double availableLines = (long double)HFDivideULLRoundingUp(HFSum(length, 1), bytesPerLine);
+            long double availableLines = HFULToFP([controller totalLineCount]);
             long double consumedLines = MAX(1., lineRange.length);
-            proportion = ld2f(lineRange.length / (long double)availableLines);
+            proportion = ld2f(lineRange.length / HFULToFP(availableLines));
             
-            unsigned long long maxScroll = availableLines - consumedLines;
-            HFASSERT((long double)maxScroll >= lineRange.location);
+            long double maxScroll = availableLines - consumedLines;
+            HFASSERT(maxScroll >= lineRange.location);
             value = ld2f(lineRange.location / maxScroll);
         }
     }

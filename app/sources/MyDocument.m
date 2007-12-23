@@ -7,8 +7,6 @@
 //
 
 #import "MyDocument.h"
-#import <HexFiend/HFTestRepresenter.h>
-
 @implementation MyDocument
 
 - (NSString *)windowNibName {
@@ -23,7 +21,7 @@
 }
 
 - (NSArray *)representers {
-    return [NSArray arrayWithObjects:debugRepresenter, lineCountingRepresenter, hexRepresenter, asciiRepresenter, scrollRepresenter, nil];
+    return [NSArray arrayWithObjects:lineCountingRepresenter, hexRepresenter, asciiRepresenter, scrollRepresenter, nil];
 }
 
 - (NSArray *)visibleViews {
@@ -73,7 +71,6 @@
 
 - init {
     [super init];
-    debugRepresenter = [[HFTestRepresenter alloc] init];
     lineCountingRepresenter = [[HFLineCountingRepresenter alloc] init];
     hexRepresenter = [[HFHexTextRepresenter alloc] init];
     asciiRepresenter = [[HFStringEncodingTextRepresenter alloc] init];
@@ -87,6 +84,7 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(lineCountingViewChangedWidth:) name:HFLineCountingRepresenterMinimumViewWidthChanged object:lineCountingRepresenter];
     
     controller = [[HFController alloc] init];
+    [controller setUndoManager:[self undoManager]];
     [controller addRepresenter:layoutRepresenter];
     return self;
 }

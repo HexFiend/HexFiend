@@ -14,7 +14,6 @@
     IBOutlet NSView *containerView;
     HFController *controller;
     
-    HFRepresenter *debugRepresenter;
     HFLineCountingRepresenter *lineCountingRepresenter;
     HFRepresenter *hexRepresenter;
     HFRepresenter *asciiRepresenter;

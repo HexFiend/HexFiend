@@ -56,12 +56,15 @@
             style, NSParagraphStyleAttributeName,
             nil];
         
+        CGFloat verticalOffset = ld2f(lineRangeToDraw.location - floorl(lineRangeToDraw.location));
+        
         NSRect textRect = [self bounds];
         textRect.size.width -= (CGFloat)5.;
         textRect.size.height = lineHeight;
+        textRect.origin.y -= verticalOffset * lineHeight;
         
-        unsigned long long lineIndex = lineRangeToDraw.location;
-        NSUInteger linesRemaining = ll2l(lineRangeToDraw.length);
+        unsigned long long lineIndex = HFFPToUL(floorl(lineRangeToDraw.location));
+        NSUInteger linesRemaining = ll2l(HFFPToUL(ceill(lineRangeToDraw.length + lineRangeToDraw.location) - floorl(lineRangeToDraw.location)));
         while (linesRemaining--) {
             NSString *string = [NSString stringWithFormat:@"%llu", lineIndex * bytesPerLine];
             [string drawInRect:NSOffsetRect(textRect, 0, 1) withAttributes:atts2];
@@ -72,14 +75,14 @@
     }
 }
 
-- (void)setLineRangeToDraw:(HFRange)range {
-    if (! HFRangeEqualsRange(range, lineRangeToDraw)) {
+- (void)setLineRangeToDraw:(HFFPRange)range {
+    if (! HFFPRangeEqualsRange(range, lineRangeToDraw)) {
         lineRangeToDraw = range;
         [self setNeedsDisplay:YES];
     }
 }
 
-- (HFRange)lineRangeToDraw {
+- (HFFPRange)lineRangeToDraw {
     return lineRangeToDraw;
 }
 

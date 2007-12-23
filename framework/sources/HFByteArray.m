@@ -24,6 +24,24 @@
 - (void)copyBytes:(unsigned char *)dst range:(HFRange)range { USE(dst); USE(range); UNIMPLEMENTED_VOID(); }
 - (void)insertByteSlice:(HFByteSlice *)slice inRange:(HFRange)lrange { USE(slice); USE(lrange); UNIMPLEMENTED_VOID(); }
 
+
+- (void)insertByteArray:(HFByteArray*)array inRange:(HFRange)lrange {
+    REQUIRE_NOT_NULL(array);
+    NSArray* slices = [array byteSlices];
+    unsigned i, max=[slices count];
+    if (max==0) [self deleteBytesInRange:lrange];
+    else {
+	for (i=0; i < max; i++) {
+            HFByteSlice* slice = [slices objectAtIndex:i];
+            [self insertByteSlice:slice inRange:lrange];
+            lrange.location += [slice length];
+            lrange.length = 0;
+	}
+    }
+}
+
+- (HFByteArray *)subarrayWithRange:(HFRange)range { USE(range); UNIMPLEMENTED(); }
+
 - (void)deleteBytesInRange:(HFRange)lrange {
     HFByteSlice* slice = [[HFFullMemoryByteSlice alloc] initWithData:[NSData data]];
     [self insertByteSlice:slice inRange:lrange];
