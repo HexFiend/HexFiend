@@ -10,7 +10,7 @@
 
 #import <HexFiend/HFTypes.h>
 
-@class HFRepresenter, HFByteArray;
+@class HFRepresenter, HFByteArray, HFControllerCoalescedUndo;
 
 enum
 {
@@ -62,14 +62,16 @@ typedef NSUInteger HFControllerMovementQuantity;
     unsigned long long selectionAnchor;
     HFRange selectionAnchorRange;
     
+    unsigned long long typingUndoOptimizationInsertionLocation;
+    HFControllerCoalescedUndo *coalescedUndo;
+    
     struct  {
         unsigned editable:1;
         unsigned selectable:1;
         unsigned selectionInProgress:1;
         unsigned shiftExtendSelection:1;
         unsigned commandExtendSelection:1;
-        unsigned typingUndoOptimizationIsActive:1;
-        unsigned reserved1:26;
+        unsigned reserved1:27;
         unsigned reserved2:32;
     } _hfflags;
 }
@@ -144,5 +146,8 @@ typedef NSUInteger HFControllerMovementQuantity;
 
 /* Deletes the selection */
 - (void)deleteSelection;
+
+/* Deletes one byte in a given direction, which must be HFControllerDirectionLeft or HFControllerDirectionRight */
+- (void)deleteDirection:(HFControllerMovementDirection)direction;
 
 @end

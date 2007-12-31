@@ -103,8 +103,8 @@
         NSRange clippedSelectedRange;
         /* Necessary because zero length ranges do not intersect anything */
         if (selectedRange.length == 0) {
-            /* Remember that {6, 0} is not considered a subrange of {3, 3} */
-            clippedRangeIsVisible = HFRangeIsSubrangeOfRange(selectedRange, displayedRange) || selectedRange.location == HFSum(displayedRange.length, displayedRange.location);
+            /* Remember that {6, 0} is considered a subrange of {3, 3} */
+            clippedRangeIsVisible = HFRangeIsSubrangeOfRange(selectedRange, displayedRange);
             if (clippedRangeIsVisible) {
                 HFASSERT(selectedRange.location >= displayedRange.location);
                 clippedSelectedRange.location = ll2l(selectedRange.location - displayedRange.location);

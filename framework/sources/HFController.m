@@ -11,6 +11,7 @@
 #import <HexFiend/HFByteArray_Internal.h>
 #import <HexFiend/HFFullMemoryByteArray.h>
 #import <HexFiend/HFFullMemoryByteSlice.h>
+#import <HexFiend/HFControllerCoalescedUndo.h>
 
 /* Used for the anchor range and location */
 #define NO_SELECTION ULLONG_MAX
@@ -24,11 +25,11 @@
 #define BEGIN_TRANSACTION() NSUInteger token = [self beginPropertyChangeTransaction]
 #define END_TRANSACTION() [self endPropertyChangeTransaction:token]
 
-
 static const CGFloat kScrollMultiplier = (CGFloat)1.5;
 
 @interface HFController (ForwardDeclarations)
-- (void)_commandSelectAndInsertByteArrays:(NSArray *)byteArrays inRanges:(NSArray *)ranges;
+- (void)_commandInsertByteArrays:(NSArray *)byteArrays inRanges:(NSArray *)ranges selectingResult:(BOOL)selectResult;
+- (void)_endTypingUndoCoalescingIfActive;
 @end
 
 @implementation HFController
@@ -36,6 +37,7 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
 - (id)init {
     [super init];
     bytesPerLine = 16;
+    typingUndoOptimizationInsertionLocation = NO_SELECTION;
     _hfflags.editable = YES;
     _hfflags.selectable = YES;
     representers = [[NSMutableArray alloc] init];
@@ -254,14 +256,14 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
     BOOL onlyOneWrapper = ([selectedContentsRanges count] == 1);
     FOREACH(HFRangeWrapper*, wrapper, selectedContentsRanges) {
         HFRange range = [wrapper HFRange];
-        HFASSERT(HFRangeIsSubrangeOfRange(range, HFRangeMake(0, [self contentsLength])) || (onlyOneWrapper && range.location == [self contentsLength] && range.length == 0));
+        HFASSERT(HFRangeIsSubrangeOfRange(range, HFRangeMake(0, [self contentsLength])));
         if (onlyOneWrapper == NO) HFASSERT(range.length > 0); /* If we have more than one wrapper, then none of them should be zero length */
     }
 }
 #endif
 
 - (void)_setSingleSelectedContentsRange:(HFRange)newSelection {
-    HFASSERT(HFRangeIsSubrangeOfRange(newSelection, HFRangeMake(0, [self contentsLength])) || (newSelection.location == [self contentsLength] && newSelection.length == 0));
+    HFASSERT(HFRangeIsSubrangeOfRange(newSelection, HFRangeMake(0, [self contentsLength])));
     BOOL selectionChanged;
     if ([selectedContentsRanges count] == 1) {
         selectionChanged = ! HFRangeEqualsRange([[selectedContentsRanges objectAtIndex:0] HFRange], newSelection);
@@ -367,13 +369,40 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
     [self setDisplayedLineRange:newLineRange];
 }
 
+- (void)_maximizeVisibilityOfContentsRange:(HFRange)range {
+    HFASSERT(HFRangeIsSubrangeOfRange(range, HFRangeMake(0, [self contentsLength])));
+    HFFPRange displayRange = [self displayedLineRange];
+    HFFPRange newDisplayRange = displayRange;
+    unsigned long long startLine = range.location / bytesPerLine;
+    unsigned long long endLine = HFRoundUpToNextMultiple(HFMaxRange(range), bytesPerLine) / bytesPerLine;
+    HFASSERT(endLine > startLine);
+    long double linesInRange = HFULToFP(endLine - startLine);
+    long double linesToDisplay = MIN(displayRange.length, linesInRange);
+    HFASSERT(linesToDisplay <= linesInRange);
+    long double linesClippedFromRange = linesToDisplay - linesInRange;
+    HFFPRange lineRangeToDisplay = (HFFPRange){range.location + linesClippedFromRange / 2., linesToDisplay};
+    HFASSERT(lineRangeToDisplay.length <= displayRange.length);
+    long double linesToMoveDownToMakeLastLineVisible = HFULToFP(endLine) - (displayRange.location + displayRange.length);
+    long double linesToMoveUpToMakeFirstLineVisible = displayRange.location - HFULToFP(startLine);
+    HFASSERT(linesToMoveUpToMakeFirstLineVisible <= 0 || linesToMoveDownToMakeLastLineVisible <= 0);
+    if (linesToMoveDownToMakeLastLineVisible > 0) {
+        newDisplayRange.location += linesToMoveDownToMakeLastLineVisible;
+    }
+    else if (linesToMoveUpToMakeFirstLineVisible > 0) {
+        newDisplayRange.location -= linesToMoveUpToMakeFirstLineVisible;
+    }
+    [self setDisplayedLineRange:newDisplayRange];
+}
+
 - (void)setByteArray:(HFByteArray *)val {
     REQUIRE_NOT_NULL(val);
+    BEGIN_TRANSACTION();
     [val retain];
     [byteArray release];
     byteArray = val;
     [self _updateDisplayedRange];
     [self _addPropertyChangeBits: HFControllerContentValue | HFControllerContentLength];
+    END_TRANSACTION();
 }
 
 - (HFByteArray *)byteArray {
@@ -416,7 +445,10 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
     if (newBytesPerLine != bytesPerLine) {
         HFASSERT(newBytesPerLine > 0);
         bytesPerLine = newBytesPerLine;
+        BEGIN_TRANSACTION();
+        [self _updateBytesPerLine];
         [self _addPropertyChangeBits:HFControllerBytesPerLine];
+        END_TRANSACTION();
     }
 }
 
@@ -818,7 +850,7 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
 }
 #endif
 
-- (BOOL)_registerCondemnedRangesForUndo:(NSArray *)ranges {
+- (BOOL)_registerCondemnedRangesForUndo:(NSArray *)ranges selectingRangesAfterUndo:(BOOL)selectAfterUndo {
     HFASSERT(ranges != NULL);
     HFASSERT(ranges != selectedContentsRanges); //selectedContentsRanges is mutable - we really don't want to stash it away with undo
     BOOL result = NO;
@@ -842,7 +874,7 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
         }
     }
     
-    if (result) [[manager prepareWithInvocationTarget:self] _commandSelectAndInsertByteArrays:correspondingByteArrays inRanges:rangesToRestore];
+    if (result) [[manager prepareWithInvocationTarget:self] _commandInsertByteArrays:correspondingByteArrays inRanges:rangesToRestore selectingResult:selectAfterUndo];
     
     return result;
 }
@@ -850,10 +882,14 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
 - (void)_commandDeleteRanges:(NSArray *)rangesToDelete {
     HFASSERT(rangesToDelete != selectedContentsRanges); //selectedContentsRanges is mutable - we really don't want to stash it away with undo
     HFASSERT(rangesAreInAscendingOrder([rangesToDelete objectEnumerator]));
+    
+    /* End this string of typing */
+    [self _endTypingUndoCoalescingIfActive];
+    
     /* Delete all the selection - in reverse order */
     unsigned long long minSelection = ULLONG_MAX;
     BOOL somethingWasDeleted = NO;
-    [self _registerCondemnedRangesForUndo:rangesToDelete];
+    [self _registerCondemnedRangesForUndo:rangesToDelete selectingRangesAfterUndo:YES];
     NSUInteger rangeIndex = [rangesToDelete count];
     HFASSERT(rangeIndex > 0);
     while (rangeIndex--) {
@@ -878,30 +914,117 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
     }
 }
 
-- (void)_commandSelectAndInsertByteArrays:(NSArray *)byteArrays inRanges:(NSArray *)ranges {
+- (void)_commandInsertByteArrays:(NSArray *)byteArrays inRanges:(NSArray *)ranges selectingResult:(BOOL)selectResult {
     REQUIRE_NOT_NULL(byteArrays);
     REQUIRE_NOT_NULL(ranges);
     HFASSERT([ranges count] == [byteArrays count]);
     NSUInteger index, max = [ranges count];
     HFByteArray *bytes = [self byteArray];
     HFASSERT(rangesAreInAscendingOrder([ranges objectEnumerator]));
+    
+    /* End this string of typing */
+    [self _endTypingUndoCoalescingIfActive];
+    
+    NSMutableArray *byteArraysToInsertOnUndo = [NSMutableArray arrayWithCapacity:max];
+    NSMutableArray *rangesToInsertOnUndo = [NSMutableArray arrayWithCapacity:max];
+    
+    BEGIN_TRANSACTION();
     [selectedContentsRanges removeAllObjects];
+    unsigned long long endOfInsertedRanges = ULLONG_MAX;
     for (index = 0; index < max; index++) {
         HFRange range = [[ranges objectAtIndex:index] HFRange];
+        HFByteArray *oldBytes = [bytes subarrayWithRange:range];
+        [byteArraysToInsertOnUndo addObject:oldBytes];
         HFByteArray *newBytes = [byteArrays objectAtIndex:index];
         EXPECT_CLASS(newBytes, [HFByteArray class]);
         [bytes insertByteArray:newBytes inRange:range];
-        [selectedContentsRanges addObject:[HFRangeWrapper withRange:HFRangeMake(range.location, [newBytes length])]];
+        HFRange insertedRange = HFRangeMake(range.location, [newBytes length]);
+        HFRangeWrapper *insertedRangeWrapper = [HFRangeWrapper withRange:insertedRange];
+        [rangesToInsertOnUndo addObject:insertedRangeWrapper];
+        if (selectResult) {
+            [selectedContentsRanges addObject:insertedRangeWrapper];
+        }
+        else {
+            endOfInsertedRanges = HFMaxRange(insertedRange);
+        }
+    }
+    if (! selectResult) {
+        HFASSERT([ranges count] > 0);
+        [selectedContentsRanges addObject:[HFRangeWrapper withRange:HFRangeMake(endOfInsertedRanges, 0)]];
     }
     VALIDATE_SELECTION();
-    NSArray *rangesToDeleteOnUndo = [HFRangeWrapper organizeAndMergeRanges:selectedContentsRanges];
-    [[[self undoManager] prepareWithInvocationTarget:self] _commandDeleteRanges:rangesToDeleteOnUndo];
+    HFASSERT([byteArraysToInsertOnUndo count] == [rangesToInsertOnUndo count]);
+    [[[self undoManager] prepareWithInvocationTarget:self] _commandInsertByteArrays:byteArraysToInsertOnUndo inRanges:rangesToInsertOnUndo selectingResult:NO];
+    [self _updateDisplayedRange];
+    [self _maximizeVisibilityOfContentsRange:[[selectedContentsRanges objectAtIndex:0] HFRange]];
     [self _addPropertyChangeBits:HFControllerContentValue | HFControllerContentLength | HFControllerSelectedRanges];
+    END_TRANSACTION();
 }
 
-- (void)_activateTypingUndoOptimizationWithRange:(HFRange)range {
-    HFASSERT(HFRangeIsSubrangeOfRange(range, HFRangeMake(0, [self contentsLength])) || (range.location == [self contentsLength] && range.length == 0));
-    //[[self undoManager] prepareWithInvocationTarget:self] _re
+/* The user has hit undo after typing a string. */
+- (void)_commandReplaceBytesAfterBytesFromBeginning:(unsigned long long)leftOffset upToBytesFromEnd:(unsigned long long)rightOffset withByteArray:(HFByteArray *)bytesToReinsert {
+    HFASSERT(bytesToReinsert != NULL);
+    
+    /* End this string of typing */
+    [self _endTypingUndoCoalescingIfActive];
+    
+    BEGIN_TRANSACTION();
+    HFByteArray *bytes = [self byteArray];
+    unsigned long long contentsLength = [self contentsLength];
+    HFASSERT(leftOffset <= contentsLength);
+    HFASSERT(rightOffset <= contentsLength);
+    HFASSERT(contentsLength - rightOffset >= leftOffset);
+    HFRange rangeToReplace = HFRangeMake(leftOffset, contentsLength - rightOffset - leftOffset);
+    [self _registerCondemnedRangesForUndo:[HFRangeWrapper withRanges:&rangeToReplace count:1] selectingRangesAfterUndo:NO];
+    [bytes insertByteArray:bytesToReinsert inRange:rangeToReplace];
+    [self _updateDisplayedRange];
+    [self _setSingleSelectedContentsRange:HFRangeMake(rangeToReplace.location, [bytesToReinsert length])];
+    [self _addPropertyChangeBits:HFControllerContentValue | HFControllerContentLength | HFControllerSelectedRanges];
+    END_TRANSACTION();
+}
+
+/* We use NSNumbers instead of long longs here because Tiger/PPC NSInvocation had trouble with long longs */
+- (void)_commandValueObjectsReplaceBytesAfterBytesFromBeginning:(NSNumber *)leftOffset upToBytesFromEnd:(NSNumber *)rightOffset withByteArray:(HFByteArray *)bytesToReinsert {
+    HFASSERT(leftOffset != NULL);
+    HFASSERT(rightOffset != NULL);
+    EXPECT_CLASS(leftOffset, NSNumber);
+    EXPECT_CLASS(rightOffset, NSNumber);
+    [self _commandReplaceBytesAfterBytesFromBeginning:[leftOffset unsignedLongLongValue] upToBytesFromEnd:[rightOffset unsignedLongLongValue] withByteArray:bytesToReinsert];
+}
+
+- (void)_endTypingUndoCoalescingIfActive {
+    typingUndoOptimizationInsertionLocation = NO_SELECTION;
+}
+
+- (void)_activateTypingUndoCoalescingForReplacingRange:(HFRange)rangeToReplace withDataOfLength:(unsigned long long)dataLength {
+    HFASSERT(HFRangeIsSubrangeOfRange(rangeToReplace, HFRangeMake(0, [self contentsLength])));
+    
+    /* This is the actual optimization here */
+    BOOL insertingTextAtOptimizedLocation = (rangeToReplace.length == 0 && typingUndoOptimizationInsertionLocation == rangeToReplace.location);
+    BOOL deletingTextAtOptimizedLocation = (rangeToReplace.length == 1 && dataLength == 0 && HFMaxRange(rangeToReplace) == typingUndoOptimizationInsertionLocation);
+    
+    BOOL undoIsCoalesced = (insertingTextAtOptimizedLocation || deletingTextAtOptimizedLocation);
+    
+    typingUndoOptimizationInsertionLocation = HFSum(dataLength, rangeToReplace.location);
+    
+    if (! undoIsCoalesced) {
+        HFByteArray *bytes = [self byteArray];
+        unsigned long long contentsLength = [bytes length];
+        HFASSERT(HFMaxRange(rangeToReplace) <= contentsLength);
+        HFByteArray *bytesToReinsert = [bytes subarrayWithRange:rangeToReplace];
+#if defined(__ppc__) && ! __LP64__
+        if (! HFIsRunningOnLeopardOrLater()) {
+            NSNumber *leftOffset = [NSNumber numberWithUnsignedLongLong:rangeToReplace.location];
+            NSNumber *rightOffset = [NSNumber numberWithUnsignedLongLong:contentsLength - HFMaxRange(rangeToReplace)];
+            [[[self undoManager] prepareWithInvocationTarget:self] _commandValueObjectsReplaceBytesAfterBytesFromBeginning:leftOffset upToBytesFromEnd:rightOffset withByteArray:bytesToReinsert];
+        }
+        else
+#else
+        {
+            [[[self undoManager] prepareWithInvocationTarget:self] _commandReplaceBytesAfterBytesFromBeginning:rangeToReplace.location upToBytesFromEnd:contentsLength - HFMaxRange(rangeToReplace) withByteArray:bytesToReinsert];
+        }
+#endif
+    }
 }
 
 - (void)moveDirection:(HFControllerMovementDirection)direction andModifySelection:(BOOL)extendSelection {
@@ -923,24 +1046,37 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
     BEGIN_TRANSACTION();
     
     unsigned long long amountDeleted = 0, amountAdded = [data length];
+    HFByteArray *bytes = [self byteArray];
+    NSEnumerator *enumer;
+    HFRangeWrapper *rangeWrapper;
     
-    /* Delete all the selection - in reverse order - except the last one, which we will overwrite */
-    NSArray *rangesToDelete = [HFRangeWrapper organizeAndMergeRanges:[self selectedContentsRanges]];
-    HFRange rangeToReplace = [[rangesToDelete objectAtIndex:0] HFRange];
+    /* Delete all the selection - in reverse order - except the last one, which we will overwrite.  TODO - make this undoable. */
+    NSArray *allRangesToRemove = [HFRangeWrapper organizeAndMergeRanges:[self selectedContentsRanges]];
+    HFRange rangeToReplace = [[allRangesToRemove objectAtIndex:0] HFRange];
     HFASSERT(rangeToReplace.location == [self _minimumSelectionLocation]);
-    NSUInteger rangeIndex, rangeCount = [rangesToDelete count];
+    NSUInteger rangeIndex, rangeCount = [allRangesToRemove count];
     HFASSERT(rangeCount > 0);
+    NSMutableArray *rangesToDelete = [NSMutableArray arrayWithCapacity:rangeCount - 1];
     for (rangeIndex = rangeCount - 1; rangeIndex > 0; rangeIndex--) {
-        HFRange range = [[rangesToDelete objectAtIndex:rangeIndex] HFRange];
+        HFRangeWrapper *rangeWrapper = [allRangesToRemove objectAtIndex:rangeIndex];
+        HFRange range = [rangeWrapper HFRange];
         if (range.length > 0) {
             amountDeleted = HFSum(amountDeleted, range.length);
-            [byteArray deleteBytesInRange:range];
+            [rangesToDelete insertObject:rangeWrapper atIndex:0];
         }
     }
+    
+    HFASSERT(rangesAreInAscendingOrder([rangesToDelete objectEnumerator]));
+    [self _registerCondemnedRangesForUndo:rangesToDelete selectingRangesAfterUndo:YES];
+    enumer = [rangesToDelete reverseObjectEnumerator];
+    while ((rangeWrapper = [enumer nextObject])) {
+        [bytes deleteBytesInRange:[rangeWrapper HFRange]];
+    }
+    
     amountDeleted = HFSum(amountDeleted, rangeToReplace.length);
     
     /* Start undo */
-    [self _activateTypingUndoOptimizationWithRange:rangeToReplace];
+    [self _activateTypingUndoCoalescingForReplacingRange:rangeToReplace withDataOfLength:amountAdded];
     
     /* Insert data */
     HFByteSlice *slice = [[HFFullMemoryByteSlice alloc] initWithData:data];
@@ -950,11 +1086,12 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
     [self _addPropertyChangeBits:HFControllerContentValue];
     
     /* Update our selection */
+    [self _updateDisplayedRange];
     [self _setSingleSelectedContentsRange:HFRangeMake(HFSum(rangeToReplace.location, amountAdded), 0)];
     [self _ensureVisibilityOfLocation:rangeToReplace.location];
     
     if (amountAdded != amountDeleted) [self _addPropertyChangeBits:HFControllerContentLength];
-    [self _updateDisplayedRange];
+
     
     END_TRANSACTION();
 }
@@ -978,6 +1115,7 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
         }
         if (rangeIsValid) {
             BEGIN_TRANSACTION();
+            [self _activateTypingUndoCoalescingForReplacingRange:rangeToDelete withDataOfLength:0];
             [byteArray deleteBytesInRange:rangeToDelete];
             [self _setSingleSelectedContentsRange:HFRangeMake(rangeToDelete.location, 0)];
             [self _updateDisplayedRange];
@@ -992,13 +1130,14 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
 + (void)_testRangeFunctions {
     HFRange range = HFRangeMake(UINT_MAX + 573ULL, UINT_MAX * 2ULL);
     HFTEST(range.location == UINT_MAX + 573ULL && range.length == UINT_MAX * 2ULL);
+    HFTEST(range.location == UINT_MAX + 573ULL && range.length == UINT_MAX * 2ULL);
     HFTEST(HFRangeIsSubrangeOfRange(range, range));
     HFTEST(HFRangeIsSubrangeOfRange(HFRangeMake(range.location, 0), range));
-    HFTEST(! HFRangeIsSubrangeOfRange(HFRangeMake(range.location + range.length, 0), range));
+    HFTEST(HFRangeIsSubrangeOfRange(HFRangeMake(range.location + range.length, 0), range));
     HFTEST(HFRangeIsSubrangeOfRange(HFRangeMake(range.location, 0), HFRangeMake(range.location, 0)));
     HFTEST(! HFRangeIsSubrangeOfRange(HFRangeMake(range.location, 0), HFRangeMake(range.location + 1, 0)));
     HFTEST(HFRangeIsSubrangeOfRange(HFRangeMake(range.location + 6, 0), range));
-    HFTEST(! HFRangeIsSubrangeOfRange(HFRangeMake(range.location + range.length, 0), range));
+    HFTEST(HFRangeIsSubrangeOfRange(HFRangeMake(range.location + range.length, 0), range));
     HFTEST(! HFRangeIsSubrangeOfRange(HFRangeMake(range.location + range.length + 1, 0), range));
     HFTEST(! HFRangeIsSubrangeOfRange(range, HFRangeMake(34, 0)));
     HFTEST(HFRangeIsSubrangeOfRange(range, HFRangeMake(range.location - 32, range.length + 54)));

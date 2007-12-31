@@ -61,14 +61,18 @@ static inline BOOL HFRangeIsSubrangeOfRange(HFRange needle, HFRange haystack) {
     // Equal ranges are considered to be subranges.  This is an important check, because two equal ranges of zero length are considered to be subranges.
     if (HFRangeEqualsRange(needle, haystack)) return YES;
     
-    // handle the case where needle is a zero-length range at the very end of haystack.  We consider this not a subrange - that is, (6, 0) is not a subrange of (3, 3)
-    // rearrange the expression needle.location >= haystack.location + haystack.length in a way that cannot overflow
-    if (needle.location - haystack.location >= haystack.length) return NO;
+    // handle the case where needle is a zero-length range at the very end of haystack.  We consider this a subrange - that is, (6, 0) is a subrange of (3, 3)
+    // rearrange the expression needle.location > haystack.location + haystack.length in a way that cannot overflow
+    if (needle.location - haystack.location > haystack.length) return NO;
     
     // rearrange expression: (needle.location + needle.length > haystack.location + haystack.length) in a way that cannot produce overflow
     if (needle.location - haystack.location > haystack.length - needle.length) return NO;
     
     return YES;
+}
+
+static inline BOOL HFRangeIsEmptyAndAtEndOfRange(HFRange needle, HFRange haystack) {
+    return needle.length == 0 && needle.location == HFMaxRange(haystack);
 }
 
 static inline BOOL HFIntersectsRange(HFRange a, HFRange b) {
