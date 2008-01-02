@@ -211,7 +211,7 @@ BOOL HFStringEncodingIsSupersetOfASCII(NSStringEncoding encoding) {
 	case kCFStringEncodingJIS_X0208_90: return NO;
 	case kCFStringEncodingJIS_X0212_90: return NO;
 	case kCFStringEncodingJIS_C6226_78: return NO;
-	case kCFStringEncodingShiftJIS_X0213: return NO;
+	case 0x0628/*kCFStringEncodingShiftJIS_X0213*/: return NO;
 	case kCFStringEncodingShiftJIS_X0213_MenKuTen: return NO;
 	case kCFStringEncodingGB_2312_80: return NO;
 	case kCFStringEncodingGBK_95: return NO;
