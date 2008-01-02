@@ -6,6 +6,22 @@ typedef unsigned long NSUInteger;
 typedef int NSInteger;
 typedef unsigned int NSUInteger;
 #endif
+#define NSINTEGER_DEFINED 1
+#endif
+
+#ifndef CGFLOAT_DEFINED
+#if defined(__LP64__) && __LP64__
+typedef double CGFloat;
+#define CGFLOAT_MIN DBL_MIN
+#define CGFLOAT_MAX DBL_MAX
+#define CGFLOAT_IS_DOUBLE 1
+#else	/* !defined(__LP64__) || !__LP64__ */
+typedef float CGFloat;
+#define CGFLOAT_MIN FLT_MIN
+#define CGFLOAT_MAX FLT_MAX
+#define CGFLOAT_IS_DOUBLE 0
+#endif	/* !defined(__LP64__) || !__LP64__ */
+#define CGFLOAT_DEFINED 1
 #endif
 
 /* A 64 bit range type we use pervasively */
