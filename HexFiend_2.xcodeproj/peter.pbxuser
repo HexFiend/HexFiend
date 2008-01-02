@@ -9,7 +9,7 @@
 	};
 	29B97313FDCFA39411CA2CEA /* Project object */ = {
 		activeArchitecture = i386;
-		activeBuildConfigurationName = Release;
+		activeBuildConfigurationName = Debug;
 		activeExecutable = D0560B180CDC41D7009D2484 /* HexFiend_2 */;
 		activeTarget = 8D1107260486CEB800E47090 /* HexFiend_2 */;
 		addToTargets = (
@@ -279,8 +279,8 @@
 	};
 	32CA4F630368D1EE00C91783 /* HexFiend_2_Prefix.pch */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1576, 595}}";
-			sepNavSelRange = "{373, 9}";
+			sepNavIntBoundsRect = "{{0, 0}, {1626, 694}}";
+			sepNavSelRange = "{473, 0}";
 			sepNavVisRange = "{0, 665}";
 		};
 	};
@@ -316,23 +316,23 @@
 	};
 	D01E7BC60CDC53B300943F9E /* HexFiend_2_Framework_Prefix.pch */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1576, 1092}}";
-			sepNavSelRange = "{264, 30}";
-			sepNavVisRange = "{0, 1678}";
+			sepNavIntBoundsRect = "{{0, 0}, {1626, 1134}}";
+			sepNavSelRange = "{2979, 37}";
+			sepNavVisRange = "{264, 2375}";
 		};
 	};
 	D01E7BEA0CDC55D000943F9E /* HFController.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1576, 2450}}";
+			sepNavIntBoundsRect = "{{0, 0}, {1626, 2282}}";
 			sepNavSelRange = "{1524, 25}";
-			sepNavVisRange = "{807, 1167}";
+			sepNavVisRange = "{2368, 2024}";
 		};
 	};
 	D01E7BEB0CDC55D000943F9E /* HFController.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1209, 20608}}";
+			sepNavIntBoundsRect = "{{0, 0}, {1626, 20300}}";
 			sepNavSelRange = "{49203, 0}";
-			sepNavVisRange = "{48538, 1244}";
+			sepNavVisRange = "{47888, 2535}";
 		};
 	};
 	D01E7BEF0CDC564B00943F9E /* HexFiend.h */ = {
@@ -351,16 +351,16 @@
 	};
 	D01E7C140CDC58AA00943F9E /* MyDocument.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1576, 595}}";
-			sepNavSelRange = "{375, 23}";
+			sepNavIntBoundsRect = "{{0, 0}, {1626, 717}}";
+			sepNavSelRange = "{612, 0}";
 			sepNavVisRange = "{0, 612}";
 		};
 	};
 	D01E7C150CDC58AA00943F9E /* MyDocument.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1626, 2784}}";
+			sepNavIntBoundsRect = "{{0, 0}, {1626, 2772}}";
 			sepNavSelRange = "{2199, 0}";
-			sepNavVisRange = "{4844, 2256}";
+			sepNavVisRange = "{472, 1970}";
 		};
 	};
 	D01E7C330CDC646800943F9E /* HFRepresenter.h */ = {
@@ -379,9 +379,9 @@
 	};
 	D01E7C3B0CDC69E500943F9E /* HFTypes.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1576, 595}}";
-			sepNavSelRange = "{648, 13}";
-			sepNavVisRange = "{0, 661}";
+			sepNavIntBoundsRect = "{{0, 0}, {1626, 694}}";
+			sepNavSelRange = "{1381, 0}";
+			sepNavVisRange = "{0, 1381}";
 		};
 	};
 	D026C7AE0CDD50ED0082279E /* HFRepresenterTextView.h */ = {
@@ -428,9 +428,9 @@
 	};
 	D04327A30CF081CD00C14250 /* HFFunctions_Private.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {992, 294}}";
-			sepNavSelRange = "{79, 7}";
-			sepNavVisRange = "{0, 517}";
+			sepNavIntBoundsRect = "{{0, 0}, {1626, 694}}";
+			sepNavSelRange = "{870, 0}";
+			sepNavVisRange = "{0, 870}";
 		};
 	};
 	D04328890CF18DBC00C14250 /* objc_exception_throw */ = {
@@ -602,7 +602,7 @@
 		comments = "warning: empty body in an if-statement";
 		fRef = D01E7C150CDC58AA00943F9E /* MyDocument.m */;
 		rLen = 1;
-		rLoc = 46;
+		rLoc = 34;
 		rType = 1;
 	};
 	D05D451B0D2B1EE50027A98A /* PBXTextBookmark */ = {
@@ -610,7 +610,7 @@
 		fRef = D01E7C150CDC58AA00943F9E /* MyDocument.m */;
 		name = "MyDocument.m: 47";
 		rLen = 27;
-		rLoc = 1381;
+		rLoc = 1004;
 		rType = 0;
 		vrLen = 84;
 		vrLoc = 1324;
@@ -832,7 +832,7 @@
 		isa = PBXTextBookmark;
 		fRef = D01E7C150CDC58AA00943F9E /* MyDocument.m */;
 		rLen = 8;
-		rLoc = 1385;
+		rLoc = 1008;
 		rType = 0;
 	};
 	D05D45860D2B63960027A98A /* PBXTextBookmark */ = {
@@ -870,7 +870,7 @@
 		fRef = D01E7C150CDC58AA00943F9E /* MyDocument.m */;
 		name = "MyDocument.m: 47";
 		rLen = 8;
-		rLoc = 1385;
+		rLoc = 1008;
 		rType = 0;
 		vrLen = 416;
 		vrLoc = 1174;
@@ -1593,7 +1593,7 @@
 		isa = PBXTextBookmark;
 		fRef = D01E7C150CDC58AA00943F9E /* MyDocument.m */;
 		rLen = 48;
-		rLoc = 4608;
+		rLoc = 4231;
 		rType = 0;
 	};
 	D05D46FE0D2BB6090027A98A /* PBXTextBookmark */ = {
@@ -1631,7 +1631,7 @@
 		fRef = D01E7C150CDC58AA00943F9E /* MyDocument.m */;
 		name = "MyDocument.m: 84";
 		rLen = 48;
-		rLoc = 4608;
+		rLoc = 4231;
 		rType = 0;
 		vrLen = 535;
 		vrLoc = 2761;
@@ -1651,7 +1651,7 @@
 		fRef = D01E7C150CDC58AA00943F9E /* MyDocument.m */;
 		name = "MyDocument.m: 106";
 		rLen = 48;
-		rLoc = 4608;
+		rLoc = 4231;
 		rType = 0;
 		vrLen = 702;
 		vrLoc = 2443;
@@ -1678,7 +1678,7 @@
 		fRef = D01E7C150CDC58AA00943F9E /* MyDocument.m */;
 		name = "MyDocument.m: 112";
 		rLen = 48;
-		rLoc = 4608;
+		rLoc = 4231;
 		rType = 0;
 		vrLen = 607;
 		vrLoc = 2200;
@@ -1688,7 +1688,7 @@
 		fRef = D01E7C150CDC58AA00943F9E /* MyDocument.m */;
 		name = "MyDocument.m: 112";
 		rLen = 48;
-		rLoc = 4608;
+		rLoc = 4231;
 		rType = 0;
 		vrLen = 607;
 		vrLoc = 2200;
@@ -1745,7 +1745,7 @@
 	};
 	D082AC900CDEBD5300554EB7 /* HFByteArray_Internal.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1576, 595}}";
+			sepNavIntBoundsRect = "{{0, 0}, {1626, 717}}";
 			sepNavSelRange = "{113, 42}";
 			sepNavVisRange = "{0, 162}";
 		};
@@ -1773,7 +1773,7 @@
 	};
 	D08F5DEF0CDE8223007EFFE8 /* HFByteArray.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1576, 595}}";
+			sepNavIntBoundsRect = "{{0, 0}, {1626, 717}}";
 			sepNavSelRange = "{613, 0}";
 			sepNavVisRange = "{0, 613}";
 		};
@@ -1787,7 +1787,7 @@
 	};
 	D08F5E220CDE843E007EFFE8 /* HFByteSlice.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1232, 560}}";
+			sepNavIntBoundsRect = "{{0, 0}, {1626, 717}}";
 			sepNavSelRange = "{359, 0}";
 			sepNavVisRange = "{0, 359}";
 		};
@@ -1801,7 +1801,7 @@
 	};
 	D08F5E370CDE84F4007EFFE8 /* HFFullMemoryByteSlice.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {921, 740}}";
+			sepNavIntBoundsRect = "{{0, 0}, {1626, 717}}";
 			sepNavSelRange = "{196, 21}";
 			sepNavVisRange = "{0, 291}";
 		};
@@ -1836,16 +1836,16 @@
 	};
 	D0A436300CDC7EAA000F7550 /* HFFunctions.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1576, 2968}}";
-			sepNavSelRange = "{6364, 0}";
-			sepNavVisRange = "{5597, 1435}";
+			sepNavIntBoundsRect = "{{0, 0}, {1626, 3220}}";
+			sepNavSelRange = "{7516, 13}";
+			sepNavVisRange = "{6556, 1816}";
 		};
 	};
 	D0A436570CDC8115000F7550 /* HFFunctions.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1576, 3766}}";
-			sepNavSelRange = "{1972, 0}";
-			sepNavVisRange = "{823, 1196}";
+			sepNavIntBoundsRect = "{{0, 0}, {1626, 3248}}";
+			sepNavSelRange = "{8679, 0}";
+			sepNavVisRange = "{7572, 2515}";
 		};
 	};
 	D0A437380CDD4EDD000F7550 /* HFTextRepresenter.h */ = {

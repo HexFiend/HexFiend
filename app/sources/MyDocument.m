@@ -24,18 +24,6 @@
     return [NSArray arrayWithObjects:lineCountingRepresenter, hexRepresenter, asciiRepresenter, scrollRepresenter, nil];
 }
 
-- (NSArray *)visibleViews {
-    NSMutableArray *result = [NSMutableArray array];
-    NSEnumerator *enumer = [[self representers] objectEnumerator];
-    NSWindow *window = [self window];
-    HFRepresenter *rep;
-    while ((rep = [enumer nextObject])) {
-        NSView *view = [rep view];
-        if ([view window] == window) [result addObject:view];
-    }
-    return result;
-}
-
 - (void)showViewForRepresenter:(HFRepresenter *)rep {
     NSView *repView = [rep view];
     HFASSERT([repView superview] == nil && [repView window] == nil);
@@ -147,12 +135,6 @@
     HFFullMemoryByteArray *byteArray = [[[HFFullMemoryByteArray alloc] init] autorelease];
     [byteArray insertByteSlice:[[[HFFullMemoryByteSlice alloc] initWithData:data] autorelease] inRange:HFRangeMake(0, 0)];
     [controller setByteArray:byteArray];
-    
-    // Insert code here to read your document from the given data of the specified type.  If the given outError != NULL, ensure that you set *outError when returning NO.
-
-    // You can also choose to override -readFromFileWrapper:ofType:error: or -readFromURL:ofType:error: instead. 
-    
-    // For applications targeted for Panther or earlier systems, you should use the deprecated API -loadDataRepresentation:ofType. In this case you can also choose to override -readFromFile:ofType: or -loadFileWrapperRepresentation:ofType: instead.
     
     return YES;
 }
