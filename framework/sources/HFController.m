@@ -30,6 +30,7 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
 @interface HFController (ForwardDeclarations)
 - (void)_commandInsertByteArrays:(NSArray *)byteArrays inRanges:(NSArray *)ranges selectingResult:(BOOL)selectResult;
 - (void)_endTypingUndoCoalescingIfActive;
+- (void)_removeUndoManagerNotifications;
 @end
 
 @implementation HFController
@@ -37,7 +38,6 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
 - (id)init {
     [super init];
     bytesPerLine = 16;
-    typingUndoOptimizationInsertionLocation = NO_SELECTION;
     _hfflags.editable = YES;
     _hfflags.selectable = YES;
     representers = [[NSMutableArray alloc] init];
@@ -52,6 +52,10 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
     [representers makeObjectsPerformSelector:@selector(_setController:) withObject:nil];
     [representers release];
     [selectedContentsRanges release];
+    [self _removeUndoManagerNotifications];
+    [undoManager release];
+    [undoCoalescer release];
+    [font release];
     [byteArray release];
     [super dealloc];
 }
@@ -255,6 +259,7 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
     HFASSERT([selectedContentsRanges count] > 0);
     BOOL onlyOneWrapper = ([selectedContentsRanges count] == 1);
     FOREACH(HFRangeWrapper*, wrapper, selectedContentsRanges) {
+        EXPECT_CLASS(wrapper, HFRangeWrapper);
         HFRange range = [wrapper HFRange];
         HFASSERT(HFRangeIsSubrangeOfRange(range, HFRangeMake(0, [self contentsLength])));
         if (onlyOneWrapper == NO) HFASSERT(range.length > 0); /* If we have more than one wrapper, then none of them should be zero length */
@@ -409,10 +414,31 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
     return byteArray;
 }
 
+- (void)_undoNotification:note {
+    USE(note);
+    [self _endTypingUndoCoalescingIfActive];
+}
+
+- (void)_removeUndoManagerNotifications {
+    if (undoManager) {
+        NSNotificationCenter *noter = [NSNotificationCenter defaultCenter];
+        [noter removeObserver:self name:NSUndoManagerWillUndoChangeNotification object:undoManager];
+    }
+}
+
+- (void)_addUndoManagerNotifications {
+    if (undoManager) {
+        NSNotificationCenter *noter = [NSNotificationCenter defaultCenter];
+        [noter addObserver:self selector:@selector(_undoNotification:) name:NSUndoManagerWillUndoChangeNotification object:undoManager];
+    }
+}
+
 - (void)setUndoManager:(NSUndoManager *)manager {
+    [self _removeUndoManagerNotifications];
     [manager retain];
     [undoManager release];
     undoManager = manager;
+    [self _addUndoManagerNotifications];
 }
 
 - (NSUndoManager *)undoManager {
@@ -704,6 +730,13 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
     END_TRANSACTION();
 }
 
+- (void)setSelectedContentsRanges:(NSArray *)selectedRanges {
+    REQUIRE_NOT_NULL(selectedRanges);
+    [selectedContentsRanges setArray:selectedRanges];
+    VALIDATE_SELECTION();
+    [self _addPropertyChangeBits:HFControllerSelectedRanges];
+}
+
 - (IBAction)selectAll:sender {
     USE(sender);
     if (_hfflags.selectable) {
@@ -993,37 +1026,65 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
 }
 
 - (void)_endTypingUndoCoalescingIfActive {
-    typingUndoOptimizationInsertionLocation = NO_SELECTION;
+    [undoCoalescer release];
+    undoCoalescer = nil;
+}
+
+- (void)_performTypingUndo:(HFControllerCoalescedUndo *)undoer {
+    REQUIRE_NOT_NULL(undoer);
+    BEGIN_TRANSACTION();
+    
+    HFByteArray *bytes = [self byteArray];
+    HFControllerCoalescedUndo *redoer = [undoer invertWithByteArray:bytes];
+    
+    HFRange rangeToReplace = [undoer rangeToReplace];
+    HFByteArray *deletedData = [undoer deletedData];
+    HFRange rangeToSelect;
+    if (deletedData == nil) {
+        [bytes deleteBytesInRange:rangeToReplace];
+        rangeToSelect = HFRangeMake(rangeToReplace.location, 0);
+    }
+    else {
+        [bytes insertByteArray:deletedData inRange:rangeToReplace];
+        rangeToSelect = HFRangeMake(rangeToReplace.location, [deletedData length]);
+        /* We only ever put the cursor at the end on redo; TextEdit works this way */
+        if ([[self undoManager] isRedoing]) rangeToSelect = HFRangeMake(HFMaxRange(rangeToSelect), 0);
+    }
+    [self _setSingleSelectedContentsRange:rangeToSelect];
+    [self _updateDisplayedRange];
+    [self _maximizeVisibilityOfContentsRange:rangeToSelect];
+    [self _addPropertyChangeBits:HFControllerContentValue | HFControllerContentLength];
+    
+    [[self undoManager] registerUndoWithTarget:self selector:@selector(_performTypingUndo:) object:redoer];
+    
+    END_TRANSACTION();
 }
 
 - (void)_activateTypingUndoCoalescingForReplacingRange:(HFRange)rangeToReplace withDataOfLength:(unsigned long long)dataLength {
     HFASSERT(HFRangeIsSubrangeOfRange(rangeToReplace, HFRangeMake(0, [self contentsLength])));
+    HFASSERT(dataLength > 0 || rangeToReplace.length > 0);
+    BOOL replaceUndoCoalescer = YES, canCoalesceAppend = NO, canCoalesceDelete = NO;
+    HFByteArray *bytes = [self byteArray];
     
-    /* This is the actual optimization here */
-    BOOL insertingTextAtOptimizedLocation = (rangeToReplace.length == 0 && typingUndoOptimizationInsertionLocation == rangeToReplace.location);
-    BOOL deletingTextAtOptimizedLocation = (rangeToReplace.length == 1 && dataLength == 0 && HFMaxRange(rangeToReplace) == typingUndoOptimizationInsertionLocation);
-    
-    BOOL undoIsCoalesced = (insertingTextAtOptimizedLocation || deletingTextAtOptimizedLocation);
-    
-    typingUndoOptimizationInsertionLocation = HFSum(dataLength, rangeToReplace.location);
-    
-    if (! undoIsCoalesced) {
-        HFByteArray *bytes = [self byteArray];
-        unsigned long long contentsLength = [bytes length];
-        HFASSERT(HFMaxRange(rangeToReplace) <= contentsLength);
-        HFByteArray *bytesToReinsert = [bytes subarrayWithRange:rangeToReplace];
-#if defined(__ppc__) && ! __LP64__
-        if (! HFIsRunningOnLeopardOrLater()) {
-            NSNumber *leftOffset = [NSNumber numberWithUnsignedLongLong:rangeToReplace.location];
-            NSNumber *rightOffset = [NSNumber numberWithUnsignedLongLong:contentsLength - HFMaxRange(rangeToReplace)];
-            [[[self undoManager] prepareWithInvocationTarget:self] _commandValueObjectsReplaceBytesAfterBytesFromBeginning:leftOffset upToBytesFromEnd:rightOffset withByteArray:bytesToReinsert];
+    if (dataLength == 0 || rangeToReplace.length == 0) {
+        if (undoCoalescer != nil) {
+            canCoalesceAppend = (dataLength > 0 && [undoCoalescer canCoalesceAppendInRange:HFRangeMake(rangeToReplace.location, dataLength)]);
+            canCoalesceDelete = (rangeToReplace.length > 0 && [undoCoalescer canCoalesceDeleteInRange:rangeToReplace]);
+            replaceUndoCoalescer = (! canCoalesceAppend && ! canCoalesceDelete);
         }
-        else
-#else
-        {
-            [[[self undoManager] prepareWithInvocationTarget:self] _commandReplaceBytesAfterBytesFromBeginning:rangeToReplace.location upToBytesFromEnd:contentsLength - HFMaxRange(rangeToReplace) withByteArray:bytesToReinsert];
-        }
-#endif
+    }
+    
+    if (replaceUndoCoalescer) {
+        [undoCoalescer release];
+        HFByteArray *replacedData = (rangeToReplace.length == 0 ? nil : [bytes subarrayWithRange:rangeToReplace]);
+        undoCoalescer = [[HFControllerCoalescedUndo alloc] initWithReplacedData:replacedData atAnchorLocation:rangeToReplace.location];
+        if (dataLength > 0) [undoCoalescer appendDataOfLength:dataLength];
+        [[self undoManager] registerUndoWithTarget:self selector:@selector(_performTypingUndo:) object:undoCoalescer];
+    }
+    else {
+        HFASSERT(!canCoalesceAppend || !canCoalesceDelete);
+        if (canCoalesceAppend) [undoCoalescer appendDataOfLength:dataLength];
+        if (canCoalesceDelete) [undoCoalescer deleteDataOfLength:rangeToReplace.length withByteArray:bytes];
     }
 }
 
@@ -1087,8 +1148,9 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
     
     /* Update our selection */
     [self _updateDisplayedRange];
-    [self _setSingleSelectedContentsRange:HFRangeMake(HFSum(rangeToReplace.location, amountAdded), 0)];
-    [self _ensureVisibilityOfLocation:rangeToReplace.location];
+    HFRange selectedRange = HFRangeMake(HFSum(rangeToReplace.location, amountAdded), 0);
+    [self _setSingleSelectedContentsRange:selectedRange];
+    [self _maximizeVisibilityOfContentsRange:selectedRange];
     
     if (amountAdded != amountDeleted) [self _addPropertyChangeBits:HFControllerContentLength];
 
@@ -1226,9 +1288,106 @@ static NSData *randomDataOfLength(NSUInteger length) {
     return [NSData dataWithBytesNoCopy:buff length:length freeWhenDone:YES];
 }
 
+static NSUInteger random_upto(NSUInteger val) {
+    if (val == 0) return 0;
+    else return random() % val;
+}
+
+#define DEBUG if (should_debug)  
++ (void)_testTextInsertion {
+    const BOOL should_debug = NO;
+    DEBUG puts("Beginning data insertion test");
+    NSMutableData *expectedData = [NSMutableData data];
+    HFController *controller = [[[self alloc] init] autorelease];
+    [controller setByteArray:[[[HFFullMemoryByteArray alloc] init] autorelease]];
+    NSUndoManager *undoer = [[[NSUndoManager alloc] init] autorelease];
+    [undoer setGroupsByEvent:NO];
+    [controller setUndoManager:undoer];
+    NSMutableArray *expectations = [NSMutableArray arrayWithObject:[NSData data]];
+    NSUInteger i, opCount = 5000;
+    unsigned long long coalescerActionPoint = ULLONG_MAX;
+    for (i=1; i <= opCount; i++) {
+        NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+        const NSUInteger length = ll2l([controller contentsLength]);
+       
+        NSRange replacementRange = {0, 0};
+        NSUInteger replacementDataLength = 0;
+        while (replacementRange.length == 0 && replacementDataLength == 0) {
+            replacementRange.location = random_upto(length);
+            replacementRange.length = random_upto(length - replacementRange.location);
+            replacementDataLength = random_upto(20);
+        }
+        NSData *replacementData = randomDataOfLength(replacementDataLength);
+        [expectedData replaceBytesInRange:replacementRange withBytes:[replacementData bytes] length:[replacementData length]];
+        
+        HFRange selectedRange = HFRangeMake(replacementRange.location, replacementRange.length);
+        
+        BOOL shouldCoalesceDelete = (replacementDataLength == 0 && HFMaxRange(selectedRange) == coalescerActionPoint);
+        BOOL shouldCoalesceInsert = (replacementRange.length == 0 && selectedRange.location == coalescerActionPoint);
+        
+        [controller setSelectedContentsRanges:[HFRangeWrapper withRanges:&selectedRange count:1]];
+        HFTEST([[controller selectedContentsRanges] isEqual:[HFRangeWrapper withRanges:&selectedRange count:1]]);
+        
+        BOOL expectedCoalesced = (shouldCoalesceInsert || shouldCoalesceDelete);
+        HFControllerCoalescedUndo *previousUndoCoalescer = controller->undoCoalescer;
+        /* If our changes should be coalesced, then we do not add an undo group, because it would just create an empty group that would interfere with our undo/redo tests below */
+        if (! expectedCoalesced) [undoer beginUndoGrouping];
+        
+        [controller insertData:replacementData];
+        BOOL wasCoalesced = (controller->undoCoalescer == previousUndoCoalescer);
+        HFTEST(expectedCoalesced == wasCoalesced);
+        
+        HFTEST([[controller byteArray] _debugIsEqualToData:expectedData]);
+        if (wasCoalesced) [expectations removeLastObject];
+        [expectations addObject:[[expectedData copy] autorelease]];
+        
+        if (! expectedCoalesced) [undoer endUndoGrouping];
+        
+        [pool release];
+        
+        coalescerActionPoint = HFSum(replacementRange.location, replacementDataLength);
+    }
+    
+    NSUInteger expectationIndex = [expectations count] - 1;
+    
+    HFTEST([[controller byteArray] _debugIsEqualToData:[expectations objectAtIndex:expectationIndex]]);
+    
+    for (i=1; i <= opCount; i++) {
+        NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+        
+        NSInteger expectationIndexChange;
+        if (expectationIndex == [expectations count] - 1) {
+            expectationIndexChange = -1;
+        }
+        else if (expectationIndex == 0) {
+            expectationIndexChange = 1;
+        }
+        else {
+            expectationIndexChange = ((random() & 1) ? -1 : 1);
+        }
+        expectationIndex += expectationIndexChange;
+        if (expectationIndexChange > 0) {
+            DEBUG printf("About to redo %d %d\n", i, expectationIndex);
+            HFTEST([undoer canRedo]);
+            [undoer redo];
+        }
+        else {
+            DEBUG printf("About to undo %d %d\n", i, expectationIndex);
+            HFTEST([undoer canUndo]);
+            [undoer undo]; 
+        }
+        
+        DEBUG printf("Index %d %d\n", i, expectationIndex);
+        HFTEST([[controller byteArray] _debugIsEqualToData:[expectations objectAtIndex:expectationIndex]]);
+        
+        [pool release];
+    }
+    
+    DEBUG puts("Done!");
+}
+
 + (void)_testByteArray {
     const BOOL should_debug = NO;
-#define DEBUG if (should_debug)  
     DEBUG puts("Beginning TAVL Tree test:");
     HFByteArray* first = [[[HFFullMemoryByteArray alloc] init] autorelease];
     HFByteArray* second = [[[HFFullMemoryByteArray alloc] init] autorelease];
@@ -1283,9 +1442,19 @@ static NSData *randomDataOfLength(NSUInteger length) {
     DEBUG printf("%s\n", [[second description] UTF8String]);
 }
 
+static void exception_thrown(const char *methodName, NSException *exception) {
+    printf("Test %s threw exception %s\n", methodName, [[exception description] UTF8String]);
+    puts("I'm bailing out.  Better luck next time.");
+    exit(0);
+}
+
 + (void)_runAllTests {
-    [self _testRangeFunctions];
-    [self _testByteArray];
+    @try { [self _testRangeFunctions]; }
+    @catch (NSException *localException) { exception_thrown("_testRangeFunctions", localException); }
+    @try { [self _testByteArray]; }
+    @catch (NSException *localException) { exception_thrown("_testByteArray", localException); }
+    @try { [self _testTextInsertion]; }
+    @catch (NSException *localException) { exception_thrown("_testTextInsertion", localException); }
 
 }
 #endif

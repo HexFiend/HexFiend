@@ -65,8 +65,36 @@
     [self showViewForRepresenter:statusBarRepresenter];
 }
 
+/* When our line counting view needs more space, we increase the size of our window, and also move it left by the same amount so that the other content does not appear to move. */
 - (void)lineCountingViewChangedWidth:(NSNotification *)note {
-    NSLog(@"Count: %f", [lineCountingRepresenter preferredWidth]);
+    HFASSERT([note object] == lineCountingRepresenter);
+    NSView *lineCountingView = [lineCountingRepresenter view];
+    
+    /* Don't do anything window changing if we're not in a window yet */
+    NSWindow *lineCountingViewWindow = [lineCountingView window];
+    if (! lineCountingViewWindow) return;
+    
+    HFASSERT(lineCountingViewWindow == [self window]);
+    
+    CGFloat currentWidth = NSWidth([lineCountingView frame]);
+    CGFloat newWidth = [lineCountingRepresenter preferredWidth];
+    if (newWidth != currentWidth) {
+        CGFloat widthChange = newWidth - currentWidth; //if we shrink, widthChange will be negative
+        CGFloat windowWidthChange = [[lineCountingView superview] convertSize:NSMakeSize(widthChange, 0) toView:nil].width;
+        windowWidthChange = (windowWidthChange < 0 ? HFFloor(windowWidthChange) : HFCeil(windowWidthChange));
+        
+        /* convertSize: has a nasty habit of stomping on negatives.  Make our window width negative if our view-space horizontal change was negative. */
+#if __LP64__
+        windowWidthChange = copysign(windowWidthChange, widthChange);
+#else
+        windowWidthChange = copysignf(windowWidthChange, widthChange);
+#endif
+        
+        NSRect windowFrame = [lineCountingViewWindow frame];
+        windowFrame.size.width += windowWidthChange;
+        windowFrame.origin.x -= windowWidthChange;
+        [lineCountingViewWindow setFrame:windowFrame display:YES animate:NO];
+    }
 }
 
 - init {

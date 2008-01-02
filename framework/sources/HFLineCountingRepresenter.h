@@ -11,9 +11,10 @@
 
 @interface HFLineCountingRepresenter : HFRepresenter {
     CGFloat lineHeight;
-    NSFont *font;
     NSUInteger digitsToRepresentContentsLength;
     NSUInteger minimumDigitCount;
+    CGFloat preferredWidth;
+    CGFloat digitAdvance;
 }
 
 /* Set the minimum amount of space for digits that will always be visible. */

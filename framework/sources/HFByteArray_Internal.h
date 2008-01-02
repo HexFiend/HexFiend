@@ -2,6 +2,7 @@
 
 @interface HFByteArray (HFInternal)
 
-- (BOOL)_debugIsEqual:val;
+- (BOOL)_debugIsEqual:(HFByteArray *)val;
+- (BOOL)_debugIsEqualToData:(NSData *)val;
 
 @end

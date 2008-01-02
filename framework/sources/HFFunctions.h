@@ -71,10 +71,6 @@ static inline BOOL HFRangeIsSubrangeOfRange(HFRange needle, HFRange haystack) {
     return YES;
 }
 
-static inline BOOL HFRangeIsEmptyAndAtEndOfRange(HFRange needle, HFRange haystack) {
-    return needle.length == 0 && needle.location == HFMaxRange(haystack);
-}
-
 static inline BOOL HFIntersectsRange(HFRange a, HFRange b) {
     // Ranges are said to intersect if they share at least one value.  Therefore, zero length ranges never intersect anything.
     if (a.length == 0 || b.length == 0) return NO;

@@ -10,7 +10,7 @@
 
 @class HFByteSlice;
 
-@interface HFByteArray : NSObject {
+@interface HFByteArray : NSObject <NSCopying, NSMutableCopying> {
 
 }
 

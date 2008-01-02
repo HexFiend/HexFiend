@@ -62,8 +62,7 @@ typedef NSUInteger HFControllerMovementQuantity;
     unsigned long long selectionAnchor;
     HFRange selectionAnchorRange;
     
-    unsigned long long typingUndoOptimizationInsertionLocation;
-    HFControllerCoalescedUndo *coalescedUndo;
+    HFControllerCoalescedUndo *undoCoalescer;
     
     struct  {
         unsigned editable:1;
@@ -100,8 +99,17 @@ typedef NSUInteger HFControllerMovementQuantity;
 
 - (CGFloat)lineHeight;
 
-- (NSArray *)selectedContentsRanges; //returns an array of HFRangeWrappers
 - (unsigned long long)contentsLength; //returns total length of contents
+
+- (NSArray *)selectedContentsRanges; //returns an array of HFRangeWrappers
+
+/* Method for directly setting the selected contents ranges.  Pass an array of HFRangeWrappers that meets the following criteria:
+    The array must not be NULL.
+    There always must be at least one selected range.
+    If any range has length 0, there must be exactly one selected range.
+    No range may extend beyond the contentsLength, with the exception of a single zero-length range, which may be at the end.
+*/
+- (void)setSelectedContentsRanges:(NSArray *)selectedRanges;
 
 /* Methods for getting at data */
 - (NSData *)dataForRange:(HFRange)range;

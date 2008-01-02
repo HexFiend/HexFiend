@@ -24,7 +24,7 @@ static NSUInteger digit_count(unsigned long long val) {
             high = mid;
         }
     }
-    return MIN(1, low);
+    return MAX(1, low);
 }
 
 @implementation HFLineCountingRepresenter
@@ -43,11 +43,55 @@ static NSUInteger digit_count(unsigned long long val) {
     return result;
 }
 
+- (void)postMinimumViewWidthChangedNotification {
+    [[NSNotificationCenter defaultCenter] postNotificationName:HFLineCountingRepresenterMinimumViewWidthChanged object:self];
+}
+
+- (void)updateDigitAdvanceWithFont:(NSFont *)font {
+    REQUIRE_NOT_NULL(font);
+    font = [font screenFont];
+    CGFloat maxDigitAdvance = 0;
+    NSDictionary *attributesDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:font, NSFontAttributeName, nil];
+    NSTextStorage *storage = [[NSTextStorage alloc] init];
+    NSLayoutManager *manager = [[NSLayoutManager alloc] init];
+    [storage setFont:font];
+    [storage addLayoutManager:manager];
+    
+    NSSize advancements[16] = {};
+    NSGlyph glyphs[16];
+    
+    for (NSUInteger i=0; i < 16; i++) {
+        char c = "0123456789ABCDEF"[i];
+        NSString *string = [[NSString alloc] initWithBytes:&c length:1 encoding:NSASCIIStringEncoding];
+        [storage replaceCharactersInRange:NSMakeRange(0, (i ? 1 : 0)) withString:string];
+        [string release];
+        glyphs[i] = [manager glyphAtIndex:0 isValidIndex:NULL];
+        HFASSERT(glyphs[i] != NSNullGlyph);
+    }
+    
+    [font getAdvancements:advancements forGlyphs:glyphs count:sizeof glyphs / sizeof *glyphs];
+    
+    [manager release];
+    [attributesDictionary release];
+    [storage release];
+    
+    for (NSUInteger i=0; i < sizeof glyphs / sizeof *glyphs; i++) {
+        maxDigitAdvance = HFMax(maxDigitAdvance, advancements[i].width);
+    }
+    
+    if (digitAdvance != maxDigitAdvance) {
+        digitAdvance = maxDigitAdvance;
+        [self postMinimumViewWidthChangedNotification];
+    }
+}
+
 - (void)updateFontAndLineHeight {
     HFLineCountingView *view = [self view];
     HFController *controller = [self controller];
-    [view setFont:controller ? [controller font] : [NSFont fontWithName:@"Monaco" size:(CGFloat)10.]];
+    NSFont *font = controller ? [controller font] : [NSFont fontWithName:@"Monaco" size:(CGFloat)10.];
+    [view setFont:font];
     [view setLineHeight: controller ? [controller lineHeight] : (CGFloat)10.];
+    [self updateDigitAdvanceWithFont:font];
 }
 
 - (void)updateBytesPerLine {
@@ -63,12 +107,8 @@ static NSUInteger digit_count(unsigned long long val) {
     [[self view] setLineRangeToDraw:lineRange];
 }
 
-- (void)postMinimumViewWidthChangedNotification {
-    [[NSNotificationCenter defaultCenter] postNotificationName:HFLineCountingRepresenterMinimumViewWidthChanged object:self];
-}
-
 - (CGFloat)preferredWidth {
-    return (CGFloat)10. + digitsToRepresentContentsLength * (CGFloat)12.;
+    return (CGFloat)10. + digitsToRepresentContentsLength * digitAdvance;
 }
 
 - (void)updateMinimumViewWidth {

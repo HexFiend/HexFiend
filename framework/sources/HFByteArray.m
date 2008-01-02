@@ -42,6 +42,16 @@
 
 - (HFByteArray *)subarrayWithRange:(HFRange)range { USE(range); UNIMPLEMENTED(); }
 
+- mutableCopyWithZone:(NSZone *)zone {
+    USE(zone);
+    return [[self subarrayWithRange:HFRangeMake(0, [self length])] retain];
+}
+
+- copyWithZone:(NSZone *)zone {
+    USE(zone);
+    return [[self subarrayWithRange:HFRangeMake(0, [self length])] retain];
+}
+
 - (void)deleteBytesInRange:(HFRange)lrange {
     HFByteSlice* slice = [[HFFullMemoryByteSlice alloc] initWithData:[NSData data]];
     [self insertByteSlice:slice inRange:lrange];
@@ -96,6 +106,17 @@
         }
     }
     return YES;
+}
+
+- (BOOL)_debugIsEqualToData:(NSData *)val {
+    REQUIRE_NOT_NULL(val);
+    HFByteArray *byteArray = [[NSClassFromString(@"HFFullMemoryByteArray") alloc] init];
+    HFByteSlice *byteSlice = [[HFFullMemoryByteSlice alloc] initWithData:val];
+    [byteArray insertByteSlice:byteSlice inRange:HFRangeMake(0, 0)];
+    [byteSlice release];
+    BOOL result = [self _debugIsEqual:byteArray];
+    [byteArray release];
+    return result;
 }
 
 @end

@@ -11,14 +11,26 @@
 
 @class HFByteArray;
 
+/* A class to track the following operation - replace the data within rangeToReplace with the replacementByteArray */
 @interface HFControllerCoalescedUndo : NSObject {
-    HFRange rangeToReplace;
-    HFByteArray *replacementByteArray;
+    unsigned long long anchorPoint;
+    unsigned long long actionPoint;
+    HFByteArray *deletedData;
+    BOOL byteArrayWasCopied;
 }
 
-- (HFRange)rangeToReplace;
-- (void)setRangeToReplace:(HFRange)range;
+/* replacedData may be nil if it should be considered empty */
+- initWithReplacedData:(HFByteArray *)replacedData atAnchorLocation:(unsigned long long)anchor;
 
-- (HFByteArray *)replacementByteArray;
+- (BOOL)canCoalesceAppendInRange:(HFRange)range;
+- (BOOL)canCoalesceDeleteInRange:(HFRange)range;
+
+- (void)appendDataOfLength:(unsigned long long)length;
+- (void)deleteDataOfLength:(unsigned long long)length withByteArray:(HFByteArray *)array;
+
+- (HFRange)rangeToReplace;
+- (HFByteArray *)deletedData;
+
+- (HFControllerCoalescedUndo *)invertWithByteArray:(HFByteArray *)byteArray;
 
 @end

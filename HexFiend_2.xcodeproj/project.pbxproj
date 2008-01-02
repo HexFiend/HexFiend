@@ -47,6 +47,8 @@
 		D0A436590CDC811D000F7550 /* HFFunctions.m in Sources */ = {isa = PBXBuildFile; fileRef = D0A436570CDC8115000F7550 /* HFFunctions.m */; };
 		D0A4373A0CDD4EDD000F7550 /* HFTextRepresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = D0A437380CDD4EDD000F7550 /* HFTextRepresenter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D0A4373B0CDD4EDD000F7550 /* HFTextRepresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = D0A437390CDD4EDD000F7550 /* HFTextRepresenter.m */; };
+		D0A47C110D288EDF00CB9BB9 /* HFControllerCoalescedUndo.h in Headers */ = {isa = PBXBuildFile; fileRef = D0A47C0F0D288EDF00CB9BB9 /* HFControllerCoalescedUndo.h */; };
+		D0A47C120D288EDF00CB9BB9 /* HFControllerCoalescedUndo.m in Sources */ = {isa = PBXBuildFile; fileRef = D0A47C100D288EDF00CB9BB9 /* HFControllerCoalescedUndo.m */; };
 		D0A90B050D160414008975B9 /* HFStatusBarRepresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = D0A90B030D160414008975B9 /* HFStatusBarRepresenter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D0A90B060D160414008975B9 /* HFStatusBarRepresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = D0A90B040D160414008975B9 /* HFStatusBarRepresenter.m */; };
 		D0A90B670D161816008975B9 /* HFMetalGradientVertical.tiff in Resources */ = {isa = PBXBuildFile; fileRef = D0A90B660D161816008975B9 /* HFMetalGradientVertical.tiff */; };
@@ -138,6 +140,8 @@
 		D0A436570CDC8115000F7550 /* HFFunctions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFFunctions.m; path = framework/sources/HFFunctions.m; sourceTree = "<group>"; };
 		D0A437380CDD4EDD000F7550 /* HFTextRepresenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFTextRepresenter.h; path = framework/sources/HFTextRepresenter.h; sourceTree = "<group>"; };
 		D0A437390CDD4EDD000F7550 /* HFTextRepresenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFTextRepresenter.m; path = framework/sources/HFTextRepresenter.m; sourceTree = "<group>"; };
+		D0A47C0F0D288EDF00CB9BB9 /* HFControllerCoalescedUndo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFControllerCoalescedUndo.h; path = framework/sources/HFControllerCoalescedUndo.h; sourceTree = "<group>"; };
+		D0A47C100D288EDF00CB9BB9 /* HFControllerCoalescedUndo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFControllerCoalescedUndo.m; path = framework/sources/HFControllerCoalescedUndo.m; sourceTree = "<group>"; };
 		D0A90B030D160414008975B9 /* HFStatusBarRepresenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFStatusBarRepresenter.h; path = framework/sources/HFStatusBarRepresenter.h; sourceTree = "<group>"; };
 		D0A90B040D160414008975B9 /* HFStatusBarRepresenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFStatusBarRepresenter.m; path = framework/sources/HFStatusBarRepresenter.m; sourceTree = "<group>"; };
 		D0A90B660D161816008975B9 /* HFMetalGradientVertical.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = HFMetalGradientVertical.tiff; path = framework/resources/HFMetalGradientVertical.tiff; sourceTree = "<group>"; };
@@ -296,6 +300,8 @@
 				D08F5DF40CDE822D007EFFE8 /* ByteArray */,
 				D01E7BEA0CDC55D000943F9E /* HFController.h */,
 				D01E7BEB0CDC55D000943F9E /* HFController.m */,
+				D0A47C0F0D288EDF00CB9BB9 /* HFControllerCoalescedUndo.h */,
+				D0A47C100D288EDF00CB9BB9 /* HFControllerCoalescedUndo.m */,
 				D01E7BC60CDC53B300943F9E /* HexFiend_2_Framework_Prefix.pch */,
 				D01E7C010CDC569F00943F9E /* Resources */,
 			);
@@ -364,6 +370,7 @@
 				D0A9F3FD0CFBEAD50077D577 /* HFLineCountingView.h in Headers */,
 				D0A402F30D0D43F4006BC574 /* HFLayoutRepresenter.h in Headers */,
 				D0A90B050D160414008975B9 /* HFStatusBarRepresenter.h in Headers */,
+				D0A47C110D288EDF00CB9BB9 /* HFControllerCoalescedUndo.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -483,6 +490,7 @@
 				D0A9F3FE0CFBEAD50077D577 /* HFLineCountingView.m in Sources */,
 				D0A402F40D0D43F4006BC574 /* HFLayoutRepresenter.m in Sources */,
 				D0A90B060D160414008975B9 /* HFStatusBarRepresenter.m in Sources */,
+				D0A47C120D288EDF00CB9BB9 /* HFControllerCoalescedUndo.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -597,6 +605,7 @@
 					x86_64,
 				);
 				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_PREPROCESSOR_DEFINITIONS = "NDEBUG=1";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.4;

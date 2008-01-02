@@ -80,6 +80,7 @@
     HFController *controller = [self controller];
     CGFloat value, proportion;
     NSScroller *scroller = [self view];
+    BOOL enable = YES;
     if (controller == nil) {
         value = 0;
         proportion = 0;
@@ -91,6 +92,7 @@
         if (length == 0) {
             value = 0;
             proportion = 1;
+            enable = NO;
         }
         else {
             long double availableLines = HFULToFP([controller totalLineCount]);
@@ -99,7 +101,12 @@
             
             long double maxScroll = availableLines - consumedLines;
             HFASSERT(maxScroll >= lineRange.location);
-            value = ld2f(lineRange.location / maxScroll);
+            if (maxScroll == 0.) {
+                enable = NO;
+            }
+            else {
+                value = ld2f(lineRange.location / maxScroll);
+            }
         }
     }
 #if __LP64__
@@ -109,6 +116,7 @@
 #else
     [scroller setFloatValue:value knobProportion:proportion];
 #endif
+    [scroller setEnabled:enable];
 }
 
 - (CGFloat)minimumViewWidthForBytesPerLine:(NSUInteger)bytesPerLine {
