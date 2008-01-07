@@ -103,6 +103,7 @@
             HFASSERT(maxScroll >= lineRange.location);
             if (maxScroll == 0.) {
                 enable = NO;
+                value = 0;
             }
             else {
                 value = ld2f(lineRange.location / maxScroll);

@@ -1102,7 +1102,15 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
     [self _commandDeleteRanges:[HFRangeWrapper organizeAndMergeRanges:selectedContentsRanges]];
 }
 
-- (void)insertData:(NSData *)data {
+- (void)insertData:(NSData *)data replacingPreviousBytes:(unsigned long long)previousBytes {
+#if ! NDEBUG
+    if (previousBytes > 0) {
+        NSArray *selectedRanges = [self selectedContentsRanges];
+        HFASSERT([selectedRanges count] == 1);
+        HFRange selectedRange = [[selectedRanges objectAtIndex:0] HFRange];
+        HFASSERT(selectedRange.location >= previousBytes);
+    }
+#endif    
     REQUIRE_NOT_NULL(data);
     BEGIN_TRANSACTION();
     
@@ -1136,8 +1144,16 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
     
     amountDeleted = HFSum(amountDeleted, rangeToReplace.length);
     
-    /* Start undo */
+    /* Start undo.  If we have previousBytes, remove those first. */
+    if (previousBytes > 0) {
+        HFASSERT(rangeToReplace.length == 0);
+        HFASSERT(rangeToReplace.location >= previousBytes);
+        [self _activateTypingUndoCoalescingForReplacingRange:HFRangeMake(rangeToReplace.location - previousBytes, previousBytes) withDataOfLength:0];
+        rangeToReplace.location -= previousBytes;
+    }
     [self _activateTypingUndoCoalescingForReplacingRange:rangeToReplace withDataOfLength:amountAdded];
+    
+    if (previousBytes > 0) rangeToReplace.length = previousBytes;
     
     /* Insert data */
     HFByteSlice *slice = [[HFFullMemoryByteSlice alloc] initWithData:data];
@@ -1333,7 +1349,7 @@ static NSUInteger random_upto(NSUInteger val) {
         /* If our changes should be coalesced, then we do not add an undo group, because it would just create an empty group that would interfere with our undo/redo tests below */
         if (! expectedCoalesced) [undoer beginUndoGrouping];
         
-        [controller insertData:replacementData];
+        [controller insertData:replacementData replacingPreviousBytes:0];
         BOOL wasCoalesced = (controller->undoCoalescer == previousUndoCoalescer);
         HFTEST(expectedCoalesced == wasCoalesced);
         

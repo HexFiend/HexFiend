@@ -21,3 +21,8 @@ static inline unsigned long long llmin(unsigned long long a, unsigned long long 
 }
 
 NSImage *HFImageNamed(NSString *name);
+
+/* Returns an NSData from an NSString containing hexadecimal characters.  Characters that are not hexadecimal digits are silently skipped.  Returns by reference whether the last byte contains only one nybble, in which case it will be returned in the low 4 bits of the last byte. */
+NSData *HFDataFromHexString(NSString *string, BOOL* isMissingLastNybble);
+
+NSString *HFHexStringFromData(NSData *data);

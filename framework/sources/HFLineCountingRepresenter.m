@@ -115,7 +115,11 @@ static NSUInteger digit_count(unsigned long long val) {
     HFController *controller = [self controller];
     if (controller) {
         unsigned long long contentsLength = [controller contentsLength];
-        NSUInteger digitCount = digit_count(contentsLength);
+        NSUInteger bytesPerLine = [controller bytesPerLine];
+        /* We want to know how many lines are displayed.  That's equal to the contentsLength divided by bytesPerLine rounded down, except in the case that we're at the end of a line, in which case we need to show one more.  Hence adding 1 and dividing gets us the right result. */
+        unsigned long long lineCount = contentsLength / bytesPerLine;
+        unsigned long long contentsLengthRoundedToLine = HFProductULL(lineCount, bytesPerLine);
+        NSUInteger digitCount = digit_count(contentsLengthRoundedToLine);
         NSUInteger digitWidth = MAX(minimumDigitCount, digitCount);
         if (digitWidth != digitsToRepresentContentsLength) {
             digitsToRepresentContentsLength = digitWidth;

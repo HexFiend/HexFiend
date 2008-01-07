@@ -149,8 +149,8 @@ typedef NSUInteger HFControllerMovementQuantity;
 
 /* Text editing.  All of the following methods are undoable. */
 
-/* Replaces the selection with the given data. */
-- (void)insertData:(NSData *)data;
+/* Replaces the selection with the given data.  For something like a hex view representer, it takes two keypresses to create a whole byte; the way this is implemented, the first keypress goes into the data as a complete byte, and the second one (if any) replaces it.  If previousByteCount > 0, then that many prior bytes are replaced, without breaking undo coalescing.  For previousByteCount to be > 0, the following must be true: There is only one selected range, and it is of length 0, and its location >= previousByteCount */
+- (void)insertData:(NSData *)data replacingPreviousBytes:(unsigned long long)previousByteCount;
 
 /* Deletes the selection */
 - (void)deleteSelection;

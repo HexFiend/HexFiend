@@ -249,3 +249,65 @@ BOOL HFStringEncodingIsSupersetOfASCII(NSStringEncoding encoding) {
             return NO;
     }
 }
+
+/* Converts a hexadecimal digit into a corresponding 4 bit unsigned int; returns -1 on failure.  The ... is a gcc extension. */
+static NSInteger char2hex(unichar c) {
+    switch (c) {
+        case '0' ... '9': return c - '0';
+        case 'a' ... 'f': return c - 'a' + 10;
+        case 'A' ... 'F': return c - 'A' + 10;
+        default: return -1;
+    }
+}
+
+static unsigned char hex2char(NSUInteger c) {
+    HFASSERT(c < 16);
+    return "0123456789ABCDEF"[c];
+}
+
+NSData *HFDataFromHexString(NSString *string, BOOL* isMissingLastNybble) {
+    REQUIRE_NOT_NULL(string);
+    NSUInteger stringIndex=0, resultIndex=0, max=[string length];
+    NSMutableData* result = [NSMutableData dataWithLength:(max + 1)/2];
+    unsigned char* bytes = [result mutableBytes];
+    
+    NSUInteger numNybbles = 0;
+    unsigned char byteValue = 0;
+    
+    for (stringIndex = 0; stringIndex < max; stringIndex++) {
+        NSInteger val = char2hex([string characterAtIndex:stringIndex]);
+        if (val < 0) continue;
+        numNybbles++;
+        byteValue = byteValue * 16 + (unsigned char)val;
+        if (! (numNybbles % 2)) {
+            bytes[resultIndex++] = byteValue;
+            byteValue = 0;
+        }
+    }
+    
+    if (isMissingLastNybble) *isMissingLastNybble = (numNybbles % 2);
+    
+    //final nibble
+    if (numNybbles % 2) {
+        bytes[resultIndex++] = byteValue;
+        byteValue = 0;
+    }
+    
+    [result setLength:resultIndex];
+    return result;    
+}
+
+NSString *HFHexStringFromData(NSData *data) {
+    REQUIRE_NOT_NULL(data);
+    NSUInteger dataLength = [data length];
+    NSUInteger stringLength = HFProductInt(dataLength, 2);
+    const unsigned char *bytes = [data bytes];
+    unsigned char *charBuffer = check_malloc(stringLength);
+    NSUInteger charIndex = 0, byteIndex;
+    for (byteIndex = 0; byteIndex < dataLength; byteIndex++) {
+        unsigned char byte = bytes[byteIndex];
+        charBuffer[charIndex++] = hex2char(byte >> 4);
+        charBuffer[charIndex++] = hex2char(byte & 0xF);
+    }
+    return [[[NSString alloc] initWithBytesNoCopy:charBuffer length:stringLength encoding:NSASCIIStringEncoding freeWhenDone:YES] autorelease];
+}

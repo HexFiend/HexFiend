@@ -10,7 +10,8 @@
 
 
 @interface HFHexTextRepresenter : HFTextRepresenter {
-
+    unsigned long long omittedNybbleLocation;
+    unsigned char unpartneredLastNybble;
 }
 
 @end

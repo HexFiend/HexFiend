@@ -36,7 +36,7 @@
         NSBeep();
     }
     else {
-        [[self controller] insertData:data];
+        [[self controller] insertData:data replacingPreviousBytes:0];
     }
 }
 
