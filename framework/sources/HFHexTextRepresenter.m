@@ -91,7 +91,6 @@
 - (void)controllerDidChange:(HFControllerPropertyBits)bits {
     [super controllerDidChange:bits];
     if (bits & (HFControllerContentValue | HFControllerContentLength | HFControllerSelectedRanges)) {
-        NSLog(@"Clearing");
         [self _clearOmittedNybble];
     }
 }

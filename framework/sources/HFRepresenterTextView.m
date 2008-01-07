@@ -32,13 +32,20 @@ static const NSTimeInterval HFCaretBlinkFrequency = 0.56;
     return glyphCount;
 }
 
+- (NSArray *)displayedSelectedContentsRanges {
+    if (! cachedSelectedRanges) {
+        cachedSelectedRanges = [[[self representer] displayedSelectedContentsRanges] copy];
+    }
+    return cachedSelectedRanges;
+}
+
 - (BOOL)_shouldHaveCaretTimer {
     NSWindow *window = [self window];
     if (window == NULL) return NO;
     if (! [window isKeyWindow]) return NO;
     if (self != [window firstResponder]) return NO;
     if (! _hftvflags.editable) return NO;
-    NSArray *ranges = [[self representer] displayedSelectedContentsRanges];
+    NSArray *ranges = [self displayedSelectedContentsRanges];
     if ([ranges count] != 1) return NO;
     NSRange range = [[ranges objectAtIndex:0] rangeValue];
     if (range.length != 0) return NO;
@@ -66,7 +73,7 @@ static const NSTimeInterval HFCaretBlinkFrequency = 0.56;
 }
 
 - (NSRect)caretRect {
-    NSArray *ranges = [[self representer] displayedSelectedContentsRanges];
+    NSArray *ranges = [self displayedSelectedContentsRanges];
     HFASSERT([ranges count] == 1);
     NSRange range = [[ranges objectAtIndex:0] rangeValue];
     HFASSERT(range.length == 0);
@@ -89,9 +96,9 @@ static const NSTimeInterval HFCaretBlinkFrequency = 0.56;
     }
 }
 
-- (void)_updateCaretTimer {
+- (void)_updateCaretTimerWithFirstResponderStatus:(BOOL)treatAsHavingFirstResponder {
     BOOL hasCaretTimer = !! caretTimer;
-    BOOL shouldHaveCaretTimer = [self _shouldHaveCaretTimer];
+    BOOL shouldHaveCaretTimer = treatAsHavingFirstResponder && [self _shouldHaveCaretTimer];
     if (shouldHaveCaretTimer == YES && hasCaretTimer == NO) {
         caretTimer = [[NSTimer timerWithTimeInterval:HFCaretBlinkFrequency target:self selector:@selector(_blinkCaret:) userInfo:nil repeats:YES] retain];
         NSRunLoop *loop = [NSRunLoop currentRunLoop];
@@ -113,6 +120,10 @@ static const NSTimeInterval HFCaretBlinkFrequency = 0.56;
     HFASSERT(shouldHaveCaretTimer == !! caretTimer);
 }
 
+- (void)_updateCaretTimer {
+    [self _updateCaretTimerWithFirstResponderStatus: self == [[self window] firstResponder]];
+}
+
 /* When you click or type, the caret appears immediately - do that here */
 - (void)_forceCaretOnIfHasCaretTimer {
     if (caretTimer) {
@@ -127,10 +138,47 @@ static const NSTimeInterval HFCaretBlinkFrequency = 0.56;
     }
 }
 
+- (void)_updateMin:(NSUInteger *)inoutMinLine andMaxLine:(NSUInteger *)inoutMaxLine withRanges:(NSArray *)ranges {
+    NSUInteger minLine = *inoutMinLine, maxLine = *inoutMaxLine;
+    NSUInteger bytesPerLine = [self bytesPerLine];
+    FOREACH(NSValue *, rangeValue, ranges) {
+        NSRange range = [rangeValue rangeValue];
+        if (range.length > 0) {
+            NSUInteger lineForRangeStart = range.location / bytesPerLine;
+            NSUInteger lineForRangeEnd = NSMaxRange(range) / bytesPerLine;
+            HFASSERT(lineForRangeStart <= lineForRangeEnd);
+            minLine = MIN(minLine, lineForRangeStart);
+            maxLine = MAX(maxLine, lineForRangeEnd);
+        }
+    }
+    *inoutMinLine = minLine;
+    *inoutMaxLine = maxLine;
+}
+
 - (void)updateSelectedRanges {
+    NSRect rectToRedisplay = NSZeroRect;
+    
+    /* Determine the first line that contains a character that was before or is now selected, and similarly the last line.  Redisplay the rects between them.  Note that this should be improved - we should take the XOR of the ranges and redisplay that.  The caret rects are handled before by explicitly invalidating lastDrawnCaretRect and then calling _forceCaretOn... which will draw the new one. */
+    NSArray *oldSelectedRanges = cachedSelectedRanges;
+    cachedSelectedRanges = [[[self representer] displayedSelectedContentsRanges] copy];
+    NSUInteger minLineWithSelection = NSUIntegerMax;
+    NSUInteger maxLineWithSelection = 0;
+    if (oldSelectedRanges) [self _updateMin:&minLineWithSelection andMaxLine:&maxLineWithSelection withRanges:oldSelectedRanges];
+    [self _updateMin:&minLineWithSelection andMaxLine:&maxLineWithSelection withRanges:cachedSelectedRanges];
+    
+    if (maxLineWithSelection >= minLineWithSelection) {
+        NSUInteger bytesPerLine = [self bytesPerLine];;
+        NSRect bounds = [self bounds];
+        rectToRedisplay.origin.x = NSMinX(bounds);
+        rectToRedisplay.size.width = NSWidth(bounds);
+        rectToRedisplay.origin.y = [self originForCharacterAtIndex:minLineWithSelection * bytesPerLine].y;
+        rectToRedisplay.size.height = [self lineHeight] * (maxLineWithSelection - minLineWithSelection + 1);
+        [self setNeedsDisplayInRect:rectToRedisplay];
+    }
+    if (! NSIsEmptyRect(lastDrawnCaretRect) && ! NSContainsRect(rectToRedisplay, lastDrawnCaretRect)) [self setNeedsDisplayInRect:lastDrawnCaretRect];
+    
     [self _updateCaretTimer];
     [self _forceCaretOnIfHasCaretTimer];
-    [self setNeedsDisplay:YES]; /* redraw us for the selection changes */
 }
 
 - (void)drawCaretIfNecessaryWithClip:(NSRect)clipRect {
@@ -151,7 +199,7 @@ static const NSTimeInterval HFCaretBlinkFrequency = 0.56;
 }
 
 - (void)drawSelectionIfNecessaryWithClip:(NSRect)clipRect {
-    NSArray *ranges = [[self representer] displayedSelectedContentsRanges];
+    NSArray *ranges = [self displayedSelectedContentsRanges];
     NSUInteger bytesPerLine = [self bytesPerLine];
     NSColor *textHighlightColor = ([self shouldHaveForegroundHighlightColor] ? [NSColor selectedTextBackgroundColor] : [NSColor colorWithCalibratedWhite: (CGFloat)(212./255.) alpha:1]);
     [textHighlightColor set];
@@ -184,13 +232,13 @@ static const NSTimeInterval HFCaretBlinkFrequency = 0.56;
 
 - (BOOL)becomeFirstResponder {
     BOOL result = [super becomeFirstResponder];
-    [self _updateCaretTimer];
+    [self _updateCaretTimerWithFirstResponderStatus:YES];
     return result;
 }
 
 - (BOOL)resignFirstResponder {
     BOOL result = [super resignFirstResponder];
-    [self _updateCaretTimer];
+    [self _updateCaretTimerWithFirstResponderStatus:NO];
     return result;
 }
 
@@ -305,10 +353,10 @@ static const NSTimeInterval HFCaretBlinkFrequency = 0.56;
     [caretTimer release];
     [font release];
     [data release];
+    [cachedSelectedRanges release];
     NSWindow *window = [self window];
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
     if (window) {
-        NSLog(@"Removing for %p", window);
         [center removeObserver:self name:NSWindowDidBecomeKeyNotification object:window];
         [center removeObserver:self name:NSWindowDidResignKeyNotification object:window];        
     }

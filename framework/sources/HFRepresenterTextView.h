@@ -14,6 +14,7 @@
 @interface HFRepresenterTextView : NSView {
     @private;
     HFTextRepresenter *representer;
+    NSArray *cachedSelectedRanges;
     NSFont *font;
     NSData *data;
     CGFloat verticalOffset;

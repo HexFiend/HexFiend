@@ -21,7 +21,7 @@
 }
 
 - (NSArray *)representers {
-    return [NSArray arrayWithObjects:lineCountingRepresenter, hexRepresenter, asciiRepresenter, scrollRepresenter, nil];
+    return [NSArray arrayWithObjects:lineCountingRepresenter, hexRepresenter, asciiRepresenter, scrollRepresenter, statusBarRepresenter, nil];
 }
 
 - (void)showViewForRepresenter:(HFRepresenter *)rep {
