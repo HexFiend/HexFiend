@@ -787,4 +787,24 @@ enum LineCoverage_t {
     [[self representer] selectAll:sender];
 }
 
+/* Indicates whether at least one byte is selected */
+- (BOOL)_selectionIsNonEmpty {
+    NSArray *selection = [[[self representer] controller] selectedContentsRanges];
+    FOREACH(HFRangeWrapper *, rangeWrapper, selection) {
+        if ([rangeWrapper HFRange].length > 0) return YES;
+    }
+    return NO;
+}
+
+- (void)copy:sender {
+    NSPasteboard *pb = [NSPasteboard generalPasteboard];
+}
+
+- (BOOL)validateMenuItem:(NSMenuItem *)item {
+    SEL action = [item action];
+    if (action == @selector(selectAll:)) return YES;
+    else if (action == @selector(copy:)) return [self _selectionIsNonEmpty];
+    else return YES;
+}
+
 @end
