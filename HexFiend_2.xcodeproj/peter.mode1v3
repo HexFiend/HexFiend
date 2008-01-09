@@ -231,8 +231,6 @@
 			<key>Layout</key>
 			<array>
 				<dict>
-					<key>BecomeActive</key>
-					<true/>
 					<key>ContentConfiguration</key>
 					<dict>
 						<key>PBXBottomSmartGroupGIDs</key>
@@ -279,7 +277,7 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>9</integer>
+									<integer>8</integer>
 									<integer>2</integer>
 									<integer>0</integer>
 								</array>
@@ -349,6 +347,8 @@
 							<string>0pt</string>
 						</dict>
 						<dict>
+							<key>BecomeActive</key>
+							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
@@ -522,16 +522,18 @@
 	<key>WindowOrderList</key>
 	<array>
 		<string>D05C86DF0D3268FB00D73DF4</string>
+		<string>D05C86D10D32672800D73DF4</string>
 		<string>D05C86B70D3264C500D73DF4</string>
 		<string>D05C86B80D3264C500D73DF4</string>
 		<string>D05C86B90D3264C500D73DF4</string>
 		<string>1C530D57069F1CE1000CFCEE</string>
+		<string>1C78EAAD065D492600B07095</string>
 		<string>1CD10A99069EF8BA00B06720</string>
 		<string>D0560B2F0CDC421E009D2484</string>
 		<string>D05C86FF0D3270AB00D73DF4</string>
+		<string>D05C87CB0D34E89800D73DF4</string>
 		<string>/Users/peter/Bell/HexFiend2/trunk/HexFiend_2/HexFiend_2.xcodeproj</string>
-		<string>1C78EAAD065D492600B07095</string>
-		<string>D05C86D10D32672800D73DF4</string>
+		<string>D05C87D50D34E9CC00D73DF4</string>
 	</array>
 	<key>WindowString</key>
 	<string>607 231 1102 797 0 0 1680 1028 </string>
@@ -555,7 +557,7 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>1CD0528F0623707200166675</string>
 								<key>PBXProjectModuleLabel</key>
-								<string></string>
+								<string>HFRepresenterTextView.m</string>
 								<key>StatusBarVisibility</key>
 								<true/>
 							</dict>
@@ -700,19 +702,19 @@
 									<key>DebugVariablesTableConfiguration</key>
 									<array>
 										<string>Name</string>
-										<real>232</real>
+										<real>337</real>
 										<string>Value</string>
 										<real>85</real>
 										<string>Summary</string>
-										<real>349</real>
+										<real>244</real>
 									</array>
 									<key>Frame</key>
 									<string>{{579, 0}, {691, 330}}</string>
 									<key>RubberWindowFrame</key>
-									<string>403 148 1270 659 0 0 1680 1028 </string>
+									<string>255 197 1270 659 0 0 1680 1028 </string>
 								</dict>
 								<key>RubberWindowFrame</key>
-								<string>403 148 1270 659 0 0 1680 1028 </string>
+								<string>255 197 1270 659 0 0 1680 1028 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXDebugSessionModule</string>
@@ -746,7 +748,7 @@
 			<key>ToolbarConfiguration</key>
 			<string>xcode.toolbar.config.debugV3</string>
 			<key>WindowString</key>
-			<string>403 148 1270 659 0 0 1680 1028 </string>
+			<string>255 197 1270 659 0 0 1680 1028 </string>
 			<key>WindowToolGUID</key>
 			<string>1CD10A99069EF8BA00B06720</string>
 			<key>WindowToolIsVisible</key>
@@ -773,7 +775,7 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CDD528C0622207200134675</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>HFTextRepresenter.m</string>
+										<string>&lt;No Editor&gt;</string>
 										<key>StatusBarVisibility</key>
 										<true/>
 									</dict>
@@ -907,7 +909,7 @@
 			<key>WindowToolGUID</key>
 			<string>1C78EAAD065D492600B07095</string>
 			<key>WindowToolIsVisible</key>
-			<true/>
+			<false/>
 		</dict>
 		<dict>
 			<key>Identifier</key>

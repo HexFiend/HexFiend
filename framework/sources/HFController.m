@@ -787,8 +787,8 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
 - (void)_moveDirectionWithoutModifyingSelection:(HFControllerMovementDirection)direction {
     BEGIN_TRANSACTION();
     BOOL selectionWasEmpty = ([selectedContentsRanges count] == 1 && [[selectedContentsRanges objectAtIndex:0] HFRange].length == 0);
-    /* Vertical movement always telescopes left. */
-    HFRange selectedRange = [self _telescopeSelectionRangeInDirection: (direction == HFControllerDirectionRight ? HFControllerDirectionRight : HFControllerDirectionLeft)];
+    BOOL directionIsForward = (direction == HFControllerDirectionRight || direction == HFControllerDirectionDown);
+    HFRange selectedRange = [self _telescopeSelectionRangeInDirection: (directionIsForward ? HFControllerDirectionRight : HFControllerDirectionLeft)];
     HFASSERT(selectedRange.length == 0);
     switch (direction) {
         case HFControllerDirectionLeft:
@@ -846,7 +846,7 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
     else if (direction == HFControllerDirectionRight || direction == HFControllerDirectionDown) {
         if (maxSelection <= selectionAnchor && maxSelection > minSelection) {
             HFASSERT(contentsLength >= maxSelection);
-            NSUInteger amountToRemove = ll2l(llmin(contentsLength - maxSelection, amountToMove));
+            NSUInteger amountToRemove = ll2l(llmin(maxSelection - minSelection, amountToMove));
             NSUInteger amountToAdd = amountToMove - amountToRemove;
             if (amountToRemove > 0) [self _removeRangeFromSelection:HFRangeMake(minSelection, amountToRemove) withCursorLocationIfAllSelectionRemoved:maxSelection];
             if (amountToAdd > 0) [self _addRangeToSelection:HFRangeMake(maxSelection, amountToAdd)];

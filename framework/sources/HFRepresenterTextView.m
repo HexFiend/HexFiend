@@ -138,8 +138,10 @@ static const NSTimeInterval HFCaretBlinkFrequency = 0.56;
     }
 }
 
-- (void)_updateMin:(NSUInteger *)inoutMinLine andMaxLine:(NSUInteger *)inoutMaxLine withRanges:(NSArray *)ranges {
-    NSUInteger minLine = *inoutMinLine, maxLine = *inoutMaxLine;
+/* Returns the range of lines containing the selected contents ranges (as NSValues containing NSRanges), or {NSNotFound, 0} if ranges is nil or empty */
+- (NSRange)_lineRangeForContentsRanges:(NSArray *)ranges {
+    NSUInteger minLine = NSUIntegerMax;
+    NSUInteger maxLine = 0;
     NSUInteger bytesPerLine = [self bytesPerLine];
     FOREACH(NSValue *, rangeValue, ranges) {
         NSRange range = [rangeValue rangeValue];
@@ -151,32 +153,179 @@ static const NSTimeInterval HFCaretBlinkFrequency = 0.56;
             maxLine = MAX(maxLine, lineForRangeEnd);
         }
     }
-    *inoutMinLine = minLine;
-    *inoutMaxLine = maxLine;
+    if (minLine > maxLine) return NSMakeRange(NSNotFound, 0);
+    else return NSMakeRange(minLine, maxLine - minLine + 1);
+}
+
+- (NSRect)_rectForLineRange:(NSRange)lineRange {
+    HFASSERT(lineRange.location != NSNotFound);
+    NSUInteger bytesPerLine = [self bytesPerLine];
+    NSRect bounds = [self bounds];
+    NSRect result;
+    result.origin.x = NSMinX(bounds);
+    result.size.width = NSWidth(bounds);
+    result.origin.y = [self originForCharacterAtIndex:lineRange.location * bytesPerLine].y;
+    result.size.height = [self lineHeight] * lineRange.length;
+    return result;
+}
+
+static int range_compare(const void *ap, const void *bp) {
+    const NSRange *a = ap;
+    const NSRange *b = bp;
+    if (a->location < b->location) return -1;
+    if (a->location > b->location) return 1;
+    if (a->length < b->length) return -1;
+    if (a->length > b->length) return 1;
+    return 0;
+}
+
+enum LineCoverage_t {
+    eCoverageNone,
+    eCoveragePartial,
+    eCoverageFull
+};
+
+- (void)_linesWithParityChangesFromRanges:(const NSRange *)oldRanges count:(NSUInteger)oldRangeCount toRanges:(const NSRange *)newRanges count:(NSUInteger)newRangeCount intoIndexSet:(NSMutableIndexSet *)result {
+    NSUInteger bytesPerLine = [self bytesPerLine];
+    NSUInteger oldParity=0, newParity=0;
+    NSUInteger oldRangeIndex = 0, newRangeIndex = 0;
+    NSUInteger currentCharacterIndex = MIN(oldRanges[oldRangeIndex].location, newRanges[newRangeIndex].location);
+    oldParity = (currentCharacterIndex >= oldRanges[oldRangeIndex].location);
+    newParity = (currentCharacterIndex >= newRanges[newRangeIndex].location);
+//    NSLog(@"Old %s, new %s at %u (%u, %u)", oldParity ? "on" : "off", newParity ? "on" : "off", currentCharacterIndex, oldRanges[oldRangeIndex].location, newRanges[newRangeIndex].location);
+    for (;;) {
+        NSUInteger oldDivision = NSUIntegerMax, newDivision = NSUIntegerMax;
+        /* Move up to the next parity change */
+        if (oldRangeIndex < oldRangeCount) {
+            const NSRange oldRange = oldRanges[oldRangeIndex];
+            oldDivision = oldRange.location + (oldParity ? oldRange.length : 0);
+        }
+        if (newRangeIndex < newRangeCount) {
+            const NSRange newRange = newRanges[newRangeIndex];            
+            newDivision = newRange.location + (newParity ? newRange.length : 0);
+        }
+
+        NSUInteger division = MIN(oldDivision, newDivision);
+        HFASSERT(division > currentCharacterIndex);
+        
+//        NSLog(@"Division %u", division);
+        
+        if (division == NSUIntegerMax) break;
+        
+        if (oldParity != newParity) {
+            /* The parities did not match through this entire range, so all intersected lines to the result index set */
+            NSUInteger startLine = currentCharacterIndex / bytesPerLine;
+            NSUInteger endLine = HFDivideULRoundingUp(division, bytesPerLine);
+            HFASSERT(endLine >= startLine);
+//            NSLog(@"Adding lines %u -> %u", startLine, endLine);
+            [result addIndexesInRange:NSMakeRange(startLine, endLine - startLine)];
+        }
+        if (division == oldDivision) {
+            oldRangeIndex += oldParity;
+            oldParity = ! oldParity;
+//            NSLog(@"Old range switching %s at %u", oldParity ? "on" : "off", division);
+        }
+        if (division == newDivision) {
+            newRangeIndex += newParity;
+            newParity = ! newParity;
+//            NSLog(@"New range switching %s at %u", newParity ? "on" : "off", division);
+        }
+        currentCharacterIndex = division;
+    }
+}
+
+- (void)_addLinesFromRanges:(const NSRange *)ranges count:(NSUInteger)count toIndexSet:(NSMutableIndexSet *)set {
+    NSUInteger bytesPerLine = [self bytesPerLine];
+    NSUInteger i;
+    for (i=0; i < count; i++) {
+        NSUInteger firstLine = ranges[i].location / bytesPerLine;
+        NSUInteger lastLine = HFDivideULRoundingUp(NSMaxRange(ranges[i]), bytesPerLine);
+        [set addIndexesInRange:NSMakeRange(firstLine, lastLine - firstLine)];
+    }
+}
+
+- (NSIndexSet *)_indexSetOfLinesNeedingRedrawWhenChangingSelectionFromRanges:(NSArray *)oldSelectedRangeArray toRanges:(NSArray *)newSelectedRangeArray {
+    NSUInteger oldRangeCount = 0, newRangeCount = 0;
+        
+    NEW_ARRAY(NSRange, oldRanges, [oldSelectedRangeArray count]);
+    NEW_ARRAY(NSRange, newRanges, [newSelectedRangeArray count]);
+    
+    NSMutableIndexSet *result = [NSMutableIndexSet indexSet];
+    
+    /* Extract all the ranges into a local array */
+    FOREACH(NSValue *, rangeValue1, oldSelectedRangeArray) {
+        NSRange range = [rangeValue1 rangeValue];
+        if (range.length > 0) {
+            oldRanges[oldRangeCount++] = range;
+        }
+    }
+    FOREACH(NSValue *, rangeValue2, newSelectedRangeArray) {
+        NSRange range = [rangeValue2 rangeValue];
+        if (range.length > 0) {
+            newRanges[newRangeCount++] = range;
+        }
+    }
+    
+#if ! NDEBUG
+    /* Assert that ranges of arrays do not have any self-intersection; this is supposed to be enforced by our HFController.  Also assert that they aren't "just touching"; if they are they should be merged into a single range. */
+    for (NSUInteger i=0; i < oldRangeCount; i++) {
+        for (NSUInteger j=i+1; j < oldRangeCount; j++) {
+            HFASSERT(NSIntersectionRange(oldRanges[i], oldRanges[j]).length == 0);
+            HFASSERT(NSMaxRange(oldRanges[i]) != oldRanges[j].location && NSMaxRange(oldRanges[j]) != oldRanges[i].location);
+        }
+    }
+    for (NSUInteger i=0; i < newRangeCount; i++) {
+        for (NSUInteger j=i+1; j < newRangeCount; j++) {
+            HFASSERT(NSIntersectionRange(newRanges[i], newRanges[j]).length == 0);
+            HFASSERT(NSMaxRange(newRanges[i]) != newRanges[j].location && NSMaxRange(newRanges[j]) != newRanges[i].location);
+        }
+    }
+#endif
+    
+    if (newRangeCount == 0) {
+        [self _addLinesFromRanges:oldRanges count:oldRangeCount toIndexSet:result];
+    }
+    else if (oldRangeCount == 0) {
+        [self _addLinesFromRanges:newRanges count:newRangeCount toIndexSet:result];
+    }
+    else {
+        /* Sort the arrays, since _linesWithParityChangesFromRanges needs it */
+        qsort(oldRanges, oldRangeCount, sizeof *oldRanges, range_compare);
+        qsort(newRanges, newRangeCount, sizeof *newRanges, range_compare);
+
+        [self _linesWithParityChangesFromRanges:oldRanges count:oldRangeCount toRanges:newRanges count:newRangeCount intoIndexSet:result];
+    }
+    
+    FREE_ARRAY(oldRanges);
+    FREE_ARRAY(newRanges);
+    
+    return result;
 }
 
 - (void)updateSelectedRanges {
-    NSRect rectToRedisplay = NSZeroRect;
-    
-    /* Determine the first line that contains a character that was before or is now selected, and similarly the last line.  Redisplay the rects between them.  Note that this should be improved - we should take the XOR of the ranges and redisplay that.  The caret rects are handled before by explicitly invalidating lastDrawnCaretRect and then calling _forceCaretOn... which will draw the new one. */
     NSArray *oldSelectedRanges = cachedSelectedRanges;
     cachedSelectedRanges = [[[self representer] displayedSelectedContentsRanges] copy];
-    NSUInteger minLineWithSelection = NSUIntegerMax;
-    NSUInteger maxLineWithSelection = 0;
-    if (oldSelectedRanges) [self _updateMin:&minLineWithSelection andMaxLine:&maxLineWithSelection withRanges:oldSelectedRanges];
-    [self _updateMin:&minLineWithSelection andMaxLine:&maxLineWithSelection withRanges:cachedSelectedRanges];
-    
-    if (maxLineWithSelection >= minLineWithSelection) {
-        NSUInteger bytesPerLine = [self bytesPerLine];;
-        NSRect bounds = [self bounds];
-        rectToRedisplay.origin.x = NSMinX(bounds);
-        rectToRedisplay.size.width = NSWidth(bounds);
-        rectToRedisplay.origin.y = [self originForCharacterAtIndex:minLineWithSelection * bytesPerLine].y;
-        rectToRedisplay.size.height = [self lineHeight] * (maxLineWithSelection - minLineWithSelection + 1);
-        [self setNeedsDisplayInRect:rectToRedisplay];
+    NSIndexSet *indexSet = [self _indexSetOfLinesNeedingRedrawWhenChangingSelectionFromRanges:oldSelectedRanges toRanges:cachedSelectedRanges];
+    BOOL lastCaretRectNeedsRedraw = ! NSIsEmptyRect(lastDrawnCaretRect);
+    NSRange lineRangeToInvalidate = NSMakeRange(NSUIntegerMax, 0);
+    for (NSUInteger lineIndex = [indexSet firstIndex]; ; lineIndex = [indexSet indexGreaterThanIndex:lineIndex]) {
+        if (lineIndex != NSNotFound && NSMaxRange(lineRangeToInvalidate) == lineIndex) {
+            lineRangeToInvalidate.length++;
+        }
+        else {
+            if (lineRangeToInvalidate.length > 0) {
+                NSRect rectToInvalidate = [self _rectForLineRange:lineRangeToInvalidate];
+                [self setNeedsDisplayInRect:rectToInvalidate];
+                lastCaretRectNeedsRedraw = lastCaretRectNeedsRedraw && ! NSContainsRect(rectToInvalidate, lastDrawnCaretRect);
+            }
+            lineRangeToInvalidate = NSMakeRange(lineIndex, 1);
+        }
+        if (lineIndex == NSNotFound) break;
     }
-    if (! NSIsEmptyRect(lastDrawnCaretRect) && ! NSContainsRect(rectToRedisplay, lastDrawnCaretRect)) [self setNeedsDisplayInRect:lastDrawnCaretRect];
     
+    if (lastCaretRectNeedsRedraw) [self setNeedsDisplayInRect:lastDrawnCaretRect];
+    
+    [oldSelectedRanges release]; //balance the retain we borrowed from the ivar
     [self _updateCaretTimer];
     [self _forceCaretOnIfHasCaretTimer];
 }
@@ -188,6 +337,7 @@ static const NSTimeInterval HFCaretBlinkFrequency = 0.56;
         NSRectFill(caretRect);
         lastDrawnCaretRect = caretRect;
     }
+    if (NSIsEmptyRect(caretRectToDraw)) lastDrawnCaretRect = NSZeroRect;
 }
 
 - (BOOL)shouldHaveForegroundHighlightColor {
