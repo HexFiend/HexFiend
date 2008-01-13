@@ -496,6 +496,23 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
     END_TRANSACTION();
 }
 
+- (HFByteArray *)byteArrayForSelectedContentsRanges {
+    HFByteArray *result = nil;
+    HFByteArray *bytes = [self byteArray];
+    VALIDATE_SELECTION();
+    FOREACH(HFRangeWrapper*, wrapper, selectedContentsRanges) {
+        HFRange range = [wrapper HFRange];
+        HFByteArray *additionalBytes = [bytes subarrayWithRange:range];
+        if (! result) {
+            result = additionalBytes;
+        }
+        else {
+            [result insertByteArray:additionalBytes inRange:HFRangeMake([result length], 0)];
+        }
+    }
+    return result;
+}
+
 /* Flattens the selected range to a single range (the selected range becomes any character within or between the selected ranges).  Modifies the selectedContentsRanges and returns the new single HFRange.  Does not call notifyRepresentersOfChanges: */
 - (HFRange)_flattenSelectionRange {
     HFASSERT([selectedContentsRanges count] >= 1);
@@ -1102,7 +1119,17 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
     [self _commandDeleteRanges:[HFRangeWrapper organizeAndMergeRanges:selectedContentsRanges]];
 }
 
-- (void)insertData:(NSData *)data replacingPreviousBytes:(unsigned long long)previousBytes {
+- (void)insertData:(NSData *)data replacingPreviousBytes:(unsigned long long)previousBytes allowUndoCoalescing:(BOOL)allowUndoCoalescing {
+    REQUIRE_NOT_NULL(data);
+    HFByteSlice *slice = [[HFFullMemoryByteSlice alloc] initWithData:data];
+    HFByteArray *array = [[HFFullMemoryByteArray alloc] init];
+    [array insertByteSlice:slice inRange:HFRangeMake(0, 0)];
+    [slice release];
+    [self insertByteArray:array replacingPreviousBytes:previousBytes allowUndoCoalescing:allowUndoCoalescing];
+    [array release];
+}
+
+- (void)insertByteArray:(HFByteArray *)bytesToInsert replacingPreviousBytes:(unsigned long long)previousBytes allowUndoCoalescing:(BOOL)allowUndoCoalescing {
 #if ! NDEBUG
     if (previousBytes > 0) {
         NSArray *selectedRanges = [self selectedContentsRanges];
@@ -1111,10 +1138,10 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
         HFASSERT(selectedRange.location >= previousBytes);
     }
 #endif    
-    REQUIRE_NOT_NULL(data);
+    REQUIRE_NOT_NULL(bytesToInsert);
     BEGIN_TRANSACTION();
     
-    unsigned long long amountDeleted = 0, amountAdded = [data length];
+    unsigned long long amountDeleted = 0, amountAdded = [bytesToInsert length];
     HFByteArray *bytes = [self byteArray];
     NSEnumerator *enumer;
     HFRangeWrapper *rangeWrapper;
@@ -1151,14 +1178,16 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
         [self _activateTypingUndoCoalescingForReplacingRange:HFRangeMake(rangeToReplace.location - previousBytes, previousBytes) withDataOfLength:0];
         rangeToReplace.location -= previousBytes;
     }
+    
+    /* End undo coalescing both before and after */
+    if (! allowUndoCoalescing) [self _endTypingUndoCoalescingIfActive];
     [self _activateTypingUndoCoalescingForReplacingRange:rangeToReplace withDataOfLength:amountAdded];
+    if (! allowUndoCoalescing) [self _endTypingUndoCoalescingIfActive];
     
     if (previousBytes > 0) rangeToReplace.length = previousBytes;
     
     /* Insert data */
-    HFByteSlice *slice = [[HFFullMemoryByteSlice alloc] initWithData:data];
-    [byteArray insertByteSlice:slice inRange:rangeToReplace];
-    [slice release];
+    [byteArray insertByteArray:bytesToInsert inRange:rangeToReplace];
     
     [self _addPropertyChangeBits:HFControllerContentValue];
     
@@ -1349,7 +1378,7 @@ static NSUInteger random_upto(NSUInteger val) {
         /* If our changes should be coalesced, then we do not add an undo group, because it would just create an empty group that would interfere with our undo/redo tests below */
         if (! expectedCoalesced) [undoer beginUndoGrouping];
         
-        [controller insertData:replacementData replacingPreviousBytes:0];
+        [controller insertData:replacementData replacingPreviousBytes:0 allowUndoCoalescing:YES];
         BOOL wasCoalesced = (controller->undoCoalescer == previousUndoCoalescer);
         HFTEST(expectedCoalesced == wasCoalesced);
         

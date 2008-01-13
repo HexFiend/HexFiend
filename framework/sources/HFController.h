@@ -133,6 +133,9 @@ typedef NSUInteger HFControllerMovementQuantity;
 /* Callback for a representer-initiated change to some property */
 - (void)representer:(HFRepresenter *)rep changedProperties:(HFControllerPropertyBits)properties;
 
+/* Creates a byte array containing all of the selected bytes.  If the selection has length 0, this returns an empty byte array. */
+- (HFByteArray *)byteArrayForSelectedContentsRanges;
+
 /* Selection methods */
 - (void)beginSelectionWithEvent:(NSEvent *)event forByteIndex:(unsigned long long)byteIndex;
 - (void)continueSelectionWithEvent:(NSEvent *)event forByteIndex:(unsigned long long)byteIndex;
@@ -150,7 +153,8 @@ typedef NSUInteger HFControllerMovementQuantity;
 /* Text editing.  All of the following methods are undoable. */
 
 /* Replaces the selection with the given data.  For something like a hex view representer, it takes two keypresses to create a whole byte; the way this is implemented, the first keypress goes into the data as a complete byte, and the second one (if any) replaces it.  If previousByteCount > 0, then that many prior bytes are replaced, without breaking undo coalescing.  For previousByteCount to be > 0, the following must be true: There is only one selected range, and it is of length 0, and its location >= previousByteCount */
-- (void)insertData:(NSData *)data replacingPreviousBytes:(unsigned long long)previousByteCount;
+- (void)insertByteArray:(HFByteArray *)byteArray replacingPreviousBytes:(unsigned long long)previousByteCount allowUndoCoalescing:(BOOL)allowUndoCoalescing;
+- (void)insertData:(NSData *)data replacingPreviousBytes:(unsigned long long)previousByteCount allowUndoCoalescing:(BOOL)allowUndoCoalescing;
 
 /* Deletes the selection */
 - (void)deleteSelection;
@@ -159,3 +163,4 @@ typedef NSUInteger HFControllerMovementQuantity;
 - (void)deleteDirection:(HFControllerMovementDirection)direction;
 
 @end
+

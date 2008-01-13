@@ -231,6 +231,8 @@
 			<key>Layout</key>
 			<array>
 				<dict>
+					<key>BecomeActive</key>
+					<true/>
 					<key>ContentConfiguration</key>
 					<dict>
 						<key>PBXBottomSmartGroupGIDs</key>
@@ -268,6 +270,7 @@
 							<array>
 								<string>29B97314FDCFA39411CA2CEA</string>
 								<string>D0560B350CDC4248009D2484</string>
+								<string>D026C7A70CDD4FD30082279E</string>
 								<string>D0560B380CDC4253009D2484</string>
 								<string>29B97317FDCFA39411CA2CEA</string>
 								<string>1C37FBAC04509CD000000102</string>
@@ -277,6 +280,8 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
+									<integer>24</integer>
+									<integer>2</integer>
 									<integer>0</integer>
 								</array>
 							</array>
@@ -345,8 +350,6 @@
 							<string>0pt</string>
 						</dict>
 						<dict>
-							<key>BecomeActive</key>
-							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
@@ -383,9 +386,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>D03A27600D34F6D5007798C7</string>
+				<string>D041D1A80D38817400C28345</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>D03A27610D34F6D5007798C7</string>
+				<string>D041D1A90D38817400C28345</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -519,9 +522,20 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>D03A27620D34F6D5007798C7</string>
+		<string>D041D24B0D3A265B00C28345</string>
+		<string>D041D24C0D3A265B00C28345</string>
+		<string>D041D24D0D3A265B00C28345</string>
+		<string>1C530D57069F1CE1000CFCEE</string>
+		<string>1CD10A99069EF8BA00B06720</string>
+		<string>D0560B2F0CDC421E009D2484</string>
+		<string>D041D24E0D3A265B00C28345</string>
+		<string>D041D2660D3A39F700C28345</string>
+		<string>D041D28F0D3A478400C28345</string>
+		<string>D041D28D0D3A477400C28345</string>
+		<string>1C78EAAD065D492600B07095</string>
 		<string>/Users/peter/Bell/HexFiend2/trunk/HexFiend_2/HexFiend_2.xcodeproj</string>
-		<string>D03A27630D34F6D5007798C7</string>
+		<string>D041D29C0D3A4DC400C28345</string>
+		<string>D041D29E0D3A4DC400C28345</string>
 	</array>
 	<key>WindowString</key>
 	<string>607 231 1102 797 0 0 1680 1028 </string>
@@ -545,21 +559,21 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>1CD0528F0623707200166675</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>HFRepresenterTextView.m</string>
+								<string>HFTextRepresenter.m</string>
 								<key>StatusBarVisibility</key>
 								<true/>
 							</dict>
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 0}, {1097, 90}}</string>
+								<string>{{0, 0}, {1097, 358}}</string>
 								<key>RubberWindowFrame</key>
 								<string>415 236 1097 792 0 0 1680 1028 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXNavigatorGroup</string>
 							<key>Proportion</key>
-							<string>90pt</string>
+							<string>358pt</string>
 						</dict>
 						<dict>
 							<key>BecomeActive</key>
@@ -567,7 +581,7 @@
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXBuildLogShowsTranscriptDefaultKey</key>
-								<string>{{0, 135}, {1097, 521}}</string>
+								<string>{{0, 212}, {1097, 176}}</string>
 								<key>PBXProjectModuleGUID</key>
 								<string>XCMainBuildResultsModuleGUID</string>
 								<key>PBXProjectModuleLabel</key>
@@ -580,14 +594,14 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 95}, {1097, 656}}</string>
+								<string>{{0, 363}, {1097, 388}}</string>
 								<key>RubberWindowFrame</key>
 								<string>415 236 1097 792 0 0 1680 1028 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXBuildResultsModule</string>
 							<key>Proportion</key>
-							<string>656pt</string>
+							<string>388pt</string>
 						</dict>
 					</array>
 					<key>Proportion</key>
@@ -605,7 +619,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>D0560B2F0CDC421E009D2484</string>
-				<string>D05C86950D32610E00D73DF4</string>
+				<string>D041D1AE0D38818900C28345</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>
@@ -725,13 +739,13 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>1CD10A99069EF8BA00B06720</string>
-				<string>D05C869A0D32615300D73DF4</string>
+				<string>D041D1AF0D38818900C28345</string>
 				<string>1C162984064C10D400B95A72</string>
-				<string>D05C869B0D32615300D73DF4</string>
-				<string>D05C869C0D32615300D73DF4</string>
-				<string>D05C869D0D32615300D73DF4</string>
-				<string>D05C869E0D32615300D73DF4</string>
-				<string>D05C869F0D32615300D73DF4</string>
+				<string>D041D1B00D38818900C28345</string>
+				<string>D041D1B10D38818900C28345</string>
+				<string>D041D1B20D38818900C28345</string>
+				<string>D041D1B30D38818900C28345</string>
+				<string>D041D1B40D38818900C28345</string>
 			</array>
 			<key>ToolbarConfiguration</key>
 			<string>xcode.toolbar.config.debugV3</string>
@@ -763,7 +777,7 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CDD528C0622207200134675</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>&lt;No Editor&gt;</string>
+										<string>HFController.h</string>
 										<key>StatusBarVisibility</key>
 										<true/>
 									</dict>
@@ -821,8 +835,8 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>1C530D57069F1CE1000CFCEE</string>
-				<string>D05C86A90D32620000D73DF4</string>
-				<string>D05C86AA0D32620000D73DF4</string>
+				<string>D041D1BA0D38818E00C28345</string>
+				<string>D041D1BB0D38818E00C28345</string>
 				<string>1CDD528C0622207200134675</string>
 				<string>1CD0528E0623707200166675</string>
 			</array>
@@ -887,7 +901,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>1C78EAAD065D492600B07095</string>
-				<string>D05C86A00D32615300D73DF4</string>
+				<string>D041D1B50D38818900C28345</string>
 				<string>1C78EAAC065D492600B07095</string>
 			</array>
 			<key>ToolbarConfiguration</key>

@@ -8,6 +8,52 @@
 
 #import <HexFiend/HFHexTextRepresenter.h>
 #import <HexFiend/HFRepresenterHexTextView.h>
+#import <HexFiend/HFPasteboardOwner.h>
+
+@interface HFHexPasteboardOwner : HFPasteboardOwner {
+    
+}
+@end
+
+static unsigned char hex2char(NSUInteger c) {
+    HFASSERT(c < 16);
+    return "0123456789ABCDEF"[c];
+}
+
+@implementation HFHexPasteboardOwner
+
+- (void)pasteboard:(NSPasteboard *)pboard provideDataForType:(NSString *)type {
+    if ([type isEqual:NSStringPboardType]) {
+        HFByteArray *byteArray = [self byteArray];
+        HFASSERT([byteArray length] <= NSUIntegerMax);
+        NSUInteger dataLength = ll2l([byteArray length]);
+        HFASSERT(dataLength < NSUIntegerMax / 3);
+        NSUInteger stringLength = dataLength * 3;
+        NSUInteger offset = 0, remaining = dataLength;
+        unsigned char * const stringBuffer = check_malloc(stringLength);
+        while (remaining > 0) {
+            unsigned char dataBuffer[256];
+            NSUInteger amountToCopy = MIN(sizeof dataBuffer, remaining);
+            [byteArray copyBytes:dataBuffer range:HFRangeMake(offset, amountToCopy)];
+            for (NSUInteger i = 0; i < amountToCopy; i++) {
+                unsigned char c = dataBuffer[i];
+                stringBuffer[offset*3 + i*3] = hex2char(c >> 4);
+                stringBuffer[offset*3 + i*3 + 1] = hex2char(c & 0xF);
+                stringBuffer[offset*3 + i*3 + 2] = ' ';
+            }
+            offset += amountToCopy;
+            remaining -= amountToCopy;
+        }
+        NSString *string = [[NSString alloc] initWithBytesNoCopy:stringBuffer length:stringLength - MIN(stringLength, 1) encoding:NSASCIIStringEncoding freeWhenDone:YES];
+        [pboard setString:string forType:type];
+        [string release];
+    }
+    else {
+        [super pasteboard:pboard provideDataForType:type];
+    }
+}
+
+@end
 
 @implementation HFHexTextRepresenter
 
@@ -72,7 +118,7 @@
     HFASSERT([data length] > 0);
     HFASSERT(shouldReplacePriorByte != isMissingLastNybble);
     HFController *controller = [self controller];
-    [controller insertData:data replacingPreviousBytes: shouldReplacePriorByte ? 1 : 0];
+    [controller insertData:data replacingPreviousBytes: (shouldReplacePriorByte ? 1 : 0) allowUndoCoalescing:YES];
     if (isMissingLastNybble) {
         HFASSERT([data length] > 0);
         HFASSERT(unpartneredLastNybble == UCHAR_MAX);
@@ -92,6 +138,19 @@
     [super controllerDidChange:bits];
     if (bits & (HFControllerContentValue | HFControllerContentLength | HFControllerSelectedRanges)) {
         [self _clearOmittedNybble];
+    }
+}
+
+- (void)copySelectedBytesToPasteboard:(NSPasteboard *)pb {
+    REQUIRE_NOT_NULL(pb);
+    HFByteArray *selection = [[self controller] byteArrayForSelectedContentsRanges];
+    HFASSERT(selection != NULL);
+    if ([selection length] == 0) {
+        NSBeep();
+    }
+    else {
+        HFHexPasteboardOwner *owner = [HFHexPasteboardOwner ownPasteboard:pb forByteArray:selection withTypes:[NSArray arrayWithObjects:HFPrivateByteArrayPboardType, NSStringPboardType, nil]];
+        [owner setBytesPerLine:[self bytesPerLine]];
     }
 }
 

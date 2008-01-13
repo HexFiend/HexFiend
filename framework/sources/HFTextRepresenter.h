@@ -24,6 +24,10 @@
 - (void)continueSelectionWithEvent:(NSEvent *)event forCharacterIndex:(NSUInteger)characterIndex;
 - (void)endSelectionWithEvent:(NSEvent *)event forCharacterIndex:(NSUInteger)characterIndex;
 
+// Copy/Paste methods
+- (void)copySelectedBytesToPasteboard:(NSPasteboard *)pb;
+- (BOOL)pasteBytesFromPasteboard:(NSPasteboard *)pb;
+
 // Must be implemented by subclasses
 - (void)insertText:(NSString *)text;
 

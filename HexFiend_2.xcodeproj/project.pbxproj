@@ -28,6 +28,8 @@
 		D026C7BC0CDD546C0082279E /* HFRepresenterHexTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = D026C7BA0CDD546C0082279E /* HFRepresenterHexTextView.m */; };
 		D026C7C00CDD54D00082279E /* HFHexTextRepresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = D026C7BE0CDD54D00082279E /* HFHexTextRepresenter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D026C7C10CDD54D00082279E /* HFHexTextRepresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = D026C7BF0CDD54D00082279E /* HFHexTextRepresenter.m */; };
+		D041D1C00D397E1A00C28345 /* HFPasteboardOwner.h in Headers */ = {isa = PBXBuildFile; fileRef = D041D1BE0D397E1A00C28345 /* HFPasteboardOwner.h */; };
+		D041D1C10D397E1A00C28345 /* HFPasteboardOwner.m in Sources */ = {isa = PBXBuildFile; fileRef = D041D1BF0D397E1A00C28345 /* HFPasteboardOwner.m */; };
 		D04327A40CF081CD00C14250 /* HFFunctions_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = D04327A30CF081CD00C14250 /* HFFunctions_Private.h */; };
 		D06B1DB10D13EE1D00B9A206 /* HFMetalGradient.tiff in Resources */ = {isa = PBXBuildFile; fileRef = D06B1DB00D13EE1D00B9A206 /* HFMetalGradient.tiff */; };
 		D082AB440CDE97DC00554EB7 /* HFFullMemoryByteArray.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D828FF0CDE8ABE00C2AB82 /* HFFullMemoryByteArray.m */; };
@@ -120,6 +122,8 @@
 		D026C7BA0CDD546C0082279E /* HFRepresenterHexTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFRepresenterHexTextView.m; path = framework/sources/HFRepresenterHexTextView.m; sourceTree = "<group>"; };
 		D026C7BE0CDD54D00082279E /* HFHexTextRepresenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFHexTextRepresenter.h; path = framework/sources/HFHexTextRepresenter.h; sourceTree = "<group>"; };
 		D026C7BF0CDD54D00082279E /* HFHexTextRepresenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFHexTextRepresenter.m; path = framework/sources/HFHexTextRepresenter.m; sourceTree = "<group>"; };
+		D041D1BE0D397E1A00C28345 /* HFPasteboardOwner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFPasteboardOwner.h; path = framework/sources/HFPasteboardOwner.h; sourceTree = "<group>"; };
+		D041D1BF0D397E1A00C28345 /* HFPasteboardOwner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFPasteboardOwner.m; path = framework/sources/HFPasteboardOwner.m; sourceTree = "<group>"; };
 		D04327A30CF081CD00C14250 /* HFFunctions_Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFFunctions_Private.h; path = framework/sources/HFFunctions_Private.h; sourceTree = "<group>"; };
 		D06B1DB00D13EE1D00B9A206 /* HFMetalGradient.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = HFMetalGradient.tiff; path = framework/resources/HFMetalGradient.tiff; sourceTree = "<group>"; };
 		D082AC900CDEBD5300554EB7 /* HFByteArray_Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFByteArray_Internal.h; path = framework/sources/HFByteArray_Internal.h; sourceTree = "<group>"; };
@@ -300,6 +304,8 @@
 				D08F5DF40CDE822D007EFFE8 /* ByteArray */,
 				D01E7BEA0CDC55D000943F9E /* HFController.h */,
 				D01E7BEB0CDC55D000943F9E /* HFController.m */,
+				D041D1BE0D397E1A00C28345 /* HFPasteboardOwner.h */,
+				D041D1BF0D397E1A00C28345 /* HFPasteboardOwner.m */,
 				D0A47C0F0D288EDF00CB9BB9 /* HFControllerCoalescedUndo.h */,
 				D0A47C100D288EDF00CB9BB9 /* HFControllerCoalescedUndo.m */,
 				D01E7BC60CDC53B300943F9E /* HexFiend_2_Framework_Prefix.pch */,
@@ -371,6 +377,7 @@
 				D0A402F30D0D43F4006BC574 /* HFLayoutRepresenter.h in Headers */,
 				D0A90B050D160414008975B9 /* HFStatusBarRepresenter.h in Headers */,
 				D0A47C110D288EDF00CB9BB9 /* HFControllerCoalescedUndo.h in Headers */,
+				D041D1C00D397E1A00C28345 /* HFPasteboardOwner.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -491,6 +498,7 @@
 				D0A402F40D0D43F4006BC574 /* HFLayoutRepresenter.m in Sources */,
 				D0A90B060D160414008975B9 /* HFStatusBarRepresenter.m in Sources */,
 				D0A47C120D288EDF00CB9BB9 /* HFControllerCoalescedUndo.m in Sources */,
+				D041D1C10D397E1A00C28345 /* HFPasteboardOwner.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -538,7 +546,6 @@
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
-				GCC_ENABLE_OBJC_GC = required;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -564,7 +571,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_ENABLE_OBJC_GC = unsupported;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = app/sources/HexFiend_2_Prefix.pch;

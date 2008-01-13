@@ -6,8 +6,9 @@
 //  Copyright 2007 __MyCompanyName__. All rights reserved.
 //
 
-#import "HFTextRepresenter.h"
-#import "HFRepresenterTextView.h"
+#import <HexFiend/HFTextRepresenter.h>
+#import <HexFiend/HFRepresenterTextView.h>
+#import <HexFiend/HFPasteboardOwner.h>
 
 @implementation HFTextRepresenter
 
@@ -151,6 +152,22 @@
 - (void)insertText:(NSString *)text {
     USE(text);
     UNIMPLEMENTED_VOID();
+}
+
+- (void)copySelectedBytesToPasteboard:(NSPasteboard *)pb {
+    USE(pb);
+    UNIMPLEMENTED_VOID();
+}
+
+- (BOOL)pasteBytesFromPasteboard:(NSPasteboard *)pb {
+    REQUIRE_NOT_NULL(pb);
+    BOOL result = NO;
+    HFByteArray *byteArray = [HFPasteboardOwner unpackByteArrayFromPasteboard:pb];
+    if (byteArray) {
+        [[self controller] insertByteArray:byteArray replacingPreviousBytes:0 allowUndoCoalescing:NO];
+        result = YES;
+    }
+    return result;
 }
 
 @end

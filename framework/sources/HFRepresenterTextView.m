@@ -796,14 +796,25 @@ enum LineCoverage_t {
     return NO;
 }
 
+- (SEL)_pasteboardOwnerStringTypeWritingSelector {
+    UNIMPLEMENTED();
+}
+
+- (void)paste:sender {
+    USE(sender);
+    [[self representer] pasteBytesFromPasteboard:[NSPasteboard generalPasteboard]];
+}
+
 - (void)copy:sender {
-    NSPasteboard *pb = [NSPasteboard generalPasteboard];
+    USE(sender);
+    [[self representer] copySelectedBytesToPasteboard:[NSPasteboard generalPasteboard]];
 }
 
 - (BOOL)validateMenuItem:(NSMenuItem *)item {
     SEL action = [item action];
     if (action == @selector(selectAll:)) return YES;
     else if (action == @selector(copy:)) return [self _selectionIsNonEmpty];
+    else if (action == @selector(paste:)) return [[[self representer] controller] isEditable];
     else return YES;
 }
 
