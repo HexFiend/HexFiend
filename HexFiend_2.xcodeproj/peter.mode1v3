@@ -270,9 +270,8 @@
 							<array>
 								<string>29B97314FDCFA39411CA2CEA</string>
 								<string>D0560B350CDC4248009D2484</string>
-								<string>D026C7A70CDD4FD30082279E</string>
-								<string>D0560B380CDC4253009D2484</string>
-								<string>29B97317FDCFA39411CA2CEA</string>
+								<string>D08F5DF40CDE822D007EFFE8</string>
+								<string>D041D2CD0D3ADF5700C28345</string>
 								<string>1C37FBAC04509CD000000102</string>
 								<string>1C37FAAC04509CD000000102</string>
 								<string>1C37FABC05509CD000000102</string>
@@ -281,6 +280,7 @@
 							<array>
 								<array>
 									<integer>24</integer>
+									<integer>9</integer>
 									<integer>2</integer>
 									<integer>0</integer>
 								</array>
@@ -305,7 +305,7 @@
 							<real>401</real>
 						</array>
 						<key>RubberWindowFrame</key>
-						<string>607 231 1102 797 0 0 1680 1028 </string>
+						<string>611 231 1102 797 0 0 1680 1028 </string>
 					</dict>
 					<key>Module</key>
 					<string>PBXSmartGroupTreeModule</string>
@@ -342,7 +342,7 @@
 								<key>Frame</key>
 								<string>{{0, 0}, {679, 0}}</string>
 								<key>RubberWindowFrame</key>
-								<string>607 231 1102 797 0 0 1680 1028 </string>
+								<string>611 231 1102 797 0 0 1680 1028 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXNavigatorGroup</string>
@@ -362,7 +362,7 @@
 								<key>Frame</key>
 								<string>{{0, 5}, {679, 751}}</string>
 								<key>RubberWindowFrame</key>
-								<string>607 231 1102 797 0 0 1680 1028 </string>
+								<string>611 231 1102 797 0 0 1680 1028 </string>
 							</dict>
 							<key>Module</key>
 							<string>XCDetailModule</string>
@@ -386,9 +386,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>D041D1A80D38817400C28345</string>
+				<string>D0F930760D3DF9E40066E245</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>D041D1A90D38817400C28345</string>
+				<string>D0F930770D3DF9E40066E245</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -522,23 +522,15 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>D041D24B0D3A265B00C28345</string>
-		<string>D041D24C0D3A265B00C28345</string>
-		<string>D041D24D0D3A265B00C28345</string>
-		<string>1C530D57069F1CE1000CFCEE</string>
-		<string>1CD10A99069EF8BA00B06720</string>
+		<string>D0F930810D3DFE4F0066E245</string>
+		<string>D0F930820D3DFE4F0066E245</string>
 		<string>D0560B2F0CDC421E009D2484</string>
-		<string>D041D24E0D3A265B00C28345</string>
-		<string>D041D2660D3A39F700C28345</string>
-		<string>D041D28F0D3A478400C28345</string>
-		<string>D041D28D0D3A477400C28345</string>
-		<string>1C78EAAD065D492600B07095</string>
+		<string>D0F930830D3DFE4F0066E245</string>
+		<string>D0F930840D3DFE4F0066E245</string>
 		<string>/Users/peter/Bell/HexFiend2/trunk/HexFiend_2/HexFiend_2.xcodeproj</string>
-		<string>D041D29C0D3A4DC400C28345</string>
-		<string>D041D29E0D3A4DC400C28345</string>
 	</array>
 	<key>WindowString</key>
-	<string>607 231 1102 797 0 0 1680 1028 </string>
+	<string>611 231 1102 797 0 0 1680 1028 </string>
 	<key>WindowToolsV3</key>
 	<array>
 		<dict>
@@ -554,12 +546,14 @@
 					<key>Dock</key>
 					<array>
 						<dict>
+							<key>BecomeActive</key>
+							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
 								<string>1CD0528F0623707200166675</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>HFTextRepresenter.m</string>
+								<string>HFTavlTreeByteArray.m</string>
 								<key>StatusBarVisibility</key>
 								<true/>
 							</dict>
@@ -576,12 +570,10 @@
 							<string>358pt</string>
 						</dict>
 						<dict>
-							<key>BecomeActive</key>
-							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXBuildLogShowsTranscriptDefaultKey</key>
-								<string>{{0, 212}, {1097, 176}}</string>
+								<string>{{0, 167}, {1097, 221}}</string>
 								<key>PBXProjectModuleGUID</key>
 								<string>XCMainBuildResultsModuleGUID</string>
 								<key>PBXProjectModuleLabel</key>
@@ -619,7 +611,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>D0560B2F0CDC421E009D2484</string>
-				<string>D041D1AE0D38818900C28345</string>
+				<string>D0F930800D3DFE480066E245</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>
@@ -777,7 +769,7 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CDD528C0622207200134675</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>HFController.h</string>
+										<string>HFTextRepresenter.m</string>
 										<key>StatusBarVisibility</key>
 										<true/>
 									</dict>

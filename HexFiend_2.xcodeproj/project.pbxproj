@@ -30,6 +30,24 @@
 		D026C7C10CDD54D00082279E /* HFHexTextRepresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = D026C7BF0CDD54D00082279E /* HFHexTextRepresenter.m */; };
 		D041D1C00D397E1A00C28345 /* HFPasteboardOwner.h in Headers */ = {isa = PBXBuildFile; fileRef = D041D1BE0D397E1A00C28345 /* HFPasteboardOwner.h */; };
 		D041D1C10D397E1A00C28345 /* HFPasteboardOwner.m in Sources */ = {isa = PBXBuildFile; fileRef = D041D1BF0D397E1A00C28345 /* HFPasteboardOwner.m */; };
+		D041D39A0D3CA19400C28345 /* tavltree.h in Headers */ = {isa = PBXBuildFile; fileRef = D041D38C0D3CA19400C28345 /* tavltree.h */; };
+		D041D39B0D3CA19400C28345 /* tavlrebl.c in Sources */ = {isa = PBXBuildFile; fileRef = D041D38D0D3CA19400C28345 /* tavlrebl.c */; };
+		D041D39C0D3CA19400C28345 /* tavlsucc.c in Sources */ = {isa = PBXBuildFile; fileRef = D041D38E0D3CA19400C28345 /* tavlsucc.c */; };
+		D041D39D0D3CA19400C28345 /* tavlinit.c in Sources */ = {isa = PBXBuildFile; fileRef = D041D38F0D3CA19400C28345 /* tavlinit.c */; };
+		D041D39E0D3CA19400C28345 /* tavlpred.c in Sources */ = {isa = PBXBuildFile; fileRef = D041D3900D3CA19400C28345 /* tavlpred.c */; };
+		D041D39F0D3CA19400C28345 /* tavlpriv.h in Headers */ = {isa = PBXBuildFile; fileRef = D041D3910D3CA19400C28345 /* tavlpriv.h */; };
+		D041D3A00D3CA19400C28345 /* tavldall.c in Sources */ = {isa = PBXBuildFile; fileRef = D041D3920D3CA19400C28345 /* tavldall.c */; };
+		D041D3A10D3CA19400C28345 /* tavlfind.c in Sources */ = {isa = PBXBuildFile; fileRef = D041D3930D3CA19400C28345 /* tavlfind.c */; };
+		D041D3A20D3CA19400C28345 /* tavlfree.c in Sources */ = {isa = PBXBuildFile; fileRef = D041D3940D3CA19400C28345 /* tavlfree.c */; };
+		D041D3A30D3CA19400C28345 /* tavl_ins.c in Sources */ = {isa = PBXBuildFile; fileRef = D041D3950D3CA19400C28345 /* tavl_ins.c */; };
+		D041D3A40D3CA19400C28345 /* tavl_rst.c in Sources */ = {isa = PBXBuildFile; fileRef = D041D3960D3CA19400C28345 /* tavl_rst.c */; };
+		D041D3A50D3CA19400C28345 /* tavl_sdt.c in Sources */ = {isa = PBXBuildFile; fileRef = D041D3970D3CA19400C28345 /* tavl_sdt.c */; };
+		D041D3A60D3CA19400C28345 /* tavl_del.c in Sources */ = {isa = PBXBuildFile; fileRef = D041D3980D3CA19400C28345 /* tavl_del.c */; };
+		D041D3A70D3CA19400C28345 /* tavl_gdt.c in Sources */ = {isa = PBXBuildFile; fileRef = D041D3990D3CA19400C28345 /* tavl_gdt.c */; };
+		D041D3DD0D3CA70600C28345 /* HFTavlTreeByteArray.h in Headers */ = {isa = PBXBuildFile; fileRef = D041D3DB0D3CA70600C28345 /* HFTavlTreeByteArray.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D041D3DE0D3CA70600C28345 /* HFTavlTreeByteArray.m in Sources */ = {isa = PBXBuildFile; fileRef = D041D3DC0D3CA70600C28345 /* HFTavlTreeByteArray.m */; };
+		D041D3FE0D3DED7200C28345 /* HFByteArrayPiece.h in Headers */ = {isa = PBXBuildFile; fileRef = D041D3FC0D3DED7200C28345 /* HFByteArrayPiece.h */; };
+		D041D3FF0D3DED7200C28345 /* HFByteArrayPiece.m in Sources */ = {isa = PBXBuildFile; fileRef = D041D3FD0D3DED7200C28345 /* HFByteArrayPiece.m */; };
 		D04327A40CF081CD00C14250 /* HFFunctions_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = D04327A30CF081CD00C14250 /* HFFunctions_Private.h */; };
 		D06B1DB10D13EE1D00B9A206 /* HFMetalGradient.tiff in Resources */ = {isa = PBXBuildFile; fileRef = D06B1DB00D13EE1D00B9A206 /* HFMetalGradient.tiff */; };
 		D082AB440CDE97DC00554EB7 /* HFFullMemoryByteArray.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D828FF0CDE8ABE00C2AB82 /* HFFullMemoryByteArray.m */; };
@@ -124,6 +142,24 @@
 		D026C7BF0CDD54D00082279E /* HFHexTextRepresenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFHexTextRepresenter.m; path = framework/sources/HFHexTextRepresenter.m; sourceTree = "<group>"; };
 		D041D1BE0D397E1A00C28345 /* HFPasteboardOwner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFPasteboardOwner.h; path = framework/sources/HFPasteboardOwner.h; sourceTree = "<group>"; };
 		D041D1BF0D397E1A00C28345 /* HFPasteboardOwner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFPasteboardOwner.m; path = framework/sources/HFPasteboardOwner.m; sourceTree = "<group>"; };
+		D041D38C0D3CA19400C28345 /* tavltree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tavltree.h; path = framework/sources/TAVLTree/tavltree.h; sourceTree = "<group>"; };
+		D041D38D0D3CA19400C28345 /* tavlrebl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = tavlrebl.c; path = framework/sources/TAVLTree/tavlrebl.c; sourceTree = "<group>"; };
+		D041D38E0D3CA19400C28345 /* tavlsucc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = tavlsucc.c; path = framework/sources/TAVLTree/tavlsucc.c; sourceTree = "<group>"; };
+		D041D38F0D3CA19400C28345 /* tavlinit.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = tavlinit.c; path = framework/sources/TAVLTree/tavlinit.c; sourceTree = "<group>"; };
+		D041D3900D3CA19400C28345 /* tavlpred.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = tavlpred.c; path = framework/sources/TAVLTree/tavlpred.c; sourceTree = "<group>"; };
+		D041D3910D3CA19400C28345 /* tavlpriv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tavlpriv.h; path = framework/sources/TAVLTree/tavlpriv.h; sourceTree = "<group>"; };
+		D041D3920D3CA19400C28345 /* tavldall.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = tavldall.c; path = framework/sources/TAVLTree/tavldall.c; sourceTree = "<group>"; };
+		D041D3930D3CA19400C28345 /* tavlfind.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = tavlfind.c; path = framework/sources/TAVLTree/tavlfind.c; sourceTree = "<group>"; };
+		D041D3940D3CA19400C28345 /* tavlfree.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = tavlfree.c; path = framework/sources/TAVLTree/tavlfree.c; sourceTree = "<group>"; };
+		D041D3950D3CA19400C28345 /* tavl_ins.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = tavl_ins.c; path = framework/sources/TAVLTree/tavl_ins.c; sourceTree = "<group>"; };
+		D041D3960D3CA19400C28345 /* tavl_rst.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = tavl_rst.c; path = framework/sources/TAVLTree/tavl_rst.c; sourceTree = "<group>"; };
+		D041D3970D3CA19400C28345 /* tavl_sdt.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = tavl_sdt.c; path = framework/sources/TAVLTree/tavl_sdt.c; sourceTree = "<group>"; };
+		D041D3980D3CA19400C28345 /* tavl_del.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = tavl_del.c; path = framework/sources/TAVLTree/tavl_del.c; sourceTree = "<group>"; };
+		D041D3990D3CA19400C28345 /* tavl_gdt.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = tavl_gdt.c; path = framework/sources/TAVLTree/tavl_gdt.c; sourceTree = "<group>"; };
+		D041D3DB0D3CA70600C28345 /* HFTavlTreeByteArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFTavlTreeByteArray.h; path = framework/sources/HFTavlTreeByteArray.h; sourceTree = "<group>"; };
+		D041D3DC0D3CA70600C28345 /* HFTavlTreeByteArray.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFTavlTreeByteArray.m; path = framework/sources/HFTavlTreeByteArray.m; sourceTree = "<group>"; };
+		D041D3FC0D3DED7200C28345 /* HFByteArrayPiece.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFByteArrayPiece.h; path = framework/sources/HFByteArrayPiece.h; sourceTree = "<group>"; };
+		D041D3FD0D3DED7200C28345 /* HFByteArrayPiece.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFByteArrayPiece.m; path = framework/sources/HFByteArrayPiece.m; sourceTree = "<group>"; };
 		D04327A30CF081CD00C14250 /* HFFunctions_Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFFunctions_Private.h; path = framework/sources/HFFunctions_Private.h; sourceTree = "<group>"; };
 		D06B1DB00D13EE1D00B9A206 /* HFMetalGradient.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = HFMetalGradient.tiff; path = framework/resources/HFMetalGradient.tiff; sourceTree = "<group>"; };
 		D082AC900CDEBD5300554EB7 /* HFByteArray_Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFByteArray_Internal.h; path = framework/sources/HFByteArray_Internal.h; sourceTree = "<group>"; };
@@ -292,6 +328,27 @@
 			name = "Text Representers";
 			sourceTree = "<group>";
 		};
+		D041D2CD0D3ADF5700C28345 /* TAVLTree */ = {
+			isa = PBXGroup;
+			children = (
+				D041D38C0D3CA19400C28345 /* tavltree.h */,
+				D041D38D0D3CA19400C28345 /* tavlrebl.c */,
+				D041D38E0D3CA19400C28345 /* tavlsucc.c */,
+				D041D38F0D3CA19400C28345 /* tavlinit.c */,
+				D041D3900D3CA19400C28345 /* tavlpred.c */,
+				D041D3910D3CA19400C28345 /* tavlpriv.h */,
+				D041D3920D3CA19400C28345 /* tavldall.c */,
+				D041D3930D3CA19400C28345 /* tavlfind.c */,
+				D041D3940D3CA19400C28345 /* tavlfree.c */,
+				D041D3950D3CA19400C28345 /* tavl_ins.c */,
+				D041D3960D3CA19400C28345 /* tavl_rst.c */,
+				D041D3970D3CA19400C28345 /* tavl_sdt.c */,
+				D041D3980D3CA19400C28345 /* tavl_del.c */,
+				D041D3990D3CA19400C28345 /* tavl_gdt.c */,
+			);
+			name = TAVLTree;
+			sourceTree = "<group>";
+		};
 		D0560B350CDC4248009D2484 /* Framework */ = {
 			isa = PBXGroup;
 			children = (
@@ -335,11 +392,16 @@
 				D0D828FE0CDE8ABE00C2AB82 /* HFFullMemoryByteArray.h */,
 				D0D828FF0CDE8ABE00C2AB82 /* HFFullMemoryByteArray.m */,
 				D08F5E220CDE843E007EFFE8 /* HFByteSlice.h */,
+				D041D3FC0D3DED7200C28345 /* HFByteArrayPiece.h */,
+				D041D3FD0D3DED7200C28345 /* HFByteArrayPiece.m */,
 				D08F5E230CDE843E007EFFE8 /* HFByteSlice.m */,
 				D08F5E370CDE84F4007EFFE8 /* HFFullMemoryByteSlice.h */,
 				D08F5E380CDE84F4007EFFE8 /* HFFullMemoryByteSlice.m */,
 				D082AF4A0CDF242500554EB7 /* HFByteArray_ToString.h */,
 				D082AF4B0CDF242500554EB7 /* HFByteArray_ToString.m */,
+				D041D3DB0D3CA70600C28345 /* HFTavlTreeByteArray.h */,
+				D041D3DC0D3CA70600C28345 /* HFTavlTreeByteArray.m */,
+				D041D2CD0D3ADF5700C28345 /* TAVLTree */,
 			);
 			name = ByteArray;
 			sourceTree = "<group>";
@@ -378,6 +440,10 @@
 				D0A90B050D160414008975B9 /* HFStatusBarRepresenter.h in Headers */,
 				D0A47C110D288EDF00CB9BB9 /* HFControllerCoalescedUndo.h in Headers */,
 				D041D1C00D397E1A00C28345 /* HFPasteboardOwner.h in Headers */,
+				D041D39A0D3CA19400C28345 /* tavltree.h in Headers */,
+				D041D39F0D3CA19400C28345 /* tavlpriv.h in Headers */,
+				D041D3DD0D3CA70600C28345 /* HFTavlTreeByteArray.h in Headers */,
+				D041D3FE0D3DED7200C28345 /* HFByteArrayPiece.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -499,6 +565,20 @@
 				D0A90B060D160414008975B9 /* HFStatusBarRepresenter.m in Sources */,
 				D0A47C120D288EDF00CB9BB9 /* HFControllerCoalescedUndo.m in Sources */,
 				D041D1C10D397E1A00C28345 /* HFPasteboardOwner.m in Sources */,
+				D041D39B0D3CA19400C28345 /* tavlrebl.c in Sources */,
+				D041D39C0D3CA19400C28345 /* tavlsucc.c in Sources */,
+				D041D39D0D3CA19400C28345 /* tavlinit.c in Sources */,
+				D041D39E0D3CA19400C28345 /* tavlpred.c in Sources */,
+				D041D3A00D3CA19400C28345 /* tavldall.c in Sources */,
+				D041D3A10D3CA19400C28345 /* tavlfind.c in Sources */,
+				D041D3A20D3CA19400C28345 /* tavlfree.c in Sources */,
+				D041D3A30D3CA19400C28345 /* tavl_ins.c in Sources */,
+				D041D3A40D3CA19400C28345 /* tavl_rst.c in Sources */,
+				D041D3A50D3CA19400C28345 /* tavl_sdt.c in Sources */,
+				D041D3A60D3CA19400C28345 /* tavl_del.c in Sources */,
+				D041D3A70D3CA19400C28345 /* tavl_gdt.c in Sources */,
+				D041D3DE0D3CA70600C28345 /* HFTavlTreeByteArray.m in Sources */,
+				D041D3FF0D3DED7200C28345 /* HFByteArrayPiece.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
