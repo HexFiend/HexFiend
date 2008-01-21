@@ -277,7 +277,7 @@ static const char *tavl_description(TAVL_treeptr tree) {
     
     TAVL_nodeptr insert_result;
     
-    TAVL_nodeptr node = tavl_find(myTree, &key);
+    TAVL_nodeptr node = tavl_find(tree, &key);
     if (node) {
 	
 #if USE_FAST_PATH
@@ -310,7 +310,7 @@ static const char *tavl_description(TAVL_treeptr tree) {
 #endif
 	
 	HFByteArrayPiece* arrayPiece=NULL;
-	tavl_getdata(myTree, node, &arrayPiece);
+	tavl_getdata(tree, node, &arrayPiece);
 	REQUIRE_NOT_NULL(arrayPiece);
 	
 	const unsigned long long arrOffset = [arrayPiece offset];
@@ -326,22 +326,22 @@ static const char *tavl_description(TAVL_treeptr tree) {
 	unsigned long long startingOffset = arrOffset + arrLength + sliceLength;
 	while ((succ = tavl_succ(succ))) {
 	    HFByteArrayPiece* piece=NULL;
-	    tavl_getdata(myTree, succ, &piece);
+	    tavl_getdata(tree, succ, &piece);
 	    REQUIRE_NOT_NULL(piece);
 	    [piece setOffset:startingOffset];
 	    startingOffset += [piece length];
 	}
 	
 	//delete the existing node
-	int delete_result = tavl_delete(myTree, [arrayPiece tavl_key]);
+	int delete_result = tavl_delete(tree, [arrayPiece tavl_key]);
 	HFASSERT(delete_result == 1);
 	
 	if (first) {
-	    insert_result = tavl_insert(myTree, first, 0);
+	    insert_result = tavl_insert(tree, first, 0);
 	    HFASSERT(insert_result);
 	}
 	if (second) {
-	    insert_result = tavl_insert(myTree, second, 0);
+	    insert_result = tavl_insert(tree, second, 0);
 	    HFASSERT(insert_result);	
 	}
     }
@@ -363,9 +363,9 @@ static const char *tavl_description(TAVL_treeptr tree) {
     
     //insert the data; we may be at the end of the tree
     HFByteArrayPiece* insertingPiece = [[HFByteArrayPiece alloc] initWithSlice:slice offset:offset];
-    insert_result = tavl_insert(myTree, insertingPiece, 0);
+    insert_result = tavl_insert(tree, insertingPiece, 0);
     [insertingPiece release];
-    assert(insert_result);
+    HFASSERT(insert_result);
     
 #ifndef NDEBUG
     [self checkOffsets];

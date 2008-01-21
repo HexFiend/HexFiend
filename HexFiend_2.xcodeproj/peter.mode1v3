@@ -527,11 +527,11 @@
 		<string>D0D178C70D4467A100684270</string>
 		<string>1C530D57069F1CE1000CFCEE</string>
 		<string>1CD10A99069EF8BA00B06720</string>
-		<string>D0560B2F0CDC421E009D2484</string>
 		<string>D0D178C20D44677500684270</string>
 		<string>/Users/peter/Bell/HexFiend2/trunk/HexFiend_2/HexFiend_2.xcodeproj</string>
 		<string>D0D178E60D446A2400684270</string>
 		<string>1C78EAAD065D492600B07095</string>
+		<string>D0560B2F0CDC421E009D2484</string>
 		<string>D0D1790E0D44B6D900684270</string>
 	</array>
 	<key>WindowString</key>
@@ -627,7 +627,7 @@
 			<key>WindowToolGUID</key>
 			<string>D0560B2F0CDC421E009D2484</string>
 			<key>WindowToolIsVisible</key>
-			<false/>
+			<true/>
 		</dict>
 		<dict>
 			<key>FirstTimeWindowDisplayed</key>
