@@ -10,6 +10,7 @@
 #import <HexFiend/HFRepresenter_Internal.h>
 #import <HexFiend/HFByteArray_Internal.h>
 #import <HexFiend/HFFullMemoryByteArray.h>
+#import <HexFiend/HFTAVLTreeByteArray.h>
 #import <HexFiend/HFFullMemoryByteSlice.h>
 #import <HexFiend/HFControllerCoalescedUndo.h>
 
@@ -1435,7 +1436,7 @@ static NSUInteger random_upto(NSUInteger val) {
     const BOOL should_debug = NO;
     DEBUG puts("Beginning TAVL Tree test:");
     HFByteArray* first = [[[HFFullMemoryByteArray alloc] init] autorelease];
-    HFByteArray* second = [[[HFFullMemoryByteArray alloc] init] autorelease];
+    HFByteArray* second = [[[HFTavlTreeByteArray alloc] init] autorelease];
     
     //srandom(time(NULL));
     
