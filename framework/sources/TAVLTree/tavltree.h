@@ -173,7 +173,7 @@ __private_extern__ TAVL_nodeptr tavl_pred(TAVL_nodeptr p);
 
 typedef struct tavlnode {
             __strong void *dataptr;
-            struct tavlnode *Lptr, *Rptr;
+            __strong struct tavlnode *Lptr, *Rptr;
 #if !defined TAVL_USE_BIT_FIELDS
                                         /* see NOTE below */
             signed  char bf;            /* assumes values -2..+2 */
@@ -187,7 +187,7 @@ typedef struct tavlnode {
         } TAVL_NODE;
 
 typedef struct tavltree {
-            TAVL_nodeptr head;
+            __strong TAVL_nodeptr head;
             int (*cmp)(void *, void *);
             void *(*key_of)(void *);
             void *(*make_item)(const void *);
