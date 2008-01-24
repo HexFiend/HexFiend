@@ -311,3 +311,11 @@ NSString *HFHexStringFromData(NSData *data) {
     }
     return [[[NSString alloc] initWithBytesNoCopy:charBuffer length:stringLength encoding:NSASCIIStringEncoding freeWhenDone:YES] autorelease];
 }
+
+void HFSetFDShouldCache(int fd, BOOL shouldCache) {
+    int result = fcntl(fd, F_NOCACHE, !shouldCache);
+    if (result == -1) {
+        int err = errno;
+        NSLog(@"fcntl(%d, F_NOCACHE, %d) returned error %d: %s", fd, !shouldCache, err, strerror(err));
+    }
+}

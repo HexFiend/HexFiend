@@ -14,7 +14,7 @@
     @private
     HFByteSlice *slice;
     @public
-    HFRange range;
+    HFRange pieceRange;
 }
 
 - initWithSlice:(HFByteSlice *)slice offset:(unsigned long long)offset;
@@ -22,5 +22,12 @@
 - (unsigned long long)length;
 - (void)setOffset:(unsigned long long)offset;
 - (HFByteSlice *)byteSlice;
+
+- (HFRange *)tavl_key;
+
+//constructs two new ByteArrayPieces on either side of range
+//returns nil by reference if that array piece would hold no data
+//range must be wholly contained within this piece
+- (void)constructNewArrayPiecesAboutRange:(HFRange)range first:(HFByteArrayPiece**)first second:(HFByteArrayPiece**)second;
 
 @end

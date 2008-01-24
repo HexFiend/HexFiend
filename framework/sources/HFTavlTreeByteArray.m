@@ -39,6 +39,7 @@ static const char *tavl_description(TAVL_treeptr tree) {
 	if (arrayPiece) [result addObject:[NSString stringWithFormat:@"{%llu - %llu}", [arrayPiece offset], [arrayPiece length]]];
 	else [result addObject:@"{NULL}"];
     }
+    if (! [result count]) return "(empty tree)";
     return [[result componentsJoinedByString:@" "] UTF8String];
 }
 
@@ -101,6 +102,7 @@ static const char *tavl_description(TAVL_treeptr tree) {
 - (void)copyBytes:(unsigned char *)dst range:(HFRange)range {
     HFASSERT(range.length == 0 || dst != NULL);
     HFASSERT(HFMaxRange(range) <= [self length]);
+    if (range.length == 0) return;
     
     HFRange key = HFRangeMake(range.location, LOCATION_MAGIC_NUMBER);
     HFByteArrayPiece* arrayPiece=NULL;
@@ -373,6 +375,60 @@ static const char *tavl_description(TAVL_treeptr tree) {
 }
 
 
+- (void)insertByteSlice:(HFByteSlice *)slice inRange:(HFRange)lrange {
+    //TODO: optimize this
+    if (lrange.length > 0) {
+	[self deleteBytesInRange:lrange];
+    }
+    if ([slice length] > 0) [self insertByteSlice:slice atOffset:lrange.location];
+}
+
+- subarrayWithRange:(HFRange)range {
+    HFASSERT(HFMaxRange(range) <= [self length]);
+
+    HFTavlTreeByteArray* result = [[[[self class] alloc] init] autorelease];
+    
+    if (! range.length) return result;
+    
+    HFRange key = HFRangeMake(range.location, LOCATION_MAGIC_NUMBER);
+    HFByteArrayPiece* arrayPiece=NULL;
+    
+    TAVL_nodeptr node = tavl_find(tree, &key);
+    REQUIRE_NOT_NULL(node);
+    tavl_getdata(tree, node, &arrayPiece);
+    
+    unsigned long long targetOffset = 0;
+    while (targetOffset < range.length) {
+	REQUIRE_NOT_NULL(arrayPiece);
+	HFByteSlice* slice = [arrayPiece byteSlice];
+	const unsigned long long arrayOffset = [arrayPiece offset];
+	const unsigned long long arrayLength = [arrayPiece length];
+	unsigned long long beforeLength;
+	if (range.location < arrayOffset) beforeLength = 0;
+	else beforeLength = range.location - arrayOffset;
+	
+	unsigned long long afterLength;
+	if (range.location + range.length > arrayOffset + arrayLength) afterLength = 0;
+	else afterLength = arrayOffset + arrayLength - range.location - range.length;
+	
+	unsigned long long bytesFromThisPieceToCopy = arrayLength - beforeLength - afterLength;
+	
+	HFByteSlice* targetSlice;
+	//optimize the common case
+	if (beforeLength == 0 && bytesFromThisPieceToCopy == arrayLength) targetSlice = slice;
+	else targetSlice = [slice subsliceWithRange:HFRangeMake(beforeLength, bytesFromThisPieceToCopy)];
+	
+	[result insertByteSlice:targetSlice inRange:HFRangeMake(targetOffset, 0)];
+	targetOffset += bytesFromThisPieceToCopy;
+	
+	node = tavl_succ(node);
+	arrayPiece = nil;
+	if (node) tavl_getdata(tree, node, &arrayPiece);
+    }
+    HFASSERT([result length]==range.length);
+    return result;
+}
+
 @end
 
 
@@ -424,7 +480,7 @@ static int compare(void* ap, void* bp) {
 
 static void* key_of(void* obj) {
     REQUIRE_NOT_NULL(obj);
-    return &((HFByteArrayPiece *)obj)->range;
+    return &((HFByteArrayPiece *)obj)->pieceRange;
 }
 
 static void* make_item(const void *obj) {

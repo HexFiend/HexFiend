@@ -7,6 +7,8 @@
 //
 
 #import "MyDocument.h"
+#import "HFFindReplaceRepresenter.h"
+
 @implementation MyDocument
 
 - (NSString *)windowNibName {
@@ -124,19 +126,20 @@
     return nil;
 }
 
-- (BOOL)readFromData:(NSData *)data ofType:(NSString *)typeName error:(NSError **)outError
-{
-    NSParameterAssert(data != NULL);
-    
-    USE(data);
+- (BOOL)readFromURL:(NSURL *)absoluteURL ofType:(NSString *)typeName error:(NSError **)outError {
     USE(typeName);
     USE(outError);
-    
-    HFFullMemoryByteArray *byteArray = [[[HFFullMemoryByteArray alloc] init] autorelease];
-    [byteArray insertByteSlice:[[[HFFullMemoryByteSlice alloc] initWithData:data] autorelease] inRange:HFRangeMake(0, 0)];
-    [controller setByteArray:byteArray];
-    
-    return YES;
+    BOOL result = NO;
+    HFASSERT([absoluteURL isFileURL]);
+    HFFileReference *fileReference = [[[HFFileReference alloc] initWithPath:[absoluteURL path]] autorelease];
+    if (fileReference) {
+        HFFileByteSlice *byteSlice = [[[HFFileByteSlice alloc] initWithFile:fileReference] autorelease];
+        HFTavlTreeByteArray *byteArray = [[[HFTavlTreeByteArray alloc] init] autorelease];
+        [byteArray insertByteSlice:byteSlice inRange:HFRangeMake(0, 0)];
+        [controller setByteArray:byteArray];
+        result = YES;
+    }
+    return result;
 }
 
 - (IBAction)toggleVisibleControllerView:(id)sender {
@@ -172,6 +175,30 @@
         }
     }
     else return [super validateMenuItem:item];
+}
+
+- (void)performFindPanelAction:sender {
+    USE(sender);
+    if (! findReplaceController) {
+        NSRect containerBounds = [containerView bounds];
+        HFByteArray *findReplaceByteArray = [[[HFTavlTreeByteArray alloc] init] autorelease];
+        findReplaceController = [[HFController alloc] init];
+        [findReplaceController setByteArray:findReplaceByteArray];
+        findReplaceRepresenter = [[HFFindReplaceRepresenter alloc] init];
+        NSView *findReplaceView = [findReplaceRepresenter view];
+        NSRect findReplaceViewFrame;
+        findReplaceViewFrame.size.width = NSWidth(containerBounds);
+        findReplaceViewFrame.size.height = [findReplaceView frame].size.height;
+        
+        NSView *layoutView = [layoutRepresenter view];
+        NSRect layoutViewFrame = [layoutView frame];
+        layoutViewFrame.size.height = NSHeight(containerBounds) - findReplaceViewFrame.size.height;
+        [layoutView setFrame:layoutViewFrame];
+        findReplaceViewFrame.origin.x = NSMinX(containerBounds);
+        findReplaceViewFrame.origin.y = NSMaxY(containerBounds) - findReplaceViewFrame.size.height;
+        [findReplaceView setFrame:findReplaceViewFrame];
+        [containerView addSubview:findReplaceView];
+    }
 }
 
 @end

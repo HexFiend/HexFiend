@@ -11,3 +11,6 @@
 #import <HexFiend/HFStringEncodingTextRepresenter.h>
 #import <HexFiend/HFVerticalScrollerRepresenter.h>
 #import <HexFiend/HFByteArray_ToString.h>
+#import <HexFiend/HFFileByteSlice.h>
+#import <HexFiend/HFFileReference.h>
+#import <HexFiend/HFTavlTreeByteArray.h>

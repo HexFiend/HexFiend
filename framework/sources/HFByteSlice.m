@@ -24,4 +24,29 @@
 
 - (HFByteSlice *)subsliceWithRange:(HFRange)range { USE(range); UNIMPLEMENTED(); }
 
+- (void)constructNewByteSlicesAboutRange:(HFRange)range first:(HFByteSlice **)first second:(HFByteSlice **)second {
+    const unsigned long long length = [self length];
+    
+    //clip the range to our extent
+    range.location = llmin(range.location, length);
+    range.length = llmin(range.length, length - range.location);
+    
+    HFRange firstRange = {0, range.location};
+    HFRange secondRange = {range.location + range.length, [self length] - (range.location + range.length)};
+    
+    if (first) {
+        if (firstRange.length > 0)
+            *first = [self subsliceWithRange:firstRange];
+        else
+            *first = nil;
+    }
+    
+    if (second) {
+        if (secondRange.length > 0)
+            *second = [self subsliceWithRange:secondRange];
+        else
+            *second = nil;
+    }
+}
+
 @end
