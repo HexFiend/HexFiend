@@ -29,3 +29,6 @@ __private_extern__ NSString *HFHexStringFromData(NSData *data);
 
 /* Modifies F_NOCACHE for a given file descriptor */
 __private_extern__ void HFSetFDShouldCache(int fd, BOOL shouldCache);
+
+/* Tiger-friendly version of objc_collectingEnabled */
+__private_extern__ BOOL HFIsGarbageCollected(void);

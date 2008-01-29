@@ -6,6 +6,8 @@
 //  Copyright 2007 __MyCompanyName__. All rights reserved.
 //
 
+/* Note that on Tiger, NSScroller did not support double in any meaningful way; [scroller doubleValue] always returns 0, and setDoubleValue: doesn't look like it works either. */
+
 #import <HexFiend/HFVerticalScrollerRepresenter.h>
 
 
@@ -71,7 +73,7 @@
 	case NSScrollerIncrementPage: [self scrollByLines: (long long)[self visibleLines]]; break;
 	case NSScrollerDecrementLine: [self scrollByLines: -1LL]; break;
 	case NSScrollerIncrementLine: [self scrollByLines: 1LL]; break;
-	case NSScrollerKnob: [self scrollByKnobToValue:[scroller doubleValue]]; break;
+	case NSScrollerKnob: [self scrollByKnobToValue:(HFIsRunningOnLeopardOrLater() ? [scroller doubleValue] : [scroller floatValue])]; break;
 	default: break;
     }
 }

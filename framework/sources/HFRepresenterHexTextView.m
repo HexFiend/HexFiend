@@ -57,9 +57,9 @@
         CGGlyph glyphs[GLYPH_BUFFER_SIZE];
         [textView setFont:[NSFont fontWithName:@"Monaco" size:(CGFloat)10.]];
         [textView useAllLigatures:nil];
-        HFASSERT([self _glyphsForString:@"fire" withGeneratingTextView:textView glyphs:glyphs] == 3); //fi ligature
+        HFASSERT(! HFIsRunningOnLeopardOrLater() || [self _glyphsForString:@"fire" withGeneratingTextView:textView glyphs:glyphs] == 3); //fi ligature
         HFASSERT([self _glyphsForString:@"forty" withGeneratingTextView:textView glyphs:glyphs] == 5); //no ligatures
-        HFASSERT([self _glyphsForString:@"flip" withGeneratingTextView:textView glyphs:glyphs] == 3); //fl ligature
+        HFASSERT(! HFIsRunningOnLeopardOrLater() || [self _glyphsForString:@"flip" withGeneratingTextView:textView glyphs:glyphs] == 3); //fl ligature
     }
 #endif
     

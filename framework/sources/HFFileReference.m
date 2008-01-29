@@ -10,6 +10,9 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <fcntl.h>
+#include <unistd.h>
+
+#define USE_STAT64 0
 
 @implementation HFFileReference
 
@@ -21,8 +24,13 @@
     if (fileDescriptor < 0) {
         [NSException raise:NSGenericException format:@"Unable to open file %@. %s.", path, strerror(errno)];
     }
+#if USE_STAT64
     struct stat64 sb;
     result = fstat64(fileDescriptor, &sb);
+#else
+    struct stat sb;
+    result = fstat(fileDescriptor, &sb);
+#endif
     if (result != 0) {
         close(fileDescriptor);
         [NSException raise:NSGenericException format:@"Unable to fstat64 file %@. %s.", path, strerror(errno)];

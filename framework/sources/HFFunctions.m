@@ -319,3 +319,9 @@ void HFSetFDShouldCache(int fd, BOOL shouldCache) {
         NSLog(@"fcntl(%d, F_NOCACHE, %d) returned error %d: %s", fd, !shouldCache, err, strerror(err));
     }
 }
+
+//extern BOOL objc_collecting_enabled(void) __attribute__((weak_import));
+BOOL HFIsGarbageCollected(void) {
+    if (objc_collecting_enabled) return objc_collecting_enabled();
+    else return NO;
+}

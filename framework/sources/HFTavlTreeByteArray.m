@@ -21,12 +21,14 @@
 
 
 static int compare(void* a, void* b);
-static void* key_of(void* obj);
-static void* make_item(const void *obj);
+static void *key_of(void* obj);
+static void *make_item(const void *obj);
 static void  free_item(void* obj);
-static void* copy_item(void* dst, const void* src);
-static void* alloc(size_t);
+static void *copy_item(void* dst, const void* src);
+static void *alloc(size_t);
+static void *alloc_gc(size_t);
 static void  dealloc(void*);
+static void  dealloc_gc(void*);
 
 static const char *tavl_description(TAVL_treeptr tree) __attribute__ ((unused));
 static const char *tavl_description(TAVL_treeptr tree) {
@@ -47,7 +49,8 @@ static const char *tavl_description(TAVL_treeptr tree) {
 
 - init {
     if ((self = [super init])) {
-        tree = tavl_init(compare, key_of, make_item, free_item, copy_item, alloc, dealloc);
+	BOOL gc = objc_collecting_enabled();
+        tree = tavl_init(compare, key_of, make_item, free_item, copy_item, (gc ? alloc_gc : alloc), (gc ? dealloc_gc : dealloc));
         if (! tree) {
             [self release];
             [NSException raise:NSMallocException format:@"tavl_init failed: out of memory."];
@@ -478,12 +481,12 @@ static int compare(void* ap, void* bp) {
 }
 #endif
 
-static void* key_of(void* obj) {
+static void *key_of(void* obj) {
     REQUIRE_NOT_NULL(obj);
     return &((HFByteArrayPiece *)obj)->pieceRange;
 }
 
-static void* make_item(const void *obj) {
+static void *make_item(const void *obj) {
     REQUIRE_NOT_NULL(obj);
     return [(HFByteArrayPiece *)obj retain];
 }
@@ -493,24 +496,26 @@ static void free_item(void* obj) {
     [(HFByteArrayPiece *)obj release];
 }
 
-static void* copy_item(void* dst, const void* src) {
+static void *copy_item(void* dst, const void* src) {
     REQUIRE_NOT_NULL(dst);
     REQUIRE_NOT_NULL(src);
     *(__strong id*)dst = (id)src;
     return dst;
 }
 
-static void* alloc(size_t val) {
-    if (! objc_collectingEnabled()) {
-        return malloc(val);
-    }
-    else {
-        return NSAllocateCollectable(val, NSScannedOption);
-    }
+static void *alloc(size_t val) {
+    return malloc(val);
+}
+
+static void *alloc_gc(size_t val) {
+    return NSAllocateCollectable(val, NSScannedOption);
 }
 
 static void dealloc(void* obj) {
-    if (! objc_collectingEnabled()) {
-        free(obj);
-    }
+    free(obj);
+}
+
+static void dealloc_gc(void* obj) {
+    USE(obj);
+    /* Nothing to do under GC */
 }

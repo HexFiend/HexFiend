@@ -21,12 +21,14 @@ static const NSTimeInterval HFCaretBlinkFrequency = 0.56;
     NSGlyph nsglyphs[GLYPH_BUFFER_SIZE];
     [textView setString:string];
     [textView setNeedsDisplay:YES]; //ligature generation doesn't seem to happen without this, for some reason.  This seems very fragile!  We should find a better way to get this ligature information!!
-    glyphCount = [[textView layoutManager] getGlyphs:nsglyphs range:NSMakeRange(0, GLYPH_BUFFER_SIZE)];
+    glyphCount = [[textView layoutManager] getGlyphs:nsglyphs range:NSMakeRange(0, MIN(GLYPH_BUFFER_SIZE, [[textView layoutManager] numberOfGlyphs]))];
     if (glyphs != NULL) {
         /* Convert from unsigned int NSGlyphs to unsigned short CGGlyphs */
         for (glyphIndex = 0; glyphIndex < glyphCount; glyphIndex++) {
-            HFASSERT(nsglyphs[glyphIndex] <= USHRT_MAX);
-            glyphs[glyphIndex] = (CGGlyph)nsglyphs[glyphIndex];
+	    /* Get rid of NSControlGlyph */
+	    NSGlyph modifiedGlyph = nsglyphs[glyphIndex] == NSControlGlyph ? NSNullGlyph : nsglyphs[glyphIndex];
+            HFASSERT(modifiedGlyph <= USHRT_MAX);
+            glyphs[glyphIndex] = (CGGlyph)modifiedGlyph;
         }
     }
     return glyphCount;
