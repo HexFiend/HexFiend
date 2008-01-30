@@ -8,6 +8,11 @@
 
 #import "MyDocument.h"
 #import "HFFindReplaceRepresenter.h"
+#import "HFBannerDividerThumb.h"
+
+static BOOL isRunningOnLeopardOrLater(void) {
+    return NSAppKitVersionNumber >= 860.;
+}
 
 @implementation MyDocument
 
@@ -42,6 +47,10 @@
 
 - (void)windowControllerDidLoadNib:(NSWindowController *)windowController {
     USE(windowController);
+    
+    [containerView setVertical:NO];
+    if ([containerView respondsToSelector:@selector(setDividerStyle:)]) [containerView setDividerStyle:NSSplitViewDividerStyleThin];
+    [containerView setDelegate:self];
     
     NSView *layoutView = [layoutRepresenter view];
     [layoutView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
@@ -111,6 +120,7 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [[self representers] makeObjectsPerformSelector:@selector(release)];
     [controller release];
+    [bannerView release];
     [super dealloc];
 }
 
@@ -177,28 +187,69 @@
     else return [super validateMenuItem:item];
 }
 
+- (void)animateBanner:(NSTimer *)timer {
+    BOOL isFirstCall = (bannerStartTime == 0);
+    CFAbsoluteTime now = CFAbsoluteTimeGetCurrent();
+    if (isFirstCall) bannerStartTime = now;
+    CFAbsoluteTime diff = now - bannerStartTime;
+    double amount = diff / .15;
+    amount = fmin(fmax(amount, 0), 1);
+    CGFloat height = (CGFloat)round(bannerTargetHeight * amount);
+    NSRect bannerFrame = [bannerView frame];
+    bannerFrame.size.height = height;
+    [bannerView setFrame:bannerFrame];
+    [containerView display];
+    if (isFirstCall) {
+        /* The first display can take some time, which can cause jerky animation; so we start the animation after it */
+        bannerStartTime = CFAbsoluteTimeGetCurrent();
+    }
+    if (amount >= 1.) {
+        [timer invalidate];
+    }
+}
+
+- (void)prepareBannerWithView:(NSView *)newSubview {
+    if (! bannerView) bannerView = [[NSView alloc] initWithFrame:NSMakeRect(0, 0, 1, 1)];
+    NSRect containerBounds = [containerView bounds];
+    NSRect bannerFrame = NSMakeRect(NSMinX(containerBounds), NSMaxY(containerBounds), NSWidth(containerBounds), 0);
+    [bannerView setFrame:bannerFrame];
+    [containerView addSubview:bannerView positioned:NSWindowBelow relativeTo:[layoutRepresenter view]];
+    bannerStartTime = 0;
+    if (isRunningOnLeopardOrLater() && ! bannerDividerThumb) {
+        bannerDividerThumb = [[HFBannerDividerThumb alloc] initWithFrame:NSMakeRect(0, 0, 14, 14)];
+        [bannerDividerThumb setAutoresizingMask:0];
+        [bannerDividerThumb setFrameOrigin:NSMakePoint(3, 0)];
+        [bannerView addSubview:bannerDividerThumb];
+    }
+    if (newSubview) {
+        if (bannerDividerThumb) [bannerView addSubview:newSubview positioned:NSWindowBelow relativeTo:bannerDividerThumb];
+        else [bannerView addSubview:newSubview];
+    }
+    [NSTimer scheduledTimerWithTimeInterval:1. / 60. target:self selector:@selector(animateBanner:) userInfo:nil repeats:YES];
+}
+
 - (void)performFindPanelAction:sender {
     USE(sender);
-    if (! findReplaceController) {
-        NSRect containerBounds = [containerView bounds];
-        HFByteArray *findReplaceByteArray = [[[HFTavlTreeByteArray alloc] init] autorelease];
-        findReplaceController = [[HFController alloc] init];
-        [findReplaceController setByteArray:findReplaceByteArray];
-        findReplaceRepresenter = [[HFFindReplaceRepresenter alloc] init];
-        NSView *findReplaceView = [findReplaceRepresenter view];
-        NSRect findReplaceViewFrame;
-        findReplaceViewFrame.size.width = NSWidth(containerBounds);
-        findReplaceViewFrame.size.height = [findReplaceView frame].size.height;
-        
-        NSView *layoutView = [layoutRepresenter view];
-        NSRect layoutViewFrame = [layoutView frame];
-        layoutViewFrame.size.height = NSHeight(containerBounds) - findReplaceViewFrame.size.height;
-        [layoutView setFrame:layoutViewFrame];
-        findReplaceViewFrame.origin.x = NSMinX(containerBounds);
-        findReplaceViewFrame.origin.y = NSMaxY(containerBounds) - findReplaceViewFrame.size.height;
-        [findReplaceView setFrame:findReplaceViewFrame];
-        [containerView addSubview:findReplaceView];
-    }
+    if (findReplaceController) return;
+    
+    findReplaceController = [[HFController alloc] init];
+    [findReplaceController setByteArray:[[[HFTavlTreeByteArray alloc] init] autorelease]];
+    findReplaceRepresenter = [[HFFindReplaceRepresenter alloc] init];
+    NSView *findReplaceView = [findReplaceRepresenter view];
+    [findReplaceView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
+    bannerTargetHeight = NSHeight([findReplaceView frame]);
+    [findReplaceView setFrameSize:NSMakeSize(NSWidth([containerView frame]), 0)];
+    [findReplaceView setFrameOrigin:NSZeroPoint];
+    
+    [self prepareBannerWithView:findReplaceView];
+    [findReplaceRepresenter gainFocus];
+}
+
+- (NSRect)splitView:(NSSplitView *)splitView additionalEffectiveRectOfDividerAtIndex:(NSInteger)dividerIndex {
+    USE(dividerIndex);
+    HFASSERT(splitView == containerView);
+    if (bannerDividerThumb) return [bannerDividerThumb convertRect:[bannerDividerThumb bounds] toView:containerView];
+    else return NSZeroRect;
 }
 
 @end

@@ -11,7 +11,7 @@
 @class HFRepresenter, HFLineCountingRepresenter, HFLayoutRepresenter, HFFindReplaceRepresenter;
 
 @interface MyDocument : NSDocument {
-    IBOutlet NSView *containerView;
+    IBOutlet NSSplitView *containerView;
     HFController *controller;
     
     HFLineCountingRepresenter *lineCountingRepresenter;
@@ -23,6 +23,12 @@
     
     HFController *findReplaceController;
     HFFindReplaceRepresenter *findReplaceRepresenter;
+
+    NSView *bannerView;
+    NSView *bannerDividerThumb;
+    BOOL bannerGrowing;
+    CGFloat bannerTargetHeight;
+    CFAbsoluteTime bannerStartTime;
 }
 
 @end

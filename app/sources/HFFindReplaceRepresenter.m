@@ -29,26 +29,34 @@
     [findReplaceController setByteArray:findReplaceByteArray];
     
     findReplaceLayout = [[HFLayoutRepresenter alloc] init];
-    HFRepresenter *hexRepresenter = [[HFHexTextRepresenter alloc] init];
-    [findReplaceController addRepresenter:hexRepresenter];
-    [findReplaceLayout addRepresenter:hexRepresenter];
+    activeRepresenter = [[HFHexTextRepresenter alloc] init];
+    [[activeRepresenter view] setShowsFocusRing:YES];
+    [[activeRepresenter view] setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
+    [findReplaceController addRepresenter:activeRepresenter];
+    [findReplaceLayout addRepresenter:activeRepresenter];
     
     [findReplaceController addRepresenter:findReplaceLayout];
     NSView *layoutView = [findReplaceLayout view];
-    [layoutView setAutoresizingMask:NSViewMinXMargin | NSViewHeightSizable];
+    [layoutView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
     NSRect backgroundViewBounds = [backgroundView bounds];
     NSRect layoutViewFrame;
-    layoutViewFrame.origin.x = NSMaxX([navigateView frame]);
-    layoutViewFrame.origin.y = NSMinY(backgroundViewBounds);
-    layoutViewFrame.size.width = NSMaxX(backgroundViewBounds) - layoutViewFrame.origin.x;
-    layoutViewFrame.size.height = NSHeight(backgroundViewBounds);
-    layoutViewFrame = NSInsetRect(layoutViewFrame, 2, 4);
+    layoutViewFrame.origin.x = NSMaxX([navigateView frame]) + 2;
+    layoutViewFrame.origin.y = NSMinY(backgroundViewBounds) + 2;
+    layoutViewFrame.size.width = NSMaxX(backgroundViewBounds) - layoutViewFrame.origin.x - 6;
+    layoutViewFrame.size.height = NSHeight(backgroundViewBounds) - 4;
+    NSLog(@"%@ -> %@", NSStringFromRect([backgroundView bounds]), NSStringFromRect(layoutViewFrame));
     [layoutView setFrame:layoutViewFrame];
+    [backgroundView setLayoutRepresenterView:layoutView];
     [backgroundView addSubview:layoutView];
 }
 
 - (IBAction)findNextOrPrevious:sender {
 
+}
+
+- (void)gainFocus {
+    NSView *view = [activeRepresenter view];
+    [[view window] makeFirstResponder:view];
 }
 
 @end

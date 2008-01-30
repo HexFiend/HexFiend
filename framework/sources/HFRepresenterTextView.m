@@ -13,7 +13,7 @@ static const NSTimeInterval HFCaretBlinkFrequency = 0.56;
 
 @implementation HFRepresenterTextView
 
-/* Returns the glyphs for the given string, using the given text view, and generating the glyphs if the glyphs parameter is not NULL */
+/* Returns the number of glyphs for the given string, using the given text view, and generating the glyphs if the glyphs parameter is not NULL */
 - (NSUInteger)_glyphsForString:(NSString *)string withGeneratingTextView:(NSTextView *)textView glyphs:(CGGlyph *)glyphs {
     NSUInteger glyphIndex, glyphCount;
     HFASSERT(string != NULL);
@@ -385,12 +385,14 @@ enum LineCoverage_t {
 - (BOOL)becomeFirstResponder {
     BOOL result = [super becomeFirstResponder];
     [self _updateCaretTimerWithFirstResponderStatus:YES];
+    if ([self showsFocusRing]) [self setNeedsDisplay:YES];
     return result;
 }
 
 - (BOOL)resignFirstResponder {
     BOOL result = [super resignFirstResponder];
     [self _updateCaretTimerWithFirstResponderStatus:NO];
+    if ([self showsFocusRing]) [self setNeedsDisplay:YES];
     return result;
 }
 
@@ -540,6 +542,7 @@ enum LineCoverage_t {
     NSRect bounds = [self bounds];
     NSUInteger lineIndex;
     NSRect lineRect = NSMakeRect(NSMinX(bounds), NSMinY(bounds), NSWidth(bounds), lineHeight);
+    if (_hftvflags.showsFocusRing) lineRect = NSInsetRect(lineRect, 2, 0);
     lineRect.origin.y -= [self verticalOffset] * [self lineHeight];
     NSUInteger drawableLineIndex = 0;
     NEW_ARRAY(NSRect, lineRects, maxLines);
@@ -601,11 +604,26 @@ enum LineCoverage_t {
     UNIMPLEMENTED_VOID();
 }
 
+- (void)drawFocusRingWithClip:(NSRect)clip {
+    USE(clip);
+    [NSGraphicsContext saveGraphicsState];
+    NSSetFocusRingStyle(NSFocusRingOnly);
+    [[NSColor clearColor] set];
+    NSRectFill([self bounds]);
+    [NSGraphicsContext restoreGraphicsState];
+}
+
 - (void)drawRect:(NSRect)clip {
     [[self backgroundColorForEmptySpace] set];
     NSRectFill(clip);
     
-
+    if ([self showsFocusRing]) {
+        NSWindow *window = [self window];
+        if (self == [window firstResponder] && [window isKeyWindow]) {
+            [self drawFocusRingWithClip:clip];
+        }
+    }
+    
     NSUInteger bytesPerLine = [self bytesPerLine];
     if (bytesPerLine == 0) return;
     NSUInteger byteCount = [data length];
@@ -681,11 +699,26 @@ enum LineCoverage_t {
     }
 }
 
+- (BOOL)showsFocusRing {
+    return _hftvflags.showsFocusRing;
+}
+
+- (void)setShowsFocusRing:(BOOL)val {
+    if (val != _hftvflags.showsFocusRing) {
+        _hftvflags.showsFocusRing = val;
+        [self setNeedsDisplay:YES];
+    }
+}
+
+
 - (void)_windowDidChangeKeyStatus:(NSNotification *)note {
     USE(note);
     [self _updateCaretTimer];
     if ([[note name] isEqualToString:NSWindowDidBecomeKeyNotification]) {
         [self _forceCaretOnIfHasCaretTimer];
+    }
+    if ([self showsFocusRing] && self == [[self window] firstResponder]) {
+        [[self superview] setNeedsDisplayInRect:NSInsetRect([self frame], -6, -6)];
     }
     [self setNeedsDisplay:YES];
 }

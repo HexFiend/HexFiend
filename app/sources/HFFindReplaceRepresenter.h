@@ -16,8 +16,10 @@
     
     HFController *findReplaceController;
     HFLayoutRepresenter *findReplaceLayout;
+    HFRepresenter *activeRepresenter;
 }
 
 - (IBAction)findNextOrPrevious:sender;
+- (void)gainFocus;
 
 @end

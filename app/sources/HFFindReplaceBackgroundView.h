@@ -10,7 +10,11 @@
 
 
 @interface HFFindReplaceBackgroundView : NSView {
-
+    IBOutlet NSSegmentedControl *navigateControl;
+    IBOutlet NSView *layoutRepresenterView;
 }
+
+- (void)setLayoutRepresenterView:(NSView *)view;
+- (NSView *)layoutRepresenterView;
 
 @end

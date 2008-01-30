@@ -39,6 +39,9 @@
 		D041D3FF0D3DED7200C28345 /* HFByteArrayPiece.m in Sources */ = {isa = PBXBuildFile; fileRef = D041D3FD0D3DED7200C28345 /* HFByteArrayPiece.m */; };
 		D04327A40CF081CD00C14250 /* HFFunctions_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = D04327A30CF081CD00C14250 /* HFFunctions_Private.h */; };
 		D06B1DB10D13EE1D00B9A206 /* HFMetalGradient.tiff in Resources */ = {isa = PBXBuildFile; fileRef = D06B1DB00D13EE1D00B9A206 /* HFMetalGradient.tiff */; };
+		D078CE770D4EE7F900492F46 /* CHUD.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D078CE760D4EE7F900492F46 /* CHUD.framework */; };
+		D078CF550D50491100492F46 /* HFBannerDividerThumb.h in Headers */ = {isa = PBXBuildFile; fileRef = D078CF530D50491100492F46 /* HFBannerDividerThumb.h */; };
+		D078D0520D50492F00492F46 /* HFBannerDividerThumb.m in Sources */ = {isa = PBXBuildFile; fileRef = D078CF540D50491100492F46 /* HFBannerDividerThumb.m */; };
 		D0826EAB0D4855900006FB7D /* HFFileReference.h in Headers */ = {isa = PBXBuildFile; fileRef = D0826EA90D4855900006FB7D /* HFFileReference.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D0826EAC0D4855900006FB7D /* HFFileReference.m in Sources */ = {isa = PBXBuildFile; fileRef = D0826EAA0D4855900006FB7D /* HFFileReference.m */; };
 		D0826EF10D487A000006FB7D /* HFFileByteSlice.h in Headers */ = {isa = PBXBuildFile; fileRef = D0826EEF0D487A000006FB7D /* HFFileByteSlice.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -161,6 +164,9 @@
 		D041D3FD0D3DED7200C28345 /* HFByteArrayPiece.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFByteArrayPiece.m; path = framework/sources/HFByteArrayPiece.m; sourceTree = "<group>"; };
 		D04327A30CF081CD00C14250 /* HFFunctions_Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFFunctions_Private.h; path = framework/sources/HFFunctions_Private.h; sourceTree = "<group>"; };
 		D06B1DB00D13EE1D00B9A206 /* HFMetalGradient.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = HFMetalGradient.tiff; path = framework/resources/HFMetalGradient.tiff; sourceTree = "<group>"; };
+		D078CE760D4EE7F900492F46 /* CHUD.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CHUD.framework; path = /System/Library/PrivateFrameworks/CHUD.framework; sourceTree = "<absolute>"; };
+		D078CF530D50491100492F46 /* HFBannerDividerThumb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFBannerDividerThumb.h; sourceTree = "<group>"; };
+		D078CF540D50491100492F46 /* HFBannerDividerThumb.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFBannerDividerThumb.m; sourceTree = "<group>"; };
 		D0826EA90D4855900006FB7D /* HFFileReference.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFFileReference.h; path = framework/sources/HFFileReference.h; sourceTree = "<group>"; };
 		D0826EAA0D4855900006FB7D /* HFFileReference.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFFileReference.m; path = framework/sources/HFFileReference.m; sourceTree = "<group>"; };
 		D0826EEF0D487A000006FB7D /* HFFileByteSlice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFFileByteSlice.h; path = framework/sources/HFFileByteSlice.h; sourceTree = "<group>"; };
@@ -229,6 +235,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D078CE770D4EE7F900492F46 /* CHUD.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -238,6 +245,7 @@
 		1058C7A0FEA54F0111CA2CBB /* Linked Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				D078CE760D4EE7F900492F46 /* CHUD.framework */,
 				1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */,
 			);
 			name = "Linked Frameworks";
@@ -386,6 +394,8 @@
 			children = (
 				32CA4F630368D1EE00C91783 /* HexFiend_2_Prefix.pch */,
 				29B97316FDCFA39411CA2CEA /* main.m */,
+				D078CF530D50491100492F46 /* HFBannerDividerThumb.h */,
+				D078CF540D50491100492F46 /* HFBannerDividerThumb.m */,
 				D01E7C140CDC58AA00943F9E /* MyDocument.h */,
 				D01E7C150CDC58AA00943F9E /* MyDocument.m */,
 				D00122DC0D48A89F00540B10 /* Find_Replace */,
@@ -492,6 +502,7 @@
 				D0D179460D46F20E00684270 /* HFByteSlice_Private.h in Headers */,
 				D0826EAB0D4855900006FB7D /* HFFileReference.h in Headers */,
 				D0826EF10D487A000006FB7D /* HFFileByteSlice.h in Headers */,
+				D078CF550D50491100492F46 /* HFBannerDividerThumb.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -587,6 +598,7 @@
 				D01E7C160CDC58AA00943F9E /* MyDocument.m in Sources */,
 				D00122D90D48A88C00540B10 /* HFFindReplaceRepresenter.m in Sources */,
 				D00122E30D48A8D400540B10 /* HFFindReplaceBackgroundView.m in Sources */,
+				D078D0520D50492F00492F46 /* HFBannerDividerThumb.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -687,7 +699,7 @@
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
-				GCC_ENABLE_OBJC_GC = required;
+				GCC_ENABLE_OBJC_GC = unsupported;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -713,7 +725,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_ENABLE_OBJC_GC = required;
+				GCC_ENABLE_OBJC_GC = unsupported;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = app/sources/HexFiend_2_Prefix.pch;
@@ -772,6 +784,10 @@
 				COPY_PHASE_STRIP = NO;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\"",
+				);
 				FRAMEWORK_VERSION = A;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
@@ -809,6 +825,10 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\"",
+				);
 				FRAMEWORK_VERSION = A;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_ENABLE_OBJC_GC = supported;

@@ -221,3 +221,8 @@ static inline NSUInteger HFDivideULRoundingUp(NSUInteger a, NSUInteger b) {
 + (void)getRanges:(HFRange *)ranges fromArray:(NSArray *)array;
 
 @end
+
+#ifndef NDEBUG
+void HFStartTiming(const char *name);
+void HFStopTiming(void);
+#endif

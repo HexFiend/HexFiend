@@ -369,7 +369,7 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
         newLineRange.location = line;
     }
     else if (line >= lineRange.location + lineRange.length) {
-        HFASSERT(lineRange.location + lineRange.length > 1);
+        HFASSERT(lineRange.location + lineRange.length >= 1);
         newLineRange.location = lineRange.location + (line - (lineRange.location + lineRange.length - 1));
     }
     [self setDisplayedLineRange:newLineRange];

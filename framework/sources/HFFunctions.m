@@ -1,5 +1,8 @@
 #import <HexFiend/HFFunctions.h>
 #import <HexFiend/HFController.h>
+#ifndef NDEBUG
+#import <CHUD/CHUD.h>
+#endif
 
 NSImage *HFImageNamed(NSString *name) {
     HFASSERT(name != NULL);
@@ -319,4 +322,23 @@ void HFSetFDShouldCache(int fd, BOOL shouldCache) {
         NSLog(@"fcntl(%d, F_NOCACHE, %d) returned error %d: %s", fd, !shouldCache, err, strerror(err));
     }
 }
+
+
+#ifndef NDEBUG
+void HFStartTiming(const char *name) {
+    static BOOL inited;
+    if (! inited) {
+        inited = YES;
+        chudInitialize();
+        chudSetErrorLogFile(stderr);
+        chudAcquireRemoteAccess();
+    }
+    chudStartRemotePerfMonitor(name);
+    
+}
+
+void HFStopTiming(void) {
+    chudStopRemotePerfMonitor();
+}
+#endif
 
