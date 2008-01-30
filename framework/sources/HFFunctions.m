@@ -320,8 +320,3 @@ void HFSetFDShouldCache(int fd, BOOL shouldCache) {
     }
 }
 
-//extern BOOL objc_collecting_enabled(void) __attribute__((weak_import));
-BOOL HFIsGarbageCollected(void) {
-    if (objc_collecting_enabled) return objc_collecting_enabled();
-    else return NO;
-}

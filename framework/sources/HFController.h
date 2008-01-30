@@ -28,9 +28,7 @@ typedef NSUInteger HFControllerPropertyBits;
 enum
 {
     HFControllerDirectionLeft,
-    HFControllerDirectionRight,
-    HFControllerDirectionUp,
-    HFControllerDirectionDown
+    HFControllerDirectionRight
 };
 typedef NSUInteger HFControllerMovementDirection;
 
@@ -41,7 +39,7 @@ enum
     HFControllerMovementPage,
     HFControllerMovementDocument
 };
-typedef NSUInteger HFControllerMovementQuantity;
+typedef NSUInteger HFControllerMovementGranularity;
 
 @interface HFController : NSObject {
     @private
@@ -84,13 +82,13 @@ typedef NSUInteger HFControllerMovementQuantity;
 - (NSUInteger)beginPropertyChangeTransaction;
 - (void)endPropertyChangeTransaction:(NSUInteger)token;
 
-- (HFFPRange)displayedLineRange;
-- (void)setDisplayedLineRange:(HFFPRange)range;
-
 /* Returns all lines on which the cursor may be placed.  This is equivalent to (unsigned long long)(HFRoundUpToNextMultiple(contentsLength, bytesPerLine) / bytesPerLine) */
 - (unsigned long long)totalLineCount;
 
 /* Methods for obtaining information about the current contents state */
+- (HFFPRange)displayedLineRange;
+- (void)setDisplayedLineRange:(HFFPRange)range;
+
 - (HFRange)displayedContentsRange;
 - (void)setDisplayedContentsRange:(HFRange)range;
 
@@ -110,6 +108,9 @@ typedef NSUInteger HFControllerMovementQuantity;
     No range may extend beyond the contentsLength, with the exception of a single zero-length range, which may be at the end.
 */
 - (void)setSelectedContentsRanges:(NSArray *)selectedRanges;
+
+/* Attempts to scroll as little as possible so that as much of the given range as can fit is visible. */
+- (void)maximizeVisibilityOfContentsRange:(HFRange)range;
 
 /* Methods for getting at data */
 - (NSData *)dataForRange:(HFRange)range;
@@ -143,12 +144,15 @@ typedef NSUInteger HFControllerMovementQuantity;
 
 /* Scroll wheel support */
 - (void)scrollWithScrollEvent:(NSEvent *)scrollEvent;
+- (void)scrollByLines:(long double)lines;
 
 /* Action methods */
 - (IBAction)selectAll:sender;
 
 /* Keyboard navigation */
-- (void)moveDirection:(HFControllerMovementDirection)direction andModifySelection:(BOOL)extendSelection;
+- (void)moveInDirection:(HFControllerMovementDirection)direction withGranularity:(HFControllerMovementGranularity)granularity andModifySelection:(BOOL)extendSelection;
+- (void)moveInDirection:(HFControllerMovementDirection)direction byByteCount:(unsigned long long)amountToMove andModifySelection:(BOOL)extendSelection;
+- (void)moveToLineBoundaryInDirection:(HFControllerMovementDirection)direction andModifySelection:(BOOL)extendSelection;
 
 /* Text editing.  All of the following methods are undoable. */
 

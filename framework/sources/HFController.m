@@ -375,7 +375,7 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
     [self setDisplayedLineRange:newLineRange];
 }
 
-- (void)_maximizeVisibilityOfContentsRange:(HFRange)range {
+- (void)maximizeVisibilityOfContentsRange:(HFRange)range {
     HFASSERT(HFRangeIsSubrangeOfRange(range, HFRangeMake(0, [self contentsLength])));
     HFFPRange displayRange = [self displayedLineRange];
     HFFPRange newDisplayRange = displayRange;
@@ -571,7 +571,7 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
     USE(event);
     HFASSERT(characterIndex <= [self contentsLength]);
     
-    /* Determine how to perform the selection - normally, with command key, or with shift key.  Command + shift is the same as command. The shift key closes the selection - the selected range becomes the single range containing the first and last character. */
+    /* Determine how to perform the selection - normally, with command key, or with shift key.  Command + shift is the same as command. The shift key closes the selection - the selected range becomes the single range containing the first and last selected character. */
     _hfflags.shiftExtendSelection = NO;
     _hfflags.commandExtendSelection = NO;
     NSUInteger flags = [event modifierFlags];
@@ -591,8 +591,14 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
         /* The selection anchor is used to track the single (flattened) selected range. */
         HFRange selectedRange = [self _flattenSelectionRange];
         unsigned long long distanceFromRangeStart = HFAbsoluteDifference(selectedRange.location, characterIndex);
-        unsigned long long distanceFromRangeEnd = HFAbsoluteDifference(selectedRange.location + selectedRange.length, characterIndex);
-        if (distanceFromRangeStart >= distanceFromRangeEnd) {
+        unsigned long long distanceFromRangeEnd = HFAbsoluteDifference(HFMaxRange(selectedRange), characterIndex);
+	if (selectedRange.length == 0) {    
+	    HFASSERT(distanceFromRangeStart == distanceFromRangeEnd);
+	    selectionAnchor = selectedRange.location;
+	    selectedRange.location = HFMin(characterIndex, selectedRange.location);
+	    selectedRange.length = distanceFromRangeStart;
+	}
+        else if (distanceFromRangeStart >= distanceFromRangeEnd) {
             /* Push the "end forwards" */
             selectedRange.length = distanceFromRangeStart;
             selectionAnchor = selectedRange.location;
@@ -701,20 +707,24 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
     selectionAnchor = NO_SELECTION;
 }
 
+- (void)scrollByLines:(long double)lines {
+    HFFPRange lineRange = [self displayedLineRange];
+    HFASSERT(HFULToFP([self totalLineCount]) >= lineRange.length);
+    long double maxScroll = HFULToFP([self totalLineCount]) - lineRange.length;
+    if (lines < 0) {
+	lineRange.location -= MIN(lineRange.location, -lines);
+    }
+    else {
+	lineRange.location = MIN(maxScroll, lineRange.location + lines);
+    }
+    [self setDisplayedLineRange:lineRange];
+}
+
 - (void)scrollWithScrollEvent:(NSEvent *)scrollEvent {
     HFASSERT(scrollEvent != NULL);
     HFASSERT([scrollEvent type] == NSScrollWheel);
-    HFFPRange lineRange = [self displayedLineRange];
     long double scrollY = - kScrollMultiplier * [scrollEvent deltaY];
-    HFASSERT(HFULToFP([self totalLineCount]) >= lineRange.length);
-    long double maxScroll = HFULToFP([self totalLineCount]) - lineRange.length;
-    if (scrollY < 0) {
-        lineRange.location -= MIN(-scrollY, lineRange.location);
-    }
-    else {
-        lineRange.location = MIN(maxScroll, lineRange.location + scrollY);
-    }
-    [self setDisplayedLineRange:lineRange];
+    [self scrollByLines:scrollY];
 }
 
 - (void)scrollWithScrollEventOld:(NSEvent *)scrollEvent {
@@ -802,25 +812,22 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
     VALIDATE_SELECTION();    
 }
 
-- (void)_moveDirectionWithoutModifyingSelection:(HFControllerMovementDirection)direction {
+- (void)_moveDirectionDiscardingSelection:(HFControllerMovementDirection)direction byAmount:(unsigned long long)amountToMove {
+    HFASSERT(direction == HFControllerDirectionLeft || direction == HFControllerDirectionRight);
     BEGIN_TRANSACTION();
     BOOL selectionWasEmpty = ([selectedContentsRanges count] == 1 && [[selectedContentsRanges objectAtIndex:0] HFRange].length == 0);
-    BOOL directionIsForward = (direction == HFControllerDirectionRight || direction == HFControllerDirectionDown);
+    BOOL directionIsForward = (direction == HFControllerDirectionRight);
     HFRange selectedRange = [self _telescopeSelectionRangeInDirection: (directionIsForward ? HFControllerDirectionRight : HFControllerDirectionLeft)];
     HFASSERT(selectedRange.length == 0);
-    switch (direction) {
-        case HFControllerDirectionLeft:
-            if (selectionWasEmpty && selectedRange.location > 0) selectedRange.location -= 1;
-            break;
-        case HFControllerDirectionRight:
-            if (selectionWasEmpty && selectedRange.location < [self contentsLength]) selectedRange.location += 1; /* Allow the selectedRange.location to be equal to the contents length, so the cursor can be at the end */
-            break;
-        case HFControllerDirectionUp:
-            selectedRange.location -= MIN([self bytesPerLine], selectedRange.location);
-            break;
-        case HFControllerDirectionDown:
-            selectedRange.location += MIN([self bytesPerLine], [self contentsLength] - selectedRange.location);
-            break;
+    HFASSERT([self contentsLength] >= selectedRange.location);
+    /* A movement of just 1 with a selection only clears the selection; it does not move the cursor */
+    if (selectionWasEmpty || amountToMove > 1) {
+	if (direction == HFControllerDirectionLeft) {
+	    selectedRange.location -= MIN(amountToMove, selectedRange.location);
+	}
+	else {
+	    selectedRange.location += MIN(amountToMove, [self contentsLength] - selectedRange.location);
+	}
     }
     selectionAnchor = NO_SELECTION;
     [self _setSingleSelectedContentsRange:selectedRange];
@@ -828,22 +835,20 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
     END_TRANSACTION();
 }
 
-- (void)_moveDirectionWhileModifyingSelection:(HFControllerMovementDirection)direction {
-    HFASSERT(direction == HFControllerDirectionLeft || direction == HFControllerDirectionRight || direction == HFControllerDirectionUp || direction == HFControllerDirectionDown);
+/* In _extendSelectionInDirection:byAmount:, we only allow left/right movement.  up/down is not allowed. */
+- (void)_extendSelectionInDirection:(HFControllerMovementDirection)direction byAmount:(unsigned long long)amountToMove {
+    HFASSERT(direction == HFControllerDirectionLeft || direction == HFControllerDirectionRight);
     unsigned long long minSelection = [self _minimumSelectionLocation];
     unsigned long long maxSelection = [self _maximumSelectionLocation];
     BOOL selectionChanged = NO;
     unsigned long long locationToMakeVisible = NO_SELECTION;
-    NSUInteger amountToMove;
-    if (direction == HFControllerDirectionUp || direction == HFControllerDirectionDown) amountToMove = bytesPerLine;
-    else amountToMove = 1;
     unsigned long long contentsLength = [self contentsLength];
     if (selectionAnchor == NO_SELECTION) {
         /* Pick the anchor opposite the choice of direction */
-        if (direction == HFControllerDirectionLeft || direction == HFControllerDirectionUp) selectionAnchor = maxSelection;
+        if (direction == HFControllerDirectionLeft) selectionAnchor = maxSelection;
         else selectionAnchor = minSelection;
     }
-    if (direction == HFControllerDirectionLeft || direction == HFControllerDirectionUp) {
+    if (direction == HFControllerDirectionLeft) {
         if (minSelection >= selectionAnchor && maxSelection > minSelection) {
             NSUInteger amountToRemove = ll2l(llmin(maxSelection - selectionAnchor, amountToMove));
             NSUInteger amountToAdd = amountToMove - amountToRemove;
@@ -861,7 +866,7 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
             }
         }
     }
-    else if (direction == HFControllerDirectionRight || direction == HFControllerDirectionDown) {
+    else if (direction == HFControllerDirectionRight) {
         if (maxSelection <= selectionAnchor && maxSelection > minSelection) {
             HFASSERT(contentsLength >= maxSelection);
             NSUInteger amountToRemove = ll2l(llmin(maxSelection - minSelection, amountToMove));
@@ -1007,7 +1012,7 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
     HFASSERT([byteArraysToInsertOnUndo count] == [rangesToInsertOnUndo count]);
     [[[self undoManager] prepareWithInvocationTarget:self] _commandInsertByteArrays:byteArraysToInsertOnUndo inRanges:rangesToInsertOnUndo selectingResult:NO];
     [self _updateDisplayedRange];
-    [self _maximizeVisibilityOfContentsRange:[[selectedContentsRanges objectAtIndex:0] HFRange]];
+    [self maximizeVisibilityOfContentsRange:[[selectedContentsRanges objectAtIndex:0] HFRange]];
     [self _addPropertyChangeBits:HFControllerContentValue | HFControllerContentLength | HFControllerSelectedRanges];
     END_TRANSACTION();
 }
@@ -1070,7 +1075,7 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
     }
     [self _setSingleSelectedContentsRange:rangeToSelect];
     [self _updateDisplayedRange];
-    [self _maximizeVisibilityOfContentsRange:rangeToSelect];
+    [self maximizeVisibilityOfContentsRange:rangeToSelect];
     [self _addPropertyChangeBits:HFControllerContentValue | HFControllerContentLength];
     
     [[self undoManager] registerUndoWithTarget:self selector:@selector(_performTypingUndo:) object:redoer];
@@ -1106,14 +1111,70 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
     }
 }
 
-- (void)moveDirection:(HFControllerMovementDirection)direction andModifySelection:(BOOL)extendSelection {
-    HFASSERT(direction == HFControllerDirectionLeft || direction == HFControllerDirectionRight || direction == HFControllerDirectionUp || direction == HFControllerDirectionDown);
-    if (! extendSelection) {
-        [self _moveDirectionWithoutModifyingSelection:direction];
+- (void)moveInDirection:(HFControllerMovementDirection)direction byByteCount:(unsigned long long)amountToMove andModifySelection:(BOOL)extendSelection {
+    if (extendSelection) {
+	[self _extendSelectionInDirection:direction byAmount:amountToMove];
     }
     else {
-        [self _moveDirectionWhileModifyingSelection:direction];
+	[self _moveDirectionDiscardingSelection:direction byAmount:amountToMove];
     }
+}
+
+- (void)moveInDirection:(HFControllerMovementDirection)direction withGranularity:(HFControllerMovementGranularity)granularity andModifySelection:(BOOL)extendSelection {
+    HFASSERT(granularity == HFControllerMovementByte || granularity == HFControllerMovementLine || granularity == HFControllerMovementPage || granularity == HFControllerMovementDocument);
+    HFASSERT(direction == HFControllerDirectionLeft || direction == HFControllerDirectionRight);
+    NSUInteger bytesToMove;
+    switch (granularity) {
+	case HFControllerMovementByte:
+	    bytesToMove = 1;
+	    break;
+	case HFControllerMovementLine:
+	    bytesToMove = [self bytesPerLine];
+	    break;
+	case HFControllerMovementPage:
+	    bytesToMove = HFProductULL([self bytesPerLine], HFFPToUL(MIN(floorl([self displayedLineRange].length), 1.)));
+	    break;
+	case HFControllerMovementDocument:
+	    bytesToMove = [self contentsLength];
+	    break;
+    }
+    [self moveInDirection:direction byByteCount:bytesToMove andModifySelection:extendSelection];
+}
+
+- (void)moveToLineBoundaryInDirection:(HFControllerMovementDirection)direction andModifySelection:(BOOL)modifySelection {
+    HFASSERT(direction == HFControllerDirectionLeft || direction == HFControllerDirectionRight);
+    BEGIN_TRANSACTION();
+    unsigned long long locationToMakeVisible = NO_SELECTION;
+    HFRange additionalSelection = {NO_SELECTION, NO_SELECTION};
+    unsigned long long minLocation = NO_SELECTION, newMinLocation = NO_SELECTION, maxLocation = NO_SELECTION, newMaxLocation = NO_SELECTION;
+    if (direction == HFControllerDirectionLeft) {
+	/* If we are at the beginning of a line, this should be a no-op */
+	minLocation = [self _minimumSelectionLocation];
+	newMinLocation = (minLocation / bytesPerLine) * bytesPerLine;
+	locationToMakeVisible = newMinLocation;
+	additionalSelection = HFRangeMake(newMinLocation, minLocation - newMinLocation);
+    }
+    else {
+	/* This always advances to the next line */
+	maxLocation = [self _maximumSelectionLocation];
+	unsigned long long proposedNewMaxLocation = HFRoundUpToNextMultiple(maxLocation, bytesPerLine);
+	newMaxLocation = MIN([self contentsLength], proposedNewMaxLocation);
+	HFASSERT(newMaxLocation >= maxLocation);
+	locationToMakeVisible = newMaxLocation;
+	additionalSelection = HFRangeMake(maxLocation, newMaxLocation - maxLocation);
+    }
+    
+    if (modifySelection) {
+	if (additionalSelection.length > 0) {
+	    [self _addRangeToSelection:additionalSelection];
+	    [self _addPropertyChangeBits:HFControllerSelectedRanges];
+	}
+    }
+    else {
+	[self _setSingleSelectedContentsRange:HFRangeMake(locationToMakeVisible, 0)];
+    }
+    [self _ensureVisibilityOfLocation:locationToMakeVisible];
+    END_TRANSACTION();
 }
 
 - (void)deleteSelection {
@@ -1196,7 +1257,7 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
     [self _updateDisplayedRange];
     HFRange selectedRange = HFRangeMake(HFSum(rangeToReplace.location, amountAdded), 0);
     [self _setSingleSelectedContentsRange:selectedRange];
-    [self _maximizeVisibilityOfContentsRange:selectedRange];
+    [self maximizeVisibilityOfContentsRange:selectedRange];
     
     if (amountAdded != amountDeleted) [self _addPropertyChangeBits:HFControllerContentLength];
 

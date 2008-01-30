@@ -781,8 +781,17 @@ enum LineCoverage_t {
 }
 
 - (void)doCommandBySelector:(SEL)sel {
+    HFRepresenter *rep = [self representer];
     NSLog(@"%s%s", _cmd, sel);
-    [super doCommandBySelector:sel];
+    if ([self respondsToSelector:sel]) {
+	[self performSelector:sel withObject:nil];
+    }
+    else if ([rep respondsToSelector:sel]) {
+	[rep performSelector:sel withObject:self];
+    }
+    else {
+	[super doCommandBySelector:sel];
+    }
 }
 
 - (IBAction)selectAll:sender {
