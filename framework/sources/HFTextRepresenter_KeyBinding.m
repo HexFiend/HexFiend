@@ -121,7 +121,7 @@ FORWARD(setMark)
 FORWARD(deleteToMark)
 FORWARD(selectToMark)
 FORWARD(swapWithMark)
-FORWARD(cancelOperation)
+//FORWARD(cancelOperation)
 
 @end
 

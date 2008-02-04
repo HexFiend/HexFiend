@@ -9,6 +9,7 @@
 #import "MyDocument.h"
 #import "HFFindReplaceRepresenter.h"
 #import "HFBannerDividerThumb.h"
+#import "HFFindReplaceBackgroundView.h"
 
 static BOOL isRunningOnLeopardOrLater(void) {
     return NSAppKitVersionNumber >= 860.;
@@ -235,14 +236,14 @@ static BOOL isRunningOnLeopardOrLater(void) {
     findReplaceController = [[HFController alloc] init];
     [findReplaceController setByteArray:[[[HFTavlTreeByteArray alloc] init] autorelease]];
     findReplaceRepresenter = [[HFFindReplaceRepresenter alloc] init];
-    NSView *findReplaceView = [findReplaceRepresenter view];
+    HFFindReplaceBackgroundView *findReplaceView = [findReplaceRepresenter view];
     [findReplaceView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
     bannerTargetHeight = NSHeight([findReplaceView frame]);
     [findReplaceView setFrameSize:NSMakeSize(NSWidth([containerView frame]), 0)];
     [findReplaceView setFrameOrigin:NSZeroPoint];
     
     [self prepareBannerWithView:findReplaceView];
-    [findReplaceRepresenter gainFocus];
+    [[self window] makeFirstResponder:[findReplaceView searchField]];
 }
 
 - (NSRect)splitView:(NSSplitView *)splitView additionalEffectiveRectOfDividerAtIndex:(NSInteger)dividerIndex {
@@ -250,6 +251,10 @@ static BOOL isRunningOnLeopardOrLater(void) {
     HFASSERT(splitView == containerView);
     if (bannerDividerThumb) return [bannerDividerThumb convertRect:[bannerDividerThumb bounds] toView:containerView];
     else return NSZeroRect;
+}
+
+- (void)cancelOperation:sender {
+    NSLog(@"%@ %s%@", self, _cmd, sender);
 }
 
 @end

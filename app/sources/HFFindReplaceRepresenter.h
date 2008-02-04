@@ -13,13 +13,8 @@
 @interface HFFindReplaceRepresenter : HFRepresenter {
     IBOutlet HFFindReplaceBackgroundView *backgroundView; 
     IBOutlet NSSegmentedControl *navigateView;
-    
-    HFController *findReplaceController;
-    HFLayoutRepresenter *findReplaceLayout;
-    HFRepresenter *activeRepresenter;
 }
 
 - (IBAction)findNextOrPrevious:sender;
-- (void)gainFocus;
 
 @end

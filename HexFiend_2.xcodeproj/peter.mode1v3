@@ -231,6 +231,8 @@
 			<key>Layout</key>
 			<array>
 				<dict>
+					<key>BecomeActive</key>
+					<true/>
 					<key>ContentConfiguration</key>
 					<dict>
 						<key>PBXBottomSmartGroupGIDs</key>
@@ -268,29 +270,25 @@
 							<array>
 								<string>29B97314FDCFA39411CA2CEA</string>
 								<string>D0560B350CDC4248009D2484</string>
-								<string>D026C7A70CDD4FD30082279E</string>
-								<string>D026C7B60CDD54410082279E</string>
+								<string>D08F5DF40CDE822D007EFFE8</string>
 								<string>D0560B380CDC4253009D2484</string>
 								<string>D00122DC0D48A89F00540B10</string>
 								<string>29B97317FDCFA39411CA2CEA</string>
 								<string>29B97323FDCFA39411CA2CEA</string>
 								<string>1C37FBAC04509CD000000102</string>
-								<string>D078D0530D50493200492F46</string>
-								<string>D078D0540D50493200492F46</string>
 								<string>1C37FAAC04509CD000000102</string>
 								<string>1C37FABC05509CD000000102</string>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>24</integer>
-									<integer>8</integer>
-									<integer>2</integer>
+									<integer>42</integer>
+									<integer>38</integer>
 									<integer>0</integer>
 								</array>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
-							<string>{{0, 0}, {401, 738}}</string>
+							<string>{{0, 137}, {401, 738}}</string>
 						</dict>
 						<key>PBXTopSmartGroupGIDs</key>
 						<array/>
@@ -354,8 +352,6 @@
 							<string>0pt</string>
 						</dict>
 						<dict>
-							<key>BecomeActive</key>
-							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
@@ -392,9 +388,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>D078CDC80D4DA0D500492F46</string>
+				<string>D071510A0D57488100573D7A</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>D078CDC90D4DA0D500492F46</string>
+				<string>D071510B0D57488100573D7A</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -528,23 +524,6 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>D078CDE60D4DDE0B00492F46</string>
-		<string>D078CDE70D4DDE0B00492F46</string>
-		<string>D078CDE80D4DDE0B00492F46</string>
-		<string>1C78EAAD065D492600B07095</string>
-		<string>1CD10A99069EF8BA00B06720</string>
-		<string>D0560B2F0CDC421E009D2484</string>
-		<string>1C530D57069F1CE1000CFCEE</string>
-		<string>D078CE8B0D4EEA2100492F46</string>
-		<string>D078D0560D50493200492F46</string>
-		<string>D078D0570D50493200492F46</string>
-		<string>D078D08A0D50776500492F46</string>
-		<string>D078D05F0D506BE300492F46</string>
-		<string>D078D0A70D507E1B00492F46</string>
-		<string>D078CE840D4EE97500492F46</string>
-		<string>D078D0550D50493200492F46</string>
-		<string>D078D0C30D508D1900492F46</string>
-		<string>D078CE410D4E01C900492F46</string>
 		<string>/Users/peter/Bell/HexFiend2/trunk/HexFiend_2/HexFiend_2.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
@@ -569,7 +548,7 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>1CD0528F0623707200166675</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>&lt;No Editor&gt;</string>
+								<string>HFFindReplaceBackgroundView.m</string>
 								<key>StatusBarVisibility</key>
 								<true/>
 							</dict>
@@ -591,7 +570,7 @@
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXBuildLogShowsTranscriptDefaultKey</key>
-								<string>{{0, 252}, {1097, 136}}</string>
+								<string>{{0, 218}, {1097, 170}}</string>
 								<key>PBXProjectModuleGUID</key>
 								<string>XCMainBuildResultsModuleGUID</string>
 								<key>PBXProjectModuleLabel</key>
@@ -629,7 +608,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>D0560B2F0CDC421E009D2484</string>
-				<string>D078CDD60D4DDB0800492F46</string>
+				<string>D07150290D55096E00573D7A</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>
@@ -749,13 +728,13 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>1CD10A99069EF8BA00B06720</string>
-				<string>D078CDDF0D4DDE0B00492F46</string>
+				<string>D071506B0D55113800573D7A</string>
 				<string>1C162984064C10D400B95A72</string>
-				<string>D078CDE00D4DDE0B00492F46</string>
-				<string>D078CDE10D4DDE0B00492F46</string>
-				<string>D078CDE20D4DDE0B00492F46</string>
-				<string>D078CDE30D4DDE0B00492F46</string>
-				<string>D078CDE40D4DDE0B00492F46</string>
+				<string>D071506C0D55113800573D7A</string>
+				<string>D071506D0D55113800573D7A</string>
+				<string>D071506E0D55113800573D7A</string>
+				<string>D071506F0D55113800573D7A</string>
+				<string>D07150700D55113800573D7A</string>
 			</array>
 			<key>ToolbarConfiguration</key>
 			<string>xcode.toolbar.config.debugV3</string>
@@ -787,7 +766,7 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CDD528C0622207200134675</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>HFFindReplaceBackgroundView.m</string>
+										<string>HexFiend_2_Prefix.pch</string>
 										<key>StatusBarVisibility</key>
 										<true/>
 									</dict>
@@ -845,8 +824,8 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>1C530D57069F1CE1000CFCEE</string>
-				<string>D078CDCD0D4DA52800492F46</string>
-				<string>D078CDCE0D4DA52800492F46</string>
+				<string>D07150730D55113800573D7A</string>
+				<string>D07150740D55113800573D7A</string>
 				<string>1CDD528C0622207200134675</string>
 				<string>1CD0528E0623707200166675</string>
 			</array>
@@ -911,7 +890,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>1C78EAAD065D492600B07095</string>
-				<string>D078CDE50D4DDE0B00492F46</string>
+				<string>D07150750D55113800573D7A</string>
 				<string>1C78EAAC065D492600B07095</string>
 			</array>
 			<key>ToolbarConfiguration</key>
@@ -921,7 +900,7 @@
 			<key>WindowToolGUID</key>
 			<string>1C78EAAD065D492600B07095</string>
 			<key>WindowToolIsVisible</key>
-			<false/>
+			<true/>
 		</dict>
 		<dict>
 			<key>Identifier</key>

@@ -39,6 +39,8 @@
 		D041D3FF0D3DED7200C28345 /* HFByteArrayPiece.m in Sources */ = {isa = PBXBuildFile; fileRef = D041D3FD0D3DED7200C28345 /* HFByteArrayPiece.m */; };
 		D04327A40CF081CD00C14250 /* HFFunctions_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = D04327A30CF081CD00C14250 /* HFFunctions_Private.h */; };
 		D06B1DB10D13EE1D00B9A206 /* HFMetalGradient.tiff in Resources */ = {isa = PBXBuildFile; fileRef = D06B1DB00D13EE1D00B9A206 /* HFMetalGradient.tiff */; };
+		D07150670D5510CE00573D7A /* HFTextField.h in Headers */ = {isa = PBXBuildFile; fileRef = D07150650D5510CE00573D7A /* HFTextField.h */; };
+		D07150680D5510CE00573D7A /* HFTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = D07150660D5510CE00573D7A /* HFTextField.m */; };
 		D078CE770D4EE7F900492F46 /* CHUD.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D078CE760D4EE7F900492F46 /* CHUD.framework */; };
 		D078CF550D50491100492F46 /* HFBannerDividerThumb.h in Headers */ = {isa = PBXBuildFile; fileRef = D078CF530D50491100492F46 /* HFBannerDividerThumb.h */; };
 		D078D0520D50492F00492F46 /* HFBannerDividerThumb.m in Sources */ = {isa = PBXBuildFile; fileRef = D078CF540D50491100492F46 /* HFBannerDividerThumb.m */; };
@@ -164,9 +166,11 @@
 		D041D3FD0D3DED7200C28345 /* HFByteArrayPiece.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFByteArrayPiece.m; path = framework/sources/HFByteArrayPiece.m; sourceTree = "<group>"; };
 		D04327A30CF081CD00C14250 /* HFFunctions_Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFFunctions_Private.h; path = framework/sources/HFFunctions_Private.h; sourceTree = "<group>"; };
 		D06B1DB00D13EE1D00B9A206 /* HFMetalGradient.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = HFMetalGradient.tiff; path = framework/resources/HFMetalGradient.tiff; sourceTree = "<group>"; };
+		D07150650D5510CE00573D7A /* HFTextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFTextField.h; path = framework/sources/HFTextField.h; sourceTree = "<group>"; };
+		D07150660D5510CE00573D7A /* HFTextField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFTextField.m; path = framework/sources/HFTextField.m; sourceTree = "<group>"; };
 		D078CE760D4EE7F900492F46 /* CHUD.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CHUD.framework; path = /System/Library/PrivateFrameworks/CHUD.framework; sourceTree = "<absolute>"; };
-		D078CF530D50491100492F46 /* HFBannerDividerThumb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFBannerDividerThumb.h; sourceTree = "<group>"; };
-		D078CF540D50491100492F46 /* HFBannerDividerThumb.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFBannerDividerThumb.m; sourceTree = "<group>"; };
+		D078CF530D50491100492F46 /* HFBannerDividerThumb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFBannerDividerThumb.h; path = app/sources/HFBannerDividerThumb.h; sourceTree = "<group>"; };
+		D078CF540D50491100492F46 /* HFBannerDividerThumb.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFBannerDividerThumb.m; path = app/sources/HFBannerDividerThumb.m; sourceTree = "<group>"; };
 		D0826EA90D4855900006FB7D /* HFFileReference.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFFileReference.h; path = framework/sources/HFFileReference.h; sourceTree = "<group>"; };
 		D0826EAA0D4855900006FB7D /* HFFileReference.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFFileReference.m; path = framework/sources/HFFileReference.m; sourceTree = "<group>"; };
 		D0826EEF0D487A000006FB7D /* HFFileByteSlice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFFileByteSlice.h; path = framework/sources/HFFileByteSlice.h; sourceTree = "<group>"; };
@@ -379,6 +383,8 @@
 				D0826F190D4883A80006FB7D /* FileByteSlice */,
 				D01E7BEA0CDC55D000943F9E /* HFController.h */,
 				D01E7BEB0CDC55D000943F9E /* HFController.m */,
+				D07150650D5510CE00573D7A /* HFTextField.h */,
+				D07150660D5510CE00573D7A /* HFTextField.m */,
 				D041D1BE0D397E1A00C28345 /* HFPasteboardOwner.h */,
 				D041D1BF0D397E1A00C28345 /* HFPasteboardOwner.m */,
 				D0A47C0F0D288EDF00CB9BB9 /* HFControllerCoalescedUndo.h */,
@@ -503,6 +509,7 @@
 				D0826EAB0D4855900006FB7D /* HFFileReference.h in Headers */,
 				D0826EF10D487A000006FB7D /* HFFileByteSlice.h in Headers */,
 				D078CF550D50491100492F46 /* HFBannerDividerThumb.h in Headers */,
+				D07150670D5510CE00573D7A /* HFTextField.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -644,6 +651,7 @@
 				D0D178B40D44482000684270 /* tavlsucc.m in Sources */,
 				D0826EAC0D4855900006FB7D /* HFFileReference.m in Sources */,
 				D0826EF20D487A000006FB7D /* HFFileByteSlice.m in Sources */,
+				D07150680D5510CE00573D7A /* HFTextField.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -8,13 +8,13 @@
 
 #import <Cocoa/Cocoa.h>
 
+@class HFTextField;
 
 @interface HFFindReplaceBackgroundView : NSView {
     IBOutlet NSSegmentedControl *navigateControl;
-    IBOutlet NSView *layoutRepresenterView;
+    IBOutlet HFTextField *searchField;
 }
 
-- (void)setLayoutRepresenterView:(NSView *)view;
-- (NSView *)layoutRepresenterView;
+- (HFTextField *)searchField;
 
 @end
