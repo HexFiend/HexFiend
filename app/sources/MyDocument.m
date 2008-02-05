@@ -50,7 +50,9 @@ static BOOL isRunningOnLeopardOrLater(void) {
     USE(windowController);
     
     [containerView setVertical:NO];
-    if ([containerView respondsToSelector:@selector(setDividerStyle:)]) [containerView setDividerStyle:NSSplitViewDividerStyleThin];
+    if ([containerView respondsToSelector:@selector(setDividerStyle:)]) {
+	[containerView setDividerStyle:2/*NSSplitViewDividerStyleThin*/];
+    }
     [containerView setDelegate:self];
     
     NSView *layoutView = [layoutRepresenter view];

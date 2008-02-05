@@ -1,6 +1,15 @@
 #import <HexFiend/HFFunctions.h>
 #import <HexFiend/HFController.h>
+
 #ifndef NDEBUG
+//#define USE_CHUD 1
+#endif
+
+#ifndef USE_CHUD
+#define USE_CHUD 0
+#endif
+
+#if USE_CHUD
 #import <CHUD/CHUD.h>
 #endif
 
@@ -324,7 +333,7 @@ void HFSetFDShouldCache(int fd, BOOL shouldCache) {
 }
 
 
-#ifndef NDEBUG
+#if USE_CHUD
 void HFStartTiming(const char *name) {
     static BOOL inited;
     if (! inited) {
@@ -340,5 +349,7 @@ void HFStartTiming(const char *name) {
 void HFStopTiming(void) {
     chudStopRemotePerfMonitor();
 }
+#else
+void HFStartTiming(const char *name) { }
+void HFStopTiming(void) { }
 #endif
-
