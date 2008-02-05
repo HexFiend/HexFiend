@@ -13,6 +13,7 @@
 @interface HFFindReplaceBackgroundView : NSView {
     IBOutlet NSSegmentedControl *navigateControl;
     IBOutlet HFTextField *searchField;
+    IBOutlet HFTextField *replaceField;
 }
 
 - (HFTextField *)searchField;

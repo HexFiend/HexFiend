@@ -14,6 +14,14 @@
 
 @implementation HFTextField
 
+- (void)positionLayoutView {
+    NSRect viewFrame = [self bounds];
+    viewFrame.size.height -= 3;
+    viewFrame.origin.y += 1;
+    viewFrame.origin.x += 1;
+    viewFrame.size.width -= 2;
+    [[layoutRepresenter view] setFrame:viewFrame];
+}
 
 - (id)initWithFrame:(NSRect)frame {
     if ((self = [super initWithFrame:frame])) {
@@ -29,15 +37,40 @@
         [dataController addRepresenter:layoutRepresenter];
         NSView *layoutView = [layoutRepresenter view];
         [layoutView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
-        [layoutView setFrame:[self bounds]];
+        [self positionLayoutView];
         [self addSubview:layoutView];
     }
     return self;
 }
 
+- (void)resizeSubviewsWithOldSize:(NSSize)oldSize {
+    [self positionLayoutView];
+}
+
 - (void)drawRect:(NSRect)rect {
+    NSRect bounds = [self bounds];
+    NSRect horizontalLine = NSMakeRect(NSMinX(bounds), NSMaxY(bounds) - 1, NSWidth(bounds), 1);
+    NSRect verticalLine = NSMakeRect(NSMinX(bounds), 1, 1, NSHeight(bounds) - 2);
+    NSRect lines[5];
+    NSColor *colors[5] = {
+        [NSColor colorWithCalibratedWhite:(CGFloat)(114./255.) alpha:1],
+        [NSColor colorWithCalibratedWhite:(CGFloat)(203./255.) alpha:1],
+        [NSColor colorWithCalibratedWhite:(CGFloat)(218./255.) alpha:1],
+        [NSColor colorWithCalibratedWhite:(CGFloat)(180./255.) alpha:1],
+        [NSColor colorWithCalibratedWhite:(CGFloat)(180./255.) alpha:1]
+    };
+    lines[0] = horizontalLine;
+    horizontalLine.origin.y -= 1;
+    lines[1] = horizontalLine;
+    horizontalLine.origin.y = NSMinY(bounds);
+    lines[2] = horizontalLine;
+    lines[3] = verticalLine;
+    verticalLine.origin.x = NSMaxX(bounds) - verticalLine.size.width;
+    lines[4] = verticalLine;
+        
     [[NSColor purpleColor] set];
     NSRectFill([self bounds]);
+    NSRectFillListWithColors(lines, colors, 5);
 }
 
 - (BOOL)becomeFirstResponder {

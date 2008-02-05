@@ -158,6 +158,15 @@ static inline BOOL HFFPRangeEqualsRange(HFFPRange a, HFFPRange b) {
     return a.location == b.location && a.length == b.length;
 }
 
+static inline CGFloat HFCopysign(CGFloat a, CGFloat b) {
+#if __LP64__
+    return copysign(a, b);
+#else
+    return copysignf(a, b);
+#endif
+}
+
+
 /* Converts a long double to unsigned long long.  Assumes that val is already an integer - use floorl or ceill */
 static inline unsigned long long HFFPToUL(long double val) {
     assert(val >= 0);

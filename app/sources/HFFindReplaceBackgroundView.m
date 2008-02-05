@@ -8,6 +8,9 @@
 
 #import "HFFindReplaceBackgroundView.h"
 
+static CGFloat roundTowardsInfinity(CGFloat x) {
+    return HFFloor(x + (CGFloat).5);
+}
 
 @implementation HFFindReplaceBackgroundView
 
@@ -19,8 +22,18 @@
 - (NSPoint)roundPointToPixels:(NSPoint)point {
     NSPoint windowPoint = [self convertPoint:point toView:nil];
     windowPoint.x = HFRound(windowPoint.x);
-    windowPoint.y = HFRound(windowPoint.y);
+    windowPoint.y = roundTowardsInfinity(windowPoint.y);
     return [self convertPoint:windowPoint fromView:nil];
+}
+
+- (NSSize)roundSizeToPixels:(NSSize)size {
+    NSSize windowSize = [self convertSize:size toView:nil];
+    windowSize.width = HFRound(windowSize.width);
+    windowSize.height = -roundTowardsInfinity(-windowSize.height);
+    NSSize result = [self convertSize:windowSize fromView:nil];
+    result.width = HFCopysign(result.width, size.width);
+    result.height = HFCopysign(result.height, size.height);
+    return result;
 }
 
 - (void)resizeSubviewsWithOldSize:(NSSize)oldSize {
@@ -29,14 +42,24 @@
     if (navigateControl) {
         NSRect navFrame = [navigateControl frame];
         navFrame.origin.y = NSMinY([self bounds]) + 3;
+//        navFrame.origin.y = NSMidY([self bounds]) - NSHeight(navFrame)/2;
         navFrame.origin = [self roundPointToPixels:navFrame.origin];
         [navigateControl setFrameOrigin:navFrame.origin];
     }
+    if (replaceField) {
+        NSRect replaceFrame = [replaceField frame];
+        replaceFrame.size.height = HFMax(NSHeight(bounds) / 2 - 4, 0);
+        replaceFrame.origin.y = NSMinY([self bounds]) + 2;
+        replaceFrame.origin = [self roundPointToPixels:replaceFrame.origin];
+        replaceFrame.size = [self roundSizeToPixels:replaceFrame.size];
+        [replaceField setFrame:replaceFrame];
+    }
     if (searchField) {
         NSRect searchFrame = [searchField frame];
-        searchFrame.size.height = HFMax(NSHeight(bounds) - 10, 0);
-        searchFrame.origin.y = NSMidY([self bounds]) - searchFrame.size.height / 2;
+        searchFrame.size.height = HFMax(NSHeight(bounds) / 2 - 4, 0);
+        searchFrame.origin.y = NSMaxY([self bounds]) - 2 - searchFrame.size.height;
         searchFrame.origin = [self roundPointToPixels:searchFrame.origin];
+        searchFrame.size = [self roundSizeToPixels:searchFrame.size];
         [searchField setFrame:searchFrame];
     }
 }

@@ -147,7 +147,7 @@ static NSInteger sortByLayoutPosition(id a, id b, void *self) {
         }
         newBytesPerLine = maxKnownGood;
     }
-    return newBytesPerLine;
+    return MAX(1, newBytesPerLine);
 }
 
 - (BOOL)_anyLayoutInfoIsVerticallyResizable:(NSArray *)vals {
