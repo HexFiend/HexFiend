@@ -16,6 +16,11 @@
 		D00122FA0D48AD8600540B10 /* FindReplace.nib in Resources */ = {isa = PBXBuildFile; fileRef = D00122F80D48AD8600540B10 /* FindReplace.nib */; };
 		D00EBA730CE866D50020E2D7 /* HFVerticalScrollerRepresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = D00EBA710CE866D50020E2D7 /* HFVerticalScrollerRepresenter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D00EBA740CE866D50020E2D7 /* HFVerticalScrollerRepresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = D00EBA720CE866D50020E2D7 /* HFVerticalScrollerRepresenter.m */; };
+		D01930C20D5AE64E0019B3F7 /* HexFiend.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D01E7BB80CDC530C00943F9E /* HexFiend.framework */; };
+		D01930EC0D5AE7690019B3F7 /* HexFiendPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = D01930EB0D5AE7690019B3F7 /* HexFiendPlugin.m */; };
+		D01931200D5AEADA0019B3F7 /* HexFiendPluginLibrary.nib in Resources */ = {isa = PBXBuildFile; fileRef = D019311F0D5AEADA0019B3F7 /* HexFiendPluginLibrary.nib */; };
+		D019312E0D5AEBA10019B3F7 /* HFTextFieldIntegration.m in Sources */ = {isa = PBXBuildFile; fileRef = D019312D0D5AEBA10019B3F7 /* HFTextFieldIntegration.m */; };
+		D01931430D5AED230019B3F7 /* HFTextFieldInspector.m in Sources */ = {isa = PBXBuildFile; fileRef = D01931420D5AED230019B3F7 /* HFTextFieldInspector.m */; };
 		D01E7BE20CDC54CE00943F9E /* HexFiend.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = D01E7BB80CDC530C00943F9E /* HexFiend.framework */; };
 		D01E7BEC0CDC55D000943F9E /* HFController.h in Headers */ = {isa = PBXBuildFile; fileRef = D01E7BEA0CDC55D000943F9E /* HFController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D01E7BED0CDC55D000943F9E /* HFController.m in Sources */ = {isa = PBXBuildFile; fileRef = D01E7BEB0CDC55D000943F9E /* HFController.m */; };
@@ -39,7 +44,7 @@
 		D041D3FF0D3DED7200C28345 /* HFByteArrayPiece.m in Sources */ = {isa = PBXBuildFile; fileRef = D041D3FD0D3DED7200C28345 /* HFByteArrayPiece.m */; };
 		D04327A40CF081CD00C14250 /* HFFunctions_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = D04327A30CF081CD00C14250 /* HFFunctions_Private.h */; };
 		D06B1DB10D13EE1D00B9A206 /* HFMetalGradient.tiff in Resources */ = {isa = PBXBuildFile; fileRef = D06B1DB00D13EE1D00B9A206 /* HFMetalGradient.tiff */; };
-		D07150670D5510CE00573D7A /* HFTextField.h in Headers */ = {isa = PBXBuildFile; fileRef = D07150650D5510CE00573D7A /* HFTextField.h */; };
+		D07150670D5510CE00573D7A /* HFTextField.h in Headers */ = {isa = PBXBuildFile; fileRef = D07150650D5510CE00573D7A /* HFTextField.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D07150680D5510CE00573D7A /* HFTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = D07150660D5510CE00573D7A /* HFTextField.m */; };
 		D078CE770D4EE7F900492F46 /* CHUD.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D078CE760D4EE7F900492F46 /* CHUD.framework */; };
 		D078CF550D50491100492F46 /* HFBannerDividerThumb.h in Headers */ = {isa = PBXBuildFile; fileRef = D078CF530D50491100492F46 /* HFBannerDividerThumb.h */; };
@@ -74,6 +79,8 @@
 		D0A9F3F20CFBEA9F0077D577 /* HFLineCountingRepresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = D0A9F3F00CFBEA9F0077D577 /* HFLineCountingRepresenter.m */; };
 		D0A9F3FD0CFBEAD50077D577 /* HFLineCountingView.h in Headers */ = {isa = PBXBuildFile; fileRef = D0A9F3FB0CFBEAD50077D577 /* HFLineCountingView.h */; settings = {ATTRIBUTES = (); }; };
 		D0A9F3FE0CFBEAD50077D577 /* HFLineCountingView.m in Sources */ = {isa = PBXBuildFile; fileRef = D0A9F3FC0CFBEAD50077D577 /* HFLineCountingView.m */; };
+		D0B7E2580D5AEEBB007874ED /* HFTextFieldInspector.nib in Resources */ = {isa = PBXBuildFile; fileRef = D0B7E2570D5AEEBB007874ED /* HFTextFieldInspector.nib */; };
+		D0B7E28A0D5AF0DF007874ED /* InterfaceBuilderKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0B7E2890D5AF0DF007874ED /* InterfaceBuilderKit.framework */; };
 		D0CDB7330CE7338E0084926B /* HFRepresenterTextView_Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = D0CDB7320CE7338E0084926B /* HFRepresenterTextView_Internal.h */; };
 		D0CDB7540CE735590084926B /* HFRepresenterStringEncodingTextView.h in Headers */ = {isa = PBXBuildFile; fileRef = D0CDB7520CE735590084926B /* HFRepresenterStringEncodingTextView.h */; settings = {ATTRIBUTES = (); }; };
 		D0CDB7550CE735590084926B /* HFRepresenterStringEncodingTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = D0CDB7530CE735590084926B /* HFRepresenterStringEncodingTextView.m */; };
@@ -100,6 +107,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		D019309F0D5AE3BE0019B3F7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D01E7BB70CDC530C00943F9E;
+			remoteInfo = HexFiend_Framework;
+		};
 		D0A435540CDC70B3000F7550 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
@@ -139,8 +153,16 @@
 		D00122F90D48AD8600540B10 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/FindReplace.nib; sourceTree = "<group>"; };
 		D00EBA710CE866D50020E2D7 /* HFVerticalScrollerRepresenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFVerticalScrollerRepresenter.h; path = framework/sources/HFVerticalScrollerRepresenter.h; sourceTree = "<group>"; };
 		D00EBA720CE866D50020E2D7 /* HFVerticalScrollerRepresenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFVerticalScrollerRepresenter.m; path = framework/sources/HFVerticalScrollerRepresenter.m; sourceTree = "<group>"; };
+		D019309A0D5AE3B40019B3F7 /* HexFiend.ibplugin */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HexFiend.ibplugin; sourceTree = BUILT_PRODUCTS_DIR; };
+		D019309B0D5AE3B40019B3F7 /* HexFiend_IBPlugin-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "HexFiend_IBPlugin-Info.plist"; sourceTree = "<group>"; };
+		D01930EA0D5AE7690019B3F7 /* HexFiendPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HexFiendPlugin.h; path = ib_plugin/sources/HexFiendPlugin.h; sourceTree = "<group>"; };
+		D01930EB0D5AE7690019B3F7 /* HexFiendPlugin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HexFiendPlugin.m; path = ib_plugin/sources/HexFiendPlugin.m; sourceTree = "<group>"; };
+		D019311F0D5AEADA0019B3F7 /* HexFiendPluginLibrary.nib */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = HexFiendPluginLibrary.nib; path = ib_plugin/resources/HexFiendPluginLibrary.nib; sourceTree = "<group>"; };
+		D019312D0D5AEBA10019B3F7 /* HFTextFieldIntegration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFTextFieldIntegration.m; path = ib_plugin/sources/HFTextFieldIntegration.m; sourceTree = "<group>"; };
+		D01931410D5AED230019B3F7 /* HFTextFieldInspector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFTextFieldInspector.h; path = ib_plugin/sources/HFTextFieldInspector.h; sourceTree = "<group>"; };
+		D01931420D5AED230019B3F7 /* HFTextFieldInspector.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFTextFieldInspector.m; path = ib_plugin/sources/HFTextFieldInspector.m; sourceTree = "<group>"; };
 		D01E7BB80CDC530C00943F9E /* HexFiend.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = HexFiend.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		D01E7BB90CDC530C00943F9E /* HexFiend_Framework-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "HexFiend_Framework-Info.plist"; sourceTree = "<group>"; };
+		D01E7BB90CDC530C00943F9E /* HexFiend_Framework-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "HexFiend_Framework-Info.plist"; path = "framework/HexFiend_Framework-Info.plist"; sourceTree = "<group>"; };
 		D01E7BC60CDC53B300943F9E /* HexFiend_2_Framework_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HexFiend_2_Framework_Prefix.pch; path = framework/sources/HexFiend_2_Framework_Prefix.pch; sourceTree = "<group>"; };
 		D01E7BEA0CDC55D000943F9E /* HFController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFController.h; path = framework/sources/HFController.h; sourceTree = "<group>"; };
 		D01E7BEB0CDC55D000943F9E /* HFController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFController.m; path = framework/sources/HFController.m; sourceTree = "<group>"; };
@@ -202,6 +224,8 @@
 		D0A9F3F00CFBEA9F0077D577 /* HFLineCountingRepresenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFLineCountingRepresenter.m; path = framework/sources/HFLineCountingRepresenter.m; sourceTree = "<group>"; };
 		D0A9F3FB0CFBEAD50077D577 /* HFLineCountingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFLineCountingView.h; path = framework/sources/HFLineCountingView.h; sourceTree = "<group>"; };
 		D0A9F3FC0CFBEAD50077D577 /* HFLineCountingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFLineCountingView.m; path = framework/sources/HFLineCountingView.m; sourceTree = "<group>"; };
+		D0B7E2570D5AEEBB007874ED /* HFTextFieldInspector.nib */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = HFTextFieldInspector.nib; path = ib_plugin/resources/HFTextFieldInspector.nib; sourceTree = "<group>"; };
+		D0B7E2890D5AF0DF007874ED /* InterfaceBuilderKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = InterfaceBuilderKit.framework; path = Library/Frameworks/InterfaceBuilderKit.framework; sourceTree = DEVELOPER_DIR; };
 		D0CDB7320CE7338E0084926B /* HFRepresenterTextView_Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFRepresenterTextView_Internal.h; path = framework/sources/HFRepresenterTextView_Internal.h; sourceTree = "<group>"; };
 		D0CDB7520CE735590084926B /* HFRepresenterStringEncodingTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFRepresenterStringEncodingTextView.h; path = framework/sources/HFRepresenterStringEncodingTextView.h; sourceTree = "<group>"; };
 		D0CDB7530CE735590084926B /* HFRepresenterStringEncodingTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFRepresenterStringEncodingTextView.m; path = framework/sources/HFRepresenterStringEncodingTextView.m; sourceTree = "<group>"; };
@@ -235,6 +259,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D01930980D5AE3B40019B3F7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D01930C20D5AE64E0019B3F7 /* HexFiend.framework in Frameworks */,
+				D0B7E28A0D5AF0DF007874ED /* InterfaceBuilderKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D01E7BB60CDC530C00943F9E /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -249,6 +282,7 @@
 		1058C7A0FEA54F0111CA2CBB /* Linked Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				D0B7E2890D5AF0DF007874ED /* InterfaceBuilderKit.framework */,
 				D078CE760D4EE7F900492F46 /* CHUD.framework */,
 				1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */,
 			);
@@ -270,6 +304,7 @@
 			children = (
 				8D1107320486CEB800E47090 /* HexFiend_2.app */,
 				D01E7BB80CDC530C00943F9E /* HexFiend.framework */,
+				D019309A0D5AE3B40019B3F7 /* HexFiend.ibplugin */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -280,6 +315,7 @@
 				D08F5DA30CDE7691007EFFE8 /* Design.graffle */,
 				D0560B350CDC4248009D2484 /* Framework */,
 				D0560B380CDC4253009D2484 /* App */,
+				D019310E0D5AE97A0019B3F7 /* IB Plugin */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
 			);
@@ -316,6 +352,21 @@
 				D00122E20D48A8D400540B10 /* HFFindReplaceBackgroundView.m */,
 			);
 			name = Find_Replace;
+			sourceTree = "<group>";
+		};
+		D019310E0D5AE97A0019B3F7 /* IB Plugin */ = {
+			isa = PBXGroup;
+			children = (
+				D019309B0D5AE3B40019B3F7 /* HexFiend_IBPlugin-Info.plist */,
+				D019311F0D5AEADA0019B3F7 /* HexFiendPluginLibrary.nib */,
+				D0B7E2570D5AEEBB007874ED /* HFTextFieldInspector.nib */,
+				D01930EA0D5AE7690019B3F7 /* HexFiendPlugin.h */,
+				D01930EB0D5AE7690019B3F7 /* HexFiendPlugin.m */,
+				D019312D0D5AEBA10019B3F7 /* HFTextFieldIntegration.m */,
+				D01931410D5AED230019B3F7 /* HFTextFieldInspector.h */,
+				D01931420D5AED230019B3F7 /* HFTextFieldInspector.m */,
+			);
+			name = "IB Plugin";
 			sourceTree = "<group>";
 		};
 		D01E7C010CDC569F00943F9E /* Resources */ = {
@@ -536,6 +587,24 @@
 			productReference = 8D1107320486CEB800E47090 /* HexFiend_2.app */;
 			productType = "com.apple.product-type.application";
 		};
+		D01930990D5AE3B40019B3F7 /* HexFiend_IBPlugin */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D019309E0D5AE3B50019B3F7 /* Build configuration list for PBXNativeTarget "HexFiend_IBPlugin" */;
+			buildPhases = (
+				D01930960D5AE3B40019B3F7 /* Resources */,
+				D01930970D5AE3B40019B3F7 /* Sources */,
+				D01930980D5AE3B40019B3F7 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				D01930A00D5AE3BE0019B3F7 /* PBXTargetDependency */,
+			);
+			name = HexFiend_IBPlugin;
+			productName = HexFiend_IBPlugin;
+			productReference = D019309A0D5AE3B40019B3F7 /* HexFiend.ibplugin */;
+			productType = "com.apple.product-type.bundle";
+		};
 		D01E7BB70CDC530C00943F9E /* HexFiend_Framework */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = D01E7BBC0CDC530C00943F9E /* Build configuration list for PBXNativeTarget "HexFiend_Framework" */;
@@ -568,6 +637,7 @@
 			targets = (
 				D01E7BB70CDC530C00943F9E /* HexFiend_Framework */,
 				8D1107260486CEB800E47090 /* HexFiend_2 */,
+				D01930990D5AE3B40019B3F7 /* HexFiend_IBPlugin */,
 			);
 		};
 /* End PBXProject section */
@@ -582,6 +652,15 @@
 				D01E7C0B0CDC570400943F9E /* Info.plist in Resources */,
 				D01E7C2A0CDC59B700943F9E /* MyDocument.nib in Resources */,
 				D00122FA0D48AD8600540B10 /* FindReplace.nib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D01930960D5AE3B40019B3F7 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D01931200D5AEADA0019B3F7 /* HexFiendPluginLibrary.nib in Resources */,
+				D0B7E2580D5AEEBB007874ED /* HFTextFieldInspector.nib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -606,6 +685,16 @@
 				D00122D90D48A88C00540B10 /* HFFindReplaceRepresenter.m in Sources */,
 				D00122E30D48A8D400540B10 /* HFFindReplaceBackgroundView.m in Sources */,
 				D078D0520D50492F00492F46 /* HFBannerDividerThumb.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D01930970D5AE3B40019B3F7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D01930EC0D5AE7690019B3F7 /* HexFiendPlugin.m in Sources */,
+				D019312E0D5AEBA10019B3F7 /* HFTextFieldIntegration.m in Sources */,
+				D01931430D5AED230019B3F7 /* HFTextFieldInspector.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -658,6 +747,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		D01930A00D5AE3BE0019B3F7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D01E7BB70CDC530C00943F9E /* HexFiend_Framework */;
+			targetProxy = D019309F0D5AE3BE0019B3F7 /* PBXContainerItemProxy */;
+		};
 		D0A435550CDC70B3000F7550 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = D01E7BB70CDC530C00943F9E /* HexFiend_Framework */;
@@ -786,6 +880,63 @@
 			};
 			name = Release;
 		};
+		D019309C0D5AE3B50019B3F7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(DEVELOPER_FRAMEWORKS_DIR)\"",
+				);
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INFOPLIST_FILE = "HexFiend_IBPlugin-Info.plist";
+				INSTALL_PATH = "$(HOME)/Library/Bundles";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = HexFiend;
+				WRAPPER_EXTENSION = ibplugin;
+				ZERO_LINK = YES;
+			};
+			name = Debug;
+		};
+		D019309D0D5AE3B50019B3F7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(DEVELOPER_FRAMEWORKS_DIR)\"",
+				);
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INFOPLIST_FILE = "HexFiend_IBPlugin-Info.plist";
+				INSTALL_PATH = "$(HOME)/Library/Bundles";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = HexFiend;
+				WRAPPER_EXTENSION = ibplugin;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
 		D01E7BBA0CDC530C00943F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -806,7 +957,7 @@
 				GCC_PREFIX_HEADER = framework/sources/HexFiend_2_Framework_Prefix.pch;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = YES;
-				INFOPLIST_FILE = "HexFiend_Framework-Info.plist";
+				INFOPLIST_FILE = "framework/HexFiend_Framework-Info.plist";
 				INSTALL_PATH = "$(HOME)/Library/Frameworks";
 				LD_DYLIB_INSTALL_NAME = "@executable_path/../Frameworks/HexFiend.framework/Versions/A/HexFiend";
 				OTHER_LDFLAGS = (
@@ -882,6 +1033,15 @@
 			buildConfigurations = (
 				C01FCF4F08A954540054247B /* Debug */,
 				C01FCF5008A954540054247B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D019309E0D5AE3B50019B3F7 /* Build configuration list for PBXNativeTarget "HexFiend_IBPlugin" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D019309C0D5AE3B50019B3F7 /* Debug */,
+				D019309D0D5AE3B50019B3F7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

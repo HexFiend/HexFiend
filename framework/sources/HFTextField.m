@@ -77,4 +77,13 @@
     return [[self window] makeFirstResponder:[activeRepresenter view]];
 }
 
+- (void)insertNewline:sender {
+    //[NSApp targetForAction:<#(SEL)theAction#> to:<#(id)theTarget#> from:<#(id)sender#>
+}
+
+- (void)encodeWithCoder:(NSCoder *)coder {
+    [super encodeWithCoder:coder];
+    [coder encodeObject:dataController forKey:@"HFDataController"];
+}
+
 @end

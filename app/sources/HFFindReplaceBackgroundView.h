@@ -14,6 +14,8 @@
     IBOutlet NSSegmentedControl *navigateControl;
     IBOutlet HFTextField *searchField;
     IBOutlet HFTextField *replaceField;
+    IBOutlet NSTextField *searchLabel;
+    IBOutlet NSTextField *replaceLabel;
 }
 
 - (HFTextField *)searchField;

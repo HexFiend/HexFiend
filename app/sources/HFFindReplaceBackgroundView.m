@@ -62,6 +62,16 @@ static CGFloat roundTowardsInfinity(CGFloat x) {
         searchFrame.size = [self roundSizeToPixels:searchFrame.size];
         [searchField setFrame:searchFrame];
     }
+    if (searchLabel && searchField) {
+        NSRect findFrame = [searchLabel frame];
+        findFrame.origin.y = NSMaxY([searchField frame]) - NSHeight(findFrame);
+        [searchLabel setFrameOrigin:findFrame.origin];
+    }
+    if (replaceLabel && replaceField) {
+        NSRect replaceFrame = [replaceLabel frame];
+        replaceFrame.origin.y = NSMaxY([replaceField frame]) - NSHeight(replaceFrame);
+        [replaceLabel setFrameOrigin:replaceFrame.origin];
+    }
 }
 
 - (HFTextField *)searchField {

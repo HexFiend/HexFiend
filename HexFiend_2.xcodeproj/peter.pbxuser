@@ -10,10 +10,10 @@
 	29B97313FDCFA39411CA2CEA /* Project object */ = {
 		activeArchitecture = i386;
 		activeBuildConfigurationName = Debug;
-		activeExecutable = D0560B180CDC41D7009D2484 /* HexFiend_2 */;
-		activeTarget = 8D1107260486CEB800E47090 /* HexFiend_2 */;
+		activeExecutable = D0B7E2B10D5AF2FA007874ED /* Interface Builder */;
+		activeTarget = D01930990D5AE3B40019B3F7 /* HexFiend_IBPlugin */;
 		addToTargets = (
-			D01E7BB70CDC530C00943F9E /* HexFiend_Framework */,
+			D01930990D5AE3B40019B3F7 /* HexFiend_IBPlugin */,
 		);
 		breakpoints = (
 			D04328890CF18DBC00C14250 /* objc_exception_throw */,
@@ -24,6 +24,7 @@
 		codeSenseManager = D0560B2A0CDC41DC009D2484 /* Code sense */;
 		executables = (
 			D0560B180CDC41D7009D2484 /* HexFiend_2 */,
+			D0B7E2B10D5AF2FA007874ED /* Interface Builder */,
 		);
 		perUserDictionary = {
 			"PBXConfiguration.PBXBreakpointsDataSource.v1:1CA1AED706398EBD00589147" = {
@@ -56,7 +57,7 @@
 				PBXFileTableDataSourceColumnWidthsKey = (
 					20,
 					300,
-					85,
+					330,
 				);
 				PBXFileTableDataSourceColumnsKey = (
 					PBXErrorsWarningsDataSource_TypeID,
@@ -150,14 +151,22 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 223901323;
-			PBXWorkspaceStateSaveDate = 223901323;
+			PBXPerProjectTemplateStateSaveDate = 224062838;
+			PBXWorkspaceStateSaveDate = 224062838;
 		};
 		perUserProjectItems = {
-			D07151440D5868C000573D7A = D07151440D5868C000573D7A /* PBXTextBookmark */;
-			D071514E0D5868C300573D7A = D071514E0D5868C300573D7A /* PBXTextBookmark */;
-			D0AF9A1D0D587D6500A80309 /* PBXTextBookmark */ = D0AF9A1D0D587D6500A80309 /* PBXTextBookmark */;
-			D0AF9A1F0D587D6A00A80309 /* PBXTextBookmark */ = D0AF9A1F0D587D6A00A80309 /* PBXTextBookmark */;
+			D0B7E2650D5AF063007874ED /* PBXTextBookmark */ = D0B7E2650D5AF063007874ED /* PBXTextBookmark */;
+			D0B7E2660D5AF063007874ED /* PBXTextBookmark */ = D0B7E2660D5AF063007874ED /* PBXTextBookmark */;
+			D0B7E29C0D5AF14E007874ED /* PBXTextBookmark */ = D0B7E29C0D5AF14E007874ED /* PBXTextBookmark */;
+			D0B7E29D0D5AF14E007874ED /* PBXTextBookmark */ = D0B7E29D0D5AF14E007874ED /* PBXTextBookmark */;
+			D0B7E29E0D5AF14E007874ED /* PBXTextBookmark */ = D0B7E29E0D5AF14E007874ED /* PBXTextBookmark */;
+			D0B7E29F0D5AF14E007874ED /* PBXTextBookmark */ = D0B7E29F0D5AF14E007874ED /* PBXTextBookmark */;
+			D0B7E2A20D5AF160007874ED /* PBXTextBookmark */ = D0B7E2A20D5AF160007874ED /* PBXTextBookmark */;
+			D0B7E2A30D5AF160007874ED /* PBXTextBookmark */ = D0B7E2A30D5AF160007874ED /* PBXTextBookmark */;
+			D0B7E2A40D5AF160007874ED /* PBXTextBookmark */ = D0B7E2A40D5AF160007874ED /* PBXTextBookmark */;
+			D0B7E2A50D5AF160007874ED /* PBXTextBookmark */ = D0B7E2A50D5AF160007874ED /* PBXTextBookmark */;
+			D0B7E2B40D5AF301007874ED /* PBXTextBookmark */ = D0B7E2B40D5AF301007874ED /* PBXTextBookmark */;
+			D0B7E2D90D5AF5D8007874ED /* PBXTextBookmark */ = D0B7E2D90D5AF5D8007874ED /* PBXTextBookmark */;
 		};
 		sourceControlManager = D0560B290CDC41DC009D2484 /* Source Control */;
 		userBuildSettings = {
@@ -200,15 +209,15 @@
 	D00122E10D48A8D400540B10 /* HFFindReplaceBackgroundView.h */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {842, 686}}";
-			sepNavSelRange = "{368, 12}";
-			sepNavVisRange = "{0, 421}";
+			sepNavSelRange = "{500, 0}";
+			sepNavVisRange = "{0, 500}";
 		};
 	};
 	D00122E20D48A8D400540B10 /* HFFindReplaceBackgroundView.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {842, 1036}}";
-			sepNavSelRange = "{1388, 0}";
-			sepNavVisRange = "{332, 2092}";
+			sepNavIntBoundsRect = "{{0, 0}, {842, 1176}}";
+			sepNavSelRange = "{2879, 0}";
+			sepNavVisRange = "{916, 2045}";
 		};
 	};
 	D00EBA710CE866D50020E2D7 /* HFVerticalScrollerRepresenter.h */ = {
@@ -223,6 +232,57 @@
 			sepNavIntBoundsRect = "{{0, 0}, {1576, 1680}}";
 			sepNavSelRange = "{3593, 0}";
 			sepNavVisRange = "{2975, 1367}";
+		};
+	};
+	D01930990D5AE3B40019B3F7 /* HexFiend_IBPlugin */ = {
+		activeExec = 0;
+	};
+	D01930EA0D5AE7690019B3F7 /* HexFiendPlugin.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1036, 341}}";
+			sepNavSelRange = "{0, 52}";
+			sepNavVisRange = "{0, 102}";
+		};
+	};
+	D01930EB0D5AE7690019B3F7 /* HexFiendPlugin.m */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {842, 686}}";
+			sepNavSelRange = "{162, 0}";
+			sepNavVisRange = "{0, 162}";
+		};
+	};
+	D019312C0D5AEBA10019B3F7 /* HFTextFieldIntegration.h */ = {
+		isa = PBXFileReference;
+		fileEncoding = 4;
+		lastKnownFileType = sourcecode.c.h;
+		name = HFTextFieldIntegration.h;
+		path = /Users/peter/Bell/HexFiend2/trunk/HexFiend_2/ib_plugin/sources/HFTextFieldIntegration.h;
+		sourceTree = "<absolute>";
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1036, 341}}";
+			sepNavSelRange = "{151, 33}";
+			sepNavVisRange = "{0, 243}";
+		};
+	};
+	D019312D0D5AEBA10019B3F7 /* HFTextFieldIntegration.m */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {842, 686}}";
+			sepNavSelRange = "{912, 0}";
+			sepNavVisRange = "{0, 931}";
+		};
+	};
+	D01931410D5AED230019B3F7 /* HFTextFieldInspector.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {842, 686}}";
+			sepNavSelRange = "{213, 20}";
+			sepNavVisRange = "{0, 257}";
+		};
+	};
+	D01931420D5AED230019B3F7 /* HFTextFieldInspector.m */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {842, 686}}";
+			sepNavSelRange = "{408, 0}";
+			sepNavVisRange = "{0, 408}";
 		};
 	};
 	D01E7BB70CDC530C00943F9E /* HexFiend_Framework */ = {
@@ -251,9 +311,9 @@
 	};
 	D01E7BEB0CDC55D000943F9E /* HFController.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1209, 21714}}";
-			sepNavSelRange = "{15144, 0}";
-			sepNavVisRange = "{14671, 954}";
+			sepNavIntBoundsRect = "{{0, 0}, {1036, 21768}}";
+			sepNavSelRange = "{24669, 77}";
+			sepNavVisRange = "{24138, 1413}";
 		};
 	};
 	D01E7BEF0CDC564B00943F9E /* HexFiend.h */ = {
@@ -273,15 +333,15 @@
 	D01E7C140CDC58AA00943F9E /* MyDocument.h */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {842, 686}}";
-			sepNavSelRange = "{748, 10}";
-			sepNavVisRange = "{0, 892}";
+			sepNavSelRange = "{670, 22}";
+			sepNavVisRange = "{0, 874}";
 		};
 	};
 	D01E7C150CDC58AA00943F9E /* MyDocument.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {992, 3542}}";
-			sepNavSelRange = "{3661, 8}";
-			sepNavVisRange = "{3391, 572}";
+			sepNavIntBoundsRect = "{{0, 0}, {842, 4144}}";
+			sepNavSelRange = "{9962, 0}";
+			sepNavVisRange = "{8847, 2309}";
 		};
 	};
 	D01E7C330CDC646800943F9E /* HFRepresenter.h */ = {
@@ -495,34 +555,17 @@
 	};
 	D07150650D5510CE00573D7A /* HFTextField.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {842, 686}}";
-			sepNavSelRange = "{234, 11}";
-			sepNavVisRange = "{0, 384}";
+			sepNavIntBoundsRect = "{{0, 0}, {1241, 782}}";
+			sepNavSelRange = "{258, 0}";
+			sepNavVisRange = "{0, 408}";
 		};
 	};
 	D07150660D5510CE00573D7A /* HFTextField.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {842, 1092}}";
-			sepNavSelRange = "{1685, 24}";
-			sepNavVisRange = "{214, 1992}";
+			sepNavIntBoundsRect = "{{0, 0}, {1241, 1384}}";
+			sepNavSelRange = "{3084, 0}";
+			sepNavVisRange = "{173, 2033}";
 		};
-	};
-	D07151440D5868C000573D7A /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D01E7C150CDC58AA00943F9E /* MyDocument.m */;
-		rLen = 8;
-		rLoc = 3661;
-		rType = 0;
-	};
-	D071514E0D5868C300573D7A /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D01E7C150CDC58AA00943F9E /* MyDocument.m */;
-		name = "MyDocument.m: 92";
-		rLen = 8;
-		rLoc = 3661;
-		rType = 0;
-		vrLen = 572;
-		vrLoc = 3391;
 	};
 	D078CDDC0D4DDBE000492F46 /* objc_exception_throw */ = {
 		isa = PBXSymbolicBreakpoint;
@@ -604,23 +647,23 @@
 	};
 	D08399AD0CF85A540030DBF0 /* HFTextRepresenter_KeyBinding.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {842, 1932}}";
-			sepNavSelRange = "{6647, 0}";
-			sepNavVisRange = "{5980, 1202}";
+			sepNavIntBoundsRect = "{{0, 0}, {992, 2226}}";
+			sepNavSelRange = "{6699, 13}";
+			sepNavVisRange = "{6565, 263}";
 		};
 	};
 	D08F5DEF0CDE8223007EFFE8 /* HFByteArray.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1300, 693}}";
-			sepNavSelRange = "{424, 15}";
+			sepNavIntBoundsRect = "{{0, 0}, {1241, 782}}";
+			sepNavSelRange = "{270, 10}";
 			sepNavVisRange = "{0, 613}";
 		};
 	};
 	D08F5DF00CDE8223007EFFE8 /* HFByteArray.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {992, 1764}}";
-			sepNavSelRange = "{3888, 11}";
-			sepNavVisRange = "{3794, 427}";
+			sepNavIntBoundsRect = "{{0, 0}, {1241, 1722}}";
+			sepNavSelRange = "{4241, 0}";
+			sepNavVisRange = "{2087, 2161}";
 		};
 	};
 	D08F5E220CDE843E007EFFE8 /* HFByteSlice.h */ = {
@@ -632,9 +675,9 @@
 	};
 	D08F5E230CDE843E007EFFE8 /* HFByteSlice.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1300, 742}}";
+			sepNavIntBoundsRect = "{{0, 0}, {1241, 782}}";
 			sepNavSelRange = "{1091, 0}";
-			sepNavVisRange = "{36, 1485}";
+			sepNavVisRange = "{0, 1521}";
 		};
 	};
 	D08F5E370CDE84F4007EFFE8 /* HFFullMemoryByteSlice.h */ = {
@@ -756,22 +799,168 @@
 			sepNavVisRange = "{961, 2136}";
 		};
 	};
-	D0AF9A1D0D587D6500A80309 /* PBXTextBookmark */ = {
+	D0B7E2650D5AF063007874ED /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
-		fRef = D08399AD0CF85A540030DBF0 /* HFTextRepresenter_KeyBinding.m */;
-		rLen = 9;
-		rLoc = 6655;
-		rType = 0;
+		comments = "error: InterfaceBuilderKit/InterfaceBuilderKit.h: No such file or directory";
+		fRef = D01930EA0D5AE7690019B3F7 /* HexFiendPlugin.h */;
+		rLen = 1;
+		rLoc = 0;
+		rType = 1;
 	};
-	D0AF9A1F0D587D6A00A80309 /* PBXTextBookmark */ = {
+	D0B7E2660D5AF063007874ED /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
-		fRef = D08399AD0CF85A540030DBF0 /* HFTextRepresenter_KeyBinding.m */;
-		name = "HFTextRepresenter_KeyBinding.m: 105";
-		rLen = 9;
-		rLoc = 6655;
+		fRef = D01930EA0D5AE7690019B3F7 /* HexFiendPlugin.h */;
+		name = "HexFiendPlugin.h: 1";
+		rLen = 52;
+		rLoc = 0;
 		rType = 0;
-		vrLen = 265;
-		vrLoc = 6565;
+		vrLen = 102;
+		vrLoc = 0;
+	};
+	D0B7E29C0D5AF14E007874ED /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D01930EA0D5AE7690019B3F7 /* HexFiendPlugin.h */;
+		name = "HexFiendPlugin.h: 1";
+		rLen = 52;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 102;
+		vrLoc = 0;
+	};
+	D0B7E29D0D5AF14E007874ED /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		comments = "error: HexFiend/HFTextField.h: No such file or directory";
+		fRef = D019312C0D5AEBA10019B3F7 /* HFTextFieldIntegration.h */;
+		rLen = 1;
+		rLoc = 8;
+		rType = 1;
+	};
+	D0B7E29E0D5AF14E007874ED /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D01930EA0D5AE7690019B3F7 /* HexFiendPlugin.h */;
+		name = "HexFiendPlugin.h: 1";
+		rLen = 52;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 102;
+		vrLoc = 0;
+	};
+	D0B7E29F0D5AF14E007874ED /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D019312C0D5AEBA10019B3F7 /* HFTextFieldIntegration.h */;
+		name = "HFTextFieldIntegration.h: 9";
+		rLen = 33;
+		rLoc = 151;
+		rType = 0;
+		vrLen = 794;
+		vrLoc = 47;
+	};
+	D0B7E2A20D5AF160007874ED /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D019312C0D5AEBA10019B3F7 /* HFTextFieldIntegration.h */;
+		name = "HFTextFieldIntegration.h: 9";
+		rLen = 33;
+		rLoc = 151;
+		rType = 0;
+		vrLen = 794;
+		vrLoc = 47;
+	};
+	D0B7E2A30D5AF160007874ED /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		comments = "In file included from /Users/peter/Bell/HexFiend2/trunk/HexFiend_2/ib_plugin/sources/HFTextFieldIntegration.m";
+		fRef = D019312D0D5AEBA10019B3F7 /* HFTextFieldIntegration.m */;
+		rLen = 1;
+		rLoc = 8;
+		rType = 1;
+	};
+	D0B7E2A40D5AF160007874ED /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D019312C0D5AEBA10019B3F7 /* HFTextFieldIntegration.h */;
+		name = "HFTextFieldIntegration.h: 9";
+		rLen = 33;
+		rLoc = 151;
+		rType = 0;
+		vrLen = 794;
+		vrLoc = 47;
+	};
+	D0B7E2A50D5AF160007874ED /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D019312D0D5AEBA10019B3F7 /* HFTextFieldIntegration.m */;
+		name = "HFTextFieldIntegration.m: 9";
+		rLen = 33;
+		rLoc = 151;
+		rType = 0;
+		vrLen = 233;
+		vrLoc = 0;
+	};
+	D0B7E2B10D5AF2FA007874ED /* Interface Builder */ = {
+		isa = PBXExecutable;
+		activeArgIndices = (
+			YES,
+		);
+		argumentStrings = (
+			"-NSOpen HexFiend.ibplugin",
+		);
+		autoAttachOnCrash = 1;
+		breakpointsEnabled = 0;
+		configStateDict = {
+			"PBXLSLaunchAction-0" = {
+				PBXLSLaunchAction = 0;
+				PBXLSLaunchStartAction = 1;
+				PBXLSLaunchStdioStyle = 2;
+				PBXLSLaunchStyle = 0;
+				class = PBXLSRunLaunchConfig;
+				commandLineArgs = (
+				);
+				displayName = "Executable Runner";
+				environment = {
+				};
+				identifier = com.apple.Xcode.launch.runConfig;
+				remoteHostInfo = "";
+				startActionInfo = "";
+			};
+		};
+		customDataFormattersEnabled = 1;
+		debuggerPlugin = GDBDebugging;
+		disassemblyDisplayState = 0;
+		dylibVariantSuffix = "";
+		enableDebugStr = 1;
+		environmentEntries = (
+		);
+		executableSystemSymbolLevel = 0;
+		executableUserSymbolLevel = 0;
+		launchableReference = D0B7E2B20D5AF2FA007874ED /* Interface Builder.app */;
+		libgmallocEnabled = 0;
+		name = "Interface Builder";
+		sourceDirectories = (
+		);
+	};
+	D0B7E2B20D5AF2FA007874ED /* Interface Builder.app */ = {
+		isa = PBXFileReference;
+		lastKnownFileType = wrapper.application;
+		name = "Interface Builder.app";
+		path = "Applications/Interface Builder.app";
+		sourceTree = DEVELOPER_DIR;
+	};
+	D0B7E2B40D5AF301007874ED /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D01930EA0D5AE7690019B3F7 /* HexFiendPlugin.h */;
+		name = "HexFiendPlugin.h: 1";
+		rLen = 52;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 102;
+		vrLoc = 0;
+	};
+	D0B7E2D90D5AF5D8007874ED /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D01930EA0D5AE7690019B3F7 /* HexFiendPlugin.h */;
+		name = "HexFiendPlugin.h: 1";
+		rLen = 52;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 102;
+		vrLoc = 0;
 	};
 	D0CDB7320CE7338E0084926B /* HFRepresenterTextView_Internal.h */ = {
 		uiCtxt = {

@@ -240,10 +240,11 @@ static BOOL isRunningOnLeopardOrLater(void) {
     bannerStartTime = 0;
     bannerIsShown = YES;
     bannerGrowing = YES;
-    if (isRunningOnLeopardOrLater() && ! bannerDividerThumb) {
-        bannerDividerThumb = [[HFBannerDividerThumb alloc] initWithFrame:NSMakeRect(0, 0, 14, 14)];
+    if (isRunningOnLeopardOrLater()) {
+        if (! bannerDividerThumb) bannerDividerThumb = [[HFBannerDividerThumb alloc] initWithFrame:NSMakeRect(0, 0, 14, 14)];
         [bannerDividerThumb setAutoresizingMask:0];
         [bannerDividerThumb setFrameOrigin:NSMakePoint(3, 0)];
+        [bannerDividerThumb removeFromSuperview];
         [bannerView addSubview:bannerDividerThumb];
     }
     if (newSubview) {
@@ -260,8 +261,6 @@ static BOOL isRunningOnLeopardOrLater(void) {
 	return;
     }
     
-    findReplaceController = [[HFController alloc] init];
-    [findReplaceController setByteArray:[[[HFTavlTreeByteArray alloc] init] autorelease]];
     findReplaceRepresenter = [[HFFindReplaceRepresenter alloc] init];
     HFFindReplaceBackgroundView *findReplaceView = [findReplaceRepresenter view];
     [findReplaceView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
