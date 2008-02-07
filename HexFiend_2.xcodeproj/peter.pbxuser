@@ -10,8 +10,8 @@
 	29B97313FDCFA39411CA2CEA /* Project object */ = {
 		activeArchitecture = i386;
 		activeBuildConfigurationName = Debug;
-		activeExecutable = D0B7E2B10D5AF2FA007874ED /* Interface Builder */;
-		activeTarget = D01930990D5AE3B40019B3F7 /* HexFiend_IBPlugin */;
+		activeExecutable = D0560B180CDC41D7009D2484 /* HexFiend_2 */;
+		activeTarget = 8D1107260486CEB800E47090 /* HexFiend_2 */;
 		addToTargets = (
 			D01930990D5AE3B40019B3F7 /* HexFiend_IBPlugin */,
 		);
@@ -80,7 +80,7 @@
 				);
 			};
 			PBXConfiguration.PBXFileTableDataSource3.PBXFileTableDataSource = {
-				PBXFileTableDataSourceColumnSortingDirectionKey = "-1";
+				PBXFileTableDataSourceColumnSortingDirectionKey = 1;
 				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
 				PBXFileTableDataSourceColumnWidthsKey = (
 					20,
@@ -167,6 +167,9 @@
 			D0B7E2A50D5AF160007874ED /* PBXTextBookmark */ = D0B7E2A50D5AF160007874ED /* PBXTextBookmark */;
 			D0B7E2B40D5AF301007874ED /* PBXTextBookmark */ = D0B7E2B40D5AF301007874ED /* PBXTextBookmark */;
 			D0B7E2D90D5AF5D8007874ED /* PBXTextBookmark */ = D0B7E2D90D5AF5D8007874ED /* PBXTextBookmark */;
+			D0B7E2F50D5AF82F007874ED /* PBXTextBookmark */ = D0B7E2F50D5AF82F007874ED /* PBXTextBookmark */;
+			D0B7E2F60D5AF832007874ED /* PBXTextBookmark */ = D0B7E2F60D5AF832007874ED /* PBXTextBookmark */;
+			D0B7E2F80D5AF832007874ED /* PBXTextBookmark */ = D0B7E2F80D5AF832007874ED /* PBXTextBookmark */;
 		};
 		sourceControlManager = D0560B290CDC41DC009D2484 /* Source Control */;
 		userBuildSettings = {
@@ -194,30 +197,30 @@
 	};
 	D00122D70D48A88C00540B10 /* HFFindReplaceRepresenter.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {842, 686}}";
-			sepNavSelRange = "{400, 0}";
+			sepNavIntBoundsRect = "{{0, 0}, {1241, 782}}";
+			sepNavSelRange = "{449, 0}";
 			sepNavVisRange = "{0, 449}";
 		};
 	};
 	D00122D80D48A88C00540B10 /* HFFindReplaceRepresenter.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {842, 686}}";
+			sepNavIntBoundsRect = "{{0, 0}, {1241, 782}}";
 			sepNavSelRange = "{698, 0}";
 			sepNavVisRange = "{0, 698}";
 		};
 	};
 	D00122E10D48A8D400540B10 /* HFFindReplaceBackgroundView.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {842, 686}}";
+			sepNavIntBoundsRect = "{{0, 0}, {1241, 782}}";
 			sepNavSelRange = "{500, 0}";
 			sepNavVisRange = "{0, 500}";
 		};
 	};
 	D00122E20D48A8D400540B10 /* HFFindReplaceBackgroundView.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {842, 1176}}";
+			sepNavIntBoundsRect = "{{0, 0}, {1241, 1176}}";
 			sepNavSelRange = "{2879, 0}";
-			sepNavVisRange = "{916, 2045}";
+			sepNavVisRange = "{0, 2025}";
 		};
 	};
 	D00EBA710CE866D50020E2D7 /* HFVerticalScrollerRepresenter.h */ = {
@@ -239,7 +242,7 @@
 	};
 	D01930EA0D5AE7690019B3F7 /* HexFiendPlugin.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1036, 341}}";
+			sepNavIntBoundsRect = "{{0, 0}, {842, 686}}";
 			sepNavSelRange = "{0, 52}";
 			sepNavVisRange = "{0, 102}";
 		};
@@ -556,15 +559,15 @@
 	D07150650D5510CE00573D7A /* HFTextField.h */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {1241, 782}}";
-			sepNavSelRange = "{258, 0}";
-			sepNavVisRange = "{0, 408}";
+			sepNavSelRange = "{424, 0}";
+			sepNavVisRange = "{0, 424}";
 		};
 	};
 	D07150660D5510CE00573D7A /* HFTextField.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1241, 1384}}";
-			sepNavSelRange = "{3084, 0}";
-			sepNavVisRange = "{173, 2033}";
+			sepNavIntBoundsRect = "{{0, 0}, {1241, 1538}}";
+			sepNavSelRange = "{2900, 0}";
+			sepNavVisRange = "{1621, 1462}";
 		};
 	};
 	D078CDDC0D4DDBE000492F46 /* objc_exception_throw */ = {
@@ -961,6 +964,33 @@
 		rType = 0;
 		vrLen = 102;
 		vrLoc = 0;
+	};
+	D0B7E2F50D5AF82F007874ED /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D07150660D5510CE00573D7A /* HFTextField.m */;
+		rLen = 13;
+		rLoc = 2824;
+		rType = 0;
+	};
+	D0B7E2F60D5AF832007874ED /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D01930EA0D5AE7690019B3F7 /* HexFiendPlugin.h */;
+		name = "HexFiendPlugin.h: 1";
+		rLen = 52;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 102;
+		vrLoc = 0;
+	};
+	D0B7E2F80D5AF832007874ED /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D07150660D5510CE00573D7A /* HFTextField.m */;
+		name = "HFTextField.m: 80";
+		rLen = 13;
+		rLoc = 2824;
+		rType = 0;
+		vrLen = 230;
+		vrLoc = 2709;
 	};
 	D0CDB7320CE7338E0084926B /* HFRepresenterTextView_Internal.h */ = {
 		uiCtxt = {

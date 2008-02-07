@@ -10,11 +10,12 @@
 
 @class HFLayoutRepresenter, HFRepresenter, HFController;
 
-@interface HFTextField : NSControl <NSCoding> {
+@interface HFTextField : NSControl {
     HFController *dataController;
     HFLayoutRepresenter *layoutRepresenter;
     HFRepresenter *activeRepresenter;
     IBOutlet id target;
+    SEL action;
 }
 
 @end

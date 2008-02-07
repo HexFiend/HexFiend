@@ -78,12 +78,23 @@
 }
 
 - (void)insertNewline:sender {
-    //[NSApp targetForAction:<#(SEL)theAction#> to:<#(id)theTarget#> from:<#(id)sender#>
+    [self sendAction:[self action] to:[self target]];
 }
 
-- (void)encodeWithCoder:(NSCoder *)coder {
-    [super encodeWithCoder:coder];
-    [coder encodeObject:dataController forKey:@"HFDataController"];
+- (id)target {
+    return target;
+}
+
+- (SEL)action {
+    return action;
+}
+
+- (void)setTarget:(id)val {
+    target = val;
+}
+
+- (void)setAction:(SEL)val {
+    action = val;
 }
 
 @end
