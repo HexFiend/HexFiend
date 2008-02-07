@@ -21,12 +21,11 @@
     HFLayoutRepresenter *layoutRepresenter;
     HFStatusBarRepresenter *statusBarRepresenter;
     
-    HFController *findReplaceController;
     HFFindReplaceRepresenter *findReplaceRepresenter;
-
+    BOOL bannerIsShown;
+    BOOL bannerGrowing;
     NSView *bannerView;
     NSView *bannerDividerThumb;
-    BOOL bannerGrowing;
     CGFloat bannerTargetHeight;
     CFAbsoluteTime bannerStartTime;
 }

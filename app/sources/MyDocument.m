@@ -190,6 +190,17 @@ static BOOL isRunningOnLeopardOrLater(void) {
     else return [super validateMenuItem:item];
 }
 
+- (void)finishedAnimation {
+    if (! bannerGrowing) {
+	bannerIsShown = NO;
+	[bannerDividerThumb removeFromSuperview];
+	[bannerView removeFromSuperview];
+	[bannerView release];
+	bannerView = nil;
+	if (! isRunningOnLeopardOrLater()) [containerView setNeedsDisplay:YES];
+    }
+}
+
 - (void)animateBanner:(NSTimer *)timer {
     BOOL isFirstCall = (bannerStartTime == 0);
     CFAbsoluteTime now = CFAbsoluteTimeGetCurrent();
@@ -197,6 +208,7 @@ static BOOL isRunningOnLeopardOrLater(void) {
     CFAbsoluteTime diff = now - bannerStartTime;
     double amount = diff / .15;
     amount = fmin(fmax(amount, 0), 1);
+    if (! bannerGrowing) amount = 1. - amount;
     CGFloat height = (CGFloat)round(bannerTargetHeight * amount);
     NSRect bannerFrame = [bannerView frame];
     bannerFrame.size.height = height;
@@ -206,9 +218,17 @@ static BOOL isRunningOnLeopardOrLater(void) {
         /* The first display can take some time, which can cause jerky animation; so we start the animation after it */
         bannerStartTime = CFAbsoluteTimeGetCurrent();
     }
-    if (amount >= 1.) {
+    if ((bannerGrowing && amount >= 1.) || (!bannerGrowing && amount <= 0.)) {
         [timer invalidate];
+	[self finishedAnimation];
     }
+}
+
+- (void)hideBannerFirstThenDo:(SEL)command {
+    HFASSERT(bannerIsShown);
+    bannerGrowing = NO;
+    bannerStartTime = 0;
+    [NSTimer scheduledTimerWithTimeInterval:1. / 60. target:self selector:@selector(animateBanner:) userInfo:nil repeats:YES];
 }
 
 - (void)prepareBannerWithView:(NSView *)newSubview {
@@ -218,6 +238,8 @@ static BOOL isRunningOnLeopardOrLater(void) {
     [bannerView setFrame:bannerFrame];
     [containerView addSubview:bannerView positioned:NSWindowBelow relativeTo:[layoutRepresenter view]];
     bannerStartTime = 0;
+    bannerIsShown = YES;
+    bannerGrowing = YES;
     if (isRunningOnLeopardOrLater() && ! bannerDividerThumb) {
         bannerDividerThumb = [[HFBannerDividerThumb alloc] initWithFrame:NSMakeRect(0, 0, 14, 14)];
         [bannerDividerThumb setAutoresizingMask:0];
@@ -233,7 +255,10 @@ static BOOL isRunningOnLeopardOrLater(void) {
 
 - (void)performFindPanelAction:sender {
     USE(sender);
-    if (findReplaceController) return;
+    if (bannerIsShown) {
+	[self hideBannerFirstThenDo:_cmd];
+	return;
+    }
     
     findReplaceController = [[HFController alloc] init];
     [findReplaceController setByteArray:[[[HFTavlTreeByteArray alloc] init] autorelease]];
@@ -256,7 +281,7 @@ static BOOL isRunningOnLeopardOrLater(void) {
 }
 
 - (void)cancelOperation:sender {
-    NSLog(@"%@ %s%@", self, _cmd, sender);
+    [self hideBannerFirstThenDo:NULL];
 }
 
 @end
