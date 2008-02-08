@@ -74,6 +74,9 @@
     #define MAX(A,B)	({ __typeof__(A) __a = (A); __typeof__(B) __b = (B); __a < __b ? __b : __a; })
 #endif
 
+//How many bytes should we read at a time when doing a find/replace?
+#define SEARCH_CHUNK_SIZE 32768
+
 #ifdef __OBJC__
     #import <HexFiend/HFFunctions.h>
     #import <HexFiend/HFFunctions_Private.h>

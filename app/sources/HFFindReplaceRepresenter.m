@@ -11,10 +11,6 @@
 
 @implementation HFFindReplaceRepresenter
 
-+ (NSPoint)defaultLayoutPosition {
-    return NSMakePoint(0, 2);
-}
-
 - (NSView *)createView {
     if (! [NSBundle loadNibNamed:@"FindReplace" owner:self] || ! backgroundView) {
         [NSException raise:NSInternalInconsistencyException format:@"Unable to load nib FindReplace.nib"];

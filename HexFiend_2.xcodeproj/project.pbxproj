@@ -81,6 +81,7 @@
 		D0A9F3FE0CFBEAD50077D577 /* HFLineCountingView.m in Sources */ = {isa = PBXBuildFile; fileRef = D0A9F3FC0CFBEAD50077D577 /* HFLineCountingView.m */; };
 		D0B7E2580D5AEEBB007874ED /* HFTextFieldInspector.nib in Resources */ = {isa = PBXBuildFile; fileRef = D0B7E2570D5AEEBB007874ED /* HFTextFieldInspector.nib */; };
 		D0B7E28A0D5AF0DF007874ED /* InterfaceBuilderKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0B7E2890D5AF0DF007874ED /* InterfaceBuilderKit.framework */; };
+		D0B7E3750D5C5B3A007874ED /* HFByteArray_FindReplace.m in Sources */ = {isa = PBXBuildFile; fileRef = D0B7E3380D5C50EA007874ED /* HFByteArray_FindReplace.m */; };
 		D0CDB7330CE7338E0084926B /* HFRepresenterTextView_Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = D0CDB7320CE7338E0084926B /* HFRepresenterTextView_Internal.h */; };
 		D0CDB7540CE735590084926B /* HFRepresenterStringEncodingTextView.h in Headers */ = {isa = PBXBuildFile; fileRef = D0CDB7520CE735590084926B /* HFRepresenterStringEncodingTextView.h */; settings = {ATTRIBUTES = (); }; };
 		D0CDB7550CE735590084926B /* HFRepresenterStringEncodingTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = D0CDB7530CE735590084926B /* HFRepresenterStringEncodingTextView.m */; };
@@ -226,6 +227,7 @@
 		D0A9F3FC0CFBEAD50077D577 /* HFLineCountingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFLineCountingView.m; path = framework/sources/HFLineCountingView.m; sourceTree = "<group>"; };
 		D0B7E2570D5AEEBB007874ED /* HFTextFieldInspector.nib */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = HFTextFieldInspector.nib; path = ib_plugin/resources/HFTextFieldInspector.nib; sourceTree = "<group>"; };
 		D0B7E2890D5AF0DF007874ED /* InterfaceBuilderKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = InterfaceBuilderKit.framework; path = Library/Frameworks/InterfaceBuilderKit.framework; sourceTree = DEVELOPER_DIR; };
+		D0B7E3380D5C50EA007874ED /* HFByteArray_FindReplace.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFByteArray_FindReplace.m; path = framework/sources/HFByteArray_FindReplace.m; sourceTree = "<group>"; };
 		D0CDB7320CE7338E0084926B /* HFRepresenterTextView_Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFRepresenterTextView_Internal.h; path = framework/sources/HFRepresenterTextView_Internal.h; sourceTree = "<group>"; };
 		D0CDB7520CE735590084926B /* HFRepresenterStringEncodingTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFRepresenterStringEncodingTextView.h; path = framework/sources/HFRepresenterStringEncodingTextView.h; sourceTree = "<group>"; };
 		D0CDB7530CE735590084926B /* HFRepresenterStringEncodingTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFRepresenterStringEncodingTextView.m; path = framework/sources/HFRepresenterStringEncodingTextView.m; sourceTree = "<group>"; };
@@ -478,6 +480,7 @@
 				D08F5DEF0CDE8223007EFFE8 /* HFByteArray.h */,
 				D082AC900CDEBD5300554EB7 /* HFByteArray_Internal.h */,
 				D08F5DF00CDE8223007EFFE8 /* HFByteArray.m */,
+				D0B7E3380D5C50EA007874ED /* HFByteArray_FindReplace.m */,
 				D0D828FE0CDE8ABE00C2AB82 /* HFFullMemoryByteArray.h */,
 				D0D828FF0CDE8ABE00C2AB82 /* HFFullMemoryByteArray.m */,
 				D08F5E220CDE843E007EFFE8 /* HFByteSlice.h */,
@@ -726,6 +729,7 @@
 				D041D1C10D397E1A00C28345 /* HFPasteboardOwner.m in Sources */,
 				D041D3DE0D3CA70600C28345 /* HFTavlTreeByteArray.m in Sources */,
 				D041D3FF0D3DED7200C28345 /* HFByteArrayPiece.m in Sources */,
+				D0B7E3750D5C5B3A007874ED /* HFByteArray_FindReplace.m in Sources */,
 				D0D178A80D44482000684270 /* tavl_del.m in Sources */,
 				D0D178A90D44482000684270 /* tavl_gdt.m in Sources */,
 				D0D178AA0D44482000684270 /* tavl_ins.m in Sources */,

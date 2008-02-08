@@ -557,6 +557,14 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
     return maxSelection;
 }
 
+- (unsigned long long)minimumSelectionLocation {
+    return [self _minimumSelectionLocation];
+}
+
+- (unsigned long long)maximumSelectionLocation {
+    return [self _maximumSelectionLocation];
+}
+
 /* Put the selection at the left or right end of the current selection, with zero length.  Modifies the selectedContentsRanges and returns the new single HFRange.  Does not call notifyRepresentersOfChanges: */
 - (HFRange)_telescopeSelectionRangeInDirection:(HFControllerMovementDirection)direction {
     HFRange resultRange;
@@ -595,7 +603,7 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
 	if (selectedRange.length == 0) {    
 	    HFASSERT(distanceFromRangeStart == distanceFromRangeEnd);
 	    selectionAnchor = selectedRange.location;
-	    selectedRange.location = HFMin(characterIndex, selectedRange.location);
+	    selectedRange.location = MIN(characterIndex, selectedRange.location);
 	    selectedRange.length = distanceFromRangeStart;
 	}
         else if (distanceFromRangeStart >= distanceFromRangeEnd) {
@@ -850,8 +858,8 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
     }
     if (direction == HFControllerDirectionLeft) {
         if (minSelection >= selectionAnchor && maxSelection > minSelection) {
-            NSUInteger amountToRemove = ll2l(llmin(maxSelection - selectionAnchor, amountToMove));
-            NSUInteger amountToAdd = amountToMove - amountToRemove;
+            unsigned long long amountToRemove = llmin(maxSelection - selectionAnchor, amountToMove);
+            unsigned long long amountToAdd = amountToMove - amountToRemove;
             if (amountToRemove > 0) [self _removeRangeFromSelection:HFRangeMake(maxSelection - amountToRemove, amountToRemove) withCursorLocationIfAllSelectionRemoved:minSelection];
             if (amountToAdd > 0) [self _addRangeToSelection:HFRangeMake(selectionAnchor - amountToAdd, amountToAdd)];
             selectionChanged = YES;
@@ -869,8 +877,8 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
     else if (direction == HFControllerDirectionRight) {
         if (maxSelection <= selectionAnchor && maxSelection > minSelection) {
             HFASSERT(contentsLength >= maxSelection);
-            NSUInteger amountToRemove = ll2l(llmin(maxSelection - minSelection, amountToMove));
-            NSUInteger amountToAdd = amountToMove - amountToRemove;
+            unsigned long long amountToRemove = ll2l(llmin(maxSelection - minSelection, amountToMove));
+            unsigned long long amountToAdd = amountToMove - amountToRemove;
             if (amountToRemove > 0) [self _removeRangeFromSelection:HFRangeMake(minSelection, amountToRemove) withCursorLocationIfAllSelectionRemoved:maxSelection];
             if (amountToAdd > 0) [self _addRangeToSelection:HFRangeMake(maxSelection, amountToAdd)];
             selectionChanged = YES;
@@ -1123,7 +1131,7 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
 - (void)moveInDirection:(HFControllerMovementDirection)direction withGranularity:(HFControllerMovementGranularity)granularity andModifySelection:(BOOL)extendSelection {
     HFASSERT(granularity == HFControllerMovementByte || granularity == HFControllerMovementLine || granularity == HFControllerMovementPage || granularity == HFControllerMovementDocument);
     HFASSERT(direction == HFControllerDirectionLeft || direction == HFControllerDirectionRight);
-    NSUInteger bytesToMove;
+    unsigned long long bytesToMove;
     switch (granularity) {
 	case HFControllerMovementByte:
 	    bytesToMove = 1;

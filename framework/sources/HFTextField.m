@@ -97,4 +97,13 @@
     action = val;
 }
 
+- (id)objectValue {
+    return [dataController byteArray];
+}
+
+- (void)setObjectValue:(id)value {
+    EXPECT_CLASS(value, HFByteArray);
+    [dataController setByteArray:value];
+}
+
 @end

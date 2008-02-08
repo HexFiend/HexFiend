@@ -22,4 +22,7 @@
 - (void)insertByteArray:(HFByteArray *)array inRange:(HFRange)lrange;
 - (HFByteArray *)subarrayWithRange:(HFRange)range;
 
+//returns ULLONG_MAX if not found
+- (unsigned long long)indexOfBytesEqualToBytes:(HFByteArray *)findBytes inRange:(HFRange)range searchingForwards:(BOOL)forwards;
+
 @end

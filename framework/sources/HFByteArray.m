@@ -6,7 +6,7 @@
 //  Copyright 2007 __MyCompanyName__. All rights reserved.
 //
 
-#import <HexFiend/HFByteArray.h>
+#import <HexFiend/HFByteArray_Internal.h>
 #import <HexFiend/HFFullMemoryByteSlice.h>
 
 
@@ -80,7 +80,26 @@
     return YES;
 }
 
-- (BOOL)_debugIsEqual:v {
+- (unsigned long long)indexOfBytesEqualToBytes:(HFByteArray *)findBytes inRange:(HFRange)range searchingForwards:(BOOL)forwards {
+    unsigned long long length = [findBytes length];
+    if (length > [self length]) return ULLONG_MAX;
+    if (forwards) {
+        if (length == 0) {
+            return range.location;
+        }
+        else if (length == 1) {
+            unsigned char byte;
+            [findBytes copyBytes:&byte range:HFRangeMake(0, 1)];
+            return [self _byteSearchForwardsSingle:byte inRange:range];
+        }
+        else if (length <= 1<<20) {
+            return [self _byteSearchForwardsBoyerMoore:findBytes inRange:range];
+        }
+    }
+    return ULLONG_MAX;
+}
+
+- (BOOL)_debugIsEqual:(HFByteArray *)v {
     REQUIRE_NOT_NULL(v);
     if (! [v isKindOfClass:[HFByteArray class]]) return NO;
     HFByteArray* obj = v;

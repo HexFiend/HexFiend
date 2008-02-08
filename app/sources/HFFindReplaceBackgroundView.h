@@ -19,5 +19,6 @@
 }
 
 - (HFTextField *)searchField;
+- (HFTextField *)replaceField;
 
 @end

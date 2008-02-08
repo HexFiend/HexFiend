@@ -78,4 +78,8 @@ static CGFloat roundTowardsInfinity(CGFloat x) {
     return searchField;
 }
 
+- (HFTextField *)replaceField {
+    return replaceField;
+}
+
 @end

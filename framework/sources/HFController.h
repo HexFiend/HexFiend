@@ -97,9 +97,15 @@ typedef NSUInteger HFControllerMovementGranularity;
 
 - (CGFloat)lineHeight;
 
-- (unsigned long long)contentsLength; //returns total length of contents
+- (unsigned long long)contentsLength;
 
 - (NSArray *)selectedContentsRanges; //returns an array of HFRangeWrappers
+
+/* Returns the smallest value in the selected contents ranges, or the insertion location if the selection is empty. */
+- (unsigned long long)minimumSelectionLocation;
+
+/* Returns the largest HFMaxRange of the selected contents ranges, or the insertion location if the selection is empty. */
+- (unsigned long long)maximumSelectionLocation;
 
 /* Method for directly setting the selected contents ranges.  Pass an array of HFRangeWrappers that meets the following criteria:
     The array must not be NULL.

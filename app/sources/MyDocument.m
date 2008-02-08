@@ -263,6 +263,10 @@ static BOOL isRunningOnLeopardOrLater(void) {
     
     findReplaceRepresenter = [[HFFindReplaceRepresenter alloc] init];
     HFFindReplaceBackgroundView *findReplaceView = [findReplaceRepresenter view];
+    [[findReplaceView searchField] setTarget:self];
+    [[findReplaceView searchField] setAction:@selector(findNext:)];
+    [[findReplaceView replaceField] setTarget:self];
+    [[findReplaceView replaceField] setAction:@selector(findNext:)];
     [findReplaceView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
     bannerTargetHeight = NSHeight([findReplaceView frame]);
     [findReplaceView setFrameSize:NSMakeSize(NSWidth([containerView frame]), 0)];
@@ -281,6 +285,26 @@ static BOOL isRunningOnLeopardOrLater(void) {
 
 - (void)cancelOperation:sender {
     [self hideBannerFirstThenDo:NULL];
+}
+
+- (void)findNext:sender {
+    HFByteArray *needle = [[[findReplaceRepresenter view] searchField] objectValue];
+    BOOL foundSomething = NO;
+    if ([needle length] > 0) {
+        HFByteArray *haystack = [controller byteArray];
+        unsigned long long haystackLength = [haystack length];
+        unsigned long long startLocation = [controller maximumSelectionLocation];
+        HFASSERT(startLocation <= haystackLength);
+        HFRange searchRange = HFRangeMake(startLocation, haystackLength - startLocation);
+        unsigned long long searchResult = [[controller byteArray] indexOfBytesEqualToBytes:needle inRange:searchRange searchingForwards:YES];
+        if (searchResult != ULLONG_MAX) {
+            HFRange resultRange = HFRangeMake(searchResult, [needle length]);
+            [controller setSelectedContentsRanges:[HFRangeWrapper withRanges:&resultRange count:1]];
+            [controller maximizeVisibilityOfContentsRange:resultRange];
+            foundSomething = YES;
+        }
+    }
+    NSLog(@"Searching for %@", needle);
 }
 
 @end
