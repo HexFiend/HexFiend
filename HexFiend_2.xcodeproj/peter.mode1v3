@@ -272,23 +272,23 @@
 								<string>D0560B350CDC4248009D2484</string>
 								<string>D08F5DF40CDE822D007EFFE8</string>
 								<string>D0560B380CDC4253009D2484</string>
+								<string>29B97317FDCFA39411CA2CEA</string>
 								<string>1C37FBAC04509CD000000102</string>
 								<string>D0B7E2330D5AED76007874ED</string>
 								<string>D0B7E2350D5AED76007874ED</string>
-								<string>D0B7E37E0D5C5B94007874ED</string>
 								<string>1C37FAAC04509CD000000102</string>
 								<string>1C37FABC05509CD000000102</string>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>29</integer>
-									<integer>2</integer>
+									<integer>45</integer>
+									<integer>39</integer>
 									<integer>0</integer>
 								</array>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
-							<string>{{0, 58}, {401, 738}}</string>
+							<string>{{0, 245}, {401, 738}}</string>
 						</dict>
 						<key>PBXTopSmartGroupGIDs</key>
 						<array/>
@@ -527,19 +527,17 @@
 		<string>D0B7E3180D5C2357007874ED</string>
 		<string>D0B7E3190D5C2357007874ED</string>
 		<string>D0B7E31A0D5C2357007874ED</string>
-		<string>1C530D57069F1CE1000CFCEE</string>
 		<string>1CD10A99069EF8BA00B06720</string>
-		<string>D0560B2F0CDC421E009D2484</string>
-		<string>D0B7E2880D5AF0A6007874ED</string>
-		<string>D0B7E2AC0D5AF1B2007874ED</string>
-		<string>D0B7E3110D5C2216007874ED</string>
-		<string>D0B7E3100D5C2216007874ED</string>
-		<string>D0B7E3900D5C61DC007874ED</string>
 		<string>/Users/peter/Bell/HexFiend2/trunk/HexFiend_2/HexFiend_2.xcodeproj</string>
-		<string>D0B7E3950D5C64E1007874ED</string>
-		<string>D0B7E3940D5C64E1007874ED</string>
+		<string>D0B7E4470D608612007874ED</string>
+		<string>1C530D57069F1CE1000CFCEE</string>
+		<string>D0B7E4490D608612007874ED</string>
+		<string>D0B7E4570D60868A007874ED</string>
+		<string>D0560B2F0CDC421E009D2484</string>
+		<string>D0B7E44B0D60864B007874ED</string>
 		<string>1C78EAAD065D492600B07095</string>
-		<string>D0B7E3910D5C61DC007874ED</string>
+		<string>D0B7E43E0D6084D0007874ED</string>
+		<string>D0B7E4600D608724007874ED</string>
 	</array>
 	<key>WindowString</key>
 	<string>574 231 1102 797 0 0 1680 1028 </string>
@@ -563,7 +561,7 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>1CD0528F0623707200166675</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>HFByteArray.m</string>
+								<string>MyDocument.m</string>
 								<key>StatusBarVisibility</key>
 								<true/>
 							</dict>
@@ -634,7 +632,7 @@
 			<key>WindowToolGUID</key>
 			<string>D0560B2F0CDC421E009D2484</string>
 			<key>WindowToolIsVisible</key>
-			<false/>
+			<true/>
 		</dict>
 		<dict>
 			<key>FirstTimeWindowDisplayed</key>
@@ -849,7 +847,7 @@
 			<key>WindowToolGUID</key>
 			<string>1C530D57069F1CE1000CFCEE</string>
 			<key>WindowToolIsVisible</key>
-			<false/>
+			<true/>
 		</dict>
 		<dict>
 			<key>Identifier</key>

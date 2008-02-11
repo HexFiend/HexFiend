@@ -82,4 +82,18 @@ static CGFloat roundTowardsInfinity(CGFloat x) {
     return replaceField;
 }
 
+- (NSSegmentedControl *)navigateControl {
+    return navigateControl;
+}
+
+- initWithFrame:(NSRect)rect {
+    [super initWithFrame:rect];
+    defaultHeight = NSHeight(rect);
+    return self;
+}
+
+- (CGFloat)defaultHeight {
+    return defaultHeight;
+}
+
 @end

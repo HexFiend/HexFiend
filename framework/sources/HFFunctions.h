@@ -1,6 +1,7 @@
 /* Functions and convenience methods for working with HFTypes */
 
 #import <HexFiend/HFTypes.h>
+#import <libkern/OSAtomic.h>
 
 static inline HFRange HFRangeMake(unsigned long long loc, unsigned long long len) {
     return (HFRange){loc, len};
@@ -166,6 +167,21 @@ static inline CGFloat HFCopysign(CGFloat a, CGFloat b) {
 #endif
 }
 
+static inline NSUInteger HFAtomicIncrement(NSUInteger *ptr, BOOL barrier) {
+#if __LP64__
+    return (barrier ? OSAtomicIncrement64Barrier : OSAtomicIncrement64)((volatile int64_t *)ptr);
+#else
+    return (barrier ? OSAtomicIncrement32Barrier : OSAtomicIncrement32)((volatile int32_t *)ptr);
+#endif
+}
+
+static inline NSUInteger HFAtomicDecrement(NSUInteger *ptr, BOOL barrier) {
+#if __LP64__
+    return (barrier ? OSAtomicDecrement64Barrier : OSAtomicDecrement64)((volatile int64_t *)ptr);
+#else
+    return (barrier ? OSAtomicDecrement32Barrier : OSAtomicDecrement32)((volatile int32_t *)ptr);
+#endif
+}
 
 /* Converts a long double to unsigned long long.  Assumes that val is already an integer - use floorl or ceill */
 static inline unsigned long long HFFPToUL(long double val) {

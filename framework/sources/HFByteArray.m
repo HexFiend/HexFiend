@@ -26,6 +26,7 @@
 
 
 - (void)insertByteArray:(HFByteArray*)array inRange:(HFRange)lrange {
+    [self _raiseIfLockedForSelector:_cmd];
     REQUIRE_NOT_NULL(array);
     NSArray* slices = [array byteSlices];
     unsigned i, max=[slices count];
@@ -53,6 +54,7 @@
 }
 
 - (void)deleteBytesInRange:(HFRange)lrange {
+    [self _raiseIfLockedForSelector:_cmd];
     HFByteSlice* slice = [[HFFullMemoryByteSlice alloc] initWithData:[NSData data]];
     [self insertByteSlice:slice inRange:lrange];
     [slice release];
@@ -80,8 +82,10 @@
     return YES;
 }
 
-- (unsigned long long)indexOfBytesEqualToBytes:(HFByteArray *)findBytes inRange:(HFRange)range searchingForwards:(BOOL)forwards {
+- (unsigned long long)indexOfBytesEqualToBytes:(HFByteArray *)findBytes inRange:(HFRange)range searchingForwards:(BOOL)forwards withBytesConsumedProgress:(unsigned long long *)bytesConsumed {
     unsigned long long length = [findBytes length];
+    unsigned long long tempBytesConsumed = 0;
+    if (! bytesConsumed) bytesConsumed = &tempBytesConsumed;
     if (length > [self length]) return ULLONG_MAX;
     if (forwards) {
         if (length == 0) {
@@ -90,10 +94,10 @@
         else if (length == 1) {
             unsigned char byte;
             [findBytes copyBytes:&byte range:HFRangeMake(0, 1)];
-            return [self _byteSearchForwardsSingle:byte inRange:range];
+            return [self _byteSearchForwardsSingle:byte inRange:range withBytesConsumedProgress:bytesConsumed];
         }
         else if (length <= 1<<20) {
-            return [self _byteSearchForwardsBoyerMoore:findBytes inRange:range];
+            return [self _byteSearchForwardsBoyerMoore:findBytes inRange:range withBytesConsumedProgress:bytesConsumed];
         }
     }
     return ULLONG_MAX;
@@ -136,6 +140,28 @@
     BOOL result = [self _debugIsEqual:byteArray];
     [byteArray release];
     return result;
+}
+
+- (void)incrementChangeLockCounter {
+    if (HFAtomicIncrement(&changeLockCounter, NO) == 0) {
+        [NSException raise:NSInvalidArgumentException format:@"change lock counter overflow for %@", self];
+    }
+}
+
+- (void)decrementChangeLockCounter {
+    if (HFAtomicDecrement(&changeLockCounter, NO) == NSUIntegerMax) {
+        [NSException raise:NSInvalidArgumentException format:@"change lock counter underflow for %@", self];
+    }
+}
+
+- (BOOL)changesAreLocked {
+    return !! changeLockCounter;
+}
+
+- (void)_raiseIfLockedForSelector:(SEL)sel {
+    if (!! changeLockCounter) {
+        [NSException raise:NSInvalidArgumentException format:@"Selector %@ sent to a locked byte array %@", NSStringFromSelector(sel), self];
+    }
 }
 
 @end

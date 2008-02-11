@@ -11,7 +11,6 @@
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
-		D00122D90D48A88C00540B10 /* HFFindReplaceRepresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = D00122D80D48A88C00540B10 /* HFFindReplaceRepresenter.m */; };
 		D00122E30D48A8D400540B10 /* HFFindReplaceBackgroundView.m in Sources */ = {isa = PBXBuildFile; fileRef = D00122E20D48A8D400540B10 /* HFFindReplaceBackgroundView.m */; };
 		D00122FA0D48AD8600540B10 /* FindReplace.nib in Resources */ = {isa = PBXBuildFile; fileRef = D00122F80D48AD8600540B10 /* FindReplace.nib */; };
 		D00EBA730CE866D50020E2D7 /* HFVerticalScrollerRepresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = D00EBA710CE866D50020E2D7 /* HFVerticalScrollerRepresenter.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -147,8 +146,6 @@
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		32CA4F630368D1EE00C91783 /* HexFiend_2_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HexFiend_2_Prefix.pch; path = app/sources/HexFiend_2_Prefix.pch; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* HexFiend_2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HexFiend_2.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		D00122D70D48A88C00540B10 /* HFFindReplaceRepresenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFFindReplaceRepresenter.h; path = app/sources/HFFindReplaceRepresenter.h; sourceTree = "<group>"; };
-		D00122D80D48A88C00540B10 /* HFFindReplaceRepresenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFFindReplaceRepresenter.m; path = app/sources/HFFindReplaceRepresenter.m; sourceTree = "<group>"; };
 		D00122E10D48A8D400540B10 /* HFFindReplaceBackgroundView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFFindReplaceBackgroundView.h; path = app/sources/HFFindReplaceBackgroundView.h; sourceTree = "<group>"; };
 		D00122E20D48A8D400540B10 /* HFFindReplaceBackgroundView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFFindReplaceBackgroundView.m; path = app/sources/HFFindReplaceBackgroundView.m; sourceTree = "<group>"; };
 		D00122F90D48AD8600540B10 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/FindReplace.nib; sourceTree = "<group>"; };
@@ -348,8 +345,6 @@
 		D00122DC0D48A89F00540B10 /* Find_Replace */ = {
 			isa = PBXGroup;
 			children = (
-				D00122D70D48A88C00540B10 /* HFFindReplaceRepresenter.h */,
-				D00122D80D48A88C00540B10 /* HFFindReplaceRepresenter.m */,
 				D00122E10D48A8D400540B10 /* HFFindReplaceBackgroundView.h */,
 				D00122E20D48A8D400540B10 /* HFFindReplaceBackgroundView.m */,
 			);
@@ -685,7 +680,6 @@
 			files = (
 				8D11072D0486CEB800E47090 /* main.m in Sources */,
 				D01E7C160CDC58AA00943F9E /* MyDocument.m in Sources */,
-				D00122D90D48A88C00540B10 /* HFFindReplaceRepresenter.m in Sources */,
 				D00122E30D48A8D400540B10 /* HFFindReplaceBackgroundView.m in Sources */,
 				D078D0520D50492F00492F46 /* HFBannerDividerThumb.m in Sources */,
 			);

@@ -6,6 +6,7 @@
 //  Copyright 2008 __MyCompanyName__. All rights reserved.
 //
 
+#import <HexFiend/HFByteArray_Internal.h>
 #import <HexFiend/HFTavlTreeByteArray.h>
 #import <HexFiend/tavltree.h>
 #import <HexFiend/HFByteArrayPiece.h>
@@ -143,6 +144,7 @@ static const char *tavl_description(TAVL_treeptr tree) {
 #endif
 
 - (void)deleteBytesInRange:(const HFRange)range {
+    [self _raiseIfLockedForSelector:_cmd];
     if (range.length == 0) return; //nothing to delete
     HFASSERT(HFMaxRange(range) <= [self length]);
     
@@ -271,6 +273,7 @@ static const char *tavl_description(TAVL_treeptr tree) {
 }
 
 - (void)insertByteSlice:(HFByteSlice *)slice atOffset:(unsigned long long)offset {
+    [self _raiseIfLockedForSelector:_cmd];
     REQUIRE_NOT_NULL(slice);
     HFByteArrayPiece *first = nil, *second = nil;
     //find the node containing that offset
@@ -379,6 +382,7 @@ static const char *tavl_description(TAVL_treeptr tree) {
 
 
 - (void)insertByteSlice:(HFByteSlice *)slice inRange:(HFRange)lrange {
+    [self _raiseIfLockedForSelector:_cmd];
     //TODO: optimize this
     if (lrange.length > 0) {
 	[self deleteBytesInRange:lrange];

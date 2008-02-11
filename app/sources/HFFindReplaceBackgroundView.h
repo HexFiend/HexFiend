@@ -16,9 +16,13 @@
     IBOutlet HFTextField *replaceField;
     IBOutlet NSTextField *searchLabel;
     IBOutlet NSTextField *replaceLabel;
+    IBOutlet NSProgressIndicator *progressIndicator;
+    CGFloat defaultHeight;
 }
 
 - (HFTextField *)searchField;
 - (HFTextField *)replaceField;
+- (NSSegmentedControl *)navigateControl;
+- (CGFloat)defaultHeight;
 
 @end

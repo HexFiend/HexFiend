@@ -8,7 +8,7 @@
 
 #import <Cocoa/Cocoa.h>
 
-@class HFRepresenter, HFLineCountingRepresenter, HFLayoutRepresenter, HFFindReplaceRepresenter;
+@class HFRepresenter, HFLineCountingRepresenter, HFLayoutRepresenter, HFFindReplaceRepresenter, HFFindReplaceBackgroundView;
 
 @interface MyDocument : NSDocument {
     IBOutlet NSSplitView *containerView;
@@ -21,7 +21,9 @@
     HFLayoutRepresenter *layoutRepresenter;
     HFStatusBarRepresenter *statusBarRepresenter;
     
-    HFFindReplaceRepresenter *findReplaceRepresenter;
+    NSResponder *savedFirstResponder;
+    
+    IBOutlet HFFindReplaceBackgroundView *findReplaceBackgroundView;
     BOOL bannerIsShown;
     BOOL bannerGrowing;
     NSView *bannerView;

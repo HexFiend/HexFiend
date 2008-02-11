@@ -7,9 +7,9 @@
 //
 
 #import "MyDocument.h"
-#import "HFFindReplaceRepresenter.h"
 #import "HFBannerDividerThumb.h"
 #import "HFFindReplaceBackgroundView.h"
+#import <HexFiend/HFTextField.h>
 
 static BOOL isRunningOnLeopardOrLater(void) {
     return NSAppKitVersionNumber >= 860.;
@@ -187,6 +187,16 @@ static BOOL isRunningOnLeopardOrLater(void) {
             return YES;
         }
     }
+    else if ([item action] == @selector(performFindPanelAction:)) {
+        switch ([item tag]) {
+            case NSFindPanelActionShowFindPanel:
+            case NSFindPanelActionNext:
+            case NSFindPanelActionPrevious:
+                return YES;
+            default:
+                return NO;
+        }
+    }
     else return [super validateMenuItem:item];
 }
 
@@ -197,8 +207,29 @@ static BOOL isRunningOnLeopardOrLater(void) {
 	[bannerView removeFromSuperview];
 	[bannerView release];
 	bannerView = nil;
-	if (! isRunningOnLeopardOrLater()) [containerView setNeedsDisplay:YES];
+        [containerView setNeedsDisplay:YES];
     }
+}
+
+- (void)restoreFirstResponderToSavedResponder {
+    NSWindow *window = [self window];
+    NSMutableArray *views = [NSMutableArray array];
+    FOREACH(HFRepresenter *, rep, [self representers]) {
+        NSView *view = [rep view];
+        if ([view window] == window) {
+            /* If we're the saved first responder, try it first */
+            if (view == savedFirstResponder) [views insertObject:view atIndex:0];
+            else [views addObject:view];
+        }
+    }
+    
+    /* Try each view we identified */
+    FOREACH(NSView *, view, views) {
+        if ([window makeFirstResponder:view]) return;
+    }
+    
+    /* No luck - set it to the window */
+    [window makeFirstResponder:window];
 }
 
 - (void)animateBanner:(NSTimer *)timer {
@@ -228,7 +259,14 @@ static BOOL isRunningOnLeopardOrLater(void) {
     HFASSERT(bannerIsShown);
     bannerGrowing = NO;
     bannerStartTime = 0;
+    /* If the first responder is in our banner, move it to our view */
+    NSWindow *window = [self window];
+    id firstResponder = [window firstResponder];
+    if ([firstResponder isKindOfClass:[NSView class]] && [firstResponder ancestorSharedWithView:bannerView] == bannerView) {
+        [self restoreFirstResponderToSavedResponder];
+    }
     [NSTimer scheduledTimerWithTimeInterval:1. / 60. target:self selector:@selector(animateBanner:) userInfo:nil repeats:YES];
+    bannerTargetHeight = NSHeight([bannerView frame]);
 }
 
 - (void)prepareBannerWithView:(NSView *)newSubview {
@@ -254,26 +292,31 @@ static BOOL isRunningOnLeopardOrLater(void) {
     [NSTimer scheduledTimerWithTimeInterval:1. / 60. target:self selector:@selector(animateBanner:) userInfo:nil repeats:YES];
 }
 
-- (void)performFindPanelAction:sender {
-    USE(sender);
+- (void)showFindPanel:(NSMenuItem *)item {
+    USE(item);
     if (bannerIsShown) {
 	[self hideBannerFirstThenDo:_cmd];
 	return;
     }
     
-    findReplaceRepresenter = [[HFFindReplaceRepresenter alloc] init];
-    HFFindReplaceBackgroundView *findReplaceView = [findReplaceRepresenter view];
-    [[findReplaceView searchField] setTarget:self];
-    [[findReplaceView searchField] setAction:@selector(findNext:)];
-    [[findReplaceView replaceField] setTarget:self];
-    [[findReplaceView replaceField] setAction:@selector(findNext:)];
-    [findReplaceView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
-    bannerTargetHeight = NSHeight([findReplaceView frame]);
-    [findReplaceView setFrameSize:NSMakeSize(NSWidth([containerView frame]), 0)];
-    [findReplaceView setFrameOrigin:NSZeroPoint];
+    if (! findReplaceBackgroundView) {
+        if (! [NSBundle loadNibNamed:@"FindReplace" owner:self] || ! findReplaceBackgroundView) {
+            [NSException raise:NSInternalInconsistencyException format:@"Unable to load FindReplace.nib"];
+        }
+        [[findReplaceBackgroundView searchField] setTarget:self];
+        [[findReplaceBackgroundView searchField] setAction:@selector(findNext:)];
+        [[findReplaceBackgroundView replaceField] setTarget:self];
+        [[findReplaceBackgroundView replaceField] setAction:@selector(findNext:)];
+        [findReplaceBackgroundView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
+        [findReplaceBackgroundView setFrameSize:NSMakeSize(NSWidth([containerView frame]), 0)];
+        [findReplaceBackgroundView setFrameOrigin:NSZeroPoint];
+    }
+
+    bannerTargetHeight = [findReplaceBackgroundView defaultHeight];
     
-    [self prepareBannerWithView:findReplaceView];
-    [[self window] makeFirstResponder:[findReplaceView searchField]];
+    [self prepareBannerWithView:findReplaceBackgroundView];
+    savedFirstResponder = [[self window] firstResponder];
+    [[self window] makeFirstResponder:[findReplaceBackgroundView searchField]];
 }
 
 - (NSRect)splitView:(NSSplitView *)splitView additionalEffectiveRectOfDividerAtIndex:(NSInteger)dividerIndex {
@@ -284,27 +327,64 @@ static BOOL isRunningOnLeopardOrLater(void) {
 }
 
 - (void)cancelOperation:sender {
+    USE(sender);
     [self hideBannerFirstThenDo:NULL];
 }
 
-- (void)findNext:sender {
-    HFByteArray *needle = [[[findReplaceRepresenter view] searchField] objectValue];
-    BOOL foundSomething = NO;
+- (void)findNextBySearchingForwards:(BOOL)forwards {
+    HFByteArray *needle = [[findReplaceBackgroundView searchField] objectValue];
     if ([needle length] > 0) {
         HFByteArray *haystack = [controller byteArray];
         unsigned long long haystackLength = [haystack length];
+        /* We start looking at the max selection, and if we don't find anything, wrap around up to the min selection.  Counterintuitively, endLocation is less than startLocation. */
         unsigned long long startLocation = [controller maximumSelectionLocation];
+        unsigned long long endLocation = [controller minimumSelectionLocation];
+        unsigned long long searchResult;
         HFASSERT(startLocation <= haystackLength);
         HFRange searchRange = HFRangeMake(startLocation, haystackLength - startLocation);
-        unsigned long long searchResult = [[controller byteArray] indexOfBytesEqualToBytes:needle inRange:searchRange searchingForwards:YES];
+        searchResult = [haystack indexOfBytesEqualToBytes:needle inRange:searchRange searchingForwards:forwards withBytesConsumedProgress:NULL];
+        if (searchResult == ULLONG_MAX) {
+            /* Start at beginning */
+            searchResult = [haystack indexOfBytesEqualToBytes:needle inRange:HFRangeMake(0, endLocation) searchingForwards:forwards withBytesConsumedProgress:NULL];
+        }
         if (searchResult != ULLONG_MAX) {
             HFRange resultRange = HFRangeMake(searchResult, [needle length]);
             [controller setSelectedContentsRanges:[HFRangeWrapper withRanges:&resultRange count:1]];
             [controller maximizeVisibilityOfContentsRange:resultRange];
-            foundSomething = YES;
+            [self restoreFirstResponderToSavedResponder];
+        }
+        else {
+            NSBeep();
         }
     }
-    NSLog(@"Searching for %@", needle);
 }
+
+- (void)findNext:sender {
+    USE(sender);
+    [self findNextBySearchingForwards:YES];
+}
+
+- (void)findPrevious:sender {
+    USE(sender);
+    [self findNextBySearchingForwards:NO];
+}
+
+- (void)performFindPanelAction:(NSMenuItem *)item {
+    switch ([item tag]) {
+        case NSFindPanelActionShowFindPanel:
+            [self showFindPanel:item];
+            break;
+        case NSFindPanelActionNext:
+            [self findNext:item];
+            break;
+        case NSFindPanelActionPrevious:
+            [self findPrevious:item];
+            break;
+        default:
+            NSLog(@"Unhandled item %@", item);
+            break;
+    }
+}
+
 
 @end

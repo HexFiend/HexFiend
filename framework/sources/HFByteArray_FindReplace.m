@@ -96,7 +96,9 @@ stage2:
 
 @implementation HFByteArray (HFFindReplace)
 
-- (unsigned long long)_byteSearchForwardsBoyerMoore:(HFByteArray *)findBytes inRange:(const HFRange)range {
+- (unsigned long long)_byteSearchForwardsBoyerMoore:(HFByteArray *)findBytes inRange:(const HFRange)range withBytesConsumedProgress:(unsigned long long *)bytesConsumed {
+    REQUIRE_NOT_NULL(bytesConsumed);
+    *bytesConsumed = 0;
     unsigned long needle_length = ll2l([findBytes length]);
     unsigned char *needle = malloc(needle_length);
     if (! needle) {
@@ -236,7 +238,7 @@ stage2:
     return result;
 }
 
-- (unsigned long long)_byteSearchForwardsSingle:(unsigned char)byte inRange:(const HFRange)range {
+- (unsigned long long)_byteSearchForwardsSingle:(unsigned char)byte inRange:(const HFRange)range withBytesConsumedProgress:(unsigned long long *)bytesConsumed {
     return ULLONG_MAX;
 }
 
