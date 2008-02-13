@@ -23,6 +23,8 @@
     
     NSResponder *savedFirstResponder;
     
+    pthread_t threadedOperation;
+    
     IBOutlet HFFindReplaceBackgroundView *findReplaceBackgroundView;
     BOOL bannerIsShown;
     BOOL bannerGrowing;

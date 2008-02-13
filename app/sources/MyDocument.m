@@ -9,7 +9,8 @@
 #import "MyDocument.h"
 #import "HFBannerDividerThumb.h"
 #import "HFFindReplaceBackgroundView.h"
-#import <HexFiend/HFTextField.h>
+#import <HexFiend/HexFiend.h>
+#include <pthread.h>
 
 static BOOL isRunningOnLeopardOrLater(void) {
     return NSAppKitVersionNumber >= 860.;
@@ -331,24 +332,51 @@ static BOOL isRunningOnLeopardOrLater(void) {
     [self hideBannerFirstThenDo:NULL];
 }
 
-- (void)findNextBySearchingForwards:(BOOL)forwards {
-    HFByteArray *needle = [[findReplaceBackgroundView searchField] objectValue];
-    if ([needle length] > 0) {
-        HFByteArray *haystack = [controller byteArray];
-        unsigned long long haystackLength = [haystack length];
-        /* We start looking at the max selection, and if we don't find anything, wrap around up to the min selection.  Counterintuitively, endLocation is less than startLocation. */
-        unsigned long long startLocation = [controller maximumSelectionLocation];
-        unsigned long long endLocation = [controller minimumSelectionLocation];
-        unsigned long long searchResult;
-        HFASSERT(startLocation <= haystackLength);
-        HFRange searchRange = HFRangeMake(startLocation, haystackLength - startLocation);
-        searchResult = [haystack indexOfBytesEqualToBytes:needle inRange:searchRange searchingForwards:forwards withBytesConsumedProgress:NULL];
-        if (searchResult == ULLONG_MAX) {
-            /* Start at beginning */
-            searchResult = [haystack indexOfBytesEqualToBytes:needle inRange:HFRangeMake(0, endLocation) searchingForwards:forwards withBytesConsumedProgress:NULL];
-        }
+typedef struct {
+    HFByteArray *needle;
+    HFByteArray *haystack;
+    HFRange range1;
+    HFRange range2;
+    HFProgressTracker *tracker;
+    BOOL forwards;
+    
+    unsigned long long result;
+} FindBuffer_t;
+
+
+static void *threadedPerformFindFunction(void *vParam) {
+    FindBuffer_t *findBufferPtr = vParam;
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init]; //necessary so the collector knows about this thread
+    
+    unsigned long long searchResult;
+    CFAbsoluteTime start = CFAbsoluteTimeGetCurrent();
+    searchResult = [findBufferPtr->haystack indexOfBytesEqualToBytes:findBufferPtr->needle inRange:findBufferPtr->range1 searchingForwards:findBufferPtr->forwards trackingProgress:findBufferPtr->tracker];
+    CFAbsoluteTime end = CFAbsoluteTimeGetCurrent();
+    printf("Diff: %f\n", end - start);
+    if (searchResult == ULLONG_MAX) {
+        searchResult = [findBufferPtr->haystack indexOfBytesEqualToBytes:findBufferPtr->needle inRange:findBufferPtr->range2 searchingForwards:findBufferPtr->forwards trackingProgress:findBufferPtr->tracker];
+    }
+    findBufferPtr->result = searchResult;
+    [findBufferPtr->tracker noteFinished:nil];
+    [pool release];
+    return findBufferPtr;
+}
+
+- (void)_findThreadFinished:(NSNotification *)note {
+    NSLog(@"Finished %p", threadedOperation);
+    USE(note);
+    HFASSERT(threadedOperation != NULL);
+    FindBuffer_t *findBufferPtr = NULL;
+    unsigned long long searchResult;
+    int joinResult;
+    joinResult = pthread_join(threadedOperation, (void **)&findBufferPtr);
+    threadedOperation = NULL;
+    HFASSERT(joinResult == 0);
+    HFASSERT(findBufferPtr != NULL);
+    if (! findBufferPtr->tracker->cancelRequested) {
+        searchResult = findBufferPtr->result;
         if (searchResult != ULLONG_MAX) {
-            HFRange resultRange = HFRangeMake(searchResult, [needle length]);
+            HFRange resultRange = HFRangeMake(searchResult, [findBufferPtr->needle length]);
             [controller setSelectedContentsRanges:[HFRangeWrapper withRanges:&resultRange count:1]];
             [controller maximizeVisibilityOfContentsRange:resultRange];
             [self restoreFirstResponderToSavedResponder];
@@ -356,6 +384,54 @@ static BOOL isRunningOnLeopardOrLater(void) {
         else {
             NSBeep();
         }
+    }
+    [findBufferPtr->tracker endTrackingProgress];
+    [findBufferPtr->needle decrementChangeLockCounter];
+    [findBufferPtr->haystack decrementChangeLockCounter];
+    [findBufferPtr->needle release];
+    [findBufferPtr->haystack release];
+    [findBufferPtr->tracker release];
+    free(findBufferPtr);
+}
+
+- (unsigned long long)_findBytes:(HFByteArray *)needle inBytes:(HFByteArray *)haystack range1:(HFRange)range1 range2:(HFRange)range2 forwards:(BOOL)forwards tracker:(HFProgressTracker *)tracker {
+    NSLog(@"%s %p", _cmd, threadedOperation);
+    HFASSERT(threadedOperation == NULL);
+    const FindBuffer_t findBuffer = {.needle = [needle retain], .haystack = [haystack retain], .range1 = range1, .range2 = range2, .forwards = forwards, .tracker = [tracker retain]};
+    int threadResult;
+    
+    FindBuffer_t *findBufferPtr = malloc(sizeof *findBufferPtr);
+    if (! findBufferPtr) [NSException raise:NSMallocException format:@"Unable to malloc %lu bytes", (unsigned long)sizeof *findBufferPtr];
+    *findBufferPtr = findBuffer;
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_findThreadFinished:) name:HFProgressTrackerDidFinishNotification object:tracker];
+    [tracker beginTrackingProgress];
+    [findBufferPtr->needle incrementChangeLockCounter];
+    [findBufferPtr->haystack incrementChangeLockCounter];
+    
+    threadResult = pthread_create(&threadedOperation, NULL, threadedPerformFindFunction, findBufferPtr);
+    if (threadResult != 0) [NSException raise:NSGenericException format:@"pthread_create returned error %d", threadResult];
+    NSLog(@"Made operation %p", threadedOperation);
+    
+    return 0;
+}
+
+- (void)findNextBySearchingForwards:(BOOL)forwards {
+    HFByteArray *needle = [[findReplaceBackgroundView searchField] objectValue];
+    if ([needle length] > 0) {
+        HFByteArray *haystack = [controller byteArray];
+        unsigned long long haystackLength = [haystack length];
+        HFProgressTracker *tracker = [[HFProgressTracker alloc] init];
+        [tracker setMaxProgress:haystackLength];
+        [tracker setProgressIndicator:[findReplaceBackgroundView progressIndicator]];
+        /* We start looking at the max selection, and if we don't find anything, wrap around up to the min selection.  Counterintuitively, endLocation is less than startLocation. */
+        unsigned long long startLocation = [controller maximumSelectionLocation];
+        unsigned long long endLocation = [controller minimumSelectionLocation];
+        HFASSERT(startLocation <= haystackLength);
+        HFRange searchRange1 = HFRangeMake(startLocation, haystackLength - startLocation);
+        HFRange searchRange2 = HFRangeMake(0, endLocation);
+        [self _findBytes:needle inBytes:haystack range1:searchRange1 range2:searchRange2 forwards:forwards tracker:tracker];
+        [tracker release];
     }
 }
 

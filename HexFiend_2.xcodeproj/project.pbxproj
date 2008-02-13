@@ -41,6 +41,8 @@
 		D041D3DE0D3CA70600C28345 /* HFTavlTreeByteArray.m in Sources */ = {isa = PBXBuildFile; fileRef = D041D3DC0D3CA70600C28345 /* HFTavlTreeByteArray.m */; };
 		D041D3FE0D3DED7200C28345 /* HFByteArrayPiece.h in Headers */ = {isa = PBXBuildFile; fileRef = D041D3FC0D3DED7200C28345 /* HFByteArrayPiece.h */; };
 		D041D3FF0D3DED7200C28345 /* HFByteArrayPiece.m in Sources */ = {isa = PBXBuildFile; fileRef = D041D3FD0D3DED7200C28345 /* HFByteArrayPiece.m */; };
+		D0422FDF0D62599300F8FCDE /* HFProgressTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = D0422FDD0D62599300F8FCDE /* HFProgressTracker.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D0422FE00D62599300F8FCDE /* HFProgressTracker.m in Sources */ = {isa = PBXBuildFile; fileRef = D0422FDE0D62599300F8FCDE /* HFProgressTracker.m */; };
 		D04327A40CF081CD00C14250 /* HFFunctions_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = D04327A30CF081CD00C14250 /* HFFunctions_Private.h */; };
 		D06B1DB10D13EE1D00B9A206 /* HFMetalGradient.tiff in Resources */ = {isa = PBXBuildFile; fileRef = D06B1DB00D13EE1D00B9A206 /* HFMetalGradient.tiff */; };
 		D07150670D5510CE00573D7A /* HFTextField.h in Headers */ = {isa = PBXBuildFile; fileRef = D07150650D5510CE00573D7A /* HFTextField.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -184,6 +186,8 @@
 		D041D3DC0D3CA70600C28345 /* HFTavlTreeByteArray.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFTavlTreeByteArray.m; path = framework/sources/HFTavlTreeByteArray.m; sourceTree = "<group>"; };
 		D041D3FC0D3DED7200C28345 /* HFByteArrayPiece.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFByteArrayPiece.h; path = framework/sources/HFByteArrayPiece.h; sourceTree = "<group>"; };
 		D041D3FD0D3DED7200C28345 /* HFByteArrayPiece.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFByteArrayPiece.m; path = framework/sources/HFByteArrayPiece.m; sourceTree = "<group>"; };
+		D0422FDD0D62599300F8FCDE /* HFProgressTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFProgressTracker.h; path = framework/sources/HFProgressTracker.h; sourceTree = "<group>"; };
+		D0422FDE0D62599300F8FCDE /* HFProgressTracker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFProgressTracker.m; path = framework/sources/HFProgressTracker.m; sourceTree = "<group>"; };
 		D04327A30CF081CD00C14250 /* HFFunctions_Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFFunctions_Private.h; path = framework/sources/HFFunctions_Private.h; sourceTree = "<group>"; };
 		D06B1DB00D13EE1D00B9A206 /* HFMetalGradient.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = HFMetalGradient.tiff; path = framework/resources/HFMetalGradient.tiff; sourceTree = "<group>"; };
 		D07150650D5510CE00573D7A /* HFTextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFTextField.h; path = framework/sources/HFTextField.h; sourceTree = "<group>"; };
@@ -429,6 +433,8 @@
 				D026C7A70CDD4FD30082279E /* Representers */,
 				D08F5DF40CDE822D007EFFE8 /* ByteArray */,
 				D0826F190D4883A80006FB7D /* FileByteSlice */,
+				D0422FDD0D62599300F8FCDE /* HFProgressTracker.h */,
+				D0422FDE0D62599300F8FCDE /* HFProgressTracker.m */,
 				D01E7BEA0CDC55D000943F9E /* HFController.h */,
 				D01E7BEB0CDC55D000943F9E /* HFController.m */,
 				D07150650D5510CE00573D7A /* HFTextField.h */,
@@ -559,6 +565,7 @@
 				D0826EF10D487A000006FB7D /* HFFileByteSlice.h in Headers */,
 				D078CF550D50491100492F46 /* HFBannerDividerThumb.h in Headers */,
 				D07150670D5510CE00573D7A /* HFTextField.h in Headers */,
+				D0422FDF0D62599300F8FCDE /* HFProgressTracker.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -739,6 +746,7 @@
 				D0826EAC0D4855900006FB7D /* HFFileReference.m in Sources */,
 				D0826EF20D487A000006FB7D /* HFFileByteSlice.m in Sources */,
 				D07150680D5510CE00573D7A /* HFTextField.m in Sources */,
+				D0422FE00D62599300F8FCDE /* HFProgressTracker.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -994,7 +1002,7 @@
 				GCC_PREFIX_HEADER = framework/sources/HexFiend_2_Framework_Prefix.pch;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = YES;
-				INFOPLIST_FILE = "HexFiend_Framework-Info.plist";
+				INFOPLIST_FILE = "framework/HexFiend_Framework-Info.plist";
 				INSTALL_PATH = "$(HOME)/Library/Frameworks";
 				LD_DYLIB_INSTALL_NAME = "@executable_path/../Frameworks/HexFiend.framework/Versions/A/HexFiend";
 				OTHER_LDFLAGS = (

@@ -7,6 +7,7 @@
 //
 
 #import <HexFiend/HFByteArray_Internal.h>
+#import <HexFiend/HFProgressTracker.h>
 
 unsigned char* boyer_moore_helper(const unsigned char * restrict haystack, const unsigned char * restrict needle, unsigned long haystack_length, unsigned long needle_length, const unsigned long * restrict char_jump, const unsigned long * restrict match_jump) {
     unsigned ua, ub;
@@ -96,9 +97,9 @@ stage2:
 
 @implementation HFByteArray (HFFindReplace)
 
-- (unsigned long long)_byteSearchForwardsBoyerMoore:(HFByteArray *)findBytes inRange:(const HFRange)range withBytesConsumedProgress:(unsigned long long *)bytesConsumed {
-    REQUIRE_NOT_NULL(bytesConsumed);
-    *bytesConsumed = 0;
+- (unsigned long long)_byteSearchForwardsBoyerMoore:(HFByteArray *)findBytes inRange:(const HFRange)range trackingProgress:(HFProgressTracker *)progressTracker {
+    unsigned long long tempProgressValue = 0;
+    volatile unsigned long long * const progressValuePtr = (progressTracker ? &progressTracker->currentProgress : &tempProgressValue);
     unsigned long needle_length = ll2l([findBytes length]);
     unsigned char *needle = malloc(needle_length);
     if (! needle) {
@@ -189,6 +190,7 @@ stage2:
 	unsigned long haystack_length = ll2l(total_haystack_length);
 	[self copyBytes:haystack range:range];
 	unsigned char *search_result = boyer_moore_helper(haystack, needle, haystack_length, needle_length, char_jump, match_jump);
+        HFAtomicAdd64(haystack_length, (int64_t *)progressValuePtr);
 	if (search_result == NULL) result = ULLONG_MAX;
 	else result = range.location + (search_result - haystack);
     }
@@ -203,6 +205,7 @@ stage2:
 	if (search_range.length > SEARCH_CHUNK_SIZE) search_range.length = SEARCH_CHUNK_SIZE;
 	[self copyBytes:base_read_in_location range:search_range];
 	unsigned char *search_result = boyer_moore_helper(base_read_in_location, needle, SEARCH_CHUNK_SIZE, needle_length, char_jump, match_jump);
+        HFAtomicAdd64(search_range.length, (int64_t *)progressValuePtr);
 	if (search_result) result = search_range.location + (search_result - base_read_in_location);
 	else {
 	    result = ULLONG_MAX;
@@ -220,6 +223,7 @@ stage2:
 		if (copy_range.length) [self copyBytes:base_read_in_location range:copy_range];
 		
 		search_result = boyer_moore_helper(base_copy_location, needle, ll2l(search_range.length), needle_length, char_jump, match_jump);
+                HFAtomicAdd64(search_range.length, (int64_t *)progressValuePtr);
 		if (search_result) {
 		    result = search_range.location + (search_result - base_copy_location);
 		    break;
@@ -238,7 +242,7 @@ stage2:
     return result;
 }
 
-- (unsigned long long)_byteSearchForwardsSingle:(unsigned char)byte inRange:(const HFRange)range withBytesConsumedProgress:(unsigned long long *)bytesConsumed {
+- (unsigned long long)_byteSearchForwardsSingle:(unsigned char)byte inRange:(const HFRange)range trackingProgress:(HFProgressTracker *)progressTracker {
     return ULLONG_MAX;
 }
 

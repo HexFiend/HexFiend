@@ -82,10 +82,9 @@
     return YES;
 }
 
-- (unsigned long long)indexOfBytesEqualToBytes:(HFByteArray *)findBytes inRange:(HFRange)range searchingForwards:(BOOL)forwards withBytesConsumedProgress:(unsigned long long *)bytesConsumed {
+- (unsigned long long)indexOfBytesEqualToBytes:(HFByteArray *)findBytes inRange:(HFRange)range searchingForwards:(BOOL)forwards trackingProgress:(HFProgressTracker *)progressTracker {
     unsigned long long length = [findBytes length];
-    unsigned long long tempBytesConsumed = 0;
-    if (! bytesConsumed) bytesConsumed = &tempBytesConsumed;
+
     if (length > [self length]) return ULLONG_MAX;
     if (forwards) {
         if (length == 0) {
@@ -94,10 +93,10 @@
         else if (length == 1) {
             unsigned char byte;
             [findBytes copyBytes:&byte range:HFRangeMake(0, 1)];
-            return [self _byteSearchForwardsSingle:byte inRange:range withBytesConsumedProgress:bytesConsumed];
+            return [self _byteSearchForwardsSingle:byte inRange:range trackingProgress:progressTracker];
         }
         else if (length <= 1<<20) {
-            return [self _byteSearchForwardsBoyerMoore:findBytes inRange:range withBytesConsumedProgress:bytesConsumed];
+            return [self _byteSearchForwardsBoyerMoore:findBytes inRange:range trackingProgress:progressTracker];
         }
     }
     return ULLONG_MAX;

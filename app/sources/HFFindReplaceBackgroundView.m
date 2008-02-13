@@ -86,6 +86,10 @@ static CGFloat roundTowardsInfinity(CGFloat x) {
     return navigateControl;
 }
 
+- (NSProgressIndicator *)progressIndicator {
+    return progressIndicator;
+}
+
 - initWithFrame:(NSRect)rect {
     [super initWithFrame:rect];
     defaultHeight = NSHeight(rect);

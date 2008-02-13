@@ -8,7 +8,7 @@
 
 #import <Cocoa/Cocoa.h>
 
-@class HFByteSlice;
+@class HFByteSlice, HFProgressTracker;
 
 @interface HFByteArray : NSObject <NSCopying, NSMutableCopying> {
     NSUInteger changeLockCounter;
@@ -23,7 +23,7 @@
 - (HFByteArray *)subarrayWithRange:(HFRange)range;
 
 //returns ULLONG_MAX if not found
-- (unsigned long long)indexOfBytesEqualToBytes:(HFByteArray *)findBytes inRange:(HFRange)range searchingForwards:(BOOL)forwards withBytesConsumedProgress:(unsigned long long *)bytesConsumed;
+- (unsigned long long)indexOfBytesEqualToBytes:(HFByteArray *)findBytes inRange:(HFRange)range searchingForwards:(BOOL)forwards trackingProgress:(HFProgressTracker *)progressTracker;
 
 // set to a write lock - only reads are possible when the counter is incremented
 - (void)incrementChangeLockCounter;

@@ -7,12 +7,7 @@
     #import <HexFiend/HexFiend.h>
 #endif
 
-#ifndef NDEBUG
 #define HFASSERT(a) assert(a)
-#else
-/* Define an assert() replacement that doesn't produce unused-variable warnings in Deployment builds */
-#define HFASSERT(val) do { if (0 && (val)); } while (0)
-#endif
 
 /* Macro to "use" a variable to prevent unused variable warnings. */
 #define USE(x) if (0) x=x

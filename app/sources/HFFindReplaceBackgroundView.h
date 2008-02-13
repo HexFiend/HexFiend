@@ -23,6 +23,7 @@
 - (HFTextField *)searchField;
 - (HFTextField *)replaceField;
 - (NSSegmentedControl *)navigateControl;
+- (NSProgressIndicator *)progressIndicator;
 - (CGFloat)defaultHeight;
 
 @end

@@ -14,3 +14,5 @@
 #import <HexFiend/HFFileByteSlice.h>
 #import <HexFiend/HFFileReference.h>
 #import <HexFiend/HFTavlTreeByteArray.h>
+#import <HexFiend/HFProgressTracker.h>
+#import <HexFiend/HFTextField.h>
