@@ -55,12 +55,15 @@
 
 - (void)initializeView {
     [super initializeView];
-    if ([self controller]) {
-        [[self view] setFont:[[self controller] font]];
+    HFRepresenterTextView *view = [self view];
+    HFController *controller = [self controller];
+    if (controller) {
+        [view setFont:[controller font]];
+        [view setEditable:[controller isEditable]];
         [self updateText];
     }
     else {
-        [[self view] setFont:[NSFont fontWithName:@"Monaco" size:(CGFloat)10.]];
+        [view setFont:[NSFont fontWithName:@"Monaco" size:(CGFloat)10.]];
     }
 }
 
@@ -73,6 +76,9 @@
     }
     if (bits & (HFControllerSelectedRanges | HFControllerDisplayedRange)) {
         [[self view] updateSelectedRanges];
+    }
+    if (bits & (HFControllerEditable)) {
+        [[self view] setEditable:[[self controller] isEditable]];
     }
     [super controllerDidChange:bits];
 }

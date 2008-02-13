@@ -12,6 +12,7 @@
 
 @interface HFByteArray : NSObject <NSCopying, NSMutableCopying> {
     NSUInteger changeLockCounter;
+    NSUInteger changeGenerationCount;
 }
 
 - (NSArray *)byteSlices;
@@ -28,6 +29,9 @@
 // set to a write lock - only reads are possible when the counter is incremented
 - (void)incrementChangeLockCounter;
 - (void)decrementChangeLockCounter;
-- (BOOL)changesAreLocked;
+- (BOOL)changesAreLocked; //KVO compliant
+
+// change generation count.  Every change to the ByteArray increments this by one or more.
+- (NSUInteger)changeGenerationCount;
 
 @end

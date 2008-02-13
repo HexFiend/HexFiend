@@ -6,9 +6,10 @@
 //  Copyright 2007 __MyCompanyName__. All rights reserved.
 //
 
-#import "HFFullMemoryByteArray.h"
-#import "HFFullMemoryByteSlice.h"
-#import "HFByteSlice.h"
+#import <HexFiend/HFByteArray_Internal.h>
+#import <HexFiend/HFFullMemoryByteArray.h>
+#import <HexFiend/HFFullMemoryByteSlice.h>
+#import <HexFiend/HFByteSlice.h>
 
 @implementation HFFullMemoryByteArray
 
@@ -51,7 +52,7 @@
 }
 
 - (void)insertByteSlice:(HFByteSlice *)slice inRange:(HFRange)lrange {
-    [self _raiseIfLockedForSelector:_cmd];
+    [self _incrementGenerationOrRaiseIfLockedForSelector:_cmd];
     HFASSERT([slice length] <= NSUIntegerMax);
     NSUInteger length = ll2l([slice length]);
     NSRange range;

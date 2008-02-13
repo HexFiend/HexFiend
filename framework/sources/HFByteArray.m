@@ -26,7 +26,7 @@
 
 
 - (void)insertByteArray:(HFByteArray*)array inRange:(HFRange)lrange {
-    [self _raiseIfLockedForSelector:_cmd];
+    [self _incrementGenerationOrRaiseIfLockedForSelector:_cmd];
     REQUIRE_NOT_NULL(array);
     NSArray* slices = [array byteSlices];
     unsigned i, max=[slices count];
@@ -54,7 +54,7 @@
 }
 
 - (void)deleteBytesInRange:(HFRange)lrange {
-    [self _raiseIfLockedForSelector:_cmd];
+    [self _incrementGenerationOrRaiseIfLockedForSelector:_cmd];
     HFByteSlice* slice = [[HFFullMemoryByteSlice alloc] initWithData:[NSData data]];
     [self insertByteSlice:slice inRange:lrange];
     [slice release];
@@ -142,24 +142,35 @@
 }
 
 - (void)incrementChangeLockCounter {
+    [self willChangeValueForKey:@"changesAreLocked"];
     if (HFAtomicIncrement(&changeLockCounter, NO) == 0) {
         [NSException raise:NSInvalidArgumentException format:@"change lock counter overflow for %@", self];
     }
+    [self didChangeValueForKey:@"changesAreLocked"];
 }
 
 - (void)decrementChangeLockCounter {
+    [self willChangeValueForKey:@"changesAreLocked"];
     if (HFAtomicDecrement(&changeLockCounter, NO) == NSUIntegerMax) {
         [NSException raise:NSInvalidArgumentException format:@"change lock counter underflow for %@", self];
     }
+    [self didChangeValueForKey:@"changesAreLocked"];
 }
 
 - (BOOL)changesAreLocked {
     return !! changeLockCounter;
 }
 
-- (void)_raiseIfLockedForSelector:(SEL)sel {
-    if (!! changeLockCounter) {
+- (NSUInteger)changeGenerationCount {
+    return changeGenerationCount;
+}
+
+- (void)_incrementGenerationOrRaiseIfLockedForSelector:(SEL)sel {
+    if (changeLockCounter) {
         [NSException raise:NSInvalidArgumentException format:@"Selector %@ sent to a locked byte array %@", NSStringFromSelector(sel), self];
+    }
+    else {
+        HFAtomicIncrement(&changeGenerationCount, YES);
     }
 }
 

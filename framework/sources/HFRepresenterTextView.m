@@ -808,9 +808,14 @@ enum LineCoverage_t {
 }
 
 - (void)insertText:(id)string {
-    if ([string isKindOfClass:[NSAttributedString class]]) string = [string string];
-    [NSCursor setHiddenUntilMouseMoves:YES];
-    [[self representer] insertText:string];
+    if (! [self isEditable]) {
+        NSBeep();
+    }
+    else {
+        if ([string isKindOfClass:[NSAttributedString class]]) string = [string string];
+        [NSCursor setHiddenUntilMouseMoves:YES];
+        [[self representer] insertText:string];
+    }
 }
 
 - (void)doCommandBySelector:(SEL)sel {
@@ -845,8 +850,13 @@ enum LineCoverage_t {
 }
 
 - (void)paste:sender {
-    USE(sender);
-    [[self representer] pasteBytesFromPasteboard:[NSPasteboard generalPasteboard]];
+    if (! [self isEditable]) {
+        NSBeep();
+    }
+    else {
+        USE(sender);
+        [[self representer] pasteBytesFromPasteboard:[NSPasteboard generalPasteboard]];
+    }
 }
 
 - (void)copy:sender {

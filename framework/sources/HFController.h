@@ -62,6 +62,11 @@ typedef NSUInteger HFControllerMovementGranularity;
     
     HFControllerCoalescedUndo *undoCoalescer;
     
+    /* Basic cache support */
+    HFRange cachedRange;
+    NSData *cachedData;
+    NSUInteger cachedGenerationIndex;
+    
     struct  {
         unsigned editable:1;
         unsigned selectable:1;

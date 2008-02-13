@@ -26,7 +26,6 @@
 - (id)initWithFrame:(NSRect)frame {
     if ((self = [super initWithFrame:frame])) {
         dataController = [[HFController alloc] init];
-        [dataController setByteArray:[[[HFTavlTreeByteArray alloc] init] autorelease]];
     
         layoutRepresenter = [[HFLayoutRepresenter alloc] init];
         activeRepresenter = [[HFHexTextRepresenter alloc] init];

@@ -2,7 +2,7 @@
 
 @interface HFByteArray (HFInternal)
 
-- (void)_raiseIfLockedForSelector:(SEL)sel;
+- (void)_incrementGenerationOrRaiseIfLockedForSelector:(SEL)sel;
 
 - (BOOL)_debugIsEqual:(HFByteArray *)val;
 - (BOOL)_debugIsEqualToData:(NSData *)val;

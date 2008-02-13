@@ -385,6 +385,8 @@ static void *threadedPerformFindFunction(void *vParam) {
             NSBeep();
         }
     }
+    HFASSERT([note object] == findBufferPtr->tracker);
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:HFProgressTrackerDidFinishNotification object:findBufferPtr->tracker];
     [findBufferPtr->tracker endTrackingProgress];
     [findBufferPtr->needle decrementChangeLockCounter];
     [findBufferPtr->haystack decrementChangeLockCounter];

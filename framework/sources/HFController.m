@@ -28,6 +28,8 @@
 
 static const CGFloat kScrollMultiplier = (CGFloat)1.5;
 
+static void *KVOContextChangesAreLocked = &KVOContextChangesAreLocked;
+
 @interface HFController (ForwardDeclarations)
 - (void)_commandInsertByteArrays:(NSArray *)byteArrays inRanges:(NSArray *)ranges selectingResult:(BOOL)selectResult;
 - (void)_endTypingUndoCoalescingIfActive;
@@ -43,7 +45,8 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
     _hfflags.selectable = YES;
     representers = [[NSMutableArray alloc] init];
     selectedContentsRanges = [[NSMutableArray alloc] initWithObjects:[HFRangeWrapper withRange:HFRangeMake(0, 0)], nil];
-    byteArray = [[HFFullMemoryByteArray alloc] init];
+    byteArray = [[HFTavlTreeByteArray alloc] init];
+    [byteArray addObserver:self forKeyPath:@"changesAreLocked" options:0 context:KVOContextChangesAreLocked];
     selectionAnchor = NO_SELECTION;
     [self setFont:[NSFont fontWithName:@"Monaco" size:10.f]];
     return self;
@@ -57,7 +60,9 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
     [undoManager release];
     [undoCoalescer release];
     [font release];
+    [byteArray removeObserver:self forKeyPath:@"changesAreLocked"];
     [byteArray release];
+    [cachedData release];
     [super dealloc];
 }
 
@@ -96,6 +101,16 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
         [NSException raise:NSInvalidArgumentException format:@"endPropertyChangeTransaction passed token %lu, but expected token %lu", (unsigned long)token, (unsigned long)currentPropertyChangeToken];
     }
     if (--currentPropertyChangeToken == 0) [self _firePropertyChanges];
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
+    if (context == KVOContextChangesAreLocked) {
+        HFASSERT([keyPath isEqual:@"changesAreLocked"]);
+        [self _addPropertyChangeBits:HFControllerEditable];
+    }
+    else {
+        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+    }
 }
 
 - (void)addRepresenter:(HFRepresenter *)representer {
@@ -300,10 +315,20 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
 - (NSData *)dataForRange:(HFRange)range {
     HFASSERT(range.length <= NSUIntegerMax); // it doesn't make sense to ask for a buffer larger than can be stored in memory
     HFASSERT(HFRangeIsSubrangeOfRange(range, HFRangeMake(0, [self contentsLength])));
-    NSUInteger length = ll2l(range.length);
-    unsigned char *data = check_malloc(length);
-    [byteArray copyBytes:data range:range];
-    return [NSData dataWithBytesNoCopy:data length:length freeWhenDone:YES];
+    
+    NSUInteger newGenerationIndex = [byteArray changeGenerationCount];
+    if (newGenerationIndex != cachedGenerationIndex || ! HFRangeEqualsRange(range, cachedRange)) {
+        //TODO - allow for subranges here
+        [cachedData release];
+        cachedGenerationIndex = newGenerationIndex;
+        cachedRange = range;
+        NSUInteger length = ll2l(range.length);
+        unsigned char *data = check_malloc(length);
+        [byteArray copyBytes:data range:range];
+        cachedData = [[NSData alloc] initWithBytesNoCopy:data length:length freeWhenDone:YES];
+    }
+    
+    return cachedData;
 }
 
 - (void)copyBytes:(unsigned char *)bytes range:(HFRange)range {
@@ -403,9 +428,11 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
 - (void)setByteArray:(HFByteArray *)val {
     REQUIRE_NOT_NULL(val);
     BEGIN_TRANSACTION();
+    [byteArray removeObserver:self forKeyPath:@"changesAreLocked"];
     [val retain];
     [byteArray release];
     byteArray = val;
+    [byteArray addObserver:self forKeyPath:@"changesAreLocked" options:0 context:KVOContextChangesAreLocked];
     [self _updateDisplayedRange];
     [self _addPropertyChangeBits: HFControllerContentValue | HFControllerContentLength];
     END_TRANSACTION();
@@ -451,7 +478,7 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
 }
 
 - (BOOL)isEditable {
-    return _hfflags.editable;
+    return _hfflags.editable && ! [byteArray changesAreLocked];
 }
 
 - (void)setEditable:(BOOL)flag {
