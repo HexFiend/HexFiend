@@ -13,6 +13,7 @@
 #import <HexFiend/HFTAVLTreeByteArray.h>
 #import <HexFiend/HFFullMemoryByteSlice.h>
 #import <HexFiend/HFControllerCoalescedUndo.h>
+#import <HexFiend/HFSharedMemoryByteSlice.h>
 
 /* Used for the anchor range and location */
 #define NO_SELECTION ULLONG_MAX
@@ -1218,12 +1219,18 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
 
 - (void)insertData:(NSData *)data replacingPreviousBytes:(unsigned long long)previousBytes allowUndoCoalescing:(BOOL)allowUndoCoalescing {
     REQUIRE_NOT_NULL(data);
-    HFByteSlice *slice = [[HFFullMemoryByteSlice alloc] initWithData:data];
-    HFByteArray *array = [[HFFullMemoryByteArray alloc] init];
+#if ! NDEBUG
+    unsigned long long expectedNewLength = [byteArray length] + [data length] - previousBytes;
+#endif
+    HFByteSlice *slice = [[HFSharedMemoryByteSlice alloc] initWithUnsharedData:data];
+    HFByteArray *array = [[HFTavlTreeByteArray alloc] init];
     [array insertByteSlice:slice inRange:HFRangeMake(0, 0)];
-    [slice release];
     [self insertByteArray:array replacingPreviousBytes:previousBytes allowUndoCoalescing:allowUndoCoalescing];
+    [slice release];
     [array release];
+#if ! NDEBUG
+    HFASSERT([byteArray length] == expectedNewLength);
+#endif
 }
 
 - (void)insertByteArray:(HFByteArray *)bytesToInsert replacingPreviousBytes:(unsigned long long)previousBytes allowUndoCoalescing:(BOOL)allowUndoCoalescing {

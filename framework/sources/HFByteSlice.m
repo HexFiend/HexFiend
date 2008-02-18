@@ -6,7 +6,7 @@
 //  Copyright 2007 __MyCompanyName__. All rights reserved.
 //
 
-#import "HFByteSlice.h"
+#import <HexFiend/HFByteSlice.h>
 
 
 @implementation HFByteSlice

@@ -10,7 +10,6 @@
 
 
 @interface HFByteSlice : NSObject {
-    
 }
 
 - (unsigned long long)length;

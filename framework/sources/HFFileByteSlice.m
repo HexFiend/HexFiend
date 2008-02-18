@@ -6,6 +6,7 @@
 //  Copyright 2008 __MyCompanyName__. All rights reserved.
 //
 
+#import <HexFiend/HFByteSlice_Private.h>
 #import <HexFiend/HFFileByteSlice.h>
 #import <HexFiend/HFFileReference.h>
 
@@ -41,6 +42,11 @@
     HFASSERT(range.location < [self length]);
     HFASSERT([self length] - range.location >= range.length);
     return [[[[self class] alloc] initWithFile:fileReference offset:range.location + offset length:range.length] autorelease];
+}
+
+- (void)dealloc {
+    [fileReference release];
+    [super dealloc];
 }
 
 @end

@@ -107,7 +107,11 @@
     if (! [v isKindOfClass:[HFByteArray class]]) return NO;
     HFByteArray* obj = v;
     unsigned long long length = [self length];
-    if (length != [obj length]) return NO;
+    if (length != [obj length]) {
+        printf("Lengths differ: %llu versus %llu\n", length, [obj length]);
+        abort();
+        return NO;
+    }
     
     unsigned long long offset;
     unsigned char buffer1[1024];
@@ -123,6 +127,7 @@
         for (i=0; i < amountToGrab; i++) {
             if (buffer1[i] != buffer2[i]) {
                 printf("Inconsistency found at %llu (%02x versus %02x)\n", i + offset, buffer1[i], buffer2[i]);
+                abort();
                 return NO;
             }
         }

@@ -117,8 +117,26 @@ static BOOL isRunningOnLeopardOrLater(void) {
     controller = [[HFController alloc] init];
     [controller setUndoManager:[self undoManager]];
     [controller addRepresenter:layoutRepresenter];
+    
+    
+#if ! NDEBUG
+    static BOOL hasAddedMenu = NO;
+    if (! hasAddedMenu) {
+        NSMenu *menu = [[[NSApp mainMenu] itemWithTitle:@"Debug"] submenu];
+        [menu addItem:[NSMenuItem separatorItem]];
+        [menu addItemWithTitle:@"Show ByteArray" action:@selector(_showByteArray:) keyEquivalent:@"k"];
+        [[[menu itemArray] lastObject] setKeyEquivalentModifierMask:NSCommandKeyMask];
+    }
+#endif
     return self;
 }
+
+#if ! NDEBUG
+- (void)_showByteArray:sender {
+    USE(sender);
+    NSLog(@"%@", [controller byteArray]);
+}
+#endif
 
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
