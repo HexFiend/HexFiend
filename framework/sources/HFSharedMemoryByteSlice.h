@@ -24,6 +24,9 @@
 - initWithData:(HFSharedData *)data;
 - initWithData:(HFSharedData *)data offset:(NSUInteger)offset length:(NSUInteger)length;
 
+// Attempts to create a new slice by efficiently appending data.  This returns nil if it cannot be done efficiently.
+- (HFSharedMemoryByteSlice *)byteSliceByAppendingSlice:(HFByteSlice *)slice;
+
 - initWithSharedData:(HFSharedData *)data offset:(NSUInteger)off length:(NSUInteger)len tail:(const void *)tail tailLength:(NSUInteger)tailLen;
 
 @end

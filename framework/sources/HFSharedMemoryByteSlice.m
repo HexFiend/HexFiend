@@ -66,6 +66,7 @@
     [data incrementUser];
     inlineTailLength = tailLen;
     memcpy(inlineTail, tail, tailLen);
+	HFASSERT([self length] == tailLen + len);
     return self;
 }
 
@@ -106,6 +107,7 @@
 }
 
 - (HFByteSlice *)subsliceWithRange:(HFRange)lrange {
+	HFByteSlice *result;
     HFASSERT(lrange.length > 0);
     HFASSERT(HFSum(length, inlineTailLength) >= HFMaxRange(lrange));
     NSRange requestedRange = NSMakeRange(ll2l(lrange.location), ll2l(lrange.length));
@@ -133,47 +135,26 @@
         HFASSERT(tail >= inlineTail && tail + tailLength <= inlineTail + inlineTailLength);
     }
     HFASSERT(resultLength + tailLength == lrange.length);
-    return [[[[self class] alloc] initWithSharedData:resultData offset:resultOffset length:resultLength tail:tail tailLength:tailLength] autorelease];
+    result = [[[[self class] alloc] initWithSharedData:resultData offset:resultOffset length:resultLength tail:tail tailLength:tailLength] autorelease];
+	HFASSERT([result length] == lrange.length);
+	return result;
 }
 
-/* Fast path methods */
-- (BOOL)fastPathCanAppendAtLocation:(unsigned long long)location {
-    HFASSERT(offset + length <= [data length]);
-    HFASSERT(offset + length >= offset);
-    unsigned dataLength = [data length];
-    unsigned targetLength = offset + length;
-    HFASSERT(dataLength > 0);
-    HFASSERT(targetLength > 0);
-    if (dataLength > targetLength) {
-	//try to do the fast path delete
-	if ([data userCount]==1) { //only one?  Gotta be us!
-	    [data setLength:targetLength];
-	    dataLength = [data length];
+- (HFSharedMemoryByteSlice *)byteSliceByAppendingSlice:(HFByteSlice *)slice {
+	REQUIRE_NOT_NULL(slice);
+	unsigned long long sliceLength = [slice length];
+	if (sliceLength == 0) return self;
+	
+	HFASSERT(inlineTailLength <= MAX_TAIL_LENGTH);
+	
+	if (HFSum(sliceLength, inlineTailLength) <= MAX_TAIL_LENGTH) {
+		unsigned long long newTailLength = HFSum(sliceLength, inlineTailLength);
+		unsigned char newTail[MAX_TAIL_LENGTH];
+		memcpy(newTail, inlineTail, inlineTailLength);
+		[slice copyBytes:newTail + inlineTailLength range:HFRangeMake(0, sliceLength)];
+		return [[[[self class] alloc] initWithSharedData:nil offset:0 length:0 tail:newTail tailLength:newTailLength] autorelease];
 	}
-    }
-    return location==length && targetLength == dataLength;
+	return nil;
 }
-
-
-- (HFByteSlice *)fastPathAppendByteSlice:(HFByteSlice *)slice atLocation:(unsigned long long)location {
-    HFASSERT(MAX_FAST_PATH_SIZE <= UINT_MAX);
-    
-    if (! [self fastPathCanAppendAtLocation:location]) return nil;
-    
-    unsigned dataLength = [data length];
-    unsigned long long ullSliceLength = [slice length];
-    
-    HFASSERT(dataLength + ullSliceLength >= ullSliceLength);
-    
-    
-    if (ullSliceLength + [data length] > MAX_FAST_PATH_SIZE) return nil;
-    
-    [data increaseLengthBy:ll2l(ullSliceLength)];
-    [slice copyBytes:dataLength + (unsigned char*)[data mutableBytes]
-	       range:HFRangeMake(0, ullSliceLength)];
-    
-    return [[[[self class] alloc] initWithData:data offset:offset length:ll2l(length + ullSliceLength)] autorelease];
-}
-
 
 @end

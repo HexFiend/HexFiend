@@ -1221,10 +1221,13 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
     REQUIRE_NOT_NULL(data);
 #if ! NDEBUG
     unsigned long long expectedNewLength = [byteArray length] + [data length] - previousBytes;
+    FOREACH(HFRangeWrapper*, wrapper, [self selectedContentsRanges]) expectedNewLength -= [wrapper HFRange].length;
 #endif
     HFByteSlice *slice = [[HFSharedMemoryByteSlice alloc] initWithUnsharedData:data];
+	HFASSERT([slice length] == [data length]);
     HFByteArray *array = [[HFTavlTreeByteArray alloc] init];
     [array insertByteSlice:slice inRange:HFRangeMake(0, 0)];
+	HFASSERT([array length] == [data length]);
     [self insertByteArray:array replacingPreviousBytes:previousBytes allowUndoCoalescing:allowUndoCoalescing];
     [slice release];
     [array release];
@@ -1291,7 +1294,13 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
     if (previousBytes > 0) rangeToReplace.length = previousBytes;
     
     /* Insert data */
+#if ! NDEBUG
+	unsigned long long expectedLength = [byteArray length] + [bytesToInsert length] - rangeToReplace.length;
+#endif
     [byteArray insertByteArray:bytesToInsert inRange:rangeToReplace];
+#if ! NDEBUG
+	HFASSERT(expectedLength == [byteArray length]);
+#endif
     
     [self _addPropertyChangeBits:HFControllerContentValue];
     
