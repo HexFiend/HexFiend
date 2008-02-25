@@ -271,8 +271,10 @@
 								<string>29B97314FDCFA39411CA2CEA</string>
 								<string>D0560B350CDC4248009D2484</string>
 								<string>D0370B130D69172E00B3A8C6</string>
-								<string>D0370A280D682EF200B3A8C6</string>
 								<string>D0560B380CDC4253009D2484</string>
+								<string>D00122DC0D48A89F00540B10</string>
+								<string>29B97317FDCFA39411CA2CEA</string>
+								<string>D00122F80D48AD8600540B10</string>
 								<string>1C37FBAC04509CD000000102</string>
 								<string>1C37FAAC04509CD000000102</string>
 								<string>1C37FABC05509CD000000102</string>
@@ -280,9 +282,7 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>18</integer>
-									<integer>17</integer>
-									<integer>10</integer>
+									<integer>16</integer>
 									<integer>2</integer>
 									<integer>0</integer>
 								</array>
@@ -524,17 +524,22 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>D017728A0D72CCC9002E03DE</string>
 		<string>1C530D57069F1CE1000CFCEE</string>
 		<string>D01771AB0D721C75002E03DE</string>
 		<string>D01771AC0D721C75002E03DE</string>
 		<string>D01771AD0D721C75002E03DE</string>
 		<string>1CD10A99069EF8BA00B06720</string>
 		<string>D0560B2F0CDC421E009D2484</string>
-		<string>1C78EAAD065D492600B07095</string>
 		<string>D01771AE0D721C75002E03DE</string>
-		<string>D01772620D72CA0B002E03DE</string>
+		<string>D017729D0D72CD58002E03DE</string>
+		<string>D01772B20D72D883002E03DE</string>
+		<string>D01772B30D72D883002E03DE</string>
 		<string>/Users/peter/Bell/HexFiend2/trunk/HexFiend_2/HexFiend_2.xcodeproj</string>
+		<string>D01772C80D72E297002E03DE</string>
+		<string>D01772C90D72E297002E03DE</string>
+		<string>1C78EAAD065D492600B07095</string>
+		<string>D01772CE0D72E3D0002E03DE</string>
+		<string>D01772CA0D72E297002E03DE</string>
 	</array>
 	<key>WindowString</key>
 	<string>15 231 1102 797 0 0 1680 1028 </string>
@@ -776,7 +781,7 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CDD528C0622207200134675</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>HFSharedMemoryByteSlice.h</string>
+										<string>MyDocument.m</string>
 										<key>StatusBarVisibility</key>
 										<true/>
 									</dict>

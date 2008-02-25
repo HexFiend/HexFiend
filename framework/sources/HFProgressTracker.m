@@ -61,7 +61,7 @@ NSString *const HFProgressTrackerDidFinishNotification = @"HFProgressTrackerDidF
     [progressIndicator stopAnimation:self];
 }
 
-- (void)requestCancel {
+- (void)requestCancel:(id)sender {
     cancelRequested = 1;
     OSMemoryBarrier();
 }

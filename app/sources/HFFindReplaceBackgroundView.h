@@ -17,6 +17,7 @@
     IBOutlet NSTextField *searchLabel;
     IBOutlet NSTextField *replaceLabel;
     IBOutlet NSProgressIndicator *progressIndicator;
+    IBOutlet NSButton *cancelButton;
     CGFloat defaultHeight;
 }
 
@@ -24,6 +25,7 @@
 - (HFTextField *)replaceField;
 - (NSSegmentedControl *)navigateControl;
 - (NSProgressIndicator *)progressIndicator;
+- (NSButton *)cancelButton;
 - (CGFloat)defaultHeight;
 
 @end

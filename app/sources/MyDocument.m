@@ -406,6 +406,7 @@ static void *threadedPerformFindFunction(void *vParam) {
     HFASSERT([note object] == findBufferPtr->tracker);
     [[NSNotificationCenter defaultCenter] removeObserver:self name:HFProgressTrackerDidFinishNotification object:findBufferPtr->tracker];
     [findBufferPtr->tracker endTrackingProgress];
+    [[findReplaceBackgroundView cancelButton] setHidden:YES];
     [findBufferPtr->needle decrementChangeLockCounter];
     [findBufferPtr->haystack decrementChangeLockCounter];
     [findBufferPtr->needle release];
@@ -436,6 +437,11 @@ static void *threadedPerformFindFunction(void *vParam) {
     return 0;
 }
 
+- (void)cancelFind:sender {
+    HFASSERT(sender == [findReplaceBackgroundView cancelButton]);
+    HFASSERT(threadedOperation != NULL);
+}
+
 - (void)findNextBySearchingForwards:(BOOL)forwards {
     HFByteArray *needle = [[findReplaceBackgroundView searchField] objectValue];
     if ([needle length] > 0) {
@@ -444,6 +450,9 @@ static void *threadedPerformFindFunction(void *vParam) {
         HFProgressTracker *tracker = [[HFProgressTracker alloc] init];
         [tracker setMaxProgress:haystackLength];
         [tracker setProgressIndicator:[findReplaceBackgroundView progressIndicator]];
+        [[findReplaceBackgroundView cancelButton] setTarget:self];
+        [[findReplaceBackgroundView cancelButton] setAction:@selector(cancelFind:)];
+        [[findReplaceBackgroundView cancelButton] setHidden:NO];
         /* We start looking at the max selection, and if we don't find anything, wrap around up to the min selection.  Counterintuitively, endLocation is less than startLocation. */
         unsigned long long startLocation = [controller maximumSelectionLocation];
         unsigned long long endLocation = [controller minimumSelectionLocation];

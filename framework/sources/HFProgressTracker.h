@@ -34,7 +34,7 @@
 /* Reflects onto the main thread if called from a different thread */
 - (void)noteFinished:(id)sender;
 
-- (void)requestCancel;
+- (void)requestCancel:(id)sender;
 
 @end
 

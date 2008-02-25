@@ -90,6 +90,10 @@ static CGFloat roundTowardsInfinity(CGFloat x) {
     return progressIndicator;
 }
 
+- (NSButton *)cancelButton {
+    return cancelButton;
+}
+
 - initWithFrame:(NSRect)rect {
     [super initWithFrame:rect];
     defaultHeight = NSHeight(rect);
