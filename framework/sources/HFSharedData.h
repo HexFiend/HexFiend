@@ -16,13 +16,9 @@
     __strong void *bytes;
     NSUInteger length;
     NSUInteger capacity;
-    NSUInteger userCount;
 }
 
 - initWithBytes:(const void *)bytes length:(NSUInteger)length;
 - initWithData:(NSData *)data;
-- (void)incrementUser;
-- (void)decrementUser;
-- (NSUInteger)userCount;
 
 @end

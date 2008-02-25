@@ -14,6 +14,8 @@
 
 #define LOCATION_MAGIC_NUMBER 0
 
+#define USE_FAST_PATH 1
+
 //we use the following hack to represent a location instead of a range
 //the key type is normally a HFRange
 //but if the key's LENGTH is LOCATION_MAGIC_NUMBER, it should be treated as a location instead
@@ -39,7 +41,9 @@ static const char *tavl_description(TAVL_treeptr tree) {
     while ((node = tavl_succ(node))) {
 	HFByteArrayPiece* arrayPiece = NULL;
 	tavl_getdata(tree, node, &arrayPiece);
-	if (arrayPiece) [result addObject:[NSString stringWithFormat:@"{%llu - %llu}", [arrayPiece offset], [arrayPiece length]]];
+	if (arrayPiece) {
+            [result addObject:[NSString stringWithFormat:@"{%llu - %llu}", [arrayPiece offset], [arrayPiece length]]];
+        }
 	else [result addObject:@"{NULL}"];
     }
     if (! [result count]) return "(empty tree)";
@@ -293,7 +297,7 @@ static const char *tavl_description(TAVL_treeptr tree) {
 	TAVL_nodeptr prev_node = tavl_pred(node);
 	if (prev_node) {
 	    HFByteArrayPiece* prev_piece=NULL;
-	    tavl_getdata(myTree, prev_node, &prev_piece);
+	    tavl_getdata(tree, prev_node, &prev_piece);
 	    REQUIRE_NOT_NULL(prev_piece);
 	    
 	    BOOL fp_result = [prev_piece fastPathAppendByteSlice:slice atLocation:offset];
@@ -303,7 +307,7 @@ static const char *tavl_description(TAVL_treeptr tree) {
 		unsigned long long new_offset = [prev_piece offset] + [prev_piece length];
 		do {
 		    HFByteArrayPiece* offset_piece=NULL;
-		    tavl_getdata(myTree, offset_updating_node, &offset_piece);
+		    tavl_getdata(tree, offset_updating_node, &offset_piece);
 		    REQUIRE_NOT_NULL(offset_piece);
 		    [offset_piece setOffset:new_offset];
 		    new_offset += [offset_piece length];
@@ -356,10 +360,10 @@ static const char *tavl_description(TAVL_treeptr tree) {
 #if USE_FAST_PATH
     //fast path for the end of the tree
     else {
-	TAVL_nodeptr end = tavl_pred(tavl_reset(myTree));
+	TAVL_nodeptr end = tavl_pred(tavl_reset(tree));
 	if (end) {
 	    HFByteArrayPiece* piece=NULL;
-	    tavl_getdata(myTree, end, &piece);
+	    tavl_getdata(tree, end, &piece);
 	    HFASSERT(piece);
 	    BOOL fp_result = [piece fastPathAppendByteSlice:slice atLocation:offset];
 	    if (fp_result) {

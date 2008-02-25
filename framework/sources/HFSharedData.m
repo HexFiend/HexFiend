@@ -49,22 +49,6 @@
     length = newLength;
 }
 
-- (void)incrementUser {
-    if (0 == HFAtomicIncrement(&userCount, NO)) {
-        [NSException raise:NSInvalidArgumentException format:@"User overflow for HFSharedData %@", self];
-    }
-}
-
-- (void)decrementUser {
-    if (NSUIntegerMax == HFAtomicDecrement(&userCount, NO)) {
-        [NSException raise:NSInvalidArgumentException format:@"User underflow for HFSharedData %@", self];
-    }
-}
-
-- (NSUInteger)userCount {
-    return userCount;
-}
-
 - (void)dealloc {
     free(bytes);
     [super dealloc];

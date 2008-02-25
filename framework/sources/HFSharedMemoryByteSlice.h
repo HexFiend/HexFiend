@@ -8,10 +8,8 @@
 
 #import <HexFiend/HFByteSlice.h>
 
-@class HFSharedData;
-
 @interface HFSharedMemoryByteSlice : HFByteSlice {
-    HFSharedData *data;
+    NSMutableData *data;
     NSUInteger offset;
     NSUInteger length;
     unsigned char inlineTailLength;
@@ -21,12 +19,12 @@
 - initWithUnsharedData:(NSData *)data;
 
 // retains, does not copy
-- initWithData:(HFSharedData *)data;
-- initWithData:(HFSharedData *)data offset:(NSUInteger)offset length:(NSUInteger)length;
+- initWithData:(NSMutableData *)data;
+- initWithData:(NSMutableData *)data offset:(NSUInteger)offset length:(NSUInteger)length;
 
 // Attempts to create a new slice by efficiently appending data.  This returns nil if it cannot be done efficiently.
-- (HFSharedMemoryByteSlice *)byteSliceByAppendingSlice:(HFByteSlice *)slice;
+- byteSliceByAppendingSlice:(HFByteSlice *)slice;
 
-- initWithSharedData:(HFSharedData *)data offset:(NSUInteger)off length:(NSUInteger)len tail:(const void *)tail tailLength:(NSUInteger)tailLen;
+- initWithSharedData:(NSMutableData *)data offset:(NSUInteger)off length:(NSUInteger)len tail:(const void *)tail tailLength:(NSUInteger)tailLen;
 
 @end

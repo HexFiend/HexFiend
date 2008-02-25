@@ -31,7 +31,7 @@ __private_extern__ NSString *HFHexStringFromData(NSData *data);
 __private_extern__ void HFSetFDShouldCache(int fd, BOOL shouldCache);
 
 /* Function for OSAtomicAdd64 that just does a non-atomic add on PowerPC.  This should not be used where atomicity is critical; an example where this is used is updating a progress bar. */
-static inline HFAtomicAdd64(int64_t a, volatile int64_t *b) {
+static inline int64_t HFAtomicAdd64(int64_t a, volatile int64_t *b) {
 #if __ppc__
     return *b += a;
 #else

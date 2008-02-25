@@ -16,4 +16,8 @@
 - (void)copyBytes:(unsigned char *)dst range:(HFRange)range;
 - (HFByteSlice *)subsliceWithRange:(HFRange)range;
 
+/* Attempts to append a given byte slice and return a new one.  This does not modify the receiver or the slice parameter.  This may return nil if the appending cannot be done efficiently (in which case, it should be done at the byte array level).
+*/
+- byteSliceByAppendingSlice:(HFByteSlice *)slice;
+
 @end

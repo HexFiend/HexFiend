@@ -72,5 +72,19 @@
     }
 }
 
+- (BOOL)fastPathAppendByteSlice:(HFByteSlice *)additionalSlice atLocation:(unsigned long long)location {
+    BOOL result = NO;
+    if (location == HFMaxRange(pieceRange)) {
+        HFByteSlice *newSlice = [slice byteSliceByAppendingSlice:additionalSlice];
+        if (newSlice) {
+            [newSlice retain];
+            [slice release];
+            slice = newSlice;
+            pieceRange.length = [slice length];
+            result = YES;
+        }
+    }
+    return result;
+}
 
 @end

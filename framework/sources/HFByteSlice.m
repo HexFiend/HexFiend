@@ -49,4 +49,8 @@
     }
 }
 
+- byteSliceByAppendingSlice:(HFByteSlice *)slice {
+    return nil;
+}
+
 @end

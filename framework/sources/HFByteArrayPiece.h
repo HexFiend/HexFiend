@@ -30,4 +30,6 @@
 //range must be wholly contained within this piece
 - (void)constructNewArrayPiecesAboutRange:(HFRange)range first:(HFByteArrayPiece**)first second:(HFByteArrayPiece**)second;
 
+- (BOOL)fastPathAppendByteSlice:(HFByteSlice *)slice atLocation:(unsigned long long)location;
+
 @end
