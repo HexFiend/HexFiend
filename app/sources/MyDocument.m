@@ -8,7 +8,7 @@
 
 #import "MyDocument.h"
 #import "HFBannerDividerThumb.h"
-#import "HFFindReplaceBackgroundView.h"
+#import "HFDocumentOperationView.h"
 #import <HexFiend/HexFiend.h>
 #include <pthread.h>
 
@@ -317,25 +317,23 @@ static BOOL isRunningOnLeopardOrLater(void) {
 	[self hideBannerFirstThenDo:_cmd];
 	return;
     }
-    
-    if (! findReplaceBackgroundView) {
-        if (! [NSBundle loadNibNamed:@"FindReplace" owner:self] || ! findReplaceBackgroundView) {
-            [NSException raise:NSInternalInconsistencyException format:@"Unable to load FindReplace.nib"];
-        }
-        [[findReplaceBackgroundView searchField] setTarget:self];
-        [[findReplaceBackgroundView searchField] setAction:@selector(findNext:)];
-        [[findReplaceBackgroundView replaceField] setTarget:self];
-        [[findReplaceBackgroundView replaceField] setAction:@selector(findNext:)];
-        [findReplaceBackgroundView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
-        [findReplaceBackgroundView setFrameSize:NSMakeSize(NSWidth([containerView frame]), 0)];
-        [findReplaceBackgroundView setFrameOrigin:NSZeroPoint];
+
+    if (! operationView) {
+        operationView = [[HFDocumentOperationView viewWithNibNamed:@"FindReplaceBanner"] retain];
+        [[operationView viewNamed:@"searchField"] setTarget:self];
+        [[operationView viewNamed:@"searchField"] setAction:@selector(findNext:)];
+        [[operationView viewNamed:@"replaceField"] setTarget:self];
+        [[operationView viewNamed:@"replaceField"] setAction:@selector(findNext:)];
+        [operationView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
+        [operationView setFrameSize:NSMakeSize(NSWidth([containerView frame]), 0)];
+        [operationView setFrameOrigin:NSZeroPoint];
     }
 
-    bannerTargetHeight = [findReplaceBackgroundView defaultHeight];
+    bannerTargetHeight = [operationView defaultHeight];
     
-    [self prepareBannerWithView:findReplaceBackgroundView];
+    [self prepareBannerWithView:operationView];
     savedFirstResponder = [[self window] firstResponder];
-    [[self window] makeFirstResponder:[findReplaceBackgroundView searchField]];
+    [[self window] makeFirstResponder:[operationView viewNamed:@"searchField"]];
 }
 
 - (NSRect)splitView:(NSSplitView *)splitView additionalEffectiveRectOfDividerAtIndex:(NSInteger)dividerIndex {
@@ -406,7 +404,7 @@ static void *threadedPerformFindFunction(void *vParam) {
     HFASSERT([note object] == findBufferPtr->tracker);
     [[NSNotificationCenter defaultCenter] removeObserver:self name:HFProgressTrackerDidFinishNotification object:findBufferPtr->tracker];
     [findBufferPtr->tracker endTrackingProgress];
-    [[findReplaceBackgroundView cancelButton] setHidden:YES];
+    [[operationView viewNamed:@"cancelButton"] setHidden:YES];
     [findBufferPtr->needle decrementChangeLockCounter];
     [findBufferPtr->haystack decrementChangeLockCounter];
     [findBufferPtr->needle release];
@@ -438,21 +436,21 @@ static void *threadedPerformFindFunction(void *vParam) {
 }
 
 - (void)cancelFind:sender {
-    HFASSERT(sender == [findReplaceBackgroundView cancelButton]);
+    HFASSERT(sender == [operationView viewNamed:@"cancelButton"]);
     HFASSERT(threadedOperation != NULL);
 }
 
 - (void)findNextBySearchingForwards:(BOOL)forwards {
-    HFByteArray *needle = [[findReplaceBackgroundView searchField] objectValue];
+    HFByteArray *needle = [[operationView viewNamed:@"searchField"] objectValue];
     if ([needle length] > 0) {
         HFByteArray *haystack = [controller byteArray];
         unsigned long long haystackLength = [haystack length];
         HFProgressTracker *tracker = [[HFProgressTracker alloc] init];
         [tracker setMaxProgress:haystackLength];
-        [tracker setProgressIndicator:[findReplaceBackgroundView progressIndicator]];
-        [[findReplaceBackgroundView cancelButton] setTarget:self];
-        [[findReplaceBackgroundView cancelButton] setAction:@selector(cancelFind:)];
-        [[findReplaceBackgroundView cancelButton] setHidden:NO];
+        [tracker setProgressIndicator:[operationView viewNamed:@"progressIndicator"]];
+        [[operationView viewNamed:@"cancelButton"] setTarget:self];
+        [[operationView viewNamed:@"cancelButton"] setAction:@selector(cancelFind:)];
+        [[operationView viewNamed:@"cancelButton"] setHidden:NO];
         /* We start looking at the max selection, and if we don't find anything, wrap around up to the min selection.  Counterintuitively, endLocation is less than startLocation. */
         unsigned long long startLocation = [controller maximumSelectionLocation];
         unsigned long long endLocation = [controller minimumSelectionLocation];

@@ -270,25 +270,24 @@
 							<array>
 								<string>29B97314FDCFA39411CA2CEA</string>
 								<string>D0560B350CDC4248009D2484</string>
-								<string>D0370B130D69172E00B3A8C6</string>
 								<string>D0560B380CDC4253009D2484</string>
 								<string>D00122DC0D48A89F00540B10</string>
 								<string>29B97317FDCFA39411CA2CEA</string>
-								<string>D00122F80D48AD8600540B10</string>
 								<string>1C37FBAC04509CD000000102</string>
+								<string>D01773380D75557D002E03DE</string>
 								<string>1C37FAAC04509CD000000102</string>
 								<string>1C37FABC05509CD000000102</string>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>16</integer>
-									<integer>2</integer>
+									<integer>31</integer>
+									<integer>23</integer>
 									<integer>0</integer>
 								</array>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
-							<string>{{0, 0}, {401, 738}}</string>
+							<string>{{0, 46}, {401, 738}}</string>
 						</dict>
 						<key>PBXTopSmartGroupGIDs</key>
 						<array/>
@@ -531,15 +530,18 @@
 		<string>1CD10A99069EF8BA00B06720</string>
 		<string>D0560B2F0CDC421E009D2484</string>
 		<string>D01771AE0D721C75002E03DE</string>
-		<string>D017729D0D72CD58002E03DE</string>
-		<string>D01772B20D72D883002E03DE</string>
-		<string>D01772B30D72D883002E03DE</string>
-		<string>/Users/peter/Bell/HexFiend2/trunk/HexFiend_2/HexFiend_2.xcodeproj</string>
 		<string>D01772C80D72E297002E03DE</string>
 		<string>D01772C90D72E297002E03DE</string>
+		<string>D01772FA0D751EA4002E03DE</string>
+		<string>D017731B0D75372E002E03DE</string>
+		<string>D01773310D7553BD002E03DE</string>
+		<string>D01773440D7561B7002E03DE</string>
+		<string>/Users/peter/Bell/HexFiend2/trunk/HexFiend_2/HexFiend_2.xcodeproj</string>
+		<string>D01773480D7563E1002E03DE</string>
+		<string>D017734A0D7563E1002E03DE</string>
 		<string>1C78EAAD065D492600B07095</string>
-		<string>D01772CE0D72E3D0002E03DE</string>
-		<string>D01772CA0D72E297002E03DE</string>
+		<string>D01773490D7563E1002E03DE</string>
+		<string>D017730B0D752905002E03DE</string>
 	</array>
 	<key>WindowString</key>
 	<string>15 231 1102 797 0 0 1680 1028 </string>
@@ -558,12 +560,14 @@
 					<key>Dock</key>
 					<array>
 						<dict>
+							<key>BecomeActive</key>
+							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
 								<string>1CD0528F0623707200166675</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>HFTavlTreeByteArray.m</string>
+								<string>MyDocument.m</string>
 								<key>StatusBarVisibility</key>
 								<true/>
 							</dict>
@@ -580,8 +584,6 @@
 							<string>358pt</string>
 						</dict>
 						<dict>
-							<key>BecomeActive</key>
-							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXBuildLogShowsTranscriptDefaultKey</key>
@@ -781,7 +783,7 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CDD528C0622207200134675</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>MyDocument.m</string>
+										<string>HFDocumentOperationView.m</string>
 										<key>StatusBarVisibility</key>
 										<true/>
 									</dict>
