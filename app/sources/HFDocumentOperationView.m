@@ -121,8 +121,10 @@ static NSString *sNibName;
     return [super respondsToSelector:sel];
 }
 
+typedef struct { CGFloat offset; CGFloat length; } Position_t;
+
 - (void)resizeView:(NSView *)view withOriginalFrame:(NSRect)originalFrame intoBounds:(NSRect)bounds {
-    CGFloat offset, width;
+    Position_t horizontal = computePosition(
 }
 
 - (void)resizeSubviewsWithOldSize:(NSSize)size {
