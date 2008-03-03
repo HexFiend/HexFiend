@@ -62,6 +62,7 @@ NSString *const HFProgressTrackerDidFinishNotification = @"HFProgressTrackerDidF
 }
 
 - (void)requestCancel:(id)sender {
+    USE(sender);
     cancelRequested = 1;
     OSMemoryBarrier();
 }
@@ -71,6 +72,7 @@ NSString *const HFProgressTrackerDidFinishNotification = @"HFProgressTrackerDidF
     [progressTimer invalidate];
     [progressTimer release];
     progressTimer = nil;
+    [userInfo release];
     [super dealloc];
 }
 
@@ -81,6 +83,16 @@ NSString *const HFProgressTrackerDidFinishNotification = @"HFProgressTrackerDidF
     else {
         [[NSNotificationCenter defaultCenter] postNotificationName:HFProgressTrackerDidFinishNotification object:self userInfo:nil];
     }
+}
+
+- (void)setUserInfo:(NSDictionary *)info {
+    [info retain];
+    [userInfo release];
+    userInfo = info;
+}
+
+- (NSDictionary *)userInfo {
+    return userInfo;
 }
 
 @end

@@ -29,7 +29,7 @@
     
         layoutRepresenter = [[HFLayoutRepresenter alloc] init];
         activeRepresenter = [[HFHexTextRepresenter alloc] init];
-        [[activeRepresenter view] setShowsFocusRing:YES];
+        [activeRepresenter setBehavesAsTextField:YES];
         [[activeRepresenter view] setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
         [dataController addRepresenter:activeRepresenter];
         [layoutRepresenter addRepresenter:activeRepresenter];

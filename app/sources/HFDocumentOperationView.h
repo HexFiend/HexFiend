@@ -6,19 +6,38 @@
 //  Copyright 2008 __MyCompanyName__. All rights reserved.
 //
 
-#import <Cocoa/Cocoa.h>
+#import "HFResizingView.h"
 
+@class HFProgressTracker;
 
-@interface HFDocumentOperationView : NSView {
+struct HFDocumentOperationCallbacks {
+    id target;
+    id userInfo; // set on the HFProgressTracker
+    SEL startSelector; // - (void)beginThread:(HFProgressTracker *)tracker; delivered on child thread
+    SEL endSelector; // - (void)threadDidEnd:(id)result; delivered on main thread
+};
+
+@interface HFDocumentOperationView : HFResizingView {
     NSMutableDictionary *views;
-    NSMutableDictionary *viewNamesToFrames;
     NSString *nibName;
-    NSSize defaultSize;
     BOOL awokenFromNib;
+    pthread_t thread;
+    
+    HFProgressTracker *tracker;
+    id target;
+    SEL startSelector;
+    SEL endSelector;
 }
 
 + viewWithNibNamed:(NSString *)name;
 - viewNamed:(NSString *)name;
 - (CGFloat)defaultHeight;
+
+- (IBAction)cancelOperation:sender;
+- (BOOL)operationIsRunning;
+
+- (void)startOperationWithCallbacks:(struct HFDocumentOperationCallbacks)callbacks;
+
+- (HFProgressTracker *)progressTracker;
 
 @end

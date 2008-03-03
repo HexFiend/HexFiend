@@ -542,7 +542,7 @@ enum LineCoverage_t {
     NSRect bounds = [self bounds];
     NSUInteger lineIndex;
     NSRect lineRect = NSMakeRect(NSMinX(bounds), NSMinY(bounds), NSWidth(bounds), lineHeight);
-    if (_hftvflags.showsFocusRing) lineRect = NSInsetRect(lineRect, 2, 0);
+    if ([self showsFocusRing]) lineRect = NSInsetRect(lineRect, 2, 0);
     lineRect.origin.y -= [self verticalOffset] * [self lineHeight];
     NSUInteger drawableLineIndex = 0;
     NEW_ARRAY(NSRect, lineRects, maxLines);
@@ -699,17 +699,13 @@ enum LineCoverage_t {
     }
 }
 
+- (BOOL)behavesAsTextField {
+    return [[self representer] behavesAsTextField];
+}
+
 - (BOOL)showsFocusRing {
-    return _hftvflags.showsFocusRing;
+    return [[self representer] behavesAsTextField];
 }
-
-- (void)setShowsFocusRing:(BOOL)val {
-    if (val != _hftvflags.showsFocusRing) {
-        _hftvflags.showsFocusRing = val;
-        [self setNeedsDisplay:YES];
-    }
-}
-
 
 - (void)_windowDidChangeKeyStatus:(NSNotification *)note {
     USE(note);
@@ -818,11 +814,24 @@ enum LineCoverage_t {
     }
 }
 
+- (BOOL)handleCommand:(SEL)sel {
+    if (sel == @selector(insertTabIgnoringFieldEditor:)) {
+        [self insertText:@"\t"];
+    }
+    else if ([self respondsToSelector:sel]) {
+        [self performSelector:sel withObject:nil];
+    }
+    else {
+        return NO;
+    }
+    return YES;
+}
+
 - (void)doCommandBySelector:(SEL)sel {
     HFRepresenter *rep = [self representer];
     NSLog(@"%s%s", _cmd, sel);
-    if ([self respondsToSelector:sel]) {
-	[self performSelector:sel withObject:nil];
+    if ([self handleCommand:sel]) {
+        /* Nothing to do */
     }
     else if ([rep respondsToSelector:sel]) {
 	[rep performSelector:sel withObject:self];

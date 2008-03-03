@@ -87,7 +87,15 @@
     [controller maximizeVisibilityOfContentsRange:HFRangeMake(min, max - min)];
 }
 
-
+- (void)insertTab:unused {
+    USE(unused);
+    if ([self behavesAsTextField]) {
+        [[[self view] window] selectNextKeyView:nil];
+    }
+    else {
+        [NSException raise:NSInternalInconsistencyException format:@"insertTab: leaked into %@", self];
+    }
+}
 
 FORWARD(scrollLineUp)
 FORWARD(scrollLineDown)
@@ -102,7 +110,6 @@ FORWARD(selectParagraph)
 FORWARD(selectLine)
 FORWARD(selectWord)
 FORWARD(indent)
-FORWARD(insertTab)
 FORWARD(insertBacktab)
 //FORWARD(insertNewline)
 FORWARD(insertParagraphSeparator)

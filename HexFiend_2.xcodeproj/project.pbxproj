@@ -19,6 +19,7 @@
 		D01772BA0D72E024002E03DE /* HFCancelOff.tiff in Resources */ = {isa = PBXBuildFile; fileRef = D01772B80D72E024002E03DE /* HFCancelOff.tiff */; };
 		D01772F50D751DB1002E03DE /* HFDocumentOperationView.m in Sources */ = {isa = PBXBuildFile; fileRef = D01772F40D751DB1002E03DE /* HFDocumentOperationView.m */; };
 		D01773360D755551002E03DE /* FindReplaceBanner.nib in Resources */ = {isa = PBXBuildFile; fileRef = D01773340D755551002E03DE /* FindReplaceBanner.nib */; };
+		D01773920D7A2F32002E03DE /* HFResizingView.m in Sources */ = {isa = PBXBuildFile; fileRef = D01773910D7A2F32002E03DE /* HFResizingView.m */; };
 		D01930C20D5AE64E0019B3F7 /* HexFiend.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D01E7BB80CDC530C00943F9E /* HexFiend.framework */; };
 		D01930EC0D5AE7690019B3F7 /* HexFiendPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = D01930EB0D5AE7690019B3F7 /* HexFiendPlugin.m */; };
 		D01931200D5AEADA0019B3F7 /* HexFiendPluginLibrary.nib in Resources */ = {isa = PBXBuildFile; fileRef = D019311F0D5AEADA0019B3F7 /* HexFiendPluginLibrary.nib */; };
@@ -164,6 +165,8 @@
 		D01772F30D751DB1002E03DE /* HFDocumentOperationView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFDocumentOperationView.h; path = app/sources/HFDocumentOperationView.h; sourceTree = "<group>"; };
 		D01772F40D751DB1002E03DE /* HFDocumentOperationView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFDocumentOperationView.m; path = app/sources/HFDocumentOperationView.m; sourceTree = "<group>"; };
 		D01773350D755551002E03DE /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/FindReplaceBanner.nib; sourceTree = "<group>"; };
+		D01773900D7A2F32002E03DE /* HFResizingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFResizingView.h; path = app/sources/HFResizingView.h; sourceTree = "<group>"; };
+		D01773910D7A2F32002E03DE /* HFResizingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFResizingView.m; path = app/sources/HFResizingView.m; sourceTree = "<group>"; };
 		D019309A0D5AE3B40019B3F7 /* HexFiend.ibplugin */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HexFiend.ibplugin; sourceTree = BUILT_PRODUCTS_DIR; };
 		D019309B0D5AE3B40019B3F7 /* HexFiend_IBPlugin-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "HexFiend_IBPlugin-Info.plist"; sourceTree = "<group>"; };
 		D01930EA0D5AE7690019B3F7 /* HexFiendPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HexFiendPlugin.h; path = ib_plugin/sources/HexFiendPlugin.h; sourceTree = "<group>"; };
@@ -499,6 +502,8 @@
 				D01E7C150CDC58AA00943F9E /* MyDocument.m */,
 				D01772F30D751DB1002E03DE /* HFDocumentOperationView.h */,
 				D01772F40D751DB1002E03DE /* HFDocumentOperationView.m */,
+				D01773900D7A2F32002E03DE /* HFResizingView.h */,
+				D01773910D7A2F32002E03DE /* HFResizingView.m */,
 				D00122DC0D48A89F00540B10 /* Find_Replace */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
 			);
@@ -730,6 +735,7 @@
 				D00122E30D48A8D400540B10 /* HFFindReplaceBackgroundView.m in Sources */,
 				D078D0520D50492F00492F46 /* HFBannerDividerThumb.m in Sources */,
 				D01772F50D751DB1002E03DE /* HFDocumentOperationView.m in Sources */,
+				D01773920D7A2F32002E03DE /* HFResizingView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -32,6 +32,7 @@
     NSView *bannerDividerThumb;
     CGFloat bannerTargetHeight;
     CFAbsoluteTime bannerStartTime;
+    
 }
 
 @end

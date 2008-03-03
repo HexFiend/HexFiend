@@ -86,7 +86,7 @@ static BOOL isRunningOnLeopardOrLater(void) {
         CGFloat windowWidthChange = [[lineCountingView superview] convertSize:NSMakeSize(widthChange, 0) toView:nil].width;
         windowWidthChange = (windowWidthChange < 0 ? HFFloor(windowWidthChange) : HFCeil(windowWidthChange));
         
-        /* convertSize: has a nasty habit of stomping on negatives.  Make our window width negative if our view-space horizontal change was negative. */
+        /* convertSize: has a nasty habit of stomping on negatives.  Make our window width change negative if our view-space horizontal change was negative. */
 #if __LP64__
         windowWidthChange = copysign(windowWidthChange, widthChange);
 #else
@@ -122,6 +122,7 @@ static BOOL isRunningOnLeopardOrLater(void) {
 #if ! NDEBUG
     static BOOL hasAddedMenu = NO;
     if (! hasAddedMenu) {
+        hasAddedMenu = YES;
         NSMenu *menu = [[[NSApp mainMenu] itemWithTitle:@"Debug"] submenu];
         [menu addItem:[NSMenuItem separatorItem]];
         [menu addItemWithTitle:@"Show ByteArray" action:@selector(_showByteArray:) keyEquivalent:@"k"];
@@ -146,16 +147,10 @@ static BOOL isRunningOnLeopardOrLater(void) {
     [super dealloc];
 }
 
-- (NSData *)dataOfType:(NSString *)typeName error:(NSError **)outError {
-    USE(typeName);
-    USE(outError);
-    // Insert code here to write your document to data of the specified type. If the given outError != NULL, ensure that you set *outError when returning nil.
-
-    // You can also choose to override -fileWrapperOfType:error:, -writeToURL:ofType:error:, or -writeToURL:ofType:forSaveOperation:originalContentsURL:error: instead.
-
-    // For applications targeted for Panther or earlier systems, you should use the deprecated API -dataRepresentationOfType:. In this case you can also choose to override -fileWrapperRepresentationOfType: or -writeToFile:ofType: instead.
-
-    return nil;
+- (BOOL)writeToURL:(NSURL *)absoluteURL ofType:(NSString *)typeName forSaveOperation:(NSSaveOperationType)saveOperation originalContentsURL:(NSURL *)absoluteOriginalContentsURL error:(NSError **)outError {
+    NSLog(@"Write to %@", absoluteURL);
+    *outError = 0;
+    return NO;
 }
 
 - (BOOL)readFromURL:(NSURL *)absoluteURL ofType:(NSString *)typeName error:(NSError **)outError {
@@ -435,12 +430,7 @@ static void *threadedPerformFindFunction(void *vParam) {
     return 0;
 }
 
-- (void)cancelFind:sender {
-    HFASSERT(sender == [operationView viewNamed:@"cancelButton"]);
-    HFASSERT(threadedOperation != NULL);
-}
-
-- (void)findNextBySearchingForwards:(BOOL)forwards {
+- (void)findNextBySearchingForwardsOLD:(BOOL)forwards {
     HFByteArray *needle = [[operationView viewNamed:@"searchField"] objectValue];
     if ([needle length] > 0) {
         HFByteArray *haystack = [controller byteArray];
@@ -448,8 +438,6 @@ static void *threadedPerformFindFunction(void *vParam) {
         HFProgressTracker *tracker = [[HFProgressTracker alloc] init];
         [tracker setMaxProgress:haystackLength];
         [tracker setProgressIndicator:[operationView viewNamed:@"progressIndicator"]];
-        [[operationView viewNamed:@"cancelButton"] setTarget:self];
-        [[operationView viewNamed:@"cancelButton"] setAction:@selector(cancelFind:)];
         [[operationView viewNamed:@"cancelButton"] setHidden:NO];
         /* We start looking at the max selection, and if we don't find anything, wrap around up to the min selection.  Counterintuitively, endLocation is less than startLocation. */
         unsigned long long startLocation = [controller maximumSelectionLocation];
@@ -459,6 +447,88 @@ static void *threadedPerformFindFunction(void *vParam) {
         HFRange searchRange2 = HFRangeMake(0, endLocation);
         [self _findBytes:needle inBytes:haystack range1:searchRange1 range2:searchRange2 forwards:forwards tracker:tracker];
         [tracker release];
+    }
+}
+
+- (id)threadedStartFind:(HFProgressTracker *)tracker {
+    HFASSERT(tracker != NULL);
+    unsigned long long searchResult;
+    NSDictionary *userInfo = [tracker userInfo];
+    HFByteArray *needle = [userInfo objectForKey:@"needle"];
+    HFByteArray *haystack = [userInfo objectForKey:@"haystack"];
+    BOOL forwards = [[userInfo objectForKey:@"forwards"] boolValue];
+    HFRange searchRange1 = [[userInfo objectForKey:@"range1"] HFRange];
+    HFRange searchRange2 = [[userInfo objectForKey:@"range2"] HFRange];
+    
+    [tracker setMaxProgress:[haystack length]];
+    
+    CFAbsoluteTime start = CFAbsoluteTimeGetCurrent();
+    searchResult = [haystack indexOfBytesEqualToBytes:needle inRange:searchRange1 searchingForwards:forwards trackingProgress:tracker];
+    CFAbsoluteTime end = CFAbsoluteTimeGetCurrent();
+    printf("Diff: %f\n", end - start);
+
+    if (searchResult == ULLONG_MAX) {
+        searchResult = [haystack indexOfBytesEqualToBytes:needle inRange:searchRange2 searchingForwards:forwards trackingProgress:tracker];
+    }
+    
+    if (tracker->cancelRequested) return nil;
+    else return [[NSNumber alloc] initWithUnsignedLongLong:searchResult]; //released by spinUntilFinished
+}
+
+- (void)findEnded:(NSNumber *)val {
+    NSLog(@"%llu", [val unsignedLongLongValue]);
+    NSDictionary *userInfo = [[operationView progressTracker] userInfo];
+    HFByteArray *needle = [userInfo objectForKey:@"needle"];
+    HFByteArray *haystack = [userInfo objectForKey:@"haystack"];
+    /* nil val means cancelled */
+    if (val) {
+        unsigned long long searchResult = [val unsignedLongLongValue];
+        if (searchResult != ULLONG_MAX) {
+                
+            HFRange resultRange = HFRangeMake(searchResult, [needle length]);
+            [controller setSelectedContentsRanges:[HFRangeWrapper withRanges:&resultRange count:1]];
+            [controller maximizeVisibilityOfContentsRange:resultRange];
+            [self restoreFirstResponderToSavedResponder];
+        }
+        else {
+            NSBeep();
+        }
+    }
+    [needle decrementChangeLockCounter];
+    [haystack decrementChangeLockCounter];
+
+}
+
+- (void)findNextBySearchingForwards:(BOOL)forwards {
+    HFByteArray *needle = [[operationView viewNamed:@"searchField"] objectValue];
+    if ([needle length] > 0) {
+        HFByteArray *haystack = [controller byteArray];
+        unsigned long long startLocation = [controller maximumSelectionLocation];
+        unsigned long long endLocation = [controller minimumSelectionLocation];
+        unsigned long long haystackLength = [haystack length];
+        HFASSERT(startLocation <= [haystack length]);
+        HFRange searchRange1 = HFRangeMake(startLocation, haystackLength - startLocation);
+        HFRange searchRange2 = HFRangeMake(0, endLocation);
+        
+        NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+            needle, @"needle",
+            haystack, @"haystack",
+            [NSNumber numberWithBool:forwards], @"forwards",
+            [HFRangeWrapper withRange:searchRange1], @"range1",
+            [HFRangeWrapper withRange:searchRange2], @"range2",
+            nil];
+        
+        struct HFDocumentOperationCallbacks callbacks = {
+            .target = self,
+            .userInfo = userInfo,
+            .startSelector = @selector(threadedStartFind:),
+            .endSelector = @selector(findEnded:)
+        };
+        
+        [needle incrementChangeLockCounter];
+        [haystack incrementChangeLockCounter];
+        
+        [operationView startOperationWithCallbacks:callbacks];
     }
 }
 

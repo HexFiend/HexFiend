@@ -98,15 +98,21 @@ stage2:
 @implementation HFByteArray (HFFindReplace)
 
 - (unsigned long long)_byteSearchForwardsBoyerMoore:(HFByteArray *)findBytes inRange:(const HFRange)range trackingProgress:(HFProgressTracker *)progressTracker {
+    unsigned long long result = ULLONG_MAX;
+    unsigned char *needle = NULL, *haystack = NULL;
+    unsigned long *match_jump = NULL;
     unsigned long long tempProgressValue = 0;
     volatile unsigned long long * const progressValuePtr = (progressTracker ? &progressTracker->currentProgress : &tempProgressValue);
+    volatile int *cancelRequested = &progressTracker->cancelRequested;
+    if (*cancelRequested) goto cancelled;
     unsigned long needle_length = ll2l([findBytes length]);
-    unsigned char *needle = malloc(needle_length);
+    needle = malloc(needle_length);
     if (! needle) {
 	NSLog(@"Out of memory allocating %lu bytes", needle_length);
 	return ULLONG_MAX;
     }
     [findBytes copyBytes:needle range:HFRangeMake(0, needle_length)];
+    if (*cancelRequested) goto cancelled;
 
     const unsigned long long total_haystack_length = range.length;
     unsigned long haystack_bytes_to_allocate;
@@ -124,7 +130,7 @@ stage2:
 	haystack_bytes_to_allocate = SEARCH_CHUNK_SIZE + needle_length_rounded_up_to_page_size;
     }
     
-    unsigned char *haystack = malloc(haystack_bytes_to_allocate);
+    haystack = malloc(haystack_bytes_to_allocate);
     if (! haystack) {
 	free(needle);
 	NSLog(@"Out of memory allocating %lu bytes", haystack_bytes_to_allocate);
@@ -133,7 +139,6 @@ stage2:
 
     /* generate the two Boyer-Moore auxiliary buffers */
     unsigned long char_jump[UCHAR_MAX + 1] = {0};
-    unsigned long *match_jump;
     match_jump = malloc(2 * (needle_length + 1) * sizeof *match_jump);
     if (! match_jump) {
 	NSLog(@"Out of memory allocating %u bytes", (2 * (needle_length + 1) * sizeof *match_jump));
@@ -141,6 +146,8 @@ stage2:
 	free(needle);
         return ULLONG_MAX;
     }
+    
+    if (*cancelRequested) goto cancelled;
     
     unsigned long *backup;
     unsigned long u, ua, ub;
@@ -182,8 +189,7 @@ stage2:
 	ub = backup[ub];
     }
     
-    
-    unsigned long long result;
+    if (*cancelRequested) goto cancelled;
     
     /* start the search */
     if (! search_with_chunks) {
@@ -205,6 +211,7 @@ stage2:
 	if (search_range.length > SEARCH_CHUNK_SIZE) search_range.length = SEARCH_CHUNK_SIZE;
 	[self copyBytes:base_read_in_location range:search_range];
 	unsigned char *search_result = boyer_moore_helper(base_read_in_location, needle, SEARCH_CHUNK_SIZE, needle_length, char_jump, match_jump);
+        if (*cancelRequested) goto cancelled;
         HFAtomicAdd64(search_range.length, (int64_t *)progressValuePtr);
 	if (search_result) result = search_range.location + (search_result - base_read_in_location);
 	else {
@@ -223,6 +230,7 @@ stage2:
 		if (copy_range.length) [self copyBytes:base_read_in_location range:copy_range];
 		
 		search_result = boyer_moore_helper(base_copy_location, needle, ll2l(search_range.length), needle_length, char_jump, match_jump);
+                if (*cancelRequested) goto cancelled;
                 HFAtomicAdd64(search_range.length, (int64_t *)progressValuePtr);
 		if (search_result) {
 		    result = search_range.location + (search_result - base_copy_location);
@@ -235,6 +243,8 @@ stage2:
 	    }
 	}
     }
+    
+cancelled:
     
     free(needle);
     free(haystack);

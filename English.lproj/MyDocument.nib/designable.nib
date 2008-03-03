@@ -2,10 +2,10 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.01">
 	<data>
 		<int key="IBDocument.SystemTarget">1050</int>
-		<string key="IBDocument.SystemVersion">9B13</string>
+		<string key="IBDocument.SystemVersion">9C31</string>
 		<string key="IBDocument.InterfaceBuilderVersion">629</string>
-		<string key="IBDocument.AppKitVersion">949</string>
-		<string key="IBDocument.HIToolboxVersion">343.00</string>
+		<string key="IBDocument.AppKitVersion">949.26</string>
+		<string key="IBDocument.HIToolboxVersion">352.00</string>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
 			<integer value="6"/>
@@ -17,7 +17,7 @@
 		<object class="NSMutableArray" key="IBDocument.RootObjects" id="580458321">
 			<bool key="EncodedWithXMLCoder">YES</bool>
 			<object class="NSCustomObject" id="512844837">
-				<string key="NSClassName" id="860046244">MyDocument</string>
+				<string key="NSClassName" id="645777214">MyDocument</string>
 			</object>
 			<object class="NSCustomObject" id="613418571">
 				<string key="NSClassName">FirstResponder</string>
@@ -26,7 +26,7 @@
 				<int key="NSWindowStyleMask">15</int>
 				<int key="NSWindowBacking">2</int>
 				<string key="NSWindowRect">{{167, 311}, {433, 420}}</string>
-				<int key="NSWTFlags">1886912512</int>
+				<int key="NSWTFlags">1886914560</int>
 				<string key="NSWindowTitle" id="679965480">Window</string>
 				<string key="NSWindowClass">NSWindow</string>
 				<string key="NSViewClass">View</string>
@@ -161,9 +161,9 @@
 					<reference ref="869232464"/>
 					<reference ref="869232464"/>
 					<reference ref="869232464"/>
-					<string>{{201, 387}, {433, 420}}</string>
+					<string id="569623313">{{201, 387}, {433, 420}}</string>
 					<integer value="1" id="9"/>
-					<string>{{201, 387}, {433, 420}}</string>
+					<reference ref="569623313"/>
 					<reference ref="9"/>
 					<string>{94, 86}</string>
 					<reference ref="869232464"/>
@@ -196,7 +196,7 @@
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
 				<bool key="EncodedWithXMLCoder">YES</bool>
 				<object class="IBPartialClassDescription">
-					<reference key="className" ref="860046244"/>
+					<reference key="className" ref="645777214"/>
 					<string key="superclassName">NSDocument</string>
 					<object class="NSMutableDictionary" key="actions">
 						<bool key="EncodedWithXMLCoder">YES</bool>
@@ -235,7 +235,7 @@
 					</object>
 					<object class="NSMutableDictionary" key="outlets">
 						<string key="NS.key.0">containerView</string>
-						<string key="NS.object.0">NSView</string>
+						<string key="NS.object.0">NSSplitView</string>
 					</object>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
@@ -266,7 +266,7 @@ AFJdTlNEZXN0aW5hdGlvblhOU1NvdXJjZVdOU0xhYmVsgB+AAoAKgB7cAFQADgBVAFYAVwBYAFkAWgBb
 AFwAXQBeAF8AYABhAGIAYwBkAGUAZgBnAGgAaQBqXE5TV2luZG93Vmlld1xOU1NjcmVlblJlY3RdTlNX
 aW5kb3dUaXRsZVlOU1dURmxhZ3NdTlNXaW5kb3dDbGFzc18QFk5TV2luZG93Q29udGVudE1pblNpemVc
 TlNXaW5kb3dSZWN0XxAPTlNXaW5kb3dCYWNraW5nXxARTlNXaW5kb3dTdHlsZU1hc2tZTlNNaW5TaXpl
-W05TVmlld0NsYXNzgBCAHYAbgAwScHgAAIANgA+ACxACEA+AHIAOXxAYe3sxNjcsIDMxMX0sIHs0MzMs
+W05TVmlld0NsYXNzgBCAHYAbgAwScHgIAIANgA+ACxACEA+AHIAOXxAYe3sxNjcsIDMxMX0sIHs0MzMs
 IDQyMH19VldpbmRvd1hOU1dpbmRvd1RWaWV3WHs5NCwgODZ91wBxAA4AcgBzAHQAbQB1AHYAdwB4AHkA
 egB2AHxfEA9OU05leHRSZXNwb25kZXJaTlNTdWJ2aWV3c1hOU3ZGbGFnc1tOU0ZyYW1lU2l6ZVtOU1N1
 cGVydmlld4ARgBqAEhEBAIAYgBGAGdIADgA+AEYAf4AXoQCAgBPXAHEADgBzAHQAbQAyAHUAXwCDAIQA
@@ -276,12 +276,12 @@ ZUFycmF5V05TQXJyYXnSADcAOACVAI6jAI4AjwA7XxAWe3swLCAwfSwgezE2ODAsIDEwMjh9fVl7OTQs
 IDEwOH3SADcAOACZAJqiAJoAO18QEE5TV2luZG93VGVtcGxhdGVYZGVsZWdhdGXSADcAOACdAJ6jAJ4A
 nwA7XxAUTlNOaWJPdXRsZXRDb25uZWN0b3JeTlNOaWJDb25uZWN0b3LUAA4ATABNAE4ATwBRAB8ApIAf
 gAqAAoAhVndpbmRvd9QADgBMAE0ATgBPAIAAHwCqgB+AE4ACgCNdY29udGFpbmVyVmlld9IADgA+AK0A
-roAnpABfAIAAUQCygBCAE4AKgCXSAA4AMgAzALWABIAmXU5TQXBwbGljYXRpb27SADcAOAC4AJOiAJMA
-O9IADgA+AK0Au4AnpABRAF8AHwAfgAqAEIACgALSAA4APgCtAMKAJ6UAXwAfAIAAUQCygBCAAoATgAqA
-JdIADgA+AK0AyoAnpQDLAMwAzQBiAM+AK4AsgC2ADIAuXENvbnRlbnQgVmlld1xGaWxlJ3MgT3duZXJa
-U3BsaXQgVmlld1tBcHBsaWNhdGlvbtIADgA+AK0A1oAnoNIADgA+AK0A2YAnoNIADgA+AK0A3IAnqACA
-AFEAsgBfAEgAHwBJAEqAE4AKgCWAEIAJgAKAIIAi0gAOAD4ArQDngCeoAOgA6QDqAOsA7ADtAO4A74Az
-gDSANYA2gDeAOIA5gDoSAAGGtRAFE//////////9EAYQERIAAYa6EBISAAGGttIADgA+AEYA+oAXoNIA
+roAnpACvAIAAUQBfgCWAE4AKgBDSAA4AMgAzALWABIAmXU5TQXBwbGljYXRpb27SADcAOAC4AJOiAJMA
+O9IADgA+AK0Au4AnpAAfAF8AHwBRgAKAEIACgArSAA4APgCtAMKAJ6UArwCAAFEAXwAfgCWAE4AKgBCA
+AtIADgA+AK0AyoAnpQDLAMwAYgDOAM+AK4AsgAyALYAuW0FwcGxpY2F0aW9uWlNwbGl0IFZpZXdcQ29u
+dGVudCBWaWV3XEZpbGUncyBPd25lctIADgA+AK0A1oAnoNIADgA+AK0A2YAnoNIADgA+AK0A3IAnqABK
+AK8AUQBIAIAAXwBJAB+AIoAlgAqACYATgBCAIIAC0gAOAD4ArQDngCeoAOgA6QDqAOsA7ADtAO4A74Az
+gDSANYA2gDeAOIA5gDoSAAGGthP//////////RAFEBESAAGGtRAGEBISAAGGutIADgA+AEYA+oAXoNIA
 DgA+AK0A/YAnoNIADgA+AK0BAIAnoNIANwA4AQIBA6IBAwA7Xk5TSUJPYmplY3REYXRhAAgAGQAiACcA
 MQA6AD8ARABSAFQAZgDnAO0BOAE/AUYBVAFmAYIBkAGcAagBtgHBAc8B6wH5AgwCHgI4AkICTwJRAlMC
 VQJXAlkCWwJdAl8CYQJjAmUCZwJpAmsCbQJvAnQCdgJ/AosCjQKPApoCowKsArcCvALLAtQC5wLwAvsC
@@ -289,9 +289,9 @@ VQJXAlkCWwJdAl8CYQJjAmUCZwJpAmsCbQJvAnQCdgJ/AosCjQKPApoCowKsArcCvALLAtQC5wLwAvsC
 OAREBEYESARKBEwEUQRTBFUEVwRZBFsEXQRfBHoEgQSKBI8EmAS1BMcE0gTbBOcE8wT1BPcE+QT8BP4F
 AAUCBQsFDQUQBRIFLwUxBTMFNgU4BToFPAU+BUkFVQVeBWcFdAV7BYcFkAWXBaYFrgW3Bb4F1wXhBeoF
 7wYCBgsGFAYbBjIGQQZSBlQGVgZYBloGYQZyBnQGdgZ4BnoGiAaRBpMGnAaeBqAGogakBq0GrwaxBr8G
-yAbNBtYG2AbhBuMG5QbnBukG8gb0Bv8HAQcDBwUHBwcJBxIHFAcfByEHIwclBycHKQc2B0MHTgdaB2MH
-ZQdmB28HcQdyB3sHfQeOB5AHkgeUB5YHmAeaB5wHngenB6kHuge8B74HwAfCB8QHxgfIB8oHzwfRB9oH
-3AfeB+MH5QfqB/MH9Qf2B/8IAQgCCAsIDQgOCBcIHAAAAAAAAAICAAAAAAAAAQQAAAAAAAAAAAAAAAAA
+yAbNBtYG2AbhBuMG5QbnBukG8gb0Bv8HAQcDBwUHBwcJBxIHFAcfByEHIwclBycHKQc1B0AHTQdaB2MH
+ZQdmB28HcQdyB3sHfQeOB5AHkgeUB5YHmAeaB5wHngenB6kHuge8B74HwAfCB8QHxgfIB8oHzwfYB9oH
+3AfhB+MH5QfqB/MH9Qf2B/8IAQgCCAsIDQgOCBcIHAAAAAAAAAICAAAAAAAAAQQAAAAAAAAAAAAAAAAA
 AAgrA</bytes>
 		</object>
 	</data>

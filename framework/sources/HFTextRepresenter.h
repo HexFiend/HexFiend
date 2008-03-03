@@ -12,6 +12,7 @@
 /* A representer that draws into a text view (e.g. the hex or ASCII view) */
 
 @interface HFTextRepresenter : HFRepresenter {
+    BOOL behavesAsTextField;
 }
 
 // HFTextRepresenter forwards these messages to its HFRepresenterTextView
@@ -30,5 +31,8 @@
 
 // Must be implemented by subclasses
 - (void)insertText:(NSString *)text;
+
+- (void)setBehavesAsTextField:(BOOL)val;
+- (BOOL)behavesAsTextField;
 
 @end

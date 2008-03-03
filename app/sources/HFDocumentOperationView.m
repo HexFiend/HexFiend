@@ -7,6 +7,8 @@
 //
 
 #import "HFDocumentOperationView.h"
+#import <HexFiend/HFProgressTracker.h>
+#include <pthread.h>
 
 static NSString *sNibName;
 
@@ -41,6 +43,7 @@ static NSString *sNibName;
 
 - (void)awakeFromNib {
     awokenFromNib = YES;
+    [super awakeFromNib];
 }
 
 - initWithFrame:(NSRect)frame {
@@ -48,13 +51,11 @@ static NSString *sNibName;
     defaultSize = frame.size;
     nibName = [sNibName copy];
     views = [[NSMutableDictionary alloc] init];
-    viewNamesToFrames = [[NSMutableDictionary alloc] init];
     return self;
 }
 
 - (void)dealloc {
     [views release];
-    [viewNamesToFrames release];
     [nibName release];
     [super dealloc];
 }
@@ -102,7 +103,6 @@ static NSString *sNibName;
         HFASSERT([view isKindOfClass:[NSView class]]);
         NSString *name = [self viewNameFromSelector:sel];
         [views setObject:view forKey:name];
-        [viewNamesToFrames setObject:[NSValue valueWithRect:[view frame]] forKey:name];
     }
     else {
         [NSException raise:NSInvalidArgumentException format:@"Can't forward %@", invocation];
@@ -121,21 +121,78 @@ static NSString *sNibName;
     return [super respondsToSelector:sel];
 }
 
-typedef struct { CGFloat offset; CGFloat length; } Position_t;
-
-- (void)resizeView:(NSView *)view withOriginalFrame:(NSRect)originalFrame intoBounds:(NSRect)bounds {
-    Position_t horizontal = computePosition(
+- (void)spinUntilFinished {
+    HFASSERT([self operationIsRunning]);
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:HFProgressTrackerDidFinishNotification object:tracker];
+    [tracker endTrackingProgress];
+    [[views objectForKey:@"cancelButton"] setHidden:YES];
+    [[views objectForKey:@"progressIndicator"] setHidden:YES];
+    void *result = nil;
+    int pthreadErr = pthread_join(thread, &result);
+    if (pthreadErr) [NSException raise:NSGenericException format:@"pthread_join returned %d", result];
+    [target performSelector:endSelector withObject:result];
+    [(id)result release];
+    [target release];
+    target = nil;
+    [tracker release];
+    tracker = nil;
+    thread = NULL;
+    [tracker release];
+    tracker = nil;
+    [self release];
 }
 
-- (void)resizeSubviewsWithOldSize:(NSSize)size {
-    NSRect bounds = [self bounds];
-    NSEnumerator *enumer = [views keyEnumerator];
-    NSString *key;
-    while ((key = [enumer nextObject])) {
-        NSView *view = [views objectForKey:key];
-        NSRect viewOriginalFrame = [[viewNamesToFrames objectForKey:key] rectValue];
-        [self resizeView:view withOriginalFrame:viewOriginalFrame intoBounds:bounds];
+- (void)didFinishNotification:(NSNotification *)note {
+    USE(note);
+    [self spinUntilFinished];
+}
+
+- (IBAction)cancelOperation:sender {
+    USE(sender);
+    if ([self operationIsRunning]) {
+        [tracker requestCancel:self];
+        [self spinUntilFinished];
     }
+}
+
+- (BOOL)operationIsRunning { return !! thread; }
+
+- (id)beginThread {
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    id result = [target performSelector:startSelector withObject:tracker];
+    [result retain];
+    [tracker noteFinished:self];
+    [pool release];
+    return result;
+}
+
+static void *startThread(void *self) {
+    return [(id)self beginThread];
+}
+
+- (void)startOperationWithCallbacks:(struct HFDocumentOperationCallbacks)callbacks {
+    HFASSERT(! [self operationIsRunning]);
+    NSProgressIndicator *progressIndicator = [views objectForKey:@"progressIndicator"];
+    startSelector = callbacks.startSelector;
+    endSelector = callbacks.endSelector;
+    target = [callbacks.target retain];
+    tracker = [[HFProgressTracker alloc] init];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didFinishNotification:) name:HFProgressTrackerDidFinishNotification object:tracker];
+    [tracker setUserInfo:callbacks.userInfo];
+    [progressIndicator setDoubleValue:0];
+    
+    [[views objectForKey:@"cancelButton"] setHidden:NO];
+    [progressIndicator setHidden:NO];
+    [tracker setProgressIndicator:progressIndicator];
+    [tracker beginTrackingProgress];
+    
+    [self retain];
+    int threadResult = pthread_create(&thread, NULL, startThread, self);
+    if (threadResult != 0) [NSException raise:NSGenericException format:@"pthread_create returned error %d", threadResult];
+}
+
+- (HFProgressTracker *)progressTracker {
+    return tracker;
 }
 
 @end

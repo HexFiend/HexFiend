@@ -20,10 +20,14 @@
     NSProgressIndicator *progressIndicator;
     NSTimer *progressTimer;
     double lastSetValue;
+    NSDictionary *userInfo;
 }
 
 - (void)setMaxProgress:(unsigned long long)max;
 - (unsigned long long)maxProgress;
+
+- (void)setUserInfo:(NSDictionary *)info;
+- (NSDictionary *)userInfo;
 
 - (void)setProgressIndicator:(NSProgressIndicator *)indicator;
 - (NSProgressIndicator *)progressIndicator;

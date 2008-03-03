@@ -176,4 +176,12 @@
     return result;
 }
 
+- (void)setBehavesAsTextField:(BOOL)val {
+    behavesAsTextField = val;
+}
+
+- (BOOL)behavesAsTextField {
+    return behavesAsTextField;
+}
+
 @end
