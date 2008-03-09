@@ -23,8 +23,6 @@
 - (void)insertByteArray:(HFByteArray *)array inRange:(HFRange)lrange;
 - (HFByteArray *)subarrayWithRange:(HFRange)range;
 
-//returns ULLONG_MAX if not found
-- (unsigned long long)indexOfBytesEqualToBytes:(HFByteArray *)findBytes inRange:(HFRange)range searchingForwards:(BOOL)forwards trackingProgress:(HFProgressTracker *)progressTracker;
 
 // set to a write lock - only reads are possible when the counter is incremented
 - (void)incrementChangeLockCounter;
@@ -34,4 +32,15 @@
 // change generation count.  Every change to the ByteArray increments this by one or more.
 - (NSUInteger)changeGenerationCount;
 
+
+//returns ULLONG_MAX if not found
+- (unsigned long long)indexOfBytesEqualToBytes:(HFByteArray *)findBytes inRange:(HFRange)range searchingForwards:(BOOL)forwards trackingProgress:(HFProgressTracker *)progressTracker;
+
 @end
+
+@interface HFByteArray (HFFileWriting)
+
+- (BOOL)writeToFile:(NSURL *)targetURL trackingProgress:(HFProgressTracker *)progressTracker error:(NSError **)error;
+
+@end
+

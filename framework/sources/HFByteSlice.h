@@ -8,6 +8,7 @@
 
 #import <Cocoa/Cocoa.h>
 
+@class HFFileReference;
 
 @interface HFByteSlice : NSObject {
 }
@@ -19,5 +20,9 @@
 /* Attempts to append a given byte slice and return a new one.  This does not modify the receiver or the slice parameter.  This may return nil if the appending cannot be done efficiently (in which case, it should be done at the byte array level).
 */
 - byteSliceByAppendingSlice:(HFByteSlice *)slice;
+
+/* Used for file writing.  For a given file reference, returns the range within the file that it is sourced from; if it is not sourced from this file, returns {ULLONG_MAX, ULLONG_MAX}
+*/
+- (HFRange)sourceRangeForFile:(HFFileReference *)reference;
 
 @end

@@ -147,7 +147,7 @@ static NSString *sNibName;
     [self spinUntilFinished];
 }
 
-- (IBAction)cancelOperation:sender {
+- (IBAction)cancelViewOperation:sender {
     USE(sender);
     if ([self operationIsRunning]) {
         [tracker requestCancel:self];

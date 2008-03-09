@@ -14,8 +14,10 @@
     dev_t device;
     unsigned long long fileLength;
     unsigned long long inode;
+    BOOL isWritable;
 }
 
+- initWritableWithPath:(NSString *)path;
 - initWithPath:(NSString *)path;
 - (void)close;
 

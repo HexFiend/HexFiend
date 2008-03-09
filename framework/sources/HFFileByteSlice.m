@@ -49,4 +49,14 @@
     [super dealloc];
 }
 
+- (HFRange)sourceRangeForFile:(HFFileReference *)reference {
+    REQUIRE_NOT_NULL(reference);
+    HFRange result = {ULLONG_MAX, ULLONG_MAX};
+    if ([fileReference isEqual:reference]) {
+        result.location = offset;
+        result.length = length;
+    }
+    return result;
+}
+
 @end

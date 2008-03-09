@@ -25,6 +25,11 @@
 		D01931200D5AEADA0019B3F7 /* HexFiendPluginLibrary.nib in Resources */ = {isa = PBXBuildFile; fileRef = D019311F0D5AEADA0019B3F7 /* HexFiendPluginLibrary.nib */; };
 		D019312E0D5AEBA10019B3F7 /* HFTextFieldIntegration.m in Sources */ = {isa = PBXBuildFile; fileRef = D019312D0D5AEBA10019B3F7 /* HFTextFieldIntegration.m */; };
 		D01931430D5AED230019B3F7 /* HFTextFieldInspector.m in Sources */ = {isa = PBXBuildFile; fileRef = D01931420D5AED230019B3F7 /* HFTextFieldInspector.m */; };
+		D019B8C00D83E8D5005789AA /* HFByteArray_FileWriting.m in Sources */ = {isa = PBXBuildFile; fileRef = D019B8BE0D83E8D5005789AA /* HFByteArray_FileWriting.m */; };
+		D019B9010D83FEB3005789AA /* HFByteSliceFileOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = D019B8FF0D83FEB3005789AA /* HFByteSliceFileOperation.h */; };
+		D019B9020D83FEB3005789AA /* HFByteSliceFileOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = D019B9000D83FEB3005789AA /* HFByteSliceFileOperation.m */; };
+		D019B9550D840FE8005789AA /* HFObjectGraph.h in Headers */ = {isa = PBXBuildFile; fileRef = D019B9530D840FE8005789AA /* HFObjectGraph.h */; };
+		D019B9560D840FE8005789AA /* HFObjectGraph.m in Sources */ = {isa = PBXBuildFile; fileRef = D019B9540D840FE8005789AA /* HFObjectGraph.m */; };
 		D01E7BE20CDC54CE00943F9E /* HexFiend.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = D01E7BB80CDC530C00943F9E /* HexFiend.framework */; };
 		D01E7BEC0CDC55D000943F9E /* HFController.h in Headers */ = {isa = PBXBuildFile; fileRef = D01E7BEA0CDC55D000943F9E /* HFController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D01E7BED0CDC55D000943F9E /* HFController.m in Sources */ = {isa = PBXBuildFile; fileRef = D01E7BEB0CDC55D000943F9E /* HFController.m */; };
@@ -71,6 +76,7 @@
 		D08F5E4F0CDE872C007EFFE8 /* HFByteArray.m in Sources */ = {isa = PBXBuildFile; fileRef = D08F5DF00CDE8223007EFFE8 /* HFByteArray.m */; };
 		D08F5E500CDE872C007EFFE8 /* HFByteSlice.m in Sources */ = {isa = PBXBuildFile; fileRef = D08F5E230CDE843E007EFFE8 /* HFByteSlice.m */; };
 		D08F5E510CDE872C007EFFE8 /* HFFullMemoryByteSlice.m in Sources */ = {isa = PBXBuildFile; fileRef = D08F5E380CDE84F4007EFFE8 /* HFFullMemoryByteSlice.m */; };
+		D0A229AE0D7D10240067A919 /* SaveBanner.nib in Resources */ = {isa = PBXBuildFile; fileRef = D0A229AC0D7D10240067A919 /* SaveBanner.nib */; };
 		D0A402F30D0D43F4006BC574 /* HFLayoutRepresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = D0A402F10D0D43F4006BC574 /* HFLayoutRepresenter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D0A402F40D0D43F4006BC574 /* HFLayoutRepresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = D0A402F20D0D43F4006BC574 /* HFLayoutRepresenter.m */; };
 		D0A435730CDC71DF000F7550 /* HFRepresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = D01E7C330CDC646800943F9E /* HFRepresenter.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -175,6 +181,11 @@
 		D019312D0D5AEBA10019B3F7 /* HFTextFieldIntegration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFTextFieldIntegration.m; path = ib_plugin/sources/HFTextFieldIntegration.m; sourceTree = "<group>"; };
 		D01931410D5AED230019B3F7 /* HFTextFieldInspector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFTextFieldInspector.h; path = ib_plugin/sources/HFTextFieldInspector.h; sourceTree = "<group>"; };
 		D01931420D5AED230019B3F7 /* HFTextFieldInspector.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFTextFieldInspector.m; path = ib_plugin/sources/HFTextFieldInspector.m; sourceTree = "<group>"; };
+		D019B8BE0D83E8D5005789AA /* HFByteArray_FileWriting.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFByteArray_FileWriting.m; path = framework/sources/HFByteArray_FileWriting.m; sourceTree = "<group>"; };
+		D019B8FF0D83FEB3005789AA /* HFByteSliceFileOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFByteSliceFileOperation.h; path = framework/sources/HFByteSliceFileOperation.h; sourceTree = "<group>"; };
+		D019B9000D83FEB3005789AA /* HFByteSliceFileOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFByteSliceFileOperation.m; path = framework/sources/HFByteSliceFileOperation.m; sourceTree = "<group>"; };
+		D019B9530D840FE8005789AA /* HFObjectGraph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFObjectGraph.h; path = framework/sources/HFObjectGraph.h; sourceTree = "<group>"; };
+		D019B9540D840FE8005789AA /* HFObjectGraph.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFObjectGraph.m; path = framework/sources/HFObjectGraph.m; sourceTree = "<group>"; };
 		D01E7BB80CDC530C00943F9E /* HexFiend.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = HexFiend.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D01E7BB90CDC530C00943F9E /* HexFiend_Framework-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "HexFiend_Framework-Info.plist"; path = "framework/HexFiend_Framework-Info.plist"; sourceTree = "<group>"; };
 		D01E7BC60CDC53B300943F9E /* HexFiend_2_Framework_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HexFiend_2_Framework_Prefix.pch; path = framework/sources/HexFiend_2_Framework_Prefix.pch; sourceTree = "<group>"; };
@@ -226,6 +237,7 @@
 		D08F5E230CDE843E007EFFE8 /* HFByteSlice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFByteSlice.m; path = framework/sources/HFByteSlice.m; sourceTree = "<group>"; };
 		D08F5E370CDE84F4007EFFE8 /* HFFullMemoryByteSlice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFFullMemoryByteSlice.h; path = framework/sources/HFFullMemoryByteSlice.h; sourceTree = "<group>"; };
 		D08F5E380CDE84F4007EFFE8 /* HFFullMemoryByteSlice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFFullMemoryByteSlice.m; path = framework/sources/HFFullMemoryByteSlice.m; sourceTree = "<group>"; };
+		D0A229AD0D7D10240067A919 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/SaveBanner.nib; sourceTree = "<group>"; };
 		D0A402F10D0D43F4006BC574 /* HFLayoutRepresenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFLayoutRepresenter.h; path = framework/sources/HFLayoutRepresenter.h; sourceTree = "<group>"; };
 		D0A402F20D0D43F4006BC574 /* HFLayoutRepresenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFLayoutRepresenter.m; path = framework/sources/HFLayoutRepresenter.m; sourceTree = "<group>"; };
 		D0A4360B0CDC7B65000F7550 /* HFRepresenter_Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFRepresenter_Internal.h; path = framework/sources/HFRepresenter_Internal.h; sourceTree = "<group>"; };
@@ -351,6 +363,7 @@
 				29B97318FDCFA39411CA2CEA /* MainMenu.nib */,
 				D01E7C280CDC59B700943F9E /* MyDocument.nib */,
 				D01773340D755551002E03DE /* FindReplaceBanner.nib */,
+				D0A229AC0D7D10240067A919 /* SaveBanner.nib */,
 				D00122F80D48AD8600540B10 /* FindReplace.nib */,
 			);
 			name = Resources;
@@ -387,6 +400,18 @@
 				D01931420D5AED230019B3F7 /* HFTextFieldInspector.m */,
 			);
 			name = "IB Plugin";
+			sourceTree = "<group>";
+		};
+		D019B8FB0D83FE8E005789AA /* File Writing */ = {
+			isa = PBXGroup;
+			children = (
+				D019B8BE0D83E8D5005789AA /* HFByteArray_FileWriting.m */,
+				D019B8FF0D83FEB3005789AA /* HFByteSliceFileOperation.h */,
+				D019B9000D83FEB3005789AA /* HFByteSliceFileOperation.m */,
+				D019B9530D840FE8005789AA /* HFObjectGraph.h */,
+				D019B9540D840FE8005789AA /* HFObjectGraph.m */,
+			);
+			name = "File Writing";
 			sourceTree = "<group>";
 		};
 		D01E7C010CDC569F00943F9E /* Resources */ = {
@@ -475,6 +500,7 @@
 				D026C7A70CDD4FD30082279E /* Representers */,
 				D08F5DF40CDE822D007EFFE8 /* ByteArray */,
 				D0370B130D69172E00B3A8C6 /* ByteSlice */,
+				D019B8FB0D83FE8E005789AA /* File Writing */,
 				D0422FDD0D62599300F8FCDE /* HFProgressTracker.h */,
 				D0422FDE0D62599300F8FCDE /* HFProgressTracker.m */,
 				D01E7BEA0CDC55D000943F9E /* HFController.h */,
@@ -608,6 +634,8 @@
 				D07150670D5510CE00573D7A /* HFTextField.h in Headers */,
 				D0422FDF0D62599300F8FCDE /* HFProgressTracker.h in Headers */,
 				D0370A3F0D68307A00B3A8C6 /* HFSharedMemoryByteSlice.h in Headers */,
+				D019B9010D83FEB3005789AA /* HFByteSliceFileOperation.h in Headers */,
+				D019B9550D840FE8005789AA /* HFObjectGraph.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -702,6 +730,7 @@
 				D01773360D755551002E03DE /* FindReplaceBanner.nib in Resources */,
 				D01772B90D72E024002E03DE /* HFCancelOn.tiff in Resources */,
 				D01772BA0D72E024002E03DE /* HFCancelOff.tiff in Resources */,
+				D0A229AE0D7D10240067A919 /* SaveBanner.nib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -795,6 +824,9 @@
 				D07150680D5510CE00573D7A /* HFTextField.m in Sources */,
 				D0422FE00D62599300F8FCDE /* HFProgressTracker.m in Sources */,
 				D0370A400D68307A00B3A8C6 /* HFSharedMemoryByteSlice.m in Sources */,
+				D019B8C00D83E8D5005789AA /* HFByteArray_FileWriting.m in Sources */,
+				D019B9020D83FEB3005789AA /* HFByteSliceFileOperation.m in Sources */,
+				D019B9560D840FE8005789AA /* HFObjectGraph.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -852,6 +884,14 @@
 				D01E7C290CDC59B700943F9E /* English */,
 			);
 			name = MyDocument.nib;
+			sourceTree = "<group>";
+		};
+		D0A229AC0D7D10240067A919 /* SaveBanner.nib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D0A229AD0D7D10240067A919 /* English */,
+			);
+			name = SaveBanner.nib;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */

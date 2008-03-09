@@ -50,7 +50,13 @@
 }
 
 - byteSliceByAppendingSlice:(HFByteSlice *)slice {
+    USE(slice);
     return nil;
+}
+
+- (HFRange)sourceRangeForFile:(HFFileReference *)reference {
+    USE(reference);
+    return HFRangeMake(ULLONG_MAX, ULLONG_MAX);
 }
 
 @end

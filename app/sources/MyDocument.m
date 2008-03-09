@@ -147,9 +147,71 @@ static BOOL isRunningOnLeopardOrLater(void) {
     [super dealloc];
 }
 
-- (BOOL)writeToURL:(NSURL *)absoluteURL ofType:(NSString *)typeName forSaveOperation:(NSSaveOperationType)saveOperation originalContentsURL:(NSURL *)absoluteOriginalContentsURL error:(NSError **)outError {
-    NSLog(@"Write to %@", absoluteURL);
-    *outError = 0;
+- (void)prepareBannerWithView:(NSView *)newSubview {
+    if (! bannerView) bannerView = [[NSView alloc] initWithFrame:NSMakeRect(0, 0, 1, 1)];
+    NSRect containerBounds = [containerView bounds];
+    NSRect bannerFrame = NSMakeRect(NSMinX(containerBounds), NSMaxY(containerBounds), NSWidth(containerBounds), 0);
+    [bannerView setFrame:bannerFrame];
+    [containerView addSubview:bannerView positioned:NSWindowBelow relativeTo:[layoutRepresenter view]];
+    bannerStartTime = 0;
+    bannerIsShown = YES;
+    bannerGrowing = YES;
+    if (isRunningOnLeopardOrLater()) {
+        if (! bannerDividerThumb) bannerDividerThumb = [[HFBannerDividerThumb alloc] initWithFrame:NSMakeRect(0, 0, 14, 14)];
+        [bannerDividerThumb setAutoresizingMask:0];
+        [bannerDividerThumb setFrameOrigin:NSMakePoint(3, 0)];
+        [bannerDividerThumb removeFromSuperview];
+        [bannerView addSubview:bannerDividerThumb];
+    }
+    if (newSubview) {
+        if (bannerDividerThumb) [bannerView addSubview:newSubview positioned:NSWindowBelow relativeTo:bannerDividerThumb];
+        else [bannerView addSubview:newSubview];
+    }
+    [NSTimer scheduledTimerWithTimeInterval:1. / 60. target:self selector:@selector(animateBanner:) userInfo:nil repeats:YES];
+}
+
+- (BOOL)writeSafelyToURL:(NSURL *)inAbsoluteURL ofType:(NSString *)inTypeName forSaveOperation:(NSSaveOperationType)inSaveOperation error:(NSError **)outError {
+    USE(inSaveOperation);
+    USE(inTypeName);
+    *outError = NULL;
+    
+    if (operationView) return NO;
+    
+    operationView = [[HFDocumentOperationView viewWithNibNamed:@"SaveBanner"] retain];
+    [operationView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
+    [operationView setFrameSize:NSMakeSize(NSWidth([containerView frame]), 0)];
+    [operationView setFrameOrigin:NSZeroPoint];
+    
+    bannerTargetHeight = [operationView defaultHeight];
+    
+    [self prepareBannerWithView:operationView];
+    struct HFDocumentOperationCallbacks callbacks = {
+        .target = self,
+        .userInfo = [NSDictionary dictionaryWithObjectsAndKeys:inAbsoluteURL, @"targetURL", nil],
+        .startSelector = @selector(threadedStartSave:),
+        .endSelector = @selector(endSave:)
+    };
+
+    [[controller byteArray] incrementChangeLockCounter];
+        
+    [operationView startOperationWithCallbacks:callbacks];
+    
+    while ([operationView operationIsRunning]) {
+        NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+        @try {  
+            NSEvent *event = [NSApp nextEventMatchingMask:NSAnyEventMask untilDate:[NSDate distantFuture] inMode:NSDefaultRunLoopMode dequeue:YES];
+            if (event) [NSApp sendEvent:event];
+        }
+        @catch (NSException *localException) {
+            NSLog(@"Exception thrown during save: %@", localException);
+        }
+        @finally {
+            [pool drain];
+        }
+    }
+    
+    [[controller byteArray] decrementChangeLockCounter];
+    
     return NO;
 }
 
@@ -270,6 +332,7 @@ static BOOL isRunningOnLeopardOrLater(void) {
 }
 
 - (void)hideBannerFirstThenDo:(SEL)command {
+    USE(command);
     HFASSERT(bannerIsShown);
     bannerGrowing = NO;
     bannerStartTime = 0;
@@ -281,29 +344,6 @@ static BOOL isRunningOnLeopardOrLater(void) {
     }
     [NSTimer scheduledTimerWithTimeInterval:1. / 60. target:self selector:@selector(animateBanner:) userInfo:nil repeats:YES];
     bannerTargetHeight = NSHeight([bannerView frame]);
-}
-
-- (void)prepareBannerWithView:(NSView *)newSubview {
-    if (! bannerView) bannerView = [[NSView alloc] initWithFrame:NSMakeRect(0, 0, 1, 1)];
-    NSRect containerBounds = [containerView bounds];
-    NSRect bannerFrame = NSMakeRect(NSMinX(containerBounds), NSMaxY(containerBounds), NSWidth(containerBounds), 0);
-    [bannerView setFrame:bannerFrame];
-    [containerView addSubview:bannerView positioned:NSWindowBelow relativeTo:[layoutRepresenter view]];
-    bannerStartTime = 0;
-    bannerIsShown = YES;
-    bannerGrowing = YES;
-    if (isRunningOnLeopardOrLater()) {
-        if (! bannerDividerThumb) bannerDividerThumb = [[HFBannerDividerThumb alloc] initWithFrame:NSMakeRect(0, 0, 14, 14)];
-        [bannerDividerThumb setAutoresizingMask:0];
-        [bannerDividerThumb setFrameOrigin:NSMakePoint(3, 0)];
-        [bannerDividerThumb removeFromSuperview];
-        [bannerView addSubview:bannerDividerThumb];
-    }
-    if (newSubview) {
-        if (bannerDividerThumb) [bannerView addSubview:newSubview positioned:NSWindowBelow relativeTo:bannerDividerThumb];
-        else [bannerView addSubview:newSubview];
-    }
-    [NSTimer scheduledTimerWithTimeInterval:1. / 60. target:self selector:@selector(animateBanner:) userInfo:nil repeats:YES];
 }
 
 - (void)showFindPanel:(NSMenuItem *)item {
@@ -343,111 +383,17 @@ static BOOL isRunningOnLeopardOrLater(void) {
     [self hideBannerFirstThenDo:NULL];
 }
 
-typedef struct {
-    HFByteArray *needle;
-    HFByteArray *haystack;
-    HFRange range1;
-    HFRange range2;
-    HFProgressTracker *tracker;
-    BOOL forwards;
-    
-    unsigned long long result;
-} FindBuffer_t;
-
-
-static void *threadedPerformFindFunction(void *vParam) {
-    FindBuffer_t *findBufferPtr = vParam;
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init]; //necessary so the collector knows about this thread
-    
-    unsigned long long searchResult;
-    CFAbsoluteTime start = CFAbsoluteTimeGetCurrent();
-    searchResult = [findBufferPtr->haystack indexOfBytesEqualToBytes:findBufferPtr->needle inRange:findBufferPtr->range1 searchingForwards:findBufferPtr->forwards trackingProgress:findBufferPtr->tracker];
-    CFAbsoluteTime end = CFAbsoluteTimeGetCurrent();
-    printf("Diff: %f\n", end - start);
-    if (searchResult == ULLONG_MAX) {
-        searchResult = [findBufferPtr->haystack indexOfBytesEqualToBytes:findBufferPtr->needle inRange:findBufferPtr->range2 searchingForwards:findBufferPtr->forwards trackingProgress:findBufferPtr->tracker];
-    }
-    findBufferPtr->result = searchResult;
-    [findBufferPtr->tracker noteFinished:nil];
-    [pool release];
-    return findBufferPtr;
+- (id)threadedStartSave:(HFProgressTracker *)tracker {
+    HFByteArray *byteArray = [controller byteArray];
+    NSDictionary *userInfo = [tracker userInfo];
+    NSURL *targetURL = [userInfo objectForKey:@"targetURL"];
+    NSError *error = nil;
+    BOOL result = [byteArray writeToFile:targetURL trackingProgress:tracker error:&error];
+    return nil;
 }
 
-- (void)_findThreadFinished:(NSNotification *)note {
-    NSLog(@"Finished %p", threadedOperation);
-    USE(note);
-    HFASSERT(threadedOperation != NULL);
-    FindBuffer_t *findBufferPtr = NULL;
-    unsigned long long searchResult;
-    int joinResult;
-    joinResult = pthread_join(threadedOperation, (void **)&findBufferPtr);
-    threadedOperation = NULL;
-    HFASSERT(joinResult == 0);
-    HFASSERT(findBufferPtr != NULL);
-    if (! findBufferPtr->tracker->cancelRequested) {
-        searchResult = findBufferPtr->result;
-        if (searchResult != ULLONG_MAX) {
-            HFRange resultRange = HFRangeMake(searchResult, [findBufferPtr->needle length]);
-            [controller setSelectedContentsRanges:[HFRangeWrapper withRanges:&resultRange count:1]];
-            [controller maximizeVisibilityOfContentsRange:resultRange];
-            [self restoreFirstResponderToSavedResponder];
-        }
-        else {
-            NSBeep();
-        }
-    }
-    HFASSERT([note object] == findBufferPtr->tracker);
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:HFProgressTrackerDidFinishNotification object:findBufferPtr->tracker];
-    [findBufferPtr->tracker endTrackingProgress];
-    [[operationView viewNamed:@"cancelButton"] setHidden:YES];
-    [findBufferPtr->needle decrementChangeLockCounter];
-    [findBufferPtr->haystack decrementChangeLockCounter];
-    [findBufferPtr->needle release];
-    [findBufferPtr->haystack release];
-    [findBufferPtr->tracker release];
-    free(findBufferPtr);
-}
-
-- (unsigned long long)_findBytes:(HFByteArray *)needle inBytes:(HFByteArray *)haystack range1:(HFRange)range1 range2:(HFRange)range2 forwards:(BOOL)forwards tracker:(HFProgressTracker *)tracker {
-    NSLog(@"%s %p", _cmd, threadedOperation);
-    HFASSERT(threadedOperation == NULL);
-    const FindBuffer_t findBuffer = {.needle = [needle retain], .haystack = [haystack retain], .range1 = range1, .range2 = range2, .forwards = forwards, .tracker = [tracker retain]};
-    int threadResult;
-    
-    FindBuffer_t *findBufferPtr = malloc(sizeof *findBufferPtr);
-    if (! findBufferPtr) [NSException raise:NSMallocException format:@"Unable to malloc %lu bytes", (unsigned long)sizeof *findBufferPtr];
-    *findBufferPtr = findBuffer;
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_findThreadFinished:) name:HFProgressTrackerDidFinishNotification object:tracker];
-    [tracker beginTrackingProgress];
-    [findBufferPtr->needle incrementChangeLockCounter];
-    [findBufferPtr->haystack incrementChangeLockCounter];
-    
-    threadResult = pthread_create(&threadedOperation, NULL, threadedPerformFindFunction, findBufferPtr);
-    if (threadResult != 0) [NSException raise:NSGenericException format:@"pthread_create returned error %d", threadResult];
-    NSLog(@"Made operation %p", threadedOperation);
-    
-    return 0;
-}
-
-- (void)findNextBySearchingForwardsOLD:(BOOL)forwards {
-    HFByteArray *needle = [[operationView viewNamed:@"searchField"] objectValue];
-    if ([needle length] > 0) {
-        HFByteArray *haystack = [controller byteArray];
-        unsigned long long haystackLength = [haystack length];
-        HFProgressTracker *tracker = [[HFProgressTracker alloc] init];
-        [tracker setMaxProgress:haystackLength];
-        [tracker setProgressIndicator:[operationView viewNamed:@"progressIndicator"]];
-        [[operationView viewNamed:@"cancelButton"] setHidden:NO];
-        /* We start looking at the max selection, and if we don't find anything, wrap around up to the min selection.  Counterintuitively, endLocation is less than startLocation. */
-        unsigned long long startLocation = [controller maximumSelectionLocation];
-        unsigned long long endLocation = [controller minimumSelectionLocation];
-        HFASSERT(startLocation <= haystackLength);
-        HFRange searchRange1 = HFRangeMake(startLocation, haystackLength - startLocation);
-        HFRange searchRange2 = HFRangeMake(0, endLocation);
-        [self _findBytes:needle inBytes:haystack range1:searchRange1 range2:searchRange2 forwards:forwards tracker:tracker];
-        [tracker release];
-    }
+- (void)endSave:(id)result {
+    NSLog(@"End save %@", result);
 }
 
 - (id)threadedStartFind:(HFProgressTracker *)tracker {

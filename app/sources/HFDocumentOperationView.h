@@ -12,7 +12,7 @@
 
 struct HFDocumentOperationCallbacks {
     id target;
-    id userInfo; // set on the HFProgressTracker
+    NSDictionary *userInfo; // set on the HFProgressTracker
     SEL startSelector; // - (void)beginThread:(HFProgressTracker *)tracker; delivered on child thread
     SEL endSelector; // - (void)threadDidEnd:(id)result; delivered on main thread
 };
@@ -33,7 +33,7 @@ struct HFDocumentOperationCallbacks {
 - viewNamed:(NSString *)name;
 - (CGFloat)defaultHeight;
 
-- (IBAction)cancelOperation:sender;
+- (IBAction)cancelViewOperation:sender;
 - (BOOL)operationIsRunning;
 
 - (void)startOperationWithCallbacks:(struct HFDocumentOperationCallbacks)callbacks;

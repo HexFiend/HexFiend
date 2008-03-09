@@ -16,11 +16,16 @@
 
 @implementation HFFileReference
 
-- initWithPath:(NSString *)path {
+- sharedInitWithPath:(NSString *)path {
     int result;
     REQUIRE_NOT_NULL(path);
     const char* p = [path fileSystemRepresentation];
-    fileDescriptor = open(p, O_RDONLY, 0);
+    if (isWritable) {
+        fileDescriptor = open(p, O_RDWR | O_CREAT, 0);
+    }
+    else {
+        fileDescriptor = open(p, O_RDONLY, 0);
+    }
     if (fileDescriptor < 0) {
         [NSException raise:NSGenericException format:@"Unable to open file %@. %s.", path, strerror(errno)];
     }
@@ -38,6 +43,20 @@
     fileLength = sb.st_size;
     inode = sb.st_ino;
     HFSetFDShouldCache(fileDescriptor, NO);
+    return self;
+}
+
+- initWithPath:(NSString *)path {
+    [super init];
+    isWritable = NO;
+    [self sharedInitWithPath:path];
+    return self;
+}
+
+- initWritableWithPath:(NSString *)path {
+    [super init];
+    isWritable = YES;
+    [self sharedInitWithPath:path];
     return self;
 }
 
@@ -73,6 +92,15 @@
 
 - (unsigned long long)length {
     return fileLength;
+}
+
+- (NSUInteger)hash {
+    return (NSUInteger)inode;
+}
+
+- (BOOL)isEqual:(HFFileReference *)ref {
+    if (! [ref isKindOfClass:[HFFileReference class]]) return NO;
+    return ref->device == device && ref->inode == inode;
 }
 
 @end
