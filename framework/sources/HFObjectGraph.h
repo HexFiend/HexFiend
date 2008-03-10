@@ -15,5 +15,9 @@
 
 - (void)addDependency:depend forObject:obj;
 - (NSArray *)dependenciesForObject:obj;
+- (BOOL)object:obj hasDependency:depend;
+
+/* Returns an NSArray of NSArrays of objects representing the strongly connected components of the graph, via Tarjan's algorithm. */
+- (NSArray *)stronglyConnectedComponentsForObjects:(NSArray *)objects;
 
 @end

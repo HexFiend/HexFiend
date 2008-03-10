@@ -24,6 +24,8 @@ static inline BOOL invalidRange(HFRange range) { return range.location == ULLONG
         Internal (source data is in the file)
         
     2. Compute a graph representing the dependencies in the internal slices, if any.
+    
+    3. Compute the strongly connected components of this graph.
 */
 
 static void computeFileOperations(HFByteArray *self, HFFileReference *reference, NSMutableArray *identity, NSMutableArray *external, NSMutableArray *internal) {
@@ -148,11 +150,13 @@ static void verifyDependencies(HFByteArray *self, HFObjectGraph *graph, NSArray 
 #endif
 
     /* Step 3 */
+    NSArray *stronglyConnectedComponents = [graph stronglyConnectedComponentsForObjects:internal];
+    
     
 
     [graph release];
     
-    [reference close];    
+    [reference close];
     [reference release];
     return YES;
 }
