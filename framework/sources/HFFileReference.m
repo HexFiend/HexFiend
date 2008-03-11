@@ -73,6 +73,21 @@
     }    
 }
 
+- (int)writeBytes:(unsigned char *)buff length:(NSUInteger)length to:(unsigned long long)offset {
+    HFASSERT(isWritable);
+    HFASSERT(fileDescriptor >= 0);
+    if (! length) return 0;
+    REQUIRE_NOT_NULL(buff);
+    HFASSERT(offset <= fileLength);
+    HFASSERT(length <= LONG_MAX);
+    HFASSERT(offset <= LLONG_MAX);
+    int err = 0;
+    ssize_t result = pwrite(fileDescriptor, buff, (size_t)length, (off_t)offset);
+    HFASSERT(result == -1 || result == (ssize_t)length);
+    if (result < 0) err = errno;
+    return err;
+}
+
 - (void)close {
     if (fileDescriptor >= 0) {
         close(fileDescriptor);
@@ -92,6 +107,22 @@
 
 - (unsigned long long)length {
     return fileLength;
+}
+
+- (int)setLength:(unsigned long long)length {
+    HFASSERT(isWritable);
+    HFASSERT(fileDescriptor >= 0);
+    HFASSERT(length <= LLONG_MAX);
+    int err = 0, result;
+    result = ftruncate(fileDescriptor, (off_t)length);
+    HFASSERT(result <= 0);
+    if (result < 0) {
+        err = errno;
+    }
+    else {
+        fileLength = length;
+    }
+    return err;
 }
 
 - (NSUInteger)hash {

@@ -49,6 +49,10 @@
     [super dealloc];
 }
 
+- (BOOL)isSourcedFromFile {
+    return YES;
+}
+
 - (HFRange)sourceRangeForFile:(HFFileReference *)reference {
     REQUIRE_NOT_NULL(reference);
     HFRange result = {ULLONG_MAX, ULLONG_MAX};

@@ -22,7 +22,11 @@
 - (void)close;
 
 - (void)readBytes:(unsigned char *)buff length:(NSUInteger)length from:(unsigned long long)pos;
+- (int)writeBytes:(unsigned char *)buff length:(NSUInteger)length to:(unsigned long long)offset;
 
 - (unsigned long long)length;
+
+/* Changes the length via ftruncate; returns errno. */
+- (int)setLength:(unsigned long long)length;
 
 @end

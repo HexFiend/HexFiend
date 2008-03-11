@@ -23,6 +23,7 @@
 
 /* Used for file writing.  For a given file reference, returns the range within the file that it is sourced from; if it is not sourced from this file, returns {ULLONG_MAX, ULLONG_MAX}
 */
+- (BOOL)isSourcedFromFile;
 - (HFRange)sourceRangeForFile:(HFFileReference *)reference;
 
 @end

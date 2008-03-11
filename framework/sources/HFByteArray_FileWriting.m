@@ -22,10 +22,14 @@ static inline BOOL invalidRange(HFRange range) { return range.location == ULLONG
         Identity (references data in the file that is not moving - nothing to do)
         External (source data is in memory or in another file)
         Internal (source data is in the file)
-        
-    2. Compute a graph representing the dependencies in the internal slices, if any.
     
-    3. Compute the strongly connected components of this graph.
+    2. Estimate cost
+    
+    3. Compute a graph representing the dependencies in the internal slices, if any.
+    
+    4. Compute the strongly connected components of this graph.
+    
+    6. Write the external reps
 */
 
 static void computeFileOperations(HFByteArray *self, HFFileReference *reference, NSMutableArray *identity, NSMutableArray *external, NSMutableArray *internal) {
@@ -133,32 +137,78 @@ static void verifyDependencies(HFByteArray *self, HFObjectGraph *graph, NSArray 
 - (BOOL)writeToFile:(NSURL *)targetURL trackingProgress:(HFProgressTracker *)progressTracker error:(NSError **)error {
     REQUIRE_NOT_NULL(targetURL);
     HFASSERT([targetURL isFileURL]);
+    unsigned char *auxBuffer = NULL;
+    unsigned long long totalCost = 0;
+    unsigned long long startLength, endLength;
     HFFileReference *reference = [[HFFileReference alloc] initWritableWithPath:[targetURL path]];
     HFASSERT(reference != NULL);
+    startLength = [reference length];
+    endLength = [self length];
+    BOOL result = NO;
+
+    if (endLength > startLength) {
+        /* If we're extending the file, make it longer so we can detect failure before trying to write anything. */
+        int err = [reference setLength:endLength];
+        if (err != 0) {
+            
+            goto bail;
+        }
+    }
 
     /* Step 1 */
     NSMutableArray *identity = [NSMutableArray array];
     NSMutableArray *external = [NSMutableArray array];
     NSMutableArray *internal = [NSMutableArray array];
+    NSMutableArray *allOperations;
     computeFileOperations(self, reference, identity, external, internal);
+    
+    /* Create an array of all the operations */
+    allOperations = [NSMutableArray arrayWithCapacity:[identity count] + [external count] + [internal count]];
+    [allOperations addObjectsFromArray:internal];
+    [allOperations addObjectsFromArray:external];
+    [allOperations addObjectsFromArray:identity];
 
     /* Step 2 */
+    /* Estimate the cost of each of our ops */
+    FOREACH(HFByteSliceFileOperation *, op, allOperations) {
+        totalCost += [op costToWrite];
+    }
+    [progressTracker setMaxProgress:totalCost];
+
+
+    /* Step 3 */
     HFObjectGraph *graph = [[HFObjectGraph alloc] init];
     computeDependencies(self, graph, internal);
 #if ! NDEBUG
     verifyDependencies(self, graph, internal);
 #endif
 
-    /* Step 3 */
+    /* Step 4 */
     NSArray *stronglyConnectedComponents = [graph stronglyConnectedComponentsForObjects:internal];
     
+    /* Step 5 */
     
+    /* Step 6 - write external ops */
+    if ([external count] > 0) {
+        size_t malloc_good_size(size_t);
+        NSUInteger auxBufferSize = malloc_good_size(1024 * 1024 * 1);
+        auxBuffer = malloc(auxBufferSize);
+        if (! auxBuffer) goto bail;
+        FOREACH(HFByteSliceFileOperation *, op2, external) {
+            if (! [op writeToFile:reference trackingProgress:progressTracker error:error withAuxilliaryBuffer:auxBuffer ofLength:auxBufferSize]) {
+                goto bail;
+            }
+        }
+    }
 
+bail:;
+
+    free(auxBuffer);
     [graph release];
     
     [reference close];
     [reference release];
-    return YES;
+    return result;
 }
 
 

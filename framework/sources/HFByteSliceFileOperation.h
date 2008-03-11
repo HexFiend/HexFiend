@@ -8,9 +8,11 @@
 
 #import <Cocoa/Cocoa.h>
 
-@class HFByteSlice;
+@class HFByteSlice, HFFileReference, HFProgressTracker;
 
 @interface HFByteSliceFileOperation : NSObject {
+    NSMutableArray *remainingTargetRanges;
+    HFRange targetRange;
 }
 
 + identityOperationWithByteSlice:(HFByteSlice *)slice targetRange:(HFRange)range;
@@ -19,5 +21,8 @@
 
 - (HFRange)sourceRange;
 - (HFRange)targetRange;
+
+- (unsigned long long)costToWrite;
+- (BOOL)writeToFile:(HFFileReference *)file trackingProgress:(HFProgressTracker *)progressTracker error:(NSError **)error withAuxilliaryBuffer:(unsigned char *)buffer ofLength:(NSUInteger)buffLen;
 
 @end

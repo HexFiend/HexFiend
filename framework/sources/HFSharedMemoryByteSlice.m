@@ -176,7 +176,7 @@
                 }
                 if (amountToShiftIntoSharedDataFromNewSlice > 0) {
                     HFASSERT(amountToShiftIntoSharedDataFromNewSlice <= [slice length]);
-                    NSUInteger dataLength = offset + length + amountToShiftIntoSharedDataFromNewSlice;
+                    NSUInteger dataLength = offset + length + amountToShiftIntoSharedDataFromTail;
                     HFASSERT([newData length] == dataLength);
                     [newData setLength:dataLength + amountToShiftIntoSharedDataFromNewSlice];
                     [slice copyBytes:[newData mutableBytes] + dataLength range:HFRangeMake(0, amountToShiftIntoSharedDataFromNewSlice)];

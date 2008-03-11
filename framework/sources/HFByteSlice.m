@@ -54,6 +54,10 @@
     return nil;
 }
 
+- (BOOL)isSourcedFromFile {
+    return NO;
+}
+
 - (HFRange)sourceRangeForFile:(HFFileReference *)reference {
     USE(reference);
     return HFRangeMake(ULLONG_MAX, ULLONG_MAX);
