@@ -180,6 +180,7 @@
                     HFASSERT([newData length] == dataLength);
                     [newData setLength:dataLength + amountToShiftIntoSharedDataFromNewSlice];
                     [slice copyBytes:[newData mutableBytes] + dataLength range:HFRangeMake(0, amountToShiftIntoSharedDataFromNewSlice)];
+                    newDataLength += amountToShiftIntoSharedDataFromNewSlice;
                 }
                 
                 /* We've updated our data; now figure out the tail */

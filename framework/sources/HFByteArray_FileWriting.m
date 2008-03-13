@@ -195,7 +195,7 @@ static void verifyDependencies(HFByteArray *self, HFObjectGraph *graph, NSArray 
         auxBuffer = malloc(auxBufferSize);
         if (! auxBuffer) goto bail;
         FOREACH(HFByteSliceFileOperation *, op2, external) {
-            if (! [op writeToFile:reference trackingProgress:progressTracker error:error withAuxilliaryBuffer:auxBuffer ofLength:auxBufferSize]) {
+            if (! [op2 writeToFile:reference trackingProgress:progressTracker error:error withAuxilliaryBuffer:auxBuffer ofLength:auxBufferSize]) {
                 goto bail;
             }
         }

@@ -9,7 +9,7 @@
 	};
 	29B97313FDCFA39411CA2CEA /* Project object */ = {
 		activeArchitecture = i386;
-		activeBuildConfigurationName = Debug;
+		activeBuildConfigurationName = Release;
 		activeExecutable = D0560B180CDC41D7009D2484 /* HexFiend_2 */;
 		activeTarget = 8D1107260486CEB800E47090 /* HexFiend_2 */;
 		addToTargets = (
@@ -263,6 +263,12 @@
 			D019BB090D869E86005789AA /* PBXTextBookmark */ = D019BB090D869E86005789AA /* PBXTextBookmark */;
 			D019BB0A0D869E86005789AA /* PBXTextBookmark */ = D019BB0A0D869E86005789AA /* PBXTextBookmark */;
 			D019BB150D869F85005789AA /* PBXTextBookmark */ = D019BB150D869F85005789AA /* PBXTextBookmark */;
+			D019BB160D8902A8005789AA /* PBXTextBookmark */ = D019BB160D8902A8005789AA /* PBXTextBookmark */;
+			D019BB170D8902AF005789AA /* PBXTextBookmark */ = D019BB170D8902AF005789AA /* PBXTextBookmark */;
+			D019BB250D890822005789AA /* PBXTextBookmark */ = D019BB250D890822005789AA /* PBXTextBookmark */;
+			D019BB290D89082C005789AA /* PBXTextBookmark */ = D019BB290D89082C005789AA /* PBXTextBookmark */;
+			D019BB300D8922B3005789AA /* PBXTextBookmark */ = D019BB300D8922B3005789AA /* PBXTextBookmark */;
+			D019BB310D8922B3005789AA /* PBXTextBookmark */ = D019BB310D8922B3005789AA /* PBXTextBookmark */;
 		};
 		sourceControlManager = D0560B290CDC41DC009D2484 /* Source Control */;
 		userBuildSettings = {
@@ -472,9 +478,9 @@
 	};
 	D019B8BE0D83E8D5005789AA /* HFByteArray_FileWriting.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1036, 3220}}";
-			sepNavSelRange = "{7641, 70}";
-			sepNavVisRange = "{7195, 854}";
+			sepNavIntBoundsRect = "{{0, 0}, {1036, 3234}}";
+			sepNavSelRange = "{7873, 0}";
+			sepNavVisRange = "{7214, 842}";
 		};
 	};
 	D019B8D10D83EF6A005789AA /* PBXTextBookmark */ = {
@@ -510,7 +516,7 @@
 		fRef = D019B8BE0D83E8D5005789AA /* HFByteArray_FileWriting.m */;
 		name = "HFByteArray_FileWriting.m: 34";
 		rLen = 0;
-		rLoc = 8133;
+		rLoc = 8134;
 		rType = 0;
 		vrLen = 784;
 		vrLoc = 350;
@@ -600,7 +606,7 @@
 		fRef = D019B8BE0D83E8D5005789AA /* HFByteArray_FileWriting.m */;
 		name = "HFByteArray_FileWriting.m: 34";
 		rLen = 0;
-		rLoc = 8133;
+		rLoc = 8134;
 		rType = 0;
 		vrLen = 784;
 		vrLoc = 350;
@@ -624,9 +630,9 @@
 	};
 	D019B9000D83FEB3005789AA /* HFByteSliceFileOperation.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1078, 3178}}";
-			sepNavSelRange = "{2973, 0}";
-			sepNavVisRange = "{1141, 2126}";
+			sepNavIntBoundsRect = "{{0, 0}, {1036, 2912}}";
+			sepNavSelRange = "{6215, 5}";
+			sepNavVisRange = "{5812, 408}";
 		};
 	};
 	D019B9090D8405D9005789AA /* PBXTextBookmark */ = {
@@ -634,7 +640,7 @@
 		fRef = D019B8BE0D83E8D5005789AA /* HFByteArray_FileWriting.m */;
 		name = "HFByteArray_FileWriting.m: 34";
 		rLen = 0;
-		rLoc = 8133;
+		rLoc = 8134;
 		rType = 0;
 		vrLen = 784;
 		vrLoc = 350;
@@ -652,7 +658,7 @@
 		fRef = D019B8BE0D83E8D5005789AA /* HFByteArray_FileWriting.m */;
 		name = "HFByteArray_FileWriting.m: 34";
 		rLen = 0;
-		rLoc = 8133;
+		rLoc = 8134;
 		rType = 0;
 		vrLen = 784;
 		vrLoc = 350;
@@ -748,7 +754,7 @@
 		fRef = D019B8BE0D83E8D5005789AA /* HFByteArray_FileWriting.m */;
 		name = "HFByteArray_FileWriting.m: 36";
 		rLen = 0;
-		rLoc = 8133;
+		rLoc = 8134;
 		rType = 0;
 		vrLen = 614;
 		vrLoc = 1043;
@@ -776,7 +782,7 @@
 		fRef = D019B8BE0D83E8D5005789AA /* HFByteArray_FileWriting.m */;
 		name = "HFByteArray_FileWriting.m: 41";
 		rLen = 0;
-		rLoc = 8133;
+		rLoc = 8134;
 		rType = 0;
 		vrLen = 1046;
 		vrLoc = 966;
@@ -796,7 +802,7 @@
 		fRef = D019B8BE0D83E8D5005789AA /* HFByteArray_FileWriting.m */;
 		name = "HFByteArray_FileWriting.m: 43";
 		rLen = 0;
-		rLoc = 8133;
+		rLoc = 8134;
 		rType = 0;
 		vrLen = 808;
 		vrLoc = 1349;
@@ -822,7 +828,7 @@
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {1078, 3836}}";
 			sepNavSelRange = "{4393, 0}";
-			sepNavVisRange = "{2078, 2644}";
+			sepNavVisRange = "{2078, 2552}";
 		};
 	};
 	D019B9A40D8417BB005789AA /* PBXTextBookmark */ = {
@@ -830,7 +836,7 @@
 		fRef = D019B8BE0D83E8D5005789AA /* HFByteArray_FileWriting.m */;
 		name = "HFByteArray_FileWriting.m: 74";
 		rLen = 0;
-		rLoc = 8133;
+		rLoc = 8134;
 		rType = 0;
 		vrLen = 1250;
 		vrLoc = 376;
@@ -850,7 +856,7 @@
 		fRef = D019B8BE0D83E8D5005789AA /* HFByteArray_FileWriting.m */;
 		name = "HFByteArray_FileWriting.m: 125";
 		rLen = 0;
-		rLoc = 8133;
+		rLoc = 8134;
 		rType = 0;
 		vrLen = 1250;
 		vrLoc = 376;
@@ -870,7 +876,7 @@
 		fRef = D019B8BE0D83E8D5005789AA /* HFByteArray_FileWriting.m */;
 		name = "HFByteArray_FileWriting.m: 155";
 		rLen = 0;
-		rLoc = 8133;
+		rLoc = 8134;
 		rType = 0;
 		vrLen = 1250;
 		vrLoc = 376;
@@ -890,7 +896,7 @@
 		fRef = D019B8BE0D83E8D5005789AA /* HFByteArray_FileWriting.m */;
 		name = "HFByteArray_FileWriting.m: 155";
 		rLen = 0;
-		rLoc = 8133;
+		rLoc = 8134;
 		rType = 0;
 		vrLen = 1250;
 		vrLoc = 376;
@@ -910,7 +916,7 @@
 		fRef = D019B8BE0D83E8D5005789AA /* HFByteArray_FileWriting.m */;
 		name = "HFByteArray_FileWriting.m: 155";
 		rLen = 0;
-		rLoc = 8133;
+		rLoc = 8134;
 		rType = 0;
 		vrLen = 1250;
 		vrLoc = 376;
@@ -930,7 +936,7 @@
 		fRef = D019B8BE0D83E8D5005789AA /* HFByteArray_FileWriting.m */;
 		name = "HFByteArray_FileWriting.m: 155";
 		rLen = 0;
-		rLoc = 8133;
+		rLoc = 8134;
 		rType = 0;
 		vrLen = 1250;
 		vrLoc = 376;
@@ -1493,6 +1499,61 @@
 		vrLen = 408;
 		vrLoc = 5812;
 	};
+	D019BB160D8902A8005789AA /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D019B9000D83FEB3005789AA /* HFByteSliceFileOperation.m */;
+		name = "HFByteSliceFileOperation.m: 201";
+		rLen = 5;
+		rLoc = 6215;
+		rType = 0;
+		vrLen = 408;
+		vrLoc = 5812;
+	};
+	D019BB170D8902AF005789AA /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D019B9000D83FEB3005789AA /* HFByteSliceFileOperation.m */;
+		name = "HFByteSliceFileOperation.m: 201";
+		rLen = 5;
+		rLoc = 6215;
+		rType = 0;
+		vrLen = 408;
+		vrLoc = 5812;
+	};
+	D019BB250D890822005789AA /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D041D3DC0D3CA70600C28345 /* HFTavlTreeByteArray.m */;
+		rLen = 12;
+		rLoc = 9152;
+		rType = 0;
+	};
+	D019BB290D89082C005789AA /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D041D3DC0D3CA70600C28345 /* HFTavlTreeByteArray.m */;
+		name = "HFTavlTreeByteArray.m: 275";
+		rLen = 12;
+		rLoc = 9152;
+		rType = 0;
+		vrLen = 169;
+		vrLoc = 9091;
+	};
+	D019BB300D8922B3005789AA /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		comments = "error: 'op' undeclared (first use in this function)";
+		fRef = D019B8BE0D83E8D5005789AA /* HFByteArray_FileWriting.m */;
+		rLen = 1;
+		rLoc = 197;
+		rType = 1;
+	};
+	D019BB310D8922B3005789AA /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D019B8BE0D83E8D5005789AA /* HFByteArray_FileWriting.m */;
+		name = "HFByteArray_FileWriting.m: 198";
+		rLen = 0;
+		rLoc = 7873;
+		rType = 0;
+		vrLen = 785;
+		vrLoc = 7214;
+	};
 	D01E7BB70CDC530C00943F9E /* HexFiend_Framework */ = {
 		activeExec = 0;
 	};
@@ -1624,9 +1685,9 @@
 	};
 	D0370A3E0D68307A00B3A8C6 /* HFSharedMemoryByteSlice.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1209, 2674}}";
-			sepNavSelRange = "{6812, 0}";
-			sepNavVisRange = "{6514, 1567}";
+			sepNavIntBoundsRect = "{{0, 0}, {1209, 2702}}";
+			sepNavSelRange = "{9150, 0}";
+			sepNavVisRange = "{8314, 1245}";
 		};
 	};
 	D0370B390D69197E00B3A8C6 /* _objc_builtin_selectors */ = {
@@ -1640,7 +1701,7 @@
 		hitCount = 0;
 		ignoreCount = 0;
 		location = "";
-		modificationTime = 226926309.803523;
+		modificationTime = 227082983.929162;
 		state = 1;
 		symbolName = _objc_builtin_selectors;
 	};
@@ -1667,28 +1728,28 @@
 	};
 	D041D3DC0D3CA70600C28345 /* HFTavlTreeByteArray.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1209, 7434}}";
-			sepNavSelRange = "{12704, 0}";
-			sepNavVisRange = "{11773, 615}";
+			sepNavIntBoundsRect = "{{0, 0}, {1078, 7392}}";
+			sepNavSelRange = "{16115, 16}";
+			sepNavVisRange = "{14631, 1730}";
 		};
 	};
 	D041D3FC0D3DED7200C28345 /* HFByteArrayPiece.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1078, 836}}";
-			sepNavSelRange = "{504, 9}";
+			sepNavIntBoundsRect = "{{0, 0}, {1078, 816}}";
+			sepNavSelRange = "{305, 0}";
 			sepNavVisRange = "{0, 943}";
 		};
 	};
 	D041D3FD0D3DED7200C28345 /* HFByteArrayPiece.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1209, 1190}}";
-			sepNavSelRange = "{2116, 0}";
-			sepNavVisRange = "{1781, 643}";
+			sepNavIntBoundsRect = "{{0, 0}, {1078, 1288}}";
+			sepNavSelRange = "{227, 33}";
+			sepNavVisRange = "{0, 1577}";
 		};
 	};
 	D0422FDD0D62599300F8FCDE /* HFProgressTracker.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1078, 839}}";
+			sepNavIntBoundsRect = "{{0, 0}, {1078, 816}}";
 			sepNavSelRange = "{679, 15}";
 			sepNavVisRange = "{0, 1439}";
 		};
@@ -1697,7 +1758,7 @@
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {1078, 1316}}";
 			sepNavSelRange = "{282, 34}";
-			sepNavVisRange = "{0, 1603}";
+			sepNavVisRange = "{0, 1578}";
 		};
 	};
 	D04327A30CF081CD00C14250 /* HFFunctions_Private.h */ = {
@@ -1718,7 +1779,7 @@
 		hitCount = 0;
 		ignoreCount = 0;
 		location = CoreFoundation;
-		modificationTime = 226926468.040016;
+		modificationTime = 227083306.036936;
 		state = 1;
 		symbolName = objc_exception_throw;
 	};
@@ -1739,7 +1800,7 @@
 			/Users/peter/SearchTest.bin,
 		);
 		autoAttachOnCrash = 1;
-		breakpointsEnabled = 1;
+		breakpointsEnabled = 0;
 		configStateDict = {
 		};
 		customDataFormattersEnabled = 1;
@@ -1787,7 +1848,7 @@
 		hitCount = 0;
 		ignoreCount = 0;
 		location = libobjc.A.dylib;
-		modificationTime = 226926309.803511;
+		modificationTime = 227082983.929151;
 		state = 1;
 		symbolName = objc_exception_throw;
 	};
@@ -1816,7 +1877,7 @@
 		hitCount = 0;
 		ignoreCount = 0;
 		location = libobjc.A.dylib;
-		modificationTime = 226926309.803517;
+		modificationTime = 227082983.929157;
 		state = 1;
 		symbolName = objc_exception_throw;
 	};
@@ -1844,8 +1905,8 @@
 	D0826EAA0D4855900006FB7D /* HFFileReference.m */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {1078, 1876}}";
-			sepNavSelRange = "{2075, 98}";
-			sepNavVisRange = "{1227, 1670}";
+			sepNavSelRange = "{1965, 0}";
+			sepNavVisRange = "{1227, 1668}";
 		};
 	};
 	D0826EEF0D487A000006FB7D /* HFFileByteSlice.h */ = {
@@ -1952,7 +2013,7 @@
 		ignoreCount = 0;
 		lineNumber = 4025;
 		location = AppKit;
-		modificationTime = 226926309.803215;
+		modificationTime = 227082983.928886;
 		state = 1;
 	};
 	D0A402F10D0D43F4006BC574 /* HFLayoutRepresenter.h */ = {

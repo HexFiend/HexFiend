@@ -520,18 +520,19 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
+		<string>D019BB380D892345005789AA</string>
 		<string>D019BA3A0D8559DA005789AA</string>
 		<string>D019BA3B0D8559DA005789AA</string>
 		<string>1C530D57069F1CE1000CFCEE</string>
+		<string>1C78EAAD065D492600B07095</string>
 		<string>1CD10A99069EF8BA00B06720</string>
+		<string>D0560B2F0CDC421E009D2484</string>
 		<string>D019B9EB0D853E6B005789AA</string>
 		<string>D019BA760D863545005789AA</string>
 		<string>D019BAA70D864FDA005789AA</string>
 		<string>/Users/peter/Bell/HexFiend2/trunk/HexFiend_2/HexFiend_2.xcodeproj</string>
-		<string>D019BA980D864473005789AA</string>
-		<string>D0560B2F0CDC421E009D2484</string>
-		<string>D019BAD40D86756E005789AA</string>
-		<string>1C78EAAD065D492600B07095</string>
+		<string>D019BB360D8922C6005789AA</string>
+		<string>D019BB390D892345005789AA</string>
 	</array>
 	<key>WindowString</key>
 	<string>589 231 1102 797 0 0 1680 1028 </string>
@@ -555,7 +556,7 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>1CD0528F0623707200166675</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>HFByteSliceFileOperation.m</string>
+								<string>&lt;No Editor&gt;</string>
 								<key>StatusBarVisibility</key>
 								<true/>
 							</dict>
@@ -626,7 +627,7 @@
 			<key>WindowToolGUID</key>
 			<string>D0560B2F0CDC421E009D2484</string>
 			<key>WindowToolIsVisible</key>
-			<true/>
+			<false/>
 		</dict>
 		<dict>
 			<key>FirstTimeWindowDisplayed</key>
@@ -907,7 +908,7 @@
 			<key>WindowToolGUID</key>
 			<string>1C78EAAD065D492600B07095</string>
 			<key>WindowToolIsVisible</key>
-			<true/>
+			<false/>
 		</dict>
 		<dict>
 			<key>Identifier</key>
