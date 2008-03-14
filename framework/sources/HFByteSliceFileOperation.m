@@ -72,6 +72,7 @@ enum {
     REQUIRE_NOT_NULL(file);
     BOOL result = NO;
     const HFRange range = [self targetRange];
+	HFASSERT(range.length == [slice length]);
     const BOOL isSourcedFromFile = [slice isSourcedFromFile];
     unsigned long long tempProgress = 0;
     volatile unsigned long long *progressPtr = progressTracker ? &progressTracker->currentProgress : &tempProgress;
@@ -86,6 +87,7 @@ enum {
         if (err) {
             goto bail;
         }
+		written += amountToWrite;
     }
     result = YES;
 bail:;

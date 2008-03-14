@@ -13,12 +13,14 @@
 
 - init {
     [super init];
-    graph = (__strong CFMutableDictionaryRef)CFMakeCollectable(CFDictionaryCreateMutable(NULL, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+    graph = (__strong CFMutableDictionaryRef)CFMakeCollectable(CFDictionaryCreateMutable(NULL, 0, NULL, &kCFTypeDictionaryValueCallBacks));
+	containedObjects = [[NSMutableArray alloc] init];
     return self;
 }
 
 - (void)dealloc {
     CFRelease(graph);
+	[containedObjects release];
     [super dealloc];
 }
 
@@ -30,6 +32,7 @@
         dependencies = [[NSMutableArray alloc] init];
         CFDictionarySetValue(graph, obj, dependencies);
         [dependencies release];
+		[containedObjects addObject:obj];
     }
     HFASSERT([dependencies indexOfObjectIdenticalTo:depend] == NSNotFound);
     [dependencies addObject:depend];
@@ -125,7 +128,10 @@ static BOOL naiveSearch(HFObjectGraph *self, id start, id goal, CFMutableSetRef 
     if (start == goal) return YES;
     if (CFSetContainsValue(visited, start)) return NO;
     CFSetAddValue(visited, start);
-    FOREACH(id, dependency, [self dependenciesForObject:start]) {
+	NSArray *dependencies = (NSArray *)CFDictionaryGetValue(self->graph, start);
+	NSUInteger i, max = [dependencies count];
+	for (i=0; i < max; i++) {
+		id dependency = [dependencies objectAtIndex:i];
         if (naiveSearch(self, dependency, goal, visited)) return YES;
     }
     return NO;

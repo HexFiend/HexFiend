@@ -53,6 +53,7 @@ static void computeFileOperations(HFByteArray *self, HFFileReference *reference,
                 [internal addObject:[HFByteSliceFileOperation internalOperationWithByteSlice:slice sourceRange:sourceRange targetRange:targetRange]];
             }
         }
+		currentOffset += length;
     }
     
 }
@@ -200,7 +201,8 @@ static void verifyDependencies(HFByteArray *self, HFObjectGraph *graph, NSArray 
             }
         }
     }
-
+	
+	result = YES;
 bail:;
 
     free(auxBuffer);

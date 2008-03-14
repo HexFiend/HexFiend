@@ -21,7 +21,7 @@
     REQUIRE_NOT_NULL(path);
     const char* p = [path fileSystemRepresentation];
     if (isWritable) {
-        fileDescriptor = open(p, O_RDWR | O_CREAT, 0);
+        fileDescriptor = open(p, O_RDWR | O_CREAT, 0744);
     }
     else {
         fileDescriptor = open(p, O_RDONLY, 0);

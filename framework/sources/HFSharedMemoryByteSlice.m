@@ -97,6 +97,8 @@
 }
 
 - (HFByteSlice *)subsliceWithRange:(HFRange)lrange {
+	if (HFRangeEqualsRange(lrange, HFRangeMake(0, HFSum(length, inlineTailLength)))) return [[self retain] autorelease];
+	
     HFByteSlice *result;
     HFASSERT(lrange.length > 0);
     HFASSERT(HFSum(length, inlineTailLength) >= HFMaxRange(lrange));
@@ -117,7 +119,7 @@
         HFASSERT(resultData != NULL);
         resultOffset = offset + dataRangeToCopy.location;
         resultLength = dataRangeToCopy.length;
-        HFASSERT(HFSum(resultOffset, resultLength) <= length);
+        HFASSERT(HFSum(resultOffset, resultLength) <= [data length]);
     }
     if (tailRangeToCopy.length > 0) {
         tail = inlineTail + tailRangeToCopy.location - length;

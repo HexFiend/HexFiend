@@ -15,6 +15,12 @@
 #import <HexFiend/HFControllerCoalescedUndo.h>
 #import <HexFiend/HFSharedMemoryByteSlice.h>
 
+#if ! NDEBUG
+#import <HexFiend/HFFileReference.h>
+#import <HexFiend/HFFileByteSlice.h>
+#import <HexFiend/HFTestHashing.h>
+#endif
+
 /* Used for the anchor range and location */
 #define NO_SELECTION ULLONG_MAX
 
@@ -1446,9 +1452,9 @@ static NSData *randomDataOfLength(NSUInteger length) {
     return [NSData dataWithBytesNoCopy:buff length:length freeWhenDone:YES];
 }
 
-static NSUInteger random_upto(NSUInteger val) {
+static NSUInteger random_upto(unsigned long long val) {
     if (val == 0) return 0;
-    else return random() % val;
+    else return ll2l(random() % val);
 }
 
 #define DEBUG if (should_debug)  
@@ -1600,6 +1606,68 @@ static NSUInteger random_upto(NSUInteger val) {
     DEBUG printf("%s\n", [[second description] UTF8String]);
 }
 
++ (void)_testFileWriting {
+	const BOOL should_debug = NO;
+	NSAutoreleasePool* pool=[[NSAutoreleasePool alloc] init];
+	NSData *data = randomDataOfLength(1 << 20);
+	NSURL *fileURL = [NSURL fileURLWithPath:@"/tmp/HexFiendTestFile.data"];
+	NSURL *asideFileURL = [NSURL fileURLWithPath:@"/tmp/HexFiendTestFile_External.data"];
+	if (! [data writeToURL:fileURL atomically:NO]) {
+		[NSException raise:NSGenericException format:@"Unable to write test data to %@", fileURL];
+	}
+	HFFileReference *ref = [[[HFFileReference alloc] initWithPath:[fileURL path]] autorelease];
+	HFTEST([ref length] == [data length]);
+	
+	HFByteSlice *slice = [[[HFFileByteSlice alloc] initWithFile:ref] autorelease];
+	
+	HFByteArray *array = [[[HFTavlTreeByteArray alloc] init] autorelease];
+	[array insertByteSlice:slice inRange:HFRangeMake(0, 0)];
+	HFTEST([HFHashByteArray(array) isEqual:HFHashFile(fileURL)]);
+	
+    unsigned i, op, opCount = 5000;
+	unsigned long long expectedLength = [data length];
+	for (i=0; i < opCount; i++) {
+		HFTEST([array length] == expectedLength);
+		HFRange replacementRange;
+		replacementRange.location = random_upto(expectedLength);
+		replacementRange.length = random_upto(expectedLength - replacementRange.location);
+		switch ((op = (random() % 3))) {
+			case 0: {
+				/* insert */
+				HFByteSlice *slice = [[[HFSharedMemoryByteSlice alloc] initWithUnsharedData:randomDataOfLength(random_upto(1000))] autorelease];
+				[array insertByteSlice:slice inRange:replacementRange];
+				expectedLength = expectedLength + [slice length] - replacementRange.length;
+				DEBUG printf("%u inserting %llu in {%llu, %llu}\n", i, [slice length], replacementRange.location, replacementRange.length);
+				break;
+			}
+			case 1: {
+				/* delete */
+				[array deleteBytesInRange:replacementRange];
+				expectedLength -= replacementRange.length;
+				DEBUG printf("%u deleting in {%llu, %llu}\n", i, replacementRange.location, replacementRange.length);
+				break;
+			}
+			case 2: {
+				/* transfer/delete */
+				HFRange sourceRange;
+				sourceRange.location = random_upto(expectedLength);
+				sourceRange.length = random_upto(expectedLength - sourceRange.location);
+				HFByteArray *subarray = [array subarrayWithRange:sourceRange];
+				[array insertByteArray:subarray inRange:replacementRange];
+				expectedLength = expectedLength + sourceRange.length - replacementRange.length;
+				DEBUG printf("%u moving {%llu, %llu} to {%llu, %llu}\n", i, sourceRange.location, sourceRange.length, replacementRange.location, replacementRange.length);
+				break;
+			}
+		}
+	}
+	
+	HFTEST([array writeToFile:asideFileURL trackingProgress:NULL error:NULL]);
+	HFTEST([HFHashByteArray(array) isEqual:HFHashFile(asideFileURL)]);
+	
+	[[NSFileManager defaultManager] removeFileAtPath:[fileURL path] handler:nil];
+	[pool release];
+}
+
 static void exception_thrown(const char *methodName, NSException *exception) {
     printf("Test %s threw exception %s\n", methodName, [[exception description] UTF8String]);
     puts("I'm bailing out.  Better luck next time.");
@@ -1615,6 +1683,8 @@ static void exception_thrown(const char *methodName, NSException *exception) {
     @catch (NSException *localException) { exception_thrown("_testTextInsertion", localException); }
     @try { [NSClassFromString(@"HFObjectGraph") self]; }
     @catch (NSException *localException) { exception_thrown("HFObjectGraph", localException); }    
+	@try { [self _testFileWriting]; }
+	@catch (NSException *localException) { exception_thrown("_testFileWriting", localException); }    
 
 }
 #endif

@@ -101,6 +101,8 @@
 		D0CDB7550CE735590084926B /* HFRepresenterStringEncodingTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = D0CDB7530CE735590084926B /* HFRepresenterStringEncodingTextView.m */; };
 		D0CDB77D0CE737130084926B /* HFStringEncodingTextRepresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = D0CDB77B0CE737130084926B /* HFStringEncodingTextRepresenter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D0CDB77E0CE737130084926B /* HFStringEncodingTextRepresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = D0CDB77C0CE737130084926B /* HFStringEncodingTextRepresenter.m */; };
+		D0D149310D8A37580018296B /* HFTestHashing.h in Headers */ = {isa = PBXBuildFile; fileRef = D0D1492F0D8A37580018296B /* HFTestHashing.h */; };
+		D0D149320D8A37580018296B /* HFTestHashing.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D149300D8A37580018296B /* HFTestHashing.m */; };
 		D0D178A80D44482000684270 /* tavl_del.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D1789A0D44482000684270 /* tavl_del.m */; };
 		D0D178A90D44482000684270 /* tavl_gdt.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D1789B0D44482000684270 /* tavl_gdt.m */; };
 		D0D178AA0D44482000684270 /* tavl_ins.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D1789C0D44482000684270 /* tavl_ins.m */; };
@@ -262,6 +264,8 @@
 		D0CDB7530CE735590084926B /* HFRepresenterStringEncodingTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFRepresenterStringEncodingTextView.m; path = framework/sources/HFRepresenterStringEncodingTextView.m; sourceTree = "<group>"; };
 		D0CDB77B0CE737130084926B /* HFStringEncodingTextRepresenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFStringEncodingTextRepresenter.h; path = framework/sources/HFStringEncodingTextRepresenter.h; sourceTree = "<group>"; };
 		D0CDB77C0CE737130084926B /* HFStringEncodingTextRepresenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFStringEncodingTextRepresenter.m; path = framework/sources/HFStringEncodingTextRepresenter.m; sourceTree = "<group>"; };
+		D0D1492F0D8A37580018296B /* HFTestHashing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFTestHashing.h; path = framework/sources/HFTestHashing.h; sourceTree = "<group>"; };
+		D0D149300D8A37580018296B /* HFTestHashing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFTestHashing.m; path = framework/sources/HFTestHashing.m; sourceTree = "<group>"; };
 		D0D1789A0D44482000684270 /* tavl_del.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = tavl_del.m; sourceTree = "<group>"; };
 		D0D1789B0D44482000684270 /* tavl_gdt.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = tavl_gdt.m; sourceTree = "<group>"; };
 		D0D1789C0D44482000684270 /* tavl_ins.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = tavl_ins.m; sourceTree = "<group>"; };
@@ -505,6 +509,8 @@
 				D0422FDE0D62599300F8FCDE /* HFProgressTracker.m */,
 				D01E7BEA0CDC55D000943F9E /* HFController.h */,
 				D01E7BEB0CDC55D000943F9E /* HFController.m */,
+				D0D1492F0D8A37580018296B /* HFTestHashing.h */,
+				D0D149300D8A37580018296B /* HFTestHashing.m */,
 				D07150650D5510CE00573D7A /* HFTextField.h */,
 				D07150660D5510CE00573D7A /* HFTextField.m */,
 				D041D1BE0D397E1A00C28345 /* HFPasteboardOwner.h */,
@@ -636,6 +642,7 @@
 				D0370A3F0D68307A00B3A8C6 /* HFSharedMemoryByteSlice.h in Headers */,
 				D019B9010D83FEB3005789AA /* HFByteSliceFileOperation.h in Headers */,
 				D019B9550D840FE8005789AA /* HFObjectGraph.h in Headers */,
+				D0D149310D8A37580018296B /* HFTestHashing.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -827,6 +834,7 @@
 				D019B8C00D83E8D5005789AA /* HFByteArray_FileWriting.m in Sources */,
 				D019B9020D83FEB3005789AA /* HFByteSliceFileOperation.m in Sources */,
 				D019B9560D840FE8005789AA /* HFObjectGraph.m in Sources */,
+				D0D149320D8A37580018296B /* HFTestHashing.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1067,6 +1075,7 @@
 					Foundation,
 					"-framework",
 					AppKit,
+					"-lcrypto",
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = HexFiend;
