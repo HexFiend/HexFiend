@@ -1624,14 +1624,14 @@ static NSUInteger random_upto(unsigned long long val) {
 	[array insertByteSlice:slice inRange:HFRangeMake(0, 0)];
 	HFTEST([HFHashByteArray(array) isEqual:HFHashFile(fileURL)]);
 	
-    unsigned i, op, opCount = 5000;
+    unsigned i, opCount = 0;5000;
 	unsigned long long expectedLength = [data length];
 	for (i=0; i < opCount; i++) {
 		HFTEST([array length] == expectedLength);
 		HFRange replacementRange;
 		replacementRange.location = random_upto(expectedLength);
 		replacementRange.length = random_upto(expectedLength - replacementRange.location);
-		switch ((op = (random() % 3))) {
+		switch (2){//(op = (random() % 8))) {
 			case 0: {
 				/* insert */
 				HFByteSlice *slice = [[[HFSharedMemoryByteSlice alloc] initWithUnsharedData:randomDataOfLength(random_upto(1000))] autorelease];
@@ -1647,7 +1647,7 @@ static NSUInteger random_upto(unsigned long long val) {
 				DEBUG printf("%u deleting in {%llu, %llu}\n", i, replacementRange.location, replacementRange.length);
 				break;
 			}
-			case 2: {
+			default: {
 				/* transfer/delete */
 				HFRange sourceRange;
 				sourceRange.location = random_upto(expectedLength);
@@ -1661,8 +1661,15 @@ static NSUInteger random_upto(unsigned long long val) {
 		}
 	}
 	
+	[array insertByteSlice:[[[HFSharedMemoryByteSlice alloc] initWithUnsharedData:[NSData dataWithBytes:"Z" length:1]] autorelease] inRange:HFRangeMake(0, 0)];
+	
+	NSData *arrayHash = HFHashByteArray(array);
+	
 	HFTEST([array writeToFile:asideFileURL trackingProgress:NULL error:NULL]);
-	HFTEST([HFHashByteArray(array) isEqual:HFHashFile(asideFileURL)]);
+	HFTEST([arrayHash isEqual:HFHashFile(asideFileURL)]);
+
+	HFTEST([array writeToFile:fileURL trackingProgress:NULL error:NULL]);
+	HFTEST([arrayHash isEqual:HFHashFile(fileURL)]);
 	
 	[[NSFileManager defaultManager] removeFileAtPath:[fileURL path] handler:nil];
 	[pool release];

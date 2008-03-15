@@ -11,13 +11,14 @@
 @class HFByteSlice, HFFileReference, HFProgressTracker;
 
 @interface HFByteSliceFileOperation : NSObject {
-    NSMutableArray *remainingTargetRanges;
     HFRange targetRange;
 }
 
 + identityOperationWithByteSlice:(HFByteSlice *)slice targetRange:(HFRange)range;
 + externalOperationWithByteSlice:(HFByteSlice *)slice targetRange:(HFRange)range;
 + internalOperationWithByteSlice:(HFByteSlice *)slice sourceRange:(HFRange)source targetRange:(HFRange)target;
+
++ chainedOperationWithInternalOperations:(NSArray *)internalOperations;
 
 - (HFRange)sourceRange;
 - (HFRange)targetRange;

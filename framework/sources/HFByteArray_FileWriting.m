@@ -29,6 +29,8 @@ static inline BOOL invalidRange(HFRange range) { return range.location == ULLONG
     
     4. Compute the strongly connected components of this graph.
     
+	5. Write the strongly connected components.
+	
     6. Write the external reps
 */
 
@@ -138,7 +140,6 @@ static void verifyDependencies(HFByteArray *self, HFObjectGraph *graph, NSArray 
 - (BOOL)writeToFile:(NSURL *)targetURL trackingProgress:(HFProgressTracker *)progressTracker error:(NSError **)error {
     REQUIRE_NOT_NULL(targetURL);
     HFASSERT([targetURL isFileURL]);
-    unsigned char *auxBuffer = NULL;
     unsigned long long totalCost = 0;
     unsigned long long startLength, endLength;
     HFFileReference *reference = [[HFFileReference alloc] initWritableWithPath:[targetURL path]];
@@ -146,6 +147,10 @@ static void verifyDependencies(HFByteArray *self, HFObjectGraph *graph, NSArray 
     startLength = [reference length];
     endLength = [self length];
     BOOL result = NO;
+
+	size_t malloc_good_size(size_t);
+	NSUInteger auxBufferSize = malloc_good_size(1024 * 1024 * 1);
+    unsigned char *auxBuffer = NULL;
 
     if (endLength > startLength) {
         /* If we're extending the file, make it longer so we can detect failure before trying to write anything. */
@@ -160,6 +165,7 @@ static void verifyDependencies(HFByteArray *self, HFObjectGraph *graph, NSArray 
     NSMutableArray *identity = [NSMutableArray array];
     NSMutableArray *external = [NSMutableArray array];
     NSMutableArray *internal = [NSMutableArray array];
+	NSMutableArray *chains = [NSMutableArray array];
     NSMutableArray *allOperations;
     computeFileOperations(self, reference, identity, external, internal);
     
@@ -168,6 +174,8 @@ static void verifyDependencies(HFByteArray *self, HFObjectGraph *graph, NSArray 
     [allOperations addObjectsFromArray:internal];
     [allOperations addObjectsFromArray:external];
     [allOperations addObjectsFromArray:identity];
+
+	NSLog(@"Internal %@ External %@ Identity %@", internal, external, identity);
 
     /* Step 2 */
     /* Estimate the cost of each of our ops */
@@ -186,14 +194,25 @@ static void verifyDependencies(HFByteArray *self, HFObjectGraph *graph, NSArray 
 
     /* Step 4 */
     NSArray *stronglyConnectedComponents = [graph stronglyConnectedComponentsForObjects:internal];
+	FOREACH(NSArray *, stronglyConnectedComponent, stronglyConnectedComponents) {
+		[chains addObject:[HFByteSliceFileOperation chainedOperationWithInternalOperations:internal]];
+	}
+	
     
     /* Step 5 */
+	if ([chains count] > 0) {
+        if (! auxBuffer) auxBuffer = malloc(auxBufferSize);
+		if (! auxBuffer) goto bail;
+		FOREACH(HFByteSliceFileOperation *, chainOp, chains) {
+			if (! [chainOp writeToFile:reference trackingProgress:progressTracker error:error withAuxilliaryBuffer:auxBuffer ofLength:auxBufferSize]) {
+				goto bail;
+			}
+		}
+	}
     
     /* Step 6 - write external ops */
     if ([external count] > 0) {
-        size_t malloc_good_size(size_t);
-        NSUInteger auxBufferSize = malloc_good_size(1024 * 1024 * 1);
-        auxBuffer = malloc(auxBufferSize);
+        if (! auxBuffer) auxBuffer = malloc(auxBufferSize);
         if (! auxBuffer) goto bail;
         FOREACH(HFByteSliceFileOperation *, op2, external) {
             if (! [op2 writeToFile:reference trackingProgress:progressTracker error:error withAuxilliaryBuffer:auxBuffer ofLength:auxBufferSize]) {
