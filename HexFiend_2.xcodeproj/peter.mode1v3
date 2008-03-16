@@ -347,6 +347,8 @@
 							<string>0pt</string>
 						</dict>
 						<dict>
+							<key>BecomeActive</key>
+							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
@@ -519,7 +521,6 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>D08630BE0D8BECCE00FF0BE7</string>
 		<string>D086308F0D8BDF7700FF0BE7</string>
 		<string>D08630900D8BDF7700FF0BE7</string>
 		<string>D08630910D8BDF7700FF0BE7</string>
@@ -528,9 +529,10 @@
 		<string>1CD10A99069EF8BA00B06720</string>
 		<string>D0560B2F0CDC421E009D2484</string>
 		<string>D08630710D8BDA2100FF0BE7</string>
-		<string>D08630920D8BDF7700FF0BE7</string>
+		<string>D086310A0D8D3BA000FF0BE7</string>
 		<string>/Users/peter/Bell/HexFiend2/trunk/HexFiend_2/HexFiend_2.xcodeproj</string>
-		<string>D08630250D8BBC4D00FF0BE7</string>
+		<string>D086311B0D8D424700FF0BE7</string>
+		<string>D08630920D8BDF7700FF0BE7</string>
 	</array>
 	<key>WindowString</key>
 	<string>829 381 1102 797 0 0 1920 1178 </string>
@@ -554,7 +556,7 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>1CD0528F0623707200166675</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>HFByteSliceFileOperation.m</string>
+								<string>&lt;No Editor&gt;</string>
 								<key>StatusBarVisibility</key>
 								<true/>
 							</dict>

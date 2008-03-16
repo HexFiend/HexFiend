@@ -177,6 +177,7 @@ bail:;
 		HFRange newFirstRange = HFRangeMake(firstRange.location + length, firstRange.length - length);
 		[remainingTargetRanges replaceObjectAtIndex:0 withObject:[HFRangeWrapper withRange:newFirstRange]];
 	}
+	NSLog(@"Read {%llu, %lu}", [self sourceLocationForTargetLocation:firstRange.location], entry->length);
 	[file readBytes:buffer length:entry->length from:[self sourceLocationForTargetLocation:firstRange.location]];
 	return entry;
 }
@@ -205,6 +206,7 @@ bail:;
 			entry->offset = [self targetLocationForSourceLocation:left];
 			entry->bytes = check_malloc(entry->length);
 			entry->source = left;
+			NSLog(@"Read {%llu, %lu}", left, entry->length);
 			[file readBytes:entry->bytes length:entry->length from:left];
 			[queue addObject:entry];
 			[entry release];
@@ -218,13 +220,11 @@ bail:;
 			rangeCount -= 1;
 			rangeIndex -= 1;
 			if (leftFragment.length > 0) {
-				[remainingTargetRanges insertObject:[HFRangeWrapper withRange:leftFragment] atIndex:rangeIndex];
-				rangeIndex += 1;
+				[remainingTargetRanges insertObject:[HFRangeWrapper withRange:leftFragment] atIndex:++rangeIndex];
 				rangeCount += 1;
 			}
 			if (rightFragment.length > 0) {
-				[remainingTargetRanges insertObject:[HFRangeWrapper withRange:rightFragment] atIndex:rangeIndex];
-				rangeIndex += 1;
+				[remainingTargetRanges insertObject:[HFRangeWrapper withRange:rightFragment] atIndex:++rangeIndex];
 				rangeCount += 1;
 			}
 		}

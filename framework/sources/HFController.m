@@ -1607,7 +1607,7 @@ static NSUInteger random_upto(unsigned long long val) {
 }
 
 + (void)_testFileWriting {
-	const BOOL should_debug = NO;
+	const BOOL should_debug = YES;
 	NSAutoreleasePool* pool=[[NSAutoreleasePool alloc] init];
 	NSData *data = randomDataOfLength(1 << 20);
 	NSURL *fileURL = [NSURL fileURLWithPath:@"/tmp/HexFiendTestFile.data"];
@@ -1624,14 +1624,14 @@ static NSUInteger random_upto(unsigned long long val) {
 	[array insertByteSlice:slice inRange:HFRangeMake(0, 0)];
 	HFTEST([HFHashByteArray(array) isEqual:HFHashFile(fileURL)]);
 	
-    unsigned i, opCount = 0;5000;
+    unsigned i, op, opCount = 1;
 	unsigned long long expectedLength = [data length];
 	for (i=0; i < opCount; i++) {
 		HFTEST([array length] == expectedLength);
 		HFRange replacementRange;
 		replacementRange.location = random_upto(expectedLength);
 		replacementRange.length = random_upto(expectedLength - replacementRange.location);
-		switch (2){//(op = (random() % 8))) {
+		switch (op = (random() % 8)) {
 			case 0: {
 				/* insert */
 				HFByteSlice *slice = [[[HFSharedMemoryByteSlice alloc] initWithUnsharedData:randomDataOfLength(random_upto(1000))] autorelease];
@@ -1661,7 +1661,7 @@ static NSUInteger random_upto(unsigned long long val) {
 		}
 	}
 	
-	[array insertByteSlice:[[[HFSharedMemoryByteSlice alloc] initWithUnsharedData:[NSData dataWithBytes:"Z" length:1]] autorelease] inRange:HFRangeMake(0, 0)];
+	//[array insertByteSlice:[[[HFSharedMemoryByteSlice alloc] initWithUnsharedData:[NSData dataWithBytes:"Z" length:1]] autorelease] inRange:HFRangeMake(0, 0)];
 	
 	NSData *arrayHash = HFHashByteArray(array);
 	

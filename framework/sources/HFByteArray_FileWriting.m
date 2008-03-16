@@ -76,23 +76,44 @@ static NSComparisonResult compareFileOperationTargetRanges(id a, id b, void *sel
 }
 #endif
 
-static NSUInteger binarySearchTargetRanges(unsigned long long location, NSArray *sortedOperations) {
-    NSUInteger left = 0, right = [sortedOperations count];
-    while (left + 1 < right) {
+/* Finds the index of the smallest operation whose max target range is less than the given location */
+static NSUInteger binarySearchRight(unsigned long long loc, NSArray *sortedOperations) {
+	NSUInteger count = [sortedOperations count];	
+	NSUInteger left = 0, right = count;
+	while (left < right) {
         NSUInteger mid = left + (right - left)/2;
         HFByteSliceFileOperation *op = [sortedOperations objectAtIndex:mid];
         HFRange targetRange = [op targetRange];
-        if (HFLocationInRange(location, targetRange)) {
-            return mid;
+		unsigned long long targetLoc = HFMaxRange(targetRange);
+		if (loc > targetLoc) {
+			right = mid;
+		}
+		else if (loc <= targetLoc) {
+			left = mid + 1;
+		}
+	}
+	return left == count ? NSUIntegerMax : left;
+}
+
+/* Finds the index of the smallest operation whose target range intersects the given source range; if none returns NSUIntegerMax  */
+static NSUInteger binarySearchLeft(HFRange range, NSArray *sortedOperations) {
+	NSUInteger count = [sortedOperations count];
+    NSUInteger left = 0, right = count;
+    while (left < right) {
+        NSUInteger mid = left + (right - left)/2;
+        HFByteSliceFileOperation *op = [sortedOperations objectAtIndex:mid];
+        HFRange targetRange = [op targetRange];
+        if (HFIntersectsRange(range, targetRange)) {
+            right = mid;
         }
-        else if (location < targetRange.location) {
+        else if (range.location < targetRange.location) {
             left = mid + 1;
         }
         else {
             right = mid;
         }
     }
-    return NSNotFound;
+    return left == count ? NSUIntegerMax : left;
 }
 
 static void computeDependencies(HFByteArray *self, HFObjectGraph *graph, NSArray *targetSortedOperations) {
@@ -104,11 +125,11 @@ static void computeDependencies(HFByteArray *self, HFObjectGraph *graph, NSArray
         /* "A depends on B" means that A's target range overlaps B's source range. For each operation B, find all the target ranges A its source range overlaps */
         HFRange sourceRange = [op sourceRange];
         HFASSERT(sourceRange.length > 0);
-        NSUInteger startIndex = binarySearchTargetRanges(sourceRange.location, targetSortedOperations);
-        NSUInteger endIndex = binarySearchTargetRanges(HFMaxRange(sourceRange) - 1, targetSortedOperations);
+        NSUInteger startIndex = binarySearchLeft(sourceRange, targetSortedOperations);
+        NSUInteger endIndex = binarySearchRight(sourceRange.location, targetSortedOperations);
         if (startIndex != NSNotFound) {
-            NSUInteger index, end = MIN(targetSortedOperationsCount - 1, endIndex); //endIndex may be NSNotFound
-            for (index = startIndex; index <= end; index++) {
+            NSUInteger index, end = MIN(targetSortedOperationsCount, endIndex); //endIndex may be NSNotFound
+            for (index = startIndex; index < end; index++) {
                 [graph addDependency:[targetSortedOperations objectAtIndex:index] forObject:op];
             }
         }
@@ -149,14 +170,13 @@ static void verifyDependencies(HFByteArray *self, HFObjectGraph *graph, NSArray 
     BOOL result = NO;
 
 	size_t malloc_good_size(size_t);
-	NSUInteger auxBufferSize = malloc_good_size(1024 * 1024 * 1);
+	NSUInteger auxBufferSize = malloc_good_size(128);//1024 * 1024 * 1);
     unsigned char *auxBuffer = NULL;
 
     if (endLength > startLength) {
         /* If we're extending the file, make it longer so we can detect failure before trying to write anything. */
         int err = [reference setLength:endLength];
         if (err != 0) {
-            
             goto bail;
         }
     }
@@ -218,6 +238,14 @@ static void verifyDependencies(HFByteArray *self, HFObjectGraph *graph, NSArray 
             if (! [op2 writeToFile:reference trackingProgress:progressTracker error:error withAuxilliaryBuffer:auxBuffer ofLength:auxBufferSize]) {
                 goto bail;
             }
+        }
+    }
+	
+    if (endLength < startLength) {
+        /* If we're shrinking the file, do it now, so we don't lose any data. */
+        int err = [reference setLength:endLength];
+        if (err != 0) {
+            goto bail;
         }
     }
 	
