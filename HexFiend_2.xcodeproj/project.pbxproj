@@ -414,10 +414,10 @@
 			isa = PBXGroup;
 			children = (
 				D019B8BE0D83E8D5005789AA /* HFByteArray_FileWriting.m */,
-				D019B8FF0D83FEB3005789AA /* HFByteSliceFileOperation.h */,
-				D019B9000D83FEB3005789AA /* HFByteSliceFileOperation.m */,
 				D019B9530D840FE8005789AA /* HFObjectGraph.h */,
 				D019B9540D840FE8005789AA /* HFObjectGraph.m */,
+				D019B8FF0D83FEB3005789AA /* HFByteSliceFileOperation.h */,
+				D019B9000D83FEB3005789AA /* HFByteSliceFileOperation.m */,
 				D08630EE0D8BEE9900FF0BE7 /* HFByteSliceFileOperationQueueEntry.h */,
 				D08630EF0D8BEE9900FF0BE7 /* HFByteSliceFileOperationQueueEntry.m */,
 			);

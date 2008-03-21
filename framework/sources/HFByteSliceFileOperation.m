@@ -18,6 +18,9 @@ enum {
     eTypeInternal
 };
 
+#define SHOULD_LOG_IO 0
+#define LOG_IO if (SHOULD_LOG_IO) 
+
 @interface HFByteSliceFileOperation (HFForwardDeclares)
 - initWithTargetRange:(HFRange)range;
 @end
@@ -113,6 +116,10 @@ bail:;
 
 @implementation HFByteSliceFileOperationInternal
 
+- (NSString *)description {
+	return [NSString stringWithFormat:@"<%@: %p (%@ -> %@)>", NSStringFromClass([self class]), self, HFRangeToString([self sourceRange]), HFRangeToString([self targetRange])];
+}
+
 - initWithByteSlice:(HFByteSlice *)val sourceRange:(HFRange)source targetRange:(HFRange)target {
     [super initWithTargetRange:target];
     REQUIRE_NOT_NULL(val);
@@ -146,13 +153,13 @@ bail:;
 }
 
 - (unsigned long long)sourceLocationForTargetLocation:(unsigned long long)loc {
-	HFASSERT(HFLocationInRange(loc, targetRange));
+	HFASSERT(HFLocationInRange(loc, targetRange) || loc == HFMaxRange(targetRange));
 	HFASSERT(targetRange.length == sourceRange.length);
 	return HFSum(loc - targetRange.location, sourceRange.location);
 }
 
 - (unsigned long long)targetLocationForSourceLocation:(unsigned long long)loc {
-	HFASSERT(HFLocationInRange(loc, sourceRange));
+	HFASSERT(HFLocationInRange(loc, sourceRange) || loc == HFMaxRange(sourceRange));
 	HFASSERT(targetRange.length == sourceRange.length);
 	return HFSum(loc - sourceRange.location, targetRange.location);
 }
@@ -177,7 +184,7 @@ bail:;
 		HFRange newFirstRange = HFRangeMake(firstRange.location + length, firstRange.length - length);
 		[remainingTargetRanges replaceObjectAtIndex:0 withObject:[HFRangeWrapper withRange:newFirstRange]];
 	}
-	NSLog(@"Read {%llu, %lu}", [self sourceLocationForTargetLocation:firstRange.location], entry->length);
+	LOG_IO NSLog(@"Read {%llu, %lu}", [self sourceLocationForTargetLocation:firstRange.location], entry->length);
 	[file readBytes:buffer length:entry->length from:[self sourceLocationForTargetLocation:firstRange.location]];
 	return entry;
 }
@@ -206,7 +213,7 @@ bail:;
 			entry->offset = [self targetLocationForSourceLocation:left];
 			entry->bytes = check_malloc(entry->length);
 			entry->source = left;
-			NSLog(@"Read {%llu, %lu}", left, entry->length);
+			LOG_IO NSLog(@"Read {%llu, %lu}", left, entry->length);
 			[file readBytes:entry->bytes length:entry->length from:left];
 			[queue addObject:entry];
 			[entry release];
@@ -214,16 +221,18 @@ bail:;
 			/* Now we have to remove this range.  We may have zero, one, or two fragments to add */
 			HFASSERT(left >= partialSourceRange.location);
 			HFASSERT(right <= HFMaxRange(partialSourceRange));
-			HFRange leftFragment = HFRangeMake(partialSourceRange.location, left - partialSourceRange.location);
-			HFRange rightFragment = HFRangeMake(right, HFMaxRange(partialSourceRange) - right);
+			HFRange leftFragment = HFRangeMake([self targetLocationForSourceLocation:partialSourceRange.location], left - partialSourceRange.location);
+			HFRange rightFragment = HFRangeMake([self targetLocationForSourceLocation:right], HFMaxRange(partialSourceRange) - right);
 			[remainingTargetRanges removeObjectAtIndex:rangeIndex];
 			rangeCount -= 1;
 			rangeIndex -= 1;
 			if (leftFragment.length > 0) {
+				HFASSERT(HFRangeIsSubrangeOfRange(leftFragment, [self targetRange]));
 				[remainingTargetRanges insertObject:[HFRangeWrapper withRange:leftFragment] atIndex:++rangeIndex];
 				rangeCount += 1;
 			}
 			if (rightFragment.length > 0) {
+				HFASSERT(HFRangeIsSubrangeOfRange(rightFragment, [self targetRange]));
 				[remainingTargetRanges insertObject:[HFRangeWrapper withRange:rightFragment] atIndex:++rangeIndex];
 				rangeCount += 1;
 			}
@@ -267,7 +276,7 @@ bail:;
 	REQUIRE_NOT_NULL(entry);
 	REQUIRE_NOT_NULL(file);
 	int err;
-	NSLog(@"Applying {%llu, %u} -> {%llu, %u}", entry->source, entry->length, entry->offset, entry->length);
+	LOG_IO NSLog(@"Applying {%llu, %u} -> {%llu, %u}", entry->source, entry->length, entry->offset, entry->length);
 	err = [file writeBytes:entry->bytes length:entry->length to:entry->offset];
 	if (progressTracker) HFAtomicAdd64(entry->length, (volatile int64_t *)(&progressTracker->currentProgress));
 	return err;
@@ -279,8 +288,10 @@ bail:;
 	BOOL result = NO;
 	NSMutableArray *queue = [[NSMutableArray alloc] init];
 	NSMutableArray *incompleteOperations = [[NSMutableArray alloc] initWithArray:internalOperations];
+	HFASSERT([[NSSet setWithArray:incompleteOperations] count] == [incompleteOperations count]);
 	while ([incompleteOperations count]) {
 		HFByteSliceFileOperationInternal *operation = [incompleteOperations objectAtIndex:0];
+		HFASSERT([operation hasRemainingTargetRange]);
 		HFByteSliceFileOperationQueueEntry *entry = [operation createQueueEntryWithBuffer:buffer ofLength:buffLen forFile:file]; //must be released
 		[queue addObject:entry];
 		[entry release];
@@ -294,7 +305,7 @@ bail:;
 				HFByteSliceFileOperationInternal *potentialOverlap = [incompleteOperations objectAtIndex:incompleteOperationIndex];
 				[potentialOverlap addQueueEntriesOverlappedByEntry:entry toQueue:queue forFile:file];
 				if (! [potentialOverlap hasRemainingTargetRange]) {
-					[incompleteOperations removeObjectAtIndex:incompleteOperationCount];
+					[incompleteOperations removeObjectAtIndex:incompleteOperationIndex];
 					incompleteOperationCount -= 1;
 					incompleteOperationIndex -= 1;
 				}
@@ -312,7 +323,6 @@ bail:;
 			}
 		}
 	}
-	
 	result = YES;
 	
 bail:;

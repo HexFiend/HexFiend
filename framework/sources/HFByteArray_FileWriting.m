@@ -76,19 +76,18 @@ static NSComparisonResult compareFileOperationTargetRanges(id a, id b, void *sel
 }
 #endif
 
-/* Finds the index of the smallest operation whose max target range is less than the given location */
+/* Finds the index of the smallest operation whose min target range is larger than or equal to the given location, or NSUIntegerMax if none */
 static NSUInteger binarySearchRight(unsigned long long loc, NSArray *sortedOperations) {
 	NSUInteger count = [sortedOperations count];	
 	NSUInteger left = 0, right = count;
 	while (left < right) {
         NSUInteger mid = left + (right - left)/2;
         HFByteSliceFileOperation *op = [sortedOperations objectAtIndex:mid];
-        HFRange targetRange = [op targetRange];
-		unsigned long long targetLoc = HFMaxRange(targetRange);
-		if (loc > targetLoc) {
+		unsigned long long targetLoc = [op targetRange].location;
+		if (targetLoc >= loc) {
 			right = mid;
 		}
-		else if (loc <= targetLoc) {
+		else {
 			left = mid + 1;
 		}
 	}
@@ -106,31 +105,63 @@ static NSUInteger binarySearchLeft(HFRange range, NSArray *sortedOperations) {
         if (HFIntersectsRange(range, targetRange)) {
             right = mid;
         }
-        else if (range.location < targetRange.location) {
+        else if (range.location > targetRange.location) {
             left = mid + 1;
         }
         else {
             right = mid;
         }
     }
-    return left == count ? NSUIntegerMax : left;
+    if (left == count) {
+		return NSUIntegerMax;
+	}
+	else {
+		/* It's possible that the range does not actually intersect us */
+		HFByteSliceFileOperation *op = [sortedOperations objectAtIndex:left];
+		HFRange targetRange = [op targetRange];
+		return HFIntersectsRange(range, targetRange) ? left : NSUIntegerMax;
+	}
 }
+
+#if ! NDEBUG
+static NSUInteger naiveSearchRight(unsigned long long loc, NSArray *sortedOperations) {
+	NSUInteger i, max = [sortedOperations count];
+	for (i=0; i < max; i++) {
+		HFByteSliceFileOperation *op = [sortedOperations objectAtIndex:i];
+		if ([op targetRange].location >= loc) return i;
+	}
+	return NSUIntegerMax;
+}
+
+static NSUInteger naiveSearchLeft(HFRange range, NSArray *sortedOperations) {
+	NSUInteger i, max = [sortedOperations count];
+	for (i=0; i < max; i++) {
+		HFByteSliceFileOperation *op = [sortedOperations objectAtIndex:i];
+		if (HFIntersectsRange([op targetRange], range)) return i;
+	}
+	return NSUIntegerMax;
+}
+#endif
 
 static void computeDependencies(HFByteArray *self, HFObjectGraph *graph, NSArray *targetSortedOperations) {
     REQUIRE_NOT_NULL(graph);
     REQUIRE_NOT_NULL(self);
     HFASSERT([targetSortedOperations isEqual:[targetSortedOperations sortedArrayUsingFunction:compareFileOperationTargetRanges context:self]]);
     NSUInteger targetSortedOperationsCount = [targetSortedOperations count];
-    FOREACH(HFByteSliceFileOperation *, op, targetSortedOperations) {
-        /* "A depends on B" means that A's target range overlaps B's source range. For each operation B, find all the target ranges A its source range overlaps */
-        HFRange sourceRange = [op sourceRange];
+    FOREACH(HFByteSliceFileOperation *, sourceOperation, targetSortedOperations) {
+        /* "B is a dependency of A" means that B's source range overlaps A's target range. For each operation B, find all the target ranges A its source range overlaps */
+        HFRange sourceRange = [sourceOperation sourceRange];
         HFASSERT(sourceRange.length > 0);
         NSUInteger startIndex = binarySearchLeft(sourceRange, targetSortedOperations);
-        NSUInteger endIndex = binarySearchRight(sourceRange.location, targetSortedOperations);
+		HFASSERT(naiveSearchLeft(sourceRange, targetSortedOperations) == startIndex);
+        NSUInteger endIndex = binarySearchRight(HFMaxRange(sourceRange), targetSortedOperations);
+		HFASSERT(naiveSearchRight(HFMaxRange(sourceRange), targetSortedOperations) == endIndex);
         if (startIndex != NSNotFound) {
             NSUInteger index, end = MIN(targetSortedOperationsCount, endIndex); //endIndex may be NSNotFound
             for (index = startIndex; index < end; index++) {
-                [graph addDependency:[targetSortedOperations objectAtIndex:index] forObject:op];
+				HFByteSliceFileOperation *targetOperation = [targetSortedOperations objectAtIndex:index];
+				HFASSERT(HFIntersectsRange([sourceOperation sourceRange], [targetOperation targetRange]));
+                [graph addDependency:sourceOperation forObject:targetOperation];
             }
         }
     }
@@ -145,6 +176,7 @@ static void verifyDependencies(HFByteArray *self, HFObjectGraph *graph, NSArray 
     for (ind1 = 0; ind1 < count; ind1++) {
         op1 = [targetSortedOperations objectAtIndex:ind1];
         for (ind2 = 0; ind2 < count; ind2++) {
+			// op1 = A, op2 = B
             op2 = [targetSortedOperations objectAtIndex:ind2];
             BOOL shouldDepend = HFIntersectsRange([op1 targetRange], [op2 sourceRange]);
             BOOL doesDepend = ([[graph dependenciesForObject:op1] indexOfObjectIdenticalTo:op2] != NSNotFound);
@@ -154,6 +186,17 @@ static void verifyDependencies(HFByteArray *self, HFObjectGraph *graph, NSArray 
             }
         }
     }
+}
+
+static void verifyStronglyConnectedComponents(NSArray *stronglyConnectedComponents) {
+	NSMutableSet *allComponentsSet = [[NSMutableSet alloc] init];
+	FOREACH(NSArray *, component, stronglyConnectedComponents) {
+		NSSet *componentSet = [[NSSet alloc] initWithArray:component];
+		HFASSERT(! [allComponentsSet intersectsSet:componentSet]);
+		[allComponentsSet unionSet:componentSet];
+		[componentSet release];
+	}
+	[allComponentsSet release];
 }
 
 #endif
@@ -170,7 +213,7 @@ static void verifyDependencies(HFByteArray *self, HFObjectGraph *graph, NSArray 
     BOOL result = NO;
 
 	size_t malloc_good_size(size_t);
-	NSUInteger auxBufferSize = malloc_good_size(128);//1024 * 1024 * 1);
+	NSUInteger auxBufferSize = malloc_good_size(1024 * 1024 * 1);
     unsigned char *auxBuffer = NULL;
 
     if (endLength > startLength) {
@@ -214,11 +257,14 @@ static void verifyDependencies(HFByteArray *self, HFObjectGraph *graph, NSArray 
 
     /* Step 4 */
     NSArray *stronglyConnectedComponents = [graph stronglyConnectedComponentsForObjects:internal];
+#if ! NDEBUG
+	verifyStronglyConnectedComponents(stronglyConnectedComponents);
+#endif
 	FOREACH(NSArray *, stronglyConnectedComponent, stronglyConnectedComponents) {
-		[chains addObject:[HFByteSliceFileOperation chainedOperationWithInternalOperations:internal]];
+		[chains addObject:[HFByteSliceFileOperation chainedOperationWithInternalOperations:stronglyConnectedComponent]];
 	}
 	
-    
+	
     /* Step 5 */
 	if ([chains count] > 0) {
         if (! auxBuffer) auxBuffer = malloc(auxBufferSize);

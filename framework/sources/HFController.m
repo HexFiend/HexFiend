@@ -1624,7 +1624,7 @@ static NSUInteger random_upto(unsigned long long val) {
 	[array insertByteSlice:slice inRange:HFRangeMake(0, 0)];
 	HFTEST([HFHashByteArray(array) isEqual:HFHashFile(fileURL)]);
 	
-    unsigned i, op, opCount = 1;
+    unsigned i, op, opCount = 20;
 	unsigned long long expectedLength = [data length];
 	for (i=0; i < opCount; i++) {
 		HFTEST([array length] == expectedLength);
