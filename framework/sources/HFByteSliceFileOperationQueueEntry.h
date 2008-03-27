@@ -18,3 +18,21 @@
 }
 
 @end
+
+@class HFFileReference, HFProgressTracker;
+
+@interface HFByteSliceFileOperationContext : NSObject {
+	@public
+	NSUInteger softMaxAllocatedMemory;
+	NSUInteger totalAllocatedMemory;
+	//the following ivars are not retained
+	HFFileReference *file; 
+	HFProgressTracker *progressTracker;
+	NSMutableArray *queue;
+}
+
+- (void *)allocateMemoryOfLength:(NSUInteger)len;
+- (void)freeMemory:(void *)buff ofLength:(NSUInteger)len;
+- (NSUInteger)suggestedAllocationLengthForMinimum:(NSUInteger)minimum maximum:(NSUInteger)maximum;
+
+@end

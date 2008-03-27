@@ -389,7 +389,8 @@ static BOOL isRunningOnLeopardOrLater(void) {
     NSURL *targetURL = [userInfo objectForKey:@"targetURL"];
     NSError *error = nil;
     BOOL result = [byteArray writeToFile:targetURL trackingProgress:tracker error:&error];
-    return nil;
+	[tracker noteFinished:self];
+    return [NSNumber numberWithBool:result];
 }
 
 - (void)endSave:(id)result {

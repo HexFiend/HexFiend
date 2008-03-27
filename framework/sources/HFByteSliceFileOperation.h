@@ -24,6 +24,6 @@
 - (HFRange)targetRange;
 
 - (unsigned long long)costToWrite;
-- (BOOL)writeToFile:(HFFileReference *)file trackingProgress:(HFProgressTracker *)progressTracker error:(NSError **)error withAuxilliaryBuffer:(unsigned char *)buffer ofLength:(NSUInteger)buffLen;
+- (BOOL)writeToFile:(HFFileReference *)file trackingProgress:(HFProgressTracker *)progressTracker error:(NSError **)error;
 
 @end

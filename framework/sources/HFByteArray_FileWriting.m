@@ -212,10 +212,6 @@ static void verifyStronglyConnectedComponents(NSArray *stronglyConnectedComponen
     endLength = [self length];
     BOOL result = NO;
 
-	size_t malloc_good_size(size_t);
-	NSUInteger auxBufferSize = malloc_good_size(1024 * 1024 * 1);
-    unsigned char *auxBuffer = NULL;
-
     if (endLength > startLength) {
         /* If we're extending the file, make it longer so we can detect failure before trying to write anything. */
         int err = [reference setLength:endLength];
@@ -267,10 +263,8 @@ static void verifyStronglyConnectedComponents(NSArray *stronglyConnectedComponen
 	
     /* Step 5 */
 	if ([chains count] > 0) {
-        if (! auxBuffer) auxBuffer = malloc(auxBufferSize);
-		if (! auxBuffer) goto bail;
 		FOREACH(HFByteSliceFileOperation *, chainOp, chains) {
-			if (! [chainOp writeToFile:reference trackingProgress:progressTracker error:error withAuxilliaryBuffer:auxBuffer ofLength:auxBufferSize]) {
+			if (! [chainOp writeToFile:reference trackingProgress:progressTracker error:error]) {
 				goto bail;
 			}
 		}
@@ -278,10 +272,8 @@ static void verifyStronglyConnectedComponents(NSArray *stronglyConnectedComponen
     
     /* Step 6 - write external ops */
     if ([external count] > 0) {
-        if (! auxBuffer) auxBuffer = malloc(auxBufferSize);
-        if (! auxBuffer) goto bail;
         FOREACH(HFByteSliceFileOperation *, op2, external) {
-            if (! [op2 writeToFile:reference trackingProgress:progressTracker error:error withAuxilliaryBuffer:auxBuffer ofLength:auxBufferSize]) {
+            if (! [op2 writeToFile:reference trackingProgress:progressTracker error:error]) {
                 goto bail;
             }
         }
@@ -298,7 +290,6 @@ static void verifyStronglyConnectedComponents(NSArray *stronglyConnectedComponen
 	result = YES;
 bail:;
 
-    free(auxBuffer);
     [graph release];
     
     [reference close];

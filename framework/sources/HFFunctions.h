@@ -44,6 +44,11 @@ static inline unsigned long long HFSum(unsigned long long a, unsigned long long 
     return a + b;
 }
 
+static inline NSUInteger HFSumInt(NSUInteger a, NSUInteger b) {
+	assert(a + b >= a);
+	return a + b;
+}
+
 /* Returns the smallest multiple of B strictly larger than A */
 static inline unsigned long long HFRoundUpToNextMultiple(unsigned long long a, unsigned long long b) {
     assert(b > 0);
