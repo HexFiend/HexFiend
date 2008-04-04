@@ -23,8 +23,10 @@
     
     NSResponder *savedFirstResponder;
     
-    pthread_t threadedOperation;
-    
+	HFDocumentOperationView *findReplaceView;
+	HFDocumentOperationView *navigateView;
+	HFDocumentOperationView *saveView;
+	
     HFDocumentOperationView *operationView;
     BOOL bannerIsShown;
     BOOL bannerGrowing;
@@ -32,7 +34,17 @@
     NSView *bannerDividerThumb;
     CGFloat bannerTargetHeight;
     CFAbsoluteTime bannerStartTime;
+	id targetFirstResponderInBanner;
+	SEL commandToRunAfterBannerIsDoneHiding;
+	
+	NSInteger saveResult;
     
 }
+
+- (void)moveSelectionForwards:(NSMenuItem *)sender;
+- (void)moveSelectionBackwards:(NSMenuItem *)sender;
+- (void)extendSelectionForwards:(NSMenuItem *)sender;
+- (void)extendSelectionBackwards:(NSMenuItem *)sender;
+
 
 @end

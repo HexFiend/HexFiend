@@ -25,13 +25,15 @@ static inline BOOL invalidRange(HFRange range) { return range.location == ULLONG
     
     2. Estimate cost
     
-    3. Compute a graph representing the dependencies in the internal slices, if any.
+    3. Compute a graph representing the dependencies in the internal slices, if any.  This graph may be cyclic.
     
     4. Compute the strongly connected components of this graph.
     
-	5. Write the strongly connected components.
+	5. Construct a NEW graph representing dependencies between the strongly connected components, in the sense that if A depends on B in the original graph, then their corresponding components depend on each other as well.  This graph must be acyclic.
 	
-    6. Write the external reps
+	6. Write this graph in topologically-sorted order.
+	
+    7. Write the external reps.
 */
 
 static void computeFileOperations(HFByteArray *self, HFFileReference *reference, NSMutableArray *identity, NSMutableArray *external, NSMutableArray *internal) {
@@ -167,6 +169,53 @@ static void computeDependencies(HFByteArray *self, HFObjectGraph *graph, NSArray
     }
 }
 
+/* Given an array of strongly connected components, and their associated chained HFByteSliceFileOperation, return an ayclic object graph representing the dependencies between the chains */
+static HFObjectGraph *createAcyclicGraphFromStronglyConnectedComponents(NSArray *stronglyConnectedComponents, NSArray *chains, HFObjectGraph *cyclicGraph) {
+	REQUIRE_NOT_NULL(stronglyConnectedComponents);
+	REQUIRE_NOT_NULL(chains);
+	HFASSERT([chains count] == [stronglyConnectedComponents count]);
+	HFObjectGraph *acyclicGraph = [[HFObjectGraph alloc] init];
+	NSUInteger i, max = [stronglyConnectedComponents count];
+	/* Construct a dictionary mapping each operation to its contained chain */
+	CFMutableDictionaryRef operationToContainingChain = CFDictionaryCreateMutable(NULL, 0, NULL, NULL);
+	for (i=0; i < max; i++) {
+		HFByteSliceFileOperation *chain = [chains objectAtIndex:i];
+		NSArray *component = [stronglyConnectedComponents objectAtIndex:i];
+		FOREACH(HFByteSliceFileOperation *, operation, component) {
+			EXPECT_CLASS(operation, HFByteSliceFileOperation);
+			HFASSERT(CFDictionaryGetValue(operationToContainingChain, operation) == NULL);
+			CFDictionarySetValue(operationToContainingChain, operation, chain);
+		}
+	}
+
+	/* Now add dependencies between chains */
+	for (i=0; i < max; i++) {
+		NSArray *component = [stronglyConnectedComponents objectAtIndex:i];
+		FOREACH(HFByteSliceFileOperation *, operation, component) {
+			EXPECT_CLASS(operation, HFByteSliceFileOperation);
+			HFByteSliceFileOperation *operationChain = (HFByteSliceFileOperation *)CFDictionaryGetValue(operationToContainingChain, operation);
+			HFASSERT(operationChain != NULL);
+			NSSet *dependencies = [cyclicGraph dependenciesForObject:operation];
+			NSUInteger dependencyCount = [dependencies count];
+			if (dependencyCount > 0) {
+				NEW_ARRAY(HFByteSliceFileOperation *, dependencyObjects, dependencyCount);
+				CFSetGetValues((CFSetRef)dependencies, (const void **)dependencyObjects);
+				NSUInteger dependencyIndex;
+				for (dependencyIndex = 0; dependencyIndex < dependencyCount; dependencyIndex++) {
+					HFByteSliceFileOperation *dependencyChain = (HFByteSliceFileOperation *)CFDictionaryGetValue(operationToContainingChain, operation);
+					HFASSERT(dependencyChain != NULL);
+					if (dependencyChain != operationChain) {
+						[acyclicGraph addDependency:dependencyChain forObject:operationChain];
+					}
+				}
+				FREE_ARRAY(dependencyObjects);
+			}
+		}
+	}
+	CFRelease(operationToContainingChain);
+	return acyclicGraph;
+}
+
 #if ! NDEBUG
 
 static void verifyDependencies(HFByteArray *self, HFObjectGraph *graph, NSArray *targetSortedOperations) {
@@ -179,7 +228,7 @@ static void verifyDependencies(HFByteArray *self, HFObjectGraph *graph, NSArray 
 			// op1 = A, op2 = B
             op2 = [targetSortedOperations objectAtIndex:ind2];
             BOOL shouldDepend = HFIntersectsRange([op1 targetRange], [op2 sourceRange]);
-            BOOL doesDepend = ([[graph dependenciesForObject:op1] indexOfObjectIdenticalTo:op2] != NSNotFound);
+            BOOL doesDepend = ([[graph dependenciesForObject:op1] containsObject:op2]);
             if (shouldDepend != doesDepend) {
                 NSLog(@"verifyDependencies failed:\n\t%@\n\t%@\n\tshouldDepend: %s doesDepend: %s", op1, op2, shouldDepend ? "YES" : "NO", doesDepend ? "YES" : "NO");
                 exit(EXIT_FAILURE);
@@ -199,19 +248,39 @@ static void verifyStronglyConnectedComponents(NSArray *stronglyConnectedComponen
 	[allComponentsSet release];
 }
 
+static void verifyEveryObjectInExactlyOneConnectedComponent(NSArray *components, NSArray *operations) {
+	NSMutableArray *remaining = [NSMutableArray arrayWithArray:operations];
+	FOREACH(NSArray *, component, components) {
+		FOREACH(HFByteSliceFileOperation *, operation, component) {
+			EXPECT_CLASS(operation, HFByteSliceFileOperation);
+			NSUInteger arrayIndex = [remaining indexOfObjectIdenticalTo:operation];
+			HFASSERT(arrayIndex != NSNotFound);
+			[remaining removeObjectAtIndex:arrayIndex];
+			HFASSERT([remaining indexOfObjectIdenticalTo:operation] == NSNotFound);
+		}
+	}
+	HFASSERT([remaining count] == 0);
+}
+
 #endif
+
+#define CHECK_CANCEL() do { if (progressTracker && progressTracker->cancelRequested) { puts("Cancelled!"); wasCancelled = YES; goto cancelled; } } while (0)
 
 - (BOOL)writeToFile:(NSURL *)targetURL trackingProgress:(HFProgressTracker *)progressTracker error:(NSError **)error {
     REQUIRE_NOT_NULL(targetURL);
     HFASSERT([targetURL isFileURL]);
     unsigned long long totalCost = 0;
     unsigned long long startLength, endLength;
+	HFObjectGraph *cyclicGraph = nil, *acyclicGraph = nil;
+	BOOL wasCancelled = NO;
     HFFileReference *reference = [[HFFileReference alloc] initWritableWithPath:[targetURL path]];
     HFASSERT(reference != NULL);
     startLength = [reference length];
     endLength = [self length];
     BOOL result = NO;
 
+	CHECK_CANCEL();
+	
     if (endLength > startLength) {
         /* If we're extending the file, make it longer so we can detect failure before trying to write anything. */
         int err = [reference setLength:endLength];
@@ -219,6 +288,8 @@ static void verifyStronglyConnectedComponents(NSArray *stronglyConnectedComponen
             goto bail;
         }
     }
+
+	CHECK_CANCEL();
 
     /* Step 1 */
     NSMutableArray *identity = [NSMutableArray array];
@@ -243,41 +314,65 @@ static void verifyStronglyConnectedComponents(NSArray *stronglyConnectedComponen
     }
     [progressTracker setMaxProgress:totalCost];
 
+	CHECK_CANCEL();
 
     /* Step 3 */
-    HFObjectGraph *graph = [[HFObjectGraph alloc] init];
-    computeDependencies(self, graph, internal);
+    cyclicGraph = [[HFObjectGraph alloc] init];
+    computeDependencies(self, cyclicGraph, internal);
 #if ! NDEBUG
-    verifyDependencies(self, graph, internal);
+    verifyDependencies(self, cyclicGraph, internal);
 #endif
 
+	CHECK_CANCEL();
+
     /* Step 4 */
-    NSArray *stronglyConnectedComponents = [graph stronglyConnectedComponentsForObjects:internal];
+    NSArray *stronglyConnectedComponents = [cyclicGraph stronglyConnectedComponentsForObjects:internal];
 #if ! NDEBUG
 	verifyStronglyConnectedComponents(stronglyConnectedComponents);
+	verifyEveryObjectInExactlyOneConnectedComponent(stronglyConnectedComponents, internal);
 #endif
 	FOREACH(NSArray *, stronglyConnectedComponent, stronglyConnectedComponents) {
 		[chains addObject:[HFByteSliceFileOperation chainedOperationWithInternalOperations:stronglyConnectedComponent]];
 	}
 	
+	CHECK_CANCEL();
 	
-    /* Step 5 */
-	if ([chains count] > 0) {
-		FOREACH(HFByteSliceFileOperation *, chainOp, chains) {
-			if (! [chainOp writeToFile:reference trackingProgress:progressTracker error:error]) {
+	/* Step 5 */
+	acyclicGraph = createAcyclicGraphFromStronglyConnectedComponents(stronglyConnectedComponents, chains, cyclicGraph);
+	
+	CHECK_CANCEL();
+	
+    /* Step 6 */
+	NSArray *topologicallySortedChains = [acyclicGraph topologicallySortObjects:chains];
+	if ([topologicallySortedChains count] > 0) {
+		FOREACH(HFByteSliceFileOperation *, chainOp, topologicallySortedChains) {
+			HFByteSliceWriteError writeError = [chainOp writeToFile:reference trackingProgress:progressTracker error:error];
+			if (writeError == HFWriteCancelled) {
+				goto cancelled;
+			}
+			else if (writeError != HFWriteSuccess) {
 				goto bail;
 			}
+			CHECK_CANCEL();
 		}
 	}
+	
     
-    /* Step 6 - write external ops */
+    /* Step 7 - write external ops */
     if ([external count] > 0) {
         FOREACH(HFByteSliceFileOperation *, op2, external) {
-            if (! [op2 writeToFile:reference trackingProgress:progressTracker error:error]) {
-                goto bail;
-            }
+			HFByteSliceWriteError writeError = [op2 writeToFile:reference trackingProgress:progressTracker error:error];
+			if (writeError == HFWriteCancelled) {
+				goto cancelled;
+			}
+			else if (writeError != HFWriteSuccess) {
+				goto bail;
+			}
+			CHECK_CANCEL();
         }
     }
+	
+	CHECK_CANCEL();
 	
     if (endLength < startLength) {
         /* If we're shrinking the file, do it now, so we don't lose any data. */
@@ -289,8 +384,10 @@ static void verifyStronglyConnectedComponents(NSArray *stronglyConnectedComponen
 	
 	result = YES;
 bail:;
+cancelled:;
 
-    [graph release];
+    [cyclicGraph release];
+	[acyclicGraph release];
     
     [reference close];
     [reference release];

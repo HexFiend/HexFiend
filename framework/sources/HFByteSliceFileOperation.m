@@ -72,12 +72,12 @@ enum {
     else return targetRange.length;
 }
 
-- (BOOL)writeToFile:(HFFileReference *)file trackingProgress:(HFProgressTracker *)progressTracker error:(NSError **)error {
+- (HFByteSliceWriteError)writeToFile:(HFFileReference *)file trackingProgress:(HFProgressTracker *)progressTracker error:(NSError **)error {
 	USE(error);
 	NSUInteger buffLen = ll2l(MIN(targetRange.length, malloc_good_size(1024 * 1024)));
     unsigned char *buffer = check_malloc(buffLen);
     REQUIRE_NOT_NULL(file);
-    BOOL result = NO;
+    HFByteSliceWriteError result = -1;
     const HFRange range = [self targetRange];
 	HFASSERT(range.length == [slice length]);
     const BOOL isSourcedFromFile = [slice isSourcedFromFile];
@@ -87,8 +87,10 @@ enum {
     while (written < range.length) {
         int err;
         NSUInteger amountToWrite = ll2l(MIN(buffLen, range.length - written));
+		if (progressTracker && progressTracker->cancelRequested) goto bail;
         [slice copyBytes:buffer range:HFRangeMake(written, amountToWrite)];
         if (isSourcedFromFile) HFAtomicAdd64(amountToWrite, (volatile int64_t *)progressPtr);
+		if (progressTracker && progressTracker->cancelRequested) goto bail;
         err = [file writeBytes:buffer length:amountToWrite to:HFSum(written, targetRange.location)];
         HFAtomicAdd64(amountToWrite, (volatile int64_t *)progressPtr);
         if (err) {
@@ -96,9 +98,12 @@ enum {
         }
 		written += amountToWrite;
     }
-    result = YES;
+    result = HFWriteSuccess;
 bail:;
 	free(buffer);
+	if (result == HFWriteSuccess && progressTracker != NULL && progressTracker->cancelRequested) {
+		result = HFWriteCancelled;
+	}
     return result;
 }
 
@@ -264,6 +269,7 @@ bail:;
 	HFASSERT(overlapRange.length > 0);
 	NSUInteger rangeIndex, rangeCount = [remainingTargetRanges count];
 	for (rangeIndex = 0; rangeIndex < rangeCount; rangeIndex++) {
+		if (context->progressTracker && context->progressTracker->cancelRequested) goto bail;
 		/* TODO: binary search */
 		HFRange partialTargetRange = [[remainingTargetRanges objectAtIndex:rangeIndex] HFRange];
 		HFASSERT(HFRangeIsSubrangeOfRange(partialTargetRange, [self targetRange]));
@@ -317,6 +323,7 @@ bail:;
 			}
 		}
 	}
+	bail:;
 }
 
 @end
@@ -368,6 +375,7 @@ bail:;
 	NSUInteger incompleteOperationIndex, incompleteOperationCount = [incompleteOperations count];
 	for (incompleteOperationIndex = 0; incompleteOperationIndex < incompleteOperationCount; incompleteOperationIndex++) {
 		 HFByteSliceFileOperationInternal *potentialOverlap = [incompleteOperations objectAtIndex:incompleteOperationIndex];
+		 if (context->progressTracker && context->progressTracker->cancelRequested) return;
 		 [potentialOverlap addQueueEntriesOverlappedByEntry:entry withContext:context];
 		 if (! [potentialOverlap hasRemainingTargetRange]) {
 			[incompleteOperations removeObjectAtIndex:incompleteOperationIndex];
@@ -377,11 +385,11 @@ bail:;
 	}
 }
 
-
-- (BOOL)writeToFile:(HFFileReference *)file trackingProgress:(HFProgressTracker *)progressTracker error:(NSError **)error {
+#define CHECK_CANCEL() do { if (progressTracker && progressTracker->cancelRequested) goto bail; } while (0)
+- (HFByteSliceWriteError)writeToFile:(HFFileReference *)file trackingProgress:(HFProgressTracker *)progressTracker error:(NSError **)error {
 	USE(error);
 	REQUIRE_NOT_NULL(file);
-	BOOL result = NO;
+	HFByteSliceWriteError result = -1;
 	NSMutableArray *queue = [[NSMutableArray alloc] init];
 	NSMutableArray *incompleteOperations = [[NSMutableArray alloc] initWithArray:internalOperations];
 	HFASSERT([[NSSet setWithArray:incompleteOperations] count] == [incompleteOperations count]);
@@ -397,15 +405,20 @@ bail:;
 		HFByteSliceFileOperationInternal *operation = [incompleteOperations objectAtIndex:0];
 		HFASSERT([operation hasRemainingTargetRange]);
 		
+		CHECK_CANCEL();
 		[operation addQueueEntryWithContext:context];
+		CHECK_CANCEL();
 		if (! [operation hasRemainingTargetRange]) [incompleteOperations removeObjectAtIndex:0];
 		
 		while ([queue count]) {
 			int err;
 			HFByteSliceFileOperationQueueEntry *entry = [queue objectAtIndex:0];
+			CHECK_CANCEL();
 			[self queueUpEntriesOverlappedByEntry:entry withIncompleteOperations:incompleteOperations context:context];
+			CHECK_CANCEL();
 			/* It's safe to fire away with this entry */
 			err = [self applyQueueEntry:entry toFile:file trackingProgress:progressTracker];
+			CHECK_CANCEL();
 			/* Dequeue and destroy it */
 			[context freeMemory:entry->bytes ofLength:entry->length];
 			entry->bytes = NULL;
@@ -416,14 +429,16 @@ bail:;
 			}
 		}
 	}
-	result = YES;
+	result = HFWriteSuccess;
 	
 bail:;
 	[incompleteOperations release];
 	[queue release];
 	[context release];
+	if (progressTracker && progressTracker->cancelRequested) result = HFWriteCancelled;
     return result;	
 }
+#undef CHECK_CANCEL
 
 - (void)dealloc {
 	[internalOperations release];
@@ -473,7 +488,7 @@ bail:;
     UNIMPLEMENTED();
 }
 
-- (BOOL)writeToFile:(HFFileReference *)file trackingProgress:(HFProgressTracker *)progressTracker error:(NSError **)error {
+- (HFByteSliceWriteError)writeToFile:(HFFileReference *)file trackingProgress:(HFProgressTracker *)progressTracker error:(NSError **)error {
 	USE(file);
 	USE(progressTracker);
 	USE(error);
@@ -481,3 +496,4 @@ bail:;
 }
 
 @end
+

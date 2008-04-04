@@ -21,6 +21,11 @@
     return self;
 }
 
+- (void)dealloc {
+	[slice release];
+	[super dealloc];
+}
+
 - (unsigned long long)offset {
     return pieceRange.location;
 }

@@ -14,7 +14,7 @@
 - init {
     [super init];
     graph = (__strong CFMutableDictionaryRef)CFMakeCollectable(CFDictionaryCreateMutable(NULL, 0, NULL, &kCFTypeDictionaryValueCallBacks));
-	containedObjects = [[NSMutableArray alloc] init];
+	containedObjects = [[NSMutableArray alloc] init]; //containedObjects is necessary to make sure that our key objects are strongly referenced, since we use a NULL-callback dictionary
     return self;
 }
 
@@ -27,14 +27,13 @@
 - (void)addDependency:depend forObject:obj {
     REQUIRE_NOT_NULL(depend);
     REQUIRE_NOT_NULL(obj);
-    NSMutableArray *dependencies = (NSMutableArray *)CFDictionaryGetValue(graph, obj);
+    NSMutableSet *dependencies = (NSMutableSet *)CFDictionaryGetValue(graph, obj);
     if (! dependencies) {
-        dependencies = [[NSMutableArray alloc] init];
+        dependencies = [[NSMutableSet alloc] init];
         CFDictionarySetValue(graph, obj, dependencies);
         [dependencies release];
 		[containedObjects addObject:obj];
     }
-    HFASSERT([dependencies indexOfObjectIdenticalTo:depend] == NSNotFound);
     [dependencies addObject:depend];
 }
 
@@ -42,27 +41,24 @@
     REQUIRE_NOT_NULL(depend);
     REQUIRE_NOT_NULL(obj);
     BOOL result = NO;
-    NSMutableArray *dependencies = (NSMutableArray *)CFDictionaryGetValue(graph, obj);
-    if (dependencies) {
-        result = ([dependencies indexOfObjectIdenticalTo:depend] != NSNotFound);
-    }
+    NSMutableSet *dependencies = (NSMutableSet *)CFDictionaryGetValue(graph, obj);
+	result = [dependencies containsObject:depend];
     return result;
 }
 
-- (NSArray *)dependenciesForObject:obj {
+- (NSSet *)dependenciesForObject:obj {
     REQUIRE_NOT_NULL(obj);
-    NSArray *result = (NSArray *)CFDictionaryGetValue(graph, obj);
-    return result ? result : [NSArray array];
+    return (NSSet *)CFDictionaryGetValue(graph, obj);
 }
 
-static void tarjan(HFObjectGraph *self, id node, CFMutableDictionaryRef vIndexes, CFMutableDictionaryRef vLowlinks, NSMutableArray *stack, NSUInteger *index, NSArray *givenDependencies, NSMutableArray *resultStronglyConnectedComponents) {
+static void tarjan(HFObjectGraph *self, id node, CFMutableDictionaryRef vIndexes, CFMutableDictionaryRef vLowlinks, NSMutableArray *stack, NSUInteger *index, id givenDependencies/*NSSet or NSArray*/, NSMutableArray *resultStronglyConnectedComponents) {
     NSUInteger vLowlink = *index;
     CFDictionarySetValue(vIndexes, node, (void *)*index);
     CFDictionarySetValue(vLowlinks, node, (void *)vLowlink);
     ++*index;
     [stack addObject:node];
     
-    NSArray *dependencies = (givenDependencies ? givenDependencies : [self dependenciesForObject:node]);
+    id dependencies = (givenDependencies ? givenDependencies : [self dependenciesForObject:node]);
     FOREACH(id, successor, dependencies) {
         NSUInteger successorIndex = -1;
         BOOL successorIndexIsDefined = CFDictionaryGetValueIfPresent(vIndexes, successor, (const void **)&successorIndex);
@@ -117,23 +113,68 @@ static void tarjan(HFObjectGraph *self, id node, CFMutableDictionaryRef vIndexes
     return result;
 }
 
+static void topologicallySort(HFObjectGraph *self, id object, NSMutableArray *result, CFMutableSetRef pending, CFMutableSetRef visited) {
+	REQUIRE_NOT_NULL(object);
+	HFASSERT(! CFSetContainsValue(pending, object));
+	HFASSERT(! CFSetContainsValue(visited, object));
+	HFASSERT((CFIndex)[result count] == CFSetGetCount(visited));
+	NSSet *dependencies = [self dependenciesForObject:object];
+	NSUInteger i, dependencyCount = [dependencies count];
+	if (dependencyCount > 0) {
+		CFSetAddValue(pending, object);
+		NEW_ARRAY(id, dependencyArray, dependencyCount);
+		CFSetGetValues((CFSetRef)dependencies, (const void **)dependencyArray);
+		for (i=0; i < dependencyCount; i++) {
+			HFASSERT(!CFSetContainsValue(pending, dependencyArray[i]));
+			if (! CFSetContainsValue(visited, dependencyArray[i])) {
+				topologicallySort(self, dependencyArray[i], result, pending, visited);
+				HFASSERT(CFSetContainsValue(visited, dependencyArray[i]));
+				HFASSERT(!CFSetContainsValue(pending, dependencyArray[i]));
+			}
+		}
+		FREE_ARRAY(dependencyArray);
+		HFASSERT(CFSetContainsValue(pending, object));
+		CFSetRemoveValue(pending, object);
+	}
+	[result addObject:object];
+	CFSetAddValue(visited, object);
+}
 
+- (NSArray *)topologicallySortObjects:(NSArray *)objects {
+	REQUIRE_NOT_NULL(objects);
+	NSUInteger count = [objects count];
+	HFASSERT([[NSSet setWithArray:objects] count] == [objects count]);
+	NSMutableArray *result = [NSMutableArray arrayWithCapacity:count];
+	CFMutableSetRef visitedSet = CFSetCreateMutable(NULL, count, NULL);
+	CFMutableSetRef pendingSet = CFSetCreateMutable(NULL, count, NULL);
+	FOREACH(id, object, objects) {
+		topologicallySort(self, object, result, pendingSet, visitedSet);
+	}
+	CFRelease(visitedSet);
+	CFRelease(pendingSet);
+	HFASSERT([result count] == count);
+	HFASSERT([[NSSet setWithArray:objects] isEqual:[NSSet setWithArray:result]]);
+	return result;
+}
 
 #if ! NDEBUG
 
 
-/* Methods and functions starting with "naive" are meant to be used for verifying more sophisticated algorithms. */
+/* Methods and functions starting with "naive" are meant to be used for verifying the correctness of more sophisticated algorithms. */
 
 static BOOL naiveSearch(HFObjectGraph *self, id start, id goal, CFMutableSetRef visited) {
     if (start == goal) return YES;
     if (CFSetContainsValue(visited, start)) return NO;
     CFSetAddValue(visited, start);
-	NSArray *dependencies = (NSArray *)CFDictionaryGetValue(self->graph, start);
-	NSUInteger i, max = [dependencies count];
-	for (i=0; i < max; i++) {
-		id dependency = [dependencies objectAtIndex:i];
-        if (naiveSearch(self, dependency, goal, visited)) return YES;
-    }
+	CFSetRef dependencies = CFDictionaryGetValue(self->graph, start);
+	if (dependencies) {
+		NSUInteger i, max = CFSetGetCount(dependencies);
+		NEW_ARRAY(id, dependencyObjects, max);
+		CFSetGetValues(dependencies, (const void **)dependencyObjects);
+		for (i=0; i < max; i++) {
+			if (naiveSearch(self, dependencyObjects[i], goal, visited)) return YES;
+		}
+	}
     return NO;
 }
 

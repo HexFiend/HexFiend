@@ -10,6 +10,11 @@
 
 @class HFByteSlice, HFFileReference, HFProgressTracker;
 
+typedef enum {
+	HFWriteSuccess,
+	HFWriteCancelled
+} HFByteSliceWriteError;
+
 @interface HFByteSliceFileOperation : NSObject {
     HFRange targetRange;
 }
@@ -24,6 +29,6 @@
 - (HFRange)targetRange;
 
 - (unsigned long long)costToWrite;
-- (BOOL)writeToFile:(HFFileReference *)file trackingProgress:(HFProgressTracker *)progressTracker error:(NSError **)error;
+- (HFByteSliceWriteError)writeToFile:(HFFileReference *)file trackingProgress:(HFProgressTracker *)progressTracker error:(NSError **)error;
 
 @end

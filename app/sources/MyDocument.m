@@ -12,6 +12,13 @@
 #import <HexFiend/HexFiend.h>
 #include <pthread.h>
 
+enum {
+	HFSaveSuccessful,
+	HFSaveCancelled,
+	HFSaveError
+};
+
+
 static BOOL isRunningOnLeopardOrLater(void) {
     return NSAppKitVersionNumber >= 860.;
 }
@@ -52,7 +59,7 @@ static BOOL isRunningOnLeopardOrLater(void) {
     
     [containerView setVertical:NO];
     if ([containerView respondsToSelector:@selector(setDividerStyle:)]) {
-	[containerView setDividerStyle:2/*NSSplitViewDividerStyleThin*/];
+		[containerView setDividerStyle:2/*NSSplitViewDividerStyleThin*/];
     }
     [containerView setDelegate:self];
     
@@ -147,15 +154,27 @@ static BOOL isRunningOnLeopardOrLater(void) {
     [super dealloc];
 }
 
-- (void)prepareBannerWithView:(NSView *)newSubview {
+- (HFDocumentOperationView *)createOperationViewOfName:(NSString *)name {
+	HFASSERT(name);
+	HFDocumentOperationView *result = [[HFDocumentOperationView viewWithNibNamed:name] retain];
+	[result setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
+	[result setFrameSize:NSMakeSize(NSWidth([containerView frame]), 0)];
+	[result setFrameOrigin:NSZeroPoint];	
+	return result;
+}
+
+- (void)prepareBannerWithView:(HFDocumentOperationView *)newSubview withTargetFirstResponder:(id)targetFirstResponder {
+	HFASSERT(operationView == nil);
+	operationView = newSubview;
+	bannerTargetHeight = [newSubview defaultHeight];
     if (! bannerView) bannerView = [[NSView alloc] initWithFrame:NSMakeRect(0, 0, 1, 1)];
     NSRect containerBounds = [containerView bounds];
     NSRect bannerFrame = NSMakeRect(NSMinX(containerBounds), NSMaxY(containerBounds), NSWidth(containerBounds), 0);
     [bannerView setFrame:bannerFrame];
-    [containerView addSubview:bannerView positioned:NSWindowBelow relativeTo:[layoutRepresenter view]];
     bannerStartTime = 0;
     bannerIsShown = YES;
     bannerGrowing = YES;
+	targetFirstResponderInBanner = targetFirstResponder;
     if (isRunningOnLeopardOrLater()) {
         if (! bannerDividerThumb) bannerDividerThumb = [[HFBannerDividerThumb alloc] initWithFrame:NSMakeRect(0, 0, 14, 14)];
         [bannerDividerThumb setAutoresizingMask:0];
@@ -170,50 +189,6 @@ static BOOL isRunningOnLeopardOrLater(void) {
     [NSTimer scheduledTimerWithTimeInterval:1. / 60. target:self selector:@selector(animateBanner:) userInfo:nil repeats:YES];
 }
 
-- (BOOL)writeSafelyToURL:(NSURL *)inAbsoluteURL ofType:(NSString *)inTypeName forSaveOperation:(NSSaveOperationType)inSaveOperation error:(NSError **)outError {
-    USE(inSaveOperation);
-    USE(inTypeName);
-    *outError = NULL;
-    
-    if (operationView) return NO;
-    
-    operationView = [[HFDocumentOperationView viewWithNibNamed:@"SaveBanner"] retain];
-    [operationView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
-    [operationView setFrameSize:NSMakeSize(NSWidth([containerView frame]), 0)];
-    [operationView setFrameOrigin:NSZeroPoint];
-    
-    bannerTargetHeight = [operationView defaultHeight];
-    
-    [self prepareBannerWithView:operationView];
-    struct HFDocumentOperationCallbacks callbacks = {
-        .target = self,
-        .userInfo = [NSDictionary dictionaryWithObjectsAndKeys:inAbsoluteURL, @"targetURL", nil],
-        .startSelector = @selector(threadedStartSave:),
-        .endSelector = @selector(endSave:)
-    };
-
-    [[controller byteArray] incrementChangeLockCounter];
-        
-    [operationView startOperationWithCallbacks:callbacks];
-    
-    while ([operationView operationIsRunning]) {
-        NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-        @try {  
-            NSEvent *event = [NSApp nextEventMatchingMask:NSAnyEventMask untilDate:[NSDate distantFuture] inMode:NSDefaultRunLoopMode dequeue:YES];
-            if (event) [NSApp sendEvent:event];
-        }
-        @catch (NSException *localException) {
-            NSLog(@"Exception thrown during save: %@", localException);
-        }
-        @finally {
-            [pool drain];
-        }
-    }
-    
-    [[controller byteArray] decrementChangeLockCounter];
-    
-    return NO;
-}
 
 - (BOOL)readFromURL:(NSURL *)absoluteURL ofType:(NSString *)typeName error:(NSError **)outError {
     USE(typeName);
@@ -278,12 +253,19 @@ static BOOL isRunningOnLeopardOrLater(void) {
 
 - (void)finishedAnimation {
     if (! bannerGrowing) {
-	bannerIsShown = NO;
-	[bannerDividerThumb removeFromSuperview];
-	[bannerView removeFromSuperview];
-	[bannerView release];
-	bannerView = nil;
+		bannerIsShown = NO;
+		[bannerDividerThumb removeFromSuperview];
+		[bannerView removeFromSuperview];
+		[[[[bannerView subviews] copy] autorelease] makeObjectsPerformSelector:@selector(removeFromSuperview)];
+		[bannerView release];
+		bannerView = nil;
+		operationView = nil;
         [containerView setNeedsDisplay:YES];
+		if (commandToRunAfterBannerIsDoneHiding) {
+			SEL command = commandToRunAfterBannerIsDoneHiding;
+			commandToRunAfterBannerIsDoneHiding = NULL;
+			[self performSelector:command withObject:nil];
+		}
     }
 }
 
@@ -316,6 +298,14 @@ static BOOL isRunningOnLeopardOrLater(void) {
     double amount = diff / .15;
     amount = fmin(fmax(amount, 0), 1);
     if (! bannerGrowing) amount = 1. - amount;
+	if (bannerGrowing && diff >= 0 && [bannerView superview] != containerView) {
+		[containerView addSubview:bannerView positioned:NSWindowBelow relativeTo:[layoutRepresenter view]];
+		if (targetFirstResponderInBanner) {
+			NSWindow *window = [self window];
+			savedFirstResponder = [window firstResponder];
+			[window makeFirstResponder:targetFirstResponderInBanner];
+		}
+	}
     CGFloat height = (CGFloat)round(bannerTargetHeight * amount);
     NSRect bannerFrame = [bannerView frame];
     bannerFrame.size.height = height;
@@ -326,49 +316,135 @@ static BOOL isRunningOnLeopardOrLater(void) {
         bannerStartTime = CFAbsoluteTimeGetCurrent();
     }
     if ((bannerGrowing && amount >= 1.) || (!bannerGrowing && amount <= 0.)) {
-        [timer invalidate];
-	[self finishedAnimation];
+		[timer invalidate];
+		[self finishedAnimation];
     }
 }
 
+- (BOOL)canSwitchToNewBanner {
+	return operationView == nil || operationView != saveView;
+}
+
 - (void)hideBannerFirstThenDo:(SEL)command {
-    USE(command);
     HFASSERT(bannerIsShown);
     bannerGrowing = NO;
     bannerStartTime = 0;
     /* If the first responder is in our banner, move it to our view */
     NSWindow *window = [self window];
     id firstResponder = [window firstResponder];
+	bannerTargetHeight = NSHeight([bannerView frame]);
+	commandToRunAfterBannerIsDoneHiding = command;
     if ([firstResponder isKindOfClass:[NSView class]] && [firstResponder ancestorSharedWithView:bannerView] == bannerView) {
         [self restoreFirstResponderToSavedResponder];
     }
     [NSTimer scheduledTimerWithTimeInterval:1. / 60. target:self selector:@selector(animateBanner:) userInfo:nil repeats:YES];
-    bannerTargetHeight = NSHeight([bannerView frame]);
+}
+
+- (void)hideBannerImmediately {
+    HFASSERT(bannerIsShown);
+	NSWindow *window = [self window];
+    bannerGrowing = NO;
+    bannerStartTime = 0;
+	bannerTargetHeight = NSHeight([bannerView frame]);
+    /* If the first responder is in our banner, move it to our view */
+    id firstResponder = [window firstResponder];
+    if ([firstResponder isKindOfClass:[NSView class]] && [firstResponder ancestorSharedWithView:bannerView] == bannerView) {
+        [self restoreFirstResponderToSavedResponder];
+    }
+	while (bannerIsShown) {
+		NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+		[self animateBanner:nil];
+		[window displayIfNeeded];
+		[pool release];
+	}
+}
+
+- (void)showSaveBannerHavingDelayed:(NSTimer *)timer {
+	HFASSERT(saveView != nil);
+	USE(timer);
+	if (operationView != nil && operationView != saveView) {
+		[self hideBannerImmediately];
+	}
+    [self prepareBannerWithView:saveView withTargetFirstResponder:nil];
+}
+
+- (BOOL)writeSafelyToURL:(NSURL *)inAbsoluteURL ofType:(NSString *)inTypeName forSaveOperation:(NSSaveOperationType)saveOperation error:(NSError **)outError {
+    USE(inTypeName);
+    *outError = NULL;
+	
+	NSTimer *showSaveBannerTimer = [NSTimer scheduledTimerWithTimeInterval:.5 target:self selector:@selector(showSaveBannerHavingDelayed:) userInfo:nil repeats:NO];
+    
+	if (! saveView) saveView = [self createOperationViewOfName:@"SaveBanner"];
+	saveResult = 0;
+
+    struct HFDocumentOperationCallbacks callbacks = {
+        .target = self,
+        .userInfo = [NSDictionary dictionaryWithObjectsAndKeys:inAbsoluteURL, @"targetURL", nil],
+        .startSelector = @selector(threadedStartSave:),
+        .endSelector = @selector(endSave:)
+    };
+	
+    [[controller byteArray] incrementChangeLockCounter];
+	
+    [saveView startOperationWithCallbacks:callbacks];
+    
+    while ([saveView operationIsRunning]) {
+        NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+        @try {  
+            NSEvent *event = [NSApp nextEventMatchingMask:NSAnyEventMask untilDate:[NSDate distantFuture] inMode:NSDefaultRunLoopMode dequeue:YES];
+            if (event) [NSApp sendEvent:event];
+        }
+        @catch (NSException *localException) {
+            NSLog(@"Exception thrown during save: %@", localException);
+        }
+        @finally {
+            [pool drain];
+        }
+    }
+	
+	[showSaveBannerTimer invalidate];
+	
+    [[controller byteArray] decrementChangeLockCounter];
+	
+	if (saveOperation == NSSaveOperation || saveOperation == NSSaveAsOperation) {
+		/* We can no longer undo, since we may have overwritten our source data. */
+		[[self undoManager] removeAllActions];	
+		HFFileReference *fileReference = [[[HFFileReference alloc] initWithPath:[inAbsoluteURL path]] autorelease];
+		if (fileReference) {
+			HFFileByteSlice *byteSlice = [[[HFFileByteSlice alloc] initWithFile:fileReference] autorelease];
+			HFTavlTreeByteArray *byteArray = [[[HFTavlTreeByteArray alloc] init] autorelease];
+			[byteArray insertByteSlice:byteSlice inRange:HFRangeMake(0, 0)];
+			[controller setByteArray:byteArray];
+		}
+	}
+	
+    
+	if (operationView != nil && operationView == saveView) [self hideBannerFirstThenDo:NULL];
+	
+    return saveResult != HFSaveError;
 }
 
 - (void)showFindPanel:(NSMenuItem *)item {
+	if (operationView != nil && operationView == findReplaceView) return;
+	if (! [self canSwitchToNewBanner]) {
+		NSBeep();
+		return;
+	}
     USE(item);
     if (bannerIsShown) {
-	[self hideBannerFirstThenDo:_cmd];
-	return;
+		[self hideBannerFirstThenDo:_cmd];
+		return;
     }
-
-    if (! operationView) {
-        operationView = [[HFDocumentOperationView viewWithNibNamed:@"FindReplaceBanner"] retain];
-        [[operationView viewNamed:@"searchField"] setTarget:self];
-        [[operationView viewNamed:@"searchField"] setAction:@selector(findNext:)];
-        [[operationView viewNamed:@"replaceField"] setTarget:self];
-        [[operationView viewNamed:@"replaceField"] setAction:@selector(findNext:)];
-        [operationView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
-        [operationView setFrameSize:NSMakeSize(NSWidth([containerView frame]), 0)];
-        [operationView setFrameOrigin:NSZeroPoint];
+	
+    if (! findReplaceView) {
+        findReplaceView = [self createOperationViewOfName:@"FindReplaceBanner"];
+        [[findReplaceView viewNamed:@"searchField"] setTarget:self];
+        [[findReplaceView viewNamed:@"searchField"] setAction:@selector(findNext:)];
+        [[findReplaceView viewNamed:@"replaceField"] setTarget:self];
+        [[findReplaceView viewNamed:@"replaceField"] setAction:@selector(findNext:)];
     }
-
-    bannerTargetHeight = [operationView defaultHeight];
     
-    [self prepareBannerWithView:operationView];
-    savedFirstResponder = [[self window] firstResponder];
-    [[self window] makeFirstResponder:[operationView viewNamed:@"searchField"]];
+    [self prepareBannerWithView:findReplaceView withTargetFirstResponder:[findReplaceView viewNamed:@"searchField"]];
 }
 
 - (NSRect)splitView:(NSSplitView *)splitView additionalEffectiveRectOfDividerAtIndex:(NSInteger)dividerIndex {
@@ -390,11 +466,16 @@ static BOOL isRunningOnLeopardOrLater(void) {
     NSError *error = nil;
     BOOL result = [byteArray writeToFile:targetURL trackingProgress:tracker error:&error];
 	[tracker noteFinished:self];
-    return [NSNumber numberWithBool:result];
+	if (tracker->cancelRequested) return [NSNumber numberWithInt:HFSaveCancelled];
+	else if (! result) return [NSNumber numberWithInt:HFSaveError];
+	else return [NSNumber numberWithInt:HFSaveSuccessful];
 }
 
 - (void)endSave:(id)result {
     NSLog(@"End save %@", result);
+	saveResult = [result integerValue];
+	/* Post an event so our event loop wakes up */
+	[NSApp postEvent:[NSEvent otherEventWithType:NSApplicationDefined location:NSZeroPoint modifierFlags:0 timestamp:0 windowNumber:0 context:NULL subtype:0 data1:0 data2:0] atStart:NO];
 }
 
 - (id)threadedStartFind:(HFProgressTracker *)tracker {
@@ -413,7 +494,7 @@ static BOOL isRunningOnLeopardOrLater(void) {
     searchResult = [haystack indexOfBytesEqualToBytes:needle inRange:searchRange1 searchingForwards:forwards trackingProgress:tracker];
     CFAbsoluteTime end = CFAbsoluteTimeGetCurrent();
     printf("Diff: %f\n", end - start);
-
+	
     if (searchResult == ULLONG_MAX) {
         searchResult = [haystack indexOfBytesEqualToBytes:needle inRange:searchRange2 searchingForwards:forwards trackingProgress:tracker];
     }
@@ -424,14 +505,14 @@ static BOOL isRunningOnLeopardOrLater(void) {
 
 - (void)findEnded:(NSNumber *)val {
     NSLog(@"%llu", [val unsignedLongLongValue]);
-    NSDictionary *userInfo = [[operationView progressTracker] userInfo];
+    NSDictionary *userInfo = [[findReplaceView progressTracker] userInfo];
     HFByteArray *needle = [userInfo objectForKey:@"needle"];
     HFByteArray *haystack = [userInfo objectForKey:@"haystack"];
     /* nil val means cancelled */
     if (val) {
         unsigned long long searchResult = [val unsignedLongLongValue];
         if (searchResult != ULLONG_MAX) {
-                
+			
             HFRange resultRange = HFRangeMake(searchResult, [needle length]);
             [controller setSelectedContentsRanges:[HFRangeWrapper withRanges:&resultRange count:1]];
             [controller maximizeVisibilityOfContentsRange:resultRange];
@@ -443,11 +524,11 @@ static BOOL isRunningOnLeopardOrLater(void) {
     }
     [needle decrementChangeLockCounter];
     [haystack decrementChangeLockCounter];
-
+	
 }
 
 - (void)findNextBySearchingForwards:(BOOL)forwards {
-    HFByteArray *needle = [[operationView viewNamed:@"searchField"] objectValue];
+    HFByteArray *needle = [[findReplaceView viewNamed:@"searchField"] objectValue];
     if ([needle length] > 0) {
         HFByteArray *haystack = [controller byteArray];
         unsigned long long startLocation = [controller maximumSelectionLocation];
@@ -458,12 +539,12 @@ static BOOL isRunningOnLeopardOrLater(void) {
         HFRange searchRange2 = HFRangeMake(0, endLocation);
         
         NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-            needle, @"needle",
-            haystack, @"haystack",
-            [NSNumber numberWithBool:forwards], @"forwards",
-            [HFRangeWrapper withRange:searchRange1], @"range1",
-            [HFRangeWrapper withRange:searchRange2], @"range2",
-            nil];
+								  needle, @"needle",
+								  haystack, @"haystack",
+								  [NSNumber numberWithBool:forwards], @"forwards",
+								  [HFRangeWrapper withRange:searchRange1], @"range1",
+								  [HFRangeWrapper withRange:searchRange2], @"range2",
+								  nil];
         
         struct HFDocumentOperationCallbacks callbacks = {
             .target = self,
@@ -475,7 +556,7 @@ static BOOL isRunningOnLeopardOrLater(void) {
         [needle incrementChangeLockCounter];
         [haystack incrementChangeLockCounter];
         
-        [operationView startOperationWithCallbacks:callbacks];
+        [findReplaceView startOperationWithCallbacks:callbacks];
     }
 }
 
@@ -504,6 +585,65 @@ static BOOL isRunningOnLeopardOrLater(void) {
             NSLog(@"Unhandled item %@", item);
             break;
     }
+}
+
+- (void)showNavigationBanner {
+	if (navigateView == operationView && navigateView != nil) return;
+    if (! navigateView) navigateView = [self createOperationViewOfName:@"DataNavigate"];
+    [self prepareBannerWithView:navigateView withTargetFirstResponder:nil];
+	
+}
+
+- (void)moveSelectionForwards:(NSMenuItem *)sender {
+	USE(sender);
+	if (! [self canSwitchToNewBanner]) {
+		NSBeep();
+		return;
+	}
+    if (operationView != nil && operationView != navigateView) {
+		[self hideBannerFirstThenDo:_cmd];
+		return;
+    }
+	[self showNavigationBanner];
+}
+
+- (void)moveSelectionBackwards:(NSMenuItem *)sender {
+	USE(sender);
+	if (! [self canSwitchToNewBanner]) {
+		NSBeep();
+		return;
+	}
+    if (operationView != nil && operationView != navigateView) {
+		[self hideBannerFirstThenDo:_cmd];
+		return;
+    }
+	[self showNavigationBanner];
+}
+
+- (void)extendSelectionForwards:(NSMenuItem *)sender {
+	USE(sender);
+	if (! [self canSwitchToNewBanner]) {
+		NSBeep();
+		return;
+	}
+    if (operationView != nil && operationView != navigateView) {
+		[self hideBannerFirstThenDo:_cmd];
+		return;
+    }
+	[self showNavigationBanner];
+}
+
+- (void)extendSelectionBackwards:(NSMenuItem *)sender {
+	USE(sender);
+	if (! [self canSwitchToNewBanner]) {
+		NSBeep();
+		return;
+	}
+    if (operationView != nil && operationView != navigateView) {
+		[self hideBannerFirstThenDo:_cmd];
+		return;
+    }
+	[self showNavigationBanner];
 }
 
 
