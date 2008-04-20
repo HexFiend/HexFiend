@@ -435,15 +435,15 @@
 	D01E7C140CDC58AA00943F9E /* MyDocument.h */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {1636, 882}}";
-			sepNavSelRange = "{1002, 17}";
+			sepNavSelRange = "{945, 10}";
 			sepNavVisRange = "{0, 1712}";
 		};
 	};
 	D01E7C150CDC58AA00943F9E /* MyDocument.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1636, 10206}}";
-			sepNavSelRange = "{20748, 0}";
-			sepNavVisRange = "{19396, 2213}";
+			sepNavIntBoundsRect = "{{0, 0}, {1636, 10458}}";
+			sepNavSelRange = "{8184, 0}";
+			sepNavVisRange = "{6405, 2890}";
 		};
 	};
 	D01E7C330CDC646800943F9E /* HFRepresenter.h */ = {
@@ -695,7 +695,7 @@
 		fRef = D01E7C150CDC58AA00943F9E /* MyDocument.m */;
 		name = "MyDocument.m: 636";
 		rLen = 32;
-		rLoc = 25834;
+		rLoc = 26080;
 		rType = 0;
 		vrLen = 585;
 		vrLoc = 24541;
@@ -713,7 +713,7 @@
 		fRef = D01E7C150CDC58AA00943F9E /* MyDocument.m */;
 		name = "MyDocument.m: 636";
 		rLen = 32;
-		rLoc = 25834;
+		rLoc = 26080;
 		rType = 0;
 		vrLen = 585;
 		vrLoc = 24541;

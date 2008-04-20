@@ -197,6 +197,11 @@ static BOOL isRunningOnLeopardOrLater(void) {
         [bannerView addSubview:bannerDividerThumb];
     }
     if (newSubview) {
+        NSSize newSubviewSize = [newSubview frame].size;
+        if (newSubviewSize.width != NSWidth(containerBounds)) {
+            newSubviewSize.width = NSWidth(containerBounds);
+            [newSubview setFrameSize:newSubviewSize];
+        }
         if (bannerDividerThumb) [bannerView addSubview:newSubview positioned:NSWindowBelow relativeTo:bannerDividerThumb];
         else [bannerView addSubview:newSubview];
     }
