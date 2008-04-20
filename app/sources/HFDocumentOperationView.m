@@ -14,12 +14,12 @@ static NSString *sNibName;
 
 @implementation HFDocumentOperationView
 
-+ viewWithNibNamed:(NSString *)name {
++ viewWithNibNamed:(NSString *)name owner:(id)owner {
     NSString *path = [[NSBundle bundleForClass:self] pathForResource:name ofType:@"nib"];
     if (! path) [NSException raise:NSInvalidArgumentException format:@"Unable to find nib named %@", name];
     sNibName = [name copy];
     NSMutableArray *topLevelObjects = [NSMutableArray array];
-    if (! [NSBundle loadNibFile:path externalNameTable:[NSDictionary dictionaryWithObjectsAndKeys:topLevelObjects, @"NSTopLevelObjects", nil] withZone:NULL]) {
+    if (! [NSBundle loadNibFile:path externalNameTable:[NSDictionary dictionaryWithObjectsAndKeys:topLevelObjects, @"NSTopLevelObjects", owner, @"NSOwner", nil] withZone:NULL]) {
         [NSException raise:NSInvalidArgumentException format:@"Unable to load nib at path %@", path];
     }
     [sNibName release];

@@ -240,7 +240,7 @@ static NSSet *arraysToSets(NSArray *array, NSUInteger depth) {
         NSUInteger i, objectCount = 2 + (random() % (100 - 2));
         NSUInteger connectionCount = random() % (objectCount * 2);
         NSMutableArray *objects = [NSMutableArray array];
-        for (i=0; i < objectCount; i++) [objects addObject:[NSNumber numberWithUnsignedInt:i]];
+        for (i=0; i < objectCount; i++) [objects addObject:[NSNumber numberWithUnsignedLong:i]];
         for (i=0; i < connectionCount; i++) {
             id object1 = [objects objectAtIndex: random() % objectCount];
             id object2 = [objects objectAtIndex: random() % objectCount];

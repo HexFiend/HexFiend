@@ -62,7 +62,7 @@
     data = [dat retain];
     inlineTailLength = tailLen;
     memcpy(inlineTail, tail, tailLen);
-	HFASSERT([self length] == tailLen + len);
+    HFASSERT([self length] == tailLen + len);
     return self;
 }
 
@@ -97,8 +97,8 @@
 }
 
 - (HFByteSlice *)subsliceWithRange:(HFRange)lrange {
-	if (HFRangeEqualsRange(lrange, HFRangeMake(0, HFSum(length, inlineTailLength)))) return [[self retain] autorelease];
-	
+    if (HFRangeEqualsRange(lrange, HFRangeMake(0, HFSum(length, inlineTailLength)))) return [[self retain] autorelease];
+    
     HFByteSlice *result;
     HFASSERT(lrange.length > 0);
     HFASSERT(HFSum(length, inlineTailLength) >= HFMaxRange(lrange));
@@ -163,7 +163,7 @@
                 unsigned char newDataTail[MAX_TAIL_LENGTH];
                 unsigned char newDataTailLength = MAX_TAIL_LENGTH;
                 NSMutableData *newData = (data ? data : [[[NSMutableData alloc] init] autorelease]);
-            
+                
                 NSUInteger sliceLengthInt = ll2l(sliceLength);
                 NSUInteger newTotalTailLength = sliceLengthInt + inlineTailLength;
                 HFASSERT(newTotalTailLength >= MAX_TAIL_LENGTH);

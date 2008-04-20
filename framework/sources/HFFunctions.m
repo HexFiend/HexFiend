@@ -351,6 +351,6 @@ void HFStopTiming(void) {
     chudStopRemotePerfMonitor();
 }
 #else
-void HFStartTiming(const char *name) { }
+void HFStartTiming(const char *name) { USE(name); }
 void HFStopTiming(void) { }
 #endif

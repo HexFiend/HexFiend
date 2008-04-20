@@ -10,7 +10,7 @@
 #import <HexFiend/HFProgressTracker.h>
 
 unsigned char* boyer_moore_helper(const unsigned char * restrict haystack, const unsigned char * restrict needle, unsigned long haystack_length, unsigned long needle_length, const unsigned long * restrict char_jump, const unsigned long * restrict match_jump) {
-    unsigned ua, ub;
+    unsigned long ua, ub;
     
     const unsigned char *u_pat = needle + needle_length;
     const unsigned char *u_text = haystack + needle_length - 1;
@@ -53,7 +53,7 @@ stage2:
 		    ua = char_jump[*u_text];
 		    ub = match_jump[u_pat - needle];
 		    
-		    unsigned result;
+		    unsigned long result;
 		    
 		    result = (ua > ub ? ua : ub);
 		    
@@ -78,7 +78,7 @@ stage2:
 	    ua = char_jump[*u_text];
 	    ub = match_jump[u_pat - needle];
 	    
-	    unsigned result;
+	    unsigned long result;
 	    
 	    result = (ua > ub ? ua : ub);
 	    
@@ -118,7 +118,7 @@ stage2:
     unsigned long haystack_bytes_to_allocate;
     
     BOOL search_with_chunks = total_haystack_length > SEARCH_CHUNK_SIZE + needle_length;
-    unsigned needle_length_rounded_up_to_page_size = 0;
+    unsigned long needle_length_rounded_up_to_page_size = 0;
     
     /* does the haystack fit entirely in memory? */
     if (! search_with_chunks) haystack_bytes_to_allocate = ll2l(total_haystack_length);
@@ -253,6 +253,30 @@ cancelled:
 }
 
 - (unsigned long long)_byteSearchForwardsSingle:(unsigned char)byte inRange:(const HFRange)range trackingProgress:(HFProgressTracker *)progressTracker {
+    unsigned long long tempProgressValue = 0;
+    unsigned long long result = ULLONG_MAX;
+    volatile unsigned long long * const progressValuePtr = (progressTracker ? &progressTracker->currentProgress : &tempProgressValue);
+    volatile int *cancelRequested = &progressTracker->cancelRequested;
+        
+    unsigned char buff[SEARCH_CHUNK_SIZE];
+    HFRange remainingRange = range;
+    while (remainingRange.length > 0) {
+        if (*cancelRequested) goto cancelled;
+        NSUInteger lengthToCopy = ll2l(MIN(remainingRange.length, sizeof buff));
+        [self copyBytes:buff range:HFRangeMake(remainingRange.location, lengthToCopy)];
+        if (*cancelRequested) goto cancelled;
+        unsigned char *resultPtr = HFFastMemchr(buff, byte, lengthToCopy);
+        if (resultPtr) {
+            result = HFSum((resultPtr - buff), remainingRange.location);
+            break;
+        }
+        remainingRange.location = HFSum(remainingRange.location, lengthToCopy);
+        remainingRange.length -= lengthToCopy;
+        HFAtomicAdd64(lengthToCopy, (int64_t *)progressValuePtr);
+    }
+    return result;
+    
+    cancelled:
     return ULLONG_MAX;
 }
 

@@ -23,21 +23,22 @@
     
     NSResponder *savedFirstResponder;
     
-	HFDocumentOperationView *findReplaceView;
-	HFDocumentOperationView *navigateView;
-	HFDocumentOperationView *saveView;
-	
+    HFDocumentOperationView *findReplaceView;
+    HFDocumentOperationView *navigateView;
+    HFDocumentOperationView *saveView;
+    
     HFDocumentOperationView *operationView;
     BOOL bannerIsShown;
     BOOL bannerGrowing;
     NSView *bannerView;
     NSView *bannerDividerThumb;
+    NSTimer *bannerResizeTimer;
     CGFloat bannerTargetHeight;
     CFAbsoluteTime bannerStartTime;
-	id targetFirstResponderInBanner;
-	SEL commandToRunAfterBannerIsDoneHiding;
-	
-	NSInteger saveResult;
+    id targetFirstResponderInBanner;
+    SEL commandToRunAfterBannerIsDoneHiding;
+    
+    NSInteger saveResult;
     
 }
 
@@ -49,7 +50,13 @@
 - (void)setFont:(NSFont *)font;
 - (NSFont *)font;
 
-- (IBAction)showFontPanel:(id)sender;
-- (IBAction)setAntialiasFromMenuItem:(id)sender;
+- (IBAction)showFontPanel:sender;
+- (IBAction)setAntialiasFromMenuItem:sender;
+
+- (IBAction)findNext:sender;
+- (IBAction)findPrevious:sender;
+- (IBAction)replaceAndFind:sender;
+- (IBAction)replace:sender;
+- (IBAction)replaceAll:sender;
 
 @end

@@ -13,9 +13,9 @@
 #include <pthread.h>
 
 enum {
-	HFSaveSuccessful,
-	HFSaveCancelled,
-	HFSaveError
+    HFSaveSuccessful,
+    HFSaveCancelled,
+    HFSaveError
 };
 
 
@@ -26,15 +26,15 @@ static BOOL isRunningOnLeopardOrLater(void) {
 @implementation MyDocument
 
 + (void)initialize {
-	if (self == [MyDocument class]) {
-		NSDictionary *defs = [[NSDictionary alloc] initWithObjectsAndKeys:
-			[NSNumber numberWithBool:YES], @"AntialiasText",
-			@"Monaco", @"DefaultFontName",
-			[NSNumber numberWithDouble:10.], @"DefaultFontSize",
-			nil];
-		[[NSUserDefaults standardUserDefaults] registerDefaults:defs];
-		[defs release];
-	}
+    if (self == [MyDocument class]) {
+        NSDictionary *defs = [[NSDictionary alloc] initWithObjectsAndKeys:
+                              [NSNumber numberWithBool:YES], @"AntialiasText",
+                              @"Monaco", @"DefaultFontName",
+                              [NSNumber numberWithDouble:10.], @"DefaultFontSize",
+                              nil];
+        [[NSUserDefaults standardUserDefaults] registerDefaults:defs];
+        [defs release];
+    }
 }
 
 - (NSString *)windowNibName {
@@ -71,7 +71,7 @@ static BOOL isRunningOnLeopardOrLater(void) {
     
     [containerView setVertical:NO];
     if ([containerView respondsToSelector:@selector(setDividerStyle:)]) {
-		[containerView setDividerStyle:2/*NSSplitViewDividerStyleThin*/];
+        [containerView setDividerStyle:2/*NSSplitViewDividerStyleThin*/];
     }
     [containerView setDelegate:self];
     
@@ -133,9 +133,9 @@ static BOOL isRunningOnLeopardOrLater(void) {
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(lineCountingViewChangedWidth:) name:HFLineCountingRepresenterMinimumViewWidthChanged object:lineCountingRepresenter];
     NSUserDefaults *defs = [NSUserDefaults standardUserDefaults];
-	
+    
     controller = [[HFController alloc] init];
-	[controller setShouldAntialias:[defs boolForKey:@"AntialiasText"]];
+    [controller setShouldAntialias:[defs boolForKey:@"AntialiasText"]];
     [controller setUndoManager:[self undoManager]];
     [controller addRepresenter:layoutRepresenter];
     
@@ -169,18 +169,18 @@ static BOOL isRunningOnLeopardOrLater(void) {
 }
 
 - (HFDocumentOperationView *)createOperationViewOfName:(NSString *)name {
-	HFASSERT(name);
-	HFDocumentOperationView *result = [[HFDocumentOperationView viewWithNibNamed:name] retain];
-	[result setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
-	[result setFrameSize:NSMakeSize(NSWidth([containerView frame]), 0)];
-	[result setFrameOrigin:NSZeroPoint];	
-	return result;
+    HFASSERT(name);
+    HFDocumentOperationView *result = [[HFDocumentOperationView viewWithNibNamed:name owner:self] retain];
+    [result setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
+    [result setFrameSize:NSMakeSize(NSWidth([containerView frame]), 0)];
+    [result setFrameOrigin:NSZeroPoint];	
+    return result;
 }
 
 - (void)prepareBannerWithView:(HFDocumentOperationView *)newSubview withTargetFirstResponder:(id)targetFirstResponder {
-	HFASSERT(operationView == nil);
-	operationView = newSubview;
-	bannerTargetHeight = [newSubview defaultHeight];
+    HFASSERT(operationView == nil);
+    operationView = newSubview;
+    bannerTargetHeight = [newSubview defaultHeight];
     if (! bannerView) bannerView = [[NSView alloc] initWithFrame:NSMakeRect(0, 0, 1, 1)];
     NSRect containerBounds = [containerView bounds];
     NSRect bannerFrame = NSMakeRect(NSMinX(containerBounds), NSMaxY(containerBounds), NSWidth(containerBounds), 0);
@@ -188,7 +188,7 @@ static BOOL isRunningOnLeopardOrLater(void) {
     bannerStartTime = 0;
     bannerIsShown = YES;
     bannerGrowing = YES;
-	targetFirstResponderInBanner = targetFirstResponder;
+    targetFirstResponderInBanner = targetFirstResponder;
     if (isRunningOnLeopardOrLater()) {
         if (! bannerDividerThumb) bannerDividerThumb = [[HFBannerDividerThumb alloc] initWithFrame:NSMakeRect(0, 0, 14, 14)];
         [bannerDividerThumb setAutoresizingMask:0];
@@ -200,7 +200,9 @@ static BOOL isRunningOnLeopardOrLater(void) {
         if (bannerDividerThumb) [bannerView addSubview:newSubview positioned:NSWindowBelow relativeTo:bannerDividerThumb];
         else [bannerView addSubview:newSubview];
     }
-    [NSTimer scheduledTimerWithTimeInterval:1. / 60. target:self selector:@selector(animateBanner:) userInfo:nil repeats:YES];
+    [bannerResizeTimer invalidate];
+    [bannerResizeTimer release];
+    bannerResizeTimer = [[NSTimer scheduledTimerWithTimeInterval:1. / 60. target:self selector:@selector(animateBanner:) userInfo:nil repeats:YES] retain];
 }
 
 
@@ -240,32 +242,32 @@ static BOOL isRunningOnLeopardOrLater(void) {
 }
 
 - (void)setFont:(NSFont *)font {
-	HFASSERT(font != nil);
-	NSWindow *window = [self window];
-	NSDisableScreenUpdates();
-	[controller setFont:font];
-	[window display];
-	NSEnableScreenUpdates();
-	NSUserDefaults *defs = [NSUserDefaults standardUserDefaults];
-	[defs setDouble:[font pointSize] forKey:@"DefaultFontSize"];
-	[defs setObject:[font fontName] forKey:@"DefaultFontName"];
-	
+    HFASSERT(font != nil);
+    NSWindow *window = [self window];
+    NSDisableScreenUpdates();
+    [controller setFont:font];
+    [window display];
+    NSEnableScreenUpdates();
+    NSUserDefaults *defs = [NSUserDefaults standardUserDefaults];
+    [defs setDouble:[font pointSize] forKey:@"DefaultFontSize"];
+    [defs setObject:[font fontName] forKey:@"DefaultFontName"];
+    
 }
 
 - (NSFont *)font {
-	return [controller font];
+    return [controller font];
 }
 
 - (void)setFontSizeFromMenuItem:(NSMenuItem *)item {
-	NSString *fontName = [[self font] fontName];
-	[self setFont:[NSFont fontWithName:fontName size:(CGFloat)[item tag]]];
+    NSString *fontName = [[self font] fontName];
+    [self setFont:[NSFont fontWithName:fontName size:(CGFloat)[item tag]]];
 }
 
 - (IBAction)setAntialiasFromMenuItem:(id)sender {
-	USE(sender);
-	BOOL newVal = ! [controller shouldAntialias];
-	[controller setShouldAntialias:newVal];
-	[[NSUserDefaults standardUserDefaults] setBool:newVal forKey:@"AntialiasText"];
+    USE(sender);
+    BOOL newVal = ! [controller shouldAntialias];
+    [controller setShouldAntialias:newVal];
+    [[NSUserDefaults standardUserDefaults] setBool:newVal forKey:@"AntialiasText"];
 }
 
 - (BOOL)validateMenuItem:(NSMenuItem *)item {
@@ -291,32 +293,32 @@ static BOOL isRunningOnLeopardOrLater(void) {
                 return NO;
         }
     }
-	else if ([item action] == @selector(setFontSizeFromMenuItem:)) {
-		[item setState:[[self font] pointSize] == [item tag]];
-		return YES;
-	}
-	else if ([item action] == @selector(setAntialiasFromMenuItem:)) {
-		[item setState:[controller shouldAntialias]];
-		return YES;		
-	}
+    else if ([item action] == @selector(setFontSizeFromMenuItem:)) {
+        [item setState:[[self font] pointSize] == [item tag]];
+        return YES;
+    }
+    else if ([item action] == @selector(setAntialiasFromMenuItem:)) {
+        [item setState:[controller shouldAntialias]];
+        return YES;		
+    }
     else return [super validateMenuItem:item];
 }
 
 - (void)finishedAnimation {
     if (! bannerGrowing) {
-		bannerIsShown = NO;
-		[bannerDividerThumb removeFromSuperview];
-		[bannerView removeFromSuperview];
-		[[[[bannerView subviews] copy] autorelease] makeObjectsPerformSelector:@selector(removeFromSuperview)];
-		[bannerView release];
-		bannerView = nil;
-		operationView = nil;
+        bannerIsShown = NO;
+        [bannerDividerThumb removeFromSuperview];
+        [bannerView removeFromSuperview];
+        [[[[bannerView subviews] copy] autorelease] makeObjectsPerformSelector:@selector(removeFromSuperview)];
+        [bannerView release];
+        bannerView = nil;
+        operationView = nil;
         [containerView setNeedsDisplay:YES];
-		if (commandToRunAfterBannerIsDoneHiding) {
-			SEL command = commandToRunAfterBannerIsDoneHiding;
-			commandToRunAfterBannerIsDoneHiding = NULL;
-			[self performSelector:command withObject:nil];
-		}
+        if (commandToRunAfterBannerIsDoneHiding) {
+            SEL command = commandToRunAfterBannerIsDoneHiding;
+            commandToRunAfterBannerIsDoneHiding = NULL;
+            [self performSelector:command withObject:nil];
+        }
     }
 }
 
@@ -349,14 +351,14 @@ static BOOL isRunningOnLeopardOrLater(void) {
     double amount = diff / .15;
     amount = fmin(fmax(amount, 0), 1);
     if (! bannerGrowing) amount = 1. - amount;
-	if (bannerGrowing && diff >= 0 && [bannerView superview] != containerView) {
-		[containerView addSubview:bannerView positioned:NSWindowBelow relativeTo:[layoutRepresenter view]];
-		if (targetFirstResponderInBanner) {
-			NSWindow *window = [self window];
-			savedFirstResponder = [window firstResponder];
-			[window makeFirstResponder:targetFirstResponderInBanner];
-		}
-	}
+    if (bannerGrowing && diff >= 0 && [bannerView superview] != containerView) {
+        [containerView addSubview:bannerView positioned:NSWindowBelow relativeTo:[layoutRepresenter view]];
+        if (targetFirstResponderInBanner) {
+            NSWindow *window = [self window];
+            savedFirstResponder = [window firstResponder];
+            [window makeFirstResponder:targetFirstResponderInBanner];
+        }
+    }
     CGFloat height = (CGFloat)round(bannerTargetHeight * amount);
     NSRect bannerFrame = [bannerView frame];
     bannerFrame.size.height = height;
@@ -367,13 +369,17 @@ static BOOL isRunningOnLeopardOrLater(void) {
         bannerStartTime = CFAbsoluteTimeGetCurrent();
     }
     if ((bannerGrowing && amount >= 1.) || (!bannerGrowing && amount <= 0.)) {
-		[timer invalidate];
-		[self finishedAnimation];
+        if (timer == bannerResizeTimer && bannerResizeTimer != nil) {
+            [bannerResizeTimer invalidate];
+            [bannerResizeTimer release];
+            bannerResizeTimer = nil;
+        }
+        [self finishedAnimation];
     }
 }
 
 - (BOOL)canSwitchToNewBanner {
-	return operationView == nil || operationView != saveView;
+    return operationView == nil || operationView != saveView;
 }
 
 - (void)hideBannerFirstThenDo:(SEL)command {
@@ -383,60 +389,62 @@ static BOOL isRunningOnLeopardOrLater(void) {
     /* If the first responder is in our banner, move it to our view */
     NSWindow *window = [self window];
     id firstResponder = [window firstResponder];
-	bannerTargetHeight = NSHeight([bannerView frame]);
-	commandToRunAfterBannerIsDoneHiding = command;
+    bannerTargetHeight = NSHeight([bannerView frame]);
+    commandToRunAfterBannerIsDoneHiding = command;
     if ([firstResponder isKindOfClass:[NSView class]] && [firstResponder ancestorSharedWithView:bannerView] == bannerView) {
         [self restoreFirstResponderToSavedResponder];
     }
-    [NSTimer scheduledTimerWithTimeInterval:1. / 60. target:self selector:@selector(animateBanner:) userInfo:nil repeats:YES];
+    [bannerResizeTimer invalidate];
+    [bannerResizeTimer release];
+    bannerResizeTimer = [[NSTimer scheduledTimerWithTimeInterval:1. / 60. target:self selector:@selector(animateBanner:) userInfo:nil repeats:YES] retain];
 }
 
 - (void)hideBannerImmediately {
     HFASSERT(bannerIsShown);
-	NSWindow *window = [self window];
+    NSWindow *window = [self window];
     bannerGrowing = NO;
     bannerStartTime = 0;
-	bannerTargetHeight = NSHeight([bannerView frame]);
+    bannerTargetHeight = NSHeight([bannerView frame]);
     /* If the first responder is in our banner, move it to our view */
     id firstResponder = [window firstResponder];
     if ([firstResponder isKindOfClass:[NSView class]] && [firstResponder ancestorSharedWithView:bannerView] == bannerView) {
         [self restoreFirstResponderToSavedResponder];
     }
-	while (bannerIsShown) {
-		NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-		[self animateBanner:nil];
-		[window displayIfNeeded];
-		[pool release];
-	}
+    while (bannerIsShown) {
+        NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+        [self animateBanner:nil];
+        [window displayIfNeeded];
+        [pool release];
+    }
 }
 
 - (void)showSaveBannerHavingDelayed:(NSTimer *)timer {
-	HFASSERT(saveView != nil);
-	USE(timer);
-	if (operationView != nil && operationView != saveView) {
-		[self hideBannerImmediately];
-	}
+    HFASSERT(saveView != nil);
+    USE(timer);
+    if (operationView != nil && operationView != saveView) {
+        [self hideBannerImmediately];
+    }
     [self prepareBannerWithView:saveView withTargetFirstResponder:nil];
 }
 
 - (BOOL)writeSafelyToURL:(NSURL *)inAbsoluteURL ofType:(NSString *)inTypeName forSaveOperation:(NSSaveOperationType)saveOperation error:(NSError **)outError {
     USE(inTypeName);
     *outError = NULL;
-	
-	NSTimer *showSaveBannerTimer = [NSTimer scheduledTimerWithTimeInterval:.5 target:self selector:@selector(showSaveBannerHavingDelayed:) userInfo:nil repeats:NO];
     
-	if (! saveView) saveView = [self createOperationViewOfName:@"SaveBanner"];
-	saveResult = 0;
-
+    NSTimer *showSaveBannerTimer = [NSTimer scheduledTimerWithTimeInterval:.5 target:self selector:@selector(showSaveBannerHavingDelayed:) userInfo:nil repeats:NO];
+    
+    if (! saveView) saveView = [self createOperationViewOfName:@"SaveBanner"];
+    saveResult = 0;
+    
     struct HFDocumentOperationCallbacks callbacks = {
         .target = self,
         .userInfo = [NSDictionary dictionaryWithObjectsAndKeys:inAbsoluteURL, @"targetURL", nil],
         .startSelector = @selector(threadedStartSave:),
         .endSelector = @selector(endSave:)
     };
-	
+    
     [[controller byteArray] incrementChangeLockCounter];
-	
+    
     [saveView startOperationWithCallbacks:callbacks];
     
     while ([saveView operationIsRunning]) {
@@ -452,41 +460,41 @@ static BOOL isRunningOnLeopardOrLater(void) {
             [pool drain];
         }
     }
-	
-	[showSaveBannerTimer invalidate];
-	
-    [[controller byteArray] decrementChangeLockCounter];
-	
-	if (saveOperation == NSSaveOperation || saveOperation == NSSaveAsOperation) {
-		/* We can no longer undo, since we may have overwritten our source data. */
-		[[self undoManager] removeAllActions];	
-		HFFileReference *fileReference = [[[HFFileReference alloc] initWithPath:[inAbsoluteURL path]] autorelease];
-		if (fileReference) {
-			HFFileByteSlice *byteSlice = [[[HFFileByteSlice alloc] initWithFile:fileReference] autorelease];
-			HFTavlTreeByteArray *byteArray = [[[HFTavlTreeByteArray alloc] init] autorelease];
-			[byteArray insertByteSlice:byteSlice inRange:HFRangeMake(0, 0)];
-			[controller setByteArray:byteArray];
-		}
-	}
-	
     
-	if (operationView != nil && operationView == saveView) [self hideBannerFirstThenDo:NULL];
-	
+    [showSaveBannerTimer invalidate];
+    
+    [[controller byteArray] decrementChangeLockCounter];
+    
+    if (saveOperation == NSSaveOperation || saveOperation == NSSaveAsOperation) {
+        /* We can no longer undo, since we may have overwritten our source data. */
+        [[self undoManager] removeAllActions];	
+        HFFileReference *fileReference = [[[HFFileReference alloc] initWithPath:[inAbsoluteURL path]] autorelease];
+        if (fileReference) {
+            HFFileByteSlice *byteSlice = [[[HFFileByteSlice alloc] initWithFile:fileReference] autorelease];
+            HFTavlTreeByteArray *byteArray = [[[HFTavlTreeByteArray alloc] init] autorelease];
+            [byteArray insertByteSlice:byteSlice inRange:HFRangeMake(0, 0)];
+            [controller setByteArray:byteArray];
+        }
+    }
+    
+    
+    if (operationView != nil && operationView == saveView) [self hideBannerFirstThenDo:NULL];
+    
     return saveResult != HFSaveError;
 }
 
 - (void)showFindPanel:(NSMenuItem *)item {
-	if (operationView != nil && operationView == findReplaceView) return;
-	if (! [self canSwitchToNewBanner]) {
-		NSBeep();
-		return;
-	}
+    if (operationView != nil && operationView == findReplaceView) return;
+    if (! [self canSwitchToNewBanner]) {
+        NSBeep();
+        return;
+    }
     USE(item);
     if (bannerIsShown) {
-		[self hideBannerFirstThenDo:_cmd];
-		return;
+        [self hideBannerFirstThenDo:_cmd];
+        return;
     }
-	
+    
     if (! findReplaceView) {
         findReplaceView = [self createOperationViewOfName:@"FindReplaceBanner"];
         [[findReplaceView viewNamed:@"searchField"] setTarget:self];
@@ -505,9 +513,28 @@ static BOOL isRunningOnLeopardOrLater(void) {
     else return NSZeroRect;
 }
 
+- (BOOL)splitView:(NSSplitView *)splitView canCollapseSubview:(NSView *)subview {
+    HFASSERT(splitView == containerView);
+    return subview == bannerView;
+}
+
+- (BOOL)splitView:(NSSplitView *)splitView shouldCollapseSubview:(NSView *)subview forDoubleClickOnDividerAtIndex:(NSInteger)dividerIndex {
+    HFASSERT(splitView == containerView);
+    USE(dividerIndex);
+    if (subview == bannerView && subview != NULL) {
+        [self hideBannerFirstThenDo:NULL];
+    }
+    return NO;
+}
+
 - (void)cancelOperation:sender {
     USE(sender);
-    [self hideBannerFirstThenDo:NULL];
+    if (bannerIsShown) {
+        [self hideBannerFirstThenDo:NULL];
+    }
+    else {
+        NSBeep();
+    }
 }
 
 - (id)threadedStartSave:(HFProgressTracker *)tracker {
@@ -516,17 +543,17 @@ static BOOL isRunningOnLeopardOrLater(void) {
     NSURL *targetURL = [userInfo objectForKey:@"targetURL"];
     NSError *error = nil;
     BOOL result = [byteArray writeToFile:targetURL trackingProgress:tracker error:&error];
-	[tracker noteFinished:self];
-	if (tracker->cancelRequested) return [NSNumber numberWithInt:HFSaveCancelled];
-	else if (! result) return [NSNumber numberWithInt:HFSaveError];
-	else return [NSNumber numberWithInt:HFSaveSuccessful];
+    [tracker noteFinished:self];
+    if (tracker->cancelRequested) return [NSNumber numberWithInt:HFSaveCancelled];
+    else if (! result) return [NSNumber numberWithInt:HFSaveError];
+    else return [NSNumber numberWithInt:HFSaveSuccessful];
 }
 
 - (void)endSave:(id)result {
     NSLog(@"End save %@", result);
-	saveResult = [result integerValue];
-	/* Post an event so our event loop wakes up */
-	[NSApp postEvent:[NSEvent otherEventWithType:NSApplicationDefined location:NSZeroPoint modifierFlags:0 timestamp:0 windowNumber:0 context:NULL subtype:0 data1:0 data2:0] atStart:NO];
+    saveResult = [result integerValue];
+    /* Post an event so our event loop wakes up */
+    [NSApp postEvent:[NSEvent otherEventWithType:NSApplicationDefined location:NSZeroPoint modifierFlags:0 timestamp:0 windowNumber:0 context:NULL subtype:0 data1:0 data2:0] atStart:NO];
 }
 
 - (id)threadedStartFind:(HFProgressTracker *)tracker {
@@ -545,7 +572,7 @@ static BOOL isRunningOnLeopardOrLater(void) {
     searchResult = [haystack indexOfBytesEqualToBytes:needle inRange:searchRange1 searchingForwards:forwards trackingProgress:tracker];
     CFAbsoluteTime end = CFAbsoluteTimeGetCurrent();
     printf("Diff: %f\n", end - start);
-	
+    
     if (searchResult == ULLONG_MAX) {
         searchResult = [haystack indexOfBytesEqualToBytes:needle inRange:searchRange2 searchingForwards:forwards trackingProgress:tracker];
     }
@@ -563,7 +590,7 @@ static BOOL isRunningOnLeopardOrLater(void) {
     if (val) {
         unsigned long long searchResult = [val unsignedLongLongValue];
         if (searchResult != ULLONG_MAX) {
-			
+            
             HFRange resultRange = HFRangeMake(searchResult, [needle length]);
             [controller setSelectedContentsRanges:[HFRangeWrapper withRanges:&resultRange count:1]];
             [controller maximizeVisibilityOfContentsRange:resultRange];
@@ -575,7 +602,7 @@ static BOOL isRunningOnLeopardOrLater(void) {
     }
     [needle decrementChangeLockCounter];
     [haystack decrementChangeLockCounter];
-	
+    
 }
 
 - (void)findNextBySearchingForwards:(BOOL)forwards {
@@ -590,12 +617,12 @@ static BOOL isRunningOnLeopardOrLater(void) {
         HFRange searchRange2 = HFRangeMake(0, endLocation);
         
         NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-								  needle, @"needle",
-								  haystack, @"haystack",
-								  [NSNumber numberWithBool:forwards], @"forwards",
-								  [HFRangeWrapper withRange:searchRange1], @"range1",
-								  [HFRangeWrapper withRange:searchRange2], @"range2",
-								  nil];
+                                  needle, @"needle",
+                                  haystack, @"haystack",
+                                  [NSNumber numberWithBool:forwards], @"forwards",
+                                  [HFRangeWrapper withRange:searchRange1], @"range1",
+                                  [HFRangeWrapper withRange:searchRange2], @"range2",
+                                  nil];
         
         struct HFDocumentOperationCallbacks callbacks = {
             .target = self,
@@ -621,6 +648,22 @@ static BOOL isRunningOnLeopardOrLater(void) {
     [self findNextBySearchingForwards:NO];
 }
 
+- (IBAction)replace:sender {
+    USE(sender);
+    HFByteArray *replaceArray = [[findReplaceView viewNamed:@"replaceField"] objectValue];
+    HFASSERT(replaceArray != NULL);
+    [controller insertByteArray:replaceArray replacingPreviousBytes:0 allowUndoCoalescing:NO];
+}
+
+- (IBAction)replaceAndFind:sender {
+    [self replace:sender];
+    [self findNext:sender];
+}
+
+- (IBAction)replaceAll:sender {
+
+}
+
 - (void)performFindPanelAction:(NSMenuItem *)item {
     switch ([item tag]) {
         case NSFindPanelActionShowFindPanel:
@@ -639,72 +682,72 @@ static BOOL isRunningOnLeopardOrLater(void) {
 }
 
 - (void)showNavigationBanner {
-	if (navigateView == operationView && navigateView != nil) return;
+    if (navigateView == operationView && navigateView != nil) return;
     if (! navigateView) navigateView = [self createOperationViewOfName:@"DataNavigate"];
     [self prepareBannerWithView:navigateView withTargetFirstResponder:nil];
-	
+    
 }
 
 - (void)moveSelectionForwards:(NSMenuItem *)sender {
-	USE(sender);
-	if (! [self canSwitchToNewBanner]) {
-		NSBeep();
-		return;
-	}
-    if (operationView != nil && operationView != navigateView) {
-		[self hideBannerFirstThenDo:_cmd];
-		return;
+    USE(sender);
+    if (! [self canSwitchToNewBanner]) {
+        NSBeep();
+        return;
     }
-	[self showNavigationBanner];
+    if (operationView != nil && operationView != navigateView) {
+        [self hideBannerFirstThenDo:_cmd];
+        return;
+    }
+    [self showNavigationBanner];
 }
 
 - (void)moveSelectionBackwards:(NSMenuItem *)sender {
-	USE(sender);
-	if (! [self canSwitchToNewBanner]) {
-		NSBeep();
-		return;
-	}
-    if (operationView != nil && operationView != navigateView) {
-		[self hideBannerFirstThenDo:_cmd];
-		return;
+    USE(sender);
+    if (! [self canSwitchToNewBanner]) {
+        NSBeep();
+        return;
     }
-	[self showNavigationBanner];
+    if (operationView != nil && operationView != navigateView) {
+        [self hideBannerFirstThenDo:_cmd];
+        return;
+    }
+    [self showNavigationBanner];
 }
 
 - (void)extendSelectionForwards:(NSMenuItem *)sender {
-	USE(sender);
-	if (! [self canSwitchToNewBanner]) {
-		NSBeep();
-		return;
-	}
-    if (operationView != nil && operationView != navigateView) {
-		[self hideBannerFirstThenDo:_cmd];
-		return;
+    USE(sender);
+    if (! [self canSwitchToNewBanner]) {
+        NSBeep();
+        return;
     }
-	[self showNavigationBanner];
+    if (operationView != nil && operationView != navigateView) {
+        [self hideBannerFirstThenDo:_cmd];
+        return;
+    }
+    [self showNavigationBanner];
 }
 
 - (void)extendSelectionBackwards:(NSMenuItem *)sender {
-	USE(sender);
-	if (! [self canSwitchToNewBanner]) {
-		NSBeep();
-		return;
-	}
-    if (operationView != nil && operationView != navigateView) {
-		[self hideBannerFirstThenDo:_cmd];
-		return;
+    USE(sender);
+    if (! [self canSwitchToNewBanner]) {
+        NSBeep();
+        return;
     }
-	[self showNavigationBanner];
+    if (operationView != nil && operationView != navigateView) {
+        [self hideBannerFirstThenDo:_cmd];
+        return;
+    }
+    [self showNavigationBanner];
 }
 
 - (IBAction)showFontPanel:(id)sender {
-	NSFontPanel *panel = [NSFontPanel sharedFontPanel];
-	[panel orderFront:sender];
-	[panel setPanelFont:[self font] isMultiple:NO];
+    NSFontPanel *panel = [NSFontPanel sharedFontPanel];
+    [panel orderFront:sender];
+    [panel setPanelFont:[self font] isMultiple:NO];
 }
 
 - (void)changeFont:(id)sender {
-	[self setFont:[sender convertFont:[self font]]];
+    [self setFont:[sender convertFont:[self font]]];
 }
 
 @end

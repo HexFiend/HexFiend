@@ -27,6 +27,8 @@ __private_extern__ NSData *HFDataFromHexString(NSString *string, BOOL* isMissing
 
 __private_extern__ NSString *HFHexStringFromData(NSData *data);
 
+__private_extern__ unsigned char *HFFastMemchr(const unsigned char *s, unsigned char c, size_t n);
+
 /* Modifies F_NOCACHE for a given file descriptor */
 __private_extern__ void HFSetFDShouldCache(int fd, BOOL shouldCache);
 

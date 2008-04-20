@@ -21,9 +21,9 @@ enum
     HFControllerBytesPerLine = 1 << 4,
     HFControllerEditable = 1 << 5,
     HFControllerFont = 1 << 6,
-	HFControllerAntialias = 1 << 7,
+    HFControllerAntialias = 1 << 7,
     HFControllerLineHeight = 1 << 8,
-	HFControllerViewSizeRatios = 1 << 9 /* Indicates that the optimum size for each view may have changed; used by HFLayoutController after font changes. */
+    HFControllerViewSizeRatios = 1 << 9 /* Indicates that the optimum size for each view may have changed; used by HFLayoutController after font changes. */
 };
 typedef NSUInteger HFControllerPropertyBits;
 
@@ -44,7 +44,7 @@ enum
 typedef NSUInteger HFControllerMovementGranularity;
 
 @interface HFController : NSObject {
-    @private
+@private
     NSMutableArray *representers;
     HFByteArray *byteArray;
     NSMutableArray *selectedContentsRanges;
@@ -55,7 +55,7 @@ typedef NSUInteger HFControllerMovementGranularity;
     CGFloat lineHeight;
     
     NSUInteger currentPropertyChangeToken;
-	NSMutableArray *additionalPendingTransactions;
+    NSMutableArray *additionalPendingTransactions;
     HFControllerPropertyBits propertiesToUpdateInCurrentTransaction;
     
     NSUndoManager *undoManager;
@@ -71,7 +71,7 @@ typedef NSUInteger HFControllerMovementGranularity;
     NSUInteger cachedGenerationIndex;
     
     struct  {
-		unsigned antialias:1;
+        unsigned antialias:1;
         unsigned editable:1;
         unsigned selectable:1;
         unsigned selectionInProgress:1;
@@ -120,11 +120,11 @@ typedef NSUInteger HFControllerMovementGranularity;
 - (unsigned long long)maximumSelectionLocation;
 
 /* Method for directly setting the selected contents ranges.  Pass an array of HFRangeWrappers that meets the following criteria:
-    The array must not be NULL.
-    There always must be at least one selected range.
-    If any range has length 0, there must be exactly one selected range.
-    No range may extend beyond the contentsLength, with the exception of a single zero-length range, which may be at the end.
-*/
+ The array must not be NULL.
+ There always must be at least one selected range.
+ If any range has length 0, there must be exactly one selected range.
+ No range may extend beyond the contentsLength, with the exception of a single zero-length range, which may be at the end.
+ */
 - (void)setSelectedContentsRanges:(NSArray *)selectedRanges;
 
 /* Attempts to scroll as little as possible so that as much of the given range as can fit is visible. */

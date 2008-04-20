@@ -14,11 +14,6 @@ static CGFloat roundTowardsInfinity(CGFloat x) {
 
 @implementation HFFindReplaceBackgroundView
 
-- (void)drawRect:(NSRect)rect {
-    [[NSColor orangeColor] set];
-//    NSRectFill(rect);
-}
-
 - (NSPoint)roundPointToPixels:(NSPoint)point {
     NSPoint windowPoint = [self convertPoint:point toView:nil];
     windowPoint.x = HFRound(windowPoint.x);

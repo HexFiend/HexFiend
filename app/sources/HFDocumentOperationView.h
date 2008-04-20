@@ -32,7 +32,7 @@ struct HFDocumentOperationCallbacks {
 
 - (void)setOtherTopLevelObjects:(NSArray *)objects;
 
-+ viewWithNibNamed:(NSString *)name;
++ viewWithNibNamed:(NSString *)name owner:(id)owner;
 - viewNamed:(NSString *)name;
 - (CGFloat)defaultHeight;
 

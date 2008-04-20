@@ -20,7 +20,7 @@
     [scroller setEnabled:YES];
     [scroller setTarget:self];
     [scroller setAction:@selector(scrollerDidChangeValue:)];
-    [scroller setFloatValue:(CGFloat).3 knobProportion:(CGFloat).4];
+    [scroller setFloatValue:.3f knobProportion:.4f];
     [scroller setAutoresizingMask:NSViewHeightSizable];
     return scroller;
 }

@@ -29,7 +29,7 @@
     [self _incrementGenerationOrRaiseIfLockedForSelector:_cmd];
     REQUIRE_NOT_NULL(array);
     NSArray* slices = [array byteSlices];
-    unsigned i, max=[slices count];
+    NSUInteger i, max=[slices count];
     if (max==0) [self deleteBytesInRange:lrange];
     else {
 	for (i=0; i < max; i++) {

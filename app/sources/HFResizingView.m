@@ -31,6 +31,7 @@
 typedef struct { CGFloat offset; CGFloat length; } Position_t;
 
 static Position_t computePosition(id view, CGFloat startOffset, CGFloat startWidth, CGFloat startSpace, CGFloat newSpace, BOOL minIsFlexible, BOOL widthIsFlexible, BOOL maxIsFlexible) {
+    USE(view);
     Position_t result;
     const CGFloat endOffset = startSpace - startWidth - startOffset;
     if (! widthIsFlexible) {
