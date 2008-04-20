@@ -11,6 +11,7 @@
 #import <HexFiend/HFController.h>
 #import <HexFiend/HFLayoutRepresenter.h>
 #import <HexFiend/HFHexTextRepresenter.h>
+#import <HexFiend/HFStringEncodingTextRepresenter.h>
 
 @implementation HFTextField
 
@@ -26,14 +27,21 @@
 - (id)initWithFrame:(NSRect)frame {
     if ((self = [super initWithFrame:frame])) {
         dataController = [[HFController alloc] init];
-    
+		
+        hexRepresenter = [[HFHexTextRepresenter alloc] init];
+        [hexRepresenter setBehavesAsTextField:YES];
+        [[hexRepresenter view] setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
+
+		textRepresenter = [[HFStringEncodingTextRepresenter alloc] init];
+		[textRepresenter setBehavesAsTextField:YES];
+        [[textRepresenter view] setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
+		
+		
+        [dataController addRepresenter:hexRepresenter];
+		
         layoutRepresenter = [[HFLayoutRepresenter alloc] init];
-        activeRepresenter = [[HFHexTextRepresenter alloc] init];
-        [activeRepresenter setBehavesAsTextField:YES];
-        [[activeRepresenter view] setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
-        [dataController addRepresenter:activeRepresenter];
-        [layoutRepresenter addRepresenter:activeRepresenter];
-        [dataController addRepresenter:layoutRepresenter];
+        [layoutRepresenter addRepresenter:hexRepresenter];
+		[dataController addRepresenter:layoutRepresenter];
         NSView *layoutView = [layoutRepresenter view];
         [layoutView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
         [self positionLayoutView];
@@ -42,11 +50,21 @@
     return self;
 }
 
+- (void)dealloc {
+	[dataController release];
+	[layoutRepresenter release];
+	[hexRepresenter release];
+	[textRepresenter release];
+	[super dealloc];
+}
+
 - (void)resizeSubviewsWithOldSize:(NSSize)oldSize {
+	USE(oldSize);
     [self positionLayoutView];
 }
 
 - (void)drawRect:(NSRect)rect {
+	USE(rect);
     NSRect bounds = [self bounds];
     NSRect horizontalLine = NSMakeRect(NSMinX(bounds), NSMaxY(bounds) - 1, NSWidth(bounds), 1);
     NSRect verticalLine = NSMakeRect(NSMinX(bounds), 1, 1, NSHeight(bounds) - 2);
@@ -73,10 +91,13 @@
 }
 
 - (BOOL)becomeFirstResponder {
-    return [[self window] makeFirstResponder:[activeRepresenter view]];
+	if ([self usesHexArea]) return [[self window] makeFirstResponder:[hexRepresenter view]];
+	else if ([self usesTextArea]) return [[self window] makeFirstResponder:[textRepresenter view]]; 
+	else return NO;
 }
 
 - (void)insertNewline:sender {
+	USE(sender);
     [self sendAction:[self action] to:[self target]];
 }
 
@@ -104,5 +125,50 @@
     EXPECT_CLASS(value, HFByteArray);
     [dataController setByteArray:value];
 }
+
+- (BOOL)usesRepresenter:(HFRepresenter *)rep {
+	REQUIRE_NOT_NULL(rep);
+	HFASSERT(rep == hexRepresenter || rep == textRepresenter);
+	BOOL result = NO;
+	NSArray *reps = [dataController representers];
+	if (reps) {
+		result = ([reps indexOfObjectIdenticalTo:rep] != NSNotFound);
+	}
+	return result;
+}
+
+- (BOOL)usesHexArea {
+	return [self usesRepresenter:hexRepresenter];
+}
+
+- (void)setUsesHexArea:(BOOL)val {
+	if ([self usesHexArea] == !!val) return;
+	if (val) {
+		[dataController addRepresenter:hexRepresenter];
+		[layoutRepresenter addRepresenter:hexRepresenter];
+	}
+	else {
+		[layoutRepresenter removeRepresenter:hexRepresenter];
+		[dataController removeRepresenter:hexRepresenter];
+	}
+}
+
+
+- (BOOL)usesTextArea {
+	return [self usesRepresenter:textRepresenter];
+}
+
+- (void)setUsesTextArea:(BOOL)val {
+	if ([self usesTextArea] == !!val) return;
+	if (val) {
+		[dataController addRepresenter:textRepresenter];
+		[layoutRepresenter addRepresenter:textRepresenter];
+	}
+	else {
+		[layoutRepresenter removeRepresenter:textRepresenter];
+		[dataController removeRepresenter:textRepresenter];
+	}
+}
+
 
 @end

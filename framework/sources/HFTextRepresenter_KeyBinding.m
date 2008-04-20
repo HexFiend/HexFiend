@@ -97,6 +97,16 @@
     }
 }
 
+- (void)insertBacktab:unused {
+    USE(unused);
+    if ([self behavesAsTextField]) {
+        [[[self view] window] selectPreviousKeyView:nil];
+    }
+    else {
+        [NSException raise:NSInternalInconsistencyException format:@"insertBacktab: leaked into %@", self];
+    }
+}
+
 FORWARD(scrollLineUp)
 FORWARD(scrollLineDown)
 FORWARD(transpose)
@@ -110,7 +120,6 @@ FORWARD(selectParagraph)
 FORWARD(selectLine)
 FORWARD(selectWord)
 FORWARD(indent)
-FORWARD(insertBacktab)
 //FORWARD(insertNewline)
 FORWARD(insertParagraphSeparator)
 FORWARD(insertNewlineIgnoringFieldEditor)

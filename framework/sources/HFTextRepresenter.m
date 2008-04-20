@@ -80,6 +80,9 @@
     if (bits & (HFControllerEditable)) {
         [[self view] setEditable:[[self controller] isEditable]];
     }
+	if (bits & (HFControllerAntialias)) {
+		[[self view] setShouldAntialias:[[self controller] shouldAntialias]];
+	}
     [super controllerDidChange:bits];
 }
 

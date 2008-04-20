@@ -300,5 +300,11 @@ static NSInteger sortByLayoutPosition(id a, id b, void *self) {
     return maximizesBytesPerLine;
 }
 
+- (void)controllerDidChange:(HFControllerPropertyBits)bits {
+	[super controllerDidChange:bits];
+	if (bits & HFControllerViewSizeRatios) {
+		[self performLayout];
+	}
+}
 
 @end

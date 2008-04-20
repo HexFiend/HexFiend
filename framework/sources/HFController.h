@@ -21,7 +21,9 @@ enum
     HFControllerBytesPerLine = 1 << 4,
     HFControllerEditable = 1 << 5,
     HFControllerFont = 1 << 6,
-    HFControllerLineHeight = 1 << 7 
+	HFControllerAntialias = 1 << 7,
+    HFControllerLineHeight = 1 << 8,
+	HFControllerViewSizeRatios = 1 << 9 /* Indicates that the optimum size for each view may have changed; used by HFLayoutController after font changes. */
 };
 typedef NSUInteger HFControllerPropertyBits;
 
@@ -53,6 +55,7 @@ typedef NSUInteger HFControllerMovementGranularity;
     CGFloat lineHeight;
     
     NSUInteger currentPropertyChangeToken;
+	NSMutableArray *additionalPendingTransactions;
     HFControllerPropertyBits propertiesToUpdateInCurrentTransaction;
     
     NSUndoManager *undoManager;
@@ -68,12 +71,13 @@ typedef NSUInteger HFControllerMovementGranularity;
     NSUInteger cachedGenerationIndex;
     
     struct  {
+		unsigned antialias:1;
         unsigned editable:1;
         unsigned selectable:1;
         unsigned selectionInProgress:1;
         unsigned shiftExtendSelection:1;
         unsigned commandExtendSelection:1;
-        unsigned reserved1:27;
+        unsigned reserved1:26;
         unsigned reserved2:32;
     } _hfflags;
 }
@@ -99,6 +103,9 @@ typedef NSUInteger HFControllerMovementGranularity;
 
 - (NSFont *)font;
 - (void)setFont:(NSFont *)font;
+
+- (BOOL)shouldAntialias;
+- (void)setShouldAntialias:(BOOL)antialias;
 
 - (CGFloat)lineHeight;
 

@@ -12,7 +12,6 @@
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		D00122E30D48A8D400540B10 /* HFFindReplaceBackgroundView.m in Sources */ = {isa = PBXBuildFile; fileRef = D00122E20D48A8D400540B10 /* HFFindReplaceBackgroundView.m */; };
-		D00122FA0D48AD8600540B10 /* FindReplace.nib in Resources */ = {isa = PBXBuildFile; fileRef = D00122F80D48AD8600540B10 /* FindReplace.nib */; };
 		D00EBA730CE866D50020E2D7 /* HFVerticalScrollerRepresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = D00EBA710CE866D50020E2D7 /* HFVerticalScrollerRepresenter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D00EBA740CE866D50020E2D7 /* HFVerticalScrollerRepresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = D00EBA720CE866D50020E2D7 /* HFVerticalScrollerRepresenter.m */; };
 		D01772B90D72E024002E03DE /* HFCancelOn.tiff in Resources */ = {isa = PBXBuildFile; fileRef = D01772B70D72E024002E03DE /* HFCancelOn.tiff */; };
@@ -125,6 +124,7 @@
 		D0D828E50CDE89E500C2AB82 /* HFByteSlice.h in Headers */ = {isa = PBXBuildFile; fileRef = D08F5E220CDE843E007EFFE8 /* HFByteSlice.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D0D828E60CDE89E800C2AB82 /* HFFullMemoryByteSlice.h in Headers */ = {isa = PBXBuildFile; fileRef = D08F5E370CDE84F4007EFFE8 /* HFFullMemoryByteSlice.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D0D829110CDE969F00C2AB82 /* HFByteArray.h in Headers */ = {isa = PBXBuildFile; fileRef = D08F5DEF0CDE8223007EFFE8 /* HFByteArray.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D0F2157D0DA61CF000ED1AA7 /* HFFieldTypeController.m in Sources */ = {isa = PBXBuildFile; fileRef = D0F2157C0DA61CF000ED1AA7 /* HFFieldTypeController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -169,7 +169,6 @@
 		8D1107320486CEB800E47090 /* HexFiend_2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HexFiend_2.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D00122E10D48A8D400540B10 /* HFFindReplaceBackgroundView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFFindReplaceBackgroundView.h; path = app/sources/HFFindReplaceBackgroundView.h; sourceTree = "<group>"; };
 		D00122E20D48A8D400540B10 /* HFFindReplaceBackgroundView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFFindReplaceBackgroundView.m; path = app/sources/HFFindReplaceBackgroundView.m; sourceTree = "<group>"; };
-		D00122F90D48AD8600540B10 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/FindReplace.nib; sourceTree = "<group>"; };
 		D00EBA710CE866D50020E2D7 /* HFVerticalScrollerRepresenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFVerticalScrollerRepresenter.h; path = framework/sources/HFVerticalScrollerRepresenter.h; sourceTree = "<group>"; };
 		D00EBA720CE866D50020E2D7 /* HFVerticalScrollerRepresenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFVerticalScrollerRepresenter.m; path = framework/sources/HFVerticalScrollerRepresenter.m; sourceTree = "<group>"; };
 		D01772B70D72E024002E03DE /* HFCancelOn.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = HFCancelOn.tiff; path = framework/resources/HFCancelOn.tiff; sourceTree = "<group>"; };
@@ -292,6 +291,8 @@
 		D0D179450D46F20E00684270 /* HFByteSlice_Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFByteSlice_Private.h; path = framework/sources/HFByteSlice_Private.h; sourceTree = "<group>"; };
 		D0D828FE0CDE8ABE00C2AB82 /* HFFullMemoryByteArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFFullMemoryByteArray.h; path = framework/sources/HFFullMemoryByteArray.h; sourceTree = "<group>"; };
 		D0D828FF0CDE8ABE00C2AB82 /* HFFullMemoryByteArray.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFFullMemoryByteArray.m; path = framework/sources/HFFullMemoryByteArray.m; sourceTree = "<group>"; };
+		D0F2157B0DA61CF000ED1AA7 /* HFFieldTypeController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFFieldTypeController.h; sourceTree = "<group>"; };
+		D0F2157C0DA61CF000ED1AA7 /* HFFieldTypeController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFFieldTypeController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -378,7 +379,6 @@
 				D0CD51D40DA1ECB9006E8D1B /* DataNavigate.nib */,
 				D01773340D755551002E03DE /* FindReplaceBanner.nib */,
 				D0A229AC0D7D10240067A919 /* SaveBanner.nib */,
-				D00122F80D48AD8600540B10 /* FindReplace.nib */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -397,6 +397,8 @@
 			children = (
 				D00122E10D48A8D400540B10 /* HFFindReplaceBackgroundView.h */,
 				D00122E20D48A8D400540B10 /* HFFindReplaceBackgroundView.m */,
+				D0F2157B0DA61CF000ED1AA7 /* HFFieldTypeController.h */,
+				D0F2157C0DA61CF000ED1AA7 /* HFFieldTypeController.m */,
 			);
 			name = Find_Replace;
 			sourceTree = "<group>";
@@ -748,7 +750,6 @@
 				8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */,
 				D01E7C0B0CDC570400943F9E /* Info.plist in Resources */,
 				D01E7C2A0CDC59B700943F9E /* MyDocument.nib in Resources */,
-				D00122FA0D48AD8600540B10 /* FindReplace.nib in Resources */,
 				D01773360D755551002E03DE /* FindReplaceBanner.nib in Resources */,
 				D01772B90D72E024002E03DE /* HFCancelOn.tiff in Resources */,
 				D01772BA0D72E024002E03DE /* HFCancelOff.tiff in Resources */,
@@ -789,6 +790,7 @@
 				D01772F50D751DB1002E03DE /* HFDocumentOperationView.m in Sources */,
 				D01773920D7A2F32002E03DE /* HFResizingView.m in Sources */,
 				D0CD51F60DA2B928006E8D1B /* AppDelegate.m in Sources */,
+				D0F2157D0DA61CF000ED1AA7 /* HFFieldTypeController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -888,14 +890,6 @@
 			name = MainMenu.nib;
 			sourceTree = "<group>";
 		};
-		D00122F80D48AD8600540B10 /* FindReplace.nib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				D00122F90D48AD8600540B10 /* English */,
-			);
-			name = FindReplace.nib;
-			sourceTree = "<group>";
-		};
 		D01773340D755551002E03DE /* FindReplaceBanner.nib */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -988,7 +982,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				GCC_C_LANGUAGE_STANDARD = c99;
-				GCC_PREPROCESSOR_DEFINITIONS = "HFUNIT_TESTS=1";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.4;
@@ -1160,6 +1153,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_PREPROCESSOR_DEFINITIONS = "HFUNIT_TESTS=1";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.4;

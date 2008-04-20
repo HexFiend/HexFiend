@@ -24,11 +24,28 @@ static NSString *sNibName;
     }
     [sNibName release];
     sNibName = nil;
+	HFDocumentOperationView *resultObject = nil;
+	NSMutableArray *otherObjects = nil;
     FOREACH(id, obj, topLevelObjects) {
-        if ([obj isKindOfClass:[self class]]) return [obj autorelease];
+        if ([obj isKindOfClass:[self class]]) {
+			HFASSERT(resultObject == nil);
+			resultObject = obj;
+		}
+		else {
+			if (! otherObjects) otherObjects = [NSMutableArray array];
+			[otherObjects addObject:obj];
+		}
+		[obj autorelease];
     }
-    [NSException raise:NSInvalidArgumentException format:@"Unable to find instance of class %@ in top level objects for nib %@", NSStringFromClass([self class]), path];
-    return nil;
+	HFASSERT(resultObject != nil);
+	if (otherObjects != nil) [resultObject setOtherTopLevelObjects:otherObjects];
+	return resultObject;
+}
+
+- (void)setOtherTopLevelObjects:(NSArray *)objects {
+	objects = [objects copy];
+	[otherTopLevelObjects release];
+	otherTopLevelObjects = objects;
 }
 
 - (void)setValue:(id)value forKey:(NSString *)key {
@@ -55,6 +72,7 @@ static NSString *sNibName;
 }
 
 - (void)dealloc {
+	[otherTopLevelObjects release];
     [views release];
     [nibName release];
     [super dealloc];
@@ -136,7 +154,9 @@ static NSString *sNibName;
     target = nil;
     [tracker release];
     tracker = nil;
+	[self willChangeValueForKey:@"operationIsRunning"];
     thread = NULL;
+	[self didChangeValueForKey:@"operationIsRunning"];
     [tracker release];
     tracker = nil;
     [self release];
@@ -187,8 +207,10 @@ static void *startThread(void *self) {
     [tracker beginTrackingProgress];
     
     [self retain];
+	[self willChangeValueForKey:@"operationIsRunning"];
     int threadResult = pthread_create(&thread, NULL, startThread, self);
     if (threadResult != 0) [NSException raise:NSGenericException format:@"pthread_create returned error %d", threadResult];
+	[self didChangeValueForKey:@"operationIsRunning"];
 }
 
 - (HFProgressTracker *)progressTracker {

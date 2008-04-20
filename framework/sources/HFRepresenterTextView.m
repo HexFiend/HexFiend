@@ -428,6 +428,7 @@ enum LineCoverage_t {
         NSLayoutManager *manager = [[NSLayoutManager alloc] init];
         defaultLineHeight = [manager defaultLineHeightForFont:font];
         [manager release];
+		[self setNeedsDisplay:YES];
         NSLog(@"Set font to %@ (%f)", font, defaultLineHeight);
     }
 }
@@ -616,6 +617,8 @@ enum LineCoverage_t {
 - (void)drawRect:(NSRect)clip {
     [[self backgroundColorForEmptySpace] set];
     NSRectFill(clip);
+	BOOL antialias = [self shouldAntialias];
+	CGContextRef ctx = [[NSGraphicsContext currentContext] graphicsPort];
     
     if ([self showsFocusRing]) {
         NSWindow *window = [self window];
@@ -634,8 +637,16 @@ enum LineCoverage_t {
 
     NSColor *textColor = [NSColor blackColor];
     [textColor set];
-    [self drawTextWithClip:clip];
-    
+	
+	if (! antialias) {
+		CGContextSaveGState(ctx);
+		CGContextSetShouldAntialias(ctx, NO);
+	}
+	[self drawTextWithClip:clip];
+	if (! antialias) {
+		CGContextRestoreGState(ctx);
+	}
+	
     [self drawVerticalGuideLines:clip];
     [self drawCaretIfNecessaryWithClip:clip];
 }
@@ -698,6 +709,16 @@ enum LineCoverage_t {
         [self _updateCaretTimer];
     }
 }
+
+- (BOOL)shouldAntialias {
+	return _hftvflags.antialias;
+}
+
+- (void)setShouldAntialias:(BOOL)val {
+	_hftvflags.antialias = !!val;
+	[self setNeedsDisplay:YES];
+}
+
 
 - (BOOL)behavesAsTextField {
     return [[self representer] behavesAsTextField];

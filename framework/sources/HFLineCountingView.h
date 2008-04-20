@@ -14,6 +14,9 @@
     CGFloat lineHeight;
     HFFPRange lineRangeToDraw;
     NSUInteger bytesPerLine;
+	NSLayoutManager *layoutManager;
+	NSTextStorage *textStorage;
+	
 }
 
 - (void)setFont:(NSFont *)val;

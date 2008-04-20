@@ -27,12 +27,13 @@
     NSUInteger startingLineBackgroundColorIndex;
     
     struct  {
+		unsigned antialias:1;
         unsigned editable:1;
         unsigned caretVisible:1;
         unsigned registeredForAppNotifications:1;
         unsigned withinMouseDown:1;
         unsigned receivedMouseUp:1;
-        unsigned reserved1:27;
+        unsigned reserved1:26;
         unsigned reserved2:32;
     } _hftvflags;
 }
@@ -55,6 +56,9 @@
 
 - (BOOL)isEditable;
 - (void)setEditable:(BOOL)val;
+
+- (BOOL)shouldAntialias;
+- (void)setShouldAntialias:(BOOL)val;
 
 - (BOOL)behavesAsTextField;
 - (BOOL)showsFocusRing;

@@ -27,7 +27,10 @@ struct HFDocumentOperationCallbacks {
     id target;
     SEL startSelector;
     SEL endSelector;
+	NSArray *otherTopLevelObjects;
 }
+
+- (void)setOtherTopLevelObjects:(NSArray *)objects;
 
 + viewWithNibNamed:(NSString *)name;
 - viewNamed:(NSString *)name;

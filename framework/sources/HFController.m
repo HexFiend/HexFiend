@@ -70,6 +70,7 @@ static void *KVOContextChangesAreLocked = &KVOContextChangesAreLocked;
     [byteArray removeObserver:self forKeyPath:@"changesAreLocked"];
     [byteArray release];
     [cachedData release];
+	[additionalPendingTransactions release];
     [super dealloc];
 }
 
@@ -84,11 +85,42 @@ static void *KVOContextChangesAreLocked = &KVOContextChangesAreLocked;
 }
 
 - (void)_firePropertyChanges {
-    if (propertiesToUpdateInCurrentTransaction != 0) {
-        HFControllerPropertyBits propertiesToUpdate = propertiesToUpdateInCurrentTransaction;
-        propertiesToUpdateInCurrentTransaction = 0;
-        [self notifyRepresentersOfChanges:propertiesToUpdate];
-    }
+	NSMutableArray *pendingTransactions = additionalPendingTransactions;
+	NSUInteger pendingTransactionCount = [pendingTransactions count];
+	additionalPendingTransactions = nil;
+	HFControllerPropertyBits propertiesToUpdate = propertiesToUpdateInCurrentTransaction;
+	propertiesToUpdateInCurrentTransaction = 0;
+	if (pendingTransactionCount > 0 || propertiesToUpdate != 0) {
+		BEGIN_TRANSACTION();
+		while (pendingTransactionCount--) {
+			HFControllerPropertyBits propertiesInThisTransaction = [[pendingTransactions objectAtIndex:0] unsignedIntegerValue];
+			[pendingTransactions removeObjectAtIndex:0];
+			HFASSERT(propertiesInThisTransaction != 0);
+			[self notifyRepresentersOfChanges:propertiesInThisTransaction];
+		}
+		[pendingTransactions release];
+		if (propertiesToUpdate) {
+			[self notifyRepresentersOfChanges:propertiesToUpdate];
+		}
+		END_TRANSACTION();
+	}
+}
+
+/* Inserts a "fence" so that all prior property change bits will be complete before any new ones */
+- (void)_insertPropertyChangeFence {
+	if (currentPropertyChangeToken == 0) {
+		HFASSERT(additionalPendingTransactions == nil);
+		/* There can be no prior property changes */
+		HFASSERT(propertiesToUpdateInCurrentTransaction == 0);
+		return;
+	}
+	if (propertiesToUpdateInCurrentTransaction == 0) {
+		/* Nothing to fence */
+		return;
+	}
+	if (additionalPendingTransactions == nil) additionalPendingTransactions = [[NSMutableArray alloc] init];
+	[additionalPendingTransactions addObject:[NSNumber numberWithUnsignedInteger:propertiesToUpdateInCurrentTransaction]];
+	propertiesToUpdateInCurrentTransaction = 0;
 }
 
 - (void)_addPropertyChangeBits:(HFControllerPropertyBits)bits {
@@ -201,10 +233,24 @@ static void *KVOContextChangesAreLocked = &KVOContextChangesAreLocked;
         
         HFControllerPropertyBits bits = HFControllerFont;
         if (lineHeight != priorLineHeight) bits |= HFControllerLineHeight;
-        
         [self _addPropertyChangeBits:bits];
+		[self _insertPropertyChangeFence];
+		[self _addPropertyChangeBits:HFControllerViewSizeRatios];
     }
 }
+
+- (BOOL)shouldAntialias {
+	return _hfflags.antialias;
+}
+
+- (void)setShouldAntialias:(BOOL)antialias {
+	antialias = !! antialias;
+	if (antialias != _hfflags.antialias) {
+		_hfflags.antialias = antialias;
+		[self _addPropertyChangeBits:HFControllerAntialias];
+	}
+}
+
 
 - (BOOL)_shouldInvertSelectedRangesByAnchorRange {
     return _hfflags.selectionInProgress && _hfflags.commandExtendSelection;
@@ -507,7 +553,6 @@ static void *KVOContextChangesAreLocked = &KVOContextChangesAreLocked;
         HFASSERT(newBytesPerLine > 0);
         bytesPerLine = newBytesPerLine;
         BEGIN_TRANSACTION();
-        [self _updateBytesPerLine];
         [self _addPropertyChangeBits:HFControllerBytesPerLine];
         END_TRANSACTION();
     }
@@ -1351,7 +1396,7 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
     }
 }
 
-#ifndef NDEBUG
+#if HFUNIT_TESTS
 #define HFTEST(a) do { if (! (a)) { printf("Test failed on line %u of file %s: %s\n", __LINE__, __FILE__, #a); exit(0); } } while (0)
 + (void)_testRangeFunctions {
     HFRange range = HFRangeMake(UINT_MAX + 573ULL, UINT_MAX * 2ULL);
@@ -1696,7 +1741,7 @@ static void exception_thrown(const char *methodName, NSException *exception) {
 }
 #endif
 
-#ifndef NDEBUG
+#if HFUNIT_TESTS
 + (void)initialize {
     if (self == [HFController class]) {
         [self _runAllTests];

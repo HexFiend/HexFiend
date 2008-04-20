@@ -157,8 +157,7 @@ static void topologicallySort(HFObjectGraph *self, id object, NSMutableArray *re
 	return result;
 }
 
-#if ! NDEBUG
-
+#if HFUNIT_TESTS
 
 /* Methods and functions starting with "naive" are meant to be used for verifying the correctness of more sophisticated algorithms. */
 

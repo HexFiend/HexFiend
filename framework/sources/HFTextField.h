@@ -8,14 +8,21 @@
 
 #import <Cocoa/Cocoa.h>
 
-@class HFLayoutRepresenter, HFRepresenter, HFController;
+@class HFLayoutRepresenter, HFRepresenter, HFController, HFHexTextRepresenter, HFStringEncodingTextRepresenter;
 
 @interface HFTextField : NSControl {
     HFController *dataController;
     HFLayoutRepresenter *layoutRepresenter;
-    HFRepresenter *activeRepresenter;
+	HFHexTextRepresenter *hexRepresenter;
+	HFStringEncodingTextRepresenter *textRepresenter;
     IBOutlet id target;
     SEL action;
 }
+
+- (BOOL)usesHexArea;
+- (void)setUsesHexArea:(BOOL)val;
+
+- (BOOL)usesTextArea;
+- (void)setUsesTextArea:(BOOL)val;
 
 @end

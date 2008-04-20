@@ -46,5 +46,10 @@
 - (void)extendSelectionForwards:(NSMenuItem *)sender;
 - (void)extendSelectionBackwards:(NSMenuItem *)sender;
 
+- (void)setFont:(NSFont *)font;
+- (NSFont *)font;
+
+- (IBAction)showFontPanel:(id)sender;
+- (IBAction)setAntialiasFromMenuItem:(id)sender;
 
 @end

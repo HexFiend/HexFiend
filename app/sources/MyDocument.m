@@ -25,6 +25,18 @@ static BOOL isRunningOnLeopardOrLater(void) {
 
 @implementation MyDocument
 
++ (void)initialize {
+	if (self == [MyDocument class]) {
+		NSDictionary *defs = [[NSDictionary alloc] initWithObjectsAndKeys:
+			[NSNumber numberWithBool:YES], @"AntialiasText",
+			@"Monaco", @"DefaultFontName",
+			[NSNumber numberWithDouble:10.], @"DefaultFontSize",
+			nil];
+		[[NSUserDefaults standardUserDefaults] registerDefaults:defs];
+		[defs release];
+	}
+}
+
 - (NSString *)windowNibName {
     // Implement this to return a nib to load OR implement -makeWindowControllers to manually create your controllers.
     return @"MyDocument";
@@ -120,8 +132,10 @@ static BOOL isRunningOnLeopardOrLater(void) {
     [[asciiRepresenter view] setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(lineCountingViewChangedWidth:) name:HFLineCountingRepresenterMinimumViewWidthChanged object:lineCountingRepresenter];
-    
+    NSUserDefaults *defs = [NSUserDefaults standardUserDefaults];
+	
     controller = [[HFController alloc] init];
+	[controller setShouldAntialias:[defs boolForKey:@"AntialiasText"]];
     [controller setUndoManager:[self undoManager]];
     [controller addRepresenter:layoutRepresenter];
     
@@ -225,6 +239,35 @@ static BOOL isRunningOnLeopardOrLater(void) {
     }
 }
 
+- (void)setFont:(NSFont *)font {
+	HFASSERT(font != nil);
+	NSWindow *window = [self window];
+	NSDisableScreenUpdates();
+	[controller setFont:font];
+	[window display];
+	NSEnableScreenUpdates();
+	NSUserDefaults *defs = [NSUserDefaults standardUserDefaults];
+	[defs setDouble:[font pointSize] forKey:@"DefaultFontSize"];
+	[defs setObject:[font fontName] forKey:@"DefaultFontName"];
+	
+}
+
+- (NSFont *)font {
+	return [controller font];
+}
+
+- (void)setFontSizeFromMenuItem:(NSMenuItem *)item {
+	NSString *fontName = [[self font] fontName];
+	[self setFont:[NSFont fontWithName:fontName size:(CGFloat)[item tag]]];
+}
+
+- (IBAction)setAntialiasFromMenuItem:(id)sender {
+	USE(sender);
+	BOOL newVal = ! [controller shouldAntialias];
+	[controller setShouldAntialias:newVal];
+	[[NSUserDefaults standardUserDefaults] setBool:newVal forKey:@"AntialiasText"];
+}
+
 - (BOOL)validateMenuItem:(NSMenuItem *)item {
     if ([item action] == @selector(toggleVisibleControllerView:)) {
         NSUInteger arrayIndex = [item tag] - 1;
@@ -248,6 +291,14 @@ static BOOL isRunningOnLeopardOrLater(void) {
                 return NO;
         }
     }
+	else if ([item action] == @selector(setFontSizeFromMenuItem:)) {
+		[item setState:[[self font] pointSize] == [item tag]];
+		return YES;
+	}
+	else if ([item action] == @selector(setAntialiasFromMenuItem:)) {
+		[item setState:[controller shouldAntialias]];
+		return YES;		
+	}
     else return [super validateMenuItem:item];
 }
 
@@ -646,5 +697,14 @@ static BOOL isRunningOnLeopardOrLater(void) {
 	[self showNavigationBanner];
 }
 
+- (IBAction)showFontPanel:(id)sender {
+	NSFontPanel *panel = [NSFontPanel sharedFontPanel];
+	[panel orderFront:sender];
+	[panel setPanelFont:[self font] isMultiple:NO];
+}
+
+- (void)changeFont:(id)sender {
+	[self setFont:[sender convertFont:[self font]]];
+}
 
 @end
