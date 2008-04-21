@@ -231,6 +231,8 @@
 			<key>Layout</key>
 			<array>
 				<dict>
+					<key>BecomeActive</key>
+					<true/>
 					<key>ContentConfiguration</key>
 					<dict>
 						<key>PBXBottomSmartGroupGIDs</key>
@@ -278,14 +280,12 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>49</integer>
-									<integer>42</integer>
-									<integer>28</integer>
-									<integer>0</integer>
+									<integer>57</integer>
+									<integer>55</integer>
 								</array>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
-							<string>{{0, 282}, {401, 738}}</string>
+							<string>{{0, 431}, {401, 738}}</string>
 						</dict>
 						<key>PBXTopSmartGroupGIDs</key>
 						<array/>
@@ -349,8 +349,6 @@
 							<string>0pt</string>
 						</dict>
 						<dict>
-							<key>BecomeActive</key>
-							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
@@ -387,9 +385,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>D0480E140DBB72EB0048F3FF</string>
+				<string>D0AAA5D00DBC90F9004381C6</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>D0480E150DBB72EB0048F3FF</string>
+				<string>D0AAA5D10DBC90F9004381C6</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -523,12 +521,11 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>1C530D57069F1CE1000CFCEE</string>
 		<string>1CD10A99069EF8BA00B06720</string>
 		<string>D0560B2F0CDC421E009D2484</string>
-		<string>/Volumes/Soot/Users/peter/Bell/HexFiend2/trunk/HexFiend_2/HexFiend_2.xcodeproj</string>
-		<string>D0480E770DBB76E20048F3FF</string>
 		<string>1C78EAAD065D492600B07095</string>
+		<string>/Volumes/Soot/Users/peter/Bell/HexFiend2/trunk/HexFiend_2/HexFiend_2.xcodeproj</string>
+		<string>D0AAA5E30DBC9A9A004381C6</string>
 	</array>
 	<key>WindowString</key>
 	<string>827 381 1102 797 0 0 1920 1178 </string>
@@ -552,7 +549,7 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>1CD0528F0623707200166675</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>&lt;No Editor&gt;</string>
+								<string>HFController.m</string>
 								<key>StatusBarVisibility</key>
 								<true/>
 							</dict>
@@ -574,7 +571,7 @@
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXBuildLogShowsTranscriptDefaultKey</key>
-								<string>{{0, 235}, {1097, 153}}</string>
+								<string>{{0, 141}, {1097, 247}}</string>
 								<key>PBXProjectModuleGUID</key>
 								<string>XCMainBuildResultsModuleGUID</string>
 								<key>PBXProjectModuleLabel</key>
@@ -612,7 +609,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>D0560B2F0CDC421E009D2484</string>
-				<string>D0480E1E0DBB737B0048F3FF</string>
+				<string>D0AAA5D20DBC90F9004381C6</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>
@@ -732,13 +729,13 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>1CD10A99069EF8BA00B06720</string>
-				<string>D0480E480DBB74FC0048F3FF</string>
+				<string>D0AAA5D30DBC90F9004381C6</string>
 				<string>1C162984064C10D400B95A72</string>
-				<string>D0480E490DBB74FC0048F3FF</string>
-				<string>D0480E4A0DBB74FC0048F3FF</string>
-				<string>D0480E4B0DBB74FC0048F3FF</string>
-				<string>D0480E4C0DBB74FC0048F3FF</string>
-				<string>D0480E4D0DBB74FC0048F3FF</string>
+				<string>D0AAA5D40DBC90F9004381C6</string>
+				<string>D0AAA5D50DBC90F9004381C6</string>
+				<string>D0AAA5D60DBC90F9004381C6</string>
+				<string>D0AAA5D70DBC90F9004381C6</string>
+				<string>D0AAA5D80DBC90F9004381C6</string>
 			</array>
 			<key>ToolbarConfiguration</key>
 			<string>xcode.toolbar.config.debugV3</string>
@@ -770,7 +767,7 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CDD528C0622207200134675</string>
 										<key>PBXProjectModuleLabel</key>
-										<string></string>
+										<string>HFController.m</string>
 										<key>StatusBarVisibility</key>
 										<true/>
 									</dict>
@@ -828,8 +825,8 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>1C530D57069F1CE1000CFCEE</string>
-				<string>D0480E630DBB76820048F3FF</string>
-				<string>D0480E640DBB76820048F3FF</string>
+				<string>D0CC30D90DBC7EF100519318</string>
+				<string>D0CC30DA0DBC7EF100519318</string>
 				<string>1CDD528C0622207200134675</string>
 				<string>1CD0528E0623707200166675</string>
 			</array>
@@ -894,7 +891,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>1C78EAAD065D492600B07095</string>
-				<string>D0480E4E0DBB74FC0048F3FF</string>
+				<string>D0AAA5D90DBC90F9004381C6</string>
 				<string>1C78EAAC065D492600B07095</string>
 			</array>
 			<key>ToolbarConfiguration</key>

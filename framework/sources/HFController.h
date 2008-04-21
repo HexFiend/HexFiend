@@ -98,9 +98,6 @@ typedef NSUInteger HFControllerMovementGranularity;
 - (HFFPRange)displayedLineRange;
 - (void)setDisplayedLineRange:(HFFPRange)range;
 
-- (HFRange)displayedContentsRange;
-- (void)setDisplayedContentsRange:(HFRange)range;
-
 - (NSFont *)font;
 - (void)setFont:(NSFont *)font;
 
@@ -183,6 +180,9 @@ typedef NSUInteger HFControllerMovementGranularity;
 
 /* Deletes one byte in a given direction, which must be HFControllerDirectionLeft or HFControllerDirectionRight */
 - (void)deleteDirection:(HFControllerMovementDirection)direction;
+
+/* Replaces the entire byte array with a new one, preserving as much of the selection as possible. */
+- (void)replaceByteArray:(HFByteArray *)newArray;
 
 @end
 

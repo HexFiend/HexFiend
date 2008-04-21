@@ -643,6 +643,53 @@ static BOOL isRunningOnLeopardOrLater(void) {
     }
 }
 
+- (id)threadedStartReplaceAll:(HFProgressTracker *)tracker {
+    HFASSERT(tracker != NULL);
+    NSDictionary *userInfo = [tracker userInfo];
+    HFByteArray *needle = [userInfo objectForKey:@"needle"];
+    HFByteArray *haystack = [userInfo objectForKey:@"haystack"];
+    HFByteArray *replacementValue = [userInfo objectForKey:@"replacementValue"];
+    const unsigned long long needleLength = [needle length];
+    const unsigned long long replacementLength = [replacementValue length];
+    const unsigned long long haystackLength = [haystack length];
+    [tracker setMaxProgress:haystackLength];
+    
+    /* Perform our changes in a copy of haystack, and then set that copy back on our controller */
+    HFByteArray *newHaystack = [[haystack mutableCopy] autorelease];
+    unsigned long long newHaystackLength = haystackLength;    
+    
+    HFRange remainingRange = HFRangeMake(0, haystackLength);
+    while (remainingRange.length > 0) {
+        if (tracker && tracker->cancelRequested) goto cancelled;
+        unsigned long long foundLocation = [haystack indexOfBytesEqualToBytes:needle inRange:remainingRange searchingForwards:YES trackingProgress:tracker];
+        if (foundLocation == ULLONG_MAX) break;
+        HFASSERT(foundLocation < haystackLength);
+        HFASSERT(HFSum(foundLocation, needleLength) < haystackLength);
+        unsigned long long offsetFromHaystackEnd = haystackLength - foundLocation;
+        HFASSERT(offsetFromHaystackEnd <= newHaystackLength);
+        unsigned long long offsetIntoNewHaystack = newHaystackLength - offsetFromHaystackEnd;
+        HFASSERT(HFSum(offsetIntoNewHaystack, needleLength) <= newHaystackLength);
+        if (tracker && tracker->cancelRequested) goto cancelled;
+        [newHaystack insertByteArray:replacementValue inRange:HFRangeMake(offsetIntoNewHaystack, needleLength)];
+        newHaystackLength += (replacementLength - needleLength);
+        remainingRange.location = HFSum(foundLocation, needleLength);
+        remainingRange.length = haystackLength - remainingRange.location;
+    }
+    if (tracker && tracker->cancelRequested) goto cancelled;
+    return newHaystack;
+    
+    cancelled:;
+    return nil;
+}
+
+- (void)replaceAllEnded:(HFByteArray *)newValue {
+    [[[findReplaceView viewNamed:@"searchField"] objectValue] decrementChangeLockCounter];
+    [[controller byteArray] decrementChangeLockCounter];
+    if (newValue != nil) {
+        [controller replaceByteArray:newValue];
+    }
+}
+
 - (void)findNext:sender {
     USE(sender);
     [self findNextBySearchingForwards:YES];
@@ -658,6 +705,7 @@ static BOOL isRunningOnLeopardOrLater(void) {
     HFByteArray *replaceArray = [[findReplaceView viewNamed:@"replaceField"] objectValue];
     HFASSERT(replaceArray != NULL);
     [controller insertByteArray:replaceArray replacingPreviousBytes:0 allowUndoCoalescing:NO];
+    
 }
 
 - (IBAction)replaceAndFind:sender {
@@ -666,7 +714,30 @@ static BOOL isRunningOnLeopardOrLater(void) {
 }
 
 - (IBAction)replaceAll:sender {
-
+    USE(sender);
+    HFByteArray *replacementValue = [[findReplaceView viewNamed:@"replaceField"] objectValue];
+    HFASSERT(replacementValue != NULL);
+    HFByteArray *needle = [[findReplaceView viewNamed:@"searchField"] objectValue];
+    if ([needle length] == 0) {
+        NSBeep();
+        return;
+    }
+    HFByteArray *haystack = [controller byteArray];
+    NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+                                  replacementValue, @"replacementValue",
+                                  needle, @"needle",
+                                  haystack, @"haystack",
+                                  nil];
+    
+    struct HFDocumentOperationCallbacks callbacks = {
+        .target = self,
+        .userInfo = userInfo,
+        .startSelector = @selector(threadedStartReplaceAll:),
+        .endSelector = @selector(replaceAllEnded:)
+    };
+    [needle incrementChangeLockCounter];
+    [haystack incrementChangeLockCounter];
+    [findReplaceView startOperationWithCallbacks:callbacks];
 }
 
 - (void)performFindPanelAction:(NSMenuItem *)item {
