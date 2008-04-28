@@ -532,6 +532,23 @@ static BOOL isRunningOnLeopardOrLater(void) {
     return NO;
 }
 
+- (void)removeBannerIfSufficientlyShort:unused {
+    USE(unused);
+    willRemoveBannerIfSufficientlyShortAfterDrag = NO;
+    if (bannerIsShown && bannerResizeTimer == NULL && NSHeight([bannerView frame]) < 20.) {
+        [self hideBannerFirstThenDo:NULL];
+    }
+}
+
+- (void)splitViewDidResizeSubviews:(NSNotification *)notification {
+    USE(notification);
+    /* If the user drags the banner so that it is very small, we want it to shrink to nothing when it is released.  We handle this by checking if we are in live resize, and setting a timer to fire in NSDefaultRunLoopMode to remove the banner. */
+    if (willRemoveBannerIfSufficientlyShortAfterDrag == NO && bannerResizeTimer == nil && [containerView inLiveResize]) {
+        willRemoveBannerIfSufficientlyShortAfterDrag = YES;
+        [self performSelector:@selector(removeBannerIfSufficientlyShort:) withObject:nil afterDelay:0. inModes:[NSArray arrayWithObject:NSDefaultRunLoopMode]];
+    }
+}
+
 - (void)cancelOperation:sender {
     USE(sender);
     if (bannerIsShown) {
@@ -600,6 +617,7 @@ static BOOL isRunningOnLeopardOrLater(void) {
             [controller setSelectedContentsRanges:[HFRangeWrapper withRanges:&resultRange count:1]];
             [controller maximizeVisibilityOfContentsRange:resultRange];
             [self restoreFirstResponderToSavedResponder];
+            [controller pulseSelection];
         }
         else {
             NSBeep();
@@ -758,9 +776,16 @@ static BOOL isRunningOnLeopardOrLater(void) {
 }
 
 - (void)showNavigationBanner {
-    if (navigateView == operationView && navigateView != nil) return;
-    if (! navigateView) navigateView = [self createOperationViewOfName:@"DataNavigate"];
-    [self prepareBannerWithView:navigateView withTargetFirstResponder:nil];
+    if (moveSelectionByView == operationView && moveSelectionByView != nil) {
+        id potentialSavedFirstResponder = [[self window] firstResponder];
+        if ([potentialSavedFirstResponder isKindOfClass:[NSView class]] && [potentialSavedFirstResponder ancestorSharedWithView:moveSelectionByView] != moveSelectionByView) {
+            savedFirstResponder = potentialSavedFirstResponder;
+        }
+        [[self window] makeFirstResponder:[moveSelectionByView viewNamed:@"moveSelectionByTextField"]];
+        return;
+    }
+    if (! moveSelectionByView) moveSelectionByView = [self createOperationViewOfName:@"MoveSelectionByBanner"];
+    [self prepareBannerWithView:moveSelectionByView withTargetFirstResponder:[moveSelectionByView viewNamed:@"moveSelectionByTextField"]];
     
 }
 
@@ -770,7 +795,7 @@ static BOOL isRunningOnLeopardOrLater(void) {
         NSBeep();
         return;
     }
-    if (operationView != nil && operationView != navigateView) {
+    if (operationView != nil && operationView != moveSelectionByView) {
         [self hideBannerFirstThenDo:_cmd];
         return;
     }
@@ -783,7 +808,7 @@ static BOOL isRunningOnLeopardOrLater(void) {
         NSBeep();
         return;
     }
-    if (operationView != nil && operationView != navigateView) {
+    if (operationView != nil && operationView != moveSelectionByView) {
         [self hideBannerFirstThenDo:_cmd];
         return;
     }
@@ -796,7 +821,7 @@ static BOOL isRunningOnLeopardOrLater(void) {
         NSBeep();
         return;
     }
-    if (operationView != nil && operationView != navigateView) {
+    if (operationView != nil && operationView != moveSelectionByView) {
         [self hideBannerFirstThenDo:_cmd];
         return;
     }
@@ -809,12 +834,118 @@ static BOOL isRunningOnLeopardOrLater(void) {
         NSBeep();
         return;
     }
-    if (operationView != nil && operationView != navigateView) {
+    if (operationView != nil && operationView != moveSelectionByView) {
         [self hideBannerFirstThenDo:_cmd];
         return;
     }
     [self showNavigationBanner];
 }
+
+- (BOOL)parseMoveString:(NSString *)stringValue into:(unsigned long long *)resulValue isNegative:(BOOL *)resultIsNegative {
+    const char *string = [stringValue UTF8String];
+    if (string == NULL) goto invalidString;
+    /* Parse the string with strtoull */
+    unsigned long long amount = -1;
+    int err = 0;
+    BOOL isNegative = NO;
+    char *endPtr = NULL;
+    for (;;) {
+        while (isspace(*string)) string++;
+        if (*string == '-') {
+            if (isNegative) goto invalidString;
+            isNegative = YES;
+            string++;
+        }
+        else {
+            break;
+        }
+    }
+    errno = 0;
+    amount = strtoull(string, &endPtr, 0);
+    err = errno;
+    if (endPtr == NULL || *endPtr != '\0') goto invalidString;
+    if (err != 0) goto invalidString;
+    
+    *resulValue = amount;
+    *resultIsNegative = isNegative;
+    return YES;
+    invalidString:;
+    return NO;
+}
+
+- (BOOL)movingRanges:(NSArray *)ranges byAmount:(unsigned long long)value isNegative:(BOOL)isNegative isValidForLength:(unsigned long long)length {
+    FOREACH(HFRangeWrapper *, wrapper, ranges) {
+        HFRange range = [wrapper HFRange];
+        if (isNegative) {
+            if (value > range.location) return NO;
+        }
+        else {
+            unsigned long long sum = HFMaxRange(range) + value;
+            if (sum < value) return NO; /* Overflow */
+            if (sum > length) return NO;
+        }
+    }
+    return YES;
+}
+
+- (IBAction)moveSelectionByAction:(id)sender {
+    USE(sender);
+    unsigned long long value;
+    BOOL isNegative;
+    if ([self parseMoveString:[[moveSelectionByView viewNamed:@"moveSelectionByTextField"] stringValue] into:&value isNegative:&isNegative] && value != 0) {
+        NSArray *oldRanges = [controller selectedContentsRanges];
+        const unsigned long long maxLength = [controller contentsLength];
+        if (! [self movingRanges:oldRanges byAmount:value isNegative:isNegative isValidForLength:maxLength]) {
+            NSBeep();
+        }
+        else {
+            BOOL extendSelection = !![[moveSelectionByView viewNamed:@"extendSelectionByCheckbox"] intValue];
+            NSUInteger i, max = [oldRanges count];
+            NSMutableArray *cleanedRanges, *newRanges = [NSMutableArray arrayWithCapacity:max];
+            for (i=0; i < max; i++) {
+                HFRange range = [[oldRanges objectAtIndex:i] HFRange];
+                HFASSERT(range.location <= maxLength && HFMaxRange(range) <= maxLength);
+                if (! isNegative) {
+                    unsigned long long offset = MIN(maxLength - range.location, value);
+                    unsigned long long lengthToSubtract = MIN(range.length, value - offset);
+                    range.location += offset;
+                    range.length -= lengthToSubtract;
+                }
+                else { /* isNegative */
+                    unsigned long long negOffset = MIN(value, range.location);
+                    unsigned long long lengthToSubtract = MIN(range.length, value - negOffset);
+                    range.location -= negOffset;
+                    range.length -= lengthToSubtract;
+                }
+                [newRanges addObject:[HFRangeWrapper withRange:range]];
+            }
+            cleanedRanges = [[[HFRangeWrapper organizeAndMergeRanges:newRanges] mutableCopy] autorelease];
+            max = [cleanedRanges count];
+            BOOL hasEmptyRange = NO, hasNonEmptyRange = NO, seenEmptyRange = NO;
+            for (i=0; i < max; i++) {
+                HFRange range = [[cleanedRanges objectAtIndex:i] HFRange];
+                hasNonEmptyRange = hasNonEmptyRange || (range.length > 0);
+                hasEmptyRange = hasEmptyRange || (range.length == 0);
+                if (hasEmptyRange && hasNonEmptyRange) break;
+            }
+            for (i=0; i < max; i++) {
+                HFRange range = [[cleanedRanges objectAtIndex:i] HFRange];
+                if (range.length == 0) {
+                    if (hasNonEmptyRange || seenEmptyRange) {
+                        [cleanedRanges removeObjectAtIndex:i];
+                        i--;
+                        max--;
+                    }
+                    seenEmptyRange = YES;
+                }
+            }
+            [controller setSelectedContentsRanges:newRanges];
+            [controller maximizeVisibilityOfContentsRange:[[newRanges objectAtIndex:0] HFRange]];
+            [controller pulseSelection];
+        }
+    }
+}
+
 
 - (IBAction)showFontPanel:(id)sender {
     NSFontPanel *panel = [NSFontPanel sharedFontPanel];

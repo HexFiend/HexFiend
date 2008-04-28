@@ -32,6 +32,9 @@
 // Must be implemented by subclasses
 - (void)insertText:(NSString *)text;
 
+// Value between [0, 1]
+- (double)selectionPulseAmount;
+
 - (void)setBehavesAsTextField:(BOOL)val;
 - (BOOL)behavesAsTextField;
 

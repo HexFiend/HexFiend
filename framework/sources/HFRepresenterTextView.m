@@ -8,6 +8,7 @@
 
 #import <HexFiend/HFRepresenterTextView_Internal.h>
 #import <HexFiend/HFTextRepresenter.h>
+#import <HexFiend/HFTextSelectionPulseView.h>
 
 static const NSTimeInterval HFCaretBlinkFrequency = 0.56;
 
@@ -194,7 +195,7 @@ enum LineCoverage_t {
     NSUInteger currentCharacterIndex = MIN(oldRanges[oldRangeIndex].location, newRanges[newRangeIndex].location);
     oldParity = (currentCharacterIndex >= oldRanges[oldRangeIndex].location);
     newParity = (currentCharacterIndex >= newRanges[newRangeIndex].location);
-//    NSLog(@"Old %s, new %s at %u (%u, %u)", oldParity ? "on" : "off", newParity ? "on" : "off", currentCharacterIndex, oldRanges[oldRangeIndex].location, newRanges[newRangeIndex].location);
+    //    NSLog(@"Old %s, new %s at %u (%u, %u)", oldParity ? "on" : "off", newParity ? "on" : "off", currentCharacterIndex, oldRanges[oldRangeIndex].location, newRanges[newRangeIndex].location);
     for (;;) {
         NSUInteger oldDivision = NSUIntegerMax, newDivision = NSUIntegerMax;
         /* Move up to the next parity change */
@@ -206,11 +207,11 @@ enum LineCoverage_t {
             const NSRange newRange = newRanges[newRangeIndex];            
             newDivision = newRange.location + (newParity ? newRange.length : 0);
         }
-
+        
         NSUInteger division = MIN(oldDivision, newDivision);
         HFASSERT(division > currentCharacterIndex);
         
-//        NSLog(@"Division %u", division);
+        //        NSLog(@"Division %u", division);
         
         if (division == NSUIntegerMax) break;
         
@@ -219,18 +220,18 @@ enum LineCoverage_t {
             NSUInteger startLine = currentCharacterIndex / bytesPerLine;
             NSUInteger endLine = HFDivideULRoundingUp(division, bytesPerLine);
             HFASSERT(endLine >= startLine);
-//            NSLog(@"Adding lines %u -> %u", startLine, endLine);
+            //            NSLog(@"Adding lines %u -> %u", startLine, endLine);
             [result addIndexesInRange:NSMakeRange(startLine, endLine - startLine)];
         }
         if (division == oldDivision) {
             oldRangeIndex += oldParity;
             oldParity = ! oldParity;
-//            NSLog(@"Old range switching %s at %u", oldParity ? "on" : "off", division);
+            //            NSLog(@"Old range switching %s at %u", oldParity ? "on" : "off", division);
         }
         if (division == newDivision) {
             newRangeIndex += newParity;
             newParity = ! newParity;
-//            NSLog(@"New range switching %s at %u", newParity ? "on" : "off", division);
+            //            NSLog(@"New range switching %s at %u", newParity ? "on" : "off", division);
         }
         currentCharacterIndex = division;
     }
@@ -248,7 +249,7 @@ enum LineCoverage_t {
 
 - (NSIndexSet *)_indexSetOfLinesNeedingRedrawWhenChangingSelectionFromRanges:(NSArray *)oldSelectedRangeArray toRanges:(NSArray *)newSelectedRangeArray {
     NSUInteger oldRangeCount = 0, newRangeCount = 0;
-        
+    
     NEW_ARRAY(NSRange, oldRanges, [oldSelectedRangeArray count]);
     NEW_ARRAY(NSRange, newRanges, [newSelectedRangeArray count]);
     
@@ -294,7 +295,7 @@ enum LineCoverage_t {
         /* Sort the arrays, since _linesWithParityChangesFromRanges needs it */
         qsort(oldRanges, oldRangeCount, sizeof *oldRanges, range_compare);
         qsort(newRanges, newRangeCount, sizeof *newRanges, range_compare);
-
+        
         [self _linesWithParityChangesFromRanges:oldRanges count:oldRangeCount toRanges:newRanges count:newRangeCount intoIndexSet:result];
     }
     
@@ -330,6 +331,106 @@ enum LineCoverage_t {
     [oldSelectedRanges release]; //balance the retain we borrowed from the ivar
     [self _updateCaretTimer];
     [self _forceCaretOnIfHasCaretTimer];
+}
+
+- (void)drawPulseBackgroundInRect:(NSRect)pulseRect {
+    [[NSColor yellowColor] set];
+    if (HFIsRunningOnLeopardOrLater()) {
+        CGContextRef ctx = [[NSGraphicsContext currentContext] graphicsPort];
+        CGContextSaveGState(ctx);
+        [[NSBezierPath bezierPathWithRoundedRect:pulseRect xRadius:25 yRadius:25] addClip];
+        NSGradient *gradient = [[NSGradient alloc] initWithStartingColor:[NSColor yellowColor] endingColor:[NSColor colorWithCalibratedRed:(CGFloat)1. green:(CGFloat).75 blue:0 alpha:1]];
+        [gradient drawInRect:pulseRect angle:90];
+        [gradient release];
+        CGContextRestoreGState(ctx);
+    }
+    else {
+        NSRectFill(pulseRect);
+    }
+}
+
+- (void)fadePulseWindowTimer:(NSTimer *)timer {
+    NSWindow *window = [timer userInfo];
+    CGFloat alpha = [window alphaValue];
+    alpha -= (CGFloat)(3. / 30.);
+    if (alpha < 0) {
+        [window close];
+        [timer invalidate];
+    }
+    else {
+        [window setAlphaValue:alpha];
+    }
+}
+
+- (void)updateSelectionPulse {
+    double selectionPulseAmount = [[self representer] selectionPulseAmount];
+    if (selectionPulseAmount == 0) {
+        [[self window] removeChildWindow:pulseWindow];
+        [pulseWindow setFrame:pulseWindowBaseFrameInScreenCoordinates display:YES animate:NO];
+        [NSTimer scheduledTimerWithTimeInterval:1. / 30. target:self selector:@selector(fadePulseWindowTimer:) userInfo:pulseWindow repeats:YES];
+        //release is not necessary, since it relases when closed by default
+        pulseWindow = nil;
+        pulseWindowBaseFrameInScreenCoordinates = NSZeroRect;
+    }
+    else {
+        if (pulseWindow == nil) {
+            NSWindow *thisWindow = [self window];
+            NSArray *ranges = [self displayedSelectedContentsRanges];
+            HFASSERT([ranges count] >= 1);
+            NSRange firstRange = [[ranges objectAtIndex:0] rangeValue];
+            NSRange lastRange = [[ranges lastObject] rangeValue];
+            NSPoint startPoint = [self originForCharacterAtIndex:firstRange.location];
+            NSPoint endPoint = [self originForCharacterAtIndex:NSMaxRange(lastRange)];
+            HFASSERT(endPoint.y >= startPoint.y);
+            NSRect bounds = [self bounds];
+            NSRect windowFrameInBoundsCoords;
+            windowFrameInBoundsCoords.origin.x = bounds.origin.x;
+            windowFrameInBoundsCoords.origin.y = startPoint.y;
+            windowFrameInBoundsCoords.size.width = bounds.size.width;
+            windowFrameInBoundsCoords.size.height = endPoint.y - startPoint.y + [self lineHeight];
+            
+            pulseWindowBaseFrameInScreenCoordinates = [self convertRect:windowFrameInBoundsCoords toView:nil];
+            pulseWindowBaseFrameInScreenCoordinates.origin = [[self window] convertBaseToScreen:pulseWindowBaseFrameInScreenCoordinates.origin];
+            
+            pulseWindow = [[NSWindow alloc] initWithContentRect:pulseWindowBaseFrameInScreenCoordinates styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:NO];
+            [pulseWindow setOpaque:NO];
+            HFTextSelectionPulseView *pulseView = [[HFTextSelectionPulseView alloc] initWithFrame:[[pulseWindow contentView] frame]];
+            [pulseWindow setContentView:pulseView];
+            [pulseView release];
+            
+            /* Render our image at 200% of its current size */
+            const CGFloat imageScale = 2;
+            NSRect imageRect = (NSRect){NSZeroPoint, NSMakeSize(windowFrameInBoundsCoords.size.width * imageScale, windowFrameInBoundsCoords.size.height * imageScale)};
+            NSImage *image = [[NSImage alloc] initWithSize:imageRect.size];
+            [image setCacheMode:NSImageCacheNever];
+            [image setFlipped:YES];
+            [image lockFocus];
+            CGContextRef ctx = [[NSGraphicsContext currentContext] graphicsPort];
+            CGContextClearRect(ctx, *(CGRect *)&imageRect);
+            [self drawPulseBackgroundInRect:imageRect];
+            [[NSColor blackColor] set];
+            [[font screenFont] set];
+            if (! [self shouldAntialias]) CGContextSetShouldAntialias(ctx, NO);
+            CGContextScaleCTM(ctx, imageScale, imageScale);
+            CGContextTranslateCTM(ctx, -windowFrameInBoundsCoords.origin.x, -windowFrameInBoundsCoords.origin.y);
+            [self drawTextWithClip:windowFrameInBoundsCoords restrictingToTextInRanges:ranges];
+            [image unlockFocus];
+            [pulseView setImage:image];
+            
+            if (thisWindow) {
+                [thisWindow addChildWindow:pulseWindow ordered:NSWindowAbove];
+            }
+        }
+        
+        CGFloat scale = (CGFloat)(selectionPulseAmount * .25 + 1.);
+        NSRect scaledWindowFrame;
+        scaledWindowFrame.size.width = HFRound(pulseWindowBaseFrameInScreenCoordinates.size.width * scale);
+        scaledWindowFrame.size.height = HFRound(pulseWindowBaseFrameInScreenCoordinates.size.height * scale);
+        scaledWindowFrame.origin.x = pulseWindowBaseFrameInScreenCoordinates.origin.x - HFRound(((scale - 1) * scaledWindowFrame.size.width / 2));
+        scaledWindowFrame.origin.y = pulseWindowBaseFrameInScreenCoordinates.origin.y - HFRound(((scale - 1) * scaledWindowFrame.size.height / 2));
+        [pulseWindow setFrame:scaledWindowFrame display:YES animate:NO];
+        
+    }
 }
 
 - (void)drawCaretIfNecessaryWithClip:(NSRect)clipRect {
@@ -378,6 +479,13 @@ enum LineCoverage_t {
     }
 }
 
+- (void)pulseSelection {
+    pulseStartTime = CFAbsoluteTimeGetCurrent();
+    if (! pulseTimer) {
+        pulseTimer = [[NSTimer scheduledTimerWithTimeInterval:(1. / 30.) target:self selector:@selector(pulseSelectionTimer:) userInfo:nil repeats:YES] retain];
+    }
+}
+
 - (BOOL)acceptsFirstResponder {
     return YES;
 }
@@ -392,7 +500,19 @@ enum LineCoverage_t {
 - (BOOL)resignFirstResponder {
     BOOL result = [super resignFirstResponder];
     [self _updateCaretTimerWithFirstResponderStatus:NO];
-    if ([self showsFocusRing]) [self setNeedsDisplay:YES];
+    BOOL needsRedisplay = NO;
+    if ([self showsFocusRing]) needsRedisplay = YES;
+    else if (! NSIsEmptyRect(lastDrawnCaretRect)) needsRedisplay = YES;
+    else {
+        FOREACH(NSValue *, rangeValue, [self displayedSelectedContentsRanges]) {
+            NSRange range = [rangeValue rangeValue];
+            if (range.length > 0) {
+                needsRedisplay = YES;
+                break;
+            }
+        }
+    }
+    if (needsRedisplay) [self setNeedsDisplay:YES];
     return result;
 }
 
@@ -428,7 +548,7 @@ enum LineCoverage_t {
         NSLayoutManager *manager = [[NSLayoutManager alloc] init];
         defaultLineHeight = [manager defaultLineHeightForFont:font];
         [manager release];
-		[self setNeedsDisplay:YES];
+        [self setNeedsDisplay:YES];
         NSLog(@"Set font to %@ (%f)", font, defaultLineHeight);
     }
 }
@@ -600,7 +720,8 @@ enum LineCoverage_t {
     FREE_ARRAY(lineRects);
 }
 
-- (void)drawTextWithClip:(NSRect)clip {
+- (void)drawTextWithClip:(NSRect)clip restrictingToTextInRanges:(NSArray *)restrictingToRanges {
+    USE(restrictingToRanges);
     USE(clip);
     UNIMPLEMENTED_VOID();
 }
@@ -617,8 +738,8 @@ enum LineCoverage_t {
 - (void)drawRect:(NSRect)clip {
     [[self backgroundColorForEmptySpace] set];
     NSRectFill(clip);
-	BOOL antialias = [self shouldAntialias];
-	CGContextRef ctx = [[NSGraphicsContext currentContext] graphicsPort];
+    BOOL antialias = [self shouldAntialias];
+    CGContextRef ctx = [[NSGraphicsContext currentContext] graphicsPort];
     
     if ([self showsFocusRing]) {
         NSWindow *window = [self window];
@@ -634,19 +755,19 @@ enum LineCoverage_t {
     
     [self _drawLineBackgrounds:clip withLineHeight:[self lineHeight] maxLines:ll2l(HFRoundUpToNextMultiple(byteCount, bytesPerLine) / bytesPerLine)];
     [self drawSelectionIfNecessaryWithClip:clip];
-
+    
     NSColor *textColor = [NSColor blackColor];
     [textColor set];
-	
-	if (! antialias) {
-		CGContextSaveGState(ctx);
-		CGContextSetShouldAntialias(ctx, NO);
-	}
-	[self drawTextWithClip:clip];
-	if (! antialias) {
-		CGContextRestoreGState(ctx);
-	}
-	
+    
+    if (! antialias) {
+        CGContextSaveGState(ctx);
+        CGContextSetShouldAntialias(ctx, NO);
+    }
+    [self drawTextWithClip:clip restrictingToTextInRanges:nil];
+    if (! antialias) {
+        CGContextRestoreGState(ctx);
+    }
+    
     [self drawVerticalGuideLines:clip];
     [self drawCaretIfNecessaryWithClip:clip];
 }
@@ -711,12 +832,12 @@ enum LineCoverage_t {
 }
 
 - (BOOL)shouldAntialias {
-	return _hftvflags.antialias;
+    return _hftvflags.antialias;
 }
 
 - (void)setShouldAntialias:(BOOL)val {
-	_hftvflags.antialias = !!val;
-	[self setNeedsDisplay:YES];
+    _hftvflags.antialias = !!val;
+    [self setNeedsDisplay:YES];
 }
 
 

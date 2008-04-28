@@ -98,7 +98,7 @@
     FREE_ARRAY(advances);
 }
 
-- (void)drawTextWithClip:(NSRect)clip {
+- (void)drawTextWithClip:(NSRect)clip restrictingToTextInRanges:(NSArray *)restrictingToRanges {
     CGContextRef ctx = [[NSGraphicsContext currentContext] graphicsPort];
     CGAffineTransform textTransform = CGContextGetTextMatrix(ctx);
     CGContextSetTextDrawingMode(ctx, kCGTextFill);

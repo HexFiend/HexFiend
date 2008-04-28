@@ -138,6 +138,8 @@ static unsigned char* int_memchr(const unsigned char* haystack, unsigned char ne
 }
 
 #if defined(__ppc__)
+#include <sys/sysctl.h>
+#include <sys/types.h>
 
 static int checkForAltivec(void) {
     int sels[2] = { CTL_HW, HW_VECTORUNIT };

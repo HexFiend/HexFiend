@@ -35,6 +35,8 @@
 
 static const CGFloat kScrollMultiplier = (CGFloat)1.5;
 
+static const CFTimeInterval kPulseDuration = .2;
+
 static void *KVOContextChangesAreLocked = &KVOContextChangesAreLocked;
 
 typedef enum {
@@ -786,6 +788,36 @@ typedef enum {
     _hfflags.shiftExtendSelection = NO;
     _hfflags.commandExtendSelection = NO;
     selectionAnchor = NO_SELECTION;
+}
+
+- (double)selectionPulseAmount {
+    double result = 0;
+    if (pulseSelectionStartTime > 0) {
+        CFTimeInterval diff = pulseSelectionCurrentTime - pulseSelectionStartTime;
+        if (diff > 0 && diff < kPulseDuration) {
+            result = 1. - fabs(diff * 2 - kPulseDuration) / kPulseDuration;
+        }
+    }
+    return result;
+}
+
+- (void)firePulseTimer:(NSTimer *)timer {
+    USE(timer);
+    HFASSERT(pulseSelectionStartTime != 0);
+    pulseSelectionCurrentTime = CFAbsoluteTimeGetCurrent();
+    [self _addPropertyChangeBits:HFControllerSelectionPulseAmount];
+    if (pulseSelectionCurrentTime - pulseSelectionStartTime > kPulseDuration) {
+        [pulseSelectionTimer invalidate];
+        [pulseSelectionTimer release];
+        pulseSelectionTimer = nil;
+    }
+}
+
+- (void)pulseSelection {
+    pulseSelectionStartTime = CFAbsoluteTimeGetCurrent();
+    if (pulseSelectionTimer == nil) {
+        pulseSelectionTimer = [[NSTimer scheduledTimerWithTimeInterval:(1. / 30.) target:self selector:@selector(firePulseTimer:) userInfo:nil repeats:YES] retain];
+    }
 }
 
 - (void)scrollByLines:(long double)lines {

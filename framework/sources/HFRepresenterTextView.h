@@ -12,7 +12,7 @@
 
 /* The base class for HFTextRepresenter views - such as the hex or ASCII text view */
 @interface HFRepresenterTextView : NSView {
-    @private;
+@private;
     HFTextRepresenter *representer;
     NSArray *cachedSelectedRanges;
     NSFont *font;
@@ -20,14 +20,18 @@
     CGFloat verticalOffset;
     CGFloat horizontalContainerInset;
     CGFloat defaultLineHeight;
+    CFAbsoluteTime pulseStartTime;
+    NSTimer *pulseTimer;
     NSTimer *caretTimer;
+    NSWindow *pulseWindow;
+    NSRect pulseWindowBaseFrameInScreenCoordinates;
     NSRect lastDrawnCaretRect;
     NSRect caretRectToDraw;
     NSUInteger bytesBetweenVerticalGuides;
     NSUInteger startingLineBackgroundColorIndex;
     
     struct  {
-		unsigned antialias:1;
+        unsigned antialias:1;
         unsigned editable:1;
         unsigned caretVisible:1;
         unsigned registeredForAppNotifications:1;
@@ -79,8 +83,10 @@
 /* To be invoked from drawRect:. */
 - (void)drawCaretIfNecessaryWithClip:(NSRect)clipRect;
 - (void)drawSelectionIfNecessaryWithClip:(NSRect)clipRect;
+- (void)drawTextWithClip:(NSRect)clipRect restrictingToTextInRanges:(NSArray *)restrictingToRanges;
 
 - (void)updateSelectedRanges;
+- (void)updateSelectionPulse;
 
 /* The background color for the line at the given index.  You may override this to return different colors.  You may return nil to draw no color in this line (and then the empty space color will appear) */
 - (NSColor *)backgroundColorForLine:(NSUInteger)line;
@@ -101,5 +107,6 @@
 - (CGFloat)minimumViewWidthForBytesPerLine:(NSUInteger)bytesPerLine;
 
 - (IBAction)selectAll:sender;
+
 
 @end

@@ -67,6 +67,10 @@
     }
 }
 
+- (double)selectionPulseAmount {
+    return [[self controller] selectionPulseAmount];
+}
+
 - (void)controllerDidChange:(HFControllerPropertyBits)bits {
     if (bits & (HFControllerFont | HFControllerLineHeight)) {
         [[self view] setFont:[[self controller] font]];
@@ -77,12 +81,15 @@
     if (bits & (HFControllerSelectedRanges | HFControllerDisplayedRange)) {
         [[self view] updateSelectedRanges];
     }
+    if (bits & (HFControllerSelectionPulseAmount)) {
+        [[self view] updateSelectionPulse];
+    }
     if (bits & (HFControllerEditable)) {
         [[self view] setEditable:[[self controller] isEditable]];
     }
-	if (bits & (HFControllerAntialias)) {
-		[[self view] setShouldAntialias:[[self controller] shouldAntialias]];
-	}
+    if (bits & (HFControllerAntialias)) {
+        [[self view] setShouldAntialias:[[self controller] shouldAntialias]];
+    }
     [super controllerDidChange:bits];
 }
 
@@ -103,7 +110,7 @@
     NSArray *result;
     NSArray *selectedRanges = [controller selectedContentsRanges];
     HFRange displayedRange = [self entireDisplayedRange];
-
+    
     HFASSERT(displayedRange.length <= NSUIntegerMax);
     NEW_ARRAY(NSValue *, clippedSelectedRanges, [selectedRanges count]);
     NSUInteger clippedRangeIndex = 0;

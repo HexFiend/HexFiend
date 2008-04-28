@@ -163,11 +163,68 @@
     FREE_ARRAY(advances);
 }
 
+- (void)wipeGlyphs:(CGGlyph *)glyphs forBytesStartingAtIndex:(NSUInteger)startingByteIndex count:(NSUInteger)byteCount notInRanges:(const NSRange *)exclusionRanges rangeCount:(NSUInteger)exclusionRangeCount withGlyph:(CGGlyph)wipeGlyph {
+    for (NSUInteger exclusionRangeIndex = 0; exclusionRangeIndex < exclusionRangeCount; exclusionRangeIndex++) {
+        NSRange exclusionRange = exclusionRanges[exclusionRangeIndex];
+        NSRange characterRangeToWipe = NSIntersectionRange(exclusionRange, NSMakeRange(startingByteIndex, byteCount));
+        if (characterRangeToWipe.length > 0) {
+#if TRY_TO_USE_LIGATURES
+#error wipeGlyphs does not support ligatures
+#endif
+            /* Two glyphs per byte */
+            NSUInteger glyphIndex = 2 * (characterRangeToWipe.location - startingByteIndex);
+            for (NSUInteger byteIndex = 0; byteIndex < characterRangeToWipe.length; byteIndex++) {
+                glyphs[glyphIndex++] = wipeGlyph;
+                glyphs[glyphIndex++] = wipeGlyph;
+            }
+        }
+    }
+}
 
-- (void)drawTextWithClip:(NSRect)clip {
+- (void)drawTextWithClip:(NSRect)clip restrictingToTextInRanges:(NSArray *)restrictingToRanges {
     CGContextRef ctx = [[NSGraphicsContext currentContext] graphicsPort];
     NSRect bounds = [self bounds];
     CGFloat lineHeight = [self lineHeight];
+    
+    NSRange *exclusionRanges = NULL;
+    NSUInteger exclusionRangeCount = 0;
+    NSUInteger restrictionRangeCount = [restrictingToRanges count];
+    if (restrictionRangeCount > 0) {
+        NSUInteger i = 0;        
+#if ! NDEBUG
+        for (i=0; i < restrictionRangeCount; i++) {
+            if (i > 0) HFASSERT([[restrictingToRanges objectAtIndex:i] rangeValue].location > NSMaxRange([[restrictingToRanges objectAtIndex:i-1] rangeValue]));
+            NSUInteger j;
+            for (j=0; j < restrictionRangeCount; j++) {
+                if (i != j) {
+                    NSRange nsrange1 = [[restrictingToRanges objectAtIndex:i] rangeValue];
+                    NSRange nsrange2 = [[restrictingToRanges objectAtIndex:j] rangeValue];
+                    HFRange range1 = HFRangeMake(nsrange1.location, nsrange1.length);
+                    HFRange range2 = HFRangeMake(nsrange2.location, nsrange2.length);
+                    /* Assert that the ranges do not intersect and are not just touching */
+                    HFASSERT(! HFIntersectsRange(range1, range2));
+                    HFASSERT(HFMaxRange(range1) != range2.location && HFMaxRange(range2) != range1.location);
+                }
+            }
+        }
+#endif
+        
+        /* restrictionRanges represents the bytes we want to keep.  Invert it - find the bytes we want to not keep. */
+        exclusionRanges = malloc((restrictionRangeCount + 1) * sizeof *exclusionRanges);
+        NSRange previousRange = {0, 0};
+        for (i=0; i < restrictionRangeCount; i++) {
+            NSRange restrictionRange = [[restrictingToRanges objectAtIndex:i] rangeValue];
+            NSRange exclusionRange;
+            exclusionRange.location = NSMaxRange(previousRange);
+            HFASSERT(restrictionRange.location > exclusionRange.location);
+            exclusionRange.length = restrictionRange.location - exclusionRange.location;
+            if (exclusionRange.length > 0) {
+                exclusionRanges[exclusionRangeCount++] = exclusionRange;
+            }
+            previousRange = restrictionRange;
+        }
+        exclusionRanges[exclusionRangeCount++] = NSMakeRange(NSMaxRange(previousRange), NSUIntegerMax - NSMaxRange(previousRange));
+    }
 
     CGAffineTransform textTransform = CGContextGetTextMatrix(ctx);
     CGContextSetTextDrawingMode(ctx, kCGTextFill);
@@ -196,6 +253,9 @@
             NSUInteger numBytes = MIN(bytesPerLine, byteCount - byteIndex);
             NSUInteger resultGlyphCount = 0;
             [self extractGlyphsForBytes:bytePtr + byteIndex count:numBytes intoArray:glyphs resultingGlyphCount:&resultGlyphCount];
+            if (exclusionRangeCount > 0) {
+                [self wipeGlyphs:glyphs forBytesStartingAtIndex:byteIndex count:numBytes notInRanges:exclusionRanges rangeCount:exclusionRangeCount withGlyph:1];
+            }
             HFASSERT(resultGlyphCount > 0);
             CGContextSetTextMatrix(ctx, textTransform);
             [self drawGlyphs:glyphs count:resultGlyphCount];
@@ -206,6 +266,7 @@
         lineIndex++;
     }
     FREE_ARRAY(glyphs);
+    free(exclusionRanges);
 }
 
 - (NSRect)caretRect {

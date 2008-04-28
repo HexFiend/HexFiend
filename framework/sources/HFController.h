@@ -18,12 +18,13 @@ enum
     HFControllerContentLength = 1 << 1,
     HFControllerDisplayedRange = 1 << 2,
     HFControllerSelectedRanges = 1 << 3,
-    HFControllerBytesPerLine = 1 << 4,
-    HFControllerEditable = 1 << 5,
-    HFControllerFont = 1 << 6,
-    HFControllerAntialias = 1 << 7,
-    HFControllerLineHeight = 1 << 8,
-    HFControllerViewSizeRatios = 1 << 9 /* Indicates that the optimum size for each view may have changed; used by HFLayoutController after font changes. */
+    HFControllerSelectionPulseAmount = 1 << 4,
+    HFControllerBytesPerLine = 1 << 5,
+    HFControllerEditable = 1 << 6,
+    HFControllerFont = 1 << 7,
+    HFControllerAntialias = 1 << 8,
+    HFControllerLineHeight = 1 << 9,
+    HFControllerViewSizeRatios = 1 << 10 /* Indicates that the optimum size for each view may have changed; used by HFLayoutController after font changes. */
 };
 typedef NSUInteger HFControllerPropertyBits;
 
@@ -64,6 +65,9 @@ typedef NSUInteger HFControllerMovementGranularity;
     HFRange selectionAnchorRange;
     
     HFControllerCoalescedUndo *undoCoalescer;
+    
+    CFAbsoluteTime pulseSelectionStartTime, pulseSelectionCurrentTime;
+    NSTimer *pulseSelectionTimer;
     
     /* Basic cache support */
     HFRange cachedRange;
@@ -110,12 +114,6 @@ typedef NSUInteger HFControllerMovementGranularity;
 
 - (NSArray *)selectedContentsRanges; //returns an array of HFRangeWrappers
 
-/* Returns the smallest value in the selected contents ranges, or the insertion location if the selection is empty. */
-- (unsigned long long)minimumSelectionLocation;
-
-/* Returns the largest HFMaxRange of the selected contents ranges, or the insertion location if the selection is empty. */
-- (unsigned long long)maximumSelectionLocation;
-
 /* Method for directly setting the selected contents ranges.  Pass an array of HFRangeWrappers that meets the following criteria:
  The array must not be NULL.
  There always must be at least one selected range.
@@ -123,6 +121,15 @@ typedef NSUInteger HFControllerMovementGranularity;
  No range may extend beyond the contentsLength, with the exception of a single zero-length range, which may be at the end.
  */
 - (void)setSelectedContentsRanges:(NSArray *)selectedRanges;
+
+/* Returns the smallest value in the selected contents ranges, or the insertion location if the selection is empty. */
+- (unsigned long long)minimumSelectionLocation;
+
+/* Returns the largest HFMaxRange of the selected contents ranges, or the insertion location if the selection is empty. */
+- (unsigned long long)maximumSelectionLocation;
+
+/* 0 means no pulse, 1 means maximum pulse */
+- (double)selectionPulseAmount;
 
 /* Attempts to scroll as little as possible so that as much of the given range as can fit is visible. */
 - (void)maximizeVisibilityOfContentsRange:(HFRange)range;
@@ -156,6 +163,9 @@ typedef NSUInteger HFControllerMovementGranularity;
 - (void)beginSelectionWithEvent:(NSEvent *)event forByteIndex:(unsigned long long)byteIndex;
 - (void)continueSelectionWithEvent:(NSEvent *)event forByteIndex:(unsigned long long)byteIndex;
 - (void)endSelectionWithEvent:(NSEvent *)event forByteIndex:(unsigned long long)byteIndex;
+
+/* Highlights the selection */
+- (void)pulseSelection;
 
 /* Scroll wheel support */
 - (void)scrollWithScrollEvent:(NSEvent *)scrollEvent;

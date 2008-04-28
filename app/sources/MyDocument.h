@@ -23,13 +23,15 @@
     
     NSResponder *savedFirstResponder;
     
+    HFDocumentOperationView *operationView;
+    
     HFDocumentOperationView *findReplaceView;
-    HFDocumentOperationView *navigateView;
+    HFDocumentOperationView *moveSelectionByView;
     HFDocumentOperationView *saveView;
     
-    HFDocumentOperationView *operationView;
     BOOL bannerIsShown;
     BOOL bannerGrowing;
+    BOOL willRemoveBannerIfSufficientlyShortAfterDrag;
     NSView *bannerView;
     NSView *bannerDividerThumb;
     NSTimer *bannerResizeTimer;
@@ -39,13 +41,14 @@
     SEL commandToRunAfterBannerIsDoneHiding;
     
     NSInteger saveResult;
-    
 }
 
 - (void)moveSelectionForwards:(NSMenuItem *)sender;
 - (void)moveSelectionBackwards:(NSMenuItem *)sender;
 - (void)extendSelectionForwards:(NSMenuItem *)sender;
 - (void)extendSelectionBackwards:(NSMenuItem *)sender;
+
+- (IBAction)moveSelectionByAction:(id)sender;
 
 - (void)setFont:(NSFont *)font;
 - (NSFont *)font;
