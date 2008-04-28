@@ -284,7 +284,7 @@
 								</array>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
-							<string>{{0, 928}, {401, 738}}</string>
+							<string>{{0, 843}, {401, 738}}</string>
 						</dict>
 						<key>PBXTopSmartGroupGIDs</key>
 						<array/>
@@ -386,9 +386,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>D0A9773B0DC54F8000552CF0</string>
+				<string>D0B66D2E0DC6920500C302E6</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>D0A9773C0DC54F8000552CF0</string>
+				<string>D0B66D2F0DC6920500C302E6</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -522,13 +522,7 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>D0A978050DC5EA2100552CF0</string>
-		<string>1CD10A99069EF8BA00B06720</string>
-		<string>1C530D57069F1CE1000CFCEE</string>
-		<string>1C78EAAD065D492600B07095</string>
-		<string>D0A978060DC5EA2100552CF0</string>
 		<string>/Volumes/Soot/Users/peter/Bell/HexFiend2/trunk/HexFiend_2/HexFiend_2.xcodeproj</string>
-		<string>D0560B2F0CDC421E009D2484</string>
 	</array>
 	<key>WindowString</key>
 	<string>833 381 1102 797 0 0 1920 1178 </string>
