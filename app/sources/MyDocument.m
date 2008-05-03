@@ -348,6 +348,14 @@ static BOOL isRunningOnLeopardOrLater(void) {
     [window makeFirstResponder:window];
 }
 
+- (void)saveFirstResponderIfNotInBannerAndThenSetItTo:(id)newResponder {
+    id potentialSavedFirstResponder = [[self window] firstResponder];
+    if ([potentialSavedFirstResponder isKindOfClass:[NSView class]] && [potentialSavedFirstResponder ancestorSharedWithView:bannerView] != findReplaceView) {
+	savedFirstResponder = potentialSavedFirstResponder;
+    }
+    [[self window] makeFirstResponder:newResponder];
+}
+
 - (void)animateBanner:(NSTimer *)timer {
     BOOL isFirstCall = (bannerStartTime == 0);
     CFAbsoluteTime now = CFAbsoluteTimeGetCurrent();
@@ -489,7 +497,10 @@ static BOOL isRunningOnLeopardOrLater(void) {
 }
 
 - (void)showFindPanel:(NSMenuItem *)item {
-    if (operationView != nil && operationView == findReplaceView) return;
+    if (operationView != nil && operationView == findReplaceView) {
+	[self saveFirstResponderIfNotInBannerAndThenSetItTo:[findReplaceView viewNamed:@"searchField"]];
+	return;
+    }
     if (! [self canSwitchToNewBanner]) {
         NSBeep();
         return;
@@ -612,7 +623,6 @@ static BOOL isRunningOnLeopardOrLater(void) {
     if (val) {
         unsigned long long searchResult = [val unsignedLongLongValue];
         if (searchResult != ULLONG_MAX) {
-            
             HFRange resultRange = HFRangeMake(searchResult, [needle length]);
             [controller setSelectedContentsRanges:[HFRangeWrapper withRanges:&resultRange count:1]];
             [controller maximizeVisibilityOfContentsRange:resultRange];
@@ -629,6 +639,10 @@ static BOOL isRunningOnLeopardOrLater(void) {
 }
 
 - (void)findNextBySearchingForwards:(BOOL)forwards {
+    if ([operationView operationIsRunning]) {
+	NSBeep();
+	return;
+    }
     HFByteArray *needle = [[findReplaceView viewNamed:@"searchField"] objectValue];
     if ([needle length] > 0) {
         HFByteArray *haystack = [controller byteArray];
@@ -710,16 +724,28 @@ static BOOL isRunningOnLeopardOrLater(void) {
 
 - (void)findNext:sender {
     USE(sender);
+    if ([operationView operationIsRunning]) {
+	NSBeep();
+	return;
+    }
     [self findNextBySearchingForwards:YES];
 }
 
 - (void)findPrevious:sender {
     USE(sender);
+    if ([operationView operationIsRunning]) {
+	NSBeep();
+	return;
+    }
     [self findNextBySearchingForwards:NO];
 }
 
 - (IBAction)replace:sender {
     USE(sender);
+    if ([operationView operationIsRunning]) {
+	NSBeep();
+	return;
+    }
     HFByteArray *replaceArray = [[findReplaceView viewNamed:@"replaceField"] objectValue];
     HFASSERT(replaceArray != NULL);
     [controller insertByteArray:replaceArray replacingPreviousBytes:0 allowUndoCoalescing:NO];
@@ -727,11 +753,19 @@ static BOOL isRunningOnLeopardOrLater(void) {
 }
 
 - (IBAction)replaceAndFind:sender {
+    if ([operationView operationIsRunning]) {
+	NSBeep();
+	return;
+    }
     [self replace:sender];
     [self findNext:sender];
 }
 
 - (IBAction)replaceAll:sender {
+    if ([operationView operationIsRunning]) {
+	NSBeep();
+	return;
+    }
     USE(sender);
     HFByteArray *replacementValue = [[findReplaceView viewNamed:@"replaceField"] objectValue];
     HFASSERT(replacementValue != NULL);
@@ -758,7 +792,7 @@ static BOOL isRunningOnLeopardOrLater(void) {
     [findReplaceView startOperationWithCallbacks:callbacks];
 }
 
-- (void)performFindPanelAction:(NSMenuItem *)item {
+- (void)performHFFindPanelAction:(NSMenuItem *)item {
     switch ([item tag]) {
         case NSFindPanelActionShowFindPanel:
             [self showFindPanel:item];
@@ -777,11 +811,7 @@ static BOOL isRunningOnLeopardOrLater(void) {
 
 - (void)showNavigationBanner {
     if (moveSelectionByView == operationView && moveSelectionByView != nil) {
-        id potentialSavedFirstResponder = [[self window] firstResponder];
-        if ([potentialSavedFirstResponder isKindOfClass:[NSView class]] && [potentialSavedFirstResponder ancestorSharedWithView:moveSelectionByView] != moveSelectionByView) {
-            savedFirstResponder = potentialSavedFirstResponder;
-        }
-        [[self window] makeFirstResponder:[moveSelectionByView viewNamed:@"moveSelectionByTextField"]];
+	[self saveFirstResponderIfNotInBannerAndThenSetItTo:[moveSelectionByView viewNamed:@"moveSelectionByTextField"]];
         return;
     }
     if (! moveSelectionByView) moveSelectionByView = [self createOperationViewOfName:@"MoveSelectionByBanner"];
@@ -890,60 +920,21 @@ static BOOL isRunningOnLeopardOrLater(void) {
 
 - (IBAction)moveSelectionByAction:(id)sender {
     USE(sender);
+    BOOL success = NO;
     unsigned long long value;
     BOOL isNegative;
-    if ([self parseMoveString:[[moveSelectionByView viewNamed:@"moveSelectionByTextField"] stringValue] into:&value isNegative:&isNegative] && value != 0) {
-        NSArray *oldRanges = [controller selectedContentsRanges];
-        const unsigned long long maxLength = [controller contentsLength];
-        if (! [self movingRanges:oldRanges byAmount:value isNegative:isNegative isValidForLength:maxLength]) {
-            NSBeep();
-        }
-        else {
-            BOOL extendSelection = !![[moveSelectionByView viewNamed:@"extendSelectionByCheckbox"] intValue];
-            NSUInteger i, max = [oldRanges count];
-            NSMutableArray *cleanedRanges, *newRanges = [NSMutableArray arrayWithCapacity:max];
-            for (i=0; i < max; i++) {
-                HFRange range = [[oldRanges objectAtIndex:i] HFRange];
-                HFASSERT(range.location <= maxLength && HFMaxRange(range) <= maxLength);
-                if (! isNegative) {
-                    unsigned long long offset = MIN(maxLength - range.location, value);
-                    unsigned long long lengthToSubtract = MIN(range.length, value - offset);
-                    range.location += offset;
-                    range.length -= lengthToSubtract;
-                }
-                else { /* isNegative */
-                    unsigned long long negOffset = MIN(value, range.location);
-                    unsigned long long lengthToSubtract = MIN(range.length, value - negOffset);
-                    range.location -= negOffset;
-                    range.length -= lengthToSubtract;
-                }
-                [newRanges addObject:[HFRangeWrapper withRange:range]];
-            }
-            cleanedRanges = [[[HFRangeWrapper organizeAndMergeRanges:newRanges] mutableCopy] autorelease];
-            max = [cleanedRanges count];
-            BOOL hasEmptyRange = NO, hasNonEmptyRange = NO, seenEmptyRange = NO;
-            for (i=0; i < max; i++) {
-                HFRange range = [[cleanedRanges objectAtIndex:i] HFRange];
-                hasNonEmptyRange = hasNonEmptyRange || (range.length > 0);
-                hasEmptyRange = hasEmptyRange || (range.length == 0);
-                if (hasEmptyRange && hasNonEmptyRange) break;
-            }
-            for (i=0; i < max; i++) {
-                HFRange range = [[cleanedRanges objectAtIndex:i] HFRange];
-                if (range.length == 0) {
-                    if (hasNonEmptyRange || seenEmptyRange) {
-                        [cleanedRanges removeObjectAtIndex:i];
-                        i--;
-                        max--;
-                    }
-                    seenEmptyRange = YES;
-                }
-            }
-            [controller setSelectedContentsRanges:newRanges];
-            [controller maximizeVisibilityOfContentsRange:[[newRanges objectAtIndex:0] HFRange]];
-            [controller pulseSelection];
-        }
+    if ([self parseMoveString:[[moveSelectionByView viewNamed:@"moveSelectionByTextField"] stringValue] into:&value isNegative:&isNegative]) {
+	if ([self movingRanges:[controller selectedContentsRanges] byAmount:value isNegative:isNegative isValidForLength:[controller contentsLength]]) {
+	    BOOL extendSelection = !![[moveSelectionByView viewNamed:@"extendSelectionByCheckbox"] intValue];
+	    HFControllerMovementDirection direction = (isNegative ? HFControllerDirectionLeft : HFControllerDirectionRight);
+	    HFControllerSelectionTransformation transformation = (extendSelection ? HFControllerExtendSelection : HFControllerShiftSelection);
+	    [controller moveInDirection:direction byByteCount:value withSelectionTransformation:transformation usingAnchor:NO];
+	    [controller maximizeVisibilityOfContentsRange:[[[controller selectedContentsRanges] objectAtIndex:0] HFRange]];
+	    [controller pulseSelection];
+	    success = YES;
+	}
     }
+    if (! success) NSBeep();
 }
 
 

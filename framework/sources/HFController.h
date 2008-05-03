@@ -33,7 +33,15 @@ enum
     HFControllerDirectionLeft,
     HFControllerDirectionRight
 };
-typedef NSUInteger HFControllerMovementDirection;
+typedef NSInteger HFControllerMovementDirection;
+
+enum
+{
+    HFControllerDiscardSelection,
+    HFControllerShiftSelection,
+    HFControllerExtendSelection
+};
+typedef NSInteger HFControllerSelectionTransformation;
 
 enum
 {
@@ -42,7 +50,7 @@ enum
     HFControllerMovementPage,
     HFControllerMovementDocument
 };
-typedef NSUInteger HFControllerMovementGranularity;
+typedef NSInteger HFControllerMovementGranularity;
 
 @interface HFController : NSObject {
 @private
@@ -108,11 +116,14 @@ typedef NSUInteger HFControllerMovementGranularity;
 - (BOOL)shouldAntialias;
 - (void)setShouldAntialias:(BOOL)antialias;
 
+/* Returns the height in points of a line. */
 - (CGFloat)lineHeight;
 
+/* Returns total length of the contents */
 - (unsigned long long)contentsLength;
 
-- (NSArray *)selectedContentsRanges; //returns an array of HFRangeWrappers
+/* Returns an array of HFRangeWrappers */
+- (NSArray *)selectedContentsRanges;
 
 /* Method for directly setting the selected contents ranges.  Pass an array of HFRangeWrappers that meets the following criteria:
  The array must not be NULL.
@@ -174,9 +185,16 @@ typedef NSUInteger HFControllerMovementGranularity;
 /* Action methods */
 - (IBAction)selectAll:sender;
 
+/* General purpose navigation function.  Modify the selection in the given direction by the given number of bytes.  The selection is modifed according to the given transformation.  If useAnchor is set, then anchored selection is used; otherwise any anchor is discarded.
+ 
+ This has a few limitations:
+  - Only HFControllerDirectionLeft and HFControllerDirectionRight movement directions are supported.
+  - Anchored selection is not supported for HFControllerShiftSelection (useAnchor must be NO)
+*/
+- (void)moveInDirection:(HFControllerMovementDirection)direction byByteCount:(unsigned long long)amountToMove withSelectionTransformation:(HFControllerSelectionTransformation)transformation usingAnchor:(BOOL)useAnchor;
+
 /* Keyboard navigation */
 - (void)moveInDirection:(HFControllerMovementDirection)direction withGranularity:(HFControllerMovementGranularity)granularity andModifySelection:(BOOL)extendSelection;
-- (void)moveInDirection:(HFControllerMovementDirection)direction byByteCount:(unsigned long long)amountToMove andModifySelection:(BOOL)extendSelection;
 - (void)moveToLineBoundaryInDirection:(HFControllerMovementDirection)direction andModifySelection:(BOOL)extendSelection;
 
 /* Text editing.  All of the following methods are undoable. */
@@ -188,11 +206,10 @@ typedef NSUInteger HFControllerMovementGranularity;
 /* Deletes the selection */
 - (void)deleteSelection;
 
-/* Deletes one byte in a given direction, which must be HFControllerDirectionLeft or HFControllerDirectionRight */
+/* If the selection is empty, deletes one byte in a given direction, which must be HFControllerDirectionLeft or HFControllerDirectionRight; if the selection is not empty, deletes the selection. */
 - (void)deleteDirection:(HFControllerMovementDirection)direction;
 
 /* Replaces the entire byte array with a new one, preserving as much of the selection as possible. */
 - (void)replaceByteArray:(HFByteArray *)newArray;
 
 @end
-

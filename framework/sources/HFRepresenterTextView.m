@@ -374,62 +374,64 @@ enum LineCoverage_t {
     }
     else {
         if (pulseWindow == nil) {
-            NSWindow *thisWindow = [self window];
             NSArray *ranges = [self displayedSelectedContentsRanges];
-            HFASSERT([ranges count] >= 1);
-            NSRange firstRange = [[ranges objectAtIndex:0] rangeValue];
-            NSRange lastRange = [[ranges lastObject] rangeValue];
-            NSPoint startPoint = [self originForCharacterAtIndex:firstRange.location];
-            NSPoint endPoint = [self originForCharacterAtIndex:NSMaxRange(lastRange)];
-            HFASSERT(endPoint.y >= startPoint.y);
-            NSRect bounds = [self bounds];
-            NSRect windowFrameInBoundsCoords;
-            windowFrameInBoundsCoords.origin.x = bounds.origin.x;
-            windowFrameInBoundsCoords.origin.y = startPoint.y;
-            windowFrameInBoundsCoords.size.width = bounds.size.width;
-            windowFrameInBoundsCoords.size.height = endPoint.y - startPoint.y + [self lineHeight];
-            
-            pulseWindowBaseFrameInScreenCoordinates = [self convertRect:windowFrameInBoundsCoords toView:nil];
-            pulseWindowBaseFrameInScreenCoordinates.origin = [[self window] convertBaseToScreen:pulseWindowBaseFrameInScreenCoordinates.origin];
-            
-            pulseWindow = [[NSWindow alloc] initWithContentRect:pulseWindowBaseFrameInScreenCoordinates styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:NO];
-            [pulseWindow setOpaque:NO];
-            HFTextSelectionPulseView *pulseView = [[HFTextSelectionPulseView alloc] initWithFrame:[[pulseWindow contentView] frame]];
-            [pulseWindow setContentView:pulseView];
-            [pulseView release];
-            
-            /* Render our image at 200% of its current size */
-            const CGFloat imageScale = 2;
-            NSRect imageRect = (NSRect){NSZeroPoint, NSMakeSize(windowFrameInBoundsCoords.size.width * imageScale, windowFrameInBoundsCoords.size.height * imageScale)};
-            NSImage *image = [[NSImage alloc] initWithSize:imageRect.size];
-            [image setCacheMode:NSImageCacheNever];
-            [image setFlipped:YES];
-            [image lockFocus];
-            CGContextRef ctx = [[NSGraphicsContext currentContext] graphicsPort];
-            CGContextClearRect(ctx, *(CGRect *)&imageRect);
-            [self drawPulseBackgroundInRect:imageRect];
-            [[NSColor blackColor] set];
-            [[font screenFont] set];
-            if (! [self shouldAntialias]) CGContextSetShouldAntialias(ctx, NO);
-            CGContextScaleCTM(ctx, imageScale, imageScale);
-            CGContextTranslateCTM(ctx, -windowFrameInBoundsCoords.origin.x, -windowFrameInBoundsCoords.origin.y);
-            [self drawTextWithClip:windowFrameInBoundsCoords restrictingToTextInRanges:ranges];
-            [image unlockFocus];
-            [pulseView setImage:image];
-            
-            if (thisWindow) {
-                [thisWindow addChildWindow:pulseWindow ordered:NSWindowAbove];
-            }
-        }
+	    if ([ranges count] > 0) {
+		NSWindow *thisWindow = [self window];
+		NSRange firstRange = [[ranges objectAtIndex:0] rangeValue];
+		NSRange lastRange = [[ranges lastObject] rangeValue];
+		NSPoint startPoint = [self originForCharacterAtIndex:firstRange.location];
+		NSPoint endPoint = [self originForCharacterAtIndex:NSMaxRange(lastRange)];
+		HFASSERT(endPoint.y >= startPoint.y);
+		NSRect bounds = [self bounds];
+		NSRect windowFrameInBoundsCoords;
+		windowFrameInBoundsCoords.origin.x = bounds.origin.x;
+		windowFrameInBoundsCoords.origin.y = startPoint.y;
+		windowFrameInBoundsCoords.size.width = bounds.size.width;
+		windowFrameInBoundsCoords.size.height = endPoint.y - startPoint.y + [self lineHeight];
+		
+		pulseWindowBaseFrameInScreenCoordinates = [self convertRect:windowFrameInBoundsCoords toView:nil];
+		pulseWindowBaseFrameInScreenCoordinates.origin = [[self window] convertBaseToScreen:pulseWindowBaseFrameInScreenCoordinates.origin];
+		
+		pulseWindow = [[NSWindow alloc] initWithContentRect:pulseWindowBaseFrameInScreenCoordinates styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:NO];
+		[pulseWindow setOpaque:NO];
+		HFTextSelectionPulseView *pulseView = [[HFTextSelectionPulseView alloc] initWithFrame:[[pulseWindow contentView] frame]];
+		[pulseWindow setContentView:pulseView];
+		[pulseView release];
+		
+		/* Render our image at 200% of its current size */
+		const CGFloat imageScale = 2;
+		NSRect imageRect = (NSRect){NSZeroPoint, NSMakeSize(windowFrameInBoundsCoords.size.width * imageScale, windowFrameInBoundsCoords.size.height * imageScale)};
+		NSImage *image = [[NSImage alloc] initWithSize:imageRect.size];
+		[image setCacheMode:NSImageCacheNever];
+		[image setFlipped:YES];
+		[image lockFocus];
+		CGContextRef ctx = [[NSGraphicsContext currentContext] graphicsPort];
+		CGContextClearRect(ctx, *(CGRect *)&imageRect);
+		[self drawPulseBackgroundInRect:imageRect];
+		[[NSColor blackColor] set];
+		[[font screenFont] set];
+		if (! [self shouldAntialias]) CGContextSetShouldAntialias(ctx, NO);
+		CGContextScaleCTM(ctx, imageScale, imageScale);
+		CGContextTranslateCTM(ctx, -windowFrameInBoundsCoords.origin.x, -windowFrameInBoundsCoords.origin.y);
+		[self drawTextWithClip:windowFrameInBoundsCoords restrictingToTextInRanges:ranges];
+		[image unlockFocus];
+		[pulseView setImage:image];
+		
+		if (thisWindow) {
+		    [thisWindow addChildWindow:pulseWindow ordered:NSWindowAbove];
+		}
+	    }
+	}
         
-        CGFloat scale = (CGFloat)(selectionPulseAmount * .25 + 1.);
-        NSRect scaledWindowFrame;
-        scaledWindowFrame.size.width = HFRound(pulseWindowBaseFrameInScreenCoordinates.size.width * scale);
-        scaledWindowFrame.size.height = HFRound(pulseWindowBaseFrameInScreenCoordinates.size.height * scale);
-        scaledWindowFrame.origin.x = pulseWindowBaseFrameInScreenCoordinates.origin.x - HFRound(((scale - 1) * scaledWindowFrame.size.width / 2));
-        scaledWindowFrame.origin.y = pulseWindowBaseFrameInScreenCoordinates.origin.y - HFRound(((scale - 1) * scaledWindowFrame.size.height / 2));
-        [pulseWindow setFrame:scaledWindowFrame display:YES animate:NO];
-        
+	if (pulseWindow) {
+	    CGFloat scale = (CGFloat)(selectionPulseAmount * .25 + 1.);
+	    NSRect scaledWindowFrame;
+	    scaledWindowFrame.size.width = HFRound(pulseWindowBaseFrameInScreenCoordinates.size.width * scale);
+	    scaledWindowFrame.size.height = HFRound(pulseWindowBaseFrameInScreenCoordinates.size.height * scale);
+	    scaledWindowFrame.origin.x = pulseWindowBaseFrameInScreenCoordinates.origin.x - HFRound(((scale - 1) * scaledWindowFrame.size.width / 2));
+	    scaledWindowFrame.origin.y = pulseWindowBaseFrameInScreenCoordinates.origin.y - HFRound(((scale - 1) * scaledWindowFrame.size.height / 2));
+	    [pulseWindow setFrame:scaledWindowFrame display:YES animate:NO];
+	}
     }
 }
 

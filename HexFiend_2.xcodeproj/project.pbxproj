@@ -30,7 +30,6 @@
 		D019B9550D840FE8005789AA /* HFObjectGraph.h in Headers */ = {isa = PBXBuildFile; fileRef = D019B9530D840FE8005789AA /* HFObjectGraph.h */; };
 		D019B9560D840FE8005789AA /* HFObjectGraph.m in Sources */ = {isa = PBXBuildFile; fileRef = D019B9540D840FE8005789AA /* HFObjectGraph.m */; };
 		D01E7BE20CDC54CE00943F9E /* HexFiend.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = D01E7BB80CDC530C00943F9E /* HexFiend.framework */; };
-		D01E7BEC0CDC55D000943F9E /* HFController.h in Headers */ = {isa = PBXBuildFile; fileRef = D01E7BEA0CDC55D000943F9E /* HFController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D01E7BED0CDC55D000943F9E /* HFController.m in Sources */ = {isa = PBXBuildFile; fileRef = D01E7BEB0CDC55D000943F9E /* HFController.m */; };
 		D01E7BF00CDC564B00943F9E /* HexFiend.h in Headers */ = {isa = PBXBuildFile; fileRef = D01E7BEF0CDC564B00943F9E /* HexFiend.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D01E7C0B0CDC570400943F9E /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D01E7C0A0CDC570400943F9E /* Info.plist */; };
@@ -91,6 +90,7 @@
 		D0A4373B0CDD4EDD000F7550 /* HFTextRepresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = D0A437390CDD4EDD000F7550 /* HFTextRepresenter.m */; };
 		D0A47C110D288EDF00CB9BB9 /* HFControllerCoalescedUndo.h in Headers */ = {isa = PBXBuildFile; fileRef = D0A47C0F0D288EDF00CB9BB9 /* HFControllerCoalescedUndo.h */; };
 		D0A47C120D288EDF00CB9BB9 /* HFControllerCoalescedUndo.m in Sources */ = {isa = PBXBuildFile; fileRef = D0A47C100D288EDF00CB9BB9 /* HFControllerCoalescedUndo.m */; };
+		D0A6C9D80DCC68610077175C /* HFController.h in Headers */ = {isa = PBXBuildFile; fileRef = D0A6C9D70DCC68610077175C /* HFController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D0A90B050D160414008975B9 /* HFStatusBarRepresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = D0A90B030D160414008975B9 /* HFStatusBarRepresenter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D0A90B060D160414008975B9 /* HFStatusBarRepresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = D0A90B040D160414008975B9 /* HFStatusBarRepresenter.m */; };
 		D0A90B670D161816008975B9 /* HFMetalGradientVertical.tiff in Resources */ = {isa = PBXBuildFile; fileRef = D0A90B660D161816008975B9 /* HFMetalGradientVertical.tiff */; };
@@ -197,7 +197,6 @@
 		D01E7BB80CDC530C00943F9E /* HexFiend.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = HexFiend.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D01E7BB90CDC530C00943F9E /* HexFiend_Framework-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "HexFiend_Framework-Info.plist"; path = "framework/HexFiend_Framework-Info.plist"; sourceTree = "<group>"; };
 		D01E7BC60CDC53B300943F9E /* HexFiend_2_Framework_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HexFiend_2_Framework_Prefix.pch; path = framework/sources/HexFiend_2_Framework_Prefix.pch; sourceTree = "<group>"; };
-		D01E7BEA0CDC55D000943F9E /* HFController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFController.h; path = framework/sources/HFController.h; sourceTree = "<group>"; };
 		D01E7BEB0CDC55D000943F9E /* HFController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFController.m; path = framework/sources/HFController.m; sourceTree = "<group>"; };
 		D01E7BEF0CDC564B00943F9E /* HexFiend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HexFiend.h; path = framework/sources/HexFiend.h; sourceTree = "<group>"; };
 		D01E7C0A0CDC570400943F9E /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = app/Info.plist; sourceTree = "<group>"; };
@@ -261,6 +260,7 @@
 		D0A437390CDD4EDD000F7550 /* HFTextRepresenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFTextRepresenter.m; path = framework/sources/HFTextRepresenter.m; sourceTree = "<group>"; };
 		D0A47C0F0D288EDF00CB9BB9 /* HFControllerCoalescedUndo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFControllerCoalescedUndo.h; path = framework/sources/HFControllerCoalescedUndo.h; sourceTree = "<group>"; };
 		D0A47C100D288EDF00CB9BB9 /* HFControllerCoalescedUndo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFControllerCoalescedUndo.m; path = framework/sources/HFControllerCoalescedUndo.m; sourceTree = "<group>"; };
+		D0A6C9D70DCC68610077175C /* HFController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFController.h; path = framework/sources/HFController.h; sourceTree = "<group>"; };
 		D0A90B030D160414008975B9 /* HFStatusBarRepresenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFStatusBarRepresenter.h; path = framework/sources/HFStatusBarRepresenter.h; sourceTree = "<group>"; };
 		D0A90B040D160414008975B9 /* HFStatusBarRepresenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFStatusBarRepresenter.m; path = framework/sources/HFStatusBarRepresenter.m; sourceTree = "<group>"; };
 		D0A90B660D161816008975B9 /* HFMetalGradientVertical.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = HFMetalGradientVertical.tiff; path = framework/resources/HFMetalGradientVertical.tiff; sourceTree = "<group>"; };
@@ -540,7 +540,7 @@
 				D019B8FB0D83FE8E005789AA /* File Writing */,
 				D0422FDD0D62599300F8FCDE /* HFProgressTracker.h */,
 				D0422FDE0D62599300F8FCDE /* HFProgressTracker.m */,
-				D01E7BEA0CDC55D000943F9E /* HFController.h */,
+				D0A6C9D70DCC68610077175C /* HFController.h */,
 				D01E7BEB0CDC55D000943F9E /* HFController.m */,
 				D07150650D5510CE00573D7A /* HFTextField.h */,
 				D07150660D5510CE00573D7A /* HFTextField.m */,
@@ -642,7 +642,6 @@
 				D0D828E50CDE89E500C2AB82 /* HFByteSlice.h in Headers */,
 				D0A436310CDC7EB1000F7550 /* HFFunctions.h in Headers */,
 				D01E7BF00CDC564B00943F9E /* HexFiend.h in Headers */,
-				D01E7BEC0CDC55D000943F9E /* HFController.h in Headers */,
 				D01E7C3D0CDC6A3100943F9E /* HFTypes.h in Headers */,
 				D0CDB7330CE7338E0084926B /* HFRepresenterTextView_Internal.h in Headers */,
 				D0A435730CDC71DF000F7550 /* HFRepresenter.h in Headers */,
@@ -678,6 +677,7 @@
 				D0D149310D8A37580018296B /* HFTestHashing.h in Headers */,
 				D08630F00D8BEE9900FF0BE7 /* HFByteSliceFileOperationQueueEntry.h in Headers */,
 				D04C78270DC47ECF00A76FF2 /* HFTextSelectionPulseView.h in Headers */,
+				D0A6C9D80DCC68610077175C /* HFController.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -945,35 +945,6 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
-		C01FCF4B08A954540054247B /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
-				GCC_ENABLE_OBJC_GC = unsupported;
-				GCC_MODEL_TUNING = G5;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = app/sources/HexFiend_2_Prefix.pch;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				INFOPLIST_FILE = app/Info.plist;
-				INSTALL_PATH = "$(HOME)/Applications";
-				OTHER_LDFLAGS = (
-					"-framework",
-					HexFiend,
-				);
-				PRODUCT_NAME = HexFiend_2;
-				WARNING_CFLAGS = (
-					"-W",
-					"-Wall",
-				);
-				WRAPPER_EXTENSION = app;
-				ZERO_LINK = YES;
-			};
-			name = Debug;
-		};
 		C01FCF4C08A954540054247B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -998,20 +969,6 @@
 			};
 			name = Release;
 		};
-		C01FCF4F08A954540054247B /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				GCC_ALTIVEC_EXTENSIONS = YES;
-				GCC_C_LANGUAGE_STANDARD = c99;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.4;
-				"MACOSX_DEPLOYMENT_TARGET[arch=ppc64]" = 10.5;
-				"MACOSX_DEPLOYMENT_TARGET[arch=x86_64]" = 10.5;
-				PREBINDING = NO;
-			};
-			name = Debug;
-		};
 		C01FCF5008A954540054247B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1032,35 +989,6 @@
 				PREBINDING = NO;
 			};
 			name = Release;
-		};
-		D019309C0D5AE3B50019B3F7 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(DEVELOPER_FRAMEWORKS_DIR)\"",
-				);
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
-				GCC_MODEL_TUNING = G5;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
-				INFOPLIST_FILE = "HexFiend_IBPlugin-Info.plist";
-				INSTALL_PATH = "$(HOME)/Library/Bundles";
-				OTHER_LDFLAGS = (
-					"-framework",
-					Foundation,
-					"-framework",
-					AppKit,
-				);
-				PREBINDING = NO;
-				PRODUCT_NAME = HexFiend;
-				WRAPPER_EXTENSION = ibplugin;
-				ZERO_LINK = YES;
-			};
-			name = Debug;
 		};
 		D019309D0D5AE3B50019B3F7 /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -1089,48 +1017,6 @@
 				ZERO_LINK = NO;
 			};
 			name = Release;
-		};
-		D01E7BBA0CDC530C00943F9E /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks",
-				);
-				FRAMEWORK_VERSION = A;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
-				GCC_ENABLE_OBJC_GC = supported;
-				GCC_MODEL_TUNING = G5;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = framework/sources/HexFiend_2_Framework_Prefix.pch;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = YES;
-				INFOPLIST_FILE = "framework/HexFiend_Framework-Info.plist";
-				INSTALL_PATH = "$(HOME)/Library/Frameworks";
-				LD_DYLIB_INSTALL_NAME = "@executable_path/../Frameworks/HexFiend.framework/Versions/A/HexFiend";
-				OTHER_LDFLAGS = (
-					"-framework",
-					Foundation,
-					"-framework",
-					AppKit,
-					"-lcrypto",
-				);
-				PREBINDING = NO;
-				PRODUCT_NAME = HexFiend;
-				WARNING_CFLAGS = (
-					"-W",
-					"-Wall",
-					"-Winit-self",
-				);
-				ZERO_LINK = YES;
-			};
-			name = Debug;
 		};
 		D01E7BBB0CDC530C00943F9E /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -1402,6 +1288,120 @@
 			};
 			name = "Debug-UnitTests-64";
 		};
+		D0A6CA030DCC6B8B0077175C /* Debug-NoUnitTests */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_ALTIVEC_EXTENSIONS = YES;
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.4;
+				"MACOSX_DEPLOYMENT_TARGET[arch=ppc64]" = 10.5;
+				"MACOSX_DEPLOYMENT_TARGET[arch=x86_64]" = 10.5;
+				PREBINDING = NO;
+			};
+			name = "Debug-NoUnitTests";
+		};
+		D0A6CA040DCC6B8B0077175C /* Debug-NoUnitTests */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks",
+				);
+				FRAMEWORK_VERSION = A;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_ENABLE_OBJC_GC = supported;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = framework/sources/HexFiend_2_Framework_Prefix.pch;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = YES;
+				INFOPLIST_FILE = "framework/HexFiend_Framework-Info.plist";
+				INSTALL_PATH = "$(HOME)/Library/Frameworks";
+				LD_DYLIB_INSTALL_NAME = "@executable_path/../Frameworks/HexFiend.framework/Versions/A/HexFiend";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+					"-lcrypto",
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = HexFiend;
+				WARNING_CFLAGS = (
+					"-W",
+					"-Wall",
+					"-Winit-self",
+				);
+				ZERO_LINK = YES;
+			};
+			name = "Debug-NoUnitTests";
+		};
+		D0A6CA050DCC6B8B0077175C /* Debug-NoUnitTests */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_ENABLE_OBJC_GC = unsupported;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = app/sources/HexFiend_2_Prefix.pch;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				INFOPLIST_FILE = app/Info.plist;
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					HexFiend,
+				);
+				PRODUCT_NAME = HexFiend_2;
+				WARNING_CFLAGS = (
+					"-W",
+					"-Wall",
+				);
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = "Debug-NoUnitTests";
+		};
+		D0A6CA060DCC6B8B0077175C /* Debug-NoUnitTests */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(DEVELOPER_FRAMEWORKS_DIR)\"",
+				);
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INFOPLIST_FILE = "HexFiend_IBPlugin-Info.plist";
+				INSTALL_PATH = "$(HOME)/Library/Bundles";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = HexFiend;
+				WRAPPER_EXTENSION = ibplugin;
+				ZERO_LINK = YES;
+			};
+			name = "Debug-NoUnitTests";
+		};
 		D0CD52040DA2BA4B006E8D1B /* Debug-UnitTests */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1523,50 +1523,50 @@
 		C01FCF4A08A954540054247B /* Build configuration list for PBXNativeTarget "HexFiend_2" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				C01FCF4B08A954540054247B /* Debug */,
+				D0A6CA050DCC6B8B0077175C /* Debug-NoUnitTests */,
 				D0CD52060DA2BA4B006E8D1B /* Debug-UnitTests */,
 				D08492720DBB70D200C7195C /* Debug-UnitTests-64 */,
 				C01FCF4C08A954540054247B /* Release */,
 				D083F7370DBCBD5F00C2B632 /* Release-GC */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = "Debug-NoUnitTests";
 		};
 		C01FCF4E08A954540054247B /* Build configuration list for PBXProject "HexFiend_2" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				C01FCF4F08A954540054247B /* Debug */,
+				D0A6CA030DCC6B8B0077175C /* Debug-NoUnitTests */,
 				D0CD52040DA2BA4B006E8D1B /* Debug-UnitTests */,
 				D08492700DBB70D200C7195C /* Debug-UnitTests-64 */,
 				C01FCF5008A954540054247B /* Release */,
 				D083F7350DBCBD5F00C2B632 /* Release-GC */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = "Debug-NoUnitTests";
 		};
 		D019309E0D5AE3B50019B3F7 /* Build configuration list for PBXNativeTarget "HexFiend_IBPlugin" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				D019309C0D5AE3B50019B3F7 /* Debug */,
+				D0A6CA060DCC6B8B0077175C /* Debug-NoUnitTests */,
 				D0CD52070DA2BA4B006E8D1B /* Debug-UnitTests */,
 				D08492730DBB70D200C7195C /* Debug-UnitTests-64 */,
 				D019309D0D5AE3B50019B3F7 /* Release */,
 				D083F7380DBCBD5F00C2B632 /* Release-GC */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = "Debug-NoUnitTests";
 		};
 		D01E7BBC0CDC530C00943F9E /* Build configuration list for PBXNativeTarget "HexFiend_Framework" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				D01E7BBA0CDC530C00943F9E /* Debug */,
+				D0A6CA040DCC6B8B0077175C /* Debug-NoUnitTests */,
 				D0CD52050DA2BA4B006E8D1B /* Debug-UnitTests */,
 				D08492710DBB70D200C7195C /* Debug-UnitTests-64 */,
 				D01E7BBB0CDC530C00943F9E /* Release */,
 				D083F7360DBCBD5F00C2B632 /* Release-GC */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = "Debug-NoUnitTests";
 		};
 /* End XCConfigurationList section */
 	};

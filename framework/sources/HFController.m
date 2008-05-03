@@ -1006,6 +1006,53 @@ typedef enum {
     }
 }
 
+/* Anchored selection is not allowed; neither is up/down movement */
+- (void)_shiftSelectionInDirection:(HFControllerMovementDirection)direction byAmount:(unsigned long long)amountToMove {
+    HFASSERT(direction == HFControllerDirectionLeft || direction == HFControllerDirectionRight);
+    HFASSERT(selectionAnchor == NO_SELECTION);
+    NSUInteger i, max = [selectedContentsRanges count];
+    const unsigned long long maxLength = [self contentsLength];
+    NSMutableArray *newRanges = [NSMutableArray arrayWithCapacity:max];
+    BOOL hasAddedNonemptyRange = NO;
+    for (i=0; i < max; i++) {
+	HFRange range = [[selectedContentsRanges objectAtIndex:i] HFRange];
+	HFASSERT(range.location <= maxLength && HFMaxRange(range) <= maxLength);
+	if (direction == HFControllerDirectionRight) {
+	    unsigned long long offset = MIN(maxLength - range.location, amountToMove);
+	    unsigned long long lengthToSubtract = MIN(range.length, amountToMove - offset);
+	    range.location += offset;
+	    range.length -= lengthToSubtract;
+	}
+	else { /* direction == HFControllerDirectionLeft */
+	    unsigned long long negOffset = MIN(amountToMove, range.location);
+	    unsigned long long lengthToSubtract = MIN(range.length, amountToMove - negOffset);
+	    range.location -= negOffset;
+	    range.length -= lengthToSubtract;
+	}
+	[newRanges addObject:[HFRangeWrapper withRange:range]];
+	hasAddedNonemptyRange = hasAddedNonemptyRange || (range.length > 0);
+    }
+    
+    newRanges = [[[HFRangeWrapper organizeAndMergeRanges:newRanges] mutableCopy] autorelease];
+    
+    BOOL hasFoundEmptyRange = NO;
+    max = [newRanges count];
+    for (i=0; i < max; i++) {
+	HFRange range = [[newRanges objectAtIndex:i] HFRange];
+	if (range.length == 0) {
+	    if (hasFoundEmptyRange || hasAddedNonemptyRange) {
+		[newRanges removeObjectAtIndex:i];
+		i--;
+		max--;
+	    }
+	    hasFoundEmptyRange = YES;
+	}
+    }
+    [selectedContentsRanges setArray:newRanges];
+    VALIDATE_SELECTION();
+    [self _addPropertyChangeBits:HFControllerSelectedRanges];
+}
+
 #if ! NDEBUG
 static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
     unsigned long long index = 0;
@@ -1270,13 +1317,26 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
     }
 }
 
-- (void)moveInDirection:(HFControllerMovementDirection)direction byByteCount:(unsigned long long)amountToMove andModifySelection:(BOOL)extendSelection {
-    if (extendSelection) {
-	[self _extendSelectionInDirection:direction byAmount:amountToMove];
+- (void)moveInDirection:(HFControllerMovementDirection)direction byByteCount:(unsigned long long)amountToMove withSelectionTransformation:(HFControllerSelectionTransformation)transformation usingAnchor:(BOOL)useAnchor {
+    if (! useAnchor) selectionAnchor = NO_SELECTION;
+    switch (transformation) {
+	case HFControllerDiscardSelection:
+	    [self _moveDirectionDiscardingSelection:direction byAmount:amountToMove];
+	    break;
+	    
+	case HFControllerShiftSelection:
+	    [self _shiftSelectionInDirection:direction byAmount:amountToMove];
+	    break;
+	    
+	case HFControllerExtendSelection:
+	    [self _extendSelectionInDirection:direction byAmount:amountToMove];
+	    break;
+	    
+	default:
+	    [NSException raise:NSInvalidArgumentException format:@"Invalid transformation %ld", (long)transformation];
+	    break;
     }
-    else {
-	[self _moveDirectionDiscardingSelection:direction byAmount:amountToMove];
-    }
+    if (! useAnchor) selectionAnchor = NO_SELECTION;
 }
 
 - (void)moveInDirection:(HFControllerMovementDirection)direction withGranularity:(HFControllerMovementGranularity)granularity andModifySelection:(BOOL)extendSelection {
@@ -1297,7 +1357,8 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
 	    bytesToMove = [self contentsLength];
 	    break;
     }
-    [self moveInDirection:direction byByteCount:bytesToMove andModifySelection:extendSelection];
+    HFControllerSelectionTransformation transformation = (extendSelection ? HFControllerExtendSelection : HFControllerDiscardSelection);
+    [self moveInDirection:direction byByteCount:bytesToMove withSelectionTransformation:transformation usingAnchor:YES];
 }
 
 - (void)moveToLineBoundaryInDirection:(HFControllerMovementDirection)direction andModifySelection:(BOOL)modifySelection {
