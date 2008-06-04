@@ -53,7 +53,7 @@
 /* Create a stack or dynamic array of the given size.  This memory is NOT scanned and is NOT collected!  Anything you put in here must have external references! */
 #define NEW_ARRAY(type, name, number) \
     type name ## static_ [256];\
-    type * name = ((number) <= 256 ? name ## static_ : check_calloc((number) * sizeof(type)))
+    type * name = ((number) <= 256 ? name ## static_ : check_malloc((number) * sizeof(type)))
     
 #define FREE_ARRAY(name) \
     if (name != name ## static_) free(name)
@@ -68,6 +68,12 @@
 
 //How many bytes should we read at a time when doing a find/replace?
 #define SEARCH_CHUNK_SIZE 32768
+
+//What's the smallest clipboard data size we should offer to avoid copying when quitting?  This is 5 MB
+#define MINIMUM_PASTEBOARD_SIZE_TO_WARN_ABOUT (5UL << 20)
+
+//What's the largest clipboard data size we should support exporting (at all?)  This is 500 MB.  Note that we can still copy more data than this internally, we just can't put it in, say, TextEdit.
+#define MAXIMUM_PASTEBOARD_SIZE_TO_EXPORT (500UL << 20)
 
 #ifdef __OBJC__
     #import <HexFiend/HFFunctions.h>

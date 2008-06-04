@@ -32,7 +32,6 @@
 		D01E7BE20CDC54CE00943F9E /* HexFiend.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = D01E7BB80CDC530C00943F9E /* HexFiend.framework */; };
 		D01E7BED0CDC55D000943F9E /* HFController.m in Sources */ = {isa = PBXBuildFile; fileRef = D01E7BEB0CDC55D000943F9E /* HFController.m */; };
 		D01E7BF00CDC564B00943F9E /* HexFiend.h in Headers */ = {isa = PBXBuildFile; fileRef = D01E7BEF0CDC564B00943F9E /* HexFiend.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		D01E7C0B0CDC570400943F9E /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D01E7C0A0CDC570400943F9E /* Info.plist */; };
 		D01E7C160CDC58AA00943F9E /* MyDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = D01E7C150CDC58AA00943F9E /* MyDocument.m */; };
 		D01E7C2A0CDC59B700943F9E /* MyDocument.nib in Resources */ = {isa = PBXBuildFile; fileRef = D01E7C280CDC59B700943F9E /* MyDocument.nib */; };
 		D01E7C3D0CDC6A3100943F9E /* HFTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = D01E7C3B0CDC69E500943F9E /* HFTypes.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -766,7 +765,6 @@
 			files = (
 				8D11072A0486CEB800E47090 /* MainMenu.nib in Resources */,
 				8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */,
-				D01E7C0B0CDC570400943F9E /* Info.plist in Resources */,
 				D01E7C2A0CDC59B700943F9E /* MyDocument.nib in Resources */,
 				D01773360D755551002E03DE /* FindReplaceBanner.nib in Resources */,
 				D01772B90D72E024002E03DE /* HFCancelOn.tiff in Resources */,

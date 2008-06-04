@@ -722,11 +722,131 @@ enum LineCoverage_t {
     FREE_ARRAY(lineRects);
 }
 
-- (void)drawTextWithClip:(NSRect)clip restrictingToTextInRanges:(NSArray *)restrictingToRanges {
-    USE(restrictingToRanges);
-    USE(clip);
+- (CGFloat)totalAdvanceForBytesInRange:(NSRange)range {
+    USE(range);
+    UNIMPLEMENTED();
+}
+
+- (NSUInteger)maximumGlyphCountForByteCount:(NSUInteger)byteCount {
+    USE(byteCount);
+    UNIMPLEMENTED();
+}
+
+- (void)drawGlyphs:(CGGlyph *)glyphs withAdvances:(CGSize *)advances count:(NSUInteger)glyphCount {
+    HFASSERT(glyphs != NULL);
+    HFASSERT(advances != NULL);
+    HFASSERT(glyphCount > 0);
+    CGContextRef ctx = [[NSGraphicsContext currentContext] graphicsPort];
+    CGContextShowGlyphsWithAdvances(ctx, glyphs, advances, glyphCount);
+}
+
+
+- (void)extractGlyphsForBytes:(const unsigned char *)bytes count:(NSUInteger)numBytes intoArray:(CGGlyph *)glyphs advances:(CGSize *)advances resultingGlyphCount:(NSUInteger *)resultGlyphCount {
+    USE(bytes);
+    USE(numBytes);
+    USE(glyphs);
+    USE(advances);
+    USE(resultGlyphCount);
     UNIMPLEMENTED_VOID();
 }
+
+- (void)extractGlyphsForBytes:(const unsigned char *)bytePtr range:(NSRange)byteRange intoArray:(CGGlyph *)glyphs advances:(CGSize *)advances withInclusionRanges:(NSArray *)restrictingToRanges initialTextOffset:(CGFloat *)initialTextOffset resultingGlyphCount:(NSUInteger *)resultingGlyphCount {
+    NSParameterAssert(glyphs != NULL && advances != NULL && restrictingToRanges != nil && bytePtr != NULL);
+    NSRange priorIntersectionRange = {NSUIntegerMax, NSUIntegerMax};
+    NSUInteger glyphBufferIndex = 0;
+    NSUInteger restrictionRangeCount = [restrictingToRanges count];
+    for (NSUInteger rangeIndex = 0; rangeIndex < restrictionRangeCount; rangeIndex++) {
+	NSRange inclusionRange = [[restrictingToRanges objectAtIndex:rangeIndex] rangeValue];
+	NSRange intersectionRange = NSIntersectionRange(inclusionRange, byteRange);
+	if (intersectionRange.length == 0) continue;
+	
+	NSRange byteRangeToSkip;
+	if (priorIntersectionRange.location == NSUIntegerMax) {
+	    byteRangeToSkip = NSMakeRange(byteRange.location, intersectionRange.location - byteRange.location);
+	}
+	else {
+	    HFASSERT(intersectionRange.location >= NSMaxRange(priorIntersectionRange));
+	    byteRangeToSkip.location = NSMaxRange(priorIntersectionRange);
+	    byteRangeToSkip.length = intersectionRange.location - byteRangeToSkip.location;
+	}
+	
+	if (byteRangeToSkip.length > 0) {
+	    CGFloat additionalAdvance = [self totalAdvanceForBytesInRange:byteRangeToSkip];
+	    if (glyphBufferIndex == 0) {
+		*initialTextOffset = *initialTextOffset + additionalAdvance;
+	    }
+	    else {
+		advances[glyphBufferIndex - 1].width += additionalAdvance;
+	    }
+	}
+	
+	NSUInteger glyphCountForRange = NSUIntegerMax;
+	[self extractGlyphsForBytes:bytePtr + (intersectionRange.location - byteRange.location) count:intersectionRange.length intoArray:glyphs + glyphBufferIndex advances:advances + glyphBufferIndex resultingGlyphCount:&glyphCountForRange];
+	HFASSERT(glyphCountForRange != NSUIntegerMax);
+	glyphBufferIndex += glyphCountForRange;
+	priorIntersectionRange = intersectionRange;
+    }
+    if (resultingGlyphCount) *resultingGlyphCount = glyphBufferIndex;
+}
+
+- (void)drawTextWithClip:(NSRect)clip restrictingToTextInRanges:(NSArray *)restrictingToRanges {
+    CGContextRef ctx = [[NSGraphicsContext currentContext] graphicsPort];
+    NSRect bounds = [self bounds];
+    CGFloat lineHeight = [self lineHeight];
+    
+    CGAffineTransform textTransform = CGContextGetTextMatrix(ctx);
+    CGContextSetTextDrawingMode(ctx, kCGTextFill);
+    
+    NSUInteger byteIndex, bytesPerLine = [self bytesPerLine];
+    NSData *dataObject = [self data];
+    NSFont *fontObject = [[self font] screenFont];
+    NSUInteger byteCount = [dataObject length];
+    
+    const unsigned char * const bytePtr = [dataObject bytes];
+    
+    NSRect lineRectInBoundsSpace = NSMakeRect(NSMinX(bounds), NSMinY(bounds), NSWidth(bounds), lineHeight);
+    lineRectInBoundsSpace.origin.y -= [self verticalOffset] * lineHeight;
+    
+    /* Start us off with the horizontal inset and move the baseline down by the ascender so our glyphs just graze the top of our view */
+    textTransform.tx += [self horizontalContainerInset];
+    textTransform.ty += [fontObject ascender] - lineHeight * [self verticalOffset];
+    NSUInteger lineIndex = 0;
+    const NSUInteger maxGlyphCount = [self maximumGlyphCountForByteCount:bytesPerLine];
+    NEW_ARRAY(CGGlyph, glyphs, maxGlyphCount);
+    NEW_ARRAY(CGSize, advances, maxGlyphCount);
+    for (byteIndex = 0; byteIndex < byteCount; byteIndex += bytesPerLine) {
+        if (byteIndex > 0) {
+            textTransform.ty += lineHeight;
+            lineRectInBoundsSpace.origin.y += lineHeight;
+        }
+        if (NSIntersectsRect(lineRectInBoundsSpace, clip)) {
+            NSUInteger numBytes = MIN(bytesPerLine, byteCount - byteIndex);
+            NSUInteger resultGlyphCount = 0;
+	    CGFloat initialTextOffset = 0;
+	    if (restrictingToRanges == nil) {
+		[self extractGlyphsForBytes:bytePtr + byteIndex count:numBytes intoArray:glyphs advances:advances resultingGlyphCount:&resultGlyphCount];
+	    }
+	    else {
+		[self extractGlyphsForBytes:bytePtr range:NSMakeRange(byteIndex, numBytes) intoArray:glyphs advances:advances withInclusionRanges:restrictingToRanges initialTextOffset:&initialTextOffset resultingGlyphCount:&resultGlyphCount];
+	    }
+	    HFASSERT(resultGlyphCount <= maxGlyphCount);
+	    
+	    if (resultGlyphCount > 0) {
+		textTransform.tx += initialTextOffset;
+		CGContextSetTextMatrix(ctx, textTransform);
+		textTransform.tx -= initialTextOffset;
+		[self drawGlyphs:glyphs withAdvances:advances count:resultGlyphCount];
+	    }
+        }
+        else if (NSMinY(lineRectInBoundsSpace) > NSMaxY(clip)) {
+            break;
+        }
+        lineIndex++;
+    }
+    FREE_ARRAY(glyphs);
+    FREE_ARRAY(advances);
+}
+
 
 - (void)drawFocusRingWithClip:(NSRect)clip {
     USE(clip);

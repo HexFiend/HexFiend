@@ -38,4 +38,7 @@ extern NSString *const HFPrivateByteArrayPboardType;
 /* Unpacks a byte array from a pasteboard, preferring HFPrivateByteArrayPboardType */
 + (HFByteArray *)unpackByteArrayFromPasteboard:(NSPasteboard *)pasteboard;
 
+/* Used to handle the case where copying data will require a lot of memory and give the user a chance to confirm. */
+- (unsigned long long)amountToCopyForDataLength:(unsigned long long)numBytes stringLength:(unsigned long long)stringLength;
+
 @end

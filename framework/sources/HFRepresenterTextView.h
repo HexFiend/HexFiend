@@ -81,9 +81,19 @@
 - (NSUInteger)bytesBetweenVerticalGuides;
 
 /* To be invoked from drawRect:. */
+- (void)drawGlyphs:(CGGlyph *)glyphs withAdvances:(CGSize *)advances count:(NSUInteger)glyphCount;
 - (void)drawCaretIfNecessaryWithClip:(NSRect)clipRect;
 - (void)drawSelectionIfNecessaryWithClip:(NSRect)clipRect;
+
+/* Must be overridden */
 - (void)drawTextWithClip:(NSRect)clipRect restrictingToTextInRanges:(NSArray *)restrictingToRanges;
+- (void)extractGlyphsForBytes:(const unsigned char *)bytes count:(NSUInteger)numBytes intoArray:(CGGlyph *)glyphs advances:(CGSize *)advances resultingGlyphCount:(NSUInteger *)resultGlyphCount;
+
+
+- (void)extractGlyphsForBytes:(const unsigned char *)bytePtr range:(NSRange)byteRange intoArray:(CGGlyph *)glyphs advances:(CGSize *)advances withInclusionRanges:(NSArray *)restrictingToRanges initialTextOffset:(CGFloat *)initialTextOffset resultingGlyphCount:(NSUInteger *)resultingGlyphCount;
+
+/* Must be overridden - returns the max number of glyphs for a given number of bytes */
+- (NSUInteger)maximumGlyphCountForByteCount:(NSUInteger)byteCount;
 
 - (void)updateSelectedRanges;
 - (void)updateSelectionPulse;

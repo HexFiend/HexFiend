@@ -333,6 +333,38 @@ void HFSetFDShouldCache(int fd, BOOL shouldCache) {
     }
 }
 
+NSString *HFDescribeByteCount(unsigned long long count) {
+    return HFDescribeByteCountWithPrefixAndSuffix(NULL, count, NULL);
+}
+
+NSString *HFDescribeByteCountWithPrefixAndSuffix(const char *stringPrefix, unsigned long long count, const char *stringSuffix) {
+    const unsigned long long sizes[] = {1ULL<<0, 1ULL<<10, 1ULL<<20, 1ULL<<30, 1ULL<<40, 1ULL<<50, 1ULL<<60};
+    const char* const suffixes[] = {"byte", "byte", "kilobyte", "megabyte", "gigabyte", "terabyte", "petabyte", "exabyte", "zettabyte"};
+    unsigned i;
+    for (i=0; i < sizeof sizes / sizeof *sizes; i++) {
+        if (count < sizes[i]) break;
+    }
+    
+    if (! stringPrefix) stringPrefix = "";
+    if (! stringSuffix) stringSuffix = "";
+    
+    if (i >= sizeof sizes / sizeof *sizes) return [NSString stringWithFormat:@"%san unbelievable number of bytes%s", stringPrefix, stringSuffix];
+    
+    unsigned long long dividend = count / sizes[i-1];
+    unsigned long long remainder = (count % sizes[i-1])*10 / sizes[i-1];
+    
+    BOOL needsPlural = (dividend != 1 || remainder > 0);
+    
+    char remainderBuff[64];
+    if (remainder > 0) snprintf(remainderBuff, sizeof remainderBuff, ".%llu", remainder);
+    else remainderBuff[0] = 0;
+    
+    char* resultPointer = NULL;
+    int numChars = asprintf(&resultPointer, "%s%llu%s %s%s%s", stringPrefix, dividend, remainderBuff, suffixes[i], "s" + !needsPlural, stringSuffix);
+    if (numChars < 0) return NULL;
+    return [[[NSString alloc] initWithBytesNoCopy:resultPointer length:numChars encoding:NSASCIIStringEncoding freeWhenDone:YES] autorelease];
+}
+
 
 #if USE_CHUD
 void HFStartTiming(const char *name) {
