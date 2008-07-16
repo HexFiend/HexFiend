@@ -89,22 +89,12 @@
 
 - (void)insertTab:unused {
     USE(unused);
-    if ([self behavesAsTextField]) {
-        [[[self view] window] selectNextKeyView:nil];
-    }
-    else {
-        [NSException raise:NSInternalInconsistencyException format:@"insertTab: leaked into %@", self];
-    }
+    [[[self view] window] selectNextKeyView:nil];
 }
 
 - (void)insertBacktab:unused {
     USE(unused);
-    if ([self behavesAsTextField]) {
-        [[[self view] window] selectPreviousKeyView:nil];
-    }
-    else {
-        [NSException raise:NSInternalInconsistencyException format:@"insertBacktab: leaked into %@", self];
-    }
+    [[[self view] window] selectPreviousKeyView:nil];
 }
 
 FORWARD(scrollLineUp)

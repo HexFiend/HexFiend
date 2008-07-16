@@ -492,10 +492,22 @@ enum LineCoverage_t {
     return YES;
 }
 
+- (BOOL)hasVisibleDisplayedSelectedContentsRange {
+    FOREACH(NSValue *, rangeValue, [self displayedSelectedContentsRanges]) {
+	NSRange range = [rangeValue rangeValue];
+	if (range.length > 0) {
+	    return YES;
+	}
+    }
+    return NO;
+}
+
 - (BOOL)becomeFirstResponder {
     BOOL result = [super becomeFirstResponder];
     [self _updateCaretTimerWithFirstResponderStatus:YES];
-    if ([self showsFocusRing]) [self setNeedsDisplay:YES];
+    if ([self showsFocusRing] || [self hasVisibleDisplayedSelectedContentsRange]) {
+	[self setNeedsDisplay:YES];
+    }
     return result;
 }
 
@@ -505,15 +517,7 @@ enum LineCoverage_t {
     BOOL needsRedisplay = NO;
     if ([self showsFocusRing]) needsRedisplay = YES;
     else if (! NSIsEmptyRect(lastDrawnCaretRect)) needsRedisplay = YES;
-    else {
-        FOREACH(NSValue *, rangeValue, [self displayedSelectedContentsRanges]) {
-            NSRange range = [rangeValue rangeValue];
-            if (range.length > 0) {
-                needsRedisplay = YES;
-                break;
-            }
-        }
-    }
+    else if ([self hasVisibleDisplayedSelectedContentsRange]) needsRedisplay = YES;
     if (needsRedisplay) [self setNeedsDisplay:YES];
     return result;
 }

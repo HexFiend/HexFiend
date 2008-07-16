@@ -31,7 +31,7 @@ NSImage *HFImageNamed(NSString *name) {
             else {
                 [image retain];
                 [image setName:name];
-				[image setScalesWhenResized:YES];
+                [image setScalesWhenResized:YES];
             }
         }
     }
@@ -341,6 +341,7 @@ NSString *HFDescribeByteCountWithPrefixAndSuffix(const char *stringPrefix, unsig
     const unsigned long long sizes[] = {1ULL<<0, 1ULL<<10, 1ULL<<20, 1ULL<<30, 1ULL<<40, 1ULL<<50, 1ULL<<60};
     const char* const suffixes[] = {"byte", "byte", "kilobyte", "megabyte", "gigabyte", "terabyte", "petabyte", "exabyte", "zettabyte"};
     unsigned i;
+    unsigned long long base;
     for (i=0; i < sizeof sizes / sizeof *sizes; i++) {
         if (count < sizes[i]) break;
     }
@@ -349,14 +350,31 @@ NSString *HFDescribeByteCountWithPrefixAndSuffix(const char *stringPrefix, unsig
     if (! stringSuffix) stringSuffix = "";
     
     if (i >= sizeof sizes / sizeof *sizes) return [NSString stringWithFormat:@"%san unbelievable number of bytes%s", stringPrefix, stringSuffix];
+    base = sizes[i-1];
     
-    unsigned long long dividend = count / sizes[i-1];
-    unsigned long long remainder = (count % sizes[i-1])*10 / sizes[i-1];
+    unsigned long long dividend = count / base;
     
-    BOOL needsPlural = (dividend != 1 || remainder > 0);
+    /* Determine the first base 10 digit of the remainder. We know the multiplication by 10 won't overflow because our largest base is 1ULL << 60, and 10 * 1<<60 does not overflow */
+    unsigned long long remainderTimes10 = (count % base) * 10;
+    unsigned long long remainderPrincipalDigit = remainderTimes10 / base;
+    HFASSERT(remainderPrincipalDigit < 10);
+    
+    /* Determine which way to round */
+    unsigned long long remainderPrincipalDigitRemainder = remainderTimes10 % base;
+    if (remainderPrincipalDigitRemainder * 2 >= base) {
+        /* Round up */
+        remainderPrincipalDigit++;
+        /* Carry */
+        if (remainderPrincipalDigit == 10) {
+            remainderPrincipalDigit = 0;
+            dividend++;
+        }
+    }
+    
+    BOOL needsPlural = (dividend != 1 || remainderPrincipalDigit > 0);
     
     char remainderBuff[64];
-    if (remainder > 0) snprintf(remainderBuff, sizeof remainderBuff, ".%llu", remainder);
+    if (remainderPrincipalDigit > 0) snprintf(remainderBuff, sizeof remainderBuff, ".%llu", remainderPrincipalDigit);
     else remainderBuff[0] = 0;
     
     char* resultPointer = NULL;

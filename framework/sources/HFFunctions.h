@@ -27,6 +27,12 @@ static inline BOOL HFSumDoesNotOverflow(unsigned long long a, unsigned long long
     return a + b >= a;
 }
 
+static inline BOOL HFProductDoesNotOverflow(unsigned long long a, unsigned long long b) {
+    if (b == 0) return YES;
+    unsigned long long result = a * b;
+    return result / b == a;
+}
+
 static inline NSUInteger HFProductInt(NSUInteger a, NSUInteger b) {
     NSUInteger result = a * b;
     assert(a == 0 || result / a == b); //detect overflow
@@ -35,7 +41,7 @@ static inline NSUInteger HFProductInt(NSUInteger a, NSUInteger b) {
 
 static inline unsigned long long HFProductULL(unsigned long long a, unsigned long long b) {
     unsigned long long result = a * b;
-    assert(a == 0 || result / a == b); //detect overflow
+    assert(HFProductDoesNotOverflow(a, b)); //detect overflow
     return result;
 }
 

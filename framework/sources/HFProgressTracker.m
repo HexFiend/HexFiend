@@ -8,8 +8,6 @@
 
 #import <HexFiend/HFProgressTracker.h>
 
-NSString *const HFProgressTrackerDidFinishNotification = @"HFProgressTrackerDidFinishNotification";
-
 @implementation HFProgressTracker
 
 - (void)setMaxProgress:(unsigned long long)max {
@@ -43,12 +41,18 @@ NSString *const HFProgressTrackerDidFinishNotification = @"HFProgressTrackerDidF
     if (value != lastSetValue) {
         lastSetValue = value;
         [progressIndicator setDoubleValue:lastSetValue];
+        if (delegate && [delegate respondsToSelector:@selector(progressTracker:didChangeProgressTo:)]) {
+            [delegate progressTracker:self didChangeProgressTo:lastSetValue];
+        }
     }
 }
 
 - (void)beginTrackingProgress {
     HFASSERT(progressTimer == NULL);
-    progressTimer = [[NSTimer scheduledTimerWithTimeInterval:1 / 30. target:self selector:@selector(_updateProgress:) userInfo:nil repeats:YES] retain];
+    NSRunLoop *currentRunLoop = [NSRunLoop currentRunLoop];
+    progressTimer = [[NSTimer timerWithTimeInterval:1 / 30. target:self selector:@selector(_updateProgress:) userInfo:nil repeats:YES] retain];
+    [currentRunLoop addTimer:progressTimer forMode:NSDefaultRunLoopMode];
+    [currentRunLoop addTimer:progressTimer forMode:NSModalPanelRunLoopMode];
     [self _updateProgress:nil];
     [progressIndicator startAnimation:self];
 }
@@ -76,12 +80,24 @@ NSString *const HFProgressTrackerDidFinishNotification = @"HFProgressTrackerDidF
     [super dealloc];
 }
 
+- (void)setDelegate:(id)val {
+    delegate = val;
+}
+
+- (id)delegate {
+    return delegate;
+}
+
 - (void)noteFinished:(id)sender {
-    if (! [NSThread isMainThread]) {
-        [self performSelectorOnMainThread:@selector(noteFinished:) withObject:sender waitUntilDone:NO];
-    }
-    else {
-        [[NSNotificationCenter defaultCenter] postNotificationName:HFProgressTrackerDidFinishNotification object:self userInfo:nil];
+    if (delegate != nil) {   
+        if (! [NSThread isMainThread]) {
+            [self performSelectorOnMainThread:@selector(noteFinished:) withObject:sender waitUntilDone:NO];
+        }
+        else {
+            if ([delegate respondsToSelector:@selector(progressTrackerDidFinish:)]) {
+                [delegate progressTrackerDidFinish:self];
+            }
+        }
     }
 }
 

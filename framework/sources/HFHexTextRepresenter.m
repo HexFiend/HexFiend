@@ -9,6 +9,7 @@
 #import <HexFiend/HFHexTextRepresenter.h>
 #import <HexFiend/HFRepresenterHexTextView.h>
 #import <HexFiend/HFPasteboardOwner.h>
+#import <HexFiend/HFProgressTracker.h>
 
 @interface HFHexPasteboardOwner : HFPasteboardOwner {
     
@@ -22,35 +23,46 @@ static unsigned char hex2char(NSUInteger c) {
 
 @implementation HFHexPasteboardOwner
 
-- (void)pasteboard:(NSPasteboard *)pboard provideDataForType:(NSString *)type {
-    if ([type isEqual:NSStringPboardType]) {
-        HFByteArray *byteArray = [self byteArray];
-        HFASSERT([byteArray length] <= NSUIntegerMax);
-        NSUInteger dataLength = ll2l([byteArray length]);
-        HFASSERT(dataLength < NSUIntegerMax / 3);
-        NSUInteger stringLength = dataLength * 3;
-        NSUInteger offset = 0, remaining = dataLength;
-        unsigned char * const stringBuffer = check_malloc(stringLength);
-        while (remaining > 0) {
-            unsigned char dataBuffer[256];
-            NSUInteger amountToCopy = MIN(sizeof dataBuffer, remaining);
-            [byteArray copyBytes:dataBuffer range:HFRangeMake(offset, amountToCopy)];
-            for (NSUInteger i = 0; i < amountToCopy; i++) {
-                unsigned char c = dataBuffer[i];
-                stringBuffer[offset*3 + i*3] = hex2char(c >> 4);
-                stringBuffer[offset*3 + i*3 + 1] = hex2char(c & 0xF);
-                stringBuffer[offset*3 + i*3 + 2] = ' ';
-            }
-            offset += amountToCopy;
-            remaining -= amountToCopy;
-        }
-        NSString *string = [[NSString alloc] initWithBytesNoCopy:stringBuffer length:stringLength - MIN(stringLength, 1) encoding:NSASCIIStringEncoding freeWhenDone:YES];
-        [pboard setString:string forType:type];
-        [string release];
+- (void)writeDataInBackgroundToPasteboard:(NSPasteboard *)pboard ofLength:(unsigned long long)length forType:(NSString *)type trackingProgress:(HFProgressTracker *)tracker {
+    HFASSERT([type isEqual:NSStringPboardType]);
+    HFByteArray *byteArray = [self byteArray];
+    HFASSERT(length <= NSUIntegerMax);
+    NSUInteger dataLength = ll2l(length);
+    HFASSERT(dataLength < NSUIntegerMax / 3);
+    NSUInteger stringLength = dataLength * 3;
+    NSUInteger offset = 0, remaining = dataLength;
+    volatile long long * const progressReportingPointer = (volatile long long *)&tracker->currentProgress;
+    [tracker setMaxProgress:dataLength];
+    unsigned char * restrict const stringBuffer = check_malloc(stringLength);
+    while (remaining > 0) {
+	if (tracker->cancelRequested) break;
+	unsigned char dataBuffer[32 * 1024];
+	NSUInteger amountToCopy = MIN(sizeof dataBuffer, remaining);
+	[byteArray copyBytes:dataBuffer range:HFRangeMake(offset, amountToCopy)];
+	for (NSUInteger i = 0; i < amountToCopy; i++) {
+	    unsigned char c = dataBuffer[i];
+	    stringBuffer[offset*3 + i*3] = hex2char(c >> 4);
+	    stringBuffer[offset*3 + i*3 + 1] = hex2char(c & 0xF);
+	    stringBuffer[offset*3 + i*3 + 2] = ' ';
+	}
+	offset += amountToCopy;
+	remaining -= amountToCopy;
+	HFAtomicAdd64(amountToCopy, progressReportingPointer);
+    }
+    if (tracker->cancelRequested) {
+	[pboard setString:@"" forType:type];
+	free(stringBuffer);
     }
     else {
-        [super pasteboard:pboard provideDataForType:type];
+	NSString *string = [[NSString alloc] initWithBytesNoCopy:stringBuffer length:stringLength - MIN(stringLength, 1) encoding:NSASCIIStringEncoding freeWhenDone:YES];
+	[pboard setString:string forType:type];
+	[string release];
     }
+}
+
+- (unsigned long long)stringLengthForDataLength:(unsigned long long)dataLength {
+    if (HFProductDoesNotOverflow(dataLength, 3)) return dataLength * 3;
+    else return ULLONG_MAX;    
 }
 
 @end

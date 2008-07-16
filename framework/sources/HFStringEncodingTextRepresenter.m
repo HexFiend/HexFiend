@@ -9,6 +9,7 @@
 #import <HexFiend/HFStringEncodingTextRepresenter.h>
 #import <HexFiend/HFRepresenterStringEncodingTextView.h>
 #import <HexFiend/HFPasteboardOwner.h>
+#import <HexFiend/HFProgressTracker.h>
 
 @interface HFStringEncodingPasteboardOwner : HFPasteboardOwner {
     NSStringEncoding encoding;
@@ -21,22 +22,37 @@
 - (void)setEncoding:(NSStringEncoding)val { encoding = val; }
 - (NSStringEncoding)encoding { return encoding; }
 
-- (void)pasteboard:(NSPasteboard *)pboard provideDataForType:(NSString *)type {
-    if ([type isEqualToString:NSStringPboardType]) {
-        /* Don't know how to handle these yet - is this sufficient to assert that the string encoding has one byte per character?  Ack */
-        HFASSERT(HFStringEncodingIsSupersetOfASCII(encoding));
-        HFByteArray *bytes = [self byteArray];
-        HFASSERT([bytes length] <= NSUIntegerMax);
-        NSUInteger length = ll2l([bytes length]);
-        unsigned char * const buffer = check_malloc(length);
-        [bytes copyBytes:buffer range:HFRangeMake(0, length)];
-        NSString *string = [[NSString alloc] initWithBytesNoCopy:buffer length:length encoding:encoding freeWhenDone:YES];
-        [pboard setString:string forType:type];
-        [string release];
+- (void)writeDataInBackgroundToPasteboard:(NSPasteboard *)pboard ofLength:(unsigned long long)length forType:(NSString *)type trackingProgress:(HFProgressTracker *)tracker {
+    HFASSERT([type isEqual:NSStringPboardType]);
+    HFByteArray *byteArray = [self byteArray];
+    HFASSERT(length <= NSUIntegerMax);
+    NSUInteger dataLength = ll2l(length);
+    NSUInteger stringLength = dataLength;
+    NSUInteger offset = 0, remaining = dataLength;
+    volatile long long * const progressReportingPointer = (volatile long long *)&tracker->currentProgress;
+    [tracker setMaxProgress:dataLength];
+    unsigned char * restrict const stringBuffer = check_malloc(stringLength);
+    while (remaining > 0) {
+	if (tracker->cancelRequested) break;
+	NSUInteger amountToCopy = MIN(32 * 1024, remaining);
+	[byteArray copyBytes:stringBuffer + offset range:HFRangeMake(offset, amountToCopy)];
+	offset += amountToCopy;
+	remaining -= amountToCopy;
+	HFAtomicAdd64(amountToCopy, progressReportingPointer);
+    }
+    if (tracker->cancelRequested) {
+	[pboard setString:@"" forType:type];
+	free(stringBuffer);
     }
     else {
-        [super pasteboard:pboard provideDataForType:type];
+	NSString *string = [[NSString alloc] initWithBytesNoCopy:stringBuffer length:stringLength encoding:NSASCIIStringEncoding freeWhenDone:YES];
+	[pboard setString:string forType:type];
+	[string release];
     }
+}
+
+- (unsigned long long)stringLengthForDataLength:(unsigned long long)dataLength {
+    return dataLength;
 }
 
 @end

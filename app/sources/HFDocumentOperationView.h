@@ -20,6 +20,7 @@ struct HFDocumentOperationCallbacks {
 @interface HFDocumentOperationView : HFResizingView {
     NSMutableDictionary *views;
     NSString *nibName;
+    NSString *displayName;
     BOOL awokenFromNib;
     pthread_t thread;
     
@@ -27,7 +28,8 @@ struct HFDocumentOperationCallbacks {
     id target;
     SEL startSelector;
     SEL endSelector;
-	NSArray *otherTopLevelObjects;
+    NSArray *otherTopLevelObjects;
+    double progress;
 }
 
 - (void)setOtherTopLevelObjects:(NSArray *)objects;
@@ -36,8 +38,14 @@ struct HFDocumentOperationCallbacks {
 - viewNamed:(NSString *)name;
 - (CGFloat)defaultHeight;
 
+- (NSString *)displayName;
+- (void)setDisplayName:(NSString *)name;
+
 - (IBAction)cancelViewOperation:sender;
 - (BOOL)operationIsRunning;
+
+/* KVO compliant, in the range [0, 1], or -1 to mean not running */
+- (double)progress;
 
 - (void)startOperationWithCallbacks:(struct HFDocumentOperationCallbacks)callbacks;
 

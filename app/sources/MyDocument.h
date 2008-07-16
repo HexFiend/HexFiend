@@ -28,6 +28,7 @@
     HFDocumentOperationView *findReplaceView;
     HFDocumentOperationView *moveSelectionByView;
     HFDocumentOperationView *saveView;
+    NSTimer *showSaveViewAfterDelayTimer;
     
     BOOL bannerIsShown;
     BOOL bannerGrowing;

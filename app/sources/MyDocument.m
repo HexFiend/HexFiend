@@ -12,6 +12,8 @@
 #import <HexFiend/HexFiend.h>
 #include <pthread.h>
 
+static const char *const kProgressContext = "context";
+
 enum {
     HFSaveSuccessful,
     HFSaveCancelled,
@@ -22,6 +24,35 @@ enum {
 static BOOL isRunningOnLeopardOrLater(void) {
     return NSAppKitVersionNumber >= 860.;
 }
+
+@interface MyDocument (ForwardDeclarations)
+- (NSString *)documentWindowTitleFormatString;
+@end
+
+/* Subclass to display custom window title that shows progress */
+@interface MyDocumentWindowController : NSWindowController
+
+@end
+
+@implementation MyDocumentWindowController
+
+- (NSString *)windowTitleForDocumentDisplayName:(NSString *)displayName {
+    NSString *result;
+    NSString *superDisplayName = [super windowTitleForDocumentDisplayName:displayName];
+    
+    /* Apply a format string if our document has one */
+    NSString *formatString = [[self document] documentWindowTitleFormatString];
+    if (formatString != nil) {
+        result = [NSString stringWithFormat:formatString, superDisplayName];
+    }
+    else {
+        result = superDisplayName;
+    }
+    
+    return result;
+}
+
+@end
 
 @implementation MyDocument
 
@@ -66,6 +97,51 @@ static BOOL isRunningOnLeopardOrLater(void) {
     [layoutRepresenter removeRepresenter:rep];
 }
 
+/* Return a format string that can take one argument which is the document name. */
+- (NSString *)documentWindowTitleFormatString {
+    NSMutableString *result = nil;
+    HFDocumentOperationView * const views[] = {findReplaceView, moveSelectionByView, saveView};
+    NSUInteger i;
+    for (i=0; i < sizeof views / sizeof *views; i++) {
+        HFDocumentOperationView *view = views[i];
+        if (view != nil && view != operationView && [view operationIsRunning]) {
+            /* If we're gonna show our save view after a delay, then don't include the save view in the title */
+            if (view == saveView && showSaveViewAfterDelayTimer != nil) continue;
+            NSString *displayName = [view displayName];
+            double progress = [view progress];
+            if (displayName != nil && progress != -1) {
+                /* Start with adding a format specifier which will be replaced with the document name */
+                if (result == nil) {
+                    result = [NSMutableString stringWithString:@"%@ ("];
+                }
+                else {
+                    [result appendString:@", "];
+                }
+                if (displayName) {
+                    /* %%%% is the right way to get a single % after applying this appendFormat: and then applying this return value as a format string as well */
+                    [result appendFormat:@"%@: %d%%%%", displayName, (int)(100. * progress)];
+                }
+            }
+        }
+    }
+    [result appendString:@")"];
+    return result;
+}
+
+- (void)updateDocumentWindowTitle {
+    [[self windowControllers] makeObjectsPerformSelector:@selector(synchronizeWindowTitleWithDocumentName)];    
+}
+
+- (void)makeWindowControllers {
+    NSString *windowNibName = [self windowNibName];
+    if (windowNibName != nil) {
+        NSWindowController *windowController = [[MyDocumentWindowController alloc] initWithWindowNibName:windowNibName owner:self];
+        [self addWindowController:windowController];
+        [windowController release];
+    }
+}
+
+
 - (void)windowControllerDidLoadNib:(NSWindowController *)windowController {
     USE(windowController);
     
@@ -89,6 +165,7 @@ static BOOL isRunningOnLeopardOrLater(void) {
 
 /* When our line counting view needs more space, we increase the size of our window, and also move it left by the same amount so that the other content does not appear to move. */
 - (void)lineCountingViewChangedWidth:(NSNotification *)note {
+    USE(note);
     HFASSERT([note object] == lineCountingRepresenter);
     NSView *lineCountingView = [lineCountingRepresenter view];
     
@@ -165,15 +242,35 @@ static BOOL isRunningOnLeopardOrLater(void) {
     [[self representers] makeObjectsPerformSelector:@selector(release)];
     [controller release];
     [bannerView release];
+    
+    /* Release and stop observing our banner views */
+    [findReplaceView release];
+    [moveSelectionByView release];
+    [saveView release];
     [super dealloc];
 }
 
-- (HFDocumentOperationView *)createOperationViewOfName:(NSString *)name {
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
+    if (context == kProgressContext) {
+        /* One of our HFDocumentOperationViews changed progress.  Update our title bar to reflect that.  But we don't show progress for the currently displayed banner. */
+        if (object != operationView) {
+            [self updateDocumentWindowTitle];
+        }
+    }
+    else {
+        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+    }
+}
+
+
+- (HFDocumentOperationView *)createOperationViewOfName:(NSString *)name displayName:(NSString *)displayName {
     HFASSERT(name);
     HFDocumentOperationView *result = [[HFDocumentOperationView viewWithNibNamed:name owner:self] retain];
+    [result setDisplayName:displayName];
     [result setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
     [result setFrameSize:NSMakeSize(NSWidth([containerView frame]), 0)];
-    [result setFrameOrigin:NSZeroPoint];	
+    [result setFrameOrigin:NSZeroPoint];
+    [result addObserver:self forKeyPath:@"progress" options:0 context:(void *)kProgressContext];
     return result;
 }
 
@@ -208,6 +305,7 @@ static BOOL isRunningOnLeopardOrLater(void) {
     [bannerResizeTimer invalidate];
     [bannerResizeTimer release];
     bannerResizeTimer = [[NSTimer scheduledTimerWithTimeInterval:1. / 60. target:self selector:@selector(animateBanner:) userInfo:nil repeats:YES] retain];
+    [self updateDocumentWindowTitle];
 }
 
 
@@ -318,6 +416,7 @@ static BOOL isRunningOnLeopardOrLater(void) {
         [bannerView release];
         bannerView = nil;
         operationView = nil;
+        [self updateDocumentWindowTitle];
         [containerView setNeedsDisplay:YES];
         if (commandToRunAfterBannerIsDoneHiding) {
             SEL command = commandToRunAfterBannerIsDoneHiding;
@@ -444,9 +543,10 @@ static BOOL isRunningOnLeopardOrLater(void) {
     USE(inTypeName);
     *outError = NULL;
     
-    NSTimer *showSaveBannerTimer = [NSTimer scheduledTimerWithTimeInterval:.5 target:self selector:@selector(showSaveBannerHavingDelayed:) userInfo:nil repeats:NO];
     
-    if (! saveView) saveView = [self createOperationViewOfName:@"SaveBanner"];
+    showSaveViewAfterDelayTimer = [[NSTimer scheduledTimerWithTimeInterval:.5 target:self selector:@selector(showSaveBannerHavingDelayed:) userInfo:nil repeats:NO] retain];
+    
+    if (! saveView) saveView = [self createOperationViewOfName:@"SaveBanner" displayName:@"Saving"];
     saveResult = 0;
     
     struct HFDocumentOperationCallbacks callbacks = {
@@ -474,7 +574,9 @@ static BOOL isRunningOnLeopardOrLater(void) {
         }
     }
     
-    [showSaveBannerTimer invalidate];
+    [showSaveViewAfterDelayTimer invalidate];
+    [showSaveViewAfterDelayTimer release];
+    showSaveViewAfterDelayTimer = nil;
     
     [[controller byteArray] decrementChangeLockCounter];
     
@@ -512,7 +614,7 @@ static BOOL isRunningOnLeopardOrLater(void) {
     }
     
     if (! findReplaceView) {
-        findReplaceView = [self createOperationViewOfName:@"FindReplaceBanner"];
+        findReplaceView = [self createOperationViewOfName:@"FindReplaceBanner" displayName:@"Finding"];
         [[findReplaceView viewNamed:@"searchField"] setTarget:self];
         [[findReplaceView viewNamed:@"searchField"] setAction:@selector(findNext:)];
         [[findReplaceView viewNamed:@"replaceField"] setTarget:self];
@@ -814,7 +916,7 @@ static BOOL isRunningOnLeopardOrLater(void) {
 	[self saveFirstResponderIfNotInBannerAndThenSetItTo:[moveSelectionByView viewNamed:@"moveSelectionByTextField"]];
         return;
     }
-    if (! moveSelectionByView) moveSelectionByView = [self createOperationViewOfName:@"MoveSelectionByBanner"];
+    if (! moveSelectionByView) moveSelectionByView = [self createOperationViewOfName:@"MoveSelectionByBanner" displayName:@"Moving Selection"];
     [self prepareBannerWithView:moveSelectionByView withTargetFirstResponder:[moveSelectionByView viewNamed:@"moveSelectionByTextField"]];
     
 }
@@ -871,11 +973,58 @@ static BOOL isRunningOnLeopardOrLater(void) {
     [self showNavigationBanner];
 }
 
-- (BOOL)parseMoveString:(NSString *)stringValue into:(unsigned long long *)resulValue isNegative:(BOOL *)resultIsNegative {
+- (BOOL)parseSuffixMultiplier:(const char *)multiplier intoMultiplier:(unsigned long long *)multiplierResultValue {
+    NSParameterAssert(multiplier != NULL);
+    NSParameterAssert(multiplierResultValue != NULL);
+    size_t length = strlen(multiplier);
+    /* Allow spaces at the end */
+    while (length > 0 && multiplier[length-1] == ' ') length--;
+    /* Allow an optional trailing b or B (e.g. MB or M) */
+    if (length > 0 && strchr("bB", multiplier[length-1]) != NULL) length--;
+    
+    /* If this exhausted our string, return success, e.g. so that the user can type "5 b" and it will return a multiplier of 1 */
+    if (length == 0) {
+        *multiplierResultValue = 1;
+        return YES;
+    }
+    
+    /* Now check each SI suffix */
+    const char * const decimalSuffixes[] = {"k", "m", "g", "t", "p", "e", "z", "y"};
+    const char * const binarySuffixes[] = {"ki", "mi", "gi", "ti", "pi", "ei", "zi", "yi"};
+    NSUInteger i;
+    unsigned long long suffixMultiplier = 1;
+    BOOL suffixMultiplierDidOverflow = NO;
+    for (i=0; i < sizeof decimalSuffixes / sizeof *decimalSuffixes; i++) {
+        unsigned long long product = suffixMultiplier * 1000;
+        suffixMultiplierDidOverflow = suffixMultiplierDidOverflow || (product/1000 != suffixMultiplier);
+        suffixMultiplier = product;
+        if (! strncasecmp(multiplier, decimalSuffixes[i], length)) {
+            if (suffixMultiplierDidOverflow) suffixMultiplier = ULLONG_MAX;
+            *multiplierResultValue = suffixMultiplier;
+            return ! suffixMultiplierDidOverflow;
+        }
+    }
+    suffixMultiplier = 1;
+    suffixMultiplierDidOverflow = NO;
+    for (i=0; i < sizeof binarySuffixes / sizeof *binarySuffixes; i++) {
+        unsigned long long product = suffixMultiplier * 1024;
+        suffixMultiplierDidOverflow = suffixMultiplierDidOverflow || (product/1024 != suffixMultiplier);
+        suffixMultiplier = product;
+        if (! strncasecmp(multiplier, binarySuffixes[i], length)) {
+            if (suffixMultiplierDidOverflow) suffixMultiplier = ULLONG_MAX;
+            *multiplierResultValue = suffixMultiplier;
+            return ! suffixMultiplierDidOverflow;
+        }
+    }
+    return NO;
+}
+
+- (BOOL)parseMoveString:(NSString *)stringValue into:(unsigned long long *)resultValue isNegative:(BOOL *)resultIsNegative {
     const char *string = [stringValue UTF8String];
     if (string == NULL) goto invalidString;
     /* Parse the string with strtoull */
     unsigned long long amount = -1;
+    unsigned long long suffixMultiplier = 1;
     int err = 0;
     BOOL isNegative = NO;
     char *endPtr = NULL;
@@ -893,10 +1042,13 @@ static BOOL isRunningOnLeopardOrLater(void) {
     errno = 0;
     amount = strtoull(string, &endPtr, 0);
     err = errno;
-    if (endPtr == NULL || *endPtr != '\0') goto invalidString;
-    if (err != 0) goto invalidString;
+    if (err != 0 || endPtr == NULL) goto invalidString;
+    if (*endPtr != '\0' && ![self parseSuffixMultiplier:endPtr intoMultiplier:&suffixMultiplier]) goto invalidString;
     
-    *resulValue = amount;
+    if (! HFProductDoesNotOverflow(amount, suffixMultiplier)) goto invalidString;
+    amount *= suffixMultiplier;
+    
+    *resultValue = amount;
     *resultIsNegative = isNegative;
     return YES;
     invalidString:;

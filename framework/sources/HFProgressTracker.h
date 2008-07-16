@@ -21,6 +21,7 @@
     NSTimer *progressTimer;
     double lastSetValue;
     NSDictionary *userInfo;
+    id delegate;
 }
 
 - (void)setMaxProgress:(unsigned long long)max;
@@ -40,6 +41,15 @@
 
 - (void)requestCancel:(id)sender;
 
+- (void)setDelegate:(id)delegate;
+- (id)delegate;
+
 @end
 
-extern NSString *const HFProgressTrackerDidFinishNotification;
+@interface NSObject (HFProgressTrackerDelegate)
+
+- (void)progressTracker:(HFProgressTracker *)tracker didChangeProgressTo:(double)fraction;
+- (void)progressTrackerDidFinish:(HFProgressTracker *)tracker;
+
+@end
+

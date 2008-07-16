@@ -12,6 +12,8 @@
 
 static NSString *sNibName;
 
+#define NO_TRACKING_PERCENTAGE (-1)
+
 @implementation HFDocumentOperationView
 
 + viewWithNibNamed:(NSString *)name owner:(id)owner {
@@ -24,28 +26,28 @@ static NSString *sNibName;
     }
     [sNibName release];
     sNibName = nil;
-	HFDocumentOperationView *resultObject = nil;
-	NSMutableArray *otherObjects = nil;
+    HFDocumentOperationView *resultObject = nil;
+    NSMutableArray *otherObjects = nil;
     FOREACH(id, obj, topLevelObjects) {
         if ([obj isKindOfClass:[self class]]) {
-			HFASSERT(resultObject == nil);
-			resultObject = obj;
-		}
-		else {
-			if (! otherObjects) otherObjects = [NSMutableArray array];
-			[otherObjects addObject:obj];
-		}
-		[obj autorelease];
+            HFASSERT(resultObject == nil);
+            resultObject = obj;
+        }
+        else {
+            if (! otherObjects) otherObjects = [NSMutableArray array];
+            [otherObjects addObject:obj];
+        }
+        [obj autorelease];
     }
-	HFASSERT(resultObject != nil);
-	if (otherObjects != nil) [resultObject setOtherTopLevelObjects:otherObjects];
-	return resultObject;
+    HFASSERT(resultObject != nil);
+    if (otherObjects != nil) [resultObject setOtherTopLevelObjects:otherObjects];
+    return resultObject;
 }
 
 - (void)setOtherTopLevelObjects:(NSArray *)objects {
-	objects = [objects copy];
-	[otherTopLevelObjects release];
-	otherTopLevelObjects = objects;
+    objects = [objects copy];
+    [otherTopLevelObjects release];
+    otherTopLevelObjects = objects;
 }
 
 - (void)setValue:(id)value forKey:(NSString *)key {
@@ -63,18 +65,31 @@ static NSString *sNibName;
     [super awakeFromNib];
 }
 
+- (NSString *)displayName {
+    return displayName;
+}
+
+- (void)setDisplayName:(NSString *)name {
+    name = [name copy];
+    [displayName release];
+    displayName = name;
+}
+
+
 - initWithFrame:(NSRect)frame {
     [super initWithFrame:frame];
     defaultSize = frame.size;
     nibName = [sNibName copy];
     views = [[NSMutableDictionary alloc] init];
+    progress = NO_TRACKING_PERCENTAGE;
     return self;
 }
 
 - (void)dealloc {
-	[otherTopLevelObjects release];
+    [otherTopLevelObjects release];
     [views release];
     [nibName release];
+    [displayName release];
     [super dealloc];
 }
 
@@ -140,9 +155,10 @@ static NSString *sNibName;
 }
 
 - (void)spinUntilFinished {
+    NSLog(@"Spinning until finished");
     HFASSERT([self operationIsRunning]);
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:HFProgressTrackerDidFinishNotification object:tracker];
     [tracker endTrackingProgress];
+    [tracker setDelegate:nil];
     [[views objectForKey:@"cancelButton"] setHidden:YES];
     [[views objectForKey:@"progressIndicator"] setHidden:YES];
     void *result = nil;
@@ -154,17 +170,33 @@ static NSString *sNibName;
     target = nil;
     [tracker release];
     tracker = nil;
-	[self willChangeValueForKey:@"operationIsRunning"];
+    [self willChangeValueForKey:@"operationIsRunning"];
     thread = NULL;
-	[self didChangeValueForKey:@"operationIsRunning"];
+    [self didChangeValueForKey:@"operationIsRunning"];
     [tracker release];
     tracker = nil;
     [self release];
 }
 
-- (void)didFinishNotification:(NSNotification *)note {
-    USE(note);
+- (void)progressTrackerDidFinish:(HFProgressTracker *)track {
+    USE(track);
+    [self willChangeValueForKey:@"progress"];
+    progress = NO_TRACKING_PERCENTAGE;
+    [self didChangeValueForKey:@"progress"];
     [self spinUntilFinished];
+}
+
+- (void)progressTracker:(HFProgressTracker *)track didChangeProgressTo:(double)fraction {
+    USE(track);
+    if (fabs(fraction - progress) >= .01) {
+        [self willChangeValueForKey:@"progress"];
+        progress = fraction;
+        [self didChangeValueForKey:@"progress"];
+    }
+}
+
+- (double)progress {
+    return progress;
 }
 
 - (IBAction)cancelViewOperation:sender {
@@ -197,7 +229,7 @@ static void *startThread(void *self) {
     endSelector = callbacks.endSelector;
     target = [callbacks.target retain];
     tracker = [[HFProgressTracker alloc] init];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didFinishNotification:) name:HFProgressTrackerDidFinishNotification object:tracker];
+    [tracker setDelegate:self];
     [tracker setUserInfo:callbacks.userInfo];
     [progressIndicator setDoubleValue:0];
     
@@ -207,10 +239,10 @@ static void *startThread(void *self) {
     [tracker beginTrackingProgress];
     
     [self retain];
-	[self willChangeValueForKey:@"operationIsRunning"];
+    [self willChangeValueForKey:@"operationIsRunning"];
     int threadResult = pthread_create(&thread, NULL, startThread, self);
     if (threadResult != 0) [NSException raise:NSGenericException format:@"pthread_create returned error %d", threadResult];
-	[self didChangeValueForKey:@"operationIsRunning"];
+    [self didChangeValueForKey:@"operationIsRunning"];
 }
 
 - (HFProgressTracker *)progressTracker {

@@ -14,8 +14,7 @@
 		D00122E30D48A8D400540B10 /* HFFindReplaceBackgroundView.m in Sources */ = {isa = PBXBuildFile; fileRef = D00122E20D48A8D400540B10 /* HFFindReplaceBackgroundView.m */; };
 		D00EBA730CE866D50020E2D7 /* HFVerticalScrollerRepresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = D00EBA710CE866D50020E2D7 /* HFVerticalScrollerRepresenter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D00EBA740CE866D50020E2D7 /* HFVerticalScrollerRepresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = D00EBA720CE866D50020E2D7 /* HFVerticalScrollerRepresenter.m */; };
-		D01772B90D72E024002E03DE /* HFCancelOn.tiff in Resources */ = {isa = PBXBuildFile; fileRef = D01772B70D72E024002E03DE /* HFCancelOn.tiff */; };
-		D01772BA0D72E024002E03DE /* HFCancelOff.tiff in Resources */ = {isa = PBXBuildFile; fileRef = D01772B80D72E024002E03DE /* HFCancelOff.tiff */; };
+		D011E1B70DF8BE01003EAFB7 /* HFModalProgress.nib in Resources */ = {isa = PBXBuildFile; fileRef = D011E1B60DF8BE01003EAFB7 /* HFModalProgress.nib */; };
 		D01772F50D751DB1002E03DE /* HFDocumentOperationView.m in Sources */ = {isa = PBXBuildFile; fileRef = D01772F40D751DB1002E03DE /* HFDocumentOperationView.m */; };
 		D01773360D755551002E03DE /* FindReplaceBanner.nib in Resources */ = {isa = PBXBuildFile; fileRef = D01773340D755551002E03DE /* FindReplaceBanner.nib */; };
 		D01773920D7A2F32002E03DE /* HFResizingView.m in Sources */ = {isa = PBXBuildFile; fileRef = D01773910D7A2F32002E03DE /* HFResizingView.m */; };
@@ -55,6 +54,10 @@
 		D04327A40CF081CD00C14250 /* HFFunctions_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = D04327A30CF081CD00C14250 /* HFFunctions_Private.h */; };
 		D04C78270DC47ECF00A76FF2 /* HFTextSelectionPulseView.h in Headers */ = {isa = PBXBuildFile; fileRef = D04C78250DC47ECF00A76FF2 /* HFTextSelectionPulseView.h */; };
 		D04C78280DC47ECF00A76FF2 /* HFTextSelectionPulseView.m in Sources */ = {isa = PBXBuildFile; fileRef = D04C78260DC47ECF00A76FF2 /* HFTextSelectionPulseView.m */; };
+		D05B77BA0E00856D008C45EB /* HFCancelOn.tiff in Resources */ = {isa = PBXBuildFile; fileRef = D01772B70D72E024002E03DE /* HFCancelOn.tiff */; };
+		D05B77BB0E00856D008C45EB /* HFCancelOff.tiff in Resources */ = {isa = PBXBuildFile; fileRef = D01772B80D72E024002E03DE /* HFCancelOff.tiff */; };
+		D05B77DF0E00883B008C45EB /* HFCancelButton.h in Headers */ = {isa = PBXBuildFile; fileRef = D05B77DD0E00883B008C45EB /* HFCancelButton.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D05B77E00E00883B008C45EB /* HFCancelButton.m in Sources */ = {isa = PBXBuildFile; fileRef = D05B77DE0E00883B008C45EB /* HFCancelButton.m */; };
 		D06B1DB10D13EE1D00B9A206 /* HFMetalGradient.tiff in Resources */ = {isa = PBXBuildFile; fileRef = D06B1DB00D13EE1D00B9A206 /* HFMetalGradient.tiff */; };
 		D07150670D5510CE00573D7A /* HFTextField.h in Headers */ = {isa = PBXBuildFile; fileRef = D07150650D5510CE00573D7A /* HFTextField.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D07150680D5510CE00573D7A /* HFTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = D07150660D5510CE00573D7A /* HFTextField.m */; };
@@ -173,6 +176,7 @@
 		D00122E20D48A8D400540B10 /* HFFindReplaceBackgroundView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFFindReplaceBackgroundView.m; path = app/sources/HFFindReplaceBackgroundView.m; sourceTree = "<group>"; };
 		D00EBA710CE866D50020E2D7 /* HFVerticalScrollerRepresenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFVerticalScrollerRepresenter.h; path = framework/sources/HFVerticalScrollerRepresenter.h; sourceTree = "<group>"; };
 		D00EBA720CE866D50020E2D7 /* HFVerticalScrollerRepresenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFVerticalScrollerRepresenter.m; path = framework/sources/HFVerticalScrollerRepresenter.m; sourceTree = "<group>"; };
+		D011E1B60DF8BE01003EAFB7 /* HFModalProgress.nib */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = HFModalProgress.nib; path = framework/resources/HFModalProgress.nib; sourceTree = "<group>"; };
 		D01772B70D72E024002E03DE /* HFCancelOn.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = HFCancelOn.tiff; path = framework/resources/HFCancelOn.tiff; sourceTree = "<group>"; };
 		D01772B80D72E024002E03DE /* HFCancelOff.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = HFCancelOff.tiff; path = framework/resources/HFCancelOff.tiff; sourceTree = "<group>"; };
 		D01772F30D751DB1002E03DE /* HFDocumentOperationView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFDocumentOperationView.h; path = app/sources/HFDocumentOperationView.h; sourceTree = "<group>"; };
@@ -224,6 +228,8 @@
 		D04327A30CF081CD00C14250 /* HFFunctions_Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFFunctions_Private.h; path = framework/sources/HFFunctions_Private.h; sourceTree = "<group>"; };
 		D04C78250DC47ECF00A76FF2 /* HFTextSelectionPulseView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFTextSelectionPulseView.h; path = framework/sources/HFTextSelectionPulseView.h; sourceTree = "<group>"; };
 		D04C78260DC47ECF00A76FF2 /* HFTextSelectionPulseView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFTextSelectionPulseView.m; path = framework/sources/HFTextSelectionPulseView.m; sourceTree = "<group>"; };
+		D05B77DD0E00883B008C45EB /* HFCancelButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFCancelButton.h; path = framework/sources/HFCancelButton.h; sourceTree = "<group>"; };
+		D05B77DE0E00883B008C45EB /* HFCancelButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFCancelButton.m; path = framework/sources/HFCancelButton.m; sourceTree = "<group>"; };
 		D06B1DB00D13EE1D00B9A206 /* HFMetalGradient.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = HFMetalGradient.tiff; path = framework/resources/HFMetalGradient.tiff; sourceTree = "<group>"; };
 		D07150650D5510CE00573D7A /* HFTextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFTextField.h; path = framework/sources/HFTextField.h; sourceTree = "<group>"; };
 		D07150660D5510CE00573D7A /* HFTextField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFTextField.m; path = framework/sources/HFTextField.m; sourceTree = "<group>"; };
@@ -375,8 +381,6 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				D01772B70D72E024002E03DE /* HFCancelOn.tiff */,
-				D01772B80D72E024002E03DE /* HFCancelOff.tiff */,
 				D01E7C0A0CDC570400943F9E /* Info.plist */,
 				089C165CFE840E0CC02AAC07 /* InfoPlist.strings */,
 				29B97318FDCFA39411CA2CEA /* MainMenu.nib */,
@@ -440,8 +444,11 @@
 		D01E7C010CDC569F00943F9E /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				D011E1B60DF8BE01003EAFB7 /* HFModalProgress.nib */,
 				D06B1DB00D13EE1D00B9A206 /* HFMetalGradient.tiff */,
 				D0A90B660D161816008975B9 /* HFMetalGradientVertical.tiff */,
+				D01772B70D72E024002E03DE /* HFCancelOn.tiff */,
+				D01772B80D72E024002E03DE /* HFCancelOff.tiff */,
 				D01E7BB90CDC530C00943F9E /* HexFiend_Framework-Info.plist */,
 			);
 			name = Resources;
@@ -539,6 +546,8 @@
 				D019B8FB0D83FE8E005789AA /* File Writing */,
 				D0422FDD0D62599300F8FCDE /* HFProgressTracker.h */,
 				D0422FDE0D62599300F8FCDE /* HFProgressTracker.m */,
+				D05B77DD0E00883B008C45EB /* HFCancelButton.h */,
+				D05B77DE0E00883B008C45EB /* HFCancelButton.m */,
 				D0A6C9D70DCC68610077175C /* HFController.h */,
 				D01E7BEB0CDC55D000943F9E /* HFController.m */,
 				D07150650D5510CE00573D7A /* HFTextField.h */,
@@ -677,6 +686,7 @@
 				D08630F00D8BEE9900FF0BE7 /* HFByteSliceFileOperationQueueEntry.h in Headers */,
 				D04C78270DC47ECF00A76FF2 /* HFTextSelectionPulseView.h in Headers */,
 				D0A6C9D80DCC68610077175C /* HFController.h in Headers */,
+				D05B77DF0E00883B008C45EB /* HFCancelButton.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -767,8 +777,6 @@
 				8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */,
 				D01E7C2A0CDC59B700943F9E /* MyDocument.nib in Resources */,
 				D01773360D755551002E03DE /* FindReplaceBanner.nib in Resources */,
-				D01772B90D72E024002E03DE /* HFCancelOn.tiff in Resources */,
-				D01772BA0D72E024002E03DE /* HFCancelOff.tiff in Resources */,
 				D0A229AE0D7D10240067A919 /* SaveBanner.nib in Resources */,
 				D0728DEF0DC1E3A00052C78C /* MoveSelectionByBanner.nib in Resources */,
 			);
@@ -789,6 +797,9 @@
 			files = (
 				D06B1DB10D13EE1D00B9A206 /* HFMetalGradient.tiff in Resources */,
 				D0A90B670D161816008975B9 /* HFMetalGradientVertical.tiff in Resources */,
+				D05B77BA0E00856D008C45EB /* HFCancelOn.tiff in Resources */,
+				D05B77BB0E00856D008C45EB /* HFCancelOff.tiff in Resources */,
+				D011E1B70DF8BE01003EAFB7 /* HFModalProgress.nib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -873,6 +884,7 @@
 				D08630F10D8BEE9900FF0BE7 /* HFByteSliceFileOperationQueueEntry.m in Sources */,
 				D08491FF0DBB60C700C7195C /* HFFastMemchr.m in Sources */,
 				D04C78280DC47ECF00A76FF2 /* HFTextSelectionPulseView.m in Sources */,
+				D05B77E00E00883B008C45EB /* HFCancelButton.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -970,12 +982,8 @@
 		C01FCF5008A954540054247B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = (
-					i386,
-					ppc,
-					ppc64,
-					x86_64,
-				);
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "x86_64 i386 ppc";
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_PREPROCESSOR_DEFINITIONS = "NDEBUG=1";
