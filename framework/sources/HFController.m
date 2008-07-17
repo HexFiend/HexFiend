@@ -204,6 +204,7 @@ typedef enum {
 #endif
     if (! HFFPRangeEqualsRange(range, displayedLineRange)) {
         displayedLineRange = range;
+        NSLog(@"displayedLineRange: %@", HFFPRangeToString(displayedLineRange));
         [self _addPropertyChangeBits:HFControllerDisplayedRange];
     }
 }
@@ -459,8 +460,9 @@ typedef enum {
     long double linesInRange = HFULToFP(endLine - startLine);
     long double linesToDisplay = MIN(displayRange.length, linesInRange);
     HFASSERT(linesToDisplay <= linesInRange);
-    long double linesClippedFromRange = linesToDisplay - linesInRange;
+    long double linesClippedFromRange = linesInRange - linesToDisplay;
     HFFPRange lineRangeToDisplay = (HFFPRange){range.location + linesClippedFromRange / 2., linesToDisplay};
+    NSLog(@"lineRangeToDisplay: %@", HFFPRangeToString(lineRangeToDisplay));
     HFASSERT(lineRangeToDisplay.length <= displayRange.length);
     long double linesToMoveDownToMakeLastLineVisible = HFULToFP(endLine) - (displayRange.location + displayRange.length);
     long double linesToMoveUpToMakeFirstLineVisible = displayRange.location - HFULToFP(startLine);

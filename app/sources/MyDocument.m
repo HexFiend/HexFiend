@@ -911,12 +911,14 @@ static BOOL isRunningOnLeopardOrLater(void) {
     }
 }
 
-- (void)showNavigationBanner {
+- (void)showNavigationBannerSettingExtendSelectionCheckboxTo:(BOOL)extend {
     if (moveSelectionByView == operationView && moveSelectionByView != nil) {
+        [[moveSelectionByView viewNamed:@"extendSelectionByCheckbox"] setIntValue:extend];
 	[self saveFirstResponderIfNotInBannerAndThenSetItTo:[moveSelectionByView viewNamed:@"moveSelectionByTextField"]];
         return;
     }
     if (! moveSelectionByView) moveSelectionByView = [self createOperationViewOfName:@"MoveSelectionByBanner" displayName:@"Moving Selection"];
+    [[moveSelectionByView viewNamed:@"extendSelectionByCheckbox"] setIntValue:extend];
     [self prepareBannerWithView:moveSelectionByView withTargetFirstResponder:[moveSelectionByView viewNamed:@"moveSelectionByTextField"]];
     
 }
@@ -931,20 +933,7 @@ static BOOL isRunningOnLeopardOrLater(void) {
         [self hideBannerFirstThenDo:_cmd];
         return;
     }
-    [self showNavigationBanner];
-}
-
-- (void)moveSelectionBackwards:(NSMenuItem *)sender {
-    USE(sender);
-    if (! [self canSwitchToNewBanner]) {
-        NSBeep();
-        return;
-    }
-    if (operationView != nil && operationView != moveSelectionByView) {
-        [self hideBannerFirstThenDo:_cmd];
-        return;
-    }
-    [self showNavigationBanner];
+    [self showNavigationBannerSettingExtendSelectionCheckboxTo:NO];
 }
 
 - (void)extendSelectionForwards:(NSMenuItem *)sender {
@@ -957,20 +946,7 @@ static BOOL isRunningOnLeopardOrLater(void) {
         [self hideBannerFirstThenDo:_cmd];
         return;
     }
-    [self showNavigationBanner];
-}
-
-- (void)extendSelectionBackwards:(NSMenuItem *)sender {
-    USE(sender);
-    if (! [self canSwitchToNewBanner]) {
-        NSBeep();
-        return;
-    }
-    if (operationView != nil && operationView != moveSelectionByView) {
-        [self hideBannerFirstThenDo:_cmd];
-        return;
-    }
-    [self showNavigationBanner];
+    [self showNavigationBannerSettingExtendSelectionCheckboxTo:YES];
 }
 
 - (BOOL)parseSuffixMultiplier:(const char *)multiplier intoMultiplier:(unsigned long long *)multiplierResultValue {
