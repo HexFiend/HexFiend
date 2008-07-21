@@ -14,13 +14,13 @@
 - init {
     [super init];
     graph = (__strong CFMutableDictionaryRef)CFMakeCollectable(CFDictionaryCreateMutable(NULL, 0, NULL, &kCFTypeDictionaryValueCallBacks));
-	containedObjects = [[NSMutableArray alloc] init]; //containedObjects is necessary to make sure that our key objects are strongly referenced, since we use a NULL-callback dictionary
+    containedObjects = [[NSMutableArray alloc] init]; //containedObjects is necessary to make sure that our key objects are strongly referenced, since we use a NULL-callback dictionary
     return self;
 }
 
 - (void)dealloc {
     CFRelease(graph);
-	[containedObjects release];
+    [containedObjects release];
     [super dealloc];
 }
 
@@ -32,7 +32,7 @@
         dependencies = [[NSMutableSet alloc] init];
         CFDictionarySetValue(graph, obj, dependencies);
         [dependencies release];
-		[containedObjects addObject:obj];
+        [containedObjects addObject:obj];
     }
     [dependencies addObject:depend];
 }
@@ -42,7 +42,7 @@
     REQUIRE_NOT_NULL(obj);
     BOOL result = NO;
     NSMutableSet *dependencies = (NSMutableSet *)CFDictionaryGetValue(graph, obj);
-	result = [dependencies containsObject:depend];
+    result = [dependencies containsObject:depend];
     return result;
 }
 
@@ -114,66 +114,69 @@ static void tarjan(HFObjectGraph *self, id node, CFMutableDictionaryRef vIndexes
 }
 
 static void topologicallySort(HFObjectGraph *self, id object, NSMutableArray *result, CFMutableSetRef pending, CFMutableSetRef visited) {
-	REQUIRE_NOT_NULL(object);
-	HFASSERT(! CFSetContainsValue(pending, object));
-	HFASSERT(! CFSetContainsValue(visited, object));
-	HFASSERT((CFIndex)[result count] == CFSetGetCount(visited));
-	NSSet *dependencies = [self dependenciesForObject:object];
-	NSUInteger i, dependencyCount = [dependencies count];
-	if (dependencyCount > 0) {
-		CFSetAddValue(pending, object);
-		NEW_ARRAY(id, dependencyArray, dependencyCount);
-		CFSetGetValues((CFSetRef)dependencies, (const void **)dependencyArray);
-		for (i=0; i < dependencyCount; i++) {
-			HFASSERT(!CFSetContainsValue(pending, dependencyArray[i]));
-			if (! CFSetContainsValue(visited, dependencyArray[i])) {
-				topologicallySort(self, dependencyArray[i], result, pending, visited);
-				HFASSERT(CFSetContainsValue(visited, dependencyArray[i]));
-				HFASSERT(!CFSetContainsValue(pending, dependencyArray[i]));
-			}
-		}
-		FREE_ARRAY(dependencyArray);
-		HFASSERT(CFSetContainsValue(pending, object));
-		CFSetRemoveValue(pending, object);
-	}
-	[result addObject:object];
-	CFSetAddValue(visited, object);
+    REQUIRE_NOT_NULL(object);
+    HFASSERT(! CFSetContainsValue(pending, object));
+    HFASSERT(! CFSetContainsValue(visited, object));
+    HFASSERT((CFIndex)[result count] == CFSetGetCount(visited));
+    NSSet *dependencies = [self dependenciesForObject:object];
+    NSUInteger i, dependencyCount = [dependencies count];
+    if (dependencyCount > 0) {
+        CFSetAddValue(pending, object);
+        NEW_ARRAY(id, dependencyArray, dependencyCount);
+        CFSetGetValues((CFSetRef)dependencies, (const void **)dependencyArray);
+        for (i=0; i < dependencyCount; i++) {
+            HFASSERT(!CFSetContainsValue(pending, dependencyArray[i]));
+            if (! CFSetContainsValue(visited, dependencyArray[i])) {
+                topologicallySort(self, dependencyArray[i], result, pending, visited);
+                HFASSERT(CFSetContainsValue(visited, dependencyArray[i]));
+                HFASSERT(!CFSetContainsValue(pending, dependencyArray[i]));
+            }
+        }
+        FREE_ARRAY(dependencyArray);
+        HFASSERT(CFSetContainsValue(pending, object));
+        CFSetRemoveValue(pending, object);
+    }
+    [result addObject:object];
+    CFSetAddValue(visited, object);
 }
 
 - (NSArray *)topologicallySortObjects:(NSArray *)objects {
-	REQUIRE_NOT_NULL(objects);
-	NSUInteger count = [objects count];
-	HFASSERT([[NSSet setWithArray:objects] count] == [objects count]);
-	NSMutableArray *result = [NSMutableArray arrayWithCapacity:count];
-	CFMutableSetRef visitedSet = CFSetCreateMutable(NULL, count, NULL);
-	CFMutableSetRef pendingSet = CFSetCreateMutable(NULL, count, NULL);
-	FOREACH(id, object, objects) {
-		topologicallySort(self, object, result, pendingSet, visitedSet);
-	}
-	CFRelease(visitedSet);
-	CFRelease(pendingSet);
-	HFASSERT([result count] == count);
-	HFASSERT([[NSSet setWithArray:objects] isEqual:[NSSet setWithArray:result]]);
-	return result;
+    REQUIRE_NOT_NULL(objects);
+    NSUInteger count = [objects count];
+    HFASSERT([[NSSet setWithArray:objects] count] == [objects count]);
+    NSMutableArray *result = [NSMutableArray arrayWithCapacity:count];
+    CFMutableSetRef visitedSet = CFSetCreateMutable(NULL, count, NULL);
+    CFMutableSetRef pendingSet = CFSetCreateMutable(NULL, count, NULL);
+    FOREACH(id, object, objects) {
+        topologicallySort(self, object, result, pendingSet, visitedSet);
+    }
+    CFRelease(visitedSet);
+    CFRelease(pendingSet);
+    HFASSERT([result count] == count);
+    HFASSERT([[NSSet setWithArray:objects] isEqual:[NSSet setWithArray:result]]);
+    return result;
 }
 
 #if HFUNIT_TESTS
 
 /* Methods and functions starting with "naive" are meant to be used for verifying the correctness of more sophisticated algorithms. */
 
-static BOOL naiveSearch(HFObjectGraph *self, id start, id goal, CFMutableSetRef visited) {
+static BOOL naiveSearch(HFObjectGraph *self, id start, id goal, id *visitedSet, NSUInteger *visitedSetCount) {
     if (start == goal) return YES;
-    if (CFSetContainsValue(visited, start)) return NO;
-    CFSetAddValue(visited, start);
-	CFSetRef dependencies = CFDictionaryGetValue(self->graph, start);
-	if (dependencies) {
-		NSUInteger i, max = CFSetGetCount(dependencies);
-		NEW_ARRAY(id, dependencyObjects, max);
-		CFSetGetValues(dependencies, (const void **)dependencyObjects);
-		for (i=0; i < max; i++) {
-			if (naiveSearch(self, dependencyObjects[i], goal, visited)) return YES;
-		}
-	}
+    NSUInteger i, visitedSetTempCount = *visitedSetCount;
+    for (i=0; i < visitedSetTempCount; i++) if (visitedSet[i] == start) return NO;
+    visitedSet[visitedSetTempCount++] = start;
+    *visitedSetCount = visitedSetTempCount;
+    CFSetRef dependencies = CFDictionaryGetValue(self->graph, start);
+    if (dependencies) {
+        NSUInteger max = CFSetGetCount(dependencies);
+        NEW_ARRAY(id, dependencyObjects, max);
+        CFSetGetValues(dependencies, (const void **)dependencyObjects);
+        for (i=0; i < max; i++) {
+            if (naiveSearch(self, dependencyObjects[i], goal, visitedSet, visitedSetCount)) return YES;
+        }
+        FREE_ARRAY(dependencyObjects);
+    }
     return NO;
 }
 
@@ -182,9 +185,12 @@ static BOOL naiveSearch(HFObjectGraph *self, id start, id goal, CFMutableSetRef 
     REQUIRE_NOT_NULL(obj2);
     if (obj1 == obj2) return YES;
     
-    CFMutableSetRef set = CFSetCreateMutable(NULL, 0, NULL);
-    BOOL result = naiveSearch(self, obj1, obj2, set);
-    CFRelease(set);
+    //    CFMutableSetRef set = CFSetCreateMutable(NULL, 0, NULL);
+    NSUInteger objectCount = [containedObjects count];
+    NSUInteger visitedSetCount = 0;
+    NEW_ARRAY(id, objectSet, objectCount);
+    BOOL result = naiveSearch(self, obj1, obj2, objectSet, &visitedSetCount);
+    FREE_ARRAY(objectSet);
     return result;
 }
 
@@ -248,15 +254,15 @@ static NSSet *arraysToSets(NSArray *array, NSUInteger depth) {
                 [graph addDependency:object2 forObject:object1];
             }
         }
-
+        
         id naive = [graph naiveStronglyConnectedComponentsForObjects:objects];
         id tarjan = [graph stronglyConnectedComponentsForObjects:objects];
         
         if (! [arraysToSets(naive, 2) isEqual:arraysToSets(tarjan, 2)]) {
-                printf("Error in HFObjectGraph tests!\n\tnaive: %s\n\ttarjan: %s\n", [[naive description] UTF8String], [[tarjan description] UTF8String]);
-                exit(EXIT_FAILURE);
+            printf("Error in HFObjectGraph tests!\n\tnaive: %s\n\ttarjan: %s\n", [[naive description] UTF8String], [[tarjan description] UTF8String]);
+            exit(EXIT_FAILURE);
         }
-
+        
         [graph release];
         [pool drain];
     }

@@ -949,6 +949,20 @@ static BOOL isRunningOnLeopardOrLater(void) {
     [self showNavigationBannerSettingExtendSelectionCheckboxTo:YES];
 }
 
+- (void)jumpToOffset:(NSMenuItem *)sender {
+    USE(sender);
+    if (! [self canSwitchToNewBanner]) {
+        NSBeep();
+        return;
+    }
+    if (operationView != nil && operationView != jumpToOffsetView) {
+        [self hideBannerFirstThenDo:_cmd];
+        return;
+    }
+    if (! jumpToOffsetView) jumpToOffsetView = [self createOperationViewOfName:@"JumpToOffsetBanner" displayName:@"Jumping to Offset"];
+    [self prepareBannerWithView:jumpToOffsetView withTargetFirstResponder:[jumpToOffsetView viewNamed:@"moveSelectionByTextField"]];
+}
+
 - (BOOL)parseSuffixMultiplier:(const char *)multiplier intoMultiplier:(unsigned long long *)multiplierResultValue {
     NSParameterAssert(multiplier != NULL);
     NSParameterAssert(multiplierResultValue != NULL);
@@ -1044,6 +1058,25 @@ static BOOL isRunningOnLeopardOrLater(void) {
         }
     }
     return YES;
+}
+
+- (IBAction)moveSelectionToAction:(id)sender {
+    USE(sender);
+    BOOL success = NO;
+    unsigned long long value;
+    BOOL isNegative;
+    if ([self parseMoveString:[[jumpToOffsetView viewNamed:@"moveSelectionByTextField"] stringValue] into:&value isNegative:&isNegative]) {
+        unsigned long long length = [controller contentsLength];
+        if (length >= value) {
+            const unsigned long long offset = (isNegative ? length - value : value);
+            const HFRange contentsRange = HFRangeMake(offset, 0);
+            [controller setSelectedContentsRanges:[NSArray arrayWithObject:[HFRangeWrapper withRange:contentsRange]]];
+            [controller maximizeVisibilityOfContentsRange:contentsRange];
+            [controller pulseSelection];
+            success = YES;
+        }
+    }
+    if (! success) NSBeep();
 }
 
 - (IBAction)moveSelectionByAction:(id)sender {

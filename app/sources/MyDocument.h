@@ -27,6 +27,7 @@
     
     HFDocumentOperationView *findReplaceView;
     HFDocumentOperationView *moveSelectionByView;
+    HFDocumentOperationView *jumpToOffsetView;
     HFDocumentOperationView *saveView;
     NSTimer *showSaveViewAfterDelayTimer;
     
@@ -45,9 +46,8 @@
 }
 
 - (void)moveSelectionForwards:(NSMenuItem *)sender;
-- (void)moveSelectionBackwards:(NSMenuItem *)sender;
 - (void)extendSelectionForwards:(NSMenuItem *)sender;
-- (void)extendSelectionBackwards:(NSMenuItem *)sender;
+- (void)jumpToOffset:(NSMenuItem *)sender;
 
 - (IBAction)moveSelectionByAction:(id)sender;
 

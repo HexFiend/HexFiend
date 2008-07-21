@@ -35,6 +35,8 @@
 		D01E7C2A0CDC59B700943F9E /* MyDocument.nib in Resources */ = {isa = PBXBuildFile; fileRef = D01E7C280CDC59B700943F9E /* MyDocument.nib */; };
 		D01E7C3D0CDC6A3100943F9E /* HFTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = D01E7C3B0CDC69E500943F9E /* HFTypes.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D01E7C960CDC700400943F9E /* HFRepresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = D01E7C340CDC646800943F9E /* HFRepresenter.m */; };
+		D024AEF30E3463AB00F39EBB /* JumpToOffsetBanner.nib in Resources */ = {isa = PBXBuildFile; fileRef = D024AEF10E3463AB00F39EBB /* JumpToOffsetBanner.nib */; };
+		D024AFB30E349A7B00F39EBB /* hex_icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = D024AFB20E349A7B00F39EBB /* hex_icon.icns */; };
 		D026C7B00CDD50ED0082279E /* HFRepresenterTextView.h in Headers */ = {isa = PBXBuildFile; fileRef = D026C7AE0CDD50ED0082279E /* HFRepresenterTextView.h */; };
 		D026C7B10CDD50ED0082279E /* HFRepresenterTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = D026C7AF0CDD50ED0082279E /* HFRepresenterTextView.m */; };
 		D026C7BB0CDD546C0082279E /* HFRepresenterHexTextView.h in Headers */ = {isa = PBXBuildFile; fileRef = D026C7B90CDD546C0082279E /* HFRepresenterHexTextView.h */; settings = {ATTRIBUTES = (); }; };
@@ -171,7 +173,7 @@
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		32CA4F630368D1EE00C91783 /* HexFiend_2_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HexFiend_2_Prefix.pch; path = app/sources/HexFiend_2_Prefix.pch; sourceTree = "<group>"; };
-		8D1107320486CEB800E47090 /* HexFiend_2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HexFiend_2.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8D1107320486CEB800E47090 /* Hex Fiend.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Hex Fiend.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D00122E10D48A8D400540B10 /* HFFindReplaceBackgroundView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFFindReplaceBackgroundView.h; path = app/sources/HFFindReplaceBackgroundView.h; sourceTree = "<group>"; };
 		D00122E20D48A8D400540B10 /* HFFindReplaceBackgroundView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFFindReplaceBackgroundView.m; path = app/sources/HFFindReplaceBackgroundView.m; sourceTree = "<group>"; };
 		D00EBA710CE866D50020E2D7 /* HFVerticalScrollerRepresenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFVerticalScrollerRepresenter.h; path = framework/sources/HFVerticalScrollerRepresenter.h; sourceTree = "<group>"; };
@@ -209,6 +211,8 @@
 		D01E7C330CDC646800943F9E /* HFRepresenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFRepresenter.h; path = framework/sources/HFRepresenter.h; sourceTree = "<group>"; };
 		D01E7C340CDC646800943F9E /* HFRepresenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFRepresenter.m; path = framework/sources/HFRepresenter.m; sourceTree = "<group>"; };
 		D01E7C3B0CDC69E500943F9E /* HFTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFTypes.h; path = framework/sources/HFTypes.h; sourceTree = "<group>"; };
+		D024AEF20E3463AB00F39EBB /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/JumpToOffsetBanner.nib; sourceTree = "<group>"; };
+		D024AFB20E349A7B00F39EBB /* hex_icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = hex_icon.icns; path = app/resources/hex_icon.icns; sourceTree = "<group>"; };
 		D026C7AE0CDD50ED0082279E /* HFRepresenterTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFRepresenterTextView.h; path = framework/sources/HFRepresenterTextView.h; sourceTree = "<group>"; };
 		D026C7AF0CDD50ED0082279E /* HFRepresenterTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFRepresenterTextView.m; path = framework/sources/HFRepresenterTextView.m; sourceTree = "<group>"; };
 		D026C7B90CDD546C0082279E /* HFRepresenterHexTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFRepresenterHexTextView.h; path = framework/sources/HFRepresenterHexTextView.h; sourceTree = "<group>"; };
@@ -358,7 +362,7 @@
 		19C28FACFE9D520D11CA2CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				8D1107320486CEB800E47090 /* HexFiend_2.app */,
+				8D1107320486CEB800E47090 /* Hex Fiend.app */,
 				D01E7BB80CDC530C00943F9E /* HexFiend.framework */,
 				D019309A0D5AE3B40019B3F7 /* HexFiend.ibplugin */,
 			);
@@ -381,11 +385,13 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				D024AFB20E349A7B00F39EBB /* hex_icon.icns */,
 				D01E7C0A0CDC570400943F9E /* Info.plist */,
 				089C165CFE840E0CC02AAC07 /* InfoPlist.strings */,
 				29B97318FDCFA39411CA2CEA /* MainMenu.nib */,
 				D01E7C280CDC59B700943F9E /* MyDocument.nib */,
 				D0728DED0DC1E3A00052C78C /* MoveSelectionByBanner.nib */,
+				D024AEF10E3463AB00F39EBB /* JumpToOffsetBanner.nib */,
 				D01773340D755551002E03DE /* FindReplaceBanner.nib */,
 				D0A229AC0D7D10240067A919 /* SaveBanner.nib */,
 			);
@@ -710,7 +716,7 @@
 			name = HexFiend_2;
 			productInstallPath = "$(HOME)/Applications";
 			productName = HexFiend_2;
-			productReference = 8D1107320486CEB800E47090 /* HexFiend_2.app */;
+			productReference = 8D1107320486CEB800E47090 /* Hex Fiend.app */;
 			productType = "com.apple.product-type.application";
 		};
 		D01930990D5AE3B40019B3F7 /* HexFiend_IBPlugin */ = {
@@ -779,6 +785,8 @@
 				D01773360D755551002E03DE /* FindReplaceBanner.nib in Resources */,
 				D0A229AE0D7D10240067A919 /* SaveBanner.nib in Resources */,
 				D0728DEF0DC1E3A00052C78C /* MoveSelectionByBanner.nib in Resources */,
+				D024AEF30E3463AB00F39EBB /* JumpToOffsetBanner.nib in Resources */,
+				D024AFB30E349A7B00F39EBB /* hex_icon.icns in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -936,6 +944,14 @@
 			name = MyDocument.nib;
 			sourceTree = "<group>";
 		};
+		D024AEF10E3463AB00F39EBB /* JumpToOffsetBanner.nib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D024AEF20E3463AB00F39EBB /* English */,
+			);
+			name = JumpToOffsetBanner.nib;
+			sourceTree = "<group>";
+		};
 		D0728DED0DC1E3A00052C78C /* MoveSelectionByBanner.nib */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -970,7 +986,7 @@
 					"-framework",
 					HexFiend,
 				);
-				PRODUCT_NAME = HexFiend_2;
+				PRODUCT_NAME = "Hex Fiend";
 				WARNING_CFLAGS = (
 					"-W",
 					"-Wall",
@@ -982,8 +998,12 @@
 		C01FCF5008A954540054247B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
-				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "x86_64 i386 ppc";
+				ARCHS = (
+					ppc64,
+					x86_64,
+					ppc,
+					i386,
+				);
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_PREPROCESSOR_DEFINITIONS = "NDEBUG=1";
@@ -993,6 +1013,7 @@
 				"MACOSX_DEPLOYMENT_TARGET[arch=ppc64]" = 10.5;
 				"MACOSX_DEPLOYMENT_TARGET[arch=x86_64]" = 10.5;
 				PREBINDING = NO;
+				"SDKROOT[arch=ppc64]" = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
 			};
 			name = Release;
 		};
@@ -1081,6 +1102,7 @@
 				"MACOSX_DEPLOYMENT_TARGET[arch=ppc64]" = 10.5;
 				"MACOSX_DEPLOYMENT_TARGET[arch=x86_64]" = 10.5;
 				PREBINDING = NO;
+				"SDKROOT[arch=ppc64]" = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
 			};
 			name = "Release-GC";
 		};
@@ -1138,7 +1160,7 @@
 					"-framework",
 					HexFiend,
 				);
-				PRODUCT_NAME = HexFiend_2;
+				PRODUCT_NAME = "Hex Fiend";
 				WARNING_CFLAGS = (
 					"-W",
 					"-Wall",
@@ -1191,6 +1213,7 @@
 				"MACOSX_DEPLOYMENT_TARGET[arch=ppc64]" = 10.5;
 				"MACOSX_DEPLOYMENT_TARGET[arch=x86_64]" = 10.5;
 				PREBINDING = NO;
+				"SDKROOT[arch=ppc64]" = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
 			};
 			name = "Debug-UnitTests-64";
 		};
@@ -1255,7 +1278,7 @@
 					"-framework",
 					HexFiend,
 				);
-				PRODUCT_NAME = HexFiend_2;
+				PRODUCT_NAME = "Hex Fiend";
 				WARNING_CFLAGS = (
 					"-W",
 					"-Wall",
@@ -1305,6 +1328,7 @@
 				"MACOSX_DEPLOYMENT_TARGET[arch=ppc64]" = 10.5;
 				"MACOSX_DEPLOYMENT_TARGET[arch=x86_64]" = 10.5;
 				PREBINDING = NO;
+				"SDKROOT[arch=ppc64]" = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
 			};
 			name = "Debug-NoUnitTests";
 		};
@@ -1369,7 +1393,7 @@
 					"-framework",
 					HexFiend,
 				);
-				PRODUCT_NAME = HexFiend_2;
+				PRODUCT_NAME = "Hex Fiend";
 				WARNING_CFLAGS = (
 					"-W",
 					"-Wall",
@@ -1420,6 +1444,7 @@
 				"MACOSX_DEPLOYMENT_TARGET[arch=ppc64]" = 10.5;
 				"MACOSX_DEPLOYMENT_TARGET[arch=x86_64]" = 10.5;
 				PREBINDING = NO;
+				"SDKROOT[arch=ppc64]" = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
 			};
 			name = "Debug-UnitTests";
 		};
@@ -1484,7 +1509,7 @@
 					"-framework",
 					HexFiend,
 				);
-				PRODUCT_NAME = HexFiend_2;
+				PRODUCT_NAME = "Hex Fiend";
 				WARNING_CFLAGS = (
 					"-W",
 					"-Wall",

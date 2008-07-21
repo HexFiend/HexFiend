@@ -204,7 +204,6 @@ typedef enum {
 #endif
     if (! HFFPRangeEqualsRange(range, displayedLineRange)) {
         displayedLineRange = range;
-        NSLog(@"displayedLineRange: %@", HFFPRangeToString(displayedLineRange));
         [self _addPropertyChangeBits:HFControllerDisplayedRange];
     }
 }
@@ -462,7 +461,6 @@ typedef enum {
     HFASSERT(linesToDisplay <= linesInRange);
     long double linesClippedFromRange = linesInRange - linesToDisplay;
     HFFPRange lineRangeToDisplay = (HFFPRange){range.location + linesClippedFromRange / 2., linesToDisplay};
-    NSLog(@"lineRangeToDisplay: %@", HFFPRangeToString(lineRangeToDisplay));
     HFASSERT(lineRangeToDisplay.length <= displayRange.length);
     long double linesToMoveDownToMakeLastLineVisible = HFULToFP(endLine) - (displayRange.location + displayRange.length);
     long double linesToMoveUpToMakeFirstLineVisible = displayRange.location - HFULToFP(startLine);
@@ -840,37 +838,6 @@ typedef enum {
     HFASSERT([scrollEvent type] == NSScrollWheel);
     long double scrollY = - kScrollMultiplier * [scrollEvent deltaY];
     [self scrollByLines:scrollY];
-}
-
-- (void)scrollWithScrollEventOld:(NSEvent *)scrollEvent {
-    HFASSERT(scrollEvent != NULL);
-    HFASSERT([scrollEvent type] == NSScrollWheel);
-    CGFloat scrollY = kScrollMultiplier * [scrollEvent deltaY];
-#if NSUIntegerMax >= LLONG_MAX
-    HFASSERT(bytesPerLine <= LLONG_MAX);
-#endif
-    BEGIN_TRANSACTION();
-    long long amountToScroll = ((long long)bytesPerLine) * (long long)HFRound( - scrollY);
-    if (amountToScroll == 0) amountToScroll = (signbit(scrollY) ? (long long)bytesPerLine : - (long long)bytesPerLine); //minimum of one line of scroll
-    HFRange originalDisplayedContentsRange = displayedContentsRange;
-    if (amountToScroll != 0) {
-        if (amountToScroll < 0) {
-            unsigned long long unsignedAmountToScroll = (unsigned long long)( - amountToScroll);
-            unsignedAmountToScroll -= unsignedAmountToScroll % bytesPerLine;
-            displayedContentsRange.location -= MIN(displayedContentsRange.location, unsignedAmountToScroll);
-        }
-        else {
-            /* amountToScroll > 0 */
-            unsigned long long unsignedAmountToScroll = (unsigned long long)amountToScroll;
-            unsignedAmountToScroll -= unsignedAmountToScroll % bytesPerLine;
-            displayedContentsRange.location = HFSum(displayedContentsRange.location, unsignedAmountToScroll);
-        }
-        [self _updateDisplayedRange];
-        if (! HFRangeEqualsRange(originalDisplayedContentsRange, displayedContentsRange)) {
-            [self _addPropertyChangeBits:HFControllerDisplayedRange];
-        }
-    }
-    END_TRANSACTION();
 }
 
 - (void)setSelectedContentsRanges:(NSArray *)selectedRanges {
@@ -1344,7 +1311,7 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
 - (void)moveInDirection:(HFControllerMovementDirection)direction withGranularity:(HFControllerMovementGranularity)granularity andModifySelection:(BOOL)extendSelection {
     HFASSERT(granularity == HFControllerMovementByte || granularity == HFControllerMovementLine || granularity == HFControllerMovementPage || granularity == HFControllerMovementDocument);
     HFASSERT(direction == HFControllerDirectionLeft || direction == HFControllerDirectionRight);
-    unsigned long long bytesToMove;
+    unsigned long long bytesToMove = 0;
     switch (granularity) {
 	case HFControllerMovementByte:
 	    bytesToMove = 1;

@@ -11,7 +11,7 @@
 
 @interface HFObjectGraph : NSObject {
     __strong CFMutableDictionaryRef graph;
-	NSMutableArray *containedObjects;
+    NSMutableArray *containedObjects;
 }
 
 - (void)addDependency:depend forObject:obj;

@@ -65,13 +65,16 @@
     NSUInteger linesRemaining = ll2l(HFFPToUL(ceill(lineRangeToDraw.length + lineRangeToDraw.location) - floorl(lineRangeToDraw.location)));
     while (linesRemaining--) {
 	if (NSIntersectsRect(textRect, clipRect)) {
-	    NSString *string = [[NSString alloc] initWithFormat:@"%llu", lineValue];
-	    NSUInteger newStringLength = [string length];
+            char buff[256];
+            int newStringLength = snprintf(buff, sizeof buff, "%llu", lineValue);
+            HFASSERT(newStringLength > 0);
+	    NSString *string = [[NSString alloc] initWithBytesNoCopy:buff length:newStringLength encoding:NSASCIIStringEncoding freeWhenDone:NO];
 	    NSUInteger glyphCount;
 	    [textStorage replaceCharactersInRange:NSMakeRange(0, previousTextStorageCharacterCount) withString:string];
 	    if (previousTextStorageCharacterCount == 0) {
 		NSDictionary *atts = [[NSDictionary alloc] initWithObjectsAndKeys:font, NSFontAttributeName, [NSColor colorWithCalibratedWhite:(CGFloat).1 alpha:(CGFloat).8], NSForegroundColorAttributeName, nil];
 		[textStorage setAttributes:atts range:NSMakeRange(0, newStringLength)];
+                [atts release];
 	    }
 	    glyphCount = [layoutManager numberOfGlyphs];
 	    if (glyphCount > 0) {

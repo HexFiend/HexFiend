@@ -2,10 +2,10 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.02">
 	<data>
 		<int key="IBDocument.SystemTarget">0</int>
-		<string key="IBDocument.SystemVersion">10A96</string>
+		<string key="IBDocument.SystemVersion">10A123</string>
 		<string key="IBDocument.InterfaceBuilderVersion">700</string>
-		<string key="IBDocument.AppKitVersion">975.1</string>
-		<string key="IBDocument.HIToolboxVersion">388.00</string>
+		<string key="IBDocument.AppKitVersion">978</string>
+		<string key="IBDocument.HIToolboxVersion">392.00</string>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
 			<integer value="205"/>
@@ -396,6 +396,15 @@
 									<bool key="NSIsSeparator">YES</bool>
 									<string key="NSTitle"/>
 									<string key="NSKeyEquiv"/>
+									<int key="NSKeyEquivModMask">1048576</int>
+									<int key="NSMnemonicLoc">2147483647</int>
+									<reference key="NSOnImage" ref="171599450"/>
+									<reference key="NSMixedImage" ref="491729860"/>
+								</object>
+								<object class="NSMenuItem" id="750048265">
+									<reference key="NSMenu" ref="789758025"/>
+									<string key="NSTitle">Jump to Offset</string>
+									<string key="NSKeyEquiv">l</string>
 									<int key="NSKeyEquivModMask">1048576</int>
 									<int key="NSMnemonicLoc">2147483647</int>
 									<reference key="NSOnImage" ref="171599450"/>
@@ -1298,6 +1307,14 @@
 					</object>
 					<int key="connectionID">464</int>
 				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">jumpToOffset:</string>
+						<reference key="source" ref="1014"/>
+						<reference key="destination" ref="750048265"/>
+					</object>
+					<int key="connectionID">466</int>
+				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
 				<object class="NSArray" key="orderedObjects">
@@ -1509,6 +1526,7 @@
 							<reference ref="615269437"/>
 							<reference ref="194621016"/>
 							<reference ref="761163590"/>
+							<reference ref="750048265"/>
 						</object>
 						<reference key="parent" ref="952259628"/>
 					</object>
@@ -1934,11 +1952,16 @@
 						<reference key="object" ref="301228071"/>
 						<reference key="parent" ref="134862247"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">465</int>
+						<reference key="object" ref="750048265"/>
+						<reference key="parent" ref="789758025"/>
+					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
 				<bool key="EncodedWithXMLCoder">YES</bool>
-				<object class="NSMutableArray" key="dict.sortedKeys">
+				<object class="NSArray" key="dict.sortedKeys">
 					<bool key="EncodedWithXMLCoder">YES</bool>
 					<string>-1.IBPluginDependency</string>
 					<string>-2.IBPluginDependency</string>
@@ -2073,6 +2096,7 @@
 					<string>455.IBPluginDependency</string>
 					<string>457.IBPluginDependency</string>
 					<string>458.IBPluginDependency</string>
+					<string>465.IBPluginDependency</string>
 					<string>5.IBPluginDependency</string>
 					<string>5.ImportedFromIB2</string>
 					<string>56.IBPluginDependency</string>
@@ -2162,7 +2186,7 @@
 					<reference ref="9"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="9"/>
-					<string>{{144, 492}, {204, 233}}</string>
+					<string>{{144, 472}, {204, 253}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="9"/>
 					<string>{{150, 705}, {280, 273}}</string>
@@ -2186,7 +2210,7 @@
 					<reference ref="9"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="9"/>
-					<string>{{424, 372}, {241, 103}}</string>
+					<string>{{348, 412}, {241, 103}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="9"/>
 					<string>{{393, 715}, {241, 103}}</string>
@@ -2230,6 +2254,7 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>{{332, 745}, {87, 203}}</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -2299,7 +2324,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">464</int>
+			<int key="maxID">466</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -2309,7 +2334,7 @@
 					<string key="superclassName">NSObject</string>
 					<object class="NSMutableDictionary" key="outlets">
 						<bool key="EncodedWithXMLCoder">YES</bool>
-						<object class="NSMutableArray" key="dict.sortedKeys">
+						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>extendBackwardsItem</string>
 							<string>extendForwardsItem</string>
@@ -2340,10 +2365,11 @@
 					<string key="superclassName">NSObject</string>
 					<object class="NSMutableDictionary" key="actions">
 						<bool key="EncodedWithXMLCoder">YES</bool>
-						<object class="NSMutableArray" key="dict.sortedKeys">
+						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>extendSelectionBackwards:</string>
 							<string>extendSelectionForwards:</string>
+							<string>jumpToOffset:</string>
 							<string>moveSelectionBackwards:</string>
 							<string>moveSelectionForwards:</string>
 							<string>performHFFindPanelAction:</string>
@@ -2354,6 +2380,7 @@
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
@@ -2429,7 +2456,7 @@
 					<string key="superclassName">NSDocument</string>
 					<object class="NSMutableDictionary" key="actions">
 						<bool key="EncodedWithXMLCoder">YES</bool>
-						<object class="NSMutableArray" key="dict.sortedKeys">
+						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>extendSelectionBackwards:</string>
 							<string>extendSelectionForwards:</string>
@@ -2462,7 +2489,7 @@
 					</object>
 					<object class="NSMutableDictionary" key="outlets">
 						<bool key="EncodedWithXMLCoder">YES</bool>
-						<object class="NSMutableArray" key="dict.sortedKeys">
+						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>containerView</string>
 							<string>targetFirstResponderInBanner</string>
