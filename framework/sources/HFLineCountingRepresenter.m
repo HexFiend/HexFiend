@@ -11,21 +11,6 @@
 
 NSString *const HFLineCountingRepresenterMinimumViewWidthChanged = @"HFLineCountingRepresenterMinimumViewWidthChanged";
 
-/* returns 1 + log base 10 of val.  If val is 0, returns 1. */
-static NSUInteger digit_count(unsigned long long val) {
-    const unsigned long long kValues[] = {0ULL, 9ULL, 99ULL, 999ULL, 9999ULL, 99999ULL, 999999ULL, 9999999ULL, 99999999ULL, 999999999ULL, 9999999999ULL, 99999999999ULL, 999999999999ULL, 9999999999999ULL, 99999999999999ULL, 999999999999999ULL, 9999999999999999ULL, 99999999999999999ULL, 999999999999999999ULL, 9999999999999999999ULL};
-    NSUInteger low = 0, high = sizeof kValues / sizeof *kValues;
-    while (high > low) {
-        NSUInteger mid = (low + high)/2; //low + high cannot overflow
-        if (val > kValues[mid]) {
-            low = mid + 1;
-        }
-        else {
-            high = mid;
-        }
-    }
-    return MAX(1, low);
-}
 
 @implementation HFLineCountingRepresenter
 
@@ -119,7 +104,7 @@ static NSUInteger digit_count(unsigned long long val) {
         /* We want to know how many lines are displayed.  That's equal to the contentsLength divided by bytesPerLine rounded down, except in the case that we're at the end of a line, in which case we need to show one more.  Hence adding 1 and dividing gets us the right result. */
         unsigned long long lineCount = contentsLength / bytesPerLine;
         unsigned long long contentsLengthRoundedToLine = HFProductULL(lineCount, bytesPerLine);
-        NSUInteger digitCount = digit_count(contentsLengthRoundedToLine);
+        NSUInteger digitCount = HFCountDigitsBase10(contentsLengthRoundedToLine);
         NSUInteger digitWidth = MAX(minimumDigitCount, digitCount);
         if (digitWidth != digitsToRepresentContentsLength) {
             digitsToRepresentContentsLength = digitWidth;

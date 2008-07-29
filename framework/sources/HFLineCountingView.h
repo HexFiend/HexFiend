@@ -13,10 +13,17 @@
     NSFont *font;
     CGFloat lineHeight;
     HFFPRange lineRangeToDraw;
+    NSLayoutManager *layoutManager;
+    NSTextStorage *textStorage;
+    NSTextContainer *textContainer;
+    NSDictionary *textAttributes;
+    NSTextView *textView;
+    
     NSUInteger bytesPerLine;
-	NSLayoutManager *layoutManager;
-	NSTextStorage *textStorage;
-	
+    unsigned long long storedLineIndex;
+    NSUInteger storedLineCount;
+    
+    BOOL useStringDrawingPath;
 }
 
 - (void)setFont:(NSFont *)val;

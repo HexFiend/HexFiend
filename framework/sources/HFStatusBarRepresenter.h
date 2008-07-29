@@ -8,9 +8,18 @@
 
 #import <HexFiend/HFRepresenter.h>
 
+enum {
+    HFStatusModeDecimal,
+    HFStatusModeHexadecimal,
+    HFStatusModeApproximate,
+    HFSTATUSMODECOUNT
+};
 
 @interface HFStatusBarRepresenter : HFRepresenter {
-
+    NSUInteger statusMode;
 }
+
+- (NSUInteger)statusMode;
+- (void)setStatusMode:(NSUInteger)mode;
 
 @end

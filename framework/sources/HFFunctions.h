@@ -3,6 +3,8 @@
 #import <HexFiend/HFTypes.h>
 #import <libkern/OSAtomic.h>
 
+#define HFZeroRange (HFRange){0, 0}
+
 static inline HFRange HFRangeMake(unsigned long long loc, unsigned long long len) {
     return (HFRange){loc, len};
 }
@@ -211,6 +213,22 @@ static inline long double HFULToFP(unsigned long long val) {
 
 static inline NSString *HFDescribeAffineTransform(CGAffineTransform t) {
     return [NSString stringWithFormat:@"%f %f 0\n%f %f 0\n%f %f 1", t.a, t.b, t.c, t.d, t.tx, t.ty];
+}
+
+/* returns 1 + floor(log base 10 of val).  If val is 0, returns 1. */
+static inline NSUInteger HFCountDigitsBase10(unsigned long long val) {
+    const unsigned long long kValues[] = {0ULL, 9ULL, 99ULL, 999ULL, 9999ULL, 99999ULL, 999999ULL, 9999999ULL, 99999999ULL, 999999999ULL, 9999999999ULL, 99999999999ULL, 999999999999ULL, 9999999999999ULL, 99999999999999ULL, 999999999999999ULL, 9999999999999999ULL, 99999999999999999ULL, 999999999999999999ULL, 9999999999999999999ULL};
+    NSUInteger low = 0, high = sizeof kValues / sizeof *kValues;
+    while (high > low) {
+        NSUInteger mid = (low + high)/2; //low + high cannot overflow
+        if (val > kValues[mid]) {
+            low = mid + 1;
+        }
+        else {
+            high = mid;
+        }
+    }
+    return MAX(1, low);
 }
 
 BOOL HFStringEncodingIsSupersetOfASCII(NSStringEncoding encoding);
