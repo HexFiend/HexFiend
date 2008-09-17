@@ -175,6 +175,11 @@
     UNIMPLEMENTED_VOID();
 }
 
+- (NSData *)dataFromPasteboardString:(NSString *)string {
+    USE(string);
+    UNIMPLEMENTED();
+}
+
 - (BOOL)pasteBytesFromPasteboard:(NSPasteboard *)pb {
     REQUIRE_NOT_NULL(pb);
     BOOL result = NO;
@@ -182,6 +187,18 @@
     if (byteArray) {
         [[self controller] insertByteArray:byteArray replacingPreviousBytes:0 allowUndoCoalescing:NO];
         result = YES;
+    }
+    else {
+        NSString *stringType = [pb availableTypeFromArray:[NSArray arrayWithObject:NSStringPboardType]];
+        if (stringType) {
+            NSString *stringValue = [pb stringForType:stringType];
+            if (stringValue) {
+                NSData *data = [self dataFromPasteboardString:stringValue];
+                if (data) {
+                    [[self controller] insertData:data replacingPreviousBytes:0 allowUndoCoalescing:NO];
+                }
+            }
+        }
     }
     return result;
 }

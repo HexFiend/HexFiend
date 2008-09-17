@@ -149,7 +149,7 @@ static BOOL isRunningOnLeopardOrLater(void) {
     if ([containerView respondsToSelector:@selector(setDividerStyle:)]) {
         [containerView setDividerStyle:2/*NSSplitViewDividerStyleThin*/];
     }
-    [containerView setDelegate:self];
+    [containerView setDelegate:(id)self];
     
     NSView *layoutView = [layoutRepresenter view];
     [layoutView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];

@@ -32,6 +32,9 @@
 // Must be implemented by subclasses
 - (void)insertText:(NSString *)text;
 
+// Must be implemented by subclasses.  Return NSData representing the string value.
+- (NSData *)dataFromPasteboardString:(NSString *)string;
+
 // Value between [0, 1]
 - (double)selectionPulseAmount;
 

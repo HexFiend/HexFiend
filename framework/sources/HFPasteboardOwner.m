@@ -69,6 +69,7 @@ NSString *const HFPrivateByteArrayPboardType = @"HFPrivateByteArrayPboardType";
 - (BOOL)moveDataWithProgressReportingToPasteboard:(NSPasteboard *)pboard forType:(NSString *)type {
     HFASSERT(pboard == pasteboard);
     BOOL result = NO;
+    [self retain]; //resolving the pasteboard may release us, which deallocates us, which deallocates our tracker...make sure we survive through this function
     progressTracker = [[HFProgressTracker alloc] init];
     /* Give the user a chance to request a smaller amount if it's really big */
     unsigned long long availableAmount = [byteArray length];
@@ -92,6 +93,7 @@ NSString *const HFPrivateByteArrayPboardType = @"HFPrivateByteArrayPboardType";
         [progressTracker release];
         progressTracker = nil;
     }
+    [self release];
     return result;
 }
 

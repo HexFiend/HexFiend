@@ -87,6 +87,11 @@
     }
 }
 
+- (NSData *)dataFromPasteboardString:(NSString *)string  {
+    REQUIRE_NOT_NULL(string);
+    return [string dataUsingEncoding:[self encoding] allowLossyConversion:NO];
+}
+
 + (NSPoint)defaultLayoutPosition {
     return NSMakePoint(1, 0);
 }

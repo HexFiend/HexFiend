@@ -146,6 +146,11 @@ static unsigned char hex2char(NSUInteger c) {
     }
 }
 
+- (NSData *)dataFromPasteboardString:(NSString *)string  {
+    REQUIRE_NOT_NULL(string);
+    return HFDataFromHexString(string, NULL);
+}
+
 - (void)controllerDidChange:(HFControllerPropertyBits)bits {
     [super controllerDidChange:bits];
     if (bits & (HFControllerContentValue | HFControllerContentLength | HFControllerSelectedRanges)) {
