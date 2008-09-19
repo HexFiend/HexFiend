@@ -13,6 +13,7 @@
 @interface HFByteArrayPiece : NSObject {
     @private
     HFByteSlice *slice;
+//    NSUInteger retainCount;
     @public
     HFRange pieceRange;
 }

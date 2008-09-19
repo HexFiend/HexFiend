@@ -81,6 +81,8 @@
 		D08491FF0DBB60C700C7195C /* HFFastMemchr.m in Sources */ = {isa = PBXBuildFile; fileRef = D08491FE0DBB60C700C7195C /* HFFastMemchr.m */; };
 		D08630F00D8BEE9900FF0BE7 /* HFByteSliceFileOperationQueueEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = D08630EE0D8BEE9900FF0BE7 /* HFByteSliceFileOperationQueueEntry.h */; };
 		D08630F10D8BEE9900FF0BE7 /* HFByteSliceFileOperationQueueEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = D08630EF0D8BEE9900FF0BE7 /* HFByteSliceFileOperationQueueEntry.m */; };
+		D08C90FF0E83BB5E00D75710 /* HFTavlTreeByteArrayEnumerator.h in Headers */ = {isa = PBXBuildFile; fileRef = D08C90FD0E83BB5E00D75710 /* HFTavlTreeByteArrayEnumerator.h */; };
+		D08C91000E83BB5E00D75710 /* HFTavlTreeByteArrayEnumerator.m in Sources */ = {isa = PBXBuildFile; fileRef = D08C90FE0E83BB5E00D75710 /* HFTavlTreeByteArrayEnumerator.m */; };
 		D08F5E4F0CDE872C007EFFE8 /* HFByteArray.m in Sources */ = {isa = PBXBuildFile; fileRef = D08F5DF00CDE8223007EFFE8 /* HFByteArray.m */; };
 		D08F5E500CDE872C007EFFE8 /* HFByteSlice.m in Sources */ = {isa = PBXBuildFile; fileRef = D08F5E230CDE843E007EFFE8 /* HFByteSlice.m */; };
 		D08F5E510CDE872C007EFFE8 /* HFFullMemoryByteSlice.m in Sources */ = {isa = PBXBuildFile; fileRef = D08F5E380CDE84F4007EFFE8 /* HFFullMemoryByteSlice.m */; };
@@ -252,6 +254,8 @@
 		D08491FE0DBB60C700C7195C /* HFFastMemchr.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFFastMemchr.m; path = framework/sources/HFFastMemchr.m; sourceTree = "<group>"; };
 		D08630EE0D8BEE9900FF0BE7 /* HFByteSliceFileOperationQueueEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFByteSliceFileOperationQueueEntry.h; path = framework/sources/HFByteSliceFileOperationQueueEntry.h; sourceTree = "<group>"; };
 		D08630EF0D8BEE9900FF0BE7 /* HFByteSliceFileOperationQueueEntry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFByteSliceFileOperationQueueEntry.m; path = framework/sources/HFByteSliceFileOperationQueueEntry.m; sourceTree = "<group>"; };
+		D08C90FD0E83BB5E00D75710 /* HFTavlTreeByteArrayEnumerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFTavlTreeByteArrayEnumerator.h; path = framework/sources/HFTavlTreeByteArrayEnumerator.h; sourceTree = "<group>"; };
+		D08C90FE0E83BB5E00D75710 /* HFTavlTreeByteArrayEnumerator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFTavlTreeByteArrayEnumerator.m; path = framework/sources/HFTavlTreeByteArrayEnumerator.m; sourceTree = "<group>"; };
 		D08F5DA30CDE7691007EFFE8 /* Design.graffle */ = {isa = PBXFileReference; lastKnownFileType = file; name = Design.graffle; path = ../../Design.graffle; sourceTree = SOURCE_ROOT; };
 		D08F5DEF0CDE8223007EFFE8 /* HFByteArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFByteArray.h; path = framework/sources/HFByteArray.h; sourceTree = "<group>"; };
 		D08F5DF00CDE8223007EFFE8 /* HFByteArray.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFByteArray.m; path = framework/sources/HFByteArray.m; sourceTree = "<group>"; };
@@ -615,6 +619,8 @@
 				D082AF4B0CDF242500554EB7 /* HFByteArray_ToString.m */,
 				D041D3DB0D3CA70600C28345 /* HFTavlTreeByteArray.h */,
 				D041D3DC0D3CA70600C28345 /* HFTavlTreeByteArray.m */,
+				D08C90FD0E83BB5E00D75710 /* HFTavlTreeByteArrayEnumerator.h */,
+				D08C90FE0E83BB5E00D75710 /* HFTavlTreeByteArrayEnumerator.m */,
 				D0D178990D44481F00684270 /* TAVLTree */,
 			);
 			name = ByteArray;
@@ -693,6 +699,7 @@
 				D04C78270DC47ECF00A76FF2 /* HFTextSelectionPulseView.h in Headers */,
 				D0A6C9D80DCC68610077175C /* HFController.h in Headers */,
 				D05B77DF0E00883B008C45EB /* HFCancelButton.h in Headers */,
+				D08C90FF0E83BB5E00D75710 /* HFTavlTreeByteArrayEnumerator.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -893,6 +900,7 @@
 				D08491FF0DBB60C700C7195C /* HFFastMemchr.m in Sources */,
 				D04C78280DC47ECF00A76FF2 /* HFTextSelectionPulseView.m in Sources */,
 				D05B77E00E00883B008C45EB /* HFCancelButton.m in Sources */,
+				D08C91000E83BB5E00D75710 /* HFTavlTreeByteArrayEnumerator.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

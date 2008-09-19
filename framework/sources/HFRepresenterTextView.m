@@ -573,28 +573,27 @@ enum LineCoverage_t {
 
 - (void)setData:(NSData *)val {
     if (val != data) {
-        if (data) {
-            NSUInteger oldLength = [data length];
-            NSUInteger newLength = [val length];
-            const unsigned char *oldBytes = (const unsigned char *)[data bytes];
-            const unsigned char *newBytes = (const unsigned char *)[val bytes];
-            NSUInteger firstDifferingIndex = HFIndexOfFirstByteThatDiffers(oldBytes, oldLength, newBytes, newLength);
-            if (firstDifferingIndex == NSNotFound) {
-                /* Nothing to do!  Data is identical! */
-            }
-            else {
-                NSUInteger line = firstDifferingIndex / [self bytesPerLine];
-                if (line <= 1) {
-                    /* No point in invalidating a region - we'll invalidate everything */
-                    [self setNeedsDisplay:YES];
-                }
-                else {
-                    CGFloat yOrigin = (line - 1) * [self lineHeight];
-                    NSRect bounds = [self bounds];
-                    NSRect dirtyRect = NSMakeRect(0, yOrigin, NSWidth(bounds), NSHeight(bounds) - yOrigin);
-                    [self setNeedsDisplayInRect:dirtyRect];
-                }
-            }
+        NSUInteger oldLength = [data length];
+        NSUInteger newLength = [val length];
+        const unsigned char *oldBytes = (const unsigned char *)[data bytes];
+        const unsigned char *newBytes = (const unsigned char *)[val bytes];
+        NSUInteger firstDifferingIndex = HFIndexOfFirstByteThatDiffers(oldBytes, oldLength, newBytes, newLength);
+        NSUInteger lastDifferingIndex = HFIndexOfLastByteThatDiffers(oldBytes, oldLength, newBytes, newLength);
+        if (firstDifferingIndex == NSNotFound) {
+            /* Nothing to do!  Data is identical! */
+        }
+        else {
+            const NSUInteger bytesPerLine = [self bytesPerLine];
+            const CGFloat lineheight = [self lineHeight];
+            CGFloat vertOffset = [self verticalOffset];
+            NSUInteger lastLine = HFDivideULRoundingUp(MAX(oldLength, newLength), bytesPerLine);
+            NSUInteger lastDifferingLine = (lastDifferingIndex == NSNotFound ? lastLine : HFDivideULRoundingUp(lastDifferingIndex, bytesPerLine));
+            CGFloat lastDifferingLineBottom = (lastDifferingLine - vertOffset) * lineheight;
+            NSUInteger line = firstDifferingIndex / bytesPerLine;
+            CGFloat yOrigin = (line - vertOffset) * lineheight;
+            NSRect bounds = [self bounds];
+            NSRect dirtyRect = NSMakeRect(0, yOrigin, NSWidth(bounds), lastDifferingLineBottom - yOrigin);
+            [self setNeedsDisplayInRect:dirtyRect];
         }
         [data release];
         data = [val copy];

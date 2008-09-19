@@ -24,21 +24,38 @@
 - (void)copyBytes:(unsigned char *)dst range:(HFRange)range { USE(dst); USE(range); UNIMPLEMENTED_VOID(); }
 - (void)insertByteSlice:(HFByteSlice *)slice inRange:(HFRange)lrange { USE(slice); USE(lrange); UNIMPLEMENTED_VOID(); }
 
+- (NSEnumerator *)byteSliceEnumerator {
+    return [[self byteSlices] objectEnumerator];
+}
 
 - (void)insertByteArray:(HFByteArray*)array inRange:(HFRange)lrange {
-    [self _incrementGenerationOrRaiseIfLockedForSelector:_cmd];
     REQUIRE_NOT_NULL(array);
-    NSArray* slices = [array byteSlices];
-    NSUInteger i, max=[slices count];
-    if (max==0) [self deleteBytesInRange:lrange];
-    else {
-	for (i=0; i < max; i++) {
-            HFByteSlice* slice = [slices objectAtIndex:i];
-            [self insertByteSlice:slice inRange:lrange];
-            lrange.location += [slice length];
-            lrange.length = 0;
-	}
+    HFASSERT(HFRangeIsSubrangeOfRange(lrange, HFRangeMake(0, [self length])));
+#ifndef NDEBUG
+    unsigned long long expectedLength = [self length] - lrange.length + [array length];
+#endif
+    [self _incrementGenerationOrRaiseIfLockedForSelector:_cmd];
+    NSEnumerator *sliceEnumerator;
+    HFByteSlice *byteSlice;
+    if (array == self) {
+        /* Guard against self insertion */
+        sliceEnumerator = [[array byteSlices] objectEnumerator];
     }
+    else {
+        sliceEnumerator = [array byteSliceEnumerator];
+    }
+    while ((byteSlice = [sliceEnumerator nextObject])) {
+        [self insertByteSlice:byteSlice inRange:lrange];
+        lrange.location += [byteSlice length];
+        lrange.length = 0;
+    }
+    /* If there were no slices, delete the lrange */
+    if (lrange.length > 0) {
+        [self deleteBytesInRange:lrange];
+    }
+#ifndef NDEBUG
+    HFASSERT(expectedLength == [self length]);
+#endif
 }
 
 - (HFByteArray *)subarrayWithRange:(HFRange)range { USE(range); UNIMPLEMENTED(); }

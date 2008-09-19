@@ -26,6 +26,7 @@
 #define check_malloc(x) ({ size_t _count = x; void* result = malloc(_count); if (! result) { fprintf(stderr, "Out of memory allocating %lu bytes\n", (unsigned long)_count); exit(EXIT_FAILURE); } result; })
 #define check_calloc(x) ({ size_t _count = x; void* result = calloc(_count, 1); if (! result) { fprintf(stderr, "Out of memory allocating %lu bytes\n", (unsigned long)_count); exit(EXIT_FAILURE); } result; })
 
+#if ! NDEBUG
 #define REQUIRE_NOT_NULL(a) do { \
 	if ((a)==NULL) {\
 		fprintf(stderr, "REQUIRE_NOT_NULL failed: NULL value for parameter " #a " on line %d in file %s\n", __LINE__, __FILE__);\
@@ -33,13 +34,17 @@
 	}\
 } while (0)
 
-
 #define EXPECT_CLASS(e, c) do { \
 	if (! [(e) isKindOfClass:[c class]]) {\
 		fprintf(stderr, "EXPECT_CLASS failed: Expression " #e " is %s on line %d in file %s\n", (e) ? "(nil)" : [[e description] UTF8String], __LINE__, __FILE__);\
 			abort();\
 	}\
 } while (0)
+
+#else
+#define REQUIRE_NOT_NULL(a)
+#define EXPECT_CLASS(e, c)
+#endif
 
 #if __LP64__
 #define FOREACH(type, var, exp) for (type var in (exp)) 

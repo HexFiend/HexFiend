@@ -16,6 +16,7 @@
 }
 
 - (NSArray *)byteSlices;
+- (NSEnumerator *)byteSliceEnumerator;
 - (unsigned long long)length;
 - (void)copyBytes:(unsigned char *)dst range:(HFRange)range;
 - (void)deleteBytesInRange:(HFRange)range;

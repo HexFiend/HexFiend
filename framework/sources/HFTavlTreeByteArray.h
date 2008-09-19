@@ -15,7 +15,8 @@
 
 - init;
 
-//for unit testing
+#ifndef NDEBUG
 - (BOOL)offsetsAreCorrect;
+#endif
 
 @end

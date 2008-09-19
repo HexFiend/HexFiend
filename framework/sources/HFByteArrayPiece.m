@@ -15,6 +15,7 @@
 - initWithSlice:(HFByteSlice *)sliceParam offset:(unsigned long long)offsetParam {
     REQUIRE_NOT_NULL(sliceParam);
     [super init];
+    //retainCount = 1;
     slice = [sliceParam retain];
     pieceRange.location = offsetParam;
     pieceRange.length = [slice length];
@@ -22,8 +23,8 @@
 }
 
 - (void)dealloc {
-	[slice release];
-	[super dealloc];
+    [slice release];
+    [super dealloc];
 }
 
 - (unsigned long long)offset {
@@ -91,5 +92,18 @@
     }
     return result;
 }
+
+#if 0
+- (id)retain {
+    HFAtomicIncrement(&retainCount, NO);
+    return self;
+}
+
+- (void)release {
+    if (HFAtomicDecrement(&retainCount, NO) == 0) {
+        [self dealloc];
+    }
+}
+#endif
 
 @end

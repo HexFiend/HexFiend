@@ -9,6 +9,7 @@
 #import <HexFiend/HFByteArray_Internal.h>
 #import <HexFiend/HFTavlTreeByteArray.h>
 #import <HexFiend/tavltree.h>
+#import <HexFiend/HFTavlTreeByteArrayEnumerator.h>
 #import <HexFiend/HFByteArrayPiece.h>
 #import <HexFiend/HFByteSlice.h>
 #import <objc/objc-auto.h>
@@ -81,6 +82,7 @@ static const char *tavl_description(TAVL_treeptr tree) {
     return [arrayPiece offset] + [arrayPiece length];
 }
 
+#ifndef NDEBUG
 - (BOOL)offsetsAreCorrect {
     unsigned long long offset = 0;
     HFByteArrayPiece* arrayPiece=NULL;
@@ -93,6 +95,7 @@ static const char *tavl_description(TAVL_treeptr tree) {
     }
     return YES;
 }
+#endif
 
 - (NSArray *)byteSlices {
     NSMutableArray* result = [NSMutableArray array];
@@ -104,6 +107,10 @@ static const char *tavl_description(TAVL_treeptr tree) {
         [result addObject:[arrayPiece byteSlice]];
     }
     return result;
+}
+
+- (NSEnumerator *)byteSliceEnumerator {
+    return [[[HFTavlTreeByteArrayEnumerator alloc] initWithByteArray:self tree:tree] autorelease];
 }
 
 - (NSString*)description { return [NSString stringWithUTF8String:tavl_description(tree)]; }
