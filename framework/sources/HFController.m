@@ -19,6 +19,7 @@
 #import <HexFiend/HFFileReference.h>
 #import <HexFiend/HFFileByteSlice.h>
 #import <HexFiend/HFTestHashing.h>
+#import <HexFiend/HFRandomDataByteSlice.h>
 #endif
 
 /* Used for the anchor range and location */
@@ -52,11 +53,18 @@ typedef enum {
 - (void)_removeUndoManagerNotifications;
 @end
 
+#if HFUNIT_TESTS
+@interface HFByteArray (HFUnitTests)
++ (void)_testSearchAlgorithmsLookingForArray:(HFByteArray *)needle inArray:(HFByteArray *)haystack;
+@end
+#endif
+
 @implementation HFController
 
 - (id)init {
     [super init];
     bytesPerLine = 16;
+    bytesPerColumn = 1;
     _hfflags.editable = YES;
     _hfflags.selectable = YES;
     representers = [[NSMutableArray alloc] init];
@@ -247,6 +255,18 @@ typedef enum {
     }
 }
 
+- (void)setBytesPerColumn:(NSUInteger)val {
+    NSParameterAssert(val > 0);
+    if (val != bytesPerColumn) {
+        bytesPerColumn = val;
+        [self _addPropertyChangeBits:HFControllerBytesPerColumn];
+    }
+}
+
+- (NSUInteger)bytesPerColumn {
+    HFASSERT(bytesPerColumn > 0);
+    return bytesPerColumn;
+}
 
 - (BOOL)_shouldInvertSelectedRangesByAnchorRange {
     return _hfflags.selectionInProgress && _hfflags.commandExtendSelection;
@@ -1538,7 +1558,6 @@ static NSData *randomDataOfLength(NSUInteger length) {
     return [NSData dataWithBytesNoCopy:buff length:length freeWhenDone:YES];
 }
 
-extern unsigned long long QQQ;
 + (void)_testFastMemchr {
     unsigned char searchChar = 0xAE;
     unsigned char fillerChar = 0x23;
@@ -1805,7 +1824,7 @@ static NSUInteger random_upto(unsigned long long val) {
 }
 
 + (void)_testFileWriting {
-    const BOOL should_debug = YES;
+    const BOOL should_debug = NO;
     NSAutoreleasePool* pool=[[NSAutoreleasePool alloc] init];
     NSData *data = randomDataOfLength(1 << 20);
     NSURL *fileURL = [NSURL fileURLWithPath:@"/tmp/HexFiendTestFile.data"];
@@ -1873,6 +1892,33 @@ static NSUInteger random_upto(unsigned long long val) {
     [pool release];
 }
 
++ (void)_testByteSearching {
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    NSUInteger round;
+    for (round = 0; round < 24; round++) {
+        HFTavlTreeByteArray *byteArray = [[[HFTavlTreeByteArray alloc] init] autorelease];
+        HFByteSlice *rootSlice = [[[HFRepeatingDataByteSlice alloc] initWithRepeatingDataLength: 1 << 20] autorelease];
+        [byteArray insertByteSlice:rootSlice inRange:HFRangeMake(0, 0)];
+        
+        NSData *needleData = randomDataOfLength(32 + random_upto(63));
+        HFByteSlice *needleSlice = [[[HFSharedMemoryByteSlice alloc] initWithUnsharedData:needleData] autorelease];
+        HFByteArray *needle = [[[HFTavlTreeByteArray alloc] init] autorelease];
+        [needle insertByteSlice:needleSlice inRange:HFRangeMake(0, 0)];
+        
+        [HFByteArray _testSearchAlgorithmsLookingForArray:needle inArray:byteArray];
+        
+        [byteArray insertByteSlice:needleSlice inRange:HFRangeMake(random_upto(1 << 15), 0)];
+        [HFByteArray _testSearchAlgorithmsLookingForArray:needle inArray:byteArray];
+        
+        [byteArray insertByteSlice:needleSlice inRange:HFRangeMake([byteArray length] - random_upto(1 << 15), 0)];
+        [HFByteArray _testSearchAlgorithmsLookingForArray:needle inArray:byteArray];
+        
+        [pool release];
+        pool = [[NSAutoreleasePool alloc] init];
+    }
+    [pool release];
+}
+
 static void exception_thrown(const char *methodName, NSException *exception) {
     printf("Test %s threw exception %s\n", methodName, [[exception description] UTF8String]);
     puts("I'm bailing out.  Better luck next time.");
@@ -1880,6 +1926,7 @@ static void exception_thrown(const char *methodName, NSException *exception) {
 }
 
 + (void)_runAllTests {
+    CFAbsoluteTime start = CFAbsoluteTimeGetCurrent();
     @try { [self _testFastMemchr]; }
     @catch (NSException *localException) { exception_thrown("_testFileWriting", localException); }
     @try { [self _testRangeFunctions]; }
@@ -1892,6 +1939,10 @@ static void exception_thrown(const char *methodName, NSException *exception) {
     @catch (NSException *localException) { exception_thrown("HFObjectGraph", localException); }    
     @try { [self _testFileWriting]; }
     @catch (NSException *localException) { exception_thrown("_testFileWriting", localException); }
+    @try { [self _testByteSearching]; }
+    @catch (NSException *localException) { exception_thrown("_testByteSearching", localException); }
+    CFAbsoluteTime end = CFAbsoluteTimeGetCurrent();
+    printf("Unit tests completed in %.02f seconds\n", end - start);
     
 }
 

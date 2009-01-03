@@ -69,7 +69,7 @@
     }
 }
 
-- (void)extractGlyphsForBytes:(const unsigned char *)bytes count:(NSUInteger)numBytes intoArray:(CGGlyph *)glyphs advances:(CGSize *)advances resultingGlyphCount:(NSUInteger *)resultGlyphCount {
+- (void)extractGlyphsForBytes:(const unsigned char *)bytes count:(NSUInteger)numBytes offsetIntoLine:(NSUInteger)offsetIntoLine intoArray:(CGGlyph *)glyphs advances:(CGSize *)advances resultingGlyphCount:(NSUInteger *)resultGlyphCount {
     HFASSERT(bytes != NULL);
     HFASSERT(glyphs != NULL);
     HFASSERT(resultGlyphCount != NULL);
@@ -87,16 +87,12 @@
     
 }
 
-- (CGFloat)spaceBetweenBytes {
-    return 0;
-}
-
 - (CGFloat)advancePerByte {
     return glyphAdvancement;
 }
 
-- (CGFloat)totalAdvanceForBytesInRange:(NSRange)range {
-    return glyphAdvancement * range.length;
+- (CGFloat)advanceBetweenColumns {
+    return 0; //don't have any space between columns
 }
 
 - (NSUInteger)maximumGlyphCountForByteCount:(NSUInteger)byteCount {

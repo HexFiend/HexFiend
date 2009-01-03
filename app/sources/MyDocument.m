@@ -86,8 +86,8 @@ static BOOL isRunningOnLeopardOrLater(void) {
 - (void)showViewForRepresenter:(HFRepresenter *)rep {
     NSView *repView = [rep view];
     HFASSERT([repView superview] == nil && [repView window] == nil);
-    [layoutRepresenter addRepresenter:rep];
     [controller addRepresenter:rep];
+    [layoutRepresenter addRepresenter:rep];
 }
 
 - (void)hideViewForRepresenter:(HFRepresenter *)rep {
@@ -141,10 +141,23 @@ static BOOL isRunningOnLeopardOrLater(void) {
     }
 }
 
+- (NSSize)minimumWindowFrameSizeForProposedSize:(NSSize)frameSize {
+    NSView *layoutView = [layoutRepresenter view];
+    NSSize proposedSizeInLayoutCoordinates = [layoutView convertSize:frameSize fromView:nil];
+    CGFloat resultingWidthInLayoutCoordinates = [layoutRepresenter minimumWidthForLayoutInProposedWidth:proposedSizeInLayoutCoordinates.width];
+    NSSize resultSize = [layoutView convertSize:NSMakeSize(resultingWidthInLayoutCoordinates, proposedSizeInLayoutCoordinates.height) toView:nil];
+    return resultSize;
+}
+
+- (NSSize)windowWillResize:(NSWindow *)sender toSize:(NSSize)frameSize {
+    if (sender != [self window] || layoutRepresenter == nil) return frameSize;
+    return [self minimumWindowFrameSizeForProposedSize:frameSize];
+}
 
 - (void)windowControllerDidLoadNib:(NSWindowController *)windowController {
     USE(windowController);
     
+    NSWindow *window = [windowController window];
     [containerView setVertical:NO];
     if ([containerView respondsToSelector:@selector(setDividerStyle:)]) {
         [containerView setDividerStyle:2/*NSSplitViewDividerStyleThin*/];
@@ -161,6 +174,9 @@ static BOOL isRunningOnLeopardOrLater(void) {
     [self showViewForRepresenter:scrollRepresenter];
     [self showViewForRepresenter:lineCountingRepresenter];
     [self showViewForRepresenter:statusBarRepresenter];
+    NSRect windowFrame = [window frame];
+    windowFrame.size = [self minimumWindowFrameSizeForProposedSize:windowFrame.size];
+    [window setFrame:windowFrame display:NO];
 }
 
 /* When our line counting view needs more space, we increase the size of our window, and also move it left by the same amount so that the other content does not appear to move. */
@@ -214,6 +230,7 @@ static BOOL isRunningOnLeopardOrLater(void) {
     controller = [[HFController alloc] init];
     [controller setShouldAntialias:[defs boolForKey:@"AntialiasText"]];
     [controller setUndoManager:[self undoManager]];
+    [controller setBytesPerColumn:4];
     [controller addRepresenter:layoutRepresenter];
     
     
@@ -618,7 +635,7 @@ static BOOL isRunningOnLeopardOrLater(void) {
         [[findReplaceView viewNamed:@"searchField"] setTarget:self];
         [[findReplaceView viewNamed:@"searchField"] setAction:@selector(findNext:)];
         [[findReplaceView viewNamed:@"replaceField"] setTarget:self];
-        [[findReplaceView viewNamed:@"replaceField"] setAction:@selector(findNext:)];
+        [[findReplaceView viewNamed:@"replaceField"] setAction:@selector(findNext:)]; //yes, this should be findNext:, not replace:, because when you just hit return in the replace text field, it only finds; replace is for the replace button
     }
     
     [self prepareBannerWithView:findReplaceView withTargetFirstResponder:[findReplaceView viewNamed:@"searchField"]];
@@ -752,8 +769,12 @@ static BOOL isRunningOnLeopardOrLater(void) {
         unsigned long long endLocation = [controller minimumSelectionLocation];
         unsigned long long haystackLength = [haystack length];
         HFASSERT(startLocation <= [haystack length]);
-        HFRange searchRange1 = HFRangeMake(startLocation, haystackLength - startLocation);
-        HFRange searchRange2 = HFRangeMake(0, endLocation);
+        HFRange earlierRange = HFRangeMake(0, endLocation);
+        HFRange laterRange = HFRangeMake(startLocation, haystackLength - startLocation);
+        
+        // if searching forwards, we search the range after the selection first; if searching backwards, we search the range before the selection first.
+        HFRange searchRange1 = (forwards ? laterRange : earlierRange);
+        HFRange searchRange2 = (forwards ? earlierRange : laterRange);
         
         NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
                                   needle, @"needle",

@@ -50,7 +50,13 @@
 }
 
 - (NSUInteger)bytesPerLine {
+    HFASSERT([self controller] != nil);
     return [[self controller] bytesPerLine];
+}
+
+- (NSUInteger)bytesPerColumn {
+    HFASSERT([self controller] != nil);
+    return [[self controller] bytesPerColumn];
 }
 
 - (NSUInteger)maximumBytesPerLineForViewWidth:(CGFloat)viewWidth {

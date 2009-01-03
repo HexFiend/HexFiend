@@ -153,6 +153,7 @@ static const char *tavl_description(TAVL_treeptr tree) {
         exit(EXIT_FAILURE);
     }
 }
+
 #endif
 
 - (void)deleteBytesInRange:(const HFRange)range {

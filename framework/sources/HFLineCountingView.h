@@ -8,6 +8,7 @@
 
 #import <Cocoa/Cocoa.h>
 
+@class HFLineCountingRepresenter;
 
 @interface HFLineCountingView : NSView {
     NSFont *font;
@@ -18,6 +19,7 @@
     NSTextContainer *textContainer;
     NSDictionary *textAttributes;
     NSTextView *textView;
+    HFLineCountingRepresenter *representer; //not retained
     
     NSUInteger bytesPerLine;
     unsigned long long storedLineIndex;
@@ -37,5 +39,8 @@
 
 - (void)setBytesPerLine:(NSUInteger)val;
 - (NSUInteger)bytesPerLine;
+
+- (void)setRepresenter:(HFLineCountingRepresenter *)rep;
+- (HFLineCountingRepresenter *)representer;
 
 @end

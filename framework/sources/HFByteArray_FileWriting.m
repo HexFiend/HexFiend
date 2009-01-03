@@ -305,7 +305,7 @@ static void verifyEveryObjectInExactlyOneConnectedComponent(NSArray *components,
     [allOperations addObjectsFromArray:external];
     [allOperations addObjectsFromArray:identity];
 
-	NSLog(@"Internal %@ External %@ Identity %@", internal, external, identity);
+    //NSLog(@"Internal %@ External %@ Identity %@", internal, external, identity);
 
     /* Step 2 */
     /* Estimate the cost of each of our ops */

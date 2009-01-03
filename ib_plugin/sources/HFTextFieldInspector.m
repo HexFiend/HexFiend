@@ -10,7 +10,7 @@
 
 @implementation HFTextFieldInspector
 
-- (void)viewNibName {
+- (NSString *)viewNibName {
     return @"HFTextFieldInspector";
 }
 

@@ -67,6 +67,8 @@
 		D078CE770D4EE7F900492F46 /* CHUD.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D078CE760D4EE7F900492F46 /* CHUD.framework */; };
 		D078CF550D50491100492F46 /* HFBannerDividerThumb.h in Headers */ = {isa = PBXBuildFile; fileRef = D078CF530D50491100492F46 /* HFBannerDividerThumb.h */; };
 		D078D0520D50492F00492F46 /* HFBannerDividerThumb.m in Sources */ = {isa = PBXBuildFile; fileRef = D078CF540D50491100492F46 /* HFBannerDividerThumb.m */; };
+		D081DDAA0F0E75FB00F66150 /* HFRandomDataByteSlice.h in Headers */ = {isa = PBXBuildFile; fileRef = D081DDA80F0E75FB00F66150 /* HFRandomDataByteSlice.h */; settings = {ATTRIBUTES = (); }; };
+		D081DDAB0F0E75FB00F66150 /* HFRandomDataByteSlice.m in Sources */ = {isa = PBXBuildFile; fileRef = D081DDA90F0E75FB00F66150 /* HFRandomDataByteSlice.m */; };
 		D0826EAB0D4855900006FB7D /* HFFileReference.h in Headers */ = {isa = PBXBuildFile; fileRef = D0826EA90D4855900006FB7D /* HFFileReference.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D0826EAC0D4855900006FB7D /* HFFileReference.m in Sources */ = {isa = PBXBuildFile; fileRef = D0826EAA0D4855900006FB7D /* HFFileReference.m */; };
 		D0826EF10D487A000006FB7D /* HFFileByteSlice.h in Headers */ = {isa = PBXBuildFile; fileRef = D0826EEF0D487A000006FB7D /* HFFileByteSlice.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -243,6 +245,8 @@
 		D078CE760D4EE7F900492F46 /* CHUD.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CHUD.framework; path = /System/Library/PrivateFrameworks/CHUD.framework; sourceTree = "<absolute>"; };
 		D078CF530D50491100492F46 /* HFBannerDividerThumb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFBannerDividerThumb.h; path = app/sources/HFBannerDividerThumb.h; sourceTree = "<group>"; };
 		D078CF540D50491100492F46 /* HFBannerDividerThumb.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFBannerDividerThumb.m; path = app/sources/HFBannerDividerThumb.m; sourceTree = "<group>"; };
+		D081DDA80F0E75FB00F66150 /* HFRandomDataByteSlice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFRandomDataByteSlice.h; path = framework/sources/HFRandomDataByteSlice.h; sourceTree = "<group>"; };
+		D081DDA90F0E75FB00F66150 /* HFRandomDataByteSlice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFRandomDataByteSlice.m; path = framework/sources/HFRandomDataByteSlice.m; sourceTree = "<group>"; };
 		D0826EA90D4855900006FB7D /* HFFileReference.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFFileReference.h; path = framework/sources/HFFileReference.h; sourceTree = "<group>"; };
 		D0826EAA0D4855900006FB7D /* HFFileReference.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFFileReference.m; path = framework/sources/HFFileReference.m; sourceTree = "<group>"; };
 		D0826EEF0D487A000006FB7D /* HFFileByteSlice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFFileByteSlice.h; path = framework/sources/HFFileByteSlice.h; sourceTree = "<group>"; };
@@ -515,6 +519,8 @@
 				D08F5E380CDE84F4007EFFE8 /* HFFullMemoryByteSlice.m */,
 				D0370A3D0D68307A00B3A8C6 /* HFSharedMemoryByteSlice.h */,
 				D0370A3E0D68307A00B3A8C6 /* HFSharedMemoryByteSlice.m */,
+				D081DDA80F0E75FB00F66150 /* HFRandomDataByteSlice.h */,
+				D081DDA90F0E75FB00F66150 /* HFRandomDataByteSlice.m */,
 			);
 			name = MemoryByteSlice;
 			sourceTree = "<group>";
@@ -700,6 +706,7 @@
 				D0A6C9D80DCC68610077175C /* HFController.h in Headers */,
 				D05B77DF0E00883B008C45EB /* HFCancelButton.h in Headers */,
 				D08C90FF0E83BB5E00D75710 /* HFTavlTreeByteArrayEnumerator.h in Headers */,
+				D081DDAA0F0E75FB00F66150 /* HFRandomDataByteSlice.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -901,6 +908,7 @@
 				D04C78280DC47ECF00A76FF2 /* HFTextSelectionPulseView.m in Sources */,
 				D05B77E00E00883B008C45EB /* HFCancelButton.m in Sources */,
 				D08C91000E83BB5E00D75710 /* HFTavlTreeByteArrayEnumerator.m in Sources */,
+				D081DDAB0F0E75FB00F66150 /* HFRandomDataByteSlice.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1214,6 +1222,7 @@
 				);
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = "HFUNIT_TESTS=1";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
@@ -1241,7 +1250,6 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_ENABLE_OBJC_GC = supported;
 				GCC_MODEL_TUNING = G5;
-				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = framework/sources/HexFiend_2_Framework_Prefix.pch;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -1276,7 +1284,6 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_ENABLE_OBJC_GC = unsupported;
 				GCC_MODEL_TUNING = G5;
-				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = app/sources/HexFiend_2_Prefix.pch;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -1330,6 +1337,7 @@
 			buildSettings = {
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.4;
@@ -1356,7 +1364,6 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_ENABLE_OBJC_GC = supported;
 				GCC_MODEL_TUNING = G5;
-				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = framework/sources/HexFiend_2_Framework_Prefix.pch;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -1391,7 +1398,6 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_ENABLE_OBJC_GC = unsupported;
 				GCC_MODEL_TUNING = G5;
-				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = app/sources/HexFiend_2_Prefix.pch;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -1445,6 +1451,7 @@
 			buildSettings = {
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = "HFUNIT_TESTS=1";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
@@ -1472,7 +1479,6 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_ENABLE_OBJC_GC = supported;
 				GCC_MODEL_TUNING = G5;
-				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = framework/sources/HexFiend_2_Framework_Prefix.pch;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -1507,7 +1513,6 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_ENABLE_OBJC_GC = unsupported;
 				GCC_MODEL_TUNING = G5;
-				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = app/sources/HexFiend_2_Prefix.pch;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -1556,6 +1561,121 @@
 			};
 			name = "Debug-UnitTests";
 		};
+		D0D317F20F0F322A008AD92F /* Debug-UnitTests-Optimized */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_ALTIVEC_EXTENSIONS = YES;
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = "HFUNIT_TESTS=1";
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.4;
+				"MACOSX_DEPLOYMENT_TARGET[arch=ppc64]" = 10.5;
+				"MACOSX_DEPLOYMENT_TARGET[arch=x86_64]" = 10.5;
+				PREBINDING = NO;
+				"SDKROOT[arch=ppc64]" = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
+			};
+			name = "Debug-UnitTests-Optimized";
+		};
+		D0D317F30F0F322A008AD92F /* Debug-UnitTests-Optimized */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks",
+				);
+				FRAMEWORK_VERSION = A;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_ENABLE_OBJC_GC = supported;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = framework/sources/HexFiend_2_Framework_Prefix.pch;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = YES;
+				INFOPLIST_FILE = "framework/HexFiend_Framework-Info.plist";
+				INSTALL_PATH = "$(HOME)/Library/Frameworks";
+				LD_DYLIB_INSTALL_NAME = "@executable_path/../Frameworks/HexFiend.framework/Versions/A/HexFiend";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+					"-lcrypto",
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = HexFiend;
+				WARNING_CFLAGS = (
+					"-W",
+					"-Wall",
+					"-Winit-self",
+				);
+				ZERO_LINK = YES;
+			};
+			name = "Debug-UnitTests-Optimized";
+		};
+		D0D317F40F0F322A008AD92F /* Debug-UnitTests-Optimized */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_ENABLE_OBJC_GC = unsupported;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = app/sources/HexFiend_2_Prefix.pch;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				INFOPLIST_FILE = app/Info.plist;
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					HexFiend,
+				);
+				PRODUCT_NAME = "Hex Fiend";
+				WARNING_CFLAGS = (
+					"-W",
+					"-Wall",
+				);
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = "Debug-UnitTests-Optimized";
+		};
+		D0D317F50F0F322A008AD92F /* Debug-UnitTests-Optimized */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(DEVELOPER_FRAMEWORKS_DIR)\"",
+				);
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INFOPLIST_FILE = "HexFiend_IBPlugin-Info.plist";
+				INSTALL_PATH = "$(HOME)/Library/Bundles";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = HexFiend;
+				WRAPPER_EXTENSION = ibplugin;
+				ZERO_LINK = YES;
+			};
+			name = "Debug-UnitTests-Optimized";
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1564,6 +1684,7 @@
 			buildConfigurations = (
 				D0A6CA050DCC6B8B0077175C /* Debug-NoUnitTests */,
 				D0CD52060DA2BA4B006E8D1B /* Debug-UnitTests */,
+				D0D317F40F0F322A008AD92F /* Debug-UnitTests-Optimized */,
 				D08492720DBB70D200C7195C /* Debug-UnitTests-64 */,
 				C01FCF4C08A954540054247B /* Release */,
 				D083F7370DBCBD5F00C2B632 /* Release-GC */,
@@ -1576,6 +1697,7 @@
 			buildConfigurations = (
 				D0A6CA030DCC6B8B0077175C /* Debug-NoUnitTests */,
 				D0CD52040DA2BA4B006E8D1B /* Debug-UnitTests */,
+				D0D317F20F0F322A008AD92F /* Debug-UnitTests-Optimized */,
 				D08492700DBB70D200C7195C /* Debug-UnitTests-64 */,
 				C01FCF5008A954540054247B /* Release */,
 				D083F7350DBCBD5F00C2B632 /* Release-GC */,
@@ -1588,6 +1710,7 @@
 			buildConfigurations = (
 				D0A6CA060DCC6B8B0077175C /* Debug-NoUnitTests */,
 				D0CD52070DA2BA4B006E8D1B /* Debug-UnitTests */,
+				D0D317F50F0F322A008AD92F /* Debug-UnitTests-Optimized */,
 				D08492730DBB70D200C7195C /* Debug-UnitTests-64 */,
 				D019309D0D5AE3B50019B3F7 /* Release */,
 				D083F7380DBCBD5F00C2B632 /* Release-GC */,
@@ -1600,6 +1723,7 @@
 			buildConfigurations = (
 				D0A6CA040DCC6B8B0077175C /* Debug-NoUnitTests */,
 				D0CD52050DA2BA4B006E8D1B /* Debug-UnitTests */,
+				D0D317F30F0F322A008AD92F /* Debug-UnitTests-Optimized */,
 				D08492710DBB70D200C7195C /* Debug-UnitTests-64 */,
 				D01E7BBB0CDC530C00943F9E /* Release */,
 				D083F7360DBCBD5F00C2B632 /* Release-GC */,

@@ -101,22 +101,25 @@
 
 - (unsigned long long)indexOfBytesEqualToBytes:(HFByteArray *)findBytes inRange:(HFRange)range searchingForwards:(BOOL)forwards trackingProgress:(HFProgressTracker *)progressTracker {
     unsigned long long length = [findBytes length];
-
-    if (length > [self length]) return ULLONG_MAX;
-    if (forwards) {
-        if (length == 0) {
-            return range.location;
-        }
-        else if (length == 1) {
-            unsigned char byte;
-            [findBytes copyBytes:&byte range:HFRangeMake(0, 1)];
-            return [self _byteSearchForwardsSingle:byte inRange:range trackingProgress:progressTracker];
-        }
-        else if (length <= 1<<20) {
-            return [self _byteSearchForwardsBoyerMoore:findBytes inRange:range trackingProgress:progressTracker];
-        }
+    NSLog(@"Search in range %@", HFRangeToString(range));
+    if (length > [self length] || length > range.length) return ULLONG_MAX;
+    if (length == 0) {
+        return range.location;
     }
-    return ULLONG_MAX;
+    else if (1 == 1) {
+        return [self _byteSearchRollingHash:findBytes inRange:range forwards:forwards trackingProgress:progressTracker];
+    }
+    else if (length == 1) {
+        unsigned char byte;
+        [findBytes copyBytes:&byte range:HFRangeMake(0, 1)];
+        return [self _byteSearchSingle:byte inRange:range forwards:forwards trackingProgress:progressTracker];
+    }
+    else if (length <= 1<<20) {
+        return [self _byteSearchBoyerMoore:findBytes inRange:range forwards:forwards trackingProgress:progressTracker];
+    }
+    else {
+        return [self _byteSearchRollingHash:findBytes inRange:range forwards:forwards trackingProgress:progressTracker];
+    }
 }
 
 - (BOOL)_debugIsEqual:(HFByteArray *)v {

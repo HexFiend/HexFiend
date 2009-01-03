@@ -31,8 +31,9 @@
 // Indicates that the properties indicated by the given bits did change, and the view should be updated as appropriate.  You may override this for different actions, but you should call super.
 - (void)controllerDidChange:(HFControllerPropertyBits)bits;
 
-// Cover method for NSController
+// Cover methods for NSController
 - (NSUInteger)bytesPerLine;
+- (NSUInteger)bytesPerColumn;
 
 // Returns the maximum number of bytes per line for the given view size.  Representers that don't care should return NSUIntegerMax, which is the default value.
 - (NSUInteger)maximumBytesPerLineForViewWidth:(CGFloat)viewWidth;

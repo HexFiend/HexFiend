@@ -9,7 +9,7 @@
 #import <HexFiend/HFLayoutRepresenter.h>
 
 @interface HFRepresenterLayoutViewInfo : NSObject {
-    @public
+@public
     HFRepresenter *rep;
     NSView *view;
     NSPoint layoutPosition;
@@ -132,22 +132,24 @@ static NSInteger sortByLayoutPosition(id a, id b, void *self) {
 }
 
 - (NSUInteger)_computeBytesPerLineForArraysOfLayoutInfos:(NSArray *)arraysOfLayoutInfos forLayoutInRect:(NSRect)layoutRect {
-    NSUInteger newBytesPerLine = NSUIntegerMax - 1;
+    const NSUInteger bytesPerColumn = [self bytesPerColumn];
+    NSUInteger newNumColumns = (NSUIntegerMax - 1) / bytesPerColumn;
     FOREACH(NSArray *, layoutInfos, arraysOfLayoutInfos) {
-        NSUInteger maxKnownGood = 0, minKnownBad = newBytesPerLine + 1;
+        NSUInteger maxKnownGood = 0, minKnownBad = newNumColumns + 1;
         while (maxKnownGood + 1 < minKnownBad) {
             CGFloat requiredSpace = 0;
-            NSUInteger proposedBytesPerLine = maxKnownGood + (minKnownBad - maxKnownGood)/2;
+            NSUInteger proposedNumColumns = maxKnownGood + (minKnownBad - maxKnownGood)/2;
+            NSUInteger proposedBytesPerLine = proposedNumColumns * bytesPerColumn;
             FOREACH(HFRepresenterLayoutViewInfo *, info, layoutInfos) {
                 requiredSpace += [info->rep minimumViewWidthForBytesPerLine:proposedBytesPerLine];
                 if (requiredSpace > NSWidth(layoutRect)) break;
             }
-            if (requiredSpace > NSWidth(layoutRect)) minKnownBad = proposedBytesPerLine;
-            else maxKnownGood = proposedBytesPerLine;
+            if (requiredSpace > NSWidth(layoutRect)) minKnownBad = proposedNumColumns;
+            else maxKnownGood = proposedNumColumns;
         }
-        newBytesPerLine = maxKnownGood;
+        newNumColumns = maxKnownGood;
     }
-    return MAX(1, newBytesPerLine);
+    return MAX(1, newNumColumns) * bytesPerColumn;
 }
 
 - (BOOL)_anyLayoutInfoIsVerticallyResizable:(NSArray *)vals {
@@ -206,7 +208,7 @@ static NSInteger sortByLayoutPosition(id a, id b, void *self) {
     HFController *controller = [self controller];
     if (! controller) return;
     if (! representers) return;
-
+    
     NSArray *arraysOfLayoutInfos = [self arraysOfLayoutInfos];
     if (! [arraysOfLayoutInfos count]) return;
     
@@ -226,12 +228,12 @@ static NSInteger sortByLayoutPosition(id a, id b, void *self) {
         yPosition += minHeight;
         [self _layoutInfosHorizontally:layoutInfos inRect:layoutRect withBytesPerLine:bytesPerLine];
     }
-
+    
     CGFloat remainingVerticalSpace = NSMaxY(layoutRect) - yPosition;
     if (remainingVerticalSpace > 0) {
         [self _distributeVerticalSpace:remainingVerticalSpace toArraysOfLayoutInfos:arraysOfLayoutInfos];
     }
-
+    
     FOREACH(NSArray *, layoutInfoArray, arraysOfLayoutInfos) {
         FOREACH(HFRepresenterLayoutViewInfo *, info, layoutInfoArray) {
             [info->view setFrame:info->frame];
@@ -300,11 +302,23 @@ static NSInteger sortByLayoutPosition(id a, id b, void *self) {
     return maximizesBytesPerLine;
 }
 
+- (CGFloat)minimumWidthForLayoutInProposedWidth:(CGFloat)proposedWidth {    
+    NSArray *arraysOfLayoutInfos = [self arraysOfLayoutInfos];
+    if (! [arraysOfLayoutInfos count]) return 0;
+
+    NSRect layoutRect = [self boundsRectForLayout];
+    layoutRect.size.width = proposedWidth;
+    
+    NSUInteger bytesPerLine = [self _computeBytesPerLineForArraysOfLayoutInfos:arraysOfLayoutInfos forLayoutInRect:layoutRect];
+    CGFloat newWidth = [self minimumViewWidthForBytesPerLine:bytesPerLine];
+    return newWidth;
+}
+
 - (void)controllerDidChange:(HFControllerPropertyBits)bits {
-	[super controllerDidChange:bits];
-	if (bits & HFControllerViewSizeRatios) {
-		[self performLayout];
-	}
+    [super controllerDidChange:bits];
+    if (bits & HFControllerViewSizeRatios) {
+        [self performLayout];
+    }
 }
 
 @end

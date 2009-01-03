@@ -55,24 +55,45 @@ static const NSTimeInterval HFCaretBlinkFrequency = 0.56;
     return YES;
 }
 
-- (NSPoint)originForCharacterAtIndex:(NSUInteger)index {
+- (NSPoint)originForCharacterAtByteIndex:(NSUInteger)index {
     NSPoint result;
     NSUInteger bytesPerLine = [self bytesPerLine];
     result.y = (index / bytesPerLine - [self verticalOffset]) * [self lineHeight];
-    result.x = [self horizontalContainerInset] + (index % bytesPerLine) * ([self advancePerByte] + [self spaceBetweenBytes]);
+    NSUInteger byteIndexIntoLine = index % bytesPerLine;
+    NSUInteger bytesPerColumn = [self bytesPerColumn];
+    NSUInteger numConsumedColumns = byteIndexIntoLine / bytesPerColumn;
+    result.x = [self horizontalContainerInset] + (index % bytesPerLine) * [self advancePerByte] + numConsumedColumns * [self advanceBetweenColumns];
     return result;
 }
 
 - (NSUInteger)indexOfCharacterAtPoint:(NSPoint)point {
     NSUInteger bytesPerLine = [self bytesPerLine];
+    CGFloat advancePerColumn = [self advancePerColumn];
+    CGFloat advancePerByte = [self advancePerByte];
+    NSUInteger bytesPerColumn = [self bytesPerColumn];
     CGFloat floatRow = (CGFloat)floor([self verticalOffset] + point.y / [self lineHeight]);
-    CGFloat floatColumn = (CGFloat)round((point.x - [self horizontalContainerInset]) / ([self advancePerByte] + [self spaceBetweenBytes]));
-    floatColumn = (CGFloat)fmax(floatColumn, 0); //to handle the case of dragging within the container inset
+    NSUInteger indexWithinRow;
+    
+    // to compute the column, we need to solve for byteIndexIntoLine in something like this: point.x = [self advancePerByte] * byteIndexIntoLine + [self spaceBetweenColumns] * floor(byteIndexIntoLine / [self bytesPerColumn]).  Start by computing the column.
+    CGFloat insetX = point.x - [self horizontalContainerInset];
+    CGFloat floatColumn = insetX / advancePerColumn;
+    if (floatColumn < 0) {
+        //handle the case of dragging within the container inset
+        indexWithinRow = 0;
+    }
+    else {
+        HFASSERT(floatColumn >= 0 && floatColumn <= NSUIntegerMax);
+        CGFloat startOfColumn = advancePerColumn * HFFloor(floatColumn);
+        HFASSERT(startOfColumn <= insetX);
+        CGFloat xOffsetWithinColumn = insetX - startOfColumn;
+        CGFloat byteIndexWithinColumn = xOffsetWithinColumn / advancePerByte; //byteIndexWithinColumn may be larger than bytesPerColumn if the user clicked on the space between columns
+        HFASSERT(byteIndexWithinColumn >= 0 && byteIndexWithinColumn <= NSUIntegerMax);
+        indexWithinRow = bytesPerColumn * (NSUInteger)floatColumn + (NSUInteger)byteIndexWithinColumn; //this may trigger overflow to the next column, but that's OK
+        indexWithinRow = MIN(indexWithinRow, bytesPerLine); //don't let clicking to the right of the line overflow to the next line
+    }
     HFASSERT(floatRow >= 0 && floatRow <= NSUIntegerMax);
-    HFASSERT(floatColumn >= 0 && floatColumn <= NSUIntegerMax);
     NSUInteger row = (NSUInteger)floatRow;
-    NSUInteger column = MIN((NSUInteger)floatColumn, bytesPerLine);
-    return row * bytesPerLine + column;
+    return row * bytesPerLine + indexWithinRow;
 }
 
 - (NSRect)caretRect {
@@ -81,7 +102,7 @@ static const NSTimeInterval HFCaretBlinkFrequency = 0.56;
     NSRange range = [[ranges objectAtIndex:0] rangeValue];
     HFASSERT(range.length == 0);
     
-    NSPoint caretBaseline = [self originForCharacterAtIndex:range.location];
+    NSPoint caretBaseline = [self originForCharacterAtByteIndex:range.location];
     return NSMakeRect(caretBaseline.x - 1, caretBaseline.y, 1, [self lineHeight]);
 }
 
@@ -167,7 +188,7 @@ static const NSTimeInterval HFCaretBlinkFrequency = 0.56;
     NSRect result;
     result.origin.x = NSMinX(bounds);
     result.size.width = NSWidth(bounds);
-    result.origin.y = [self originForCharacterAtIndex:lineRange.location * bytesPerLine].y;
+    result.origin.y = [self originForCharacterAtByteIndex:lineRange.location * bytesPerLine].y;
     result.size.height = [self lineHeight] * lineRange.length;
     return result;
 }
@@ -216,7 +237,7 @@ enum LineCoverage_t {
         if (division == NSUIntegerMax) break;
         
         if (oldParity != newParity) {
-            /* The parities did not match through this entire range, so all intersected lines to the result index set */
+            /* The parities did not match through this entire range, so add all intersected lines to the result index set */
             NSUInteger startLine = currentCharacterIndex / bytesPerLine;
             NSUInteger endLine = HFDivideULRoundingUp(division, bytesPerLine);
             HFASSERT(endLine >= startLine);
@@ -327,7 +348,6 @@ enum LineCoverage_t {
     }
     
     if (lastCaretRectNeedsRedraw) [self setNeedsDisplayInRect:lastDrawnCaretRect];
-    
     [oldSelectedRanges release]; //balance the retain we borrowed from the ivar
     [self _updateCaretTimer];
     [self _forceCaretOnIfHasCaretTimer];
@@ -379,8 +399,11 @@ enum LineCoverage_t {
 		NSWindow *thisWindow = [self window];
 		NSRange firstRange = [[ranges objectAtIndex:0] rangeValue];
 		NSRange lastRange = [[ranges lastObject] rangeValue];
-		NSPoint startPoint = [self originForCharacterAtIndex:firstRange.location];
-		NSPoint endPoint = [self originForCharacterAtIndex:NSMaxRange(lastRange)];
+		NSPoint startPoint = [self originForCharacterAtByteIndex:firstRange.location];
+                // don't just use originForCharacterAtByteIndex:NSMaxRange(lastRange), because if the last selected character is at the end of the line, this will cause us to highlight the next line.  Instead, get the last selected character, and add an advance to it.
+                HFASSERT(lastRange.length > 0);
+                NSPoint endPoint = [self originForCharacterAtByteIndex:NSMaxRange(lastRange) - 1];
+                endPoint.x += [self advancePerByte];
 		HFASSERT(endPoint.y >= startPoint.y);
 		NSRect bounds = [self bounds];
 		NSRect windowFrameInBoundsCoords;
@@ -468,8 +491,8 @@ enum LineCoverage_t {
             while (characterIndex <= endCharacterIndexForRange) {
                 NSUInteger endCharacterIndexForLine = ((characterIndex / bytesPerLine) + 1) * bytesPerLine - 1;
                 NSUInteger endCharacterForThisLineOfRange = MIN(endCharacterIndexForRange, endCharacterIndexForLine);
-                NSPoint startPoint = [self originForCharacterAtIndex:characterIndex];
-                NSPoint endPoint = [self originForCharacterAtIndex:endCharacterForThisLineOfRange];
+                NSPoint startPoint = [self originForCharacterAtByteIndex:characterIndex];
+                NSPoint endPoint = [self originForCharacterAtByteIndex:endCharacterForThisLineOfRange];
                 NSRect selectionRect = NSMakeRect(startPoint.x, startPoint.y, endPoint.x + [self advancePerByte] - startPoint.x, lineHeight);
                 NSRect clippedSelectionRect = NSIntersectionRect(selectionRect, clipRect);
                 if (! NSIsEmptyRect(clippedSelectionRect)) {
@@ -527,6 +550,7 @@ enum LineCoverage_t {
     horizontalContainerInset = 4;
     representer = rep;
     _hftvflags.editable = YES;
+
     return self;
 }
 
@@ -555,7 +579,6 @@ enum LineCoverage_t {
         defaultLineHeight = [manager defaultLineHeightForFont:font];
         [manager release];
         [self setNeedsDisplay:YES];
-        NSLog(@"Set font to %@ (%f)", font, defaultLineHeight);
     }
 }
 
@@ -584,13 +607,14 @@ enum LineCoverage_t {
         }
         else {
             const NSUInteger bytesPerLine = [self bytesPerLine];
-            const CGFloat lineheight = [self lineHeight];
+            const CGFloat lineHeight = [self lineHeight];
             CGFloat vertOffset = [self verticalOffset];
             NSUInteger lastLine = HFDivideULRoundingUp(MAX(oldLength, newLength), bytesPerLine);
-            NSUInteger lastDifferingLine = (lastDifferingIndex == NSNotFound ? lastLine : HFDivideULRoundingUp(lastDifferingIndex, bytesPerLine));
-            CGFloat lastDifferingLineBottom = (lastDifferingLine - vertOffset) * lineheight;
+            /* The +1 is for the following case - if we change the last character, then it may push the caret into the next line (even though there's no text there).  This last line may have a background color, so we need to make it draw if it did not draw before (or vice versa - when deleting the last character which pulls the caret from the last line). */
+            NSUInteger lastDifferingLine = (lastDifferingIndex == NSNotFound ? lastLine : HFDivideULRoundingUp(lastDifferingIndex + 1, bytesPerLine));
+            CGFloat lastDifferingLineBottom = (lastDifferingLine - vertOffset) * lineHeight;
             NSUInteger line = firstDifferingIndex / bytesPerLine;
-            CGFloat yOrigin = (line - vertOffset) * lineheight;
+            CGFloat yOrigin = (line - vertOffset) * lineHeight;
             NSRect bounds = [self bounds];
             NSRect dirtyRect = NSMakeRect(0, yOrigin, NSWidth(bounds), lastDifferingLineBottom - yOrigin);
             [self setNeedsDisplayInRect:dirtyRect];
@@ -660,9 +684,14 @@ enum LineCoverage_t {
 }
 
 - (NSUInteger)bytesPerLine {
+    HFASSERT([self representer] != nil);
     return [[self representer] bytesPerLine];
 }
 
+- (NSUInteger)bytesPerColumn {
+    HFASSERT([self representer] != nil);
+    return [[self representer] bytesPerColumn];
+}
 
 - (void)_drawLineBackgrounds:(NSRect)clip withLineHeight:(CGFloat)lineHeight maxLines:(NSUInteger)maxLines {
     NSRect bounds = [self bounds];
@@ -692,7 +721,7 @@ enum LineCoverage_t {
     
     FREE_ARRAY(lineRects);
     FREE_ARRAY(lineColors);
-}
+}                              
 
 /* Draw vertical guidelines every four bytes */
 - (void)drawVerticalGuideLines:(NSRect)clip {
@@ -700,8 +729,9 @@ enum LineCoverage_t {
     
     NSUInteger bytesPerLine = [self bytesPerLine];
     NSRect bounds = [self bounds];
-    CGFloat spaceAdvancement = [self spaceBetweenBytes];
-    CGFloat advanceAmount = ([self advancePerByte] + spaceAdvancement) * bytesBetweenVerticalGuides;
+    CGFloat advancePerByte = [self advancePerByte];
+    CGFloat spaceAdvancement = advancePerByte / 2;
+    CGFloat advanceAmount = (advancePerByte + spaceAdvancement) * bytesBetweenVerticalGuides;
     CGFloat lineOffset = (CGFloat)(NSMinX(bounds) + [self horizontalContainerInset] + advanceAmount - spaceAdvancement / 2.);
     CGFloat endOffset = NSMaxX(bounds) - [self horizontalContainerInset];
     
@@ -725,11 +755,6 @@ enum LineCoverage_t {
     FREE_ARRAY(lineRects);
 }
 
-- (CGFloat)totalAdvanceForBytesInRange:(NSRange)range {
-    USE(range);
-    UNIMPLEMENTED();
-}
-
 - (NSUInteger)maximumGlyphCountForByteCount:(NSUInteger)byteCount {
     USE(byteCount);
     UNIMPLEMENTED();
@@ -744,9 +769,10 @@ enum LineCoverage_t {
 }
 
 
-- (void)extractGlyphsForBytes:(const unsigned char *)bytes count:(NSUInteger)numBytes intoArray:(CGGlyph *)glyphs advances:(CGSize *)advances resultingGlyphCount:(NSUInteger *)resultGlyphCount {
+- (void)extractGlyphsForBytes:(const unsigned char *)bytes count:(NSUInteger)numBytes offsetIntoLine:(NSUInteger)offsetIntoLine intoArray:(CGGlyph *)glyphs advances:(CGSize *)advances resultingGlyphCount:(NSUInteger *)resultGlyphCount {
     USE(bytes);
     USE(numBytes);
+    USE(offsetIntoLine);
     USE(glyphs);
     USE(advances);
     USE(resultGlyphCount);
@@ -757,12 +783,15 @@ enum LineCoverage_t {
     NSParameterAssert(glyphs != NULL && advances != NULL && restrictingToRanges != nil && bytePtr != NULL);
     NSRange priorIntersectionRange = {NSUIntegerMax, NSUIntegerMax};
     NSUInteger glyphBufferIndex = 0;
+    NSUInteger bytesPerLine = [self bytesPerLine];
     NSUInteger restrictionRangeCount = [restrictingToRanges count];
     for (NSUInteger rangeIndex = 0; rangeIndex < restrictionRangeCount; rangeIndex++) {
 	NSRange inclusionRange = [[restrictingToRanges objectAtIndex:rangeIndex] rangeValue];
 	NSRange intersectionRange = NSIntersectionRange(inclusionRange, byteRange);
 	if (intersectionRange.length == 0) continue;
 	
+        NSUInteger offsetIntoLine = intersectionRange.location % bytesPerLine;
+        
 	NSRange byteRangeToSkip;
 	if (priorIntersectionRange.location == NSUIntegerMax) {
 	    byteRangeToSkip = NSMakeRange(byteRange.location, intersectionRange.location - byteRange.location);
@@ -784,7 +813,7 @@ enum LineCoverage_t {
 	}
 	
 	NSUInteger glyphCountForRange = NSUIntegerMax;
-	[self extractGlyphsForBytes:bytePtr + (intersectionRange.location - byteRange.location) count:intersectionRange.length intoArray:glyphs + glyphBufferIndex advances:advances + glyphBufferIndex resultingGlyphCount:&glyphCountForRange];
+	[self extractGlyphsForBytes:bytePtr + intersectionRange.location count:intersectionRange.length offsetIntoLine:offsetIntoLine intoArray:glyphs + glyphBufferIndex advances:advances + glyphBufferIndex resultingGlyphCount:&glyphCountForRange];
 	HFASSERT(glyphCountForRange != NSUIntegerMax);
 	glyphBufferIndex += glyphCountForRange;
 	priorIntersectionRange = intersectionRange;
@@ -827,7 +856,7 @@ enum LineCoverage_t {
             NSUInteger resultGlyphCount = 0;
 	    CGFloat initialTextOffset = 0;
 	    if (restrictingToRanges == nil) {
-		[self extractGlyphsForBytes:bytePtr + byteIndex count:numBytes intoArray:glyphs advances:advances resultingGlyphCount:&resultGlyphCount];
+		[self extractGlyphsForBytes:bytePtr + byteIndex count:numBytes offsetIntoLine:0 intoArray:glyphs advances:advances resultingGlyphCount:&resultGlyphCount];
 	    }
 	    else {
 		[self extractGlyphsForBytes:bytePtr range:NSMakeRange(byteIndex, numBytes) intoArray:glyphs advances:advances withInclusionRanges:restrictingToRanges initialTextOffset:&initialTextOffset resultingGlyphCount:&resultGlyphCount];
@@ -880,7 +909,7 @@ enum LineCoverage_t {
     
     [self _drawLineBackgrounds:clip withLineHeight:[self lineHeight] maxLines:ll2l(HFRoundUpToNextMultiple(byteCount, bytesPerLine) / bytesPerLine)];
     [self drawSelectionIfNecessaryWithClip:clip];
-    
+
     NSColor *textColor = [NSColor blackColor];
     [textColor set];
     
@@ -893,7 +922,11 @@ enum LineCoverage_t {
         CGContextRestoreGState(ctx);
     }
     
-    [self drawVerticalGuideLines:clip];
+    // Vertical dividers only make sense in single byte mode.
+    if ([self bytesPerColumn] == 1) {
+        [self drawVerticalGuideLines:clip];
+    }
+
     [self drawCaretIfNecessaryWithClip:clip];
 }
 
@@ -924,25 +957,36 @@ enum LineCoverage_t {
     UNIMPLEMENTED();
 }
 
-- (CGFloat)spaceBetweenBytes {
+- (CGFloat)advanceBetweenColumns {
     UNIMPLEMENTED();
+}
+
+- (CGFloat)advancePerColumn {
+    return [self advancePerByte] * [self bytesPerColumn] + [self advanceBetweenColumns];
+}
+
+- (CGFloat)totalAdvanceForBytesInRange:(NSRange)range {
+    if (range.length == 0) return 0;
+    NSUInteger bytesPerColumn = [self bytesPerColumn];
+    HFASSERT([self bytesPerLine] % bytesPerColumn == 0);
+    NSUInteger numColumnSpaces = NSMaxRange(range) / bytesPerColumn - range.location / bytesPerColumn; //note that integer division does not distribute
+    return numColumnSpaces * [self advanceBetweenColumns] + range.length * [self advancePerByte];
 }
 
 - (NSUInteger)maximumBytesPerLineForViewWidth:(CGFloat)viewWidth {
     CGFloat availableSpace = (CGFloat)(viewWidth - 2. * [self horizontalContainerInset]);
-    CGFloat spaceBetweenBytes = [self spaceBetweenBytes];
-    CGFloat advancePerByte = [self advancePerByte];
-    //spaceRequiredForNBytes = N * (advancePerByte + spaceBetweenBytes) - spaceBetweenBytes
-    CGFloat fractionalBytesPerLine = (availableSpace + spaceBetweenBytes) / (advancePerByte + spaceBetweenBytes);
-    return (NSUInteger)fmax(1., floor(fractionalBytesPerLine));
+    CGFloat advancePerColumn = [self advancePerColumn];
+    //spaceRequiredForNColumns = N * (advancePerColumn) - spaceBetweenColumns
+    CGFloat fractionalColumns = (availableSpace + [self advanceBetweenColumns]) / advancePerColumn;
+    NSUInteger columnCount = (NSUInteger)fmax(1., HFFloor(fractionalColumns));
+    return columnCount * [self bytesPerColumn];
 }
 
 
 - (CGFloat)minimumViewWidthForBytesPerLine:(NSUInteger)bytesPerLine {
     HFASSERT(bytesPerLine > 0);
-    CGFloat spaceBetweenBytes = [self spaceBetweenBytes];
-    CGFloat advancePerByte = [self advancePerByte];
-    return (CGFloat)(2. * [self horizontalContainerInset] + bytesPerLine * (advancePerByte + spaceBetweenBytes) - spaceBetweenBytes);
+    HFASSERT(bytesPerLine % [self bytesPerColumn] == 0);
+    return (CGFloat)((2. * [self horizontalContainerInset]) + [self advancePerColumn] * (bytesPerLine / [self bytesPerColumn]) - [self advanceBetweenColumns]);
 }
 
 - (BOOL)isEditable {
@@ -965,13 +1009,16 @@ enum LineCoverage_t {
     [self setNeedsDisplay:YES];
 }
 
-
 - (BOOL)behavesAsTextField {
     return [[self representer] behavesAsTextField];
 }
 
 - (BOOL)showsFocusRing {
     return [[self representer] behavesAsTextField];
+}
+
+- (BOOL)isWithinMouseDown {
+    return _hftvflags.withinMouseDown;
 }
 
 - (void)_windowDidChangeKeyStatus:(NSNotification *)note {
@@ -1012,14 +1059,18 @@ enum LineCoverage_t {
     }
 }
 
-/* When dragging the mouse outside the view's bounds, we want the "closest point" behavior */
-- (NSPoint)pointInBoundsClosestToPoint:(NSPoint)point {
-    NSRect bounds = [self bounds];
-    point.x = HFMax(NSMinX(bounds), point.x);
-    point.x = HFMin(NSMaxX(bounds), point.x);
-    point.y = HFMax(NSMinY(bounds), point.y);
-    point.y = HFMin(NSMaxY(bounds), point.y);
-    return point;
+/* Computes the character at the given index for selection, properly handling the case where the point is outside the bounds */
+- (NSUInteger)characterAtPointForSelection:(NSPoint)point {
+    NSPoint mungedPoint = point;
+    // shift us right by half an advance so that we trigger at the midpoint of each character, rather than at the x origin
+    mungedPoint.x += [self advancePerByte] / (CGFloat)2.;
+    // make sure we're inside the bounds
+    const NSRect bounds = [self bounds];
+    mungedPoint.x = HFMax(NSMinX(bounds), mungedPoint.x);
+    mungedPoint.x = HFMin(NSMaxX(bounds), mungedPoint.x);
+    mungedPoint.y = HFMax(NSMinY(bounds), mungedPoint.y);
+    mungedPoint.y = HFMin(NSMaxY(bounds), mungedPoint.y);
+    return [self indexOfCharacterAtPoint:mungedPoint];
 }
 
 - (void)mouseDown:(NSEvent *)event {
@@ -1027,7 +1078,7 @@ enum LineCoverage_t {
     _hftvflags.withinMouseDown = 1;
     [self _forceCaretOnIfHasCaretTimer];
     NSPoint location = [self convertPoint:[event locationInWindow] fromView:nil];
-    NSUInteger characterIndex = [self indexOfCharacterAtPoint:[self pointInBoundsClosestToPoint:location]];
+    NSUInteger characterIndex = [self characterAtPointForSelection:location];
     characterIndex = MIN(characterIndex, [[self data] length]); //characterIndex may be one beyond the last index, to represent the cursor at the end of the document
     [[self representer] beginSelectionWithEvent:event forCharacterIndex:characterIndex];
     
@@ -1047,7 +1098,7 @@ enum LineCoverage_t {
 - (void)mouseDragged:(NSEvent *)event {
     if (! _hftvflags.withinMouseDown) return;
     NSPoint location = [self convertPoint:[event locationInWindow] fromView:nil];
-    NSUInteger characterIndex = [self indexOfCharacterAtPoint:[self pointInBoundsClosestToPoint:location]];
+    NSUInteger characterIndex = [self characterAtPointForSelection:location];
     characterIndex = MIN(characterIndex, [[self data] length]);
     [[self representer] continueSelectionWithEvent:event forCharacterIndex:characterIndex];    
 }
@@ -1055,7 +1106,7 @@ enum LineCoverage_t {
 - (void)mouseUp:(NSEvent *)event {
     if (! _hftvflags.withinMouseDown) return;
     NSPoint location = [self convertPoint:[event locationInWindow] fromView:nil];
-    NSUInteger characterIndex = [self indexOfCharacterAtPoint:[self pointInBoundsClosestToPoint:location]];
+    NSUInteger characterIndex = [self characterAtPointForSelection:location];
     characterIndex = MIN(characterIndex, [[self data] length]);
     [[self representer] endSelectionWithEvent:event forCharacterIndex:characterIndex];
     _hftvflags.receivedMouseUp = YES;

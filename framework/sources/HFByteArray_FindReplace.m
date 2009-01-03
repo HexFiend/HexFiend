@@ -97,13 +97,35 @@ stage2:
 
 @implementation HFByteArray (HFFindReplace)
 
-- (unsigned long long)_byteSearchForwardsBoyerMoore:(HFByteArray *)findBytes inRange:(const HFRange)range trackingProgress:(HFProgressTracker *)progressTracker {
+- (void)_copyBytes:(unsigned char *)bytes range:(HFRange)range forwards:(BOOL)forwards inEnclosingRange:(HFRange)enclosingRange {
+    if (forwards) {
+        [self copyBytes:bytes range:range];
+    }
+    else {
+        /* Copy backwards - from the end, and then invert the bytes */
+        unsigned long long endEnclosingRange = HFMaxRange(enclosingRange);
+        HFASSERT(HFMaxRange(range) <= endEnclosingRange);
+        HFRange invertedRange = HFRangeMake(endEnclosingRange - range.length - range.location, range.length);
+        [self copyBytes:bytes range:invertedRange];
+        /* Reverse the bytes */
+        NSUInteger i, max = ll2l(invertedRange.length);
+        NSUInteger mid = max / 2;
+        for (i=0; i < mid; i++) {
+            unsigned char temp = bytes[i];
+            bytes[i] = bytes[max - 1 - i];
+            bytes[max - 1 - i] = temp;
+        }
+    }
+}
+
+- (unsigned long long)_byteSearchBoyerMoore:(HFByteArray *)findBytes inRange:(const HFRange)range forwards:(BOOL)forwards trackingProgress:(HFProgressTracker *)progressTracker {
     unsigned long long result = ULLONG_MAX;
     unsigned char *needle = NULL, *haystack = NULL;
     unsigned long *match_jump = NULL;
     unsigned long long tempProgressValue = 0;
+    int tempCancelRequested = 0;
     volatile unsigned long long * const progressValuePtr = (progressTracker ? &progressTracker->currentProgress : &tempProgressValue);
-    volatile int *cancelRequested = &progressTracker->cancelRequested;
+    volatile int *cancelRequested = progressTracker ? &progressTracker->cancelRequested : &tempCancelRequested;
     if (*cancelRequested) goto cancelled;
     unsigned long needle_length = ll2l([findBytes length]);
     needle = malloc(needle_length);
@@ -111,7 +133,7 @@ stage2:
 	NSLog(@"Out of memory allocating %lu bytes", needle_length);
 	return ULLONG_MAX;
     }
-    [findBytes copyBytes:needle range:HFRangeMake(0, needle_length)];
+    [findBytes _copyBytes:needle range:HFRangeMake(0, needle_length) forwards:forwards inEnclosingRange:HFRangeMake(0, needle_length)];
     if (*cancelRequested) goto cancelled;
 
     const unsigned long long total_haystack_length = range.length;
@@ -194,11 +216,19 @@ stage2:
     /* start the search */
     if (! search_with_chunks) {
 	unsigned long haystack_length = ll2l(total_haystack_length);
-	[self copyBytes:haystack range:range];
+	[self _copyBytes:haystack range:range forwards:forwards inEnclosingRange:range];
 	unsigned char *search_result = boyer_moore_helper(haystack, needle, haystack_length, needle_length, char_jump, match_jump);
         HFAtomicAdd64(haystack_length, (int64_t *)progressValuePtr);
-	if (search_result == NULL) result = ULLONG_MAX;
-	else result = range.location + (search_result - haystack);
+	if (search_result == NULL) {
+            result = ULLONG_MAX;
+        }
+	else {
+            result = range.location + (search_result - haystack);
+            /* Compensate for the reversing that _copyBytes does when searching backwards */
+            if (! forwards) {
+                result = HFMaxRange(range) - result - needle_length;
+            }
+        }
     }
     else {
 	unsigned char * const base_read_in_location = haystack + needle_length_rounded_up_to_page_size;
@@ -209,11 +239,17 @@ stage2:
 	/* start us off */
 	HFRange search_range = remaining_range;
 	if (search_range.length > SEARCH_CHUNK_SIZE) search_range.length = SEARCH_CHUNK_SIZE;
-	[self copyBytes:base_read_in_location range:search_range];
+	[self _copyBytes:base_read_in_location range:search_range forwards:forwards inEnclosingRange:range];
 	unsigned char *search_result = boyer_moore_helper(base_read_in_location, needle, SEARCH_CHUNK_SIZE, needle_length, char_jump, match_jump);
         if (*cancelRequested) goto cancelled;
         HFAtomicAdd64(search_range.length, (int64_t *)progressValuePtr);
-	if (search_result) result = search_range.location + (search_result - base_read_in_location);
+	if (search_result) {
+            result = search_range.location + (search_result - base_read_in_location);
+            /* Compensate for the reversing that _copyBytes does when searching backwards */
+            if (! forwards) {
+                result = HFMaxRange(range) - result - needle_length;
+            }            
+        }
 	else {
 	    result = ULLONG_MAX;
 	    remaining_range.location += search_range.length - needle_length;
@@ -227,13 +263,17 @@ stage2:
 		copy_range.location += llmin(copy_range.length, needle_length);
 		copy_range.length -= llmin(copy_range.length, needle_length);
 		
-		if (copy_range.length) [self copyBytes:base_read_in_location range:copy_range];
+		if (copy_range.length) [self _copyBytes:base_read_in_location range:copy_range forwards:forwards inEnclosingRange:range];
 		
 		search_result = boyer_moore_helper(base_copy_location, needle, ll2l(search_range.length), needle_length, char_jump, match_jump);
                 if (*cancelRequested) goto cancelled;
                 HFAtomicAdd64(search_range.length, (int64_t *)progressValuePtr);
 		if (search_result) {
 		    result = search_range.location + (search_result - base_copy_location);
+                    /* Compensate for the reversing that _copyBytes does when searching backwards */
+                    if (! forwards) {
+                        result = HFMaxRange(range) - result - needle_length;
+                    }
 		    break;
 		}
 		else {
@@ -252,7 +292,7 @@ cancelled:
     return result;
 }
 
-- (unsigned long long)_byteSearchForwardsSingle:(unsigned char)byte inRange:(const HFRange)range trackingProgress:(HFProgressTracker *)progressTracker {
+- (unsigned long long)_byteSearchSingle:(unsigned char)byte inRange:(const HFRange)range forwards:(BOOL)forwards trackingProgress:(HFProgressTracker *)progressTracker {
     unsigned long long tempProgressValue = 0;
     unsigned long long result = ULLONG_MAX;
     volatile unsigned long long * const progressValuePtr = (progressTracker ? &progressTracker->currentProgress : &tempProgressValue);
@@ -263,11 +303,16 @@ cancelled:
     while (remainingRange.length > 0) {
         if (*cancelRequested) goto cancelled;
         NSUInteger lengthToCopy = ll2l(MIN(remainingRange.length, sizeof buff));
-        [self copyBytes:buff range:HFRangeMake(remainingRange.location, lengthToCopy)];
+        [self _copyBytes:buff range:HFRangeMake(remainingRange.location, lengthToCopy) forwards:forwards inEnclosingRange:range];
         if (*cancelRequested) goto cancelled;
         unsigned char *resultPtr = HFFastMemchr(buff, byte, lengthToCopy);
         if (resultPtr) {
             result = HFSum((resultPtr - buff), remainingRange.location);
+            if (! forwards) {
+                /* Because we reversed everything while searching, our result itself is reversed; so reverse it again */
+                HFASSERT(result < HFMaxRange(range));
+                result = HFMaxRange(range) - result - 1/*found range length*/;
+            }
             break;
         }
         remainingRange.location = HFSum(remainingRange.location, lengthToCopy);
@@ -280,4 +325,168 @@ cancelled:
     return ULLONG_MAX;
 }
 
+#define ROLLING_HASH_BASE 269
+#define ROLLING_HASH_INIT 0
+typedef NSUInteger RollingHash_t;
+
+static inline RollingHash_t hash_bytes(const unsigned char *bytes, NSUInteger length, RollingHash_t initial) {
+    RollingHash_t result = initial;
+    NSUInteger i;
+    for (i=0; i < length; i++) {
+        result = result * ROLLING_HASH_BASE + bytes[i];
+    }
+    return result;
+}
+
+static RollingHash_t hash_byte_array(HFByteArray *bytes, HFRange rangeToHash, BOOL forwards, HFRange enclosingRange, const volatile int *cancelRequested) {
+    NSCParameterAssert(bytes != NULL);
+    HFRange remainingRange = rangeToHash;
+    RollingHash_t hash = ROLLING_HASH_INIT;
+    while (remainingRange.length) {
+        if (*cancelRequested) break;
+        unsigned char buff[SEARCH_CHUNK_SIZE];
+        NSUInteger lengthToCopy = ll2l(MIN(remainingRange.length, sizeof buff));
+        [bytes _copyBytes:buff range:HFRangeMake(remainingRange.location, lengthToCopy) forwards:forwards inEnclosingRange:enclosingRange];
+        remainingRange.length -= lengthToCopy;
+        remainingRange.location += lengthToCopy;
+        hash = hash_bytes(buff, lengthToCopy, hash);
+    }
+    return hash;
+}
+
+static RollingHash_t find_power(RollingHash_t base, unsigned long long exponent) {
+    if (exponent == 0) return 1;
+    else if ((exponent & 1) == 0) return find_power(base * base, exponent >> 1); // x^(2n) = (x^2)^n
+    else return base * find_power(base, exponent ^ 1); // x^(2n + 1) = x * x^(2n)
+}
+
+static BOOL matchOccursAtIndex(HFByteArray *needle, HFByteArray *haystack, HFRange haystackRange) {
+    HFASSERT(needle != NULL);
+    HFASSERT(haystack != NULL);
+    HFASSERT(haystackRange.length == [needle length]);
+    HFRange needleRange = HFRangeMake(0, haystackRange.length);
+    BOOL result = YES;
+    while (needleRange.length > 0) {
+        unsigned char needleBuff[SEARCH_CHUNK_SIZE], haystackBuff[SEARCH_CHUNK_SIZE];
+        NSUInteger amountToCopy = ll2l(MIN(needleRange.length, sizeof needleBuff));
+        [needle copyBytes:needleBuff range:HFRangeMake(needleRange.location, amountToCopy)];
+        [haystack copyBytes:haystackBuff range:HFRangeMake(haystackRange.location, amountToCopy)];
+        if (memcmp(needleBuff, haystackBuff, amountToCopy)) {
+            result = NO;
+            break;
+        }
+        needleRange.location += amountToCopy;
+        haystackRange.location += amountToCopy;
+        needleRange.length -= amountToCopy;
+        haystackRange.length -= amountToCopy;
+    }
+    return result;
+}
+
+- (unsigned long long)_byteSearchRollingHash:(HFByteArray *)findBytes inRange:(const HFRange)range forwards:(BOOL)forwards trackingProgress:(HFProgressTracker *)progressTracker {
+    const unsigned long long needleLength = [findBytes length];
+    unsigned long long tempProgressValue = 0;
+    int tempCancelRequested = 0;
+    volatile unsigned long long * const progressValuePtr = (progressTracker ? &progressTracker->currentProgress : &tempProgressValue);
+    volatile int *cancelRequested = progressTracker ? &progressTracker->cancelRequested : &tempCancelRequested;
+    HFASSERT(range.length >= needleLength);    
+    const RollingHash_t needleHash = hash_byte_array(findBytes, HFRangeMake(0, needleLength), forwards, HFRangeMake(0, needleLength), cancelRequested);
+    if (*cancelRequested) goto cancelled;
+    
+    const RollingHash_t hashPower = find_power(ROLLING_HASH_BASE, needleLength);
+    unsigned char trailingChunk[SEARCH_CHUNK_SIZE], leadingChunk[SEARCH_CHUNK_SIZE];
+    unsigned long long result = ULLONG_MAX;
+    
+    /* Prime the hash */
+    RollingHash_t rollingHash = hash_byte_array(self, HFRangeMake(range.location, needleLength), forwards, range, cancelRequested);
+    if (*cancelRequested) goto cancelled;
+    
+    HFRange remainingRange = HFRangeMake(HFSum(range.location, needleLength), range.length - needleLength);
+    /* Start the hashing */
+    while (remainingRange.length > 0 && result == ULLONG_MAX) {
+        NSUInteger bufferIndex, amountToCopy = ll2l(MIN(sizeof leadingChunk, remainingRange.length));
+        [self _copyBytes:leadingChunk range:HFRangeMake(remainingRange.location, amountToCopy) forwards:forwards inEnclosingRange:range];
+        if (*cancelRequested) goto cancelled;
+        
+        [self _copyBytes:trailingChunk range:HFRangeMake(remainingRange.location - needleLength, amountToCopy) forwards:forwards inEnclosingRange:range];
+        if (*cancelRequested) goto cancelled;
+        
+        for (bufferIndex = 0; bufferIndex < amountToCopy; ) {
+            if (rollingHash == needleHash) {
+                unsigned long long proposedResult = HFSum(remainingRange.location, bufferIndex) - needleLength;
+                if (! forwards) {
+                    proposedResult = HFMaxRange(range) - proposedResult - needleLength;
+                }
+                if (matchOccursAtIndex(findBytes, self, HFRangeMake(proposedResult, needleLength))) {
+                    result = proposedResult;
+                    break;
+                }
+            }
+            /* Compute the next hash */
+            unsigned char trailingChar = trailingChunk[bufferIndex];
+            rollingHash = rollingHash * ROLLING_HASH_BASE + leadingChunk[bufferIndex++] - hashPower * (RollingHash_t)trailingChar;
+#if ! NDEBUG
+            //if (random() % 200 == 0) HFASSERT(rollingHash == hash_byte_array(self, HFRangeMake(remainingRange.location + bufferIndex - needleLength, needleLength), forwards, range, &tempCancelRequested));
+#endif
+        }
+        HFAtomicAdd64(amountToCopy, (int64_t *)progressValuePtr);
+        remainingRange.location += amountToCopy;
+        remainingRange.length -= amountToCopy;
+        if (*cancelRequested) goto cancelled;
+    }
+    return result;
+    
+cancelled:
+    return ULLONG_MAX;
+}
+
+- (unsigned long long)_byteSearchNaive:(HFByteArray *)findBytes inRange:(const HFRange)range forwards:(BOOL)forwards trackingProgress:(HFProgressTracker *)progressTracker {
+    USE(progressTracker);
+    unsigned long long i;
+    const unsigned long long needleLength = [findBytes length];
+    const unsigned long long end = range.length - needleLength + 1;
+    if (forwards) {
+        for (i=0; i < end; i++) {
+            if (matchOccursAtIndex(findBytes, self, HFRangeMake(range.location + i, needleLength))) return i + range.location;
+        }
+    }
+    else {
+        i = end;
+        while (i--) {
+            if (matchOccursAtIndex(findBytes, self, HFRangeMake(range.location + i, needleLength))) return i + range.location;
+        }
+    }
+    return ULLONG_MAX;
+}
+
+#if HFUNIT_TESTS
+
+#define HFTEST(a) do { if (! (a)) { printf("Test failed on line %u of file %s: %s\n", __LINE__, __FILE__, #a); exit(0); } } while (0)
+
++ (void)_testSearchAlgorithmsLookingForArray:(HFByteArray *)needle inArray:(HFByteArray *)haystack {
+    HFRange fullRange = HFRangeMake(0, [haystack length]);
+    HFRange partialRange = HFRangeMake(fullRange.location + 10, fullRange.length - 10);
+    unsigned long long result1, result2;
+    
+    //result1 = [haystack _byteSearchBoyerMoore:needle inRange:fullRange forwards:YES trackingProgress:nil];
+    //result2 = [haystack _byteSearchRollingHash:needle inRange:fullRange forwards:YES trackingProgress:nil];
+    //HFTEST(result1 == result2);
+    
+    result1 = [haystack _byteSearchBoyerMoore:needle inRange:fullRange forwards:NO trackingProgress:nil];
+    result2 = [haystack _byteSearchRollingHash:needle inRange:fullRange forwards:NO trackingProgress:nil];
+    HFTEST(result1 == result2);    
+    
+    //result1 = [haystack _byteSearchBoyerMoore:needle inRange:partialRange forwards:YES trackingProgress:nil];
+    //result2 = [haystack _byteSearchRollingHash:needle inRange:partialRange forwards:YES trackingProgress:nil];
+    //HFTEST(result1 == result2);
+    
+    result1 = [haystack _byteSearchBoyerMoore:needle inRange:partialRange forwards:NO trackingProgress:nil];
+    result2 = [haystack _byteSearchRollingHash:needle inRange:partialRange forwards:NO trackingProgress:nil];
+    HFTEST(result1 == result2);    
+    
+}
+
+#endif
+
 @end
+

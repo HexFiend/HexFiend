@@ -115,48 +115,49 @@
     [self generateGlyphTable];
 }
 
-- (void)extractGlyphsForBytes:(const unsigned char *)bytes count:(NSUInteger)numBytes intoArray:(CGGlyph *)glyphs advances:(CGSize *)advances resultingGlyphCount:(NSUInteger *)resultGlyphCount {
+- (void)extractGlyphsForBytes:(const unsigned char *)bytes count:(NSUInteger)numBytes offsetIntoLine:(NSUInteger)offsetIntoLine intoArray:(CGGlyph *)glyphs advances:(CGSize *)advances resultingGlyphCount:(NSUInteger *)resultGlyphCount {
     HFASSERT(bytes != NULL);
     HFASSERT(glyphs != NULL);
     HFASSERT(numBytes <= NSUIntegerMax);
     HFASSERT(resultGlyphCount != NULL);
+    const NSUInteger bytesPerColumn = [self bytesPerColumn];
     NSUInteger glyphIndex = 0, byteIndex = 0;
+    NSUInteger remainingBytesInThisColumn = bytesPerColumn - offsetIntoLine % bytesPerColumn;
+    CGFloat advanceBetweenColumns = [self advanceBetweenColumns];
     while (byteIndex < numBytes) {
         unsigned char byte = bytes[byteIndex++];
+        
+        CGFloat glyphAdvancementPlusAnySpace = glyphAdvancement;
+        if (--remainingBytesInThisColumn == 0) {
+            remainingBytesInThisColumn = bytesPerColumn;
+            glyphAdvancementPlusAnySpace += advanceBetweenColumns;
+        }
+        
         if (ligatureTable[byte] != 0) {
-	    advances[glyphIndex] = CGSizeMake(glyphAdvancement + spaceAdvancement, 0);
+            advances[glyphIndex] = CGSizeMake(glyphAdvancementPlusAnySpace, 0);
             glyphs[glyphIndex++] = ligatureTable[byte];
         }
         else {
-	    advances[glyphIndex] = CGSizeMake(glyphAdvancement, 0);
+            advances[glyphIndex] = CGSizeMake(glyphAdvancement, 0);
             glyphs[glyphIndex++] = glyphTable[byte >> 4];
-	    advances[glyphIndex] = CGSizeMake(glyphAdvancement + spaceAdvancement, 0);
+            advances[glyphIndex] = CGSizeMake(glyphAdvancementPlusAnySpace, 0);
             glyphs[glyphIndex++] = glyphTable[byte & 0xF];
         }
     }
+    
     *resultGlyphCount = glyphIndex;
-}
-
-- (CGFloat)spaceBetweenBytes {
-    return spaceAdvancement;
 }
 
 - (CGFloat)advancePerByte {
     return 2 * glyphAdvancement;
 }
 
-- (CGFloat)totalAdvanceForBytesInRange:(NSRange)range {
-    return range.length * (2 * glyphAdvancement + spaceAdvancement);
+- (CGFloat)advanceBetweenColumns {
+    return glyphAdvancement;
 }
 
 - (NSUInteger)maximumGlyphCountForByteCount:(NSUInteger)byteCount {
     return 2 * byteCount;
-}
-
-- (NSRect)caretRect {
-    NSRect result = [super caretRect];
-    result.origin.x -= spaceAdvancement / 2;
-    return result;
 }
 
 @end

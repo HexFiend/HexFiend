@@ -23,7 +23,8 @@ NSString *const HFLineCountingRepresenterMinimumViewWidthChanged = @"HFLineCount
 }
 
 - (NSView *)createView {
-    NSView *result = [[HFLineCountingView alloc] initWithFrame:NSMakeRect(0, 0, 60, 10)];
+    HFLineCountingView *result = [[HFLineCountingView alloc] initWithFrame:NSMakeRect(0, 0, 60, 10)];
+    [result setRepresenter:self];
     [result setAutoresizingMask:NSViewHeightSizable];
     return result;
 }
@@ -116,6 +117,10 @@ NSString *const HFLineCountingRepresenterMinimumViewWidthChanged = @"HFLineCount
 - (CGFloat)minimumViewWidthForBytesPerLine:(NSUInteger)bytesPerLine {
     USE(bytesPerLine);
     return [self preferredWidth];
+}
+
+- (void)cycleLineNumberFormat {
+    
 }
 
 - (void)initializeView {

@@ -527,4 +527,16 @@ static inline int common_prefix_length(const char *a, const char *b) {
     [textContainer setContainerSize:NSMakeSize([self bounds].size.width, [textContainer containerSize].height)];
 }
 
+- (void)mouseDown:(NSEvent *)event {
+    [representer cycleLineNumberFormat];
+}
+
+- (void)setRepresenter:(HFLineCountingRepresenter *)rep {
+    representer = rep;
+}
+
+- (HFLineCountingRepresenter *)representer {
+    return representer;
+}
+
 @end

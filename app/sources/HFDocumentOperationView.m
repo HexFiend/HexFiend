@@ -122,7 +122,7 @@ static NSString *sNibName;
 - (NSString *)viewNameFromSelector:(SEL)sel {
     HFASSERT([self selectorIsSetMethod:sel]);
     char *selName = strdup(3 + sel_getName(sel));
-    if (! selName) [NSException raise:NSMallocException format:@"strup failed"];
+    if (! selName) [NSException raise:NSMallocException format:@"strdup failed"];
     selName[0] = tolower(selName[0]);
     NSString *result = [[[NSString alloc] initWithBytesNoCopy:selName length:strlen(selName) - 1 encoding:NSMacOSRomanStringEncoding freeWhenDone:YES] autorelease];
     return result;

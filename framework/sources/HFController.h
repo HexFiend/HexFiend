@@ -20,11 +20,12 @@ enum
     HFControllerSelectedRanges = 1 << 3,
     HFControllerSelectionPulseAmount = 1 << 4,
     HFControllerBytesPerLine = 1 << 5,
-    HFControllerEditable = 1 << 6,
-    HFControllerFont = 1 << 7,
-    HFControllerAntialias = 1 << 8,
-    HFControllerLineHeight = 1 << 9,
-    HFControllerViewSizeRatios = 1 << 10 /* Indicates that the optimum size for each view may have changed; used by HFLayoutController after font changes. */
+    HFControllerBytesPerColumn = 1 << 6,
+    HFControllerEditable = 1 << 7,
+    HFControllerFont = 1 << 8,
+    HFControllerAntialias = 1 << 9,
+    HFControllerLineHeight = 1 << 10,
+    HFControllerViewSizeRatios = 1 << 11 /* Indicates that the optimum size for each view may have changed; used by HFLayoutController after font changes. */
 };
 typedef NSUInteger HFControllerPropertyBits;
 
@@ -60,6 +61,7 @@ typedef NSInteger HFControllerMovementGranularity;
     HFRange displayedContentsRange;
     HFFPRange displayedLineRange;
     NSUInteger bytesPerLine;
+    NSUInteger bytesPerColumn;
     NSFont *font;
     CGFloat lineHeight;
     
@@ -211,5 +213,9 @@ typedef NSInteger HFControllerMovementGranularity;
 
 /* Replaces the entire byte array with a new one, preserving as much of the selection as possible. */
 - (void)replaceByteArray:(HFByteArray *)newArray;
+
+/* Determines how many bytes are used in each column for a text view. */
+- (void)setBytesPerColumn:(NSUInteger)val;
+- (NSUInteger)bytesPerColumn;
 
 @end

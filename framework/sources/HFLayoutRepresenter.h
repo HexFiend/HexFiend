@@ -30,4 +30,7 @@
 - (void)setMaximizesBytesPerLine:(BOOL)val;
 - (BOOL)maximizesBytesPerLine;
 
+/* Returns the smallest width that produces the same layout (and, if maximizes bytesPerLine, the same bytes per line) as the proposed width. */
+- (CGFloat)minimumWidthForLayoutInProposedWidth:(CGFloat)proposedWidth;
+
 @end

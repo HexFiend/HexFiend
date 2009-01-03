@@ -15,8 +15,4 @@
 
 - init;
 
-#ifndef NDEBUG
-- (BOOL)offsetsAreCorrect;
-#endif
-
 @end

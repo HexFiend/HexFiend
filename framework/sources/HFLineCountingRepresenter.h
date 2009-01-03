@@ -8,11 +8,17 @@
 
 #import <HexFiend/HFRepresenter.h>
 
+enum {
+    HFLineNumberFormatDecimal,
+    HFLineNumberFormatHexadecimal,
+    HFLineNumberFormatMAXIMUM
+};
 
 @interface HFLineCountingRepresenter : HFRepresenter {
     CGFloat lineHeight;
     NSUInteger digitsToRepresentContentsLength;
     NSUInteger minimumDigitCount;
+    NSUInteger lineNumberFormat;
     CGFloat preferredWidth;
     CGFloat digitAdvance;
 }
@@ -22,6 +28,8 @@
 - (NSUInteger)minimumDigitCount;
 
 - (CGFloat)preferredWidth;
+
+- (void)cycleLineNumberFormat;
 
 @end
 
