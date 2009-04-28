@@ -102,18 +102,30 @@ stage2:
         [self copyBytes:bytes range:range];
     }
     else {
-        /* Copy backwards - from the end, and then invert the bytes */
         unsigned long long endEnclosingRange = HFMaxRange(enclosingRange);
         HFASSERT(HFMaxRange(range) <= endEnclosingRange);
         HFRange invertedRange = HFRangeMake(endEnclosingRange - range.length - range.location, range.length);
-        [self copyBytes:bytes range:invertedRange];
-        /* Reverse the bytes */
-        NSUInteger i, max = ll2l(invertedRange.length);
-        NSUInteger mid = max / 2;
-        for (i=0; i < mid; i++) {
-            unsigned char temp = bytes[i];
-            bytes[i] = bytes[max - 1 - i];
-            bytes[max - 1 - i] = temp;
+        
+        if (0 && invertedRange.length <= SEARCH_CHUNK_SIZE) {
+            /* Copy to a temporary buffer, then reverse to the output buffer */
+            unsigned char tempBuffer[SEARCH_CHUNK_SIZE];
+            NSUInteger index = ll2l(invertedRange.length);
+            [self copyBytes:tempBuffer range:invertedRange];
+            while (index--) {
+                *bytes++ = tempBuffer[index];
+            }
+        }
+        else {
+            /* Copy backwards - from the end, and then invert the bytes */
+            [self copyBytes:bytes range:invertedRange];
+            /* Reverse the bytes */
+            NSUInteger i, max = ll2l(invertedRange.length);
+            NSUInteger mid = max / 2;
+            for (i=0; i < mid; i++) {
+                unsigned char temp = bytes[i];
+                bytes[i] = bytes[max - 1 - i];
+                bytes[max - 1 - i] = temp;
+            }
         }
     }
 }
@@ -468,17 +480,17 @@ cancelled:
     HFRange partialRange = HFRangeMake(fullRange.location + 10, fullRange.length - 10);
     unsigned long long result1, result2;
     
-    //result1 = [haystack _byteSearchBoyerMoore:needle inRange:fullRange forwards:YES trackingProgress:nil];
-    //result2 = [haystack _byteSearchRollingHash:needle inRange:fullRange forwards:YES trackingProgress:nil];
-    //HFTEST(result1 == result2);
+    result1 = [haystack _byteSearchBoyerMoore:needle inRange:fullRange forwards:YES trackingProgress:nil];
+    result2 = [haystack _byteSearchRollingHash:needle inRange:fullRange forwards:YES trackingProgress:nil];
+    HFTEST(result1 == result2);
     
     result1 = [haystack _byteSearchBoyerMoore:needle inRange:fullRange forwards:NO trackingProgress:nil];
     result2 = [haystack _byteSearchRollingHash:needle inRange:fullRange forwards:NO trackingProgress:nil];
     HFTEST(result1 == result2);    
     
-    //result1 = [haystack _byteSearchBoyerMoore:needle inRange:partialRange forwards:YES trackingProgress:nil];
-    //result2 = [haystack _byteSearchRollingHash:needle inRange:partialRange forwards:YES trackingProgress:nil];
-    //HFTEST(result1 == result2);
+    result1 = [haystack _byteSearchBoyerMoore:needle inRange:partialRange forwards:YES trackingProgress:nil];
+    result2 = [haystack _byteSearchRollingHash:needle inRange:partialRange forwards:YES trackingProgress:nil];
+    HFTEST(result1 == result2);
     
     result1 = [haystack _byteSearchBoyerMoore:needle inRange:partialRange forwards:NO trackingProgress:nil];
     result2 = [haystack _byteSearchRollingHash:needle inRange:partialRange forwards:NO trackingProgress:nil];

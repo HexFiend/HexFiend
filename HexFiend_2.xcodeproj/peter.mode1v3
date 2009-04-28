@@ -229,8 +229,6 @@
 			<key>Layout</key>
 			<array>
 				<dict>
-					<key>BecomeActive</key>
-					<true/>
 					<key>ContentConfiguration</key>
 					<dict>
 						<key>PBXBottomSmartGroupGIDs</key>
@@ -315,7 +313,7 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>HexFiend_2_Framework_Prefix.pch</string>
+								<string>HFByteArray_FileWriting.m</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -323,18 +321,17 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>HexFiend_2_Framework_Prefix.pch</string>
+										<string>HFByteArray_FileWriting.m</string>
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>D0D319160F0F5CAA008AD92F</string>
+										<string>D0D319660F1273AA008AD92F</string>
 										<key>history</key>
 										<array>
 											<string>D0029E7A0E8104CC00AA9E42</string>
 											<string>D0029E7B0E8104CC00AA9E42</string>
 											<string>D0A3199D0E83A47600A95B45</string>
 											<string>D0A319CD0E83A69300A95B45</string>
-											<string>D08C90D90E83B96200D75710</string>
 											<string>D08C91060E83BB7700D75710</string>
 											<string>D08C914C0E83C2A900D75710</string>
 											<string>D0CF22290E83C84F00FA9981</string>
@@ -369,7 +366,6 @@
 											<string>D08E943C0F0C84790001FA84</string>
 											<string>D08E952B0F0C99C10001FA84</string>
 											<string>D08E952C0F0C99C10001FA84</string>
-											<string>D08E95690F0D58AE0001FA84</string>
 											<string>D08E956A0F0D58AE0001FA84</string>
 											<string>D08E95990F0D5B940001FA84</string>
 											<string>D081DBA90F0D84D300F66150</string>
@@ -386,7 +382,6 @@
 											<string>D081DDF20F0E76C200F66150</string>
 											<string>D081DE4A0F0E7C5900F66150</string>
 											<string>D081DE4B0F0E7C5900F66150</string>
-											<string>D081DEB20F0E837D00F66150</string>
 											<string>D081DEB30F0E837D00F66150</string>
 											<string>D081DEB40F0E837D00F66150</string>
 											<string>D081DEB50F0E837D00F66150</string>
@@ -399,7 +394,10 @@
 											<string>D0D319100F0F5CAA008AD92F</string>
 											<string>D0D319110F0F5CAA008AD92F</string>
 											<string>D0D319120F0F5CAA008AD92F</string>
-											<string>D0D3190B0F0F5C9D008AD92F</string>
+											<string>D0D319390F11BA15008AD92F</string>
+											<string>D0D3194D0F11BAE7008AD92F</string>
+											<string>D0D3194E0F11BAE7008AD92F</string>
+											<string>D0D3194F0F11BAE7008AD92F</string>
 										</array>
 										<key>prevStack</key>
 										<array>
@@ -483,6 +481,9 @@
 											<string>D0D319130F0F5CAA008AD92F</string>
 											<string>D0D319140F0F5CAA008AD92F</string>
 											<string>D0D319150F0F5CAA008AD92F</string>
+											<string>D0D3193B0F11BA15008AD92F</string>
+											<string>D0D319500F11BAE7008AD92F</string>
+											<string>D0D319510F11BAE7008AD92F</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -504,6 +505,8 @@
 							<string>176pt</string>
 						</dict>
 						<dict>
+							<key>BecomeActive</key>
+							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
@@ -678,15 +681,15 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>D0D319170F0F5CAA008AD92F</string>
 		<string>D0D318B90F0F5626008AD92F</string>
 		<string>1C530D57069F1CE1000CFCEE</string>
 		<string>D0D316FC0F0F1148008AD92F</string>
 		<string>D0D316FD0F0F1148008AD92F</string>
 		<string>1CD10A99069EF8BA00B06720</string>
 		<string>D0560B2F0CDC421E009D2484</string>
-		<string>1C78EAAD065D492600B07095</string>
 		<string>/Users/peter/HexFiend2/trunk/HexFiend_2/HexFiend_2.xcodeproj</string>
+		<string>D0D319540F11BAE7008AD92F</string>
+		<string>1C78EAAD065D492600B07095</string>
 	</array>
 	<key>WindowString</key>
 	<string>187 146 1102 632 0 0 1280 778 </string>
@@ -727,8 +730,6 @@
 							<string>259pt</string>
 						</dict>
 						<dict>
-							<key>BecomeActive</key>
-							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXBuildLogTranscriptExpandedDefaultKey</key>
@@ -1062,7 +1063,7 @@
 			<key>WindowToolGUID</key>
 			<string>1C78EAAD065D492600B07095</string>
 			<key>WindowToolIsVisible</key>
-			<false/>
+			<true/>
 		</dict>
 		<dict>
 			<key>Identifier</key>

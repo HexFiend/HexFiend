@@ -101,13 +101,9 @@
 
 - (unsigned long long)indexOfBytesEqualToBytes:(HFByteArray *)findBytes inRange:(HFRange)range searchingForwards:(BOOL)forwards trackingProgress:(HFProgressTracker *)progressTracker {
     unsigned long long length = [findBytes length];
-    NSLog(@"Search in range %@", HFRangeToString(range));
     if (length > [self length] || length > range.length) return ULLONG_MAX;
     if (length == 0) {
         return range.location;
-    }
-    else if (1 == 1) {
-        return [self _byteSearchRollingHash:findBytes inRange:range forwards:forwards trackingProgress:progressTracker];
     }
     else if (length == 1) {
         unsigned char byte;
