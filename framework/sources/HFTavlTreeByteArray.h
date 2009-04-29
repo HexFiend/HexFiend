@@ -8,7 +8,6 @@
 
 #import <HexFiend/HFByteArray.h>
 
-
 @interface HFTavlTreeByteArray : HFByteArray {
     __strong struct tavltree *tree;
 }

@@ -67,6 +67,8 @@
 		D06D60A60FA7E980002376EE /* NaiveArray.m in Sources */ = {isa = PBXBuildFile; fileRef = D06D60A40FA7E980002376EE /* NaiveArray.m */; };
 		D06D60A70FA7E980002376EE /* test_btree_main.m in Sources */ = {isa = PBXBuildFile; fileRef = D06D60A50FA7E980002376EE /* test_btree_main.m */; };
 		D06D60BD0FA7EA23002376EE /* TreeEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = D06D60BC0FA7EA23002376EE /* TreeEntry.m */; };
+		D06D61EE0FA7FA7C002376EE /* HFBTreeByteArray.h in Headers */ = {isa = PBXBuildFile; fileRef = D06D61EC0FA7FA7C002376EE /* HFBTreeByteArray.h */; };
+		D06D61EF0FA7FA7C002376EE /* HFBTreeByteArray.m in Sources */ = {isa = PBXBuildFile; fileRef = D06D61ED0FA7FA7C002376EE /* HFBTreeByteArray.m */; };
 		D07150670D5510CE00573D7A /* HFTextField.h in Headers */ = {isa = PBXBuildFile; fileRef = D07150650D5510CE00573D7A /* HFTextField.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D07150680D5510CE00573D7A /* HFTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = D07150660D5510CE00573D7A /* HFTextField.m */; };
 		D0728DEF0DC1E3A00052C78C /* MoveSelectionByBanner.nib in Resources */ = {isa = PBXBuildFile; fileRef = D0728DED0DC1E3A00052C78C /* MoveSelectionByBanner.nib */; };
@@ -254,6 +256,8 @@
 		D06D60BB0FA7EA23002376EE /* TreeEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TreeEntry.h; sourceTree = "<group>"; };
 		D06D60BC0FA7EA23002376EE /* TreeEntry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TreeEntry.m; sourceTree = "<group>"; };
 		D06D60FE0FA7EB33002376EE /* BTree_Test_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BTree_Test_Prefix.pch; sourceTree = "<group>"; };
+		D06D61EC0FA7FA7C002376EE /* HFBTreeByteArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFBTreeByteArray.h; path = framework/sources/HFBTreeByteArray.h; sourceTree = "<group>"; };
+		D06D61ED0FA7FA7C002376EE /* HFBTreeByteArray.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFBTreeByteArray.m; path = framework/sources/HFBTreeByteArray.m; sourceTree = "<group>"; };
 		D07150650D5510CE00573D7A /* HFTextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFTextField.h; path = framework/sources/HFTextField.h; sourceTree = "<group>"; };
 		D07150660D5510CE00573D7A /* HFTextField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFTextField.m; path = framework/sources/HFTextField.m; sourceTree = "<group>"; };
 		D0728DEE0DC1E3A00052C78C /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/MoveSelectionByBanner.nib; sourceTree = "<group>"; };
@@ -672,6 +676,8 @@
 				D082AF4B0CDF242500554EB7 /* HFByteArray_ToString.m */,
 				D041D3DB0D3CA70600C28345 /* HFTavlTreeByteArray.h */,
 				D041D3DC0D3CA70600C28345 /* HFTavlTreeByteArray.m */,
+				D06D61EC0FA7FA7C002376EE /* HFBTreeByteArray.h */,
+				D06D61ED0FA7FA7C002376EE /* HFBTreeByteArray.m */,
 				D08C90FD0E83BB5E00D75710 /* HFTavlTreeByteArrayEnumerator.h */,
 				D08C90FE0E83BB5E00D75710 /* HFTavlTreeByteArrayEnumerator.m */,
 				D0D178990D44481F00684270 /* TAVLTree */,
@@ -756,6 +762,7 @@
 				D08C90FF0E83BB5E00D75710 /* HFTavlTreeByteArrayEnumerator.h in Headers */,
 				D081DDAA0F0E75FB00F66150 /* HFRandomDataByteSlice.h in Headers */,
 				D06D60070FA69AFA002376EE /* HFBTree.h in Headers */,
+				D06D61EE0FA7FA7C002376EE /* HFBTreeByteArray.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -976,6 +983,7 @@
 				D08C91000E83BB5E00D75710 /* HFTavlTreeByteArrayEnumerator.m in Sources */,
 				D081DDAB0F0E75FB00F66150 /* HFRandomDataByteSlice.m in Sources */,
 				D06D60080FA69AFA002376EE /* HFBTree.m in Sources */,
+				D06D61EF0FA7FA7C002376EE /* HFBTreeByteArray.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

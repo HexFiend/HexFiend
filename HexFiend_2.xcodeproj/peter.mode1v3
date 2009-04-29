@@ -281,14 +281,15 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>17</integer>
+									<integer>26</integer>
+									<integer>25</integer>
 									<integer>7</integer>
 									<integer>2</integer>
 									<integer>0</integer>
 								</array>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
-							<string>{{0, 36}, {401, 573}}</string>
+							<string>{{0, 225}, {401, 573}}</string>
 						</dict>
 						<key>PBXTopSmartGroupGIDs</key>
 						<array/>
@@ -323,7 +324,7 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>HFByteArray_ToString.m</string>
+								<string>HFByteArray.h</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -331,11 +332,11 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>HFByteArray_ToString.m</string>
+										<string>HFByteArray.h</string>
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>D06D61E50FA7FA05002376EE</string>
+										<string>D06D62950FA90874002376EE</string>
 										<key>history</key>
 										<array>
 											<string>D0029E7A0E8104CC00AA9E42</string>
@@ -343,7 +344,6 @@
 											<string>D0A3199D0E83A47600A95B45</string>
 											<string>D0A319CD0E83A69300A95B45</string>
 											<string>D08C91060E83BB7700D75710</string>
-											<string>D011D5940F09738000688D9B</string>
 											<string>D011D5960F09738000688D9B</string>
 											<string>D08E91070F0C30F90001FA84</string>
 											<string>D08E91080F0C30F90001FA84</string>
@@ -374,7 +374,6 @@
 											<string>D08E943C0F0C84790001FA84</string>
 											<string>D08E952B0F0C99C10001FA84</string>
 											<string>D08E952C0F0C99C10001FA84</string>
-											<string>D08E956A0F0D58AE0001FA84</string>
 											<string>D081DBA90F0D84D300F66150</string>
 											<string>D081DBF40F0D9D3000F66150</string>
 											<string>D081DC820F0DAD9600F66150</string>
@@ -406,7 +405,6 @@
 											<string>D06D604C0FA7CF0C002376EE</string>
 											<string>D06D60790FA7E6EB002376EE</string>
 											<string>D06D61090FA7EB83002376EE</string>
-											<string>D06D614A0FA7ED2A002376EE</string>
 											<string>D06D614B0FA7ED2A002376EE</string>
 											<string>D06D614E0FA7ED2A002376EE</string>
 											<string>D06D619B0FA7F596002376EE</string>
@@ -417,7 +415,12 @@
 											<string>D06D61BE0FA7F734002376EE</string>
 											<string>D06D61D00FA7F8C0002376EE</string>
 											<string>D06D61E30FA7FA05002376EE</string>
-											<string>D0CF22290E83C84F00FA9981</string>
+											<string>D06D61F00FA7FA80002376EE</string>
+											<string>D06D61F10FA7FA80002376EE</string>
+											<string>D06D62330FA8D41A002376EE</string>
+											<string>D06D62340FA8D41A002376EE</string>
+											<string>D06D628F0FA8FD16002376EE</string>
+											<string>D06D62900FA8FD16002376EE</string>
 										</array>
 										<key>prevStack</key>
 										<array>
@@ -533,6 +536,11 @@
 											<string>D06D61C00FA7F734002376EE</string>
 											<string>D06D61D20FA7F8C0002376EE</string>
 											<string>D06D61E40FA7FA05002376EE</string>
+											<string>D06D61F30FA7FA80002376EE</string>
+											<string>D06D61F40FA7FA80002376EE</string>
+											<string>D06D62360FA8D41A002376EE</string>
+											<string>D06D62370FA8D41A002376EE</string>
+											<string>D06D62910FA8FD16002376EE</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -728,12 +736,17 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
+		<string>1C530D57069F1CE1000CFCEE</string>
 		<string>D06D5FAC0FA69689002376EE</string>
 		<string>D06D5FAD0FA69689002376EE</string>
 		<string>1CD10A99069EF8BA00B06720</string>
 		<string>D0560B2F0CDC421E009D2484</string>
 		<string>1C78EAAD065D492600B07095</string>
+		<string>D06D61FA0FA7FB02002376EE</string>
 		<string>/Users/peter/Bell/HexFiend2/trunk/HexFiend_2/HexFiend_2.xcodeproj</string>
+		<string>D06D62940FA90790002376EE</string>
+		<string>D06D625A0FA8D6F1002376EE</string>
+		<string>D06D61F90FA7FB02002376EE</string>
 	</array>
 	<key>WindowString</key>
 	<string>187 146 1102 632 0 0 1280 778 </string>
@@ -774,8 +787,6 @@
 							<string>259pt</string>
 						</dict>
 						<dict>
-							<key>BecomeActive</key>
-							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
@@ -973,7 +984,7 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CDD528C0622207200134675</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>HFByteArray_FindReplace.m</string>
+										<string>HFByteArray_FileWriting.m</string>
 										<key>StatusBarVisibility</key>
 										<true/>
 									</dict>
@@ -1031,8 +1042,8 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>1C530D57069F1CE1000CFCEE</string>
-				<string>D0D316F10F0F1127008AD92F</string>
-				<string>D0D316F20F0F1127008AD92F</string>
+				<string>D06D62110FA7FC92002376EE</string>
+				<string>D06D62120FA7FC92002376EE</string>
 				<string>1CDD528C0622207200134675</string>
 				<string>1CD0528E0623707200166675</string>
 			</array>

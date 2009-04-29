@@ -701,7 +701,13 @@ static HFBTreeLeaf *btree_descend(HFBTree *tree, struct SubtreeInfo_t *outDescen
     return currentBranchOrLeaf;
 }
 
-static TreeEntry *btree_search(HFBTree *tree, HFBTreeIndex offset, HFBTreeIndex *outBeginningOffset) {
+struct LeafInfo_t {
+    HFBTreeLeaf *leaf;
+    ChildIndex_t entryIndex;
+    HFBTreeIndex offsetOfEntryInTree;
+};
+
+static struct LeafInfo_t btree_find_leaf(HFBTree *tree, HFBTreeIndex offset) {
     TreeDepth_t depth = tree->depth;
     HFBTreeNode *currentNode = tree->root;
     HFBTreeIndex remainingOffset = offset;
@@ -711,17 +717,21 @@ static TreeEntry *btree_search(HFBTree *tree, HFBTreeIndex offset, HFBTreeIndex 
         HFASSERT(beginningOffsetOfNode <= remainingOffset);
         remainingOffset = remainingOffset - beginningOffsetOfNode;
     }
-    
-    /* We're at the leaf level. */
+    ASSERT_IS_LEAF(currentNode);
     HFBTreeIndex startOffsetOfEntry;
-    id resultEntry = child_containing_offset(currentNode, remainingOffset, &startOffsetOfEntry, YES);
+    ChildIndex_t entryIndex = index_containing_offset(currentNode, remainingOffset, &startOffsetOfEntry, YES);
     /* The offset of this entry is the requested offset minus the difference between its starting offset within the leaf and the requested offset within the leaf */
     HFASSERT(remainingOffset >= startOffsetOfEntry);
-    HFBTreeIndex offsetIntoEntry = remainingOffset - startOffsetOfEntry; 
+    HFBTreeIndex offsetIntoEntry = remainingOffset - startOffsetOfEntry;
     HFASSERT(offset >= offsetIntoEntry);
     HFBTreeIndex beginningOffset = offset - offsetIntoEntry;
-    *outBeginningOffset = beginningOffset;
-    return resultEntry;
+    return (struct LeafInfo_t){.leaf = CHECK_CAST(currentNode, HFBTreeLeaf), .entryIndex = entryIndex, .offsetOfEntryInTree = beginningOffset};
+}
+
+static TreeEntry *btree_search(HFBTree *tree, HFBTreeIndex offset, HFBTreeIndex *outBeginningOffset) {
+    struct LeafInfo_t leafInfo = btree_find_leaf(tree, offset);
+    *outBeginningOffset = leafInfo.offsetOfEntryInTree;
+    return leafInfo.leaf->children[leafInfo.entryIndex];
 }
 
 static id btree_insert_returning_retained_value_for_parent(HFBTree *tree, TreeEntry *entry, HFBTreeIndex insertionOffset) {
@@ -950,16 +960,50 @@ static HFBTreeIndex btree_recursive_fixup_cached_lengths(HFBTree *tree, HFBTreeN
     return result;
 }
 
+FORCE_STATIC_INLINE void btree_apply_function_to_entries(HFBTree *tree, HFBTreeIndex offset, BOOL (*func)(id, HFBTreeIndex, void *), void *userInfo) {
+    struct LeafInfo_t leafInfo = btree_find_leaf(tree, 0);
+    HFBTreeLeaf *leaf = leafInfo.leaf;
+    ChildIndex_t entryIndex = leafInfo.entryIndex;
+    HFBTreeIndex leafOffset = leafInfo.offsetOfEntryInTree;
+    BOOL continueApplying = YES;
+    while (leaf != NULL) {
+        for (; entryIndex < BTREE_LEAF_ORDER; entryIndex++) {
+            TreeEntry *entry = leaf->children[entryIndex];
+            if (! entry) break;
+            continueApplying = func(entry, offset, userInfo);
+            if (! continueApplying) break;
+            leafOffset = HFSum(offset, HFBTreeLength(entry));
+        }
+        if (! continueApplying) break;
+        leaf = CHECK_CAST_OR_NULL(leaf->right, HFBTreeLeaf);
+        entryIndex = 0;
+    }
+}
+
 - (NSEnumerator *)entryEnumerator {
     if (! root) return [[NSArray array] objectEnumerator];
-    HFBTreeNode *branchOrLeaf = root;
-    TreeDepth_t tempDepth = depth;
-    while (tempDepth--) {
-        ASSERT_IS_BRANCH(branchOrLeaf);
-        HFBTreeBranch *branch = CHECK_CAST(branchOrLeaf, HFBTreeBranch);
-        branchOrLeaf = branch->children[0];
-    }
-    return [[[HFBTreeEnumerator alloc] initWithLeaf:CHECK_CAST(branchOrLeaf, HFBTreeLeaf)] autorelease];
+    HFBTreeLeaf *leaf = btree_find_leaf(self, 0).leaf;
+    return [[[HFBTreeEnumerator alloc] initWithLeaf:leaf] autorelease];
+}
+
+static BOOL add_to_array(id entry, HFBTreeIndex offset, void *array) {
+    [(id)array addObject:entry];
+    return YES;
+}
+
+- (NSArray *)allEntries {
+    if (! root) return [NSArray array];
+    NSUInteger treeCapacity = 1;
+    unsigned int depthIndex = depth;
+    while (depthIndex--) treeCapacity *= BTREE_ORDER;
+    NSMutableArray *result = [NSMutableArray arrayWithCapacity: treeCapacity/2]; //assume we're half full
+    btree_apply_function_to_entries(self, 0, add_to_array, result);
+    return result;
+}
+
+- (void)applyFunction:(BOOL (*)(id entry, HFBTreeIndex offset, void *userInfo))func toEntriesStartingAtOffset:(HFBTreeIndex)offset withUserInfo:(void *)userInfo {
+    NSParameterAssert(func != NULL);
+    btree_apply_function_to_entries(self, offset, func, userInfo);
 }
 
 @end
