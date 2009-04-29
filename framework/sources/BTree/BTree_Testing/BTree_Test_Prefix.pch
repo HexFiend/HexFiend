@@ -1,0 +1,41 @@
+//
+// Prefix header for all source files of the 'BTree' target in the 'BTree' project.
+//
+
+#ifdef __OBJC__
+#import <Foundation/Foundation.h>
+#endif
+
+#include <libkern/OSAtomic.h>
+
+#if ! NDEBUG
+#define HFASSERT(a) assert(a)
+#else
+#define HFASSERT(a)
+#endif
+
+
+static inline BOOL HFSumDoesNotOverflow(unsigned long long a, unsigned long long b) {
+    return a + b >= a;
+}
+
+static inline unsigned long long HFSum(unsigned long long a, unsigned long long b) {
+    assert(HFSumDoesNotOverflow(a, b));
+    return a + b;
+}
+
+static inline NSUInteger HFAtomicIncrement(NSUInteger *ptr, BOOL barrier) {
+#if __LP64__
+    return (barrier ? OSAtomicIncrement64Barrier : OSAtomicIncrement64)((volatile int64_t *)ptr);
+#else
+    return (barrier ? OSAtomicIncrement32Barrier : OSAtomicIncrement32)((volatile int32_t *)ptr);
+#endif
+}
+
+static inline NSUInteger HFAtomicDecrement(NSUInteger *ptr, BOOL barrier) {
+#if __LP64__
+    return (barrier ? OSAtomicDecrement64Barrier : OSAtomicDecrement64)((volatile int64_t *)ptr);
+#else
+    return (barrier ? OSAtomicDecrement32Barrier : OSAtomicDecrement32)((volatile int32_t *)ptr);
+#endif
+}

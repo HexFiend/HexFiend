@@ -401,7 +401,7 @@ enum LineCoverage_t {
 		NSRange lastRange = [[ranges lastObject] rangeValue];
 		NSPoint startPoint = [self originForCharacterAtByteIndex:firstRange.location];
                 // don't just use originForCharacterAtByteIndex:NSMaxRange(lastRange), because if the last selected character is at the end of the line, this will cause us to highlight the next line.  Instead, get the last selected character, and add an advance to it.
-                HFASSERT(lastRange.length > 0);
+//                HFASSERT(lastRange.length > 0);
                 NSPoint endPoint = [self originForCharacterAtByteIndex:NSMaxRange(lastRange) - 1];
                 endPoint.x += [self advancePerByte];
 		HFASSERT(endPoint.y >= startPoint.y);
