@@ -9,7 +9,7 @@
 #import "HFBTree.h"
 #include <malloc/malloc.h>
 
-#define FIXUP_LENGTHS 1
+#define FIXUP_LENGTHS 0
 
 #define BTREE_BRANCH_ORDER 10
 #define BTREE_LEAF_ORDER 10
@@ -201,7 +201,7 @@ static HFBTreeIndex sum_child_lengths(const id *children, const BOOL isLeaf);
         HFASSERT([self length] == 0);
         HFASSERT(depth == BAD_DEPTH);
         HFBTreeLeaf *leaf = [[HFBTreeLeaf alloc] init];
-        printf("Leaf size: %lu\n", malloc_size(leaf));
+//        printf("Leaf size: %lu\n", malloc_size(leaf));
         leaf->children[0] = [entry retain];
         leaf->subtreeLength = HFBTreeLength(entry);
         root = leaf;
@@ -211,7 +211,7 @@ static HFBTreeIndex sum_child_lengths(const id *children, const BOOL isLeaf);
         HFBTreeNode *newParentValue = btree_insert_returning_retained_value_for_parent(self, entry, offset);
         if (newParentValue) {
             HFBTreeBranch *newRoot = [[HFBTreeBranch alloc] init];
-            printf("Branch size: %lu\n", malloc_size(newRoot));
+//            printf("Branch size: %lu\n", malloc_size(newRoot));
             newRoot->children[0] = root; //transfer our retain
             newRoot->children[1] = newParentValue; //transfer the retain we got from the function
             newRoot->subtreeLength = HFSum(root->subtreeLength, newParentValue->subtreeLength);
@@ -234,6 +234,12 @@ static HFBTreeIndex sum_child_lengths(const id *children, const BOOL isLeaf);
     return btree_search(self, offset, outBeginningOffset);
 }
 
+- (void)removeAllEntries {
+    [root release];
+    root = nil;
+    depth = BAD_DEPTH;
+}
+
 - (void)removeEntryAtOffset:(HFBTreeIndex)offset {
     HFASSERT(root != nil);
 #if FIXUP_LENGTHS
@@ -241,13 +247,11 @@ static HFBTreeIndex sum_child_lengths(const id *children, const BOOL isLeaf);
 #endif
     BOOL deleteRoot = btree_remove(self, offset);
     if (deleteRoot) {
-        puts("Delete da root!");
         HFASSERT(count_node_values(root) <= 1);
         id newRoot = [root->children[0] retain]; //may be nil!
         [root release];
         root = newRoot;
         depth--;
-        NSLog(@"Root count: %lu", btree_entry_count(root));
     }
 #if FIXUP_LENGTHS
     const NSUInteger afterCount = btree_entry_count(root);
@@ -300,9 +304,10 @@ FORCE_STATIC_INLINE HFBTreeIndex sum_N_child_lengths(const id *children, ChildIn
 FORCE_STATIC_INLINE ChildIndex_t index_containing_offset(HFBTreeNode *node, HFBTreeIndex offset, HFBTreeIndex * restrict outOffset, const BOOL isLeaf) {
     ChildIndex_t childIndex;
     HFBTreeIndex previousSum = 0;
+    const id *children = node->children;
     for (childIndex = 0; childIndex < BTREE_ORDER; childIndex++) {
-        HFASSERT(node->children[childIndex] != nil);
-        HFBTreeIndex childLength = GET_LENGTH(node->children[childIndex], isLeaf);
+        HFASSERT(children[childIndex] != nil);
+        HFBTreeIndex childLength = GET_LENGTH(children[childIndex], isLeaf);
         HFBTreeIndex newSum = HFSum(childLength, previousSum);
         if (newSum > offset) {
             break;
@@ -320,10 +325,11 @@ FORCE_STATIC_INLINE id child_containing_offset(HFBTreeNode *node, HFBTreeIndex o
 FORCE_STATIC_INLINE ChildIndex_t index_for_child_at_offset(HFBTreeNode *node, HFBTreeIndex offset, const BOOL isLeaf) {
     ChildIndex_t childIndex;
     HFBTreeIndex previousSum = 0;
+    id *const children = node->children;
     for (childIndex = 0; childIndex < BTREE_ORDER; childIndex++) {
         if (previousSum == offset) break;
-        HFASSERT(node->children[childIndex] != nil);
-        HFBTreeIndex childLength = GET_LENGTH(node->children[childIndex], isLeaf);
+        HFASSERT(children[childIndex] != nil);
+        HFBTreeIndex childLength = GET_LENGTH(children[childIndex], isLeaf);
         previousSum = HFSum(childLength, previousSum);
         HFASSERT(previousSum <= offset);
     }
@@ -335,9 +341,10 @@ FORCE_STATIC_INLINE ChildIndex_t index_for_child_at_offset(HFBTreeNode *node, HF
 FORCE_STATIC_INLINE ChildIndex_t child_index_for_insertion_at_offset(HFBTreeBranch *branch, HFBTreeIndex insertionOffset, HFBTreeIndex *outPriorCombinedOffset) {
     ChildIndex_t indexForInsertion;
     HFBTreeIndex priorCombinedOffset = 0;
+    id *const children = branch->children;
     for (indexForInsertion = 0; indexForInsertion < BTREE_BRANCH_ORDER; indexForInsertion++) {
-        if (! branch->children[indexForInsertion]) break;
-        HFBTreeNode *childNode = CHECK_CAST(branch->children[indexForInsertion], HFBTreeNode);
+        if (! children[indexForInsertion]) break;
+        HFBTreeNode *childNode = CHECK_CAST(children[indexForInsertion], HFBTreeNode);
         HFBTreeIndex subtreeLength = childNode->subtreeLength;
         HFASSERT(subtreeLength > 0);
         HFBTreeIndex newOffset = HFSum(priorCombinedOffset, subtreeLength);
@@ -627,6 +634,13 @@ FORCE_STATIC_INLINE BOOL remove_value_from_node_with_possible_rebalance(HFBTreeN
     
 #if ! NDEBUG
     const id savedChild = node->children[childIndex];
+    NSUInteger childMultiplicity = 0;
+    NSUInteger v;
+    for (v = 0; v < BTREE_ORDER; v++) {
+        if (node->children[v] == savedChild) childMultiplicity++;
+        if (node->children[v] == nil) break;
+    }
+    
 #endif
     
     /* Figure out how many children we have; start at one more than childIndex since we know that childIndex is a valid index */
@@ -641,10 +655,10 @@ FORCE_STATIC_INLINE BOOL remove_value_from_node_with_possible_rebalance(HFBTreeN
     childCount--;
     
 #if ! NDEBUG
-    NSUInteger q;
-    for (q = 0; q < childCount; q++) {
-        HFASSERT(node->children[q] != savedChild);
+    for (v = 0; v < childCount; v++) {
+        if (node->children[v] == savedChild) childMultiplicity--;
     }
+    HFASSERT(childMultiplicity == 1);
 #endif
 
     if (childCount < BTREE_LEAF_MINIMUM_VALUE_COUNT && ! isRootNode) {
@@ -961,7 +975,7 @@ static HFBTreeIndex btree_recursive_fixup_cached_lengths(HFBTree *tree, HFBTreeN
 }
 
 FORCE_STATIC_INLINE void btree_apply_function_to_entries(HFBTree *tree, HFBTreeIndex offset, BOOL (*func)(id, HFBTreeIndex, void *), void *userInfo) {
-    struct LeafInfo_t leafInfo = btree_find_leaf(tree, 0);
+    struct LeafInfo_t leafInfo = btree_find_leaf(tree, offset);
     HFBTreeLeaf *leaf = leafInfo.leaf;
     ChildIndex_t entryIndex = leafInfo.entryIndex;
     HFBTreeIndex leafOffset = leafInfo.offsetOfEntryInTree;
@@ -970,9 +984,9 @@ FORCE_STATIC_INLINE void btree_apply_function_to_entries(HFBTree *tree, HFBTreeI
         for (; entryIndex < BTREE_LEAF_ORDER; entryIndex++) {
             TreeEntry *entry = leaf->children[entryIndex];
             if (! entry) break;
-            continueApplying = func(entry, offset, userInfo);
+            continueApplying = func(entry, leafOffset, userInfo);
             if (! continueApplying) break;
-            leafOffset = HFSum(offset, HFBTreeLength(entry));
+            leafOffset = HFSum(leafOffset, HFBTreeLength(entry));
         }
         if (! continueApplying) break;
         leaf = CHECK_CAST_OR_NULL(leaf->right, HFBTreeLeaf);
@@ -986,7 +1000,8 @@ FORCE_STATIC_INLINE void btree_apply_function_to_entries(HFBTree *tree, HFBTreeI
     return [[[HFBTreeEnumerator alloc] initWithLeaf:leaf] autorelease];
 }
 
-static BOOL add_to_array(id entry, HFBTreeIndex offset, void *array) {
+
+static BOOL add_to_array(id entry, HFBTreeIndex offset __attribute__((unused)), void *array) {
     [(id)array addObject:entry];
     return YES;
 }
@@ -1003,6 +1018,7 @@ static BOOL add_to_array(id entry, HFBTreeIndex offset, void *array) {
 
 - (void)applyFunction:(BOOL (*)(id entry, HFBTreeIndex offset, void *userInfo))func toEntriesStartingAtOffset:(HFBTreeIndex)offset withUserInfo:(void *)userInfo {
     NSParameterAssert(func != NULL);
+    if (! root) return;
     btree_apply_function_to_entries(self, offset, func, userInfo);
 }
 

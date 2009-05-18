@@ -7,7 +7,12 @@
     #import <HexFiend/HexFiend.h>
 #endif
 
+#if ! NDEBUG
 #define HFASSERT(a) assert(a)
+#else
+#define HFASSERT(a)
+#endif
+
 
 /* Macro to "use" a variable to prevent unused variable warnings. */
 #define USE(x) if (0) x=x

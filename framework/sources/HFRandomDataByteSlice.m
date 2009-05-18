@@ -10,7 +10,7 @@
 
 #import <HexFiend/HFRandomDataByteSlice.h>
 
-#if ! NDEBUG
+//#if ! NDEBUG
 
 static unsigned char munge(unsigned long long val64, unsigned char randomizer) __attribute__((always_inline));
 static inline unsigned char munge(unsigned long long val64, unsigned char randomizer) {
@@ -134,4 +134,4 @@ static unsigned char *kRepeatingData;
 
 @end
 
-#endif //NDEBUG
+//#endif //NDEBUG

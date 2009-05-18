@@ -25,6 +25,10 @@ static BOOL isRunningOnLeopardOrLater(void) {
     return NSAppKitVersionNumber >= 860.;
 }
 
+static inline Class preferredByteArrayClass(void) {
+    return [HFBTreeByteArray class];
+}
+
 @interface MyDocument (ForwardDeclarations)
 - (NSString *)documentWindowTitleFormatString;
 @end
@@ -334,7 +338,7 @@ static BOOL isRunningOnLeopardOrLater(void) {
     HFFileReference *fileReference = [[[HFFileReference alloc] initWithPath:[absoluteURL path]] autorelease];
     if (fileReference) {
         HFFileByteSlice *byteSlice = [[[HFFileByteSlice alloc] initWithFile:fileReference] autorelease];
-        HFTavlTreeByteArray *byteArray = [[[HFTavlTreeByteArray alloc] init] autorelease];
+        HFByteArray *byteArray = [[[preferredByteArrayClass() alloc] init] autorelease];
         [byteArray insertByteSlice:byteSlice inRange:HFRangeMake(0, 0)];
         [controller setByteArray:byteArray];
         result = YES;
@@ -603,7 +607,7 @@ static BOOL isRunningOnLeopardOrLater(void) {
         HFFileReference *fileReference = [[[HFFileReference alloc] initWithPath:[inAbsoluteURL path]] autorelease];
         if (fileReference) {
             HFFileByteSlice *byteSlice = [[[HFFileByteSlice alloc] initWithFile:fileReference] autorelease];
-            HFTavlTreeByteArray *byteArray = [[[HFTavlTreeByteArray alloc] init] autorelease];
+            HFByteArray *byteArray = [[[preferredByteArrayClass() alloc] init] autorelease];
             [byteArray insertByteSlice:byteSlice inRange:HFRangeMake(0, 0)];
             [controller setByteArray:byteArray];
         }

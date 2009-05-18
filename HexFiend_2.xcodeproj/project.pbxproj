@@ -67,7 +67,7 @@
 		D06D60A60FA7E980002376EE /* NaiveArray.m in Sources */ = {isa = PBXBuildFile; fileRef = D06D60A40FA7E980002376EE /* NaiveArray.m */; };
 		D06D60A70FA7E980002376EE /* test_btree_main.m in Sources */ = {isa = PBXBuildFile; fileRef = D06D60A50FA7E980002376EE /* test_btree_main.m */; };
 		D06D60BD0FA7EA23002376EE /* TreeEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = D06D60BC0FA7EA23002376EE /* TreeEntry.m */; };
-		D06D61EE0FA7FA7C002376EE /* HFBTreeByteArray.h in Headers */ = {isa = PBXBuildFile; fileRef = D06D61EC0FA7FA7C002376EE /* HFBTreeByteArray.h */; };
+		D06D61EE0FA7FA7C002376EE /* HFBTreeByteArray.h in Headers */ = {isa = PBXBuildFile; fileRef = D06D61EC0FA7FA7C002376EE /* HFBTreeByteArray.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D06D61EF0FA7FA7C002376EE /* HFBTreeByteArray.m in Sources */ = {isa = PBXBuildFile; fileRef = D06D61ED0FA7FA7C002376EE /* HFBTreeByteArray.m */; };
 		D07150670D5510CE00573D7A /* HFTextField.h in Headers */ = {isa = PBXBuildFile; fileRef = D07150650D5510CE00573D7A /* HFTextField.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D07150680D5510CE00573D7A /* HFTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = D07150660D5510CE00573D7A /* HFTextField.m */; };
@@ -453,6 +453,19 @@
 			name = Find_Replace;
 			sourceTree = "<group>";
 		};
+		D01727350FC14BEB007B98ED /* TAVLTreeByteArray */ = {
+			isa = PBXGroup;
+			children = (
+				D041D3FC0D3DED7200C28345 /* HFByteArrayPiece.h */,
+				D041D3FD0D3DED7200C28345 /* HFByteArrayPiece.m */,
+				D041D3DB0D3CA70600C28345 /* HFTavlTreeByteArray.h */,
+				D041D3DC0D3CA70600C28345 /* HFTavlTreeByteArray.m */,
+				D08C90FD0E83BB5E00D75710 /* HFTavlTreeByteArrayEnumerator.h */,
+				D08C90FE0E83BB5E00D75710 /* HFTavlTreeByteArrayEnumerator.m */,
+			);
+			name = TAVLTreeByteArray;
+			sourceTree = "<group>";
+		};
 		D019310E0D5AE97A0019B3F7 /* IB Plugin */ = {
 			isa = PBXGroup;
 			children = (
@@ -670,18 +683,13 @@
 				D0B7E3380D5C50EA007874ED /* HFByteArray_FindReplace.m */,
 				D0D828FE0CDE8ABE00C2AB82 /* HFFullMemoryByteArray.h */,
 				D0D828FF0CDE8ABE00C2AB82 /* HFFullMemoryByteArray.m */,
-				D041D3FC0D3DED7200C28345 /* HFByteArrayPiece.h */,
-				D041D3FD0D3DED7200C28345 /* HFByteArrayPiece.m */,
 				D082AF4A0CDF242500554EB7 /* HFByteArray_ToString.h */,
 				D082AF4B0CDF242500554EB7 /* HFByteArray_ToString.m */,
-				D041D3DB0D3CA70600C28345 /* HFTavlTreeByteArray.h */,
-				D041D3DC0D3CA70600C28345 /* HFTavlTreeByteArray.m */,
 				D06D61EC0FA7FA7C002376EE /* HFBTreeByteArray.h */,
 				D06D61ED0FA7FA7C002376EE /* HFBTreeByteArray.m */,
-				D08C90FD0E83BB5E00D75710 /* HFTavlTreeByteArrayEnumerator.h */,
-				D08C90FE0E83BB5E00D75710 /* HFTavlTreeByteArrayEnumerator.m */,
-				D0D178990D44481F00684270 /* TAVLTree */,
 				D06D5FE70FA699B8002376EE /* BTree */,
+				D01727350FC14BEB007B98ED /* TAVLTreeByteArray */,
+				D0D178990D44481F00684270 /* TAVLTree */,
 			);
 			name = ByteArray;
 			sourceTree = "<group>";

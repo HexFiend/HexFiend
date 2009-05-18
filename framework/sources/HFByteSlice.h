@@ -11,6 +11,7 @@
 @class HFFileReference;
 
 @interface HFByteSlice : NSObject {
+    NSUInteger retainCount;
 }
 
 - (unsigned long long)length;

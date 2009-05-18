@@ -10,7 +10,7 @@
 
 #import <HexFiend/HFByteSlice.h>
 
-#if ! NDEBUG
+//#if ! NDEBUG
 
 @interface HFRandomDataByteSlice : HFByteSlice {
     unsigned long long start;
@@ -31,4 +31,4 @@
 
 @end
 
-#endif
+//#endif

@@ -7,6 +7,7 @@
 //
 
 #import <HexFiend/HFByteArray_Internal.h>
+#import <HexFiend/HFByteSlice.h>
 #import <HexFiend/HFBTreeByteArray.h>
 #import <HexFiend/HFBTree.h>
 
@@ -37,7 +38,18 @@
 }
 
 - (NSString*)description {
-    return [NSString stringWithFormat:@"%@ <%@>", [super description], [btree description]];
+    NSMutableArray* result = [NSMutableArray array];
+    NSEnumerator *enumer = [self byteSliceEnumerator];
+    HFByteSlice *slice;
+    unsigned long long offset = 0;
+    while ((slice = [enumer nextObject])) {
+        unsigned long long length = [slice length];
+        [result addObject:[NSString stringWithFormat:@"{%llu - %llu}", offset, length]];
+        offset = HFSum(offset, length);
+    }
+    if (! [result count]) return @"(empty tree)";
+    return [NSString stringWithFormat:@"<%@: %p>: %@", [self class], self, [result componentsJoinedByString:@" "]];
+    
 }
 
 struct HFBTreeByteArrayCopyInfo_t {
@@ -54,10 +66,10 @@ static BOOL copy_bytes(id entry, HFBTreeIndex offset, void *userInfo) {
     HFASSERT(offset <= info->startingOffset);
     
     unsigned long long sliceLength = [slice length];
-    HFASESRT(sliceLength > 0);
+    HFASSERT(sliceLength > 0);
     unsigned long long offsetIntoSlice = info->startingOffset - offset;
     HFASSERT(offsetIntoSlice < sliceLength);
-    NSUInteger amountToCopy = ll2l(MIN(userInfo->remainingLength, sliceLength - offsetIntoSlice));
+    NSUInteger amountToCopy = ll2l(MIN(info->remainingLength, sliceLength - offsetIntoSlice));
     HFRange srcRange = HFRangeMake(info->startingOffset - offset, amountToCopy);
     [slice copyBytes:info->dst range:srcRange];
     info->dst += amountToCopy;
@@ -68,41 +80,189 @@ static BOOL copy_bytes(id entry, HFBTreeIndex offset, void *userInfo) {
 
 - (void)copyBytes:(unsigned char *)dst range:(HFRange)range {
     HFASSERT(range.length <= NSUIntegerMax);
-    struct HFBTreeByteArrayCopyInfo_t copyInfo = {.dst = dst, .remainingLength = ll2l(range.length), .initialOffset = range.location};
-    [btree applyFunction:copy_bytes toEntriesStartingAtOffset:range.location withUserInfo:userInfo];
+    struct HFBTreeByteArrayCopyInfo_t copyInfo = {.dst = dst, .remainingLength = ll2l(range.length), .startingOffset = range.location};
+    [btree applyFunction:copy_bytes toEntriesStartingAtOffset:range.location withUserInfo:&copyInfo];
+}
+
+/* Given a HFByteArray and a range contained within it, return the first byte slice containing that range, and the range within that slice.  Modifies the given range to reflect what you get when the returned slice is removed. */
+static inline HFByteSlice *findInitialSlice(HFBTree *btree, HFRange *inoutArrayRange, HFRange *outRangeWithinSlice) {
+    const HFRange arrayRange = *inoutArrayRange;
+    const unsigned long long arrayRangeEnd = HFMaxRange(arrayRange);
+    
+    unsigned long long offsetIntoSlice, lengthFromOffsetIntoSlice;
+    
+    unsigned long long beginningOffset;
+    HFByteSlice *slice = [btree entryContainingOffset:arrayRange.location beginningOffset:&beginningOffset];
+    const unsigned long long sliceLength = [slice length];
+    HFASSERT(beginningOffset <= arrayRange.location);
+    offsetIntoSlice = arrayRange.location - beginningOffset;
+    HFASSERT(offsetIntoSlice < sliceLength);
+    
+    unsigned long long sliceEndInArray = HFSum(sliceLength, beginningOffset);
+    if (sliceEndInArray <= arrayRangeEnd) {
+        /* Our slice ends before or at the requested range end */
+        lengthFromOffsetIntoSlice = sliceLength - offsetIntoSlice;
+    }
+    else {
+        /* Our slice ends after the requested range end */
+        unsigned long long overflow = sliceEndInArray - arrayRangeEnd;
+        HFASSERT(HFSum(overflow, offsetIntoSlice) < sliceLength);
+        lengthFromOffsetIntoSlice = sliceLength - HFSum(overflow, offsetIntoSlice);
+    }
+    
+    /* Set the out range to the input range minus the range consumed by the slice */
+    inoutArrayRange->location = MIN(sliceEndInArray, arrayRangeEnd);
+    inoutArrayRange->length = arrayRangeEnd - inoutArrayRange->location;
+    
+    /* Set the out range within the slice to what we computed */
+    *outRangeWithinSlice = HFRangeMake(offsetIntoSlice, lengthFromOffsetIntoSlice);
+    
+    return slice;
+}
+
+- (BOOL)fastPathInsertByteSlice:(HFByteSlice *)slice atOffset:(unsigned long long)offset {
+    HFASSERT(offset > 0);
+    unsigned long long priorSliceOffset;
+    HFByteSlice *priorSlice = [btree entryContainingOffset:offset - 1 beginningOffset:&priorSliceOffset];
+    HFByteSlice *appendedSlice = [priorSlice byteSliceByAppendingSlice:slice];
+    if (appendedSlice) {
+        [btree removeEntryAtOffset:priorSliceOffset];
+        [btree insertEntry:appendedSlice atOffset:priorSliceOffset];
+        return YES;
+    }
+    else {
+        return NO;
+    }
+}
+
+- (void)insertByteSlice:(HFByteSlice *)slice atOffset:(unsigned long long)offset {
+    [self _incrementGenerationOrRaiseIfLockedForSelector:_cmd];
+    
+    unsigned long long beforeLength = [self length];
+    
+    if (offset == 0) {
+        [btree insertEntry:slice atOffset:0];
+    }
+    else if (offset == [btree length]) {
+        if (! [self fastPathInsertByteSlice:slice atOffset:offset]) {
+            [btree insertEntry:slice atOffset:offset];
+        }
+    }
+    else {
+        unsigned long long beginningOffset;
+        HFByteSlice *overlappingSlice = [btree entryContainingOffset:offset beginningOffset:&beginningOffset];
+        if (beginningOffset == offset) {
+            if (! [self fastPathInsertByteSlice:slice atOffset:offset]) {
+                [btree insertEntry:slice atOffset:offset];
+            }
+        }
+        else {
+            HFASSERT(offset > beginningOffset);
+            unsigned long long offsetIntoSlice = offset - beginningOffset;
+            unsigned long long sliceLength = [overlappingSlice length];
+            HFASSERT(sliceLength > offsetIntoSlice);
+            HFByteSlice *left = [overlappingSlice subsliceWithRange:HFRangeMake(0, offsetIntoSlice)];
+            HFByteSlice *right = [overlappingSlice subsliceWithRange:HFRangeMake(offsetIntoSlice, sliceLength - offsetIntoSlice)];
+            [btree removeEntryAtOffset:beginningOffset];
+            
+            [btree insertEntry:right atOffset:beginningOffset];
+
+            /* Try the fast appending path */
+            HFByteSlice *joinedSlice = [left byteSliceByAppendingSlice:slice];
+            if (joinedSlice) {
+                [btree insertEntry:joinedSlice atOffset:beginningOffset];
+            }
+            else {   
+                [btree insertEntry:slice atOffset:beginningOffset];
+                [btree insertEntry:left atOffset:beginningOffset];
+            }
+        }
+    }
+    
+    unsigned long long afterLength = [self length];
+    
+    HFASSERT(afterLength - beforeLength == [slice length]);
 }
 
 - (void)deleteBytesInRange:(const HFRange)range {
+    [self _incrementGenerationOrRaiseIfLockedForSelector:_cmd];
     HFRange remainingRange = range;
+    
+    HFASSERT(HFMaxRange(range) <= [self length]);
+    if (range.length == 0) return; //nothing to delete
+    
+    //fast path for deleting everything
+    if (range.location == 0 && range.length == [self length]) {
+        [btree removeAllEntries];
+        return;
+    }
+    
+    unsigned long long beforeLength = [self length];
+    
+    unsigned long long rangeStartLocation = range.location;
     HFByteSlice *beforeSlice = nil, *afterSlice = nil;
     while (remainingRange.length > 0) {
-        HFBTreeIndex beginningOffset;
-        HFByteSlice *slice = [btree entryContainingOffset:remainingRange.location beginningOffset:&beginningOffset];
+        HFRange rangeWithinSlice;
+        HFByteSlice *slice = findInitialSlice(btree, &remainingRange, &rangeWithinSlice);
         const unsigned long long sliceLength = [slice length];
-
-        /* Figure out how much of the beginning we need to preserve.  We should only need to preserve the beginning of at most one slice. */
-        HFASSERT(beginningOffset <= remainingRange.location);
-        unsigned long long offsetIntoSlice = remainingRange.location - beginningOffset;
-        HFASSERT(offsetIntoSlice < sliceLength);
-        if (offsetIntoSlice > 0) {
-            HFASSERT(beforeSlice == nil);
-            beforeSlice = [slice subsliceWithRange:HFRangeMake(0, remainingRange.location - beginningOffset)];
+        const unsigned long long rangeWithinSliceEnd = HFMaxRange(rangeWithinSlice);
+        HFRange lefty = HFRangeMake(0, rangeWithinSlice.location);
+        HFRange righty = HFRangeMake(rangeWithinSliceEnd, sliceLength - rangeWithinSliceEnd);
+        HFASSERT(lefty.length == 0 || beforeSlice == nil);
+        HFASSERT(righty.length == 0 || afterSlice == nil);
+        
+        unsigned long long beginningOffset = remainingRange.location - HFMaxRange(rangeWithinSlice);
+        
+        if (lefty.length > 0){
+            beforeSlice = [slice subsliceWithRange:lefty];
+            rangeStartLocation = beginningOffset;
         }
-
-        /* Figure out how much of the end we need to preserve.  We should only need to preserve the end of at most one slice. */
-        unsigned long long rangeEnd = HFMaxRange(remainingRange);
-        unsigned long long sliceEnd = HFSum(beginningOffset, sliceLength);
-        if (sliceEnd > rangeEnd) {
-            HFASSERT(afterSlice == nil);
-            unsigned long long remainderLength = sliceEnd - rangeEnd;
-            HFASSERT(remainderLength < sliceLength);
-            afterSlice = [slice subsliceWithRange:HFRangeMake(sliceLength - remainderLength, remainderLength)];
-        }
+        if (righty.length > 0) afterSlice = [slice subsliceWithRange:righty];
         
         [btree removeEntryAtOffset:beginningOffset];
-        remainingRange.location = HFSum(remainingRange.location, sliceLength - offsetIntoSlice);
-        
+        remainingRange.location = beginningOffset;
     }
+    if (afterSlice) {
+        [self insertByteSlice:afterSlice atOffset:rangeStartLocation];
+    }
+    if (beforeSlice) {
+        [self insertByteSlice:beforeSlice atOffset:rangeStartLocation];
+    }    
+    
+    unsigned long long afterLength = [self length];
+    HFASSERT(beforeLength - afterLength == range.length);
+}
+
+- (void)insertByteSlice:(HFByteSlice *)slice inRange:(HFRange)lrange {
+    [self _incrementGenerationOrRaiseIfLockedForSelector:_cmd];
+
+    if (lrange.length > 0) {
+        [self deleteBytesInRange:lrange];
+    }
+    if ([slice length] > 0) {
+        [self insertByteSlice:slice atOffset:lrange.location];
+    }
+}
+
+
+- subarrayWithRange:(HFRange)range {
+    HFBTreeByteArray *result = [[[[self class] alloc] init] autorelease];
+    HFRange remainingRange = range;
+    unsigned long long offsetInResult = 0;
+    while (remainingRange.length > 0) {
+        HFRange rangeWithinSlice;
+        HFByteSlice *slice = findInitialSlice(btree, &remainingRange, &rangeWithinSlice);
+        HFByteSlice *subslice;
+        if (rangeWithinSlice.location == 0 && rangeWithinSlice.length == [slice length]) {
+            subslice = slice;
+        }
+        else {
+            subslice = [slice subsliceWithRange:rangeWithinSlice];
+        }
+        [result insertByteSlice:subslice atOffset:offsetInResult];
+        offsetInResult = HFSum(offsetInResult, rangeWithinSlice.length);
+    }
+    return result;
 }
 
 @end

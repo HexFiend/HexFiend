@@ -7,7 +7,7 @@
 //
 
 #import <HexFiend/HFTextField.h>
-#import <HexFiend/HFTavlTreeByteArray.h>
+#import <HexFiend/HFBTreeByteArray.h>
 #import <HexFiend/HFController.h>
 #import <HexFiend/HFLayoutRepresenter.h>
 #import <HexFiend/HFHexTextRepresenter.h>

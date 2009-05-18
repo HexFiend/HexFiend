@@ -1,9 +1,8 @@
 //
 //  HFBTree.h
-//  BTree
+//  HexFiend
 //
-//  Created by peter on 2/6/09.
-//  Copyright 2009 __MyCompanyName__. All rights reserved.
+//  Created by Peter Ammon on 2/6/09.
 //
 
 #import <Foundation/Foundation.h>
@@ -11,6 +10,8 @@
 typedef unsigned long long HFBTreeIndex;
 
 @class HFBTreeNode;
+
+#define HFTEST_BTREES 1
 
 @interface HFBTree : NSObject {
     unsigned int depth;
@@ -20,6 +21,7 @@ typedef unsigned long long HFBTreeIndex;
 - (void)insertEntry:(id)entry atOffset:(HFBTreeIndex)offset;
 - (id)entryContainingOffset:(HFBTreeIndex)offset beginningOffset:(HFBTreeIndex *)outBeginningOffset;
 - (void)removeEntryAtOffset:(HFBTreeIndex)offset;
+- (void)removeAllEntries;
 
 #if HFTEST_BTREES
 - (void)checkIntegrityOfCachedLengths;

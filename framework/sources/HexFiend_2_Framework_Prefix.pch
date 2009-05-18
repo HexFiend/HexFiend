@@ -11,7 +11,12 @@
 
 #include <assert.h>
 
+#if ! NDEBUG
 #define HFASSERT(a) assert(a)
+#else
+#define HFASSERT(a)
+#endif
+
 
 #define UNIMPLEMENTED_VOID() [NSException raise:NSGenericException \
                                          format:@"Message %@ sent to instance of class %@, "\

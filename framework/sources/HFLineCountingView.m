@@ -6,10 +6,13 @@
 //  Copyright 2007 __MyCompanyName__. All rights reserved.
 //
 
-#import "HFLineCountingView.h"
+#import <HexFiend/HFLineCountingView.h>
+#import <HexFiend/HFLineCountingRepresenter.h>
 
 #define USE_TEXT_VIEW 0
 #define TIME_LINE_NUMBERS 0
+
+#define HEX_LINE_NUMBERS_HAS_0X_PREFIX 0
 
 #define INVALID_LINE_COUNT NSUIntegerMax
 
@@ -25,6 +28,19 @@
 }
 @end
 #endif
+
+
+static const char *formatStringForLineNumberFormat(enum HFLineNumberFormat_t format) {
+    switch (format) {
+        case HFLineNumberFormatDecimal: return "%llu";
+#if HEX_LINE_NUMBERS_HAS_0X_PREFIX
+        case HFLineNumberFormatHexadecimal: return "0x%llX";
+#else
+        case HFLineNumberFormatHexadecimal: return "%llX";    
+#endif
+        default: return NULL;
+    }
+}
 
 @implementation HFLineCountingView
 
@@ -167,10 +183,11 @@ static inline int common_prefix_length(const char *a, const char *b) {
         textAttributes = [[NSDictionary alloc] initWithObjectsAndKeys:font, NSFontAttributeName, [NSColor colorWithCalibratedWhite:(CGFloat).1 alpha:(CGFloat).8], NSForegroundColorAttributeName, paragraphStyle, NSParagraphStyleAttributeName, nil];
         [paragraphStyle release];
     }
+    const char * const formatString = formatStringForLineNumberFormat([[self representer] lineNumberFormat]);
     while (linesRemaining--) {
 	if (NSIntersectsRect(textRect, clipRect)) {
             char buff[256];
-            int newStringLength = snprintf(buff, sizeof buff, "%llu", lineValue);
+            int newStringLength = snprintf(buff, sizeof buff, formatString, lineValue);
             HFASSERT(newStringLength > 0);
 	    NSString *string = [[NSString alloc] initWithBytesNoCopy:buff length:newStringLength encoding:NSASCIIStringEncoding freeWhenDone:NO];
             [string drawInRect:textRect withAttributes:textAttributes];
@@ -204,8 +221,10 @@ static inline int common_prefix_length(const char *a, const char *b) {
     char *buffer = check_malloc(characterCount);
     NSUInteger bufferIndex = 0;
     
+    const char * const formatString = formatStringForLineNumberFormat([[self representer] lineNumberFormat]);
+    
     while (lineCount--) {
-        int charCount = sprintf(buffer + bufferIndex, "%llu", lineValue);
+        int charCount = sprintf(buffer + bufferIndex, formatString, lineValue);
         HFASSERT(charCount > 0);
         bufferIndex += charCount;
         buffer[bufferIndex++] = '\n';   
@@ -343,6 +362,7 @@ static inline int common_prefix_length(const char *a, const char *b) {
 }
 
 - (void)drawLineNumbersWithClipSingleStringDrawing:(NSRect)clipRect {
+    USE(clipRect);
     unsigned long long lineIndex = HFFPToUL(floorl(lineRangeToDraw.location));
     NSUInteger linesRemaining = ll2l(HFFPToUL(ceill(lineRangeToDraw.length + lineRangeToDraw.location) - floorl(lineRangeToDraw.location)));
 
@@ -410,6 +430,7 @@ static inline int common_prefix_length(const char *a, const char *b) {
 }
 
 - (void)drawLineNumbersWithClipFullLayoutManager:(NSRect)clipRect {
+    USE(clipRect);
     unsigned long long lineIndex = HFFPToUL(floorl(lineRangeToDraw.location));
     NSUInteger linesRemaining = ll2l(HFFPToUL(ceill(lineRangeToDraw.length + lineRangeToDraw.location) - floorl(lineRangeToDraw.location)));
     if (lineIndex != storedLineIndex || linesRemaining != storedLineCount) {
@@ -528,6 +549,7 @@ static inline int common_prefix_length(const char *a, const char *b) {
 }
 
 - (void)mouseDown:(NSEvent *)event {
+    USE(event);
     [representer cycleLineNumberFormat];
 }
 

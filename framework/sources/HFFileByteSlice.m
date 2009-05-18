@@ -41,6 +41,7 @@
     HFASSERT(range.length > 0);
     HFASSERT(range.location < [self length]);
     HFASSERT([self length] - range.location >= range.length);
+    if (range.location == 0 && range.length == length) return [[self retain] autorelease];
     return [[[[self class] alloc] initWithFile:fileReference offset:range.location + offset length:range.length] autorelease];
 }
 

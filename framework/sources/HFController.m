@@ -11,11 +11,13 @@
 #import <HexFiend/HFByteArray_Internal.h>
 #import <HexFiend/HFFullMemoryByteArray.h>
 #import <HexFiend/HFTAVLTreeByteArray.h>
+#import <HexFiend/HFBTreeByteArray.h>
 #import <HexFiend/HFFullMemoryByteSlice.h>
 #import <HexFiend/HFControllerCoalescedUndo.h>
 #import <HexFiend/HFSharedMemoryByteSlice.h>
+#import <HexFiend/HFRandomDataByteSlice.h>
 
-#if ! NDEBUG
+#if HFUNIT_TESTS
 #import <HexFiend/HFFileReference.h>
 #import <HexFiend/HFFileByteSlice.h>
 #import <HexFiend/HFTestHashing.h>
@@ -30,6 +32,8 @@
 #else
 #define VALIDATE_SELECTION() do { } while (0)
 #endif
+
+#define BENCHMARK_BYTEARRAYS 0
 
 #define BEGIN_TRANSACTION() NSUInteger token = [self beginPropertyChangeTransaction]
 #define END_TRANSACTION() [self endPropertyChangeTransaction:token]
@@ -53,6 +57,10 @@ typedef enum {
 - (void)_removeUndoManagerNotifications;
 @end
 
+static inline Class preferredByteArrayClass(void) {
+    return [HFBTreeByteArray class];
+}
+
 #if HFUNIT_TESTS
 @interface HFByteArray (HFUnitTests)
 + (void)_testSearchAlgorithmsLookingForArray:(HFByteArray *)needle inArray:(HFByteArray *)haystack;
@@ -69,7 +77,7 @@ typedef enum {
     _hfflags.selectable = YES;
     representers = [[NSMutableArray alloc] init];
     selectedContentsRanges = [[NSMutableArray alloc] initWithObjects:[HFRangeWrapper withRange:HFRangeMake(0, 0)], nil];
-    byteArray = [[HFTavlTreeByteArray alloc] init];
+    byteArray = [[preferredByteArrayClass() alloc] init];
     [byteArray addObserver:self forKeyPath:@"changesAreLocked" options:0 context:KVOContextChangesAreLocked];
     selectionAnchor = NO_SELECTION;
     [self setFont:[NSFont fontWithName:@"Monaco" size:10.f]];
@@ -1405,7 +1413,7 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
 #endif
     HFByteSlice *slice = [[HFSharedMemoryByteSlice alloc] initWithUnsharedData:data];
     HFASSERT([slice length] == [data length]);
-    HFByteArray *array = [[HFTavlTreeByteArray alloc] init];
+    HFByteArray *array = [[preferredByteArrayClass() alloc] init];
     [array insertByteSlice:slice inRange:HFRangeMake(0, 0)];
     HFASSERT([array length] == [data length]);
     [self insertByteArray:array replacingPreviousBytes:previousBytes allowUndoCoalescing:allowUndoCoalescing];
@@ -1524,6 +1532,63 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
         }
     }
 }
+
+#if BENCHMARK_BYTEARRAYS
+
++ (void)_testByteArray {
+    //HFByteArray* first = [[[HFFullMemoryByteArray alloc] init] autorelease];
+    HFByteArray *first = nil;
+#if 1
+    HFBTreeByteArray* second = [[[HFBTreeByteArray alloc] init] autorelease];    
+#else
+    HFByteArray* second = [[[HFTavlTreeByteArray alloc] init] autorelease];
+#endif
+    
+    //srandom(time(NULL));
+    
+    unsigned opCount = 9000000;
+    unsigned long long expectedLength = 0;
+    unsigned i;
+    for (i=1; i <= opCount; i++) {
+	NSAutoreleasePool* pool=[[NSAutoreleasePool alloc] init];
+	NSUInteger op;
+	const unsigned long long length = [first length];
+	unsigned long long offset;
+	unsigned long long number;
+	switch ((op = (random()%2))) {
+	    case 0: { //insert
+		offset = random() % (1 + length);
+		HFByteSlice* slice = [[HFRandomDataByteSlice alloc] initWithRandomDataLength: 1 + random() % 1000];
+		[first insertByteSlice:slice inRange:HFRangeMake(offset, 0)];
+		[second insertByteSlice:slice inRange:HFRangeMake(offset, 0)];
+		expectedLength += [slice length];
+		[slice release];
+		break;
+	    }
+	    case 1: { //delete
+		if (length > 0) {
+		    offset = random() % length;
+		    number = 1 + random() % (length - offset);
+		    [first deleteBytesInRange:HFRangeMake(offset, number)];
+		    [second deleteBytesInRange:HFRangeMake(offset, number)];
+		    expectedLength -= number;
+		}
+		break;
+	    }
+	}
+	[pool release];
+    }
+}
+
++ (void)initialize {
+    CFAbsoluteTime start = CFAbsoluteTimeGetCurrent();
+    srandom(0);
+    [self _testByteArray];
+    CFAbsoluteTime end = CFAbsoluteTimeGetCurrent();
+    printf("Time: %f\n", end - start);
+}
+
+#endif
 
 #if HFUNIT_TESTS
 #define HFTEST(a) do { if (! (a)) { printf("Test failed on line %u of file %s: %s\n", __LINE__, __FILE__, #a); exit(0); } } while (0)
@@ -1771,11 +1836,15 @@ static NSUInteger random_upto(unsigned long long val) {
     const BOOL should_debug = NO;
     DEBUG puts("Beginning TAVL Tree test:");
     HFByteArray* first = [[[HFFullMemoryByteArray alloc] init] autorelease];
+#if 1
+    HFBTreeByteArray* second = [[[HFBTreeByteArray alloc] init] autorelease];    
+#else
     HFByteArray* second = [[[HFTavlTreeByteArray alloc] init] autorelease];
+#endif
     
     //srandom(time(NULL));
     
-    unsigned opCount = 5000;
+    unsigned opCount = 50000;
     unsigned long long expectedLength = 0;
     unsigned i;
     for (i=1; i <= opCount; i++) {
@@ -1837,7 +1906,7 @@ static NSUInteger random_upto(unsigned long long val) {
     
     HFByteSlice *slice = [[[HFFileByteSlice alloc] initWithFile:ref] autorelease];
     
-    HFByteArray *array = [[[HFTavlTreeByteArray alloc] init] autorelease];
+    HFByteArray *array = [[[preferredByteArrayClass() alloc] init] autorelease];
     [array insertByteSlice:slice inRange:HFRangeMake(0, 0)];
     HFTEST([HFHashByteArray(array) isEqual:HFHashFile(fileURL)]);
     
@@ -1896,13 +1965,13 @@ static NSUInteger random_upto(unsigned long long val) {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     NSUInteger round;
     for (round = 0; round < 24; round++) {
-        HFTavlTreeByteArray *byteArray = [[[HFTavlTreeByteArray alloc] init] autorelease];
+        HFByteArray *byteArray = [[[preferredByteArrayClass() alloc] init] autorelease];
         HFByteSlice *rootSlice = [[[HFRepeatingDataByteSlice alloc] initWithRepeatingDataLength: 1 << 20] autorelease];
         [byteArray insertByteSlice:rootSlice inRange:HFRangeMake(0, 0)];
         
         NSData *needleData = randomDataOfLength(32 + random_upto(63));
         HFByteSlice *needleSlice = [[[HFSharedMemoryByteSlice alloc] initWithUnsharedData:needleData] autorelease];
-        HFByteArray *needle = [[[HFTavlTreeByteArray alloc] init] autorelease];
+        HFByteArray *needle = [[[preferredByteArrayClass() alloc] init] autorelease];
         [needle insertByteSlice:needleSlice inRange:HFRangeMake(0, 0)];
         
         [HFByteArray _testSearchAlgorithmsLookingForArray:needle inArray:byteArray];

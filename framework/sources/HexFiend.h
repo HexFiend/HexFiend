@@ -14,6 +14,7 @@
 #import <HexFiend/HFFileByteSlice.h>
 #import <HexFiend/HFFileReference.h>
 #import <HexFiend/HFTavlTreeByteArray.h>
+#import <HexFiend/HFBTreeByteArray.h>
 #import <HexFiend/HFProgressTracker.h>
 #import <HexFiend/HFTextField.h>
 #import <HexFiend/HFSharedMemoryByteSlice.h>

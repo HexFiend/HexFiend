@@ -10,6 +10,7 @@
 
 @class HFLineCountingRepresenter;
 
+
 @interface HFLineCountingView : NSView {
     NSFont *font;
     CGFloat lineHeight;
@@ -24,7 +25,6 @@
     NSUInteger bytesPerLine;
     unsigned long long storedLineIndex;
     NSUInteger storedLineCount;
-    
     BOOL useStringDrawingPath;
 }
 

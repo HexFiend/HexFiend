@@ -119,8 +119,14 @@ NSString *const HFLineCountingRepresenterMinimumViewWidthChanged = @"HFLineCount
     return [self preferredWidth];
 }
 
+- (enum HFLineNumberFormat_t)lineNumberFormat {
+    return lineNumberFormat;
+}
+
 - (void)cycleLineNumberFormat {
-    
+    lineNumberFormat = (lineNumberFormat + 1) % HFLineNumberFormatMAXIMUM;
+    [self updateMinimumViewWidth];
+    [[self view] setNeedsDisplay:YES];
 }
 
 - (void)initializeView {
