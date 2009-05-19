@@ -27,6 +27,9 @@ enum HFLineNumberFormat_t {
 - (void)setMinimumDigitCount:(NSUInteger)count;
 - (NSUInteger)minimumDigitCount;
 
+/* Returns the number of digits we are making space for */
+- (NSUInteger)digitCount;
+
 - (CGFloat)preferredWidth;
 
 - (enum HFLineNumberFormat_t)lineNumberFormat;

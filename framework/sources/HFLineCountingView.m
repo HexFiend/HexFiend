@@ -12,7 +12,7 @@
 #define USE_TEXT_VIEW 0
 #define TIME_LINE_NUMBERS 0
 
-#define HEX_LINE_NUMBERS_HAS_0X_PREFIX 0
+#define HEX_LINE_NUMBERS_HAVE_0X_PREFIX 0
 
 #define INVALID_LINE_COUNT NSUIntegerMax
 
@@ -28,19 +28,6 @@
 }
 @end
 #endif
-
-
-static const char *formatStringForLineNumberFormat(enum HFLineNumberFormat_t format) {
-    switch (format) {
-        case HFLineNumberFormatDecimal: return "%llu";
-#if HEX_LINE_NUMBERS_HAS_0X_PREFIX
-        case HFLineNumberFormatHexadecimal: return "0x%llX";
-#else
-        case HFLineNumberFormatHexadecimal: return "%llX";    
-#endif
-        default: return NULL;
-    }
-}
 
 @implementation HFLineCountingView
 
@@ -81,10 +68,34 @@ static const char *formatStringForLineNumberFormat(enum HFLineNumberFormat_t for
 
 - (BOOL)isFlipped { return YES; }
 
+- (void)getLineNumberFormatString:(char *)outString length:(NSUInteger)length {
+    enum HFLineNumberFormat_t format = [self lineNumberFormat];
+    if (format == HFLineNumberFormatDecimal) {
+        strlcpy(outString, "%llu", length);
+    }
+    else if (format == HFLineNumberFormatHexadecimal) {
+#if HEX_LINE_NUMBERS_HAVE_0X_PREFIX
+        // we want a format string like 0x%08llX
+        snprintf(outString, length, "0x%%0%lullX", (unsigned long)[[self representer] digitCount] - 2);
+#else
+        // we want a format string like %08llX
+        snprintf(outString, length, "%%0%lullX", (unsigned long)[[self representer] digitCount]);
+#endif
+    }
+    else {
+        strlcpy(outString, "", length);
+    }
+}
+
 - (void)drawGradientWithClip:(NSRect)clip {
+#if 0
     USE(clip);
     NSImage *image = HFImageNamed(@"HFMetalGradient");
     [image drawInRect:[self bounds] fromRect:NSZeroRect operation:NSCompositeCopy fraction:(CGFloat)1.];
+#else
+    [[NSColor colorWithCalibratedWhite:(CGFloat).91 alpha:1] set];
+    NSRectFill(clip);
+#endif
 }
 
 - (void)drawDividerWithClip:(NSRect)clipRect {
@@ -128,11 +139,14 @@ static inline int common_prefix_length(const char *a, const char *b) {
     BOOL conversionResult = [[textStorage string] getCString:previousBuff maxLength:sizeof previousBuff encoding:NSASCIIStringEncoding];
     HFASSERT(conversionResult);
     while (linesRemaining--) {
+        char formatString[64];
+        [self getLineNumberFormatString:formatString length:sizeof formatString];
+        
 	if (NSIntersectsRect(textRect, clipRect)) {
 	    NSString *replacementCharacters = nil;
             NSRange replacementRange;
             char buff[256];
-            int newStringLength = snprintf(buff, sizeof buff, "%llu", lineValue);
+            int newStringLength = snprintf(buff, sizeof buff, formatString, lineValue);
             HFASSERT(newStringLength > 0);
             int prefixLength = common_prefix_length(previousBuff, buff);
             HFASSERT(prefixLength <= newStringLength);
@@ -183,7 +197,10 @@ static inline int common_prefix_length(const char *a, const char *b) {
         textAttributes = [[NSDictionary alloc] initWithObjectsAndKeys:font, NSFontAttributeName, [NSColor colorWithCalibratedWhite:(CGFloat).1 alpha:(CGFloat).8], NSForegroundColorAttributeName, paragraphStyle, NSParagraphStyleAttributeName, nil];
         [paragraphStyle release];
     }
-    const char * const formatString = formatStringForLineNumberFormat([[self representer] lineNumberFormat]);
+    
+    char formatString[64];
+    [self getLineNumberFormatString:formatString length:sizeof formatString];
+    
     while (linesRemaining--) {
 	if (NSIntersectsRect(textRect, clipRect)) {
             char buff[256];
@@ -201,13 +218,25 @@ static inline int common_prefix_length(const char *a, const char *b) {
 
 - (NSUInteger)characterCountForLineRange:(HFRange)range {
     HFASSERT(range.length <= NSUIntegerMax);
+    NSUInteger characterCount;
+    
     NSUInteger lineCount = ll2l(range.length);
     const NSUInteger stride = bytesPerLine;
-    unsigned long long lineValue = HFProductULL(range.location, bytesPerLine);
-    NSUInteger characterCount = lineCount /* newlines */;
-    while (lineCount--) {
-        characterCount += HFCountDigitsBase10(lineValue);
-        lineValue += stride;
+    HFLineCountingRepresenter *rep = [self representer];
+    enum HFLineNumberFormat_t format = [self lineNumberFormat];
+    if (format == HFLineNumberFormatDecimal) {
+        unsigned long long lineValue = HFProductULL(range.location, bytesPerLine);
+        characterCount = lineCount /* newlines */;
+        while (lineCount--) {
+            characterCount += HFCountDigitsBase10(lineValue);
+            lineValue += stride;
+        }
+    }
+    else if (format == HFLineNumberFormatHexadecimal) {
+        characterCount = ([rep digitCount] + 1) * lineCount; // +1 for newlines
+    }
+    else {
+        characterCount = -1;
     }
     return characterCount;
 }
@@ -221,7 +250,8 @@ static inline int common_prefix_length(const char *a, const char *b) {
     char *buffer = check_malloc(characterCount);
     NSUInteger bufferIndex = 0;
     
-    const char * const formatString = formatStringForLineNumberFormat([[self representer] lineNumberFormat]);
+    char formatString[64];
+    [self getLineNumberFormatString:formatString length:sizeof formatString];
     
     while (lineCount--) {
         int charCount = sprintf(buffer + bufferIndex, formatString, lineValue);
@@ -241,7 +271,7 @@ static inline int common_prefix_length(const char *a, const char *b) {
     [textStorage beginEditing];
     
     if (storedLineCount == INVALID_LINE_COUNT) {
-        /* This usually indicates that our bytes per line changed, and we need to just recalculate everything */
+        /* This usually indicates that our bytes per line or line number format changed, and we need to just recalculate everything */
         NSString *string = [self createLineStringForRange:HFRangeMake(startingLineIndex, linesRemaining)];
         [textStorage replaceCharactersInRange:NSMakeRange(0, [textStorage length]) withString:string];
         [string release];
@@ -395,8 +425,6 @@ static inline int common_prefix_length(const char *a, const char *b) {
     unsigned long long lineIndex = HFFPToUL(floorl(lineRangeToDraw.location));
     NSUInteger linesRemaining = ll2l(HFFPToUL(ceill(lineRangeToDraw.length + lineRangeToDraw.location) - floorl(lineRangeToDraw.location)));
     
-    CGContextRef ctx = [[NSGraphicsContext currentContext] graphicsPort];
-    
     CGFloat linesToVerticallyOffset = ld2f(lineRangeToDraw.location - floorl(lineRangeToDraw.location));
     CGFloat verticalOffset = linesToVerticallyOffset * lineHeight + 1;
     NSLog(@"Vertical offset: %f", verticalOffset);
@@ -448,7 +476,7 @@ static inline int common_prefix_length(const char *a, const char *b) {
 #if TIME_LINE_NUMBERS
     CFAbsoluteTime startTime = CFAbsoluteTimeGetCurrent();
 #endif
-    const NSInteger drawingMode = (useStringDrawingPath ? 1 : 2);
+    NSInteger drawingMode = (useStringDrawingPath ? 1 : 2);
     switch (drawingMode) {
         case 0:
             [self drawLineNumbersWithClipLayoutManagerPerLine:clipRect];
@@ -507,6 +535,18 @@ static inline int common_prefix_length(const char *a, const char *b) {
     return bytesPerLine;
 }
 
+- (void)setLineNumberFormat:(enum HFLineNumberFormat_t)format {
+    if (format != lineNumberFormat) {
+        lineNumberFormat = format;
+        storedLineCount = INVALID_LINE_COUNT;
+        [self setNeedsDisplay:YES];
+    }
+}
+
+- (enum HFLineNumberFormat_t)lineNumberFormat {
+    return lineNumberFormat;
+}
+
 - (BOOL)canUseStringDrawingPathForFont:(NSFont *)testFont {
     NSString *name = [testFont fontName];
     return [name isEqualToString:@"Monaco"] || [name isEqualToString:@"Courier"];
@@ -559,6 +599,18 @@ static inline int common_prefix_length(const char *a, const char *b) {
 
 - (HFLineCountingRepresenter *)representer {
     return representer;
+}
+
++ (NSUInteger)digitsRequiredToDisplayLineNumber:(unsigned long long)lineNumber inFormat:(enum HFLineNumberFormat_t)format {
+    switch (format) {
+        case HFLineNumberFormatDecimal: return HFCountDigitsBase10(lineNumber);
+#if HEX_LINE_NUMBERS_HAVE_0X_PREFIX
+        case HFLineNumberFormatHexadecimal: return 2 + HFCountDigitsBase16(lineNumber);
+#else
+        case HFLineNumberFormatHexadecimal: return HFCountDigitsBase16(lineNumber);
+#endif
+        default: return 0;
+    }
 }
 
 @end

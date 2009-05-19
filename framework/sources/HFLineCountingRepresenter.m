@@ -11,7 +11,6 @@
 
 NSString *const HFLineCountingRepresenterMinimumViewWidthChanged = @"HFLineCountingRepresenterMinimumViewWidthChanged";
 
-
 @implementation HFLineCountingRepresenter
 
 - (id)init {
@@ -80,6 +79,10 @@ NSString *const HFLineCountingRepresenterMinimumViewWidthChanged = @"HFLineCount
     [self updateDigitAdvanceWithFont:font];
 }
 
+- (void)updateLineNumberFormat {
+    [[self view] setLineNumberFormat:lineNumberFormat];
+}
+
 - (void)updateBytesPerLine {
     [[self view] setBytesPerLine:[[self controller] bytesPerLine]];
 }
@@ -105,7 +108,7 @@ NSString *const HFLineCountingRepresenterMinimumViewWidthChanged = @"HFLineCount
         /* We want to know how many lines are displayed.  That's equal to the contentsLength divided by bytesPerLine rounded down, except in the case that we're at the end of a line, in which case we need to show one more.  Hence adding 1 and dividing gets us the right result. */
         unsigned long long lineCount = contentsLength / bytesPerLine;
         unsigned long long contentsLengthRoundedToLine = HFProductULL(lineCount, bytesPerLine);
-        NSUInteger digitCount = HFCountDigitsBase10(contentsLengthRoundedToLine);
+        NSUInteger digitCount = [HFLineCountingView digitsRequiredToDisplayLineNumber:contentsLengthRoundedToLine inFormat:lineNumberFormat];
         NSUInteger digitWidth = MAX(minimumDigitCount, digitCount);
         if (digitWidth != digitsToRepresentContentsLength) {
             digitsToRepresentContentsLength = digitWidth;
@@ -125,12 +128,13 @@ NSString *const HFLineCountingRepresenterMinimumViewWidthChanged = @"HFLineCount
 
 - (void)cycleLineNumberFormat {
     lineNumberFormat = (lineNumberFormat + 1) % HFLineNumberFormatMAXIMUM;
+    [self updateLineNumberFormat];
     [self updateMinimumViewWidth];
-    [[self view] setNeedsDisplay:YES];
 }
 
 - (void)initializeView {
     [self updateFontAndLineHeight];
+    [self updateLineNumberFormat];
     [self updateBytesPerLine];
     [self updateLineRangeToDraw];
     [self updateMinimumViewWidth];
@@ -150,6 +154,10 @@ NSString *const HFLineCountingRepresenterMinimumViewWidthChanged = @"HFLineCount
 
 - (NSUInteger)minimumDigitCount {
     return minimumDigitCount;
+}
+
+- (NSUInteger)digitCount {
+    return digitsToRepresentContentsLength;
 }
 
 + (NSPoint)defaultLayoutPosition {

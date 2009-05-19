@@ -1573,6 +1573,7 @@
 				"MACOSX_DEPLOYMENT_TARGET[arch=ppc64]" = 10.5;
 				"MACOSX_DEPLOYMENT_TARGET[arch=x86_64]" = 10.5;
 				PREBINDING = NO;
+				RUN_CLANG_STATIC_ANALYZER = YES;
 				"SDKROOT[arch=ppc64]" = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
 			};
 			name = "Debug-NoUnitTests";
@@ -1688,6 +1689,7 @@
 				"MACOSX_DEPLOYMENT_TARGET[arch=ppc64]" = 10.5;
 				"MACOSX_DEPLOYMENT_TARGET[arch=x86_64]" = 10.5;
 				PREBINDING = NO;
+				RUN_CLANG_STATIC_ANALYZER = YES;
 				"SDKROOT[arch=ppc64]" = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
 			};
 			name = "Debug-UnitTests";
@@ -1803,6 +1805,7 @@
 				"MACOSX_DEPLOYMENT_TARGET[arch=ppc64]" = 10.5;
 				"MACOSX_DEPLOYMENT_TARGET[arch=x86_64]" = 10.5;
 				PREBINDING = NO;
+				RUN_CLANG_STATIC_ANALYZER = YES;
 				"SDKROOT[arch=ppc64]" = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
 			};
 			name = "Debug-UnitTests-Optimized";

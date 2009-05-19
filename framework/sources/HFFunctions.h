@@ -231,6 +231,17 @@ static inline NSUInteger HFCountDigitsBase10(unsigned long long val) {
     return MAX(1, low);
 }
 
+/* Returns 1 + floor(log base 16 of val).  If val is 0, returns 1.  This works by computing the log base 2 based on the number of leading zeros, and then dividing by 4. */
+static inline NSUInteger HFCountDigitsBase16(unsigned long long val) {
+    /* __builtin_clzll doesn't like being passed 0 */
+    if (val == 0) return 1;
+    
+    /* Compute the log base 2 */
+    NSUInteger leadingZeros = (NSUInteger)__builtin_clzll(val);
+    NSUInteger logBase2 = (CHAR_BIT * sizeof val) - leadingZeros - 1;
+    return 1 + logBase2/4;
+}
+
 BOOL HFStringEncodingIsSupersetOfASCII(NSStringEncoding encoding);
 
 static inline unsigned long ll2l(unsigned long long val) { assert(val <= NSUIntegerMax); return (unsigned long)val; }

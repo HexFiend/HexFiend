@@ -303,7 +303,6 @@ NSData *HFDataFromHexString(NSString *string, BOOL* isMissingLastNybble) {
     //final nibble
     if (numNybbles % 2) {
         bytes[resultIndex++] = byteValue;
-        byteValue = 0;
     }
     
     [result setLength:resultIndex];

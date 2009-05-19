@@ -7,9 +7,7 @@
 //
 
 #import <Cocoa/Cocoa.h>
-
-@class HFLineCountingRepresenter;
-
+#import <HexFiend/HFLineCountingRepresenter.h>
 
 @interface HFLineCountingView : NSView {
     NSFont *font;
@@ -25,6 +23,7 @@
     NSUInteger bytesPerLine;
     unsigned long long storedLineIndex;
     NSUInteger storedLineCount;
+    enum HFLineNumberFormat_t lineNumberFormat;
     BOOL useStringDrawingPath;
 }
 
@@ -40,7 +39,12 @@
 - (void)setBytesPerLine:(NSUInteger)val;
 - (NSUInteger)bytesPerLine;
 
+- (void)setLineNumberFormat:(enum HFLineNumberFormat_t)format;
+- (enum HFLineNumberFormat_t)lineNumberFormat;
+
 - (void)setRepresenter:(HFLineCountingRepresenter *)rep;
 - (HFLineCountingRepresenter *)representer;
+
++ (NSUInteger)digitsRequiredToDisplayLineNumber:(unsigned long long)lineNumber inFormat:(enum HFLineNumberFormat_t)format;
 
 @end

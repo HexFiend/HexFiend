@@ -21,7 +21,6 @@ extern NSString *const HFPrivateByteArrayPboardType;
     IBOutlet NSProgressIndicator *progressTrackingIndicator;
     IBOutlet NSTextField *progressTrackingDescriptionTextField;
     HFProgressTracker *progressTracker;
-    NSInteger progressTrackerModalSessionState;
     unsigned long long dataAmountToCopy;
 }
 
