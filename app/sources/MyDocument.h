@@ -63,4 +63,6 @@
 - (IBAction)replace:sender;
 - (IBAction)replaceAll:sender;
 
+- (IBAction)toggleOverwriteMode:sender;
+
 @end

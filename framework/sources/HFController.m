@@ -909,8 +909,8 @@ static inline Class preferredByteArrayClass(void) {
             }
         }
     }
-    if (rangeIndex == 0) {
-        /* We removed all of our range.  Telescope us. */
+    if (rangeIndex == 0 || (rangeIndex == 1 && tempRanges[0].length == 0)) {
+        /* We removed all of our ranges.  Telescope us. */
         HFASSERT(cursorLocation <= [self contentsLength]);
         [self _setSingleSelectedContentsRange:HFRangeMake(cursorLocation, 0)];
     }
@@ -1286,6 +1286,26 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
     END_TRANSACTION();
 }
 
+- (void)_activateTypingUndoCoalescingForOverwritingRange:(HFRange)rangeToReplace {
+    HFASSERT(HFRangeIsSubrangeOfRange(rangeToReplace, HFRangeMake(0, [self contentsLength])));
+    HFASSERT(rangeToReplace.length > 0);
+    HFByteArray *bytes = [self byteArray];
+    
+    //undoCoalescer may be nil here
+    BOOL replaceUndoCoalescer = ! [undoCoalescer canCoalesceOverwriteAtLocation:rangeToReplace.location];
+    
+    if (replaceUndoCoalescer) {
+        [undoCoalescer release];
+        HFByteArray *replacedData = [bytes subarrayWithRange:rangeToReplace];
+        undoCoalescer = [[HFControllerCoalescedUndo alloc] initWithOverwrittenData:replacedData atAnchorLocation:rangeToReplace.location];
+        [[self undoManager] registerUndoWithTarget:self selector:@selector(_performTypingUndo:) object:undoCoalescer];
+    }
+    else {
+        [undoCoalescer overwriteDataInRange:rangeToReplace withByteArray:bytes];
+    }
+    
+}
+
 - (void)_activateTypingUndoCoalescingForReplacingRange:(HFRange)rangeToReplace withDataOfLength:(unsigned long long)dataLength {
     HFASSERT(HFRangeIsSubrangeOfRange(rangeToReplace, HFRangeMake(0, [self contentsLength])));
     HFASSERT(dataLength > 0 || rangeToReplace.length > 0);
@@ -1395,52 +1415,61 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
 }
 
 - (void)deleteSelection {
-    [self _commandDeleteRanges:[HFRangeWrapper organizeAndMergeRanges:selectedContentsRanges]];
+    if ([self inOverwriteMode]) {
+        NSBeep();
+    }
+    else {
+        [self _commandDeleteRanges:[HFRangeWrapper organizeAndMergeRanges:selectedContentsRanges]];
+    }
 }
 
+// Called after Replace All is finished. 
 - (void)replaceByteArray:(HFByteArray *)newArray {
     REQUIRE_NOT_NULL(newArray);
     EXPECT_CLASS(newArray, HFByteArray);
     HFRange entireRange = HFRangeMake(0, [self contentsLength]);
-    [self _commandInsertByteArrays:[NSArray arrayWithObject:newArray] inRanges:[HFRangeWrapper withRanges:&entireRange count:1] withSelectionAction:ePreserveSelection];
+    if ([self inOverwriteMode] && [newArray length] != entireRange.length) {
+        NSBeep();
+    }
+    else {
+        [self _commandInsertByteArrays:[NSArray arrayWithObject:newArray] inRanges:[HFRangeWrapper withRanges:&entireRange count:1] withSelectionAction:ePreserveSelection];
+    }
 }
 
-- (void)insertData:(NSData *)data replacingPreviousBytes:(unsigned long long)previousBytes allowUndoCoalescing:(BOOL)allowUndoCoalescing {
+- (BOOL)insertData:(NSData *)data replacingPreviousBytes:(unsigned long long)previousBytes allowUndoCoalescing:(BOOL)allowUndoCoalescing {
     REQUIRE_NOT_NULL(data);
+    BOOL result;
 #if ! NDEBUG
-    unsigned long long expectedNewLength = [byteArray length] + [data length] - previousBytes;
-    FOREACH(HFRangeWrapper*, wrapper, [self selectedContentsRanges]) expectedNewLength -= [wrapper HFRange].length;
+    unsigned long long expectedNewLength;
+    if ([self inOverwriteMode]) {
+        expectedNewLength = [byteArray length];
+    }    
+    else {
+        expectedNewLength = [byteArray length] + [data length] - previousBytes;
+        FOREACH(HFRangeWrapper*, wrapper, [self selectedContentsRanges]) expectedNewLength -= [wrapper HFRange].length;
+    }
 #endif
     HFByteSlice *slice = [[HFSharedMemoryByteSlice alloc] initWithUnsharedData:data];
     HFASSERT([slice length] == [data length]);
     HFByteArray *array = [[preferredByteArrayClass() alloc] init];
     [array insertByteSlice:slice inRange:HFRangeMake(0, 0)];
     HFASSERT([array length] == [data length]);
-    [self insertByteArray:array replacingPreviousBytes:previousBytes allowUndoCoalescing:allowUndoCoalescing];
+    result = [self insertByteArray:array replacingPreviousBytes:previousBytes allowUndoCoalescing:allowUndoCoalescing];
     [slice release];
     [array release];
 #if ! NDEBUG
     HFASSERT([byteArray length] == expectedNewLength);
 #endif
+    return result;
 }
 
-- (void)insertByteArray:(HFByteArray *)bytesToInsert replacingPreviousBytes:(unsigned long long)previousBytes allowUndoCoalescing:(BOOL)allowUndoCoalescing {
-#if ! NDEBUG
-    if (previousBytes > 0) {
-        NSArray *selectedRanges = [self selectedContentsRanges];
-        HFASSERT([selectedRanges count] == 1);
-        HFRange selectedRange = [[selectedRanges objectAtIndex:0] HFRange];
-        HFASSERT(selectedRange.location >= previousBytes);
-    }
-#endif    
+- (BOOL)_insertionModeCoreInsertByteArray:(HFByteArray *)bytesToInsert replacingPreviousBytes:(unsigned long long)previousBytes allowUndoCoalescing:(BOOL)allowUndoCoalescing outNewSingleSelectedRange:(HFRange *)outSelectedRange {
+    HFASSERT(! [self inOverwriteMode]);
     REQUIRE_NOT_NULL(bytesToInsert);
-    BEGIN_TRANSACTION();
     
     unsigned long long amountDeleted = 0, amountAdded = [bytesToInsert length];
     HFByteArray *bytes = [self byteArray];
-    NSEnumerator *enumer;
-    HFRangeWrapper *rangeWrapper;
-    
+
     /* Delete all the selection - in reverse order - except the last one, which we will overwrite.  TODO - make this undoable. */
     NSArray *allRangesToRemove = [HFRangeWrapper organizeAndMergeRanges:[self selectedContentsRanges]];
     HFRange rangeToReplace = [[allRangesToRemove objectAtIndex:0] HFRange];
@@ -1457,14 +1486,16 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
         }
     }
     
-    HFASSERT(rangesAreInAscendingOrder([rangesToDelete objectEnumerator]));
-    [self _registerCondemnedRangesForUndo:rangesToDelete selectingRangesAfterUndo:YES];
-    enumer = [rangesToDelete reverseObjectEnumerator];
-    while ((rangeWrapper = [enumer nextObject])) {
-        [bytes deleteBytesInRange:[rangeWrapper HFRange]];
+    if ([rangesToDelete count] > 0) {
+        HFASSERT(rangesAreInAscendingOrder([rangesToDelete objectEnumerator]));
+        /* TODO: This is problematic because it overwrites the selection that gets set by _activateTypingUndoCoalescingForReplacingRange:, so we lose the first selection in a multiple selection scenario. */
+        [self _registerCondemnedRangesForUndo:rangesToDelete selectingRangesAfterUndo:YES];
+        NSEnumerator *enumer = [rangesToDelete reverseObjectEnumerator];
+        HFRangeWrapper *rangeWrapper;
+        while ((rangeWrapper = [enumer nextObject])) {
+            [bytes deleteBytesInRange:[rangeWrapper HFRange]];
+        }
     }
-    
-    amountDeleted = HFSum(amountDeleted, rangeToReplace.length);
     
     /* Start undo.  If we have previousBytes, remove those first. */
     if (previousBytes > 0) {
@@ -1479,7 +1510,7 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
     [self _activateTypingUndoCoalescingForReplacingRange:rangeToReplace withDataOfLength:amountAdded];
     if (! allowUndoCoalescing) [self _endTypingUndoCoalescingIfActive];
     
-    if (previousBytes > 0) rangeToReplace.length = previousBytes;
+    rangeToReplace.length = HFSum(rangeToReplace.length, previousBytes);
     
     /* Insert data */
 #if ! NDEBUG
@@ -1490,22 +1521,84 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
     HFASSERT(expectedLength == [byteArray length]);
 #endif
     
-    [self _addPropertyChangeBits:HFControllerContentValue];
+    /* return the new selected range */
+    *outSelectedRange = HFRangeMake(HFSum(rangeToReplace.location, amountAdded), 0);
+    return YES;
+}
+
+
+- (BOOL)_overwriteModeCoreInsertByteArray:(HFByteArray *)bytesToInsert replacingPreviousBytes:(unsigned long long)previousBytes allowUndoCoalescing:(BOOL)allowUndoCoalescing outRangeToRemoveFromSelection:(HFRange *)outRangeToRemove {
+    REQUIRE_NOT_NULL(bytesToInsert);
+    const unsigned long long byteArrayLength = [byteArray length];
+    const unsigned long long bytesToInsertLength = [bytesToInsert length];
+    HFRange firstSelectedRange = [[selectedContentsRanges objectAtIndex:0] HFRange];
+    HFRange proposedRangeToOverwrite = HFRangeMake(firstSelectedRange.location, bytesToInsertLength);
+    HFASSERT(proposedRangeToOverwrite.location >= previousBytes);
+    proposedRangeToOverwrite.location -= previousBytes;
+    if (! HFRangeIsSubrangeOfRange(proposedRangeToOverwrite, HFRangeMake(0, byteArrayLength))) {
+        /* The user tried to overwrite past the end */
+        NSBeep();
+        return NO;
+    }
     
-    /* Update our selection */
-    [self _updateDisplayedRange];
-    HFRange selectedRange = HFRangeMake(HFSum(rangeToReplace.location, amountAdded), 0);
-    [self _setSingleSelectedContentsRange:selectedRange];
-    [self maximizeVisibilityOfContentsRange:selectedRange];
+    if (! allowUndoCoalescing) [self _endTypingUndoCoalescingIfActive];
+    [self _activateTypingUndoCoalescingForOverwritingRange:proposedRangeToOverwrite];
+    if (! allowUndoCoalescing) [self _endTypingUndoCoalescingIfActive];
     
-    if (amountAdded != amountDeleted) [self _addPropertyChangeBits:HFControllerContentLength];
+    [byteArray insertByteArray:bytesToInsert inRange:proposedRangeToOverwrite];
     
+    *outRangeToRemove = proposedRangeToOverwrite;
+    return YES;
+}
+
+- (BOOL)insertByteArray:(HFByteArray *)bytesToInsert replacingPreviousBytes:(unsigned long long)previousBytes allowUndoCoalescing:(BOOL)allowUndoCoalescing {
+#if ! NDEBUG
+    if (previousBytes > 0) {
+        NSArray *selectedRanges = [self selectedContentsRanges];
+        HFASSERT([selectedRanges count] == 1);
+        HFRange selectedRange = [[selectedRanges objectAtIndex:0] HFRange];
+        HFASSERT(selectedRange.location >= previousBytes); //don't try to delete more trailing bytes than we actually have!
+    }
+#endif
+    REQUIRE_NOT_NULL(bytesToInsert);
     
+    BEGIN_TRANSACTION();
+    unsigned long long beforeLength = [byteArray length];
+    BOOL inOverwriteMode = [self inOverwriteMode];
+    HFRange modificationRange; //either range to remove from selection if in overwrite mode, or range to select if not
+    BOOL success;
+    if (inOverwriteMode) {
+        success = [self _overwriteModeCoreInsertByteArray:bytesToInsert replacingPreviousBytes:previousBytes allowUndoCoalescing:allowUndoCoalescing outRangeToRemoveFromSelection:&modificationRange];
+    }
+    else {
+        success = [self _insertionModeCoreInsertByteArray:bytesToInsert replacingPreviousBytes:previousBytes allowUndoCoalescing:allowUndoCoalescing outNewSingleSelectedRange:&modificationRange];
+    }
+    
+    if (success) {
+        /* Update our selection */
+        [self _addPropertyChangeBits:HFControllerContentValue];
+        [self _updateDisplayedRange];
+        [self _addPropertyChangeBits:HFControllerContentValue];
+        if (inOverwriteMode) {
+            [self _removeRangeFromSelection:modificationRange withCursorLocationIfAllSelectionRemoved:HFMaxRange(modificationRange)];
+            [self maximizeVisibilityOfContentsRange:[[selectedContentsRanges objectAtIndex:0] HFRange]];
+        }
+        else {
+            [self _setSingleSelectedContentsRange:modificationRange];
+            [self maximizeVisibilityOfContentsRange:modificationRange];
+        }
+        if (beforeLength != [byteArray length]) [self _addPropertyChangeBits:HFControllerContentLength];
+    }
     END_TRANSACTION();
+    return success;
 }
 
 - (void)deleteDirection:(HFControllerMovementDirection)direction {
     HFASSERT(direction == HFControllerDirectionLeft || direction == HFControllerDirectionRight);
+    if ([self inOverwriteMode]) {
+        NSBeep();
+        return;
+    }
     unsigned long long minSelection = [self _minimumSelectionLocation];
     unsigned long long maxSelection = [self _maximumSelectionLocation];
     if (maxSelection != minSelection) {
@@ -1531,6 +1624,20 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
             END_TRANSACTION();
         }
     }
+}
+
+- (BOOL)inOverwriteMode {
+    return _hfflags.overwriteMode;
+}
+
+- (void)setInOverwriteMode:(BOOL)val {
+    _hfflags.overwriteMode = val;
+    // don't allow undo coalescing across switching between overwrite mode
+    [self _endTypingUndoCoalescingIfActive];
+}
+
+- (BOOL)requiresOverwriteMode {
+    return NO;
 }
 
 #if BENCHMARK_BYTEARRAYS

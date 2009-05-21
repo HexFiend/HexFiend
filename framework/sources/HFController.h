@@ -86,12 +86,13 @@ typedef NSInteger HFControllerMovementGranularity;
     
     struct  {
         unsigned antialias:1;
+        unsigned overwriteMode:1;
         unsigned editable:1;
         unsigned selectable:1;
         unsigned selectionInProgress:1;
         unsigned shiftExtendSelection:1;
         unsigned commandExtendSelection:1;
-        unsigned reserved1:26;
+        unsigned reserved1:25;
         unsigned reserved2:32;
     } _hfflags;
 }
@@ -201,9 +202,12 @@ typedef NSInteger HFControllerMovementGranularity;
 
 /* Text editing.  All of the following methods are undoable. */
 
-/* Replaces the selection with the given data.  For something like a hex view representer, it takes two keypresses to create a whole byte; the way this is implemented, the first keypress goes into the data as a complete byte, and the second one (if any) replaces it.  If previousByteCount > 0, then that many prior bytes are replaced, without breaking undo coalescing.  For previousByteCount to be > 0, the following must be true: There is only one selected range, and it is of length 0, and its location >= previousByteCount */
-- (void)insertByteArray:(HFByteArray *)byteArray replacingPreviousBytes:(unsigned long long)previousByteCount allowUndoCoalescing:(BOOL)allowUndoCoalescing;
-- (void)insertData:(NSData *)data replacingPreviousBytes:(unsigned long long)previousByteCount allowUndoCoalescing:(BOOL)allowUndoCoalescing;
+/* Replaces the selection with the given data.  For something like a hex view representer, it takes two keypresses to create a whole byte; the way this is implemented, the first keypress goes into the data as a complete byte, and the second one (if any) replaces it.  If previousByteCount > 0, then that many prior bytes are replaced, without breaking undo coalescing.  For previousByteCount to be > 0, the following must be true: There is only one selected range, and it is of length 0, and its location >= previousByteCount 
+    
+    These functions return YES if they succeed, and NO if they fail.  Currently they may fail only in overwrite mode, if you attempt to insert data that would require lengthening the byte array.
+ */
+- (BOOL)insertByteArray:(HFByteArray *)byteArray replacingPreviousBytes:(unsigned long long)previousByteCount allowUndoCoalescing:(BOOL)allowUndoCoalescing;
+- (BOOL)insertData:(NSData *)data replacingPreviousBytes:(unsigned long long)previousByteCount allowUndoCoalescing:(BOOL)allowUndoCoalescing;
 
 /* Deletes the selection */
 - (void)deleteSelection;
@@ -217,5 +221,12 @@ typedef NSInteger HFControllerMovementGranularity;
 /* Determines how many bytes are used in each column for a text view. */
 - (void)setBytesPerColumn:(NSUInteger)val;
 - (NSUInteger)bytesPerColumn;
+
+/* Determines whether we are in overwrite mode or not. */
+- (BOOL)inOverwriteMode;
+- (void)setInOverwriteMode:(BOOL)val;
+
+/* Returns YES if we must be in overwrite mode (because our backing data cannot have its size changed) */
+- (BOOL)requiresOverwriteMode;
 
 @end

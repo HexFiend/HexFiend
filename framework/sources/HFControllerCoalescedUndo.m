@@ -9,7 +9,11 @@
 #import <HexFiend/HFControllerCoalescedUndo.h>
 #import <HexFiend/HFFullMemoryByteArray.h>
 
-/* Invariant for this class: actionPoint >= anchorPoint */
+/* Invariant for this class: actionPoint >= anchorPoint
+ 
+ Action point: the offset at which the user is currently typing.
+ Anchor point: the offset at which our deletedData would go when we undo.
+ */
 
 @implementation HFControllerCoalescedUndo
 
@@ -19,6 +23,16 @@
     byteArrayWasCopied = NO;
     anchorPoint = anchor;
     actionPoint = anchor;
+    return self;
+}
+
+- initWithOverwrittenData:(HFByteArray *)overwrittenData atAnchorLocation:(unsigned long long)anchor {
+    [super init];
+    HFASSERT([overwrittenData length] > 0);
+    deletedData = [overwrittenData retain];
+    byteArrayWasCopied = NO;
+    anchorPoint = anchor;
+    actionPoint = HFSum(anchor, [overwrittenData length]);
     return self;
 }
 
@@ -37,9 +51,10 @@
     return HFMaxRange(range) == actionPoint;
 }
 
-- (void)appendDataOfLength:(unsigned long long)length {
+- (BOOL)canCoalesceOverwriteAtLocation:(unsigned long long)location {
     HFASSERT(anchorPoint <= actionPoint);
-    actionPoint = HFSum(actionPoint, length);
+    // Allow as a special case overwrites of our last character
+    return location == actionPoint || (location < ULLONG_MAX && location + 1 == actionPoint);
 }
 
 - (void)_copyByteArray {
@@ -49,6 +64,36 @@
     deletedData = [deletedData mutableCopy];
     [oldDeletedData release];
     byteArrayWasCopied = YES;
+}
+
+/* Overwrites the data in the given range, whose location must be equal to or one less than our action point, with data from that range in the array */
+- (void)overwriteDataInRange:(HFRange)overwriteRange withByteArray:(HFByteArray *)array {
+    HFASSERT(anchorPoint <= actionPoint);
+    HFASSERT((actionPoint == anchorPoint && deletedData == nil) || actionPoint - anchorPoint == [deletedData length]); //when we're overwriting, we can't change lengths
+    HFASSERT(overwriteRange.location == actionPoint || overwriteRange.location + 1 == actionPoint);
+    HFASSERT(HFMaxRange(overwriteRange) <= [array length]);
+    
+    /* Figure out how much of the overwritten data isn't already covered by our deletedData array */
+    HFByteArray *newlyOverwrittenData = nil;
+    if (HFMaxRange(overwriteRange) > actionPoint) {
+        newlyOverwrittenData = [array subarrayWithRange:HFRangeMake(actionPoint, HFMaxRange(overwriteRange) - actionPoint)];
+    }
+    
+    if (deletedData == nil) {
+        HFASSERT(newlyOverwrittenData != nil);
+        deletedData = [newlyOverwrittenData retain];
+        byteArrayWasCopied = YES; //since we made a subarray, we own it
+    }
+    else if (newlyOverwrittenData != nil) { // we may have worked entirely within our previously overwritten data and thus have no newly overwritten data
+        if (! byteArrayWasCopied) [self _copyByteArray];
+        [deletedData insertByteArray:newlyOverwrittenData inRange:HFRangeMake([deletedData length], 0)];
+    }
+    actionPoint = HFMaxRange(overwriteRange);
+}
+
+- (void)appendDataOfLength:(unsigned long long)length {
+    HFASSERT(anchorPoint <= actionPoint);
+    actionPoint = HFSum(actionPoint, length);
 }
 
 - (void)deleteDataOfLength:(unsigned long long)length withByteArray:(HFByteArray *)array {

@@ -22,11 +22,15 @@
 /* replacedData may be nil if it should be considered empty */
 - initWithReplacedData:(HFByteArray *)replacedData atAnchorLocation:(unsigned long long)anchor;
 
+- initWithOverwrittenData:(HFByteArray *)overwrittenData atAnchorLocation:(unsigned long long)anchor;
+
 - (BOOL)canCoalesceAppendInRange:(HFRange)range;
 - (BOOL)canCoalesceDeleteInRange:(HFRange)range;
+- (BOOL)canCoalesceOverwriteAtLocation:(unsigned long long)location;
 
 - (void)appendDataOfLength:(unsigned long long)length;
 - (void)deleteDataOfLength:(unsigned long long)length withByteArray:(HFByteArray *)array;
+- (void)overwriteDataInRange:(HFRange)overwriteRange withByteArray:(HFByteArray *)array;
 
 - (HFRange)rangeToReplace;
 - (HFByteArray *)deletedData;

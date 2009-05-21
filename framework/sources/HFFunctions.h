@@ -52,6 +52,11 @@ static inline unsigned long long HFSum(unsigned long long a, unsigned long long 
     return a + b;
 }
 
+static inline unsigned long long HFSubtract(unsigned long long a, unsigned long long b) {
+    assert(a >= b);
+    return a - b;
+}
+
 static inline NSUInteger HFSumInt(NSUInteger a, NSUInteger b) {
 	assert(a + b >= a);
 	return a + b;

@@ -99,7 +99,7 @@ static unsigned char hex2char(NSUInteger c) {
         NSArray *selectedRanges = [controller selectedContentsRanges];
         if ([selectedRanges count] == 1) {
             HFRange selectedRange = [[selectedRanges objectAtIndex:0] HFRange];
-            result = (selectedRange.length == 0 && selectedRange.location == omittedNybbleLocation);
+            result = (selectedRange.length == 0 && selectedRange.location > 0 && selectedRange.location - 1 == omittedNybbleLocation);
         }
     }
     return result;
@@ -130,16 +130,16 @@ static unsigned char hex2char(NSUInteger c) {
     HFASSERT([data length] > 0);
     HFASSERT(shouldReplacePriorByte != isMissingLastNybble);
     HFController *controller = [self controller];
-    [controller insertData:data replacingPreviousBytes: (shouldReplacePriorByte ? 1 : 0) allowUndoCoalescing:YES];
-    if (isMissingLastNybble) {
+    BOOL success = [controller insertData:data replacingPreviousBytes: (shouldReplacePriorByte ? 1 : 0) allowUndoCoalescing:YES];
+    if (isMissingLastNybble && success) {
         HFASSERT([data length] > 0);
         HFASSERT(unpartneredLastNybble == UCHAR_MAX);
         [data getBytes:&unpartneredLastNybble range:NSMakeRange([data length] - 1, 1)];
         NSArray *selectedRanges = [controller selectedContentsRanges];
-        HFASSERT([selectedRanges count] == 1);
+        HFASSERT([selectedRanges count] >= 1);
         HFRange selectedRange = [[selectedRanges objectAtIndex:0] HFRange];
-        HFASSERT(selectedRange.length == 0);
-        omittedNybbleLocation = selectedRange.location;
+        HFASSERT(selectedRange.location > 0);
+        omittedNybbleLocation = HFSubtract(selectedRange.location, 1);
     }
     else {
         [self _clearOmittedNybble];

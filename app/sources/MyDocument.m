@@ -44,14 +44,9 @@ static inline Class preferredByteArrayClass(void) {
     NSString *result;
     NSString *superDisplayName = [super windowTitleForDocumentDisplayName:displayName];
     
-    /* Apply a format string if our document has one */
+    /* Apply a format string */
     NSString *formatString = [[self document] documentWindowTitleFormatString];
-    if (formatString != nil) {
-        result = [NSString stringWithFormat:formatString, superDisplayName];
-    }
-    else {
-        result = superDisplayName;
-    }
+    result = [NSString stringWithFormat:formatString, superDisplayName];
     
     return result;
 }
@@ -103,9 +98,15 @@ static inline Class preferredByteArrayClass(void) {
 
 /* Return a format string that can take one argument which is the document name. */
 - (NSString *)documentWindowTitleFormatString {
-    NSMutableString *result = nil;
+    NSMutableString *result = [NSMutableString stringWithString:@"%@"]; //format specifier that is replaced with document name
+    
+    if ([controller inOverwriteMode]) {
+        [result appendString:@" **OVERWRITE MODE**"];
+    }
+    
     HFDocumentOperationView * const views[] = {findReplaceView, moveSelectionByView, saveView};
     NSUInteger i;
+    BOOL hasAppendedProgressMarker = NO;
     for (i=0; i < sizeof views / sizeof *views; i++) {
         HFDocumentOperationView *view = views[i];
         if (view != nil && view != operationView && [view operationIsRunning]) {
@@ -114,9 +115,9 @@ static inline Class preferredByteArrayClass(void) {
             NSString *displayName = [view displayName];
             double progress = [view progress];
             if (displayName != nil && progress != -1) {
-                /* Start with adding a format specifier which will be replaced with the document name */
-                if (result == nil) {
-                    result = [NSMutableString stringWithString:@"%@ ("];
+                if (! hasAppendedProgressMarker) {
+                    [result appendString:@" ("];
+                    hasAppendedProgressMarker = YES;
                 }
                 else {
                     [result appendString:@", "];
@@ -128,7 +129,7 @@ static inline Class preferredByteArrayClass(void) {
             }
         }
     }
-    [result appendString:@")"];
+    if (hasAppendedProgressMarker) [result appendString:@")"];
     return result;
 }
 
@@ -395,7 +396,8 @@ static inline Class preferredByteArrayClass(void) {
 }
 
 - (BOOL)validateMenuItem:(NSMenuItem *)item {
-    if ([item action] == @selector(toggleVisibleControllerView:)) {
+    SEL action = [item action];
+    if (action == @selector(toggleVisibleControllerView:)) {
         NSUInteger arrayIndex = [item tag] - 1;
         NSArray *representers = [self representers];
         if (arrayIndex >= [representers count]) {
@@ -407,7 +409,7 @@ static inline Class preferredByteArrayClass(void) {
             return YES;
         }
     }
-    else if ([item action] == @selector(performFindPanelAction:)) {
+    else if (action == @selector(performFindPanelAction:)) {
         switch ([item tag]) {
             case NSFindPanelActionShowFindPanel:
             case NSFindPanelActionNext:
@@ -417,13 +419,18 @@ static inline Class preferredByteArrayClass(void) {
                 return NO;
         }
     }
-    else if ([item action] == @selector(setFontSizeFromMenuItem:)) {
+    else if (action == @selector(setFontSizeFromMenuItem:)) {
         [item setState:[[self font] pointSize] == [item tag]];
         return YES;
     }
-    else if ([item action] == @selector(setAntialiasFromMenuItem:)) {
+    else if (action == @selector(setAntialiasFromMenuItem:)) {
         [item setState:[controller shouldAntialias]];
         return YES;		
+    }
+    else if (action == @selector(toggleOverwriteMode:)) {
+        [item setState:[controller inOverwriteMode]];
+        /* We can toggle overwrite mode only if the controller doesn't require that it be on */
+        return ! [controller requiresOverwriteMode];
     }
     else return [super validateMenuItem:item];
 }
@@ -1132,6 +1139,12 @@ static inline Class preferredByteArrayClass(void) {
 
 - (void)changeFont:(id)sender {
     [self setFont:[sender convertFont:[self font]]];
+}
+
+- (IBAction)toggleOverwriteMode:sender {
+    USE(sender);
+    [controller setInOverwriteMode:![controller inOverwriteMode]];
+    [self updateDocumentWindowTitle];
 }
 
 @end
