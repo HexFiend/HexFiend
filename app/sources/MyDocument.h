@@ -64,5 +64,6 @@
 - (IBAction)replaceAll:sender;
 
 - (IBAction)toggleOverwriteMode:sender;
+- (IBAction)modifyByteGrouping:sender;
 
 @end

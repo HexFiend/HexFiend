@@ -159,6 +159,13 @@ static inline Class preferredByteArrayClass(void) {
     return [self minimumWindowFrameSizeForProposedSize:frameSize];
 }
 
+- (void)relayoutAndResizeWindow {
+    NSWindow *window = [self window];
+    NSRect windowFrame = [window frame];
+    windowFrame.size = [self minimumWindowFrameSizeForProposedSize:windowFrame.size];
+    [window setFrame:windowFrame display:YES];
+}
+
 - (void)windowControllerDidLoadNib:(NSWindowController *)windowController {
     USE(windowController);
     
@@ -371,6 +378,7 @@ static inline Class preferredByteArrayClass(void) {
     NSWindow *window = [self window];
     NSDisableScreenUpdates();
     [controller setFont:font];
+    [self relayoutAndResizeWindow];
     [window display];
     NSEnableScreenUpdates();
     NSUserDefaults *defs = [NSUserDefaults standardUserDefaults];
@@ -431,6 +439,10 @@ static inline Class preferredByteArrayClass(void) {
         [item setState:[controller inOverwriteMode]];
         /* We can toggle overwrite mode only if the controller doesn't require that it be on */
         return ! [controller requiresOverwriteMode];
+    }
+    else if (action == @selector(modifyByteGrouping:)) {
+        [item setState:(NSUInteger)[item tag] == [controller bytesPerColumn]];
+        return YES;
     }
     else return [super validateMenuItem:item];
 }
@@ -1139,6 +1151,11 @@ static inline Class preferredByteArrayClass(void) {
 
 - (void)changeFont:(id)sender {
     [self setFont:[sender convertFont:[self font]]];
+}
+
+- (IBAction)modifyByteGrouping:sender {
+    [controller setBytesPerColumn:(NSUInteger)[sender tag]];
+    [self relayoutAndResizeWindow];
 }
 
 - (IBAction)toggleOverwriteMode:sender {

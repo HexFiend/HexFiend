@@ -316,7 +316,7 @@ static NSInteger sortByLayoutPosition(id a, id b, void *self) {
 
 - (void)controllerDidChange:(HFControllerPropertyBits)bits {
     [super controllerDidChange:bits];
-    if (bits & HFControllerViewSizeRatios) {
+    if (bits & (HFControllerViewSizeRatios | HFControllerBytesPerColumn)) {
         [self performLayout];
     }
 }
