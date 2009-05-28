@@ -9,6 +9,7 @@
 #import "MyDocument.h"
 #import "HFBannerDividerThumb.h"
 #import "HFDocumentOperationView.h"
+#import "DataInspectorRepresenter.h"
 #import <HexFiend/HexFiend.h>
 #include <pthread.h>
 
@@ -79,7 +80,7 @@ static inline Class preferredByteArrayClass(void) {
 }
 
 - (NSArray *)representers {
-    return [NSArray arrayWithObjects:lineCountingRepresenter, hexRepresenter, asciiRepresenter, scrollRepresenter, statusBarRepresenter, nil];
+    return [NSArray arrayWithObjects:lineCountingRepresenter, hexRepresenter, asciiRepresenter, scrollRepresenter, dataInspectorRepresenter, statusBarRepresenter, nil];
 }
 
 - (void)showViewForRepresenter:(HFRepresenter *)rep {
@@ -185,6 +186,7 @@ static inline Class preferredByteArrayClass(void) {
     [self showViewForRepresenter:asciiRepresenter];
     [self showViewForRepresenter:scrollRepresenter];
     [self showViewForRepresenter:lineCountingRepresenter];
+    [self showViewForRepresenter:dataInspectorRepresenter];
     [self showViewForRepresenter:statusBarRepresenter];
     NSRect windowFrame = [window frame];
     windowFrame.size = [self minimumWindowFrameSizeForProposedSize:windowFrame.size];
@@ -224,6 +226,16 @@ static inline Class preferredByteArrayClass(void) {
     }
 }
 
+/* Called when our data inspector changes its size (number of rows) */
+- (void)dataInspectorChangedSize:(NSNotification *)note {
+    CGFloat newHeight = [[[note userInfo] objectForKey:@"height"] doubleValue];
+    NSView *dataInspectorView = [dataInspectorRepresenter view];
+    NSSize size = [dataInspectorView frame].size;
+    size.height = newHeight;
+    [dataInspectorView setFrameSize:size];
+    [layoutRepresenter performLayout];
+}
+
 - init {
     [super init];
     lineCountingRepresenter = [[HFLineCountingRepresenter alloc] init];
@@ -232,11 +244,15 @@ static inline Class preferredByteArrayClass(void) {
     scrollRepresenter = [[HFVerticalScrollerRepresenter alloc] init];
     layoutRepresenter = [[HFLayoutRepresenter alloc] init];
     statusBarRepresenter = [[HFStatusBarRepresenter alloc] init];
+    dataInspectorRepresenter = [[DataInspectorRepresenter alloc] init];
     
     [[hexRepresenter view] setAutoresizingMask:NSViewHeightSizable];
     [[asciiRepresenter view] setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(lineCountingViewChangedWidth:) name:HFLineCountingRepresenterMinimumViewWidthChanged object:lineCountingRepresenter];
+    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+    [center addObserver:self selector:@selector(lineCountingViewChangedWidth:) name:HFLineCountingRepresenterMinimumViewWidthChanged object:lineCountingRepresenter];
+    [center addObserver:self selector:@selector(dataInspectorChangedSize:) name:DataInspectorDidChangeSize object:dataInspectorRepresenter];
+
     NSUserDefaults *defs = [NSUserDefaults standardUserDefaults];
     
     controller = [[HFController alloc] init];

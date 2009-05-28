@@ -8,7 +8,7 @@
 
 #import <Cocoa/Cocoa.h>
 
-@class HFRepresenter, HFLineCountingRepresenter, HFLayoutRepresenter, HFFindReplaceRepresenter, HFDocumentOperationView;
+@class HFRepresenter, HFLineCountingRepresenter, HFLayoutRepresenter, HFFindReplaceRepresenter, HFDocumentOperationView, DataInspectorRepresenter;
 
 @interface MyDocument : NSDocument {
     IBOutlet NSSplitView *containerView;
@@ -19,8 +19,8 @@
     HFRepresenter *asciiRepresenter;
     HFRepresenter *scrollRepresenter;
     HFLayoutRepresenter *layoutRepresenter;
+    DataInspectorRepresenter *dataInspectorRepresenter;
     HFStatusBarRepresenter *statusBarRepresenter;
-    
     NSResponder *savedFirstResponder;
     
     HFDocumentOperationView *operationView;

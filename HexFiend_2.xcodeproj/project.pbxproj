@@ -45,6 +45,8 @@
 		D026C7C10CDD54D00082279E /* HFHexTextRepresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = D026C7BF0CDD54D00082279E /* HFHexTextRepresenter.m */; };
 		D0370A3F0D68307A00B3A8C6 /* HFSharedMemoryByteSlice.h in Headers */ = {isa = PBXBuildFile; fileRef = D0370A3D0D68307A00B3A8C6 /* HFSharedMemoryByteSlice.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D0370A400D68307A00B3A8C6 /* HFSharedMemoryByteSlice.m in Sources */ = {isa = PBXBuildFile; fileRef = D0370A3E0D68307A00B3A8C6 /* HFSharedMemoryByteSlice.m */; };
+		D03CFA820FC7857B00EE79E4 /* DataInspectorView.xib in Resources */ = {isa = PBXBuildFile; fileRef = D03CFA810FC7857B00EE79E4 /* DataInspectorView.xib */; };
+		D03CFA8A0FC78BCD00EE79E4 /* DataInspectorRepresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = D03CFA890FC78BCD00EE79E4 /* DataInspectorRepresenter.m */; };
 		D041D1C00D397E1A00C28345 /* HFPasteboardOwner.h in Headers */ = {isa = PBXBuildFile; fileRef = D041D1BE0D397E1A00C28345 /* HFPasteboardOwner.h */; };
 		D041D1C10D397E1A00C28345 /* HFPasteboardOwner.m in Sources */ = {isa = PBXBuildFile; fileRef = D041D1BF0D397E1A00C28345 /* HFPasteboardOwner.m */; };
 		D041D3DD0D3CA70600C28345 /* HFTavlTreeByteArray.h in Headers */ = {isa = PBXBuildFile; fileRef = D041D3DB0D3CA70600C28345 /* HFTavlTreeByteArray.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -233,6 +235,9 @@
 		D026C7BF0CDD54D00082279E /* HFHexTextRepresenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFHexTextRepresenter.m; path = framework/sources/HFHexTextRepresenter.m; sourceTree = "<group>"; };
 		D0370A3D0D68307A00B3A8C6 /* HFSharedMemoryByteSlice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFSharedMemoryByteSlice.h; path = framework/sources/HFSharedMemoryByteSlice.h; sourceTree = "<group>"; };
 		D0370A3E0D68307A00B3A8C6 /* HFSharedMemoryByteSlice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFSharedMemoryByteSlice.m; path = framework/sources/HFSharedMemoryByteSlice.m; sourceTree = "<group>"; };
+		D03CFA810FC7857B00EE79E4 /* DataInspectorView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = DataInspectorView.xib; path = app/resources/DataInspectorView.xib; sourceTree = "<group>"; };
+		D03CFA880FC78BCD00EE79E4 /* DataInspectorRepresenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DataInspectorRepresenter.h; path = app/sources/DataInspectorRepresenter.h; sourceTree = "<group>"; };
+		D03CFA890FC78BCD00EE79E4 /* DataInspectorRepresenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DataInspectorRepresenter.m; path = app/sources/DataInspectorRepresenter.m; sourceTree = "<group>"; };
 		D041D1BE0D397E1A00C28345 /* HFPasteboardOwner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFPasteboardOwner.h; path = framework/sources/HFPasteboardOwner.h; sourceTree = "<group>"; };
 		D041D1BF0D397E1A00C28345 /* HFPasteboardOwner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFPasteboardOwner.m; path = framework/sources/HFPasteboardOwner.m; sourceTree = "<group>"; };
 		D041D3DB0D3CA70600C28345 /* HFTavlTreeByteArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFTavlTreeByteArray.h; path = framework/sources/HFTavlTreeByteArray.h; sourceTree = "<group>"; };
@@ -422,6 +427,7 @@
 			children = (
 				D024AFB20E349A7B00F39EBB /* hex_icon.icns */,
 				D01E7C0A0CDC570400943F9E /* Info.plist */,
+				D03CFA810FC7857B00EE79E4 /* DataInspectorView.xib */,
 				089C165CFE840E0CC02AAC07 /* InfoPlist.strings */,
 				29B97318FDCFA39411CA2CEA /* MainMenu.nib */,
 				D01E7C280CDC59B700943F9E /* MyDocument.nib */,
@@ -627,6 +633,8 @@
 				D01E7C150CDC58AA00943F9E /* MyDocument.m */,
 				D0CD51F40DA2B928006E8D1B /* AppDelegate.h */,
 				D0CD51F50DA2B928006E8D1B /* AppDelegate.m */,
+				D03CFA880FC78BCD00EE79E4 /* DataInspectorRepresenter.h */,
+				D03CFA890FC78BCD00EE79E4 /* DataInspectorRepresenter.m */,
 				D01772F30D751DB1002E03DE /* HFDocumentOperationView.h */,
 				D01772F40D751DB1002E03DE /* HFDocumentOperationView.m */,
 				D01773900D7A2F32002E03DE /* HFResizingView.h */,
@@ -882,6 +890,7 @@
 				D0728DEF0DC1E3A00052C78C /* MoveSelectionByBanner.nib in Resources */,
 				D024AEF30E3463AB00F39EBB /* JumpToOffsetBanner.nib in Resources */,
 				D024AFB30E349A7B00F39EBB /* hex_icon.icns in Resources */,
+				D03CFA820FC7857B00EE79E4 /* DataInspectorView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -921,6 +930,7 @@
 				D01773920D7A2F32002E03DE /* HFResizingView.m in Sources */,
 				D0CD51F60DA2B928006E8D1B /* AppDelegate.m in Sources */,
 				D0F2157D0DA61CF000ED1AA7 /* HFFieldTypeController.m in Sources */,
+				D03CFA8A0FC78BCD00EE79E4 /* DataInspectorRepresenter.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
