@@ -17,6 +17,9 @@
 
 #define kScrollViewExtraPadding ((CGFloat)2.)
 
+/* Declaration of SnowLeopard only property so we can build on Leopard */
+#define NSTableViewSelectionHighlightStyleNone (-1)
+
 NSString * const DataInspectorDidChangeSize = @"DataInspectorDidChangeSize";
 
 /* Inspector types */
