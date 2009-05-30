@@ -17,5 +17,10 @@ extern NSString * const DataInspectorDidChangeSize;
 @end
 
 @interface DataInspectorScrollView : NSScrollView
+@end
 
+@interface DataInspectorPlusMinusButtonCell : NSButtonCell
+@end
+
+@interface DataInspectorTableView : NSTableView
 @end

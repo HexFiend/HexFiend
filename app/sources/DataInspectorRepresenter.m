@@ -205,6 +205,7 @@ static id floatingPointDescription(const unsigned char *bytes, NSUInteger length
 }
 
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView {
+    USE(tableView);
     return [inspectors count];
 }
 
@@ -250,7 +251,7 @@ static NSAttributedString *notApplicableString(void) {
     else if ([ident isEqualToString:kInspectorValueColumnIdentifier]) {
         return [self valueFromInspector:inspector];
     }
-    else if ([ident isEqualToString:kInspectorAddButtonColumnIdentifier]) {
+    else if ([ident isEqualToString:kInspectorAddButtonColumnIdentifier] || [ident isEqualToString:kInspectorSubtractButtonColumnIdentifier]) {
         return [NSNumber numberWithInt:1]; //just a button
     }
     else {
@@ -273,7 +274,7 @@ static NSAttributedString *notApplicableString(void) {
     else if ([ident isEqualToString:kInspectorValueColumnIdentifier]) {
         
     }
-    else if ([ident isEqualToString:kInspectorAddButtonColumnIdentifier]) {
+    else if ([ident isEqualToString:kInspectorAddButtonColumnIdentifier] || [ident isEqualToString:kInspectorSubtractButtonColumnIdentifier]) {
         /* Nothing to do */
     }
     else {
@@ -283,6 +284,7 @@ static NSAttributedString *notApplicableString(void) {
 }
 
 - (void)addRow:(id)sender {
+    USE(sender);
     DataInspector *ins = [[DataInspector alloc] init];
     NSInteger clickedRow = [table clickedRow];
     [inspectors insertObject:ins atIndex:clickedRow + 1];
@@ -296,6 +298,8 @@ static NSAttributedString *notApplicableString(void) {
     [[NSNotificationCenter defaultCenter] postNotificationName:DataInspectorDidChangeSize object:self userInfo:[NSDictionary dictionaryWithObject:[NSNumber numberWithDouble:newScrollViewHeight] forKey:@"height"]];
 }
 
+/* Prevent all row selection */
+
 - (void)refreshTableValues {
     [table reloadData];
 }
@@ -305,6 +309,88 @@ static NSAttributedString *notApplicableString(void) {
         [self refreshTableValues];
     }
     [super controllerDidChange:bits];
+}
+
+@end
+
+@implementation DataInspectorPlusMinusButtonCell
+
+- (id)initWithCoder:(NSCoder *)coder {
+    [super initWithCoder:coder];
+    [self setBezelStyle:NSRoundRectBezelStyle];
+    return self;
+}
+
+- (void)drawDataInspectorTitleWithFrame:(NSRect)cellFrame inView:(NSView *)controlView {
+    const BOOL isPlus = [[self title] isEqual:@"+"];
+    const unsigned char grayColor = 0x73;
+    const unsigned char alpha = 0xFF;
+#if __BIG_ENDIAN__
+    const unsigned short X = (grayColor << 8) | alpha ;
+#else
+    const unsigned short X = (alpha << 8) | grayColor;
+#endif
+    const NSUInteger bytesPerPixel = sizeof X;
+    const unsigned short plusData[] = {
+	0,0,0,X,X,0,0,0,
+	0,0,0,X,X,0,0,0,
+	0,0,0,X,X,0,0,0,
+	X,X,X,X,X,X,X,X,
+	X,X,X,X,X,X,X,X,
+	0,0,0,X,X,0,0,0,
+	0,0,0,X,X,0,0,0,
+	0,0,0,X,X,0,0,0
+    };
+    
+    const unsigned short minusData[] = {
+	0,0,0,0,0,0,0,0,
+	0,0,0,0,0,0,0,0,
+	0,0,0,0,0,0,0,0,
+	X,X,X,X,X,X,X,X,
+	X,X,X,X,X,X,X,X,
+	0,0,0,0,0,0,0,0,
+	0,0,0,0,0,0,0,0,
+	0,0,0,0,0,0,0,0
+    };
+    
+    const unsigned char * const bitmapData = (const unsigned char *)(isPlus ? plusData : minusData);
+    
+    NSInteger width = 8, height = 8;
+    assert(width * height * bytesPerPixel == sizeof plusData);
+    assert(width * height * bytesPerPixel == sizeof minusData);
+    NSRect bitmapRect = NSMakeRect(NSMidX(cellFrame) - width/2, NSMidY(cellFrame) - height/2, width, height);
+    bitmapRect = [controlView centerScanRect:bitmapRect];
+
+    CGColorSpaceRef space = CGColorSpaceCreateWithName(kCGColorSpaceGenericGray);
+    CGDataProviderRef provider = CGDataProviderCreateWithData(NULL, bitmapData, width * height * bytesPerPixel, NULL);
+    CGImageRef image = CGImageCreate(width, height, CHAR_BIT, bytesPerPixel * CHAR_BIT, bytesPerPixel * width, space, kCGImageAlphaPremultipliedLast, provider, NULL, YES, kCGRenderingIntentDefault);
+    CGDataProviderRelease(provider);
+    CGColorSpaceRelease(space);
+    [[NSGraphicsContext currentContext] setCompositingOperation:NSCompositeSourceOver];
+    CGContextDrawImage([[NSGraphicsContext currentContext] graphicsPort], *(CGRect *)&bitmapRect, image);
+    CGImageRelease(image);
+}
+
+- (NSRect)drawTitle:(NSAttributedString*)title withFrame:(NSRect)frame inView:(NSView*)controlView {
+    /* Defeat title drawing by doing nothing */
+    USE(title);
+    USE(frame);
+    USE(controlView);
+    return NSZeroRect;
+}
+
+- (void)drawWithFrame:(NSRect)cellFrame inView:(NSView *)controlView {
+    [super drawWithFrame:cellFrame inView:controlView];
+    [self drawDataInspectorTitleWithFrame:cellFrame inView:controlView];
+
+}
+
+@end
+
+@implementation DataInspectorTableView
+
+- (void)highlightSelectionInClipRect:(NSRect)clipRect {
+    USE(clipRect);
 }
 
 @end

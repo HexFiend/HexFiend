@@ -61,6 +61,8 @@ static HFBTreeIndex sum_child_lengths(const id *children, const BOOL isLeaf);
 #define CHECK_CAST(a, b) ({HFASSERT([(a) isKindOfClass:[b class]]); (b *)(a);})
 #define CHECK_CAST_OR_NULL(a, b) ({HFASSERT((a == nil) || [(a) isKindOfClass:[b class]]); (b *)(a);})
 
+#define DEFEAT_INLINE 1
+
 #if DEFEAT_INLINE
 #define FORCE_STATIC_INLINE static
 #else

@@ -228,7 +228,7 @@ static inline Class preferredByteArrayClass(void) {
 
 /* Called when our data inspector changes its size (number of rows) */
 - (void)dataInspectorChangedSize:(NSNotification *)note {
-    CGFloat newHeight = [[[note userInfo] objectForKey:@"height"] doubleValue];
+    CGFloat newHeight = (CGFloat)[[[note userInfo] objectForKey:@"height"] doubleValue];
     NSView *dataInspectorView = [dataInspectorRepresenter view];
     NSSize size = [dataInspectorView frame].size;
     size.height = newHeight;
