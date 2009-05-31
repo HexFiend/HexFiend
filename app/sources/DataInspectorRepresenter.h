@@ -12,7 +12,8 @@ extern NSString * const DataInspectorDidChangeSize;
 
 - (void)loadDefaultInspectors;
 
-- (void)addRow:(id)sender;
+- (IBAction)addRow:(id)sender;
+- (IBAction)removeRow:(id)sender;
 
 @end
 

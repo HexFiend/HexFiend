@@ -20,6 +20,10 @@
 /* Declaration of SnowLeopard only property so we can build on Leopard */
 #define NSTableViewSelectionHighlightStyleNone (-1)
 
+static BOOL isRunningOnLeopardOrLater(void) {
+    return NSAppKitVersionNumber >= 860.;
+}
+
 NSString * const DataInspectorDidChangeSize = @"DataInspectorDidChangeSize";
 
 /* Inspector types */
@@ -262,6 +266,9 @@ static NSAttributedString *notApplicableString(void) {
 
 - (void)tableView:(NSTableView *)tableView setObjectValue:(id)object forTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row {
     NSString *ident = [tableColumn identifier];
+    /* This gets called after clicking on the + or - button.  If you delete the last row, then this gets called with a row >= the number of inspectors, so bail out for +/- buttons before pulling out our inspector */
+    if ([ident isEqualToString:kInspectorSubtractButtonColumnIdentifier]) return;
+    
     DataInspector *inspector = [inspectors objectAtIndex:row];
     if ([ident isEqualToString:kInspectorTypeColumnIdentifier]) {
         [inspector setType:[object intValue]];
@@ -290,6 +297,7 @@ static NSAttributedString *notApplicableString(void) {
     [inspectors insertObject:ins atIndex:clickedRow + 1];
     [ins release];
     [table noteNumberOfRowsChanged];
+        
     NSScrollView *scrollView = [table enclosingScrollView];
     CGFloat newScrollViewHeight = [[scrollView class] frameSizeForContentSize:[table frame].size
                                                         hasHorizontalScroller:[scrollView hasHorizontalScroller]
@@ -298,7 +306,36 @@ static NSAttributedString *notApplicableString(void) {
     [[NSNotificationCenter defaultCenter] postNotificationName:DataInspectorDidChangeSize object:self userInfo:[NSDictionary dictionaryWithObject:[NSNumber numberWithDouble:newScrollViewHeight] forKey:@"height"]];
 }
 
+- (void)removeRow:(id)sender {
+    USE(sender);
+    NSInteger clickedRow = [table clickedRow];
+    [inspectors removeObjectAtIndex:clickedRow];
+    [table noteNumberOfRowsChanged];
+    NSScrollView *scrollView = [table enclosingScrollView];
+    CGFloat newScrollViewHeight = [[scrollView class] frameSizeForContentSize:[table frame].size
+                                                        hasHorizontalScroller:[scrollView hasHorizontalScroller]
+                                                          hasVerticalScroller:[scrollView hasVerticalScroller]
+                                                                   borderType:[scrollView borderType]].height + kScrollViewExtraPadding;
+    [[NSNotificationCenter defaultCenter] postNotificationName:DataInspectorDidChangeSize object:self userInfo:[NSDictionary dictionaryWithObject:[NSNumber numberWithDouble:newScrollViewHeight] forKey:@"height"]];
+
+}
+
 /* Prevent all row selection */
+
+- (BOOL)tableView:(NSTableView *)tableView shouldSelectRow:(NSInteger)row {
+    /* since shouldTrackCell is only available on 10.5, fall back to crappier behavior on 10.4 */
+    USE(tableView);
+    USE(row);
+    return ! isRunningOnLeopardOrLater();
+}
+
+- (BOOL)tableView:(NSTableView *)tableView shouldTrackCell:(NSCell *)cell forTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row {
+    USE(tableView);
+    USE(row);
+    USE(cell);
+    USE(tableColumn);
+    return YES;
+}
 
 - (void)refreshTableValues {
     [table reloadData];

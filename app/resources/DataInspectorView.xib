@@ -1,18 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.02">
+<archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.03">
 	<data>
 		<int key="IBDocument.SystemTarget">1060</int>
-		<string key="IBDocument.SystemVersion">9G55</string>
-		<string key="IBDocument.InterfaceBuilderVersion">670</string>
-		<string key="IBDocument.AppKitVersion">949.43</string>
+		<string key="IBDocument.SystemVersion">9J61</string>
+		<string key="IBDocument.InterfaceBuilderVersion">677</string>
+		<string key="IBDocument.AppKitVersion">949.46</string>
 		<string key="IBDocument.HIToolboxVersion">353.00</string>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="58"/>
+			<integer value="87"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
 			<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+		</object>
+		<object class="NSMutableDictionary" key="IBDocument.Metadata">
+			<bool key="EncodedWithXMLCoder">YES</bool>
+			<object class="NSArray" key="dict.sortedKeys">
+				<bool key="EncodedWithXMLCoder">YES</bool>
+			</object>
+			<object class="NSMutableArray" key="dict.values">
+				<bool key="EncodedWithXMLCoder">YES</bool>
+			</object>
 		</object>
 		<object class="NSMutableArray" key="IBDocument.RootObjects" id="1000">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -38,7 +47,7 @@
 							<object class="NSTableView" id="177753097">
 								<reference key="NSNextResponder" ref="809801618"/>
 								<int key="NSvFlags">256</int>
-								<string key="NSFrameSize">{540, 20}</string>
+								<string key="NSFrameSize">{563, 20}</string>
 								<reference key="NSSuperview" ref="809801618"/>
 								<bool key="NSEnabled">YES</bool>
 								<object class="_NSCornerView" key="NSCornerView">
@@ -219,7 +228,7 @@
 									</object>
 									<object class="NSTableColumn" id="447951832">
 										<string key="NSIdentifier">inspected_value</string>
-										<double key="NSWidth">3.750000e+02</double>
+										<double key="NSWidth">4.060000e+02</double>
 										<double key="NSMinWidth">4.000000e+01</double>
 										<double key="NSMaxWidth">1.000000e+03</double>
 										<object class="NSTableHeaderCell" key="NSHeaderCell">
@@ -348,7 +357,7 @@
 								<bool key="NSAllowsTypeSelect">NO</bool>
 							</object>
 						</object>
-						<string key="NSFrame">{{2, 2}, {540, 20}}</string>
+						<string key="NSFrame">{{2, 2}, {563, 20}}</string>
 						<reference key="NSSuperview" ref="1014968909"/>
 						<reference key="NSNextKeyView" ref="177753097"/>
 						<reference key="NSDocView" ref="177753097"/>
@@ -380,7 +389,7 @@
 						<double key="NSPercent">9.979424e-01</double>
 					</object>
 				</object>
-				<string key="NSFrameSize">{544, 24}</string>
+				<string key="NSFrameSize">{567, 24}</string>
 				<reference key="NSSuperview"/>
 				<reference key="NSNextKeyView" ref="809801618"/>
 				<int key="NSsFlags">3</int>
@@ -432,6 +441,14 @@
 						<reference key="destination" ref="177753097"/>
 					</object>
 					<int key="connectionID">76</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">removeRow:</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="70376020"/>
+					</object>
+					<int key="connectionID">92</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -662,7 +679,7 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>DataInspectorScrollView</string>
-					<string>{{60, 631}, {544, 24}}</string>
+					<string>{{60, 631}, {567, 24}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>DataInspectorTableView</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -708,7 +725,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">91</int>
+			<int key="maxID">92</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -725,8 +742,17 @@
 					<string key="className">DataInspectorRepresenter</string>
 					<string key="superclassName">HFRepresenter</string>
 					<object class="NSMutableDictionary" key="actions">
-						<string key="NS.key.0">addRow:</string>
-						<string key="NS.object.0">id</string>
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSMutableArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>addRow:</string>
+							<string>removeRow:</string>
+						</object>
+						<object class="NSMutableArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
+							<string>id</string>
+						</object>
 					</object>
 					<object class="NSMutableDictionary" key="outlets">
 						<bool key="EncodedWithXMLCoder">YES</bool>
