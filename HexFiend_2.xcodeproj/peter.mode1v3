@@ -320,7 +320,7 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>Info.plist</string>
+								<string>HFDocumentOperationView.h</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -328,11 +328,7 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>Info.plist</string>
-										<key>_historyCapacity</key>
-										<integer>0</integer>
-										<key>bookmark</key>
-										<string>D06D65570FD3173D0045AE30</string>
+										<string>HFDocumentOperationView.h</string>
 										<key>history</key>
 										<array>
 											<string>D0029E7A0E8104CC00AA9E42</string>
@@ -408,26 +404,20 @@
 											<string>D03CFA3D0FC76A6200EE79E4</string>
 											<string>D03CFA920FC78C6F00EE79E4</string>
 											<string>D03CFA940FC78C6F00EE79E4</string>
-											<string>D03CFA950FC78C6F00EE79E4</string>
 											<string>D03CFA960FC78C6F00EE79E4</string>
 											<string>D03CFAD00FC78FF700EE79E4</string>
 											<string>D0D4DE1F0FCCD60E0032634B</string>
-											<string>D0D4DE200FCCD60E0032634B</string>
 											<string>D0D4DE210FCCD60E0032634B</string>
 											<string>D0D4DE220FCCD60E0032634B</string>
 											<string>D0D4DE240FCCD60E0032634B</string>
-											<string>D0D4DE250FCCD60E0032634B</string>
 											<string>D0D4DE680FCCD95D0032634B</string>
-											<string>D0D4DE690FCCD95D0032634B</string>
 											<string>D0D4DEC10FCDF31C0032634B</string>
 											<string>D0D4DEC20FCDF31C0032634B</string>
 											<string>D03DC9B20FD0A25500B64D40</string>
 											<string>D03DC9C20FD0A4AF00B64D40</string>
 											<string>D06D65010FD20FDE0045AE30</string>
-											<string>D06D65020FD20FDE0045AE30</string>
 											<string>D06D65030FD20FDE0045AE30</string>
-											<string>D06D65040FD20FDE0045AE30</string>
-											<string>D06D65050FD20FDE0045AE30</string>
+											<string>D03CFA950FC78C6F00EE79E4</string>
 										</array>
 										<key>prevStack</key>
 										<array>
@@ -436,7 +426,6 @@
 											<string>D03DC9C30FD0A4AF00B64D40</string>
 											<string>D06D65060FD20FDE0045AE30</string>
 											<string>D06D65070FD20FDE0045AE30</string>
-											<string>D06D65080FD20FDE0045AE30</string>
 											<string>D06D65090FD20FDE0045AE30</string>
 										</array>
 									</dict>
@@ -495,9 +484,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>D06D64D00FD209B50045AE30</string>
+				<string>D06D659A0FD31BD40045AE30</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>D06D64D10FD209B50045AE30</string>
+				<string>D06D659B0FD31BD40045AE30</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -633,16 +622,7 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>D06D65200FD2124E0045AE30</string>
-		<string>D06D65210FD2124E0045AE30</string>
-		<string>D0560B2F0CDC421E009D2484</string>
-		<string>1C530D57069F1CE1000CFCEE</string>
-		<string>D06D651C0FD2124E0045AE30</string>
-		<string>1CD10A99069EF8BA00B06720</string>
 		<string>/Users/peter/Bell/HexFiend2/trunk/HexFiend_2/HexFiend_2.xcodeproj</string>
-		<string>D06D65420FD313830045AE30</string>
-		<string>D06D650E0FD211350045AE30</string>
-		<string>1C78EAAD065D492600B07095</string>
 	</array>
 	<key>WindowString</key>
 	<string>14 189 1420 839 0 0 1680 1028 </string>
@@ -857,7 +837,7 @@
 			<key>WindowToolGUID</key>
 			<string>1CD10A99069EF8BA00B06720</string>
 			<key>WindowToolIsVisible</key>
-			<true/>
+			<false/>
 		</dict>
 		<dict>
 			<key>FirstTimeWindowDisplayed</key>

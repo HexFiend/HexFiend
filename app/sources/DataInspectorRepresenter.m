@@ -96,7 +96,19 @@ enum Endianness_t {
     }
 }
 
-static id integerDescription(const unsigned char *bytes, NSUInteger length) {
+static uint64_t reverse(uint64_t val, NSUInteger amount) {
+    /* Transfer amount bytes from input to output in reverse order */
+    uint64_t input = val, output = 0;
+    NSUInteger remaining = amount;
+    while (remaining--) {
+        unsigned char byte = input & 0xFF;
+        output = (output << CHAR_BIT) | byte;
+        input >>= CHAR_BIT;
+    }
+    return output;
+}
+
+static id integerDescription(const unsigned char *bytes, NSUInteger length, enum Endianness_t endianness) {
     unsigned long long s = 0;
     switch (length) {
         case 1:
@@ -122,20 +134,35 @@ static id integerDescription(const unsigned char *bytes, NSUInteger length) {
         }
         default: return nil;
     }
+    if (endianness != eNativeEndianness) {
+        s = reverse(s, length);
+    }
     return [NSString stringWithFormat:@"%lld", s];
 }
 
-static id floatingPointDescription(const unsigned char *bytes, NSUInteger length) {
+static id floatingPointDescription(const unsigned char *bytes, NSUInteger length, enum Endianness_t endianness) {
     switch (length) {
-        case 4:
+        case sizeof(float):
         {
-            float s = *(const float *)bytes;
-            return [NSString stringWithFormat:@"%f", s];
+            union {
+                uint32_t i;
+                float f;
+            } temp;
+            assert(sizeof temp.f == sizeof temp.i);
+            temp.i = *(const uint32_t *)bytes;
+            if (endianness != eNativeEndianness) temp.i = (uint32_t)reverse(temp.i, sizeof(float));
+            return [NSString stringWithFormat:@"%f", temp.f];
         }
-        case 8:
+        case sizeof(double):
         {
-            double s = *(const double *)bytes;
-            return [NSString stringWithFormat:@"%f", s];
+            union {
+                uint64_t i;
+                double f;
+            } temp;
+            assert(sizeof temp.f == sizeof temp.i);
+            temp.i = *(const uint64_t *)bytes;
+            if (endianness != eNativeEndianness) temp.i = reverse(temp.i, sizeof(double));
+            return [NSString stringWithFormat:@"%f", temp.f];
         }
         default: return nil;
     }
@@ -145,10 +172,10 @@ static id floatingPointDescription(const unsigned char *bytes, NSUInteger length
     assert([self canDisplayDataForByteCount:length]);
     switch ([self type]) {
         case eInspectorTypeInteger:
-            return integerDescription(bytes, length);
+            return integerDescription(bytes, length, endianness);
         
         case eInspectorTypeFloatingPoint:
-            return floatingPointDescription(bytes, length);
+            return floatingPointDescription(bytes, length, endianness);
             
         default:
             return nil;
@@ -201,6 +228,7 @@ static id floatingPointDescription(const unsigned char *bytes, NSUInteger length
         [table setSelectionHighlightStyle:NSTableViewSelectionHighlightStyleNone];
     }
     [table setBackgroundColor:[NSColor colorWithCalibratedWhite:(CGFloat).91 alpha:1]];
+    [table setRefusesFirstResponder:YES];
     return resultView;
 }
 
@@ -290,33 +318,41 @@ static NSAttributedString *notApplicableString(void) {
     
 }
 
+- (void)resizeTableViewAfterChangingRowCount {
+    [table noteNumberOfRowsChanged];
+    NSUInteger rowCount = [table numberOfRows];
+    if (rowCount > 0) {
+        NSScrollView *scrollView = [table enclosingScrollView];
+        NSSize newTableViewBoundsSize = [table frame].size;
+        newTableViewBoundsSize.height = NSMaxY([table rectOfRow:rowCount - 1]) - NSMinY([table bounds]);
+        /* Is converting to the scroll view's coordinate system right?  It doesn't matter much because nothing is scaled except possibly the window */
+        CGFloat newScrollViewHeight = [[scrollView class] frameSizeForContentSize:[table convertSize:newTableViewBoundsSize toView:scrollView]
+                                                            hasHorizontalScroller:[scrollView hasHorizontalScroller]
+                                                              hasVerticalScroller:[scrollView hasVerticalScroller]
+                                                                       borderType:[scrollView borderType]].height + kScrollViewExtraPadding;
+        [[NSNotificationCenter defaultCenter] postNotificationName:DataInspectorDidChangeSize object:self userInfo:[NSDictionary dictionaryWithObject:[NSNumber numberWithDouble:newScrollViewHeight] forKey:@"height"]];
+    }
+}
+
 - (void)addRow:(id)sender {
     USE(sender);
     DataInspector *ins = [[DataInspector alloc] init];
     NSInteger clickedRow = [table clickedRow];
     [inspectors insertObject:ins atIndex:clickedRow + 1];
     [ins release];
-    [table noteNumberOfRowsChanged];
-        
-    NSScrollView *scrollView = [table enclosingScrollView];
-    CGFloat newScrollViewHeight = [[scrollView class] frameSizeForContentSize:[table frame].size
-                                                        hasHorizontalScroller:[scrollView hasHorizontalScroller]
-                                                          hasVerticalScroller:[scrollView hasVerticalScroller]
-                                                                   borderType:[scrollView borderType]].height + kScrollViewExtraPadding;
-    [[NSNotificationCenter defaultCenter] postNotificationName:DataInspectorDidChangeSize object:self userInfo:[NSDictionary dictionaryWithObject:[NSNumber numberWithDouble:newScrollViewHeight] forKey:@"height"]];
+    [self resizeTableViewAfterChangingRowCount];
 }
 
 - (void)removeRow:(id)sender {
     USE(sender);
-    NSInteger clickedRow = [table clickedRow];
-    [inspectors removeObjectAtIndex:clickedRow];
-    [table noteNumberOfRowsChanged];
-    NSScrollView *scrollView = [table enclosingScrollView];
-    CGFloat newScrollViewHeight = [[scrollView class] frameSizeForContentSize:[table frame].size
-                                                        hasHorizontalScroller:[scrollView hasHorizontalScroller]
-                                                          hasVerticalScroller:[scrollView hasVerticalScroller]
-                                                                   borderType:[scrollView borderType]].height + kScrollViewExtraPadding;
-    [[NSNotificationCenter defaultCenter] postNotificationName:DataInspectorDidChangeSize object:self userInfo:[NSDictionary dictionaryWithObject:[NSNumber numberWithDouble:newScrollViewHeight] forKey:@"height"]];
+    if ([inspectors count] > 1) {
+        NSInteger clickedRow = [table clickedRow];
+        [inspectors removeObjectAtIndex:clickedRow];
+        [self resizeTableViewAfterChangingRowCount];
+    }
+    else {
+        
+    }
 
 }
 
