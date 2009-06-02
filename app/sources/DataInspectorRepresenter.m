@@ -76,7 +76,7 @@ static NSString *errorStringForInspectionStatus(enum InspectionStatus_t status) 
 - (id)valueForBytes:(const unsigned char *)bytes length:(NSUInteger)length;
 
 /* Returns YES if we can replace the given number of bytes with this string value */
-- (BOOL)canAcceptStringValue:(NSString *)value replacingByteCount:(unsigned long long)count;
+- (BOOL)acceptStringValue:(NSString *)value replacingByteCount:(NSUInteger)count intoData:(unsigned char *)outData;
 
 /* returns YES if types wrapped around */
 - (BOOL)incrementToNextType;
@@ -238,7 +238,7 @@ static id floatingPointDescription(const unsigned char *bytes, NSUInteger length
     return wrapped;
 }
 
-- (BOOL)canAcceptStringValue:(NSString *)value replacingByteCount:(unsigned long long)count {
+- (BOOL)acceptStringValue:(NSString *)value replacingByteCount:(NSUInteger)count intoData:(unsigned char *)outData {
     if (inspectorType == eInspectorTypeInteger) {
 	char buffer[256];
 	BOOL success = [value getCString:buffer maxLength:sizeof buffer encoding:NSASCIIStringEncoding];
@@ -474,7 +474,7 @@ static NSAttributedString *inspectionError(NSString *s) {
     NSInteger row = [table editedRow];
     if (row < 0) return YES; /* paranoia */
     DataInspector *inspector = [inspectors objectAtIndex:row];
-    return [inspector canAcceptStringValue:[fieldEditor string]];
+    return [inspector acceptStringValue:[fieldEditor string] replacingByteCount:0 intoData:NULL];
 }
 
 
