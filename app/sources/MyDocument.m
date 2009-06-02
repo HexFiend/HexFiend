@@ -226,10 +226,16 @@ static inline Class preferredByteArrayClass(void) {
     }
 }
 
+- (void)dataInspectorDeletedAllRows:(NSNotification *)note {
+    DataInspectorRepresenter *inspector = [note object];
+    [self hideViewForRepresenter:inspector];
+}
+
 /* Called when our data inspector changes its size (number of rows) */
-- (void)dataInspectorChangedSize:(NSNotification *)note {
+- (void)dataInspectorChangedRowCount:(NSNotification *)note {
+    DataInspectorRepresenter *inspector = [note object];
     CGFloat newHeight = (CGFloat)[[[note userInfo] objectForKey:@"height"] doubleValue];
-    NSView *dataInspectorView = [dataInspectorRepresenter view];
+    NSView *dataInspectorView = [inspector view];
     NSSize size = [dataInspectorView frame].size;
     size.height = newHeight;
     [dataInspectorView setFrameSize:size];
@@ -251,7 +257,8 @@ static inline Class preferredByteArrayClass(void) {
     
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
     [center addObserver:self selector:@selector(lineCountingViewChangedWidth:) name:HFLineCountingRepresenterMinimumViewWidthChanged object:lineCountingRepresenter];
-    [center addObserver:self selector:@selector(dataInspectorChangedSize:) name:DataInspectorDidChangeSize object:dataInspectorRepresenter];
+    [center addObserver:self selector:@selector(dataInspectorChangedRowCount:) name:DataInspectorDidChangeRowCount object:dataInspectorRepresenter];
+    [center addObserver:self selector:@selector(dataInspectorDeletedAllRows:) name:DataInspectorDidDeleteAllRows object:dataInspectorRepresenter];
 
     NSUserDefaults *defs = [NSUserDefaults standardUserDefaults];
     

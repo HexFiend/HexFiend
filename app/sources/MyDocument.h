@@ -66,4 +66,6 @@
 - (IBAction)toggleOverwriteMode:sender;
 - (IBAction)modifyByteGrouping:sender;
 
+- (void)hideRepresenter:(HFRepresenter *)representer;
+
 @end

@@ -24,13 +24,13 @@ static BOOL isRunningOnLeopardOrLater(void) {
     return NSAppKitVersionNumber >= 860.;
 }
 
-NSString * const DataInspectorDidChangeSize = @"DataInspectorDidChangeSize";
+NSString * const DataInspectorDidChangeRowCount = @"DataInspectorDidChangeRowCount";
+NSString * const DataInspectorDidDeleteAllRows = @"DataInspectorDidDeleteAllRows";
 
 /* Inspector types */
 enum InspectorType_t {
     eInspectorTypeInteger,
-    eInspectorTypeFloatingPoint,
-    eInspectorTypeColor
+    eInspectorTypeFloatingPoint
 };
 
 enum Endianness_t {
@@ -44,6 +44,22 @@ enum Endianness_t {
 #endif
 };
 
+enum InspectionStatus_t {
+    eInspectionCanInspect,
+    eInspectionNoData,
+    eInspectionTooMuchData,
+    eInspectionBadByteCount
+};
+
+static NSString *errorStringForInspectionStatus(enum InspectionStatus_t status) {
+    switch (status) {
+	case eInspectionNoData: return @"(select some data)";
+	case eInspectionTooMuchData: return @"(select less data)";
+	case eInspectionBadByteCount: return @"(select a different number of bytes)";
+	default: return nil;
+    }
+}
+
 /* A class representing a single row of the data inspector */
 @interface DataInspector : NSObject {
     enum InspectorType_t inspectorType;
@@ -56,8 +72,14 @@ enum Endianness_t {
 - (enum Endianness_t)endianness;
 - (void)setEndianness:(enum Endianness_t)endianness;
 
-- (BOOL)canDisplayDataForByteCount:(unsigned long long)count;
+- (enum InspectionStatus_t)inspectionStatusForByteCount:(unsigned long long)count;
 - (id)valueForBytes:(const unsigned char *)bytes length:(NSUInteger)length;
+
+/* Returns YES if we can replace the given number of bytes with this string value */
+- (BOOL)canAcceptStringValue:(NSString *)value replacingByteCount:(unsigned long long)count;
+
+/* returns YES if types wrapped around */
+- (BOOL)incrementToNextType;
 
 @end
 
@@ -80,17 +102,33 @@ enum Endianness_t {
     return endianness;
 }
 
-- (BOOL)canDisplayDataForByteCount:(unsigned long long)count {
+- (NSUInteger)hash {
+    return inspectorType + (endianness << 8UL);
+}
+
+- (BOOL)isEqual:(DataInspector *)him {
+    if (! [him isKindOfClass:[DataInspector class]]) return NO;
+    return inspectorType == him->inspectorType && endianness == him->endianness;
+}
+
+- (enum InspectionStatus_t)inspectionStatusForByteCount:(unsigned long long)count {
     switch ([self type]) {
         case eInspectorTypeInteger:
             /* Only allow positive powers of 2 up to 8 */
-            return count > 0 && count <= 8 && ! (count & (count - 1));
+	    switch (count) {
+		case 0: return eInspectionNoData;
+		case 1: case 2: case 4: case 8: return eInspectionCanInspect;
+		default: return (count > 8) ? eInspectionTooMuchData : eInspectionBadByteCount;
+	    }
             
         case eInspectorTypeFloatingPoint:
             /* Only 4 and 8 */
-            return count == 4 || count == 8;
+	    switch (count) {
+		case 0: return eInspectionNoData;
+		case 4: case 8: return eInspectionCanInspect;
+		default: return (count > 8) ? eInspectionTooMuchData : eInspectionBadByteCount;
+	    }
         
-        case eInspectorTypeColor:
         default:
             return NO;
     }
@@ -169,7 +207,7 @@ static id floatingPointDescription(const unsigned char *bytes, NSUInteger length
 }
 
 - (id)valueForBytes:(const unsigned char *)bytes length:(NSUInteger)length {
-    assert([self canDisplayDataForByteCount:length]);
+    assert([self inspectionStatusForByteCount:length] == eInspectionCanInspect);
     switch ([self type]) {
         case eInspectorTypeInteger:
             return integerDescription(bytes, length, endianness);
@@ -179,6 +217,49 @@ static id floatingPointDescription(const unsigned char *bytes, NSUInteger length
             
         default:
             return nil;
+    }
+}
+
+- (BOOL)incrementToNextType {
+    BOOL wrapped = NO;
+    if (endianness == eEndianBig) {
+	endianness = eEndianLittle;
+    }
+    else {
+	endianness = eEndianBig;
+	if (inspectorType == eInspectorTypeInteger) {
+	    inspectorType = eInspectorTypeFloatingPoint;
+	}
+	else {
+	    inspectorType = eInspectorTypeInteger;
+	    wrapped = YES;
+	}
+    }
+    return wrapped;
+}
+
+- (BOOL)canAcceptStringValue:(NSString *)value replacingByteCount:(unsigned long long)count {
+    if (inspectorType == eInspectorTypeInteger) {
+	char buffer[256];
+	BOOL success = [value getCString:buffer maxLength:sizeof buffer encoding:NSASCIIStringEncoding];
+	if (! success) return NO;
+	
+	char *ptr = buffer;
+	
+	/* allow either signed or unsigned input */
+	BOOL useSigned = !! strchr(buffer, '-');
+	
+	errno = 0;
+	char *endPtr = NULL;
+	if (useSigned) {
+	    strtol(ptr, &endPtr, 0);
+	}
+	else {
+	    strtoull;
+	}
+    }
+    else if (inspectorType == eInspectorTypeFloatingPoint) {
+	return YES;
     }
 }
 
@@ -229,6 +310,8 @@ static id floatingPointDescription(const unsigned char *bytes, NSUInteger length
     }
     [table setBackgroundColor:[NSColor colorWithCalibratedWhite:(CGFloat).91 alpha:1]];
     [table setRefusesFirstResponder:YES];
+    [table setTarget:self];
+    [table setDoubleAction:@selector(doubleClickedTable:)];
     return resultView;
 }
 
@@ -236,38 +319,45 @@ static id floatingPointDescription(const unsigned char *bytes, NSUInteger length
     return NSMakePoint(0, (CGFloat)-.5);
 }
 
-- (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView {
-    USE(tableView);
+- (NSUInteger)rowCount {
     return [inspectors count];
 }
 
-static NSAttributedString *notApplicableString(void) {
-    static NSAttributedString *string;
-    if (! string) {
-        string = [[NSAttributedString alloc] initWithString:@"(n/a)" attributes:[NSDictionary dictionaryWithObjectsAndKeys:[NSColor disabledControlTextColor], NSForegroundColorAttributeName, nil]];
-    }
-    return string;
+- (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView {
+    USE(tableView);
+    return [self rowCount];
 }
 
-- (id)valueFromInspector:(DataInspector *)inspector {
-    id resultValue = nil;
+static NSAttributedString *inspectionError(NSString *s) {
+    NSMutableParagraphStyle *paragraphStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
+    [paragraphStyle setMinimumLineHeight:(CGFloat)16.];
+    NSAttributedString *result = [[NSAttributedString alloc] initWithString:s attributes:[NSDictionary dictionaryWithObjectsAndKeys:[NSColor disabledControlTextColor], NSForegroundColorAttributeName, [NSFont controlContentFontOfSize:11], NSFontAttributeName, paragraphStyle, NSParagraphStyleAttributeName, nil]];
+    [paragraphStyle release];
+    return result;
+}
+
+- (id)valueFromInspector:(DataInspector *)inspector isError:(BOOL *)outIsError{
     HFController *controller = [self controller];
     NSArray *selectedRanges = [controller selectedContentsRanges];
-    if ([selectedRanges count] == 1) {
-        HFRange selectedRange = [[selectedRanges objectAtIndex:0] HFRange];
-        if ([inspector canDisplayDataForByteCount:selectedRange.length]) {
-            NSData *selection = [controller dataForRange:selectedRange];
-            [selection retain];
-            const unsigned char *bytes = [selection bytes];
-            resultValue = [inspector valueForBytes:bytes length:ll2l(selectedRange.length)];
-            [selection release]; //keep it alive for GC
-        }
+    if ([selectedRanges count] != 1) {
+	if (outIsError) *outIsError = YES;
+	return inspectionError(@"(select a contiguous range)");
     }
-    if (! resultValue) {
-        /* Show n/a */
-        resultValue = notApplicableString();
+
+    HFRange selectedRange = [[selectedRanges objectAtIndex:0] HFRange];
+    enum InspectionStatus_t inspectionStatus = [inspector inspectionStatusForByteCount:selectedRange.length];
+    if (inspectionStatus != eInspectionCanInspect) {
+	if (outIsError) *outIsError = YES;
+	return inspectionError(errorStringForInspectionStatus(inspectionStatus));
     }
-    return resultValue;    
+    
+    NSData *selection = [controller dataForRange:selectedRange];
+    [selection retain];
+    const unsigned char *bytes = [selection bytes];
+    id result = [inspector valueForBytes:bytes length:ll2l(selectedRange.length)];
+    [selection release]; //keep it alive for GC
+    if (outIsError) *outIsError = NO;
+    return result;
 }
 
 - (id)tableView:(NSTableView *)tableView objectValueForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row {
@@ -281,7 +371,7 @@ static NSAttributedString *notApplicableString(void) {
         return [NSNumber numberWithInt:[inspector endianness]];
     }
     else if ([ident isEqualToString:kInspectorValueColumnIdentifier]) {
-        return [self valueFromInspector:inspector];
+        return [self valueFromInspector:inspector isError:NULL];
     }
     else if ([ident isEqualToString:kInspectorAddButtonColumnIdentifier] || [ident isEqualToString:kInspectorSubtractButtonColumnIdentifier]) {
         return [NSNumber numberWithInt:1]; //just a button
@@ -330,13 +420,21 @@ static NSAttributedString *notApplicableString(void) {
                                                             hasHorizontalScroller:[scrollView hasHorizontalScroller]
                                                               hasVerticalScroller:[scrollView hasVerticalScroller]
                                                                        borderType:[scrollView borderType]].height + kScrollViewExtraPadding;
-        [[NSNotificationCenter defaultCenter] postNotificationName:DataInspectorDidChangeSize object:self userInfo:[NSDictionary dictionaryWithObject:[NSNumber numberWithDouble:newScrollViewHeight] forKey:@"height"]];
+        [[NSNotificationCenter defaultCenter] postNotificationName:DataInspectorDidChangeRowCount object:self userInfo:[NSDictionary dictionaryWithObject:[NSNumber numberWithDouble:newScrollViewHeight] forKey:@"height"]];
     }
 }
 
 - (void)addRow:(id)sender {
     USE(sender);
     DataInspector *ins = [[DataInspector alloc] init];
+    /* Try to add an inspector that we don't already have */
+    NSMutableSet *existingInspectors = [[NSMutableSet alloc] initWithArray:inspectors];
+    while ([existingInspectors containsObject:ins]) {
+	BOOL wrapped = [ins incrementToNextType];
+	if (wrapped) break;
+    }
+    [existingInspectors release];
+    
     NSInteger clickedRow = [table clickedRow];
     [inspectors insertObject:ins atIndex:clickedRow + 1];
     [ins release];
@@ -345,16 +443,40 @@ static NSAttributedString *notApplicableString(void) {
 
 - (void)removeRow:(id)sender {
     USE(sender);
-    if ([inspectors count] > 1) {
-        NSInteger clickedRow = [table clickedRow];
-        [inspectors removeObjectAtIndex:clickedRow];
-        [self resizeTableViewAfterChangingRowCount];
+    if ([self rowCount] == 1) {
+	[[NSNotificationCenter defaultCenter] postNotificationName:DataInspectorDidDeleteAllRows object:self userInfo:nil];
     }
     else {
-        
+	NSInteger clickedRow = [table clickedRow];
+	[inspectors removeObjectAtIndex:clickedRow];
+	[self resizeTableViewAfterChangingRowCount];
     }
-
 }
+
+- (IBAction)doubleClickedTable:(id)sender {
+    USE(sender);
+    NSInteger column = [table clickedColumn], row = [table clickedRow];
+    if (column >= 0 && row >= 0 && [[[[table tableColumns] objectAtIndex:column] identifier] isEqual:kInspectorValueColumnIdentifier]) {
+	BOOL isError;
+	[self valueFromInspector:[inspectors objectAtIndex:row] isError:&isError];
+	if (! isError) {
+	    [table editColumn:column row:row withEvent:[NSApp currentEvent] select:YES];
+	}
+	else {
+	    NSBeep();
+	}
+    }
+}
+
+- (BOOL)control:(NSControl *)control textShouldEndEditing:(NSText *)fieldEditor {
+    USE(control);
+    NSLog(@"%@", [fieldEditor string]);
+    NSInteger row = [table editedRow];
+    if (row < 0) return YES; /* paranoia */
+    DataInspector *inspector = [inspectors objectAtIndex:row];
+    return [inspector canAcceptStringValue:[fieldEditor string]];
+}
+
 
 /* Prevent all row selection */
 
@@ -372,6 +494,7 @@ static NSAttributedString *notApplicableString(void) {
     USE(tableColumn);
     return YES;
 }
+
 
 - (void)refreshTableValues {
     [table reloadData];
