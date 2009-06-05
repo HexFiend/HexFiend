@@ -2017,14 +2017,15 @@ static NSUInteger random_upto(unsigned long long val) {
     [array insertByteSlice:slice inRange:HFRangeMake(0, 0)];
     HFTEST([HFHashByteArray(array) isEqual:HFHashFile(fileURL)]);
     
-    NSUInteger i, op, opCount = 20;
+    NSUInteger i, op, opCount = 2000;
     unsigned long long expectedLength = [data length];
     for (i=0; i < opCount; i++) {
         HFTEST([array length] == expectedLength);
         HFRange replacementRange;
         replacementRange.location = random_upto(expectedLength);
         replacementRange.length = random_upto(expectedLength - replacementRange.location);
-        switch (op = (random() % 8)) {
+	replacementRange.length = 0;
+        switch (op = 5){//(random() % 8)) {
             case 0: {
                 /* insert */
                 HFByteSlice *slice = [[[HFSharedMemoryByteSlice alloc] initWithUnsharedData:randomDataOfLength(random_upto(1000))] autorelease];

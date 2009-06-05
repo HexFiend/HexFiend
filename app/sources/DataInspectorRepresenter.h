@@ -21,8 +21,6 @@ extern NSString * const DataInspectorDidDeleteAllRows;
 - (IBAction)removeRow:(id)sender;
 - (IBAction)doubleClickedTable:(id)sender;
 
-- (BOOL)validateEditingStringValue:(NSString *)string;
-
 @end
 
 @interface DataInspectorScrollView : NSScrollView

@@ -8,7 +8,7 @@
 
 #import <Cocoa/Cocoa.h>
 
-@class HFByteSlice, HFProgressTracker;
+@class HFByteSlice, HFProgressTracker, HFFileReference;
 
 @interface HFByteArray : NSObject <NSCopying, NSMutableCopying> {
     NSUInteger changeLockCounter;
@@ -43,5 +43,7 @@
 
 - (BOOL)writeToFile:(NSURL *)targetURL trackingProgress:(HFProgressTracker *)progressTracker error:(NSError **)error;
 
-@end
+// If the receiver were written to this file, what ranges within the file would be modified?  This answers that question.  This is for use in e.g. determining if the clipboard can be preserved after a save operation.  Returns an array of HFRangeWrappers.
+- (NSArray *)rangesOfFileModifiedBySaveOperation:(HFFileReference *)reference;
 
+@end

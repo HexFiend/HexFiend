@@ -20,6 +20,10 @@
 /* Declaration of SnowLeopard only property so we can build on Leopard */
 #define NSTableViewSelectionHighlightStyleNone (-1)
 
+/* The largest number of bytes that any inspector type can edit */
+#define MAX_EDITABLE_BYTE_COUNT 8
+#define INVALID_EDITING_BYTE_COUNT NSUIntegerMax
+
 static BOOL isRunningOnLeopardOrLater(void) {
     return NSAppKitVersionNumber >= 860.;
 }
@@ -55,7 +59,7 @@ static NSString *errorStringForInspectionStatus(enum InspectionStatus_t status) 
     switch (status) {
 	case eInspectionNoData: return @"(select some data)";
 	case eInspectionTooMuchData: return @"(select less data)";
-	case eInspectionBadByteCount: return @"(select a different number of bytes)";
+	case eInspectionBadByteCount: return @"(select a power of 2 bytes)";
 	default: return nil;
     }
 }
@@ -200,7 +204,7 @@ static id floatingPointDescription(const unsigned char *bytes, NSUInteger length
             assert(sizeof temp.f == sizeof temp.i);
             temp.i = *(const uint64_t *)bytes;
             if (endianness != eNativeEndianness) temp.i = reverse(temp.i, sizeof(double));
-            return [NSString stringWithFormat:@"%f", temp.f];
+            return [NSString stringWithFormat:@"%e", temp.f];
         }
         default: return nil;
     }
@@ -238,28 +242,129 @@ static id floatingPointDescription(const unsigned char *bytes, NSUInteger length
     return wrapped;
 }
 
+static BOOL valueCanFitInByteCount(unsigned long long unsignedValue, NSUInteger count) {
+    long long signedValue = (long long)unsignedValue;
+    switch (count) {
+	case 1:
+	    return unsignedValue <= UINT8_MAX || (signedValue <= INT8_MAX && signedValue >= INT8_MIN);
+	case 2:
+	    return unsignedValue <= UINT16_MAX || (signedValue <= INT16_MAX && signedValue >= INT16_MIN);
+	case 4:
+	    return unsignedValue <= UINT32_MAX || (signedValue <= INT32_MAX && signedValue >= INT32_MIN);
+	case 8:
+	    return unsignedValue <= UINT64_MAX || (signedValue <= INT64_MAX && signedValue >= INT64_MIN);
+	default:
+	    return NO;
+    }
+}
+
 - (BOOL)acceptStringValue:(NSString *)value replacingByteCount:(NSUInteger)count intoData:(unsigned char *)outData {
     if (inspectorType == eInspectorTypeInteger) {
+	if (! (count == 1 || count == 2 || count == 4 || count == 8)) return NO;
+	
+	char buffer[256];
+	BOOL success = [value getCString:buffer maxLength:sizeof buffer encoding:NSASCIIStringEncoding];
+	if (! success) return NO;
+    
+	
+	errno = 0;
+	char *endPtr = NULL;
+	/* note that strtoull handles negative values */
+	unsigned long long unsignedValue = strtoull(buffer, &endPtr, 0);
+	int resultError = errno;
+	
+	/* Make sure we consumed some of the string */
+	if (endPtr == buffer) return NO;
+	
+	/* Check for conversion errors (overflow, etc.) */
+	if (resultError != 0) return NO;
+	
+	/* Now check to make sure we fit */
+	if (! valueCanFitInByteCount(unsignedValue, count)) return NO;
+	
+	/* Actually return the bytes if requested */
+	if (outData != NULL) {
+	    /* Get all 8 bytes in big-endian form */
+	    unsigned long long consumableValue = unsignedValue;
+	    unsigned char bytes[8];
+	    unsigned i = 8;
+	    while (i--) {
+		bytes[i] = consumableValue & 0xFF;
+		consumableValue >>= 8;
+	    }
+	    
+	    /* Now copy the last (least significant) 'count' bytes to outData in the requested endianness */
+	    for (i=0; i < count; i++) {
+		unsigned char byte = bytes[(8 - count + i)];
+		if (endianness == eEndianBig) {
+		    outData[i] = byte;
+		}
+		else {
+		    outData[count - i - 1] = byte;
+		}
+	    }
+	}
+	
+	/* Victory */
+	return YES;
+    }
+    else if (inspectorType == eInspectorTypeFloatingPoint) {
+	if (! (count == 4 || count == 8)) return NO;
+	assert(sizeof(float) == 4);
+	assert(sizeof(double) == 8);
+	
+	BOOL useFloat = (count == 4);
+	
 	char buffer[256];
 	BOOL success = [value getCString:buffer maxLength:sizeof buffer encoding:NSASCIIStringEncoding];
 	if (! success) return NO;
 	
-	char *ptr = buffer;
-	
-	/* allow either signed or unsigned input */
-	BOOL useSigned = !! strchr(buffer, '-');
+	double doubleValue = 0;
+	float floatValue = 0;
 	
 	errno = 0;
 	char *endPtr = NULL;
-	if (useSigned) {
-	    strtol(ptr, &endPtr, 0);
+	if (useFloat) {
+	    floatValue = strtof(buffer, &endPtr);
 	}
 	else {
-	    strtoull;
+	    doubleValue = strtod(buffer, &endPtr);
 	}
-    }
-    else if (inspectorType == eInspectorTypeFloatingPoint) {
+	int resultError = errno;
+	
+	/* Make sure we consumed some of the string */
+	if (endPtr == buffer) return NO;
+	
+	/* Check for conversion errors (overflow, etc.) */
+	if (resultError != 0) return NO;
+	
+	if (outData != NULL) {
+	    unsigned char bytes[8];
+	    if (useFloat) {
+		memcpy(bytes, &floatValue, sizeof floatValue);
+	    }
+	    else {
+		memcpy(bytes, &doubleValue, sizeof doubleValue);
+	    }
+	    
+	    /* Now copy the first 'count' bytes to outData in the requested endianness.  This is different from the integer case - there we always work big-endian because we support more different byteCounts, but here we work in the native endianness because there's no simple way to convert a float or double to big endian form */
+	    NSUInteger i;
+	    for (i=0; i < count; i++) {
+		if (endianness == eNativeEndianness) {
+		    outData[i] = bytes[i];
+		}
+		else {
+		    outData[count - i - 1] = bytes[i];
+		}
+	    }
+	}
+	
+	/* Return triumphantly! */
 	return YES;
+    }
+    else {
+	/* Unknown inspector type */
+	return NO;
     }
 }
 
@@ -326,6 +431,15 @@ static id floatingPointDescription(const unsigned char *bytes, NSUInteger length
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView {
     USE(tableView);
     return [self rowCount];
+}
+
+/* returns the number of bytes that are selected, or NSUIntegerMax if there is more than one selection, or the selection is larger than MAX_EDITABLE_BYTE_COUNT */
+- (NSInteger)selectedByteCountForEditing {
+    NSArray *selectedRanges = [[self controller] selectedContentsRanges];
+    if ([selectedRanges count] != 1) return INVALID_EDITING_BYTE_COUNT;
+    HFRange selectedRange = [[selectedRanges objectAtIndex:0] HFRange];
+    if (selectedRange.length > MAX_EDITABLE_BYTE_COUNT) return INVALID_EDITING_BYTE_COUNT;
+    return ll2l(selectedRange.length);
 }
 
 static NSAttributedString *inspectionError(NSString *s) {
@@ -397,7 +511,19 @@ static NSAttributedString *inspectionError(NSString *s) {
         [tableView reloadData];
     }
     else if ([ident isEqualToString:kInspectorValueColumnIdentifier]) {
-        
+	NSUInteger byteCount = [self selectedByteCountForEditing];
+	if (byteCount != INVALID_EDITING_BYTE_COUNT) {
+	    HFASSERT(byteCount <= MAX_EDITABLE_BYTE_COUNT);
+	    unsigned char bytes[MAX_EDITABLE_BYTE_COUNT];
+	    if ([inspector acceptStringValue:object replacingByteCount:byteCount intoData:bytes]) {
+		HFController *controller = [self controller];
+		NSArray *selectedRanges = [controller selectedContentsRanges];
+		NSData *data = [[NSData alloc] initWithBytes:bytes length:byteCount];
+		[controller insertData:data replacingPreviousBytes:0 allowUndoCoalescing:NO];
+		[data release];
+		[controller setSelectedContentsRanges:selectedRanges]; //Hack to preserve the selection across the data insertion
+	    }
+	}
     }
     else if ([ident isEqualToString:kInspectorAddButtonColumnIdentifier] || [ident isEqualToString:kInspectorSubtractButtonColumnIdentifier]) {
         /* Nothing to do */
@@ -470,11 +596,14 @@ static NSAttributedString *inspectionError(NSString *s) {
 
 - (BOOL)control:(NSControl *)control textShouldEndEditing:(NSText *)fieldEditor {
     USE(control);
-    NSLog(@"%@", [fieldEditor string]);
     NSInteger row = [table editedRow];
     if (row < 0) return YES; /* paranoia */
+    
+    NSUInteger byteCount = [self selectedByteCountForEditing];
+    if (byteCount == INVALID_EDITING_BYTE_COUNT) return NO;
+    
     DataInspector *inspector = [inspectors objectAtIndex:row];
-    return [inspector acceptStringValue:[fieldEditor string] replacingByteCount:0 intoData:NULL];
+    return [inspector acceptStringValue:[fieldEditor string] replacingByteCount:byteCount intoData:NULL];
 }
 
 

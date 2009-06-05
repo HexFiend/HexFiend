@@ -209,6 +209,8 @@ typedef NSInteger HFControllerMovementGranularity;
 - (BOOL)insertByteArray:(HFByteArray *)byteArray replacingPreviousBytes:(unsigned long long)previousByteCount allowUndoCoalescing:(BOOL)allowUndoCoalescing;
 - (BOOL)insertData:(NSData *)data replacingPreviousBytes:(unsigned long long)previousByteCount allowUndoCoalescing:(BOOL)allowUndoCoalescing;
 
+
+
 /* Deletes the selection */
 - (void)deleteSelection;
 

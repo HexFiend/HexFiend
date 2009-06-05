@@ -18,6 +18,7 @@ typedef unsigned long long HFBTreeIndex;
     HFBTreeNode *root;
 }
 
+/* entry should conform to HFBTreeEntry */
 - (void)insertEntry:(id)entry atOffset:(HFBTreeIndex)offset;
 - (id)entryContainingOffset:(HFBTreeIndex)offset beginningOffset:(HFBTreeIndex *)outBeginningOffset;
 - (void)removeEntryAtOffset:(HFBTreeIndex)offset;

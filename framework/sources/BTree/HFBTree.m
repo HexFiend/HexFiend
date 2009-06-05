@@ -196,7 +196,8 @@ static HFBTreeIndex sum_child_lengths(const id *children, const BOOL isLeaf);
     return ((HFBTreeNode *)root)->subtreeLength;
 }
 
-- (void)insertEntry:(TreeEntry *)entry atOffset:(HFBTreeIndex)offset {
+- (void)insertEntry:(id)entryObj atOffset:(HFBTreeIndex)offset {
+    TreeEntry *entry = (TreeEntry *)entryObj; //avoid a conflicting types warning
     HFASSERT(entry);
     HFASSERT(offset <= [self length]);
     if (! root) {
