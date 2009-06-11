@@ -44,6 +44,9 @@
 - (BOOL)writeToFile:(NSURL *)targetURL trackingProgress:(HFProgressTracker *)progressTracker error:(NSError **)error;
 
 // If the receiver were written to this file, what ranges within the file would be modified?  This answers that question.  This is for use in e.g. determining if the clipboard can be preserved after a save operation.  Returns an array of HFRangeWrappers.
-- (NSArray *)rangesOfFileModifiedBySaveOperation:(HFFileReference *)reference;
+- (NSArray *)rangesOfFileModifiedIfSavedToFile:(HFFileReference *)reference;
+
+// Attempts to modify the receiver so that it no longer depends on any of the HFRanges in the array within the given file.  Returns YES if successful, NO if not (because it might use too much memory)
+- (BOOL)clearDependenciesOnRanges:(NSArray *)ranges inFile:(HFFileReference *)reference;
 
 @end

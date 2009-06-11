@@ -53,6 +53,7 @@ enum
 };
 typedef NSInteger HFControllerMovementGranularity;
 
+
 @interface HFController : NSObject {
 @private
     NSMutableArray *representers;
@@ -210,7 +211,6 @@ typedef NSInteger HFControllerMovementGranularity;
 - (BOOL)insertData:(NSData *)data replacingPreviousBytes:(unsigned long long)previousByteCount allowUndoCoalescing:(BOOL)allowUndoCoalescing;
 
 
-
 /* Deletes the selection */
 - (void)deleteSelection;
 
@@ -232,3 +232,17 @@ typedef NSInteger HFControllerMovementGranularity;
 - (BOOL)requiresOverwriteMode;
 
 @end
+
+@interface HFController (HFFileWritingNotification)
+
+/* Attempts to clear all dependencies on the given file (clipboard, undo, etc.) that could not be preserved if the file were written. */
++ (void)prepareForChangeInFile:(NSURL *)targetFile fromWritingByteArray:(HFByteArray *)array;
+
+@end
+
+/* Posted from prepareForChangeInFile:fromWritingByteArray: because we are about to write a ByteArray to a file.  The object is the FileReference. */
+extern NSString * const HFPrepareForChangeInFileNotification;
+
+/* Key in HFPrepareForChangeInFileNotification: */
+extern NSString * const HFChangeInFileByteArrayKey; //the byte array that will be written
+extern NSString * const HFChangeInFileModifiedRangesKey; //an array of HFRangeWrappers indicating which parts of the file will be modified

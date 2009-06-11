@@ -16,9 +16,9 @@
 #import <HexFiend/HFControllerCoalescedUndo.h>
 #import <HexFiend/HFSharedMemoryByteSlice.h>
 #import <HexFiend/HFRandomDataByteSlice.h>
+#import <HexFiend/HFFileReference.h>
 
 #if HFUNIT_TESTS
-#import <HexFiend/HFFileReference.h>
 #import <HexFiend/HFFileByteSlice.h>
 #import <HexFiend/HFTestHashing.h>
 #import <HexFiend/HFRandomDataByteSlice.h>
@@ -43,6 +43,11 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
 static const CFTimeInterval kPulseDuration = .2;
 
 static void *KVOContextChangesAreLocked = &KVOContextChangesAreLocked;
+
+NSString * const HFPrepareForChangeInFileNotification = @"HFPrepareForChangeInFileNotification";
+NSString * const HFChangeInFileByteArrayKey = @"HFChangeInFileByteArrayKey";
+NSString * const HFChangeInFileModifiedRangesKey = @"HFChangeInFileModifiedRangesKey";
+
 
 typedef enum {
     eSelectResult,
@@ -1640,6 +1645,20 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
     return NO;
 }
 
++ (void)prepareForChangeInFile:(NSURL *)targetFile fromWritingByteArray:(HFByteArray *)array {
+    REQUIRE_NOT_NULL(targetFile);
+    REQUIRE_NOT_NULL(array);
+    HFFileReference *fileReference = [[HFFileReference alloc] initWithPath:[targetFile path]];
+    if (! fileReference) return; //good luck writing that sucker
+    NSArray *changedRanges = [array rangesOfFileModifiedIfSavedToFile:fileReference];
+    if ([changedRanges count] > 0) { //don't bother if nothing is changing
+	NSDictionary *userInfo = [[NSDictionary alloc] initWithObjectsAndKeys:array, HFChangeInFileByteArrayKey, changedRanges, HFChangeInFileModifiedRangesKey, nil];
+	[[NSNotificationCenter defaultCenter] postNotificationName:HFPrepareForChangeInFileNotification object:fileReference userInfo:userInfo];
+	[userInfo release];
+    }
+    [fileReference release];
+}
+
 #if BENCHMARK_BYTEARRAYS
 
 + (void)_testByteArray {
@@ -1999,7 +2018,7 @@ static NSUInteger random_upto(unsigned long long val) {
     DEBUG printf("%s\n", [[second description] UTF8String]);
 }
 
-+ (void)_testFileWriting {
++ (void)_testRandomOperationFileWriting {
     const BOOL should_debug = NO;
     NSAutoreleasePool* pool=[[NSAutoreleasePool alloc] init];
     NSData *data = randomDataOfLength(1 << 20);
@@ -2017,15 +2036,14 @@ static NSUInteger random_upto(unsigned long long val) {
     [array insertByteSlice:slice inRange:HFRangeMake(0, 0)];
     HFTEST([HFHashByteArray(array) isEqual:HFHashFile(fileURL)]);
     
-    NSUInteger i, op, opCount = 2000;
+    NSUInteger i, op, opCount = 20;
     unsigned long long expectedLength = [data length];
     for (i=0; i < opCount; i++) {
         HFTEST([array length] == expectedLength);
         HFRange replacementRange;
         replacementRange.location = random_upto(expectedLength);
         replacementRange.length = random_upto(expectedLength - replacementRange.location);
-	replacementRange.length = 0;
-        switch (op = 5){//(random() % 8)) {
+        switch (op = (random() % 8)) {
             case 0: {
                 /* insert */
                 HFByteSlice *slice = [[[HFSharedMemoryByteSlice alloc] initWithUnsharedData:randomDataOfLength(random_upto(1000))] autorelease];
@@ -2069,6 +2087,63 @@ static NSUInteger random_upto(unsigned long long val) {
     [pool release];
 }
 
++ (void)_testPermutationFileWriting {
+    const BOOL should_debug = NO;
+    
+    NSUInteger iteration = 10;
+    
+    while (iteration--) {
+	NSAutoreleasePool* pool=[[NSAutoreleasePool alloc] init];
+	
+#define BLOCK_SIZE (1024 * 1024)
+#define BLOCK_COUNT 64
+	
+	/* Construct an enumeration */
+	NSUInteger permutation[BLOCK_COUNT];
+	NSUInteger p;
+	for (p=0; p < BLOCK_COUNT; p++) permutation[p] = p;
+	while (p > 1) {
+	    p--;
+	    unsigned k = random() % (p + 1);
+	    NSUInteger tmp = permutation[k];
+	    permutation[k] = permutation[p];
+	    permutation[p] = tmp;
+	}
+	
+	NSData *data = randomDataOfLength(BLOCK_COUNT * BLOCK_SIZE);
+	NSURL *fileURL = [NSURL fileURLWithPath:@"/tmp/HexFiendTestFile.data"];
+	NSURL *asideFileURL = [NSURL fileURLWithPath:@"/tmp/HexFiendTestFile_External.data"];
+	if (! [data writeToURL:fileURL atomically:NO]) {
+	    [NSException raise:NSGenericException format:@"Unable to write test data to %@", fileURL];
+	}
+	HFFileReference *ref = [[[HFFileReference alloc] initWithPath:[fileURL path]] autorelease];
+	HFTEST([ref length] == [data length]);
+	
+	HFByteSlice *slice = [[[HFFileByteSlice alloc] initWithFile:ref] autorelease];
+	
+	HFByteArray *array = [[[preferredByteArrayClass() alloc] init] autorelease];
+
+	for (p=0; p < BLOCK_COUNT; p++) {
+	    NSUInteger index = permutation[p];
+	    HFByteSlice *subslice = [slice subsliceWithRange:HFRangeMake(index * BLOCK_SIZE, BLOCK_SIZE)];
+	    [array insertByteSlice:subslice inRange:HFRangeMake([array length], 0)];
+	}    
+	NSData *arrayHash = HFHashByteArray(array);
+	
+	HFTEST([array writeToFile:asideFileURL trackingProgress:NULL error:NULL]);
+	HFTEST([arrayHash isEqual:HFHashFile(asideFileURL)]);
+	
+	HFTEST([array writeToFile:fileURL trackingProgress:NULL error:NULL]);
+	NSDate *startDate = [NSDate date];
+	HFTEST([arrayHash isEqual:HFHashFile(fileURL)]);	
+	NSTimeInterval diff = [startDate timeIntervalSinceNow];
+	
+	[[NSFileManager defaultManager] removeFileAtPath:[fileURL path] handler:nil];
+	
+	[pool release];
+    }
+}
+
 + (void)_testByteSearching {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     NSUInteger round;
@@ -2105,7 +2180,7 @@ static void exception_thrown(const char *methodName, NSException *exception) {
 + (void)_runAllTests {
     CFAbsoluteTime start = CFAbsoluteTimeGetCurrent();
     @try { [self _testFastMemchr]; }
-    @catch (NSException *localException) { exception_thrown("_testFileWriting", localException); }
+    @catch (NSException *localException) { exception_thrown("_testFastMemchr", localException); }
     @try { [self _testRangeFunctions]; }
     @catch (NSException *localException) { exception_thrown("_testRangeFunctions", localException); }
     @try { [self _testByteArray]; }
@@ -2114,8 +2189,10 @@ static void exception_thrown(const char *methodName, NSException *exception) {
     @catch (NSException *localException) { exception_thrown("_testTextInsertion", localException); }
     @try { [NSClassFromString(@"HFObjectGraph") self]; }
     @catch (NSException *localException) { exception_thrown("HFObjectGraph", localException); }    
-    @try { [self _testFileWriting]; }
-    @catch (NSException *localException) { exception_thrown("_testFileWriting", localException); }
+//    @try { [self _testRandomOperationFileWriting]; }
+//    @catch (NSException *localException) { exception_thrown("_testRandomOperationFileWriting", localException); }
+    @try { [self _testPermutationFileWriting]; }
+    @catch (NSException *localException) { exception_thrown("_testPermutationFileWriting", localException); }
     @try { [self _testByteSearching]; }
     @catch (NSException *localException) { exception_thrown("_testByteSearching", localException); }
     CFAbsoluteTime end = CFAbsoluteTimeGetCurrent();

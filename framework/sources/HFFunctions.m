@@ -65,10 +65,17 @@ NSImage *HFImageNamed(NSString *name) {
     else return HFRangeEqualsRange(range, [obj HFRange]);
 }
 
+- (NSUInteger)hash {
+    return (NSUInteger)(range.location + (range.length << 16));
+}
+
+- (id)copyWithZone:(NSZone *)zone {
+    return [self retain];
+}
+
 - (NSString *)description {
     return HFRangeToString(range);
 }
-
 
 static int hfrange_compare(const void *ap, const void *bp) {
     const HFRange *a = ap;

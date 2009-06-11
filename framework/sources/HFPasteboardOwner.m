@@ -8,6 +8,8 @@
 
 #import <HexFiend/HFPasteboardOwner.h>
 #import <HexFiend/HFProgressTracker.h>
+#import <HexFiend/HFController.h>
+#import <HexFiend/HFByteArray.h>
 #import <objc/message.h>
 
 NSString *const HFPrivateByteArrayPboardType = @"HFPrivateByteArrayPboardType";
@@ -22,6 +24,10 @@ NSString *const HFPrivateByteArrayPboardType = @"HFPrivateByteArrayPboardType";
     byteArray = [array retain];
     pasteboard = pboard;
     [pasteboard declareTypes:types owner:self];
+    
+    // get notified when we're about to write a file, so that if they're overwriting a file backing part of our byte array, we can properly clear or preserve our pasteboard
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changeInFileNotification:) name:HFPrepareForChangeInFileNotification object:nil];
+    
     return self;
 }
 
@@ -29,7 +35,26 @@ NSString *const HFPrivateByteArrayPboardType = @"HFPrivateByteArrayPboardType";
     return [[[self alloc] initWithPasteboard:pboard forByteArray:array withTypes:types] autorelease];
 }
 
+- (void)tearDownPasteboardReferenceIfExists {
+    if (pasteboard) {
+	pasteboard = nil;
+	[[NSNotificationCenter defaultCenter] removeObserver:self name:HFPrepareForChangeInFileNotification object:nil];
+    }
+}
+
+- (void)changeInFileNotification:(NSNotification *)notification {
+    HFASSERT(pasteboard != nil);
+    HFASSERT(byteArray != nil);
+    NSArray *changedRanges = [[notification userInfo] objectForKey:HFChangeInFileModifiedRangesKey];
+    HFFileReference *fileReference = [notification object];
+    if (! [byteArray clearDependenciesOnRanges:changedRanges inFile:fileReference]) {
+	/* We can't do it */
+	[self tearDownPasteboardReferenceIfExists];
+    }
+}
+
 - (void)dealloc {
+    [self tearDownPasteboardReferenceIfExists];
     [byteArray release];
     [super dealloc];
 }
@@ -104,6 +129,7 @@ NSString *const HFPrivateByteArrayPboardType = @"HFPrivateByteArrayPboardType";
 
 - (void)pasteboardChangedOwner:(NSPasteboard *)pboard {
     HFASSERT(pasteboard == pboard);
+    [self tearDownPasteboardReferenceIfExists];
 }
 
 - (HFByteArray *)byteArray {
@@ -111,6 +137,10 @@ NSString *const HFPrivateByteArrayPboardType = @"HFPrivateByteArrayPboardType";
 }
 
 - (void)pasteboard:(NSPasteboard *)pboard provideDataForType:(NSString *)type {
+    if (! pasteboard) {
+	/* Don't do anything, because we've torn down our pasteboard */
+	return;
+    }
     if ([type isEqualToString:HFPrivateByteArrayPboardType]) {
 	NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
 	    [NSNumber numberWithUnsignedLong:(unsigned long)byteArray], @"HFByteArray",

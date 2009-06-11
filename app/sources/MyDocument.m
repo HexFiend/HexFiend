@@ -740,6 +740,7 @@ static inline Class preferredByteArrayClass(void) {
     NSDictionary *userInfo = [tracker userInfo];
     NSURL *targetURL = [userInfo objectForKey:@"targetURL"];
     NSError *error = nil;
+    [HFController prepareForChangeInFile:targetURL fromWritingByteArray:byteArray];
     BOOL result = [byteArray writeToFile:targetURL trackingProgress:tracker error:&error];
     [tracker noteFinished:self];
     if (tracker->cancelRequested) return [NSNumber numberWithInt:HFSaveCancelled];

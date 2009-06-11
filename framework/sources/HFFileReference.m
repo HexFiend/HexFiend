@@ -27,7 +27,8 @@
         fileDescriptor = open(p, O_RDONLY, 0);
     }
     if (fileDescriptor < 0) {
-        [NSException raise:NSGenericException format:@"Unable to open file %@. %s.", path, strerror(errno)];
+        [self release];
+	return nil;
     }
 #if USE_STAT64
     struct stat64 sb;
@@ -37,8 +38,11 @@
     result = fstat(fileDescriptor, &sb);
 #endif
     if (result != 0) {
+	int err = errno;
         close(fileDescriptor);
-        [NSException raise:NSGenericException format:@"Unable to fstat64 file %@. %s.", path, strerror(errno)];
+        NSLog(@"Unable to fstat64 file %@. %s.", path, strerror(err));
+	[self release];
+	return nil;
     }
     fileLength = sb.st_size;
     inode = sb.st_ino;
@@ -49,15 +53,13 @@
 - initWithPath:(NSString *)path {
     [super init];
     isWritable = NO;
-    [self sharedInitWithPath:path];
-    return self;
+    return [self sharedInitWithPath:path];
 }
 
 - initWritableWithPath:(NSString *)path {
     [super init];
     isWritable = YES;
-    [self sharedInitWithPath:path];
-    return self;
+    return [self sharedInitWithPath:path];
 }
 
 - (void)readBytes:(unsigned char*)buff length:(NSUInteger)length from:(unsigned long long)pos {
