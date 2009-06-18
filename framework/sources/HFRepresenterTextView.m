@@ -26,8 +26,8 @@ static const NSTimeInterval HFCaretBlinkFrequency = 0.56;
     if (glyphs != NULL) {
         /* Convert from unsigned int NSGlyphs to unsigned short CGGlyphs */
         for (glyphIndex = 0; glyphIndex < glyphCount; glyphIndex++) {
-	    /* Get rid of NSControlGlyph */
-	    NSGlyph modifiedGlyph = nsglyphs[glyphIndex] == NSControlGlyph ? NSNullGlyph : nsglyphs[glyphIndex];
+			/* Get rid of NSControlGlyph */
+			NSGlyph modifiedGlyph = nsglyphs[glyphIndex] == NSControlGlyph ? NSNullGlyph : nsglyphs[glyphIndex];
             HFASSERT(modifiedGlyph <= USHRT_MAX);
             glyphs[glyphIndex] = (CGGlyph)modifiedGlyph;
         }
@@ -395,66 +395,72 @@ enum LineCoverage_t {
     else {
         if (pulseWindow == nil) {
             NSArray *ranges = [self displayedSelectedContentsRanges];
-	    if ([ranges count] > 0) {
-		NSWindow *thisWindow = [self window];
-		NSRange firstRange = [[ranges objectAtIndex:0] rangeValue];
-		NSRange lastRange = [[ranges lastObject] rangeValue];
-		NSPoint startPoint = [self originForCharacterAtByteIndex:firstRange.location];
-                // don't just use originForCharacterAtByteIndex:NSMaxRange(lastRange), because if the last selected character is at the end of the line, this will cause us to highlight the next line.  Instead, get the last selected character, and add an advance to it.
-//                HFASSERT(lastRange.length > 0);
-                NSPoint endPoint = [self originForCharacterAtByteIndex:NSMaxRange(lastRange) - 1];
-                endPoint.x += [self advancePerByte];
-		HFASSERT(endPoint.y >= startPoint.y);
-		NSRect bounds = [self bounds];
-		NSRect windowFrameInBoundsCoords;
-		windowFrameInBoundsCoords.origin.x = bounds.origin.x;
-		windowFrameInBoundsCoords.origin.y = startPoint.y;
-		windowFrameInBoundsCoords.size.width = bounds.size.width;
-		windowFrameInBoundsCoords.size.height = endPoint.y - startPoint.y + [self lineHeight];
-		
-		pulseWindowBaseFrameInScreenCoordinates = [self convertRect:windowFrameInBoundsCoords toView:nil];
-		pulseWindowBaseFrameInScreenCoordinates.origin = [[self window] convertBaseToScreen:pulseWindowBaseFrameInScreenCoordinates.origin];
-		
-		pulseWindow = [[NSWindow alloc] initWithContentRect:pulseWindowBaseFrameInScreenCoordinates styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:NO];
-		[pulseWindow setOpaque:NO];
-		HFTextSelectionPulseView *pulseView = [[HFTextSelectionPulseView alloc] initWithFrame:[[pulseWindow contentView] frame]];
-		[pulseWindow setContentView:pulseView];
-		[pulseView release];
-		
-		/* Render our image at 200% of its current size */
-		const CGFloat imageScale = 2;
-		NSRect imageRect = (NSRect){NSZeroPoint, NSMakeSize(windowFrameInBoundsCoords.size.width * imageScale, windowFrameInBoundsCoords.size.height * imageScale)};
-		NSImage *image = [[NSImage alloc] initWithSize:imageRect.size];
-		[image setCacheMode:NSImageCacheNever];
-		[image setFlipped:YES];
-		[image lockFocus];
-		CGContextRef ctx = [[NSGraphicsContext currentContext] graphicsPort];
-		CGContextClearRect(ctx, *(CGRect *)&imageRect);
-		[self drawPulseBackgroundInRect:imageRect];
-		[[NSColor blackColor] set];
-		[[font screenFont] set];
-		if (! [self shouldAntialias]) CGContextSetShouldAntialias(ctx, NO);
-		CGContextScaleCTM(ctx, imageScale, imageScale);
-		CGContextTranslateCTM(ctx, -windowFrameInBoundsCoords.origin.x, -windowFrameInBoundsCoords.origin.y);
-		[self drawTextWithClip:windowFrameInBoundsCoords restrictingToTextInRanges:ranges];
-		[image unlockFocus];
-		[pulseView setImage:image];
-		
-		if (thisWindow) {
-		    [thisWindow addChildWindow:pulseWindow ordered:NSWindowAbove];
+			if ([ranges count] > 0) {
+				NSWindow *thisWindow = [self window];
+				NSRange firstRange = [[ranges objectAtIndex:0] rangeValue];
+				NSRange lastRange = [[ranges lastObject] rangeValue];
+				NSPoint startPoint = [self originForCharacterAtByteIndex:firstRange.location];
+				// don't just use originForCharacterAtByteIndex:NSMaxRange(lastRange), because if the last selected character is at the end of the line, this will cause us to highlight the next line.  Instead, get the last selected character, and add an advance to it.
+				//                HFASSERT(lastRange.length > 0);
+				NSPoint endPoint;
+				if (! NSEqualRanges(firstRange, lastRange)) {
+					endPoint = [self originForCharacterAtByteIndex:NSMaxRange(lastRange) - 1];
+				}
+				else {
+					endPoint = startPoint;
+				}
+				endPoint.x += [self advancePerByte];
+				HFASSERT(endPoint.y >= startPoint.y);
+				NSRect bounds = [self bounds];
+				NSRect windowFrameInBoundsCoords;
+				windowFrameInBoundsCoords.origin.x = bounds.origin.x;
+				windowFrameInBoundsCoords.origin.y = startPoint.y;
+				windowFrameInBoundsCoords.size.width = bounds.size.width;
+				windowFrameInBoundsCoords.size.height = endPoint.y - startPoint.y + [self lineHeight];
+				
+				pulseWindowBaseFrameInScreenCoordinates = [self convertRect:windowFrameInBoundsCoords toView:nil];
+				pulseWindowBaseFrameInScreenCoordinates.origin = [[self window] convertBaseToScreen:pulseWindowBaseFrameInScreenCoordinates.origin];
+				
+				pulseWindow = [[NSWindow alloc] initWithContentRect:pulseWindowBaseFrameInScreenCoordinates styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:NO];
+				[pulseWindow setOpaque:NO];
+				HFTextSelectionPulseView *pulseView = [[HFTextSelectionPulseView alloc] initWithFrame:[[pulseWindow contentView] frame]];
+				[pulseWindow setContentView:pulseView];
+				[pulseView release];
+				
+				/* Render our image at 200% of its current size */
+				const CGFloat imageScale = 2;
+				NSRect imageRect = (NSRect){NSZeroPoint, NSMakeSize(windowFrameInBoundsCoords.size.width * imageScale, windowFrameInBoundsCoords.size.height * imageScale)};
+				NSImage *image = [[NSImage alloc] initWithSize:imageRect.size];
+				[image setCacheMode:NSImageCacheNever];
+				[image setFlipped:YES];
+				[image lockFocus];
+				CGContextRef ctx = [[NSGraphicsContext currentContext] graphicsPort];
+				CGContextClearRect(ctx, *(CGRect *)&imageRect);
+				[self drawPulseBackgroundInRect:imageRect];
+				[[NSColor blackColor] set];
+				[[font screenFont] set];
+				if (! [self shouldAntialias]) CGContextSetShouldAntialias(ctx, NO);
+				CGContextScaleCTM(ctx, imageScale, imageScale);
+				CGContextTranslateCTM(ctx, -windowFrameInBoundsCoords.origin.x, -windowFrameInBoundsCoords.origin.y);
+				[self drawTextWithClip:windowFrameInBoundsCoords restrictingToTextInRanges:ranges];
+				[image unlockFocus];
+				[pulseView setImage:image];
+				
+				if (thisWindow) {
+					[thisWindow addChildWindow:pulseWindow ordered:NSWindowAbove];
+				}
+			}
 		}
-	    }
-	}
         
-	if (pulseWindow) {
-	    CGFloat scale = (CGFloat)(selectionPulseAmount * .25 + 1.);
-	    NSRect scaledWindowFrame;
-	    scaledWindowFrame.size.width = HFRound(pulseWindowBaseFrameInScreenCoordinates.size.width * scale);
-	    scaledWindowFrame.size.height = HFRound(pulseWindowBaseFrameInScreenCoordinates.size.height * scale);
-	    scaledWindowFrame.origin.x = pulseWindowBaseFrameInScreenCoordinates.origin.x - HFRound(((scale - 1) * scaledWindowFrame.size.width / 2));
-	    scaledWindowFrame.origin.y = pulseWindowBaseFrameInScreenCoordinates.origin.y - HFRound(((scale - 1) * scaledWindowFrame.size.height / 2));
-	    [pulseWindow setFrame:scaledWindowFrame display:YES animate:NO];
-	}
+		if (pulseWindow) {
+			CGFloat scale = (CGFloat)(selectionPulseAmount * .25 + 1.);
+			NSRect scaledWindowFrame;
+			scaledWindowFrame.size.width = HFRound(pulseWindowBaseFrameInScreenCoordinates.size.width * scale);
+			scaledWindowFrame.size.height = HFRound(pulseWindowBaseFrameInScreenCoordinates.size.height * scale);
+			scaledWindowFrame.origin.x = pulseWindowBaseFrameInScreenCoordinates.origin.x - HFRound(((scale - 1) * scaledWindowFrame.size.width / 2));
+			scaledWindowFrame.origin.y = pulseWindowBaseFrameInScreenCoordinates.origin.y - HFRound(((scale - 1) * scaledWindowFrame.size.height / 2));
+			[pulseWindow setFrame:scaledWindowFrame display:YES animate:NO];
+		}
     }
 }
 
@@ -517,10 +523,10 @@ enum LineCoverage_t {
 
 - (BOOL)hasVisibleDisplayedSelectedContentsRange {
     FOREACH(NSValue *, rangeValue, [self displayedSelectedContentsRanges]) {
-	NSRange range = [rangeValue rangeValue];
-	if (range.length > 0) {
-	    return YES;
-	}
+		NSRange range = [rangeValue rangeValue];
+		if (range.length > 0) {
+			return YES;
+		}
     }
     return NO;
 }
@@ -529,7 +535,7 @@ enum LineCoverage_t {
     BOOL result = [super becomeFirstResponder];
     [self _updateCaretTimerWithFirstResponderStatus:YES];
     if ([self showsFocusRing] || [self hasVisibleDisplayedSelectedContentsRange]) {
-	[self setNeedsDisplay:YES];
+		[self setNeedsDisplay:YES];
     }
     return result;
 }
@@ -550,7 +556,7 @@ enum LineCoverage_t {
     horizontalContainerInset = 4;
     representer = rep;
     _hftvflags.editable = YES;
-
+	
     return self;
 }
 
@@ -786,37 +792,37 @@ enum LineCoverage_t {
     NSUInteger bytesPerLine = [self bytesPerLine];
     NSUInteger restrictionRangeCount = [restrictingToRanges count];
     for (NSUInteger rangeIndex = 0; rangeIndex < restrictionRangeCount; rangeIndex++) {
-	NSRange inclusionRange = [[restrictingToRanges objectAtIndex:rangeIndex] rangeValue];
-	NSRange intersectionRange = NSIntersectionRange(inclusionRange, byteRange);
-	if (intersectionRange.length == 0) continue;
-	
+		NSRange inclusionRange = [[restrictingToRanges objectAtIndex:rangeIndex] rangeValue];
+		NSRange intersectionRange = NSIntersectionRange(inclusionRange, byteRange);
+		if (intersectionRange.length == 0) continue;
+		
         NSUInteger offsetIntoLine = intersectionRange.location % bytesPerLine;
         
-	NSRange byteRangeToSkip;
-	if (priorIntersectionRange.location == NSUIntegerMax) {
-	    byteRangeToSkip = NSMakeRange(byteRange.location, intersectionRange.location - byteRange.location);
-	}
-	else {
-	    HFASSERT(intersectionRange.location >= NSMaxRange(priorIntersectionRange));
-	    byteRangeToSkip.location = NSMaxRange(priorIntersectionRange);
-	    byteRangeToSkip.length = intersectionRange.location - byteRangeToSkip.location;
-	}
-	
-	if (byteRangeToSkip.length > 0) {
-	    CGFloat additionalAdvance = [self totalAdvanceForBytesInRange:byteRangeToSkip];
-	    if (glyphBufferIndex == 0) {
-		*initialTextOffset = *initialTextOffset + additionalAdvance;
-	    }
-	    else {
-		advances[glyphBufferIndex - 1].width += additionalAdvance;
-	    }
-	}
-	
-	NSUInteger glyphCountForRange = NSUIntegerMax;
-	[self extractGlyphsForBytes:bytePtr + intersectionRange.location count:intersectionRange.length offsetIntoLine:offsetIntoLine intoArray:glyphs + glyphBufferIndex advances:advances + glyphBufferIndex resultingGlyphCount:&glyphCountForRange];
-	HFASSERT(glyphCountForRange != NSUIntegerMax);
-	glyphBufferIndex += glyphCountForRange;
-	priorIntersectionRange = intersectionRange;
+		NSRange byteRangeToSkip;
+		if (priorIntersectionRange.location == NSUIntegerMax) {
+			byteRangeToSkip = NSMakeRange(byteRange.location, intersectionRange.location - byteRange.location);
+		}
+		else {
+			HFASSERT(intersectionRange.location >= NSMaxRange(priorIntersectionRange));
+			byteRangeToSkip.location = NSMaxRange(priorIntersectionRange);
+			byteRangeToSkip.length = intersectionRange.location - byteRangeToSkip.location;
+		}
+		
+		if (byteRangeToSkip.length > 0) {
+			CGFloat additionalAdvance = [self totalAdvanceForBytesInRange:byteRangeToSkip];
+			if (glyphBufferIndex == 0) {
+				*initialTextOffset = *initialTextOffset + additionalAdvance;
+			}
+			else {
+				advances[glyphBufferIndex - 1].width += additionalAdvance;
+			}
+		}
+		
+		NSUInteger glyphCountForRange = NSUIntegerMax;
+		[self extractGlyphsForBytes:bytePtr + intersectionRange.location count:intersectionRange.length offsetIntoLine:offsetIntoLine intoArray:glyphs + glyphBufferIndex advances:advances + glyphBufferIndex resultingGlyphCount:&glyphCountForRange];
+		HFASSERT(glyphCountForRange != NSUIntegerMax);
+		glyphBufferIndex += glyphCountForRange;
+		priorIntersectionRange = intersectionRange;
     }
     if (resultingGlyphCount) *resultingGlyphCount = glyphBufferIndex;
 }
@@ -854,21 +860,21 @@ enum LineCoverage_t {
         if (NSIntersectsRect(lineRectInBoundsSpace, clip)) {
             NSUInteger numBytes = MIN(bytesPerLine, byteCount - byteIndex);
             NSUInteger resultGlyphCount = 0;
-	    CGFloat initialTextOffset = 0;
-	    if (restrictingToRanges == nil) {
-		[self extractGlyphsForBytes:bytePtr + byteIndex count:numBytes offsetIntoLine:0 intoArray:glyphs advances:advances resultingGlyphCount:&resultGlyphCount];
-	    }
-	    else {
-		[self extractGlyphsForBytes:bytePtr range:NSMakeRange(byteIndex, numBytes) intoArray:glyphs advances:advances withInclusionRanges:restrictingToRanges initialTextOffset:&initialTextOffset resultingGlyphCount:&resultGlyphCount];
-	    }
-	    HFASSERT(resultGlyphCount <= maxGlyphCount);
-	    
-	    if (resultGlyphCount > 0) {
-		textTransform.tx += initialTextOffset;
-		CGContextSetTextMatrix(ctx, textTransform);
-		textTransform.tx -= initialTextOffset;
-		[self drawGlyphs:glyphs withAdvances:advances count:resultGlyphCount];
-	    }
+			CGFloat initialTextOffset = 0;
+			if (restrictingToRanges == nil) {
+				[self extractGlyphsForBytes:bytePtr + byteIndex count:numBytes offsetIntoLine:0 intoArray:glyphs advances:advances resultingGlyphCount:&resultGlyphCount];
+			}
+			else {
+				[self extractGlyphsForBytes:bytePtr range:NSMakeRange(byteIndex, numBytes) intoArray:glyphs advances:advances withInclusionRanges:restrictingToRanges initialTextOffset:&initialTextOffset resultingGlyphCount:&resultGlyphCount];
+			}
+			HFASSERT(resultGlyphCount <= maxGlyphCount);
+			
+			if (resultGlyphCount > 0) {
+				textTransform.tx += initialTextOffset;
+				CGContextSetTextMatrix(ctx, textTransform);
+				textTransform.tx -= initialTextOffset;
+				[self drawGlyphs:glyphs withAdvances:advances count:resultGlyphCount];
+			}
         }
         else if (NSMinY(lineRectInBoundsSpace) > NSMaxY(clip)) {
             break;
@@ -909,7 +915,7 @@ enum LineCoverage_t {
     
     [self _drawLineBackgrounds:clip withLineHeight:[self lineHeight] maxLines:ll2l(HFRoundUpToNextMultiple(byteCount, bytesPerLine) / bytesPerLine)];
     [self drawSelectionIfNecessaryWithClip:clip];
-
+	
     NSColor *textColor = [NSColor blackColor];
     [textColor set];
     
@@ -926,7 +932,7 @@ enum LineCoverage_t {
     if ([self bytesPerColumn] == 1) {
         [self drawVerticalGuideLines:clip];
     }
-
+	
     [self drawCaretIfNecessaryWithClip:clip];
 }
 
@@ -1147,15 +1153,15 @@ enum LineCoverage_t {
 
 - (void)doCommandBySelector:(SEL)sel {
     HFRepresenter *rep = [self representer];
-    NSLog(@"%s%s", _cmd, sel);
+	//    NSLog(@"%s%s", _cmd, sel);
     if ([self handleCommand:sel]) {
         /* Nothing to do */
     }
     else if ([rep respondsToSelector:sel]) {
-	[rep performSelector:sel withObject:self];
+		[rep performSelector:sel withObject:self];
     }
     else {
-	[super doCommandBySelector:sel];
+		[super doCommandBySelector:sel];
     }
 }
 

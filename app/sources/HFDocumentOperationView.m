@@ -155,7 +155,6 @@ static NSString *sNibName;
 }
 
 - (void)spinUntilFinished {
-    NSLog(@"Spinning until finished");
     HFASSERT([self operationIsRunning]);
     [tracker endTrackingProgress];
     [tracker setDelegate:nil];

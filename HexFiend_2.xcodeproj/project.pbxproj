@@ -427,8 +427,8 @@
 			children = (
 				D024AFB20E349A7B00F39EBB /* hex_icon.icns */,
 				D01E7C0A0CDC570400943F9E /* Info.plist */,
-				D03CFA810FC7857B00EE79E4 /* DataInspectorView.xib */,
 				089C165CFE840E0CC02AAC07 /* InfoPlist.strings */,
+				D03CFA810FC7857B00EE79E4 /* DataInspectorView.xib */,
 				29B97318FDCFA39411CA2CEA /* MainMenu.nib */,
 				D01E7C280CDC59B700943F9E /* MyDocument.nib */,
 				D0728DED0DC1E3A00052C78C /* MoveSelectionByBanner.nib */,

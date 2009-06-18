@@ -295,10 +295,12 @@ static inline Class preferredByteArrayClass(void) {
     [controller release];
     [bannerView release];
     
-    /* Release and stop observing our banner views */
-    [findReplaceView release];
-    [moveSelectionByView release];
-    [saveView release];
+    /* Release and stop observing our banner views.  Note that any of these may be nil. */
+	HFDocumentOperationView *views[] = {findReplaceView, moveSelectionByView, jumpToOffsetView, saveView};
+	for (NSUInteger i = 0; i < sizeof views / sizeof *views; i++) {
+		[views[i] removeObserver:self forKeyPath:@"progress"];
+		[views[i] release];
+	}
     [super dealloc];
 }
 
@@ -389,9 +391,11 @@ static inline Class preferredByteArrayClass(void) {
         NSView *repView = [rep view];
         if ([repView window] == [self window]) {
             [self hideViewForRepresenter:rep];
+			[self relayoutAndResizeWindow];
         }
         else {
             [self showViewForRepresenter:rep];
+			[self relayoutAndResizeWindow];
         }
     }
 }
@@ -781,7 +785,6 @@ static inline Class preferredByteArrayClass(void) {
 }
 
 - (void)findEnded:(NSNumber *)val {
-    NSLog(@"%llu", [val unsignedLongLongValue]);
     NSDictionary *userInfo = [[findReplaceView progressTracker] userInfo];
     HFByteArray *needle = [userInfo objectForKey:@"needle"];
     HFByteArray *haystack = [userInfo objectForKey:@"haystack"];
