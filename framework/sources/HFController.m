@@ -47,6 +47,7 @@ static void *KVOContextChangesAreLocked = &KVOContextChangesAreLocked;
 NSString * const HFPrepareForChangeInFileNotification = @"HFPrepareForChangeInFileNotification";
 NSString * const HFChangeInFileByteArrayKey = @"HFChangeInFileByteArrayKey";
 NSString * const HFChangeInFileModifiedRangesKey = @"HFChangeInFileModifiedRangesKey";
+NSString * const HFChangeInFileShouldCancelKey = @"HFChangeInFileShouldCancelKey";
 
 
 typedef enum {
@@ -1645,18 +1646,23 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
     return NO;
 }
 
-+ (void)prepareForChangeInFile:(NSURL *)targetFile fromWritingByteArray:(HFByteArray *)array {
++ (BOOL)prepareForChangeInFile:(NSURL *)targetFile fromWritingByteArray:(HFByteArray *)array {
     REQUIRE_NOT_NULL(targetFile);
     REQUIRE_NOT_NULL(array);
     HFFileReference *fileReference = [[HFFileReference alloc] initWithPath:[targetFile path]];
-    if (! fileReference) return; //good luck writing that sucker
+    if (! fileReference) return YES; //good luck writing that sucker
+    
+    BOOL shouldCancel = NO;
+    NSValue *shouldCancelPointer = [NSValue valueWithPointer:&shouldCancel];
+    
     NSArray *changedRanges = [array rangesOfFileModifiedIfSavedToFile:fileReference];
     if ([changedRanges count] > 0) { //don't bother if nothing is changing
-	NSDictionary *userInfo = [[NSDictionary alloc] initWithObjectsAndKeys:array, HFChangeInFileByteArrayKey, changedRanges, HFChangeInFileModifiedRangesKey, nil];
+	NSDictionary *userInfo = [[NSDictionary alloc] initWithObjectsAndKeys:array, HFChangeInFileByteArrayKey, changedRanges, HFChangeInFileModifiedRangesKey, shouldCancelPointer, HFChangeInFileShouldCancelKey, nil];
 	[[NSNotificationCenter defaultCenter] postNotificationName:HFPrepareForChangeInFileNotification object:fileReference userInfo:userInfo];
 	[userInfo release];
     }
     [fileReference release];
+    return ! shouldCancel;
 }
 
 #if BENCHMARK_BYTEARRAYS

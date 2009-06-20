@@ -65,6 +65,9 @@ static inline Class preferredByteArrayClass(void) {
                               nil];
         [[NSUserDefaults standardUserDefaults] registerDefaults:defs];
         [defs release];
+	
+	// Get notified when we are about to save a document, so we can try to break dependencies on the file in other documents
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(prepareForChangeInFileByBreakingFileDependencies:) name:HFPrepareForChangeInFileNotification object:nil];
     }
 }
 
@@ -259,7 +262,6 @@ static inline Class preferredByteArrayClass(void) {
     [center addObserver:self selector:@selector(lineCountingViewChangedWidth:) name:HFLineCountingRepresenterMinimumViewWidthChanged object:lineCountingRepresenter];
     [center addObserver:self selector:@selector(dataInspectorChangedRowCount:) name:DataInspectorDidChangeRowCount object:dataInspectorRepresenter];
     [center addObserver:self selector:@selector(dataInspectorDeletedAllRows:) name:DataInspectorDidDeleteAllRows object:dataInspectorRepresenter];
-
     NSUserDefaults *defs = [NSUserDefaults standardUserDefaults];
     
     controller = [[HFController alloc] init];
@@ -610,6 +612,7 @@ static inline Class preferredByteArrayClass(void) {
     USE(inTypeName);
     *outError = NULL;
     
+    [HFController prepareForChangeInFile:inAbsoluteURL fromWritingByteArray:[controller byteArray]];
     
     showSaveViewAfterDelayTimer = [[NSTimer scheduledTimerWithTimeInterval:.5 target:self selector:@selector(showSaveBannerHavingDelayed:) userInfo:nil repeats:NO] retain];
     
@@ -744,7 +747,6 @@ static inline Class preferredByteArrayClass(void) {
     NSDictionary *userInfo = [tracker userInfo];
     NSURL *targetURL = [userInfo objectForKey:@"targetURL"];
     NSError *error = nil;
-    [HFController prepareForChangeInFile:targetURL fromWritingByteArray:byteArray];
     BOOL result = [byteArray writeToFile:targetURL trackingProgress:tracker error:&error];
     [tracker noteFinished:self];
     if (tracker->cancelRequested) return [NSNumber numberWithInt:HFSaveCancelled];
@@ -1189,6 +1191,55 @@ static inline Class preferredByteArrayClass(void) {
     USE(sender);
     [controller setInOverwriteMode:![controller inOverwriteMode]];
     [self updateDocumentWindowTitle];
+}
+
+
++ (void)didEndBreakFileDependencySheet:(NSAlert *)alert returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
+    USE(alert);
+    USE(contextInfo);
+    [NSApp stopModalWithCode:returnCode];
+    
+}
+
++ (void)prepareForChangeInFileByBreakingFileDependencies:(NSNotification *)note {
+    HFFileReference *fileReference = [note object];
+    NSDictionary *userInfo = [note userInfo];
+    
+    BOOL *cancellationPointer = [[userInfo objectForKey:HFChangeInFileShouldCancelKey] pointerValue];
+    if (*cancellationPointer) return; //don't do anything if someone requested cancellation
+
+    HFByteArray *byteArray = [userInfo objectForKey:HFChangeInFileByteArrayKey];
+    NSArray *modifiedRanges = [userInfo objectForKey:HFChangeInFileModifiedRangesKey];
+    NSArray *allDocuments = [[[NSDocumentController sharedDocumentController] documents] copy]; //we copy this because we may need to close them
+    FOREACH(MyDocument *, document, allDocuments) {
+	if (! [document isKindOfClass:[MyDocument class]]) {
+	    /* Paranoia in case other NSDocument classes slip in */
+	    continue;
+	}
+	HFByteArray *itsArray = [document->controller byteArray];
+	if (itsArray == byteArray) {
+	    /* This is the document being saved */
+	    continue;
+	}
+	if (! [itsArray clearDependenciesOnRanges:modifiedRanges inFile:fileReference]) {
+	    /* We aren't able to remove our dependency on this file in this document, so ask permission to close it.  We don't try to save the document first, because if saving the document would require breaking dependencies in another document, we could get into an infinite loop! */
+	    NSAlert *alert = [[NSAlert alloc] init];
+	    [alert setMessageText:@"Booga Booga"];
+	    [alert setInformativeText:[NSString stringWithFormat: @"This document contains data that will be overwritten if you save the document \"%@.\"  To save that document, you must close this one.", @"Hooray"]];
+	    [alert addButtonWithTitle:@"Cancel"];
+	    [alert addButtonWithTitle:@"Discard Changes and Close"];
+	    [alert beginSheetModalForWindow:[document windowForSheet] modalDelegate:self didEndSelector:@selector(didEndBreakFileDependencySheet:returnCode:contextInfo:) contextInfo:nil];
+	    NSInteger modalResult = [NSApp runModalForWindow:[alert window]];
+	    [alert release];
+	    
+	    BOOL didCancel = (modalResult == NSAlertFirstButtonReturn);
+	    if (didCancel) *cancellationPointer = YES;
+	    
+	    if (! didCancel) [document close];
+	}
+	
+    }
+    [allDocuments release];
 }
 
 @end

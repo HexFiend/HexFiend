@@ -235,14 +235,17 @@ typedef NSInteger HFControllerMovementGranularity;
 
 @interface HFController (HFFileWritingNotification)
 
-/* Attempts to clear all dependencies on the given file (clipboard, undo, etc.) that could not be preserved if the file were written. */
-+ (void)prepareForChangeInFile:(NSURL *)targetFile fromWritingByteArray:(HFByteArray *)array;
+/* Attempts to clear all dependencies on the given file (clipboard, undo, etc.) that could not be preserved if the file were written.  Returns YES if we successfully prepared, NO if someone objected. */
++ (BOOL)prepareForChangeInFile:(NSURL *)targetFile fromWritingByteArray:(HFByteArray *)array;
 
 @end
 
-/* Posted from prepareForChangeInFile:fromWritingByteArray: because we are about to write a ByteArray to a file.  The object is the FileReference. */
+/* Posted from prepareForChangeInFile:fromWritingByteArray: because we are about to write a ByteArray to a file.  The object is the FileReference.
+  Currently, HFControllers do not listen for this notification.  This is because under GC there is no way of knowing whether the controller is live or not.  However, pasteboard owners do listen for it, because as long as we own a pasteboard we are guaranteed to be live.
+*/
 extern NSString * const HFPrepareForChangeInFileNotification;
 
 /* Key in HFPrepareForChangeInFileNotification: */
 extern NSString * const HFChangeInFileByteArrayKey; //the byte array that will be written
-extern NSString * const HFChangeInFileModifiedRangesKey; //an array of HFRangeWrappers indicating which parts of the file will be modified
+extern NSString * const HFChangeInFileModifiedRangesKey; //an array of HFRangeWrappers indicating which parts of the file will be modifie
+extern NSString * const HFChangeInFileShouldCancelKey; //an NSValue containing a pointer to a BOOL.  If set to YES, then someone was unable to prepare and the file should not be saved.  It's a good idea to check and see if this value points to YES; if so your notification handler does not have to do anything.
