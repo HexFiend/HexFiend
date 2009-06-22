@@ -180,6 +180,15 @@
     UNIMPLEMENTED();
 }
 
+- (BOOL)canPasteFromPasteboard:(NSPasteboard *)pb {
+    REQUIRE_NOT_NULL(pb);
+    if ([[self controller] isEditable]) {
+        // we can paste if the pboard contains text or contains an HFByteArray
+        return [HFPasteboardOwner unpackByteArrayFromPasteboard:pb] || [pb availableTypeFromArray:[NSArray arrayWithObject:NSStringPboardType]];
+    }
+    return NO;
+}
+
 - (BOOL)pasteBytesFromPasteboard:(NSPasteboard *)pb {
     REQUIRE_NOT_NULL(pb);
     BOOL result = NO;

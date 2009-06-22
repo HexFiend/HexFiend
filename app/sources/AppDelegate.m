@@ -13,6 +13,12 @@
 
 - (void)applicationDidFinishLaunching:(NSNotification *)note {
     USE(note);
+#if NDEBUG
+    /* Remove the Debug menu unless we want it */
+    NSMenu *mainMenu = [NSApp mainMenu];
+    NSInteger index = [mainMenu indexOfItemWithTitle:@"Debug"];
+    if (index != -1) [mainMenu removeItemAtIndex:index];
+#endif
     [NSThread detachNewThreadSelector:@selector(buildFontMenu:) toTarget:self withObject:nil];
     [extendForwardsItem setKeyEquivalentModifierMask:[extendForwardsItem keyEquivalentModifierMask] | NSShiftKeyMask];
     [extendBackwardsItem setKeyEquivalentModifierMask:[extendBackwardsItem keyEquivalentModifierMask] | NSShiftKeyMask];

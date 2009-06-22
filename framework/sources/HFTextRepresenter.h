@@ -27,6 +27,7 @@
 
 // Copy/Paste methods
 - (void)copySelectedBytesToPasteboard:(NSPasteboard *)pb;
+- (BOOL)canPasteFromPasteboard:(NSPasteboard *)pb;
 - (BOOL)pasteBytesFromPasteboard:(NSPasteboard *)pb;
 
 // Must be implemented by subclasses

@@ -783,7 +783,7 @@ static inline Class preferredByteArrayClass(void) {
     }
     
     if (tracker->cancelRequested) return nil;
-    else return [[NSNumber alloc] initWithUnsignedLongLong:searchResult]; //released by spinUntilFinished
+    else return [NSNumber numberWithUnsignedLongLong:searchResult];
 }
 
 - (void)findEnded:(NSNumber *)val {
@@ -1211,23 +1211,32 @@ static inline Class preferredByteArrayClass(void) {
     HFByteArray *byteArray = [userInfo objectForKey:HFChangeInFileByteArrayKey];
     NSArray *modifiedRanges = [userInfo objectForKey:HFChangeInFileModifiedRangesKey];
     NSArray *allDocuments = [[[NSDocumentController sharedDocumentController] documents] copy]; //we copy this because we may need to close them
+    
+    /* Determine which document contains this byte array so we can make a nice dialog */
+    NSDocument *documentForThisByteArray = nil;
+    FOREACH(MyDocument *, testDocument, allDocuments) {
+        if ([testDocument->controller byteArray] == byteArray) {
+            documentForThisByteArray = testDocument;
+            break;
+        }
+    }
+    HFASSERT(documentForThisByteArray != nil); //for now we require that saving a ByteArray is associated with a document save
+    
     FOREACH(MyDocument *, document, allDocuments) {
 	if (! [document isKindOfClass:[MyDocument class]]) {
 	    /* Paranoia in case other NSDocument classes slip in */
 	    continue;
 	}
+        if (document == documentForThisByteArray) continue; //this is the document being saved
+        
 	HFByteArray *itsArray = [document->controller byteArray];
-	if (itsArray == byteArray) {
-	    /* This is the document being saved */
-	    continue;
-	}
 	if (! [itsArray clearDependenciesOnRanges:modifiedRanges inFile:fileReference]) {
 	    /* We aren't able to remove our dependency on this file in this document, so ask permission to close it.  We don't try to save the document first, because if saving the document would require breaking dependencies in another document, we could get into an infinite loop! */
 	    NSAlert *alert = [[NSAlert alloc] init];
-	    [alert setMessageText:@"Booga Booga"];
-	    [alert setInformativeText:[NSString stringWithFormat: @"This document contains data that will be overwritten if you save the document \"%@.\"  To save that document, you must close this one.", @"Hooray"]];
-	    [alert addButtonWithTitle:@"Cancel"];
-	    [alert addButtonWithTitle:@"Discard Changes and Close"];
+	    [alert setMessageText:[NSString stringWithFormat:@"This document contains data that will be overwritten if you save the document \"%@.\"", [documentForThisByteArray displayName]]];
+	    [alert setInformativeText:@"To save that document, you must close this one."];
+	    [alert addButtonWithTitle:@"Cancel Save"];
+	    [alert addButtonWithTitle:@"Close, Discarding Any Changes"];
 	    [alert beginSheetModalForWindow:[document windowForSheet] modalDelegate:self didEndSelector:@selector(didEndBreakFileDependencySheet:returnCode:contextInfo:) contextInfo:nil];
 	    NSInteger modalResult = [NSApp runModalForWindow:[alert window]];
 	    [alert release];

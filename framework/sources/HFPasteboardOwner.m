@@ -16,6 +16,12 @@ NSString *const HFPrivateByteArrayPboardType = @"HFPrivateByteArrayPboardType";
 
 @implementation HFPasteboardOwner
 
++ (void)initialize {
+    if (self == [HFPasteboardOwner class]) {
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(prepareCommonPasteboardsForChangeInFileNotification:) name:HFPrepareForChangeInFileNotification object:nil];
+    }
+}
+
 - initWithPasteboard:(NSPasteboard *)pboard forByteArray:(HFByteArray *)array withTypes:(NSArray *)types {
     REQUIRE_NOT_NULL(pboard);
     REQUIRE_NOT_NULL(array);
@@ -39,6 +45,44 @@ NSString *const HFPrivateByteArrayPboardType = @"HFPrivateByteArrayPboardType";
     if (pasteboard) {
 	pasteboard = nil;
 	[[NSNotificationCenter defaultCenter] removeObserver:self name:HFPrepareForChangeInFileNotification object:nil];
+    }
+}
+
+
++ (HFByteArray *)_unpackByteArrayFromDictionary:(NSDictionary *)byteArrayDictionary {
+    HFByteArray *result = nil;
+    if (byteArrayDictionary) {
+        NSString *uuid = [byteArrayDictionary objectForKey:@"HFUUID"];
+        if ([uuid isEqual:[self uuid]]) {
+            result = (HFByteArray *)[[byteArrayDictionary objectForKey:@"HFByteArray"] unsignedLongValue];
+        }
+    }
+    return result;
+}
+
++ (HFByteArray *)unpackByteArrayFromPasteboard:(NSPasteboard *)pasteboard {
+    REQUIRE_NOT_NULL(pasteboard);
+    HFByteArray *result = [self _unpackByteArrayFromDictionary:[pasteboard propertyListForType:HFPrivateByteArrayPboardType]];
+    return result;
+}
+
+/* Try to fix up commonly named pasteboards when a file is about to be saved */
++ (void)prepareCommonPasteboardsForChangeInFileNotification:(NSNotification *)notification {
+    const BOOL *cancellationPointer = [[[notification userInfo] objectForKey:HFChangeInFileShouldCancelKey] pointerValue];
+    if (*cancellationPointer) return; //don't do anything if someone requested cancellation
+    
+    NSArray *changedRanges = [[notification userInfo] objectForKey:HFChangeInFileModifiedRangesKey];
+    HFFileReference *fileReference = [notification object];
+
+    NSString * const names[] = {NSGeneralPboard, NSFindPboard, NSDragPboard};
+    NSUInteger i;
+    for (i=0; i < sizeof names / sizeof *names; i++) {
+        NSPasteboard *pboard = [NSPasteboard pasteboardWithName:names[i]];
+        HFByteArray *byteArray = [self unpackByteArrayFromPasteboard:pboard];
+        if (byteArray && ! [byteArray clearDependenciesOnRanges:changedRanges inFile:fileReference]) {
+            /* This pasteboard no longer works */
+            [pboard declareTypes:[NSArray array] owner:nil];
+        }
     }
 }
 
@@ -169,23 +213,6 @@ NSString *const HFPrivateByteArrayPboardType = @"HFPrivateByteArrayPboardType";
         CFRelease(uuidRef);
     }
     return uuid;
-}
-
-+ (HFByteArray *)_unpackByteArrayFromDictionary:(NSDictionary *)byteArrayDictionary {
-    HFByteArray *result = nil;
-    if (byteArrayDictionary) {
-        NSString *uuid = [byteArrayDictionary objectForKey:@"HFUUID"];
-        if ([uuid isEqual:[self uuid]]) {
-            result = (HFByteArray *)[[byteArrayDictionary objectForKey:@"HFByteArray"] unsignedLongValue];
-        }
-    }
-    return result;
-}
-
-+ (HFByteArray *)unpackByteArrayFromPasteboard:(NSPasteboard *)pasteboard {
-    REQUIRE_NOT_NULL(pasteboard);
-    HFByteArray *result = [self _unpackByteArrayFromDictionary:[pasteboard propertyListForType:HFPrivateByteArrayPboardType]];
-    return result;
 }
 
 - (unsigned long long)stringLengthForDataLength:(unsigned long long)dataLength { USE(dataLength); UNIMPLEMENTED(); }

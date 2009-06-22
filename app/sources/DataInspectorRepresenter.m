@@ -447,7 +447,7 @@ static NSAttributedString *inspectionError(NSString *s) {
     [paragraphStyle setMinimumLineHeight:(CGFloat)16.];
     NSAttributedString *result = [[NSAttributedString alloc] initWithString:s attributes:[NSDictionary dictionaryWithObjectsAndKeys:[NSColor disabledControlTextColor], NSForegroundColorAttributeName, [NSFont controlContentFontOfSize:11], NSFontAttributeName, paragraphStyle, NSParagraphStyleAttributeName, nil]];
     [paragraphStyle release];
-    return result;
+    return [result autorelease];
 }
 
 - (id)valueFromInspector:(DataInspector *)inspector isError:(BOOL *)outIsError{
