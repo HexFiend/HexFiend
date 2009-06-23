@@ -302,7 +302,7 @@ static NSInteger sortByLayoutPosition(id a, id b, void *self) {
     return maximizesBytesPerLine;
 }
 
-- (CGFloat)minimumWidthForLayoutInProposedWidth:(CGFloat)proposedWidth {    
+- (CGFloat)minimumViewWidthForLayoutInProposedWidth:(CGFloat)proposedWidth {    
     NSArray *arraysOfLayoutInfos = [self arraysOfLayoutInfos];
     if (! [arraysOfLayoutInfos count]) return 0;
 

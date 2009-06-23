@@ -153,7 +153,7 @@ static inline Class preferredByteArrayClass(void) {
 - (NSSize)minimumWindowFrameSizeForProposedSize:(NSSize)frameSize {
     NSView *layoutView = [layoutRepresenter view];
     NSSize proposedSizeInLayoutCoordinates = [layoutView convertSize:frameSize fromView:nil];
-    CGFloat resultingWidthInLayoutCoordinates = [layoutRepresenter minimumWidthForLayoutInProposedWidth:proposedSizeInLayoutCoordinates.width];
+    CGFloat resultingWidthInLayoutCoordinates = [layoutRepresenter minimumViewWidthForLayoutInProposedWidth:proposedSizeInLayoutCoordinates.width];
     NSSize resultSize = [layoutView convertSize:NSMakeSize(resultingWidthInLayoutCoordinates, proposedSizeInLayoutCoordinates.height) toView:nil];
     return resultSize;
 }
@@ -163,10 +163,22 @@ static inline Class preferredByteArrayClass(void) {
     return [self minimumWindowFrameSizeForProposedSize:frameSize];
 }
 
-- (void)relayoutAndResizeWindow {
+/* Relayout the window without increasing its window frame size */
+- (void)relayoutAndResizeWindowPreservingFrame {
     NSWindow *window = [self window];
     NSRect windowFrame = [window frame];
     windowFrame.size = [self minimumWindowFrameSizeForProposedSize:windowFrame.size];
+    [window setFrame:windowFrame display:YES];
+}
+
+/* Relayout the window to support the given number of bytes per line */
+- (void)relayoutAndResizeWindowForBytesPerLine:(NSUInteger)bytesPerLine {
+    NSWindow *window = [self window];
+    NSRect windowFrame = [window frame];
+    NSView *layoutView = [layoutRepresenter view];
+    CGFloat minViewWidth = [layoutRepresenter minimumViewWidthForBytesPerLine:bytesPerLine];
+    CGFloat minWindowWidth = [layoutView convertSize:NSMakeSize(minViewWidth, 1) toView:nil].width;
+    windowFrame.size.width = minWindowWidth;
     [window setFrame:windowFrame display:YES];
 }
 
@@ -298,11 +310,11 @@ static inline Class preferredByteArrayClass(void) {
     [bannerView release];
     
     /* Release and stop observing our banner views.  Note that any of these may be nil. */
-	HFDocumentOperationView *views[] = {findReplaceView, moveSelectionByView, jumpToOffsetView, saveView};
-	for (NSUInteger i = 0; i < sizeof views / sizeof *views; i++) {
-		[views[i] removeObserver:self forKeyPath:@"progress"];
-		[views[i] release];
-	}
+    HFDocumentOperationView *views[] = {findReplaceView, moveSelectionByView, jumpToOffsetView, saveView};
+    for (NSUInteger i = 0; i < sizeof views / sizeof *views; i++) {
+	[views[i] removeObserver:self forKeyPath:@"progress"];
+	[views[i] release];
+    }
     [super dealloc];
 }
 
@@ -393,11 +405,11 @@ static inline Class preferredByteArrayClass(void) {
         NSView *repView = [rep view];
         if ([repView window] == [self window]) {
             [self hideViewForRepresenter:rep];
-			[self relayoutAndResizeWindow];
+	    [self relayoutAndResizeWindowPreservingFrame];
         }
         else {
             [self showViewForRepresenter:rep];
-			[self relayoutAndResizeWindow];
+	    [self relayoutAndResizeWindowPreservingFrame];
         }
     }
 }
@@ -407,7 +419,7 @@ static inline Class preferredByteArrayClass(void) {
     NSWindow *window = [self window];
     NSDisableScreenUpdates();
     [controller setFont:font];
-    [self relayoutAndResizeWindow];
+    [self relayoutAndResizeWindowPreservingFrame];
     [window display];
     NSEnableScreenUpdates();
     NSUserDefaults *defs = [NSUserDefaults standardUserDefaults];
@@ -755,7 +767,6 @@ static inline Class preferredByteArrayClass(void) {
 }
 
 - (void)endSave:(id)result {
-    NSLog(@"End save %@", result);
     saveResult = [result integerValue];
     /* Post an event so our event loop wakes up */
     [NSApp postEvent:[NSEvent otherEventWithType:NSApplicationDefined location:NSZeroPoint modifierFlags:0 timestamp:0 windowNumber:0 context:NULL subtype:0 data1:0 data2:0] atStart:NO];
@@ -773,10 +784,10 @@ static inline Class preferredByteArrayClass(void) {
     
     [tracker setMaxProgress:[haystack length]];
     
-    CFAbsoluteTime start = CFAbsoluteTimeGetCurrent();
+    //    CFAbsoluteTime start = CFAbsoluteTimeGetCurrent();
     searchResult = [haystack indexOfBytesEqualToBytes:needle inRange:searchRange1 searchingForwards:forwards trackingProgress:tracker];
-    CFAbsoluteTime end = CFAbsoluteTimeGetCurrent();
-    printf("Diff: %f\n", end - start);
+    //    CFAbsoluteTime end = CFAbsoluteTimeGetCurrent();
+    //    printf("Diff: %f\n", end - start);
     
     if (searchResult == ULLONG_MAX) {
         searchResult = [haystack indexOfBytesEqualToBytes:needle inRange:searchRange2 searchingForwards:forwards trackingProgress:tracker];
@@ -885,7 +896,7 @@ static inline Class preferredByteArrayClass(void) {
     if (tracker && tracker->cancelRequested) goto cancelled;
     return newHaystack;
     
-    cancelled:;
+cancelled:;
     return nil;
 }
 
@@ -951,10 +962,10 @@ static inline Class preferredByteArrayClass(void) {
     }
     HFByteArray *haystack = [controller byteArray];
     NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-                                  replacementValue, @"replacementValue",
-                                  needle, @"needle",
-                                  haystack, @"haystack",
-                                  nil];
+			      replacementValue, @"replacementValue",
+			      needle, @"needle",
+			      haystack, @"haystack",
+			      nil];
     
     struct HFDocumentOperationCallbacks callbacks = {
         .target = self,
@@ -1114,7 +1125,7 @@ static inline Class preferredByteArrayClass(void) {
     *resultValue = amount;
     *resultIsNegative = isNegative;
     return YES;
-    invalidString:;
+invalidString:;
     return NO;
 }
 
@@ -1183,8 +1194,12 @@ static inline Class preferredByteArrayClass(void) {
 }
 
 - (IBAction)modifyByteGrouping:sender {
-    [controller setBytesPerColumn:(NSUInteger)[sender tag]];
-    [self relayoutAndResizeWindow];
+    NSUInteger bytesPerLine = [controller bytesPerLine], newDesiredBytesPerLine;
+    NSUInteger newBytesPerColumn = (NSUInteger)[sender tag];
+    HFASSERT(newBytesPerColumn > 0);
+    newDesiredBytesPerLine = MAX(newBytesPerColumn, bytesPerLine - (bytesPerLine % newBytesPerColumn));
+    [controller setBytesPerColumn:newBytesPerColumn];
+    [self relayoutAndResizeWindowForBytesPerLine:newDesiredBytesPerLine]; //this ensures that the window does not shrink when going e.g. from 4->8->4
 }
 
 - (IBAction)toggleOverwriteMode:sender {
@@ -1207,7 +1222,7 @@ static inline Class preferredByteArrayClass(void) {
     
     BOOL *cancellationPointer = [[userInfo objectForKey:HFChangeInFileShouldCancelKey] pointerValue];
     if (*cancellationPointer) return; //don't do anything if someone requested cancellation
-
+    
     HFByteArray *byteArray = [userInfo objectForKey:HFChangeInFileByteArrayKey];
     NSArray *modifiedRanges = [userInfo objectForKey:HFChangeInFileModifiedRangesKey];
     NSArray *allDocuments = [[[NSDocumentController sharedDocumentController] documents] copy]; //we copy this because we may need to close them
