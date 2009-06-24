@@ -27,21 +27,21 @@
 - (id)initWithFrame:(NSRect)frame {
     if ((self = [super initWithFrame:frame])) {
         dataController = [[HFController alloc] init];
-		
+	
         hexRepresenter = [[HFHexTextRepresenter alloc] init];
         [hexRepresenter setBehavesAsTextField:YES];
         [[hexRepresenter view] setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
-
-		textRepresenter = [[HFStringEncodingTextRepresenter alloc] init];
-		[textRepresenter setBehavesAsTextField:YES];
+	
+	textRepresenter = [[HFStringEncodingTextRepresenter alloc] init];
+	[textRepresenter setBehavesAsTextField:YES];
         [[textRepresenter view] setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
-		
-		
+	
+	
         [dataController addRepresenter:hexRepresenter];
-		
+	
         layoutRepresenter = [[HFLayoutRepresenter alloc] init];
         [layoutRepresenter addRepresenter:hexRepresenter];
-		[dataController addRepresenter:layoutRepresenter];
+	[dataController addRepresenter:layoutRepresenter];
         NSView *layoutView = [layoutRepresenter view];
         [layoutView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
         [self positionLayoutView];
@@ -51,20 +51,20 @@
 }
 
 - (void)dealloc {
-	[dataController release];
-	[layoutRepresenter release];
-	[hexRepresenter release];
-	[textRepresenter release];
-	[super dealloc];
+    [dataController release];
+    [layoutRepresenter release];
+    [hexRepresenter release];
+    [textRepresenter release];
+    [super dealloc];
 }
 
 - (void)resizeSubviewsWithOldSize:(NSSize)oldSize {
-	USE(oldSize);
+    USE(oldSize);
     [self positionLayoutView];
 }
 
 - (void)drawRect:(NSRect)rect {
-	USE(rect);
+    USE(rect);
     NSRect bounds = [self bounds];
     NSRect horizontalLine = NSMakeRect(NSMinX(bounds), NSMaxY(bounds) - 1, NSWidth(bounds), 1);
     NSRect verticalLine = NSMakeRect(NSMinX(bounds), 1, 1, NSHeight(bounds) - 2);
@@ -84,20 +84,20 @@
     lines[3] = verticalLine;
     verticalLine.origin.x = NSMaxX(bounds) - verticalLine.size.width;
     lines[4] = verticalLine;
-        
+    
     [[NSColor purpleColor] set];
     NSRectFill([self bounds]);
     NSRectFillListWithColors(lines, colors, 5);
 }
 
 - (BOOL)becomeFirstResponder {
-	if ([self usesHexArea]) return [[self window] makeFirstResponder:[hexRepresenter view]];
-	else if ([self usesTextArea]) return [[self window] makeFirstResponder:[textRepresenter view]]; 
-	else return NO;
+    if ([self usesHexArea]) return [[self window] makeFirstResponder:[hexRepresenter view]];
+    else if ([self usesTextArea]) return [[self window] makeFirstResponder:[textRepresenter view]]; 
+    else return NO;
 }
 
 - (void)insertNewline:sender {
-	USE(sender);
+    USE(sender);
     [self sendAction:[self action] to:[self target]];
 }
 
@@ -127,47 +127,47 @@
 }
 
 - (BOOL)usesRepresenter:(HFRepresenter *)rep {
-	REQUIRE_NOT_NULL(rep);
-	HFASSERT(rep == hexRepresenter || rep == textRepresenter);
-	BOOL result = NO;
-	NSArray *reps = [dataController representers];
-	if (reps) {
-		result = ([reps indexOfObjectIdenticalTo:rep] != NSNotFound);
-	}
-	return result;
+    REQUIRE_NOT_NULL(rep);
+    HFASSERT(rep == hexRepresenter || rep == textRepresenter);
+    BOOL result = NO;
+    NSArray *reps = [dataController representers];
+    if (reps) {
+	result = ([reps indexOfObjectIdenticalTo:rep] != NSNotFound);
+    }
+    return result;
 }
 
 - (BOOL)usesHexArea {
-	return [self usesRepresenter:hexRepresenter];
+    return [self usesRepresenter:hexRepresenter];
 }
 
 - (void)setUsesHexArea:(BOOL)val {
-	if ([self usesHexArea] == !!val) return;
-	if (val) {
-		[dataController addRepresenter:hexRepresenter];
-		[layoutRepresenter addRepresenter:hexRepresenter];
-	}
-	else {
-		[layoutRepresenter removeRepresenter:hexRepresenter];
-		[dataController removeRepresenter:hexRepresenter];
-	}
+    if ([self usesHexArea] == !!val) return;
+    if (val) {
+	[dataController addRepresenter:hexRepresenter];
+	[layoutRepresenter addRepresenter:hexRepresenter];
+    }
+    else {
+	[layoutRepresenter removeRepresenter:hexRepresenter];
+	[dataController removeRepresenter:hexRepresenter];
+    }
 }
 
 
 - (BOOL)usesTextArea {
-	return [self usesRepresenter:textRepresenter];
+    return [self usesRepresenter:textRepresenter];
 }
 
 - (void)setUsesTextArea:(BOOL)val {
-	if ([self usesTextArea] == !!val) return;
-	if (val) {
-		[dataController addRepresenter:textRepresenter];
-		[layoutRepresenter addRepresenter:textRepresenter];
-	}
-	else {
-		[layoutRepresenter removeRepresenter:textRepresenter];
-		[dataController removeRepresenter:textRepresenter];
-	}
+    if ([self usesTextArea] == !!val) return;
+    if (val) {
+	[dataController addRepresenter:textRepresenter];
+	[layoutRepresenter addRepresenter:textRepresenter];
+    }
+    else {
+	[layoutRepresenter removeRepresenter:textRepresenter];
+	[dataController removeRepresenter:textRepresenter];
+    }
 }
 
 

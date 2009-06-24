@@ -13,8 +13,8 @@
 @interface HFTextField : NSControl {
     HFController *dataController;
     HFLayoutRepresenter *layoutRepresenter;
-	HFHexTextRepresenter *hexRepresenter;
-	HFStringEncodingTextRepresenter *textRepresenter;
+    HFHexTextRepresenter *hexRepresenter;
+    HFStringEncodingTextRepresenter *textRepresenter;
     IBOutlet id target;
     SEL action;
 }

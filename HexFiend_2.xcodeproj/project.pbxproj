@@ -28,7 +28,6 @@
 		D019B9020D83FEB3005789AA /* HFByteSliceFileOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = D019B9000D83FEB3005789AA /* HFByteSliceFileOperation.m */; };
 		D019B9550D840FE8005789AA /* HFObjectGraph.h in Headers */ = {isa = PBXBuildFile; fileRef = D019B9530D840FE8005789AA /* HFObjectGraph.h */; };
 		D019B9560D840FE8005789AA /* HFObjectGraph.m in Sources */ = {isa = PBXBuildFile; fileRef = D019B9540D840FE8005789AA /* HFObjectGraph.m */; };
-		D01E7BE20CDC54CE00943F9E /* HexFiend.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = D01E7BB80CDC530C00943F9E /* HexFiend.framework */; };
 		D01E7BED0CDC55D000943F9E /* HFController.m in Sources */ = {isa = PBXBuildFile; fileRef = D01E7BEB0CDC55D000943F9E /* HFController.m */; };
 		D01E7BF00CDC564B00943F9E /* HexFiend.h in Headers */ = {isa = PBXBuildFile; fileRef = D01E7BEF0CDC564B00943F9E /* HexFiend.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D01E7C160CDC58AA00943F9E /* MyDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = D01E7C150CDC58AA00943F9E /* MyDocument.m */; };
@@ -166,13 +165,21 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		D01E7BDA0CDC540700943F9E /* CopyFiles */ = {
+		D0BA19DB0FF172C400F611CE /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
-			dstSubfolderSpec = 10;
+			dstSubfolderSpec = 7;
 			files = (
-				D01E7BE20CDC54CE00943F9E /* HexFiend.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D0BA19E90FF173BC00F611CE /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "~/Picture 1.png";
+			dstSubfolderSpec = 7;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -789,10 +796,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = C01FCF4A08A954540054247B /* Build configuration list for PBXNativeTarget "HexFiend_2" */;
 			buildPhases = (
-				D01E7BDA0CDC540700943F9E /* CopyFiles */,
 				8D1107290486CEB800E47090 /* Resources */,
 				8D11072C0486CEB800E47090 /* Sources */,
 				8D11072E0486CEB800E47090 /* Frameworks */,
+				D0BA19DB0FF172C400F611CE /* CopyFiles */,
+				D0BA19E90FF173BC00F611CE /* CopyFiles */,
 			);
 			buildRules = (
 			);

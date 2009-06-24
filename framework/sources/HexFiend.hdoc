@@ -1,0 +1,29 @@
+// Header documentation for HexFiend.framework
+
+/*!
+@framework HexFiend framework
+@abstract An Objective-C API for working with large files.
+@discussion
+
+HexFiend.framework is an Objective-C framework for displaying and manipulating potentially large amounts of raw binary data.  It is geared towards writing a hex editor but it can be adapted for many uses.  Class names in HexFiend.framework start with a prefix of HF.
+
+HexFiend is designed to handle more data than can fit in memory.  It uses the unsigned long long type pervasively.  The HFRange struct type is analagous to NSRange, but contains unsigned long longs.
+
+Hex Fiend relies heavily on a model-view-controller design.  Unlike most Cocoa controls, it is not possible to simply make a view and give it some data to display.  Instead, you must create a controller and model as well.
+
+There are two principal model classes: HFByteArray and HFByteSlice.
+
+HFByteSlice represents a portion (slice) of some source of data, which might be a file, in-memory data, or algorithmically computed data.  The data is expected to be random-access.
+
+HFByteSlice has three primitive methods:
+
+- (unsigned long long)length;
+- (void)copyBytes:(unsigned char *)dst range:(HFRange)range;
+- (HFByteSlice *)subsliceWithRange:(HFRange)range;
+
+These are used to determine how much data is contained within a slice, to read the data, and to produce a subslice of the given slice.  New data sources can be added by subclassing HFByteSlice, and should override these methods.
+
+HFByteArray is logically a list of byte slices.
+
+
+*/
