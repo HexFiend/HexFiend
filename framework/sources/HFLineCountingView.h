@@ -17,7 +17,6 @@
     NSTextStorage *textStorage;
     NSTextContainer *textContainer;
     NSDictionary *textAttributes;
-    NSTextView *textView;
     HFLineCountingRepresenter *representer; //not retained
     
     NSUInteger bytesPerLine;

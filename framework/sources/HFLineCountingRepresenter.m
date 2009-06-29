@@ -21,6 +21,23 @@ NSString *const HFLineCountingRepresenterMinimumViewWidthChanged = @"HFLineCount
     return self;
 }
 
+- (void)encodeWithCoder:(NSCoder *)coder {
+    HFASSERT([coder allowsKeyedCoding]);
+    [super encodeWithCoder:coder];
+    [coder encodeDouble:lineHeight forKey:@"HFLineHeight"];
+    [coder encodeInt64:minimumDigitCount forKey:@"HFMinimumDigitCount"];
+    [coder encodeInt64:lineNumberFormat forKey:@"HFLineNumberFormat"];
+}
+
+- (id)initWithCoder:(NSCoder *)coder {
+    HFASSERT([coder allowsKeyedCoding]);
+    [super initWithCoder:coder];
+    lineHeight = (CGFloat)[coder decodeDoubleForKey:@"HFLineHeight"];
+    minimumDigitCount = (NSUInteger)[coder decodeInt64ForKey:@"HFMinimumDigitCount"];
+    lineNumberFormat = (enum HFLineNumberFormat_t)[coder decodeInt64ForKey:@"HFLineNumberFormat"];
+    return self;
+}
+
 - (NSView *)createView {
     HFLineCountingView *result = [[HFLineCountingView alloc] initWithFrame:NSMakeRect(0, 0, 60, 10)];
     [result setRepresenter:self];

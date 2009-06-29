@@ -16,6 +16,7 @@
     unsigned char inlineTail[15]; //size chosen to exhaust padding of 32-byte allocator
 }
 
+// copies the data
 - initWithUnsharedData:(NSData *)data;
 
 // retains, does not copy

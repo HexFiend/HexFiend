@@ -54,7 +54,7 @@ enum
 typedef NSInteger HFControllerMovementGranularity;
 
 
-@interface HFController : NSObject {
+@interface HFController : NSObject <NSCoding> {
 @private
     NSMutableArray *representers;
     HFByteArray *byteArray;
@@ -162,7 +162,7 @@ typedef NSInteger HFControllerMovementGranularity;
 - (NSUndoManager *)undoManager;
 
 /* Set/get editable property */
-- (BOOL)isEditable;
+- (BOOL)editable;
 - (void)setEditable:(BOOL)flag;
 
 /* Line oriented representers can use this */

@@ -115,6 +115,15 @@
     [self generateGlyphTable];
 }
 
+- (id)initWithCoder:(NSCoder *)coder {
+    HFASSERT([coder allowsKeyedCoding]);
+    [super initWithCoder:coder];
+    [self generateGlyphTable];
+    return self;
+}
+
+//no need for encodeWithCoder
+
 - (void)extractGlyphsForBytes:(const unsigned char *)bytes count:(NSUInteger)numBytes offsetIntoLine:(NSUInteger)offsetIntoLine intoArray:(CGGlyph *)glyphs advances:(CGSize *)advances resultingGlyphCount:(NSUInteger *)resultGlyphCount {
     HFASSERT(bytes != NULL);
     HFASSERT(glyphs != NULL);

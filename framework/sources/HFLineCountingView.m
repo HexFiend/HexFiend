@@ -9,7 +9,6 @@
 #import <HexFiend/HFLineCountingView.h>
 #import <HexFiend/HFLineCountingRepresenter.h>
 
-#define USE_TEXT_VIEW 0
 #define TIME_LINE_NUMBERS 0
 
 #define HEX_LINE_NUMBERS_HAVE_0X_PREFIX 0
@@ -31,30 +30,20 @@
 
 @implementation HFLineCountingView
 
+- (void)_sharedInitLineCountingView {
+    layoutManager = [[NSLayoutManager alloc] init];
+    textStorage = [[NSTextStorage alloc] init];
+    [textStorage addLayoutManager:layoutManager];
+    textContainer = [[NSTextContainer alloc] init];
+    [textContainer setLineFragmentPadding:(CGFloat)5];
+    [textContainer setContainerSize:NSMakeSize([self bounds].size.width, [textContainer containerSize].height)];
+    [layoutManager addTextContainer:textContainer];
+}
+
 - (id)initWithFrame:(NSRect)frame {
     self = [super initWithFrame:frame];
     if (self) {
-        layoutManager = [[NSLayoutManager alloc] init];
-	textStorage = [[NSTextStorage alloc] init];
-	[textStorage addLayoutManager:layoutManager];
-	textContainer = [[NSTextContainer alloc] init];
-        [textContainer setLineFragmentPadding:(CGFloat)5];
-        [textContainer setContainerSize:NSMakeSize([self bounds].size.width, [textContainer containerSize].height)];
-	[layoutManager addTextContainer:textContainer];
-#if USE_TEXT_VIEW
-        Class textViewClass;
-#if TIME_LINE_NUMBERS
-        textViewClass = [HFTimingTextView class];
-#else
-        textViewClass = [NSTextView class];
-#endif
-        textView = [[textViewClass alloc] initWithFrame:[self bounds]];
-        [textView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
-        [textView setEditable:NO];
-        [textView setSelectable:NO];
-        [textView setDrawsBackground:NO];
-        [self addSubview:textView];
-#endif
+        [self _sharedInitLineCountingView];
     }
     return self;
 }
@@ -64,6 +53,30 @@
     [layoutManager release];
     [textStorage release];
     [super dealloc];
+}
+
+- (void)encodeWithCoder:(NSCoder *)coder {
+    HFASSERT([coder allowsKeyedCoding]);
+    [super encodeWithCoder:coder];
+    [coder encodeObject:font forKey:@"HFFont"];
+    [coder encodeDouble:lineHeight forKey:@"HFLineHeight"];
+    [coder encodeObject:representer forKey:@"HFRepresenter"];
+    [coder encodeInt64:bytesPerLine forKey:@"HFBytesPerLine"];
+    [coder encodeInt64:lineNumberFormat forKey:@"HFLineNumberFormat"];
+    [coder encodeBool:useStringDrawingPath forKey:@"HFUseStringDrawingPath"];
+}
+
+- (id)initWithCoder:(NSCoder *)coder {
+    HFASSERT([coder allowsKeyedCoding]);
+    [super initWithCoder:coder];
+    [self _sharedInitLineCountingView];
+    font = [[coder decodeObjectForKey:@"HFFont"] retain];
+    lineHeight = (CGFloat)[coder decodeDoubleForKey:@"HFLineHeight"];
+    representer = [coder decodeObjectForKey:@"HFRepresenter"];
+    bytesPerLine = (NSUInteger)[coder decodeInt64ForKey:@"HFBytesPerLine"];
+    lineNumberFormat = (NSUInteger)[coder decodeInt64ForKey:@"HFLineNumberFormat"];
+    useStringDrawingPath = [coder decodeBoolForKey:@"HFUseStringDrawingPath"];
+    return self;
 }
 
 - (BOOL)isFlipped { return YES; }
@@ -369,28 +382,6 @@ static inline int common_prefix_length(const char *a, const char *b) {
     storedLineCount = linesRemaining;
 }
 
-- (void)updateTextView {
-    unsigned long long lineIndex = HFFPToUL(floorl(lineRangeToDraw.location));
-    NSUInteger linesRemaining = ll2l(HFFPToUL(ceill(lineRangeToDraw.length + lineRangeToDraw.location) - floorl(lineRangeToDraw.location)));
-    
-    NSString *string = [self createLineStringForRange:HFRangeMake(lineIndex, linesRemaining)];
-    [textView setString:string];
-    [string release];
-}
-
-- (void)updateTextViewAttributes {
-    NSMutableParagraphStyle *mutableStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
-    [mutableStyle setAlignment:NSRightTextAlignment];
-    NSParagraphStyle *paragraphStyle = [mutableStyle copy];
-    [mutableStyle release];
-    NSDictionary *attributes = [[NSDictionary alloc] initWithObjectsAndKeys:font, NSFontAttributeName, [NSColor colorWithCalibratedWhite:(CGFloat).1 alpha:(CGFloat).8], NSForegroundColorAttributeName, paragraphStyle, NSParagraphStyleAttributeName, nil];
-    [paragraphStyle release];
-    [textView setTypingAttributes:attributes];
-    NSTextStorage *storage = [textView textStorage];
-    [storage setAttributes:attributes range:NSMakeRange(0, [storage length])];
-    [attributes release];
-}
-
 - (void)drawLineNumbersWithClipSingleStringDrawing:(NSRect)clipRect {
     USE(clipRect);
     unsigned long long lineIndex = HFFPToUL(floorl(lineRangeToDraw.location));
@@ -421,13 +412,13 @@ static inline int common_prefix_length(const char *a, const char *b) {
 }
 
 - (void)drawLineNumbersWithClipSingleStringCellDrawing:(NSRect)clipRect {
+    USE(clipRect);
     const CGFloat cellTextContainerPadding = 2.f;
     unsigned long long lineIndex = HFFPToUL(floorl(lineRangeToDraw.location));
     NSUInteger linesRemaining = ll2l(HFFPToUL(ceill(lineRangeToDraw.length + lineRangeToDraw.location) - floorl(lineRangeToDraw.location)));
     
     CGFloat linesToVerticallyOffset = ld2f(lineRangeToDraw.location - floorl(lineRangeToDraw.location));
     CGFloat verticalOffset = linesToVerticallyOffset * lineHeight + 1;
-    NSLog(@"Vertical offset: %f", verticalOffset);
     NSRect textRect = [self bounds];
     textRect.size.width -= 5;
     textRect.origin.y -= verticalOffset;
@@ -504,17 +495,12 @@ static inline int common_prefix_length(const char *a, const char *b) {
 - (void)drawRect:(NSRect)clipRect {
     [self drawGradientWithClip:clipRect];
     [self drawDividerWithClip:clipRect];
-#if ! USE_TEXT_VIEW
     [self drawLineNumbersWithClip:clipRect];
-#endif
 }
 
 - (void)setLineRangeToDraw:(HFFPRange)range {
     if (! HFFPRangeEqualsRange(range, lineRangeToDraw)) {
         lineRangeToDraw = range;
-#if USE_TEXT_VIEW
-        [self updateTextView];
-#endif
         [self setNeedsDisplay:YES];
     }
 }
@@ -561,9 +547,6 @@ static inline int common_prefix_length(const char *a, const char *b) {
         textAttributes = nil;
         storedLineCount = INVALID_LINE_COUNT;
         useStringDrawingPath = [self canUseStringDrawingPathForFont:font];
-#if USE_TEXT_VIEW
-        [self updateTextViewAttributes];
-#endif
         [self setNeedsDisplay:YES];
     }
 }

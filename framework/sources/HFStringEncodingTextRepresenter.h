@@ -10,7 +10,7 @@
 
 
 @interface HFStringEncodingTextRepresenter : HFTextRepresenter {
-
+    NSStringEncoding stringEncoding;
 }
 
 - (NSStringEncoding)encoding;

@@ -22,6 +22,7 @@ extern NSString *const HFPrivateByteArrayPboardType;
     IBOutlet NSTextField *progressTrackingDescriptionTextField;
     HFProgressTracker *progressTracker;
     unsigned long long dataAmountToCopy;
+    BOOL retainedSelfOnBehalfOfPboard;
 }
 
 /* Creates an HFPasteboardOwner to own the given pasteboard with the given types.  Note that the NSPasteboard retains its owner. */

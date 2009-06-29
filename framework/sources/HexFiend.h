@@ -13,7 +13,6 @@
 #import <HexFiend/HFByteArray_ToString.h>
 #import <HexFiend/HFFileByteSlice.h>
 #import <HexFiend/HFFileReference.h>
-#import <HexFiend/HFTavlTreeByteArray.h>
 #import <HexFiend/HFBTreeByteArray.h>
 #import <HexFiend/HFProgressTracker.h>
 #import <HexFiend/HFTextField.h>

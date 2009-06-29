@@ -9,7 +9,7 @@ extern NSString * const DataInspectorDidDeleteAllRows;
 
 @interface DataInspectorRepresenter : HFRepresenter {
     IBOutlet NSView *outletView; //used only for loading the nib
-    IBOutlet NSTableView *table;
+    IBOutlet NSTableView *table; //not retained - is a subview of our view (stored in superclass)
     NSMutableArray *inspectors;
 }
 

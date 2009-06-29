@@ -69,6 +69,8 @@ static unsigned char hex2char(NSUInteger c) {
 
 @implementation HFHexTextRepresenter
 
+/* No extra NSCoder support needed */
+
 - (Class)_textViewClass {
     return [HFRepresenterHexTextView class];
 }

@@ -10,7 +10,6 @@
 #import <HexFiend/HFRepresenter_Internal.h>
 #import <HexFiend/HFByteArray_Internal.h>
 #import <HexFiend/HFFullMemoryByteArray.h>
-#import <HexFiend/HFTAVLTreeByteArray.h>
 #import <HexFiend/HFBTreeByteArray.h>
 #import <HexFiend/HFFullMemoryByteSlice.h>
 #import <HexFiend/HFControllerCoalescedUndo.h>
@@ -75,17 +74,22 @@ static inline Class preferredByteArrayClass(void) {
 
 @implementation HFController
 
-- (id)init {
-    [super init];
-    bytesPerLine = 16;
-    bytesPerColumn = 1;
-    _hfflags.editable = YES;
-    _hfflags.selectable = YES;
-    representers = [[NSMutableArray alloc] init];
+- (void)_sharedInit {
     selectedContentsRanges = [[NSMutableArray alloc] initWithObjects:[HFRangeWrapper withRange:HFRangeMake(0, 0)], nil];
     byteArray = [[preferredByteArrayClass() alloc] init];
     [byteArray addObserver:self forKeyPath:@"changesAreLocked" options:0 context:KVOContextChangesAreLocked];
-    selectionAnchor = NO_SELECTION;
+    selectionAnchor = NO_SELECTION;    
+}
+
+- (id)init {
+    [super init];
+    [self _sharedInit];
+    bytesPerLine = 16;
+    bytesPerColumn = 1;
+    _hfflags.editable = YES;
+    _hfflags.antialias = YES;
+    _hfflags.selectable = YES;
+    representers = [[NSMutableArray alloc] init];
     [self setFont:[NSFont fontWithName:@"Monaco" size:10.f]];
     return self;
 }
@@ -103,6 +107,35 @@ static inline Class preferredByteArrayClass(void) {
     [cachedData release];
     [additionalPendingTransactions release];
     [super dealloc];
+}
+
+- (void)encodeWithCoder:(NSCoder *)coder {
+    HFASSERT([coder allowsKeyedCoding]);
+    [coder encodeObject:representers forKey:@"HFRepresenters"];
+    [coder encodeInt64:bytesPerLine forKey:@"HFBytesPerLine"];
+    [coder encodeInt64:bytesPerColumn forKey:@"HFBytesPerColumn"];
+    [coder encodeObject:font forKey:@"HFFont"];
+    [coder encodeDouble:lineHeight forKey:@"HFLineHeight"];
+    [coder encodeBool:_hfflags.antialias forKey:@"HFAntialias"];
+    [coder encodeBool:_hfflags.overwriteMode forKey:@"HFOverwriteMode"];
+    [coder encodeBool:_hfflags.editable forKey:@"HFEditable"];
+    [coder encodeBool:_hfflags.selectable forKey:@"HFSelectable"];
+}
+
+- (id)initWithCoder:(NSCoder *)coder {
+    HFASSERT([coder allowsKeyedCoding]);
+    [super init];
+    [self _sharedInit];
+    bytesPerLine = (NSUInteger)[coder decodeInt64ForKey:@"HFBytesPerLine"];
+    bytesPerColumn = (NSUInteger)[coder decodeInt64ForKey:@"HFBytesPerColumn"];
+    font = [[coder decodeObjectForKey:@"HFFont"] retain];
+    lineHeight = (CGFloat)[coder decodeDoubleForKey:@"HFLineHeight"];
+    _hfflags.antialias = [coder decodeBoolForKey:@"HFAntialias"];
+    _hfflags.overwriteMode = [coder decodeBoolForKey:@"HFOverwriteMode"];
+    _hfflags.editable = [coder decodeBoolForKey:@"HFEditable"];
+    _hfflags.selectable = [coder decodeBoolForKey:@"HFSelectable"];
+    representers = [[coder decodeObjectForKey:@"HFRepresenters"] retain];
+    return self;
 }
 
 - (NSArray *)representers {
@@ -430,7 +463,14 @@ static inline Class preferredByteArrayClass(void) {
         NSView *view = [rep view];
         double repMaxLines = [rep maximumAvailableLinesForViewHeight:NSHeight([view frame])];
         if (repMaxLines != DBL_MAX) {
-            maxBytesForViewSize = MIN(HFProductInt((NSUInteger)ceil(repMaxLines), bytesPerLine), maxBytesForViewSize);
+            /* bytesPerLine may be ULONG_MAX.  We want to compute the smaller of maxBytesForViewSize and ceil(repMaxLines) * bytesPerLine.  If the latter expression overflows, the smaller is the former. */
+            NSUInteger repMaxLinesUInt = (NSUInteger)ceil(repMaxLines);
+            NSUInteger maxLinesTimesBytesPerLine =  repMaxLinesUInt * bytesPerLine;
+            /* Check if we overflowed */
+            BOOL overflowed = (repMaxLinesUInt != 0 && (maxLinesTimesBytesPerLine / repMaxLinesUInt != bytesPerLine));
+            if (! overflowed) {
+                maxBytesForViewSize = MIN(maxLinesTimesBytesPerLine, maxBytesForViewSize);
+            }
         }
         maxLines = MIN(repMaxLines, maxLines);
     }
@@ -560,7 +600,7 @@ static inline Class preferredByteArrayClass(void) {
     return bytesPerLine;
 }
 
-- (BOOL)isEditable {
+- (BOOL)editable {
     return _hfflags.editable && ! [byteArray changesAreLocked];
 }
 
@@ -1670,11 +1710,7 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
 + (void)_testByteArray {
     //HFByteArray* first = [[[HFFullMemoryByteArray alloc] init] autorelease];
     HFByteArray *first = nil;
-#if 1
     HFBTreeByteArray* second = [[[HFBTreeByteArray alloc] init] autorelease];    
-#else
-    HFByteArray* second = [[[HFTavlTreeByteArray alloc] init] autorelease];
-#endif
     
     //srandom(time(NULL));
     
@@ -1968,11 +2004,7 @@ static NSUInteger random_upto(unsigned long long val) {
     const BOOL should_debug = NO;
     DEBUG puts("Beginning TAVL Tree test:");
     HFByteArray* first = [[[HFFullMemoryByteArray alloc] init] autorelease];
-#if 1
     HFBTreeByteArray* second = [[[HFBTreeByteArray alloc] init] autorelease];    
-#else
-    HFByteArray* second = [[[HFTavlTreeByteArray alloc] init] autorelease];
-#endif
     
     //srandom(time(NULL));
     

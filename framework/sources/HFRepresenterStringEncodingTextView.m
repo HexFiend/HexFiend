@@ -11,12 +11,6 @@
 
 @implementation HFRepresenterStringEncodingTextView
 
-- initWithRepresenter:(HFTextRepresenter *)rep {
-    if ((self = [super initWithRepresenter:rep])) {
-	encoding = NSMacOSRomanStringEncoding;
-    }
-    return self;
-}
 
 /* Ligatures generally look not-so-hot with fixed pitch fonts.  Don't use them. */
 - (void)generateGlyphTable {
@@ -58,6 +52,20 @@
     [self generateGlyphTable];
 }
 
+- (id)initWithCoder:(NSCoder *)coder {
+    HFASSERT([coder allowsKeyedCoding]);
+    [super initWithCoder:coder];
+    encoding = (NSStringEncoding)[coder decodeInt64ForKey:@"HFStringEncoding"];
+    [self generateGlyphTable];
+    return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)coder {
+    HFASSERT([coder allowsKeyedCoding]);
+    [super encodeWithCoder:coder];
+    [coder encodeInt64:encoding forKey:@"HFStringEncoding"];
+}
+
 - (NSStringEncoding)encoding {
     return encoding;
 }
@@ -74,6 +82,7 @@
     HFASSERT(glyphs != NULL);
     HFASSERT(resultGlyphCount != NULL);
     HFASSERT(advances != NULL);
+    USE(offsetIntoLine);
     CGSize advance = CGSizeMake(glyphAdvancement, 0);
     NSUInteger byteIndex;
     for (byteIndex = 0; byteIndex < numBytes; byteIndex++) {

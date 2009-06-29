@@ -33,6 +33,22 @@
     [super dealloc];
 }
 
+- (void)encodeWithCoder:(NSCoder *)coder {
+    HFASSERT([coder allowsKeyedCoding]);
+    [coder encodeObject:controller forKey:@"HFController"];
+    [coder encodePoint:layoutPosition forKey:@"HFLayoutPosition"];
+    [coder encodeObject:view forKey:@"HFRepresenterView"];
+}
+
+- (id)initWithCoder:(NSCoder *)coder {
+    HFASSERT([coder allowsKeyedCoding]);
+    [super init];
+    layoutPosition = [coder decodePointForKey:@"HFLayoutPosition"];   
+    controller = [coder decodeObjectForKey:@"HFController"]; // not retained
+    view = [[coder decodeObjectForKey:@"HFRepresenterView"] retain];
+    return self;
+}
+
 - (NSView *)createView {
     UNIMPLEMENTED();
 }

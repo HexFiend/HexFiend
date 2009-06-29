@@ -259,6 +259,24 @@ static NSInteger sortByLayoutPosition(id a, id b, void *self) {
     [super dealloc];
 }
 
+- (void)encodeWithCoder:(NSCoder *)coder {
+    HFASSERT([coder allowsKeyedCoding]);
+    [super encodeWithCoder:coder];
+    [coder encodeObject:representers forKey:@"HFRepresenters"];
+    [coder encodeBool:maximizesBytesPerLine forKey:@"HFMaximizesBytesPerLine"];
+}
+
+- (id)initWithCoder:(NSCoder *)coder {
+    HFASSERT([coder allowsKeyedCoding]);
+    [super initWithCoder:coder];
+    representers = [[coder decodeObjectForKey:@"HFRepresenters"] retain];
+    maximizesBytesPerLine = [coder decodeBoolForKey:@"HFMaximizesBytesPerLine"];
+    NSView *view = [self view];
+    [view setPostsFrameChangedNotifications:YES];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(frameChanged:) name:NSViewFrameDidChangeNotification object:view];
+    return self;
+}
+
 - (void)addRepresenter:(HFRepresenter *)representer {
     REQUIRE_NOT_NULL(representer);
     if (! representers) representers = [[NSMutableArray alloc] init];

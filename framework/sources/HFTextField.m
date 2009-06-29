@@ -27,21 +27,21 @@
 - (id)initWithFrame:(NSRect)frame {
     if ((self = [super initWithFrame:frame])) {
         dataController = [[HFController alloc] init];
-	
+        
         hexRepresenter = [[HFHexTextRepresenter alloc] init];
         [hexRepresenter setBehavesAsTextField:YES];
         [[hexRepresenter view] setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
-	
-	textRepresenter = [[HFStringEncodingTextRepresenter alloc] init];
-	[textRepresenter setBehavesAsTextField:YES];
+        
+        textRepresenter = [[HFStringEncodingTextRepresenter alloc] init];
+        [textRepresenter setBehavesAsTextField:YES];
         [[textRepresenter view] setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
-	
-	
+        
+        
         [dataController addRepresenter:hexRepresenter];
-	
+        
         layoutRepresenter = [[HFLayoutRepresenter alloc] init];
         [layoutRepresenter addRepresenter:hexRepresenter];
-	[dataController addRepresenter:layoutRepresenter];
+        [dataController addRepresenter:layoutRepresenter];
         NSView *layoutView = [layoutRepresenter view];
         [layoutView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
         [self positionLayoutView];
@@ -132,7 +132,7 @@
     BOOL result = NO;
     NSArray *reps = [dataController representers];
     if (reps) {
-	result = ([reps indexOfObjectIdenticalTo:rep] != NSNotFound);
+        result = ([reps indexOfObjectIdenticalTo:rep] != NSNotFound);
     }
     return result;
 }
@@ -144,12 +144,12 @@
 - (void)setUsesHexArea:(BOOL)val {
     if ([self usesHexArea] == !!val) return;
     if (val) {
-	[dataController addRepresenter:hexRepresenter];
-	[layoutRepresenter addRepresenter:hexRepresenter];
+        [dataController addRepresenter:hexRepresenter];
+        [layoutRepresenter addRepresenter:hexRepresenter];
     }
     else {
-	[layoutRepresenter removeRepresenter:hexRepresenter];
-	[dataController removeRepresenter:hexRepresenter];
+        [layoutRepresenter removeRepresenter:hexRepresenter];
+        [dataController removeRepresenter:hexRepresenter];
     }
 }
 
@@ -161,12 +161,12 @@
 - (void)setUsesTextArea:(BOOL)val {
     if ([self usesTextArea] == !!val) return;
     if (val) {
-	[dataController addRepresenter:textRepresenter];
-	[layoutRepresenter addRepresenter:textRepresenter];
+        [dataController addRepresenter:textRepresenter];
+        [layoutRepresenter addRepresenter:textRepresenter];
     }
     else {
-	[layoutRepresenter removeRepresenter:textRepresenter];
-	[dataController removeRepresenter:textRepresenter];
+        [layoutRepresenter removeRepresenter:textRepresenter];
+        [dataController removeRepresenter:textRepresenter];
     }
 }
 

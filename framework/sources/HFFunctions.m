@@ -70,6 +70,7 @@ NSImage *HFImageNamed(NSString *name) {
 }
 
 - (id)copyWithZone:(NSZone *)zone {
+    USE(zone);
     return [self retain];
 }
 

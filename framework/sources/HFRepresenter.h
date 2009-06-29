@@ -9,7 +9,7 @@
 #import <Cocoa/Cocoa.h>
 #import <HexFiend/HFController.h>
 
-@interface HFRepresenter : NSObject {
+@interface HFRepresenter : NSObject <NSCoding> {
     @private
     id view;
     HFController *controller;

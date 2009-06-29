@@ -28,15 +28,28 @@
     [super dealloc];
 }
 
-- initWithFrame:(NSRect)frame {
-    [super initWithFrame:frame];
+- (void)_sharedInitStatusBarView {
     NSMutableParagraphStyle *style = [[[NSParagraphStyle defaultParagraphStyle] mutableCopy] autorelease];
     [style setAlignment:NSCenterTextAlignment];
     cellAttributes = [[NSDictionary alloc] initWithObjectsAndKeys:[NSColor colorWithCalibratedWhite:(CGFloat).22 alpha:1], NSForegroundColorAttributeName, [NSFont labelFontOfSize:10], NSFontAttributeName, style, NSParagraphStyleAttributeName, nil];
     cell = [[NSCell alloc] initTextCell:@""];
     [cell setAlignment:NSCenterTextAlignment];
+}
+
+- initWithFrame:(NSRect)frame {
+    [super initWithFrame:frame];
+    [self _sharedInitStatusBarView];
     return self;
 }
+
+- (id)initWithCoder:(NSCoder *)coder {
+    HFASSERT([coder allowsKeyedCoding]);
+    [super initWithCoder:coder];
+    [self _sharedInitStatusBarView];
+    return self;
+}
+
+// nothing to do in encodeWithCoder
 
 - (BOOL)isFlipped { return YES; }
 
@@ -85,6 +98,19 @@
 
 static inline const char *plural(unsigned long long s) {
     return (s == 1 ? "" : "s");
+}
+
+- (void)encodeWithCoder:(NSCoder *)coder {
+    HFASSERT([coder allowsKeyedCoding]);
+    [super encodeWithCoder:coder];
+    [coder encodeInt64:statusMode forKey:@"HFStatusMode"];
+}
+
+- (id)initWithCoder:(NSCoder *)coder {
+    HFASSERT([coder allowsKeyedCoding]);
+    [super initWithCoder:coder];
+    statusMode = (NSUInteger)[coder decodeInt64ForKey:@"HFStatusMode"];
+    return self;
 }
 
 - (NSView *)createView {

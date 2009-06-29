@@ -16,6 +16,32 @@
     UNIMPLEMENTED();
 }
 
+- (id)init {
+    [super init];
+    rowBackgroundColors = [[NSColor controlAlternatingRowBackgroundColors] copy];
+    return self;
+}
+
+- (void)dealloc {
+    [rowBackgroundColors release];
+    [super dealloc];
+}
+
+- (void)encodeWithCoder:(NSCoder *)coder {
+    HFASSERT([coder allowsKeyedCoding]);
+    [super encodeWithCoder:coder];
+    [coder encodeBool:behavesAsTextField forKey:@"HFBehavesAsTextField"];
+    [coder encodeObject:rowBackgroundColors forKey:@"HFRowBackgroundColors"];
+}
+
+- (id)initWithCoder:(NSCoder *)coder {
+    HFASSERT([coder allowsKeyedCoding]);
+    [super initWithCoder:coder];
+    behavesAsTextField = [coder decodeBoolForKey:@"HFBehavesAsTextField"];
+    rowBackgroundColors = [[coder decodeObjectForKey:@"HFRowBackgroundColors"] retain];
+    return self;
+}
+
 - (NSView *)createView {
     HFRepresenterTextView *view = [[[self _textViewClass] alloc] initWithRepresenter:self];
     [view setAutoresizingMask:NSViewHeightSizable];
@@ -59,7 +85,7 @@
     HFController *controller = [self controller];
     if (controller) {
         [view setFont:[controller font]];
-        [view setEditable:[controller isEditable]];
+        [view setEditable:[controller editable]];
         [self updateText];
     }
     else {
@@ -85,7 +111,7 @@
         [[self view] updateSelectionPulse];
     }
     if (bits & (HFControllerEditable)) {
-        [[self view] setEditable:[[self controller] isEditable]];
+        [[self view] setEditable:[[self controller] editable]];
     }
     if (bits & (HFControllerAntialias)) {
         [[self view] setShouldAntialias:[[self controller] shouldAntialias]];
@@ -182,7 +208,7 @@
 
 - (BOOL)canPasteFromPasteboard:(NSPasteboard *)pb {
     REQUIRE_NOT_NULL(pb);
-    if ([[self controller] isEditable]) {
+    if ([[self controller] editable]) {
         // we can paste if the pboard contains text or contains an HFByteArray
         return [HFPasteboardOwner unpackByteArrayFromPasteboard:pb] || [pb availableTypeFromArray:[NSArray arrayWithObject:NSStringPboardType]];
     }
@@ -210,6 +236,17 @@
         }
     }
     return result;
+}
+
+- (NSArray *)rowBackgroundColors {
+    return rowBackgroundColors;
+}
+
+- (void)setRowBackgroundColors:(NSArray *)colors {
+    if (colors != rowBackgroundColors) {
+        [rowBackgroundColors release];
+        rowBackgroundColors = [colors copy];
+    }
 }
 
 - (void)setBehavesAsTextField:(BOOL)val {

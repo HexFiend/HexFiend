@@ -40,6 +40,7 @@
     NSRect caretRectToDraw;
     NSUInteger bytesBetweenVerticalGuides;
     NSUInteger startingLineBackgroundColorIndex;
+    NSArray *rowBackgroundColors;
     
     struct  {
         unsigned antialias:1;

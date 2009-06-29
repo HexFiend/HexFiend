@@ -59,21 +59,41 @@
 
 @implementation HFStringEncodingTextRepresenter
 
+- (id)init {
+    [super init];
+    stringEncoding = [NSString defaultCStringEncoding];
+    return self;
+}
+
+- (id)initWithCoder:(NSCoder *)coder {
+    HFASSERT([coder allowsKeyedCoding]);
+    [super initWithCoder:coder];
+    stringEncoding = (NSStringEncoding)[coder decodeInt64ForKey:@"HFStringEncoding"];
+    return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)coder {
+    HFASSERT([coder allowsKeyedCoding]);
+    [super encodeWithCoder:coder];
+    [coder encodeInt64:stringEncoding forKey:@"HFStringEncoding"];
+}
+
 - (Class)_textViewClass {
     return [HFRepresenterStringEncodingTextView class];
 }
 
 - (NSStringEncoding)encoding {
-    return [[self view] encoding];
+    return stringEncoding;
 }
 
 - (void)setEncoding:(NSStringEncoding)encoding {
+    stringEncoding = encoding;
     [[self view] setEncoding:encoding];
 }
 
 - (void)initializeView {
     [super initializeView];
-    [[self view] setEncoding:NSMacOSRomanStringEncoding];
+    [[self view] setEncoding:stringEncoding];
 }
 
 - (void)insertText:(NSString *)text {

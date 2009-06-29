@@ -89,6 +89,19 @@ static NSString *errorStringForInspectionStatus(enum InspectionStatus_t status) 
 
 @implementation DataInspector
 
+- (void)encodeWithCoder:(NSCoder *)coder {
+    HFASSERT([coder allowsKeyedCoding]);
+    [coder encodeInt32:inspectorType forKey:@"InspectorType"];
+    [coder encodeInt32:endianness forKey:@"Endianness"];
+}
+
+- (id)initWithCoder:(NSCoder *)coder {
+    HFASSERT([coder allowsKeyedCoding]);
+    [super init];
+    inspectorType = [coder decodeInt32ForKey:@"InspectorType"];
+    endianness = [coder decodeInt32ForKey:@"Endianness"];
+    return self;
+}
 
 - (void)setType:(enum InspectorType_t)type {
     inspectorType = type;
@@ -394,6 +407,24 @@ static BOOL valueCanFitInByteCount(unsigned long long unsignedValue, NSUInteger 
     [super init];
     inspectors = [[NSMutableArray alloc] init];
     [self loadDefaultInspectors];
+    return self;
+}
+
+- (void)dealloc {
+    [inspectors release];
+    [super dealloc];
+}
+
+- (void)encodeWithCoder:(NSCoder *)coder {
+    HFASSERT([coder allowsKeyedCoding]);
+    [super encodeWithCoder:coder];
+    [coder encodeObject:inspectors forKey:@"HFInspectors"];
+}
+
+- (id)initWithCoder:(NSCoder *)coder {
+    HFASSERT([coder allowsKeyedCoding]);
+    [super initWithCoder:coder];
+    inspectors = [[coder decodeObjectForKey:@"HFInspectors"] retain];
     return self;
 }
 

@@ -46,6 +46,10 @@ NSString *const HFPrivateByteArrayPboardType = @"HFPrivateByteArrayPboardType";
 	pasteboard = nil;
 	[[NSNotificationCenter defaultCenter] removeObserver:self name:HFPrepareForChangeInFileNotification object:nil];
     }
+    if (retainedSelfOnBehalfOfPboard) {
+        CFRelease(self);
+        retainedSelfOnBehalfOfPboard = NO;
+    }
 }
 
 
@@ -189,6 +193,10 @@ NSString *const HFPrivateByteArrayPboardType = @"HFPrivateByteArrayPboardType";
 	return;
     }
     if ([type isEqualToString:HFPrivateByteArrayPboardType]) {
+        if (! retainedSelfOnBehalfOfPboard) {
+            retainedSelfOnBehalfOfPboard = YES;
+            CFRetain(self);
+        }
 	NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
 			      [NSNumber numberWithUnsignedLong:(unsigned long)byteArray], @"HFByteArray",
 			      [[self class] uuid], @"HFUUID",

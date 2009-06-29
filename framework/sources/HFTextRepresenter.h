@@ -13,6 +13,7 @@
 
 @interface HFTextRepresenter : HFRepresenter {
     BOOL behavesAsTextField;
+    NSArray *rowBackgroundColors;
 }
 
 // HFTextRepresenter forwards these messages to its HFRepresenterTextView
@@ -38,6 +39,10 @@
 
 // Value between [0, 1]
 - (double)selectionPulseAmount;
+
+// Determines the per-row background colors.  Defaults to -[NSControl controlAlternatingRowBackgroundColors]
+- (NSArray *)rowBackgroundColors;
+- (void)setRowBackgroundColors:(NSArray *)colors;
 
 - (void)setBehavesAsTextField:(BOOL)val;
 - (BOOL)behavesAsTextField;
