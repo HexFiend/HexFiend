@@ -8,7 +8,6 @@
 }
 
 - (NSArray *)requiredFrameworks {
-    NSLog(@"%@", [NSBundle bundleForClass:[HFTextView class]]);
     return [NSArray arrayWithObject:[NSBundle bundleForClass:[HFTextView class]]];
 }
 

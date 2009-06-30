@@ -14,6 +14,7 @@
     HFController *dataController;
     HFLayoutRepresenter *layoutRepresenter;
     NSArray *backgroundColors;
+    BOOL bordered;
 }
 
 - (HFLayoutRepresenter *)layoutRepresenter;
@@ -21,5 +22,8 @@
 
 - (NSArray *)backgroundColors;
 - (void)setBackgroundColors:(NSArray *)colors;
+
+- (void)setBordered:(BOOL)val;
+- (BOOL)bordered;
 
 @end

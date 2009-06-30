@@ -8,7 +8,7 @@
 		<string key="IBDocument.HIToolboxVersion">353.00</string>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="7"/>
+			<integer value="18"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -46,47 +46,49 @@
 						<int key="NSvFlags">268</int>
 						<object class="NSMutableArray" key="NSSubviews">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<object class="HFTextView" id="110803113">
+							<object class="HFTextView" id="944624331">
 								<reference key="NSNextResponder" ref="1001"/>
 								<int key="NSvFlags">268</int>
 								<object class="NSMutableArray" key="NSSubviews">
 									<bool key="EncodedWithXMLCoder">YES</bool>
-									<object class="NSView" id="743638744">
-										<reference key="NSNextResponder" ref="110803113"/>
+									<object class="NSView" id="221424557">
+										<reference key="NSNextResponder" ref="944624331"/>
 										<int key="NSvFlags">274</int>
 										<object class="NSMutableArray" key="NSSubviews">
 											<bool key="EncodedWithXMLCoder">YES</bool>
-											<object class="HFRepresenterHexTextView" id="1022519332">
-												<reference key="NSNextResponder" ref="743638744"/>
+											<object class="HFRepresenterHexTextView" id="79445538">
+												<reference key="NSNextResponder" ref="221424557"/>
 												<int key="NSvFlags">274</int>
-												<string key="NSFrameSize">{169, 135}</string>
-												<reference key="NSSuperview" ref="743638744"/>
-												<object class="HFHexTextRepresenter" key="HFRepresenter" id="223027096">
-													<object class="HFController" key="HFController" id="921850213">
+												<string key="NSFrame">{{10, 0}, {38, 40}}</string>
+												<reference key="NSSuperview" ref="221424557"/>
+												<object class="HFHexTextRepresenter" key="HFRepresenter" id="457639080">
+													<object class="HFController" key="HFController" id="887705254">
 														<object class="NSMutableArray" key="HFRepresenters">
 															<bool key="EncodedWithXMLCoder">YES</bool>
-															<object class="HFLayoutRepresenter" id="921639817">
-																<reference key="HFController" ref="921850213"/>
+															<object class="HFLayoutRepresenter" id="845268041">
+																<reference key="HFController" ref="887705254"/>
 																<string key="HFLayoutPosition">{0, 0}</string>
-																<reference key="HFRepresenterView" ref="743638744"/>
+																<reference key="HFRepresenterView" ref="221424557"/>
 																<object class="NSMutableArray" key="HFRepresenters">
 																	<bool key="EncodedWithXMLCoder">YES</bool>
-																	<reference ref="223027096"/>
-																	<object class="HFStringEncodingTextRepresenter" id="71578706">
-																		<reference key="HFController" ref="921850213"/>
+																	<reference ref="457639080"/>
+																	<object class="HFStringEncodingTextRepresenter" id="650719041">
+																		<reference key="HFController" ref="887705254"/>
 																		<string key="HFLayoutPosition">{1, 0}</string>
-																		<object class="HFRepresenterStringEncodingTextView" key="HFRepresenterView" id="425091242">
-																			<reference key="NSNextResponder" ref="743638744"/>
+																		<object class="HFRepresenterStringEncodingTextView" key="HFRepresenterView" id="250846637">
+																			<reference key="NSNextResponder" ref="221424557"/>
 																			<int key="NSvFlags">272</int>
-																			<string key="NSFrame">{{169, 0}, {56, 135}}</string>
-																			<reference key="NSSuperview" ref="743638744"/>
-																			<reference key="HFRepresenter" ref="71578706"/>
+																			<string key="NSFrame">{{48, 0}, {20, 40}}</string>
+																			<reference key="NSSuperview" ref="221424557"/>
+																			<reference key="HFRepresenter" ref="650719041"/>
 																			<object class="NSFont" key="HFFont" id="776039628">
 																				<string key="NSName">Monaco</string>
 																				<double key="NSSize">1.000000e+01</double>
 																				<int key="NSfFlags">16</int>
 																			</object>
-																			<nil key="HFData"/>
+																			<object class="NSData" key="HFData" id="1059941393">
+																				<bytes key="NS.bytes">/u36zkgWA</bytes>
+																			</object>
 																			<double key="HFVerticalOffset">0.000000e+00</double>
 																			<double key="HFHorizontalContainerOffset">4.000000e+00</double>
 																			<double key="HFDefaultLineHeight">1.400000e+01</double>
@@ -98,7 +100,7 @@
 																			<int key="HFStringEncoding">30</int>
 																		</object>
 																		<bool key="HFBehavesAsTextField">NO</bool>
-																		<object class="NSArray" key="HFRowBackgroundColors" id="648371395">
+																		<object class="NSArray" key="HFRowBackgroundColors" id="567111413">
 																			<bool key="EncodedWithXMLCoder">YES</bool>
 																			<object class="NSColor" id="568110648">
 																				<int key="NSColorSpace">6</int>
@@ -118,27 +120,33 @@
 																		</object>
 																		<int key="HFStringEncoding">30</int>
 																	</object>
-																	<object class="HFVerticalScrollerRepresenter" id="538697614">
-																		<reference key="HFController" ref="921850213"/>
-																		<string key="HFLayoutPosition">{2, 0}</string>
-																		<object class="NSScroller" key="HFRepresenterView" id="1031963982">
-																			<reference key="NSNextResponder" ref="743638744"/>
+																	<object class="HFLineCountingRepresenter" id="83852196">
+																		<reference key="HFController" ref="887705254"/>
+																		<string key="HFLayoutPosition">{-1, 0}</string>
+																		<object class="HFLineCountingView" key="HFRepresenterView" id="650980291">
+																			<reference key="NSNextResponder" ref="221424557"/>
 																			<int key="NSvFlags">272</int>
-																			<string key="NSFrame">{{225, 0}, {15, 135}}</string>
-																			<reference key="NSSuperview" ref="743638744"/>
-																			<reference key="NSTarget" ref="538697614"/>
-																			<string key="NSAction">scrollerDidChangeValue:</string>
-																			<double key="NSPercent">1.000000e+00</double>
+																			<string key="NSFrameSize">{10, 40}</string>
+																			<reference key="NSSuperview" ref="221424557"/>
+																			<reference key="HFFont" ref="776039628"/>
+																			<double key="HFLineHeight">1.400000e+01</double>
+																			<reference key="HFRepresenter" ref="83852196"/>
+																			<int key="HFBytesPerLine">2</int>
+																			<int key="HFLineNumberFormat">0</int>
+																			<bool key="HFUseStringDrawingPath">YES</bool>
 																		</object>
+																		<double key="HFLineHeight">0.000000e+00</double>
+																		<int key="HFMinimumDigitCount">2</int>
+																		<int key="HFLineNumberFormat">0</int>
 																	</object>
 																</object>
 																<bool key="HFMaximizesBytesPerLine">YES</bool>
 															</object>
-															<reference ref="223027096"/>
-															<reference ref="71578706"/>
-															<reference ref="538697614"/>
+															<reference ref="457639080"/>
+															<reference ref="650719041"/>
+															<reference ref="83852196"/>
 														</object>
-														<int key="HFBytesPerLine">8</int>
+														<int key="HFBytesPerLine">2</int>
 														<int key="HFBytesPerColumn">1</int>
 														<reference key="HFFont" ref="776039628"/>
 														<double key="HFLineHeight">1.400000e+01</double>
@@ -148,12 +156,12 @@
 														<bool key="HFSelectable">YES</bool>
 													</object>
 													<string key="HFLayoutPosition">{0, 0}</string>
-													<reference key="HFRepresenterView" ref="1022519332"/>
+													<reference key="HFRepresenterView" ref="79445538"/>
 													<bool key="HFBehavesAsTextField">NO</bool>
-													<reference key="HFRowBackgroundColors" ref="648371395"/>
+													<reference key="HFRowBackgroundColors" ref="567111413"/>
 												</object>
 												<reference key="HFFont" ref="776039628"/>
-												<nil key="HFData"/>
+												<reference key="HFData" ref="1059941393"/>
 												<double key="HFVerticalOffset">0.000000e+00</double>
 												<double key="HFHorizontalContainerOffset">4.000000e+00</double>
 												<double key="HFDefaultLineHeight">1.400000e+01</double>
@@ -163,22 +171,26 @@
 												<bool key="HFAntialias">YES</bool>
 												<bool key="HFEditable">YES</bool>
 											</object>
-											<reference ref="425091242"/>
-											<reference ref="1031963982"/>
+											<reference ref="250846637"/>
+											<reference ref="650980291"/>
 										</object>
-										<string key="NSFrameSize">{240, 135}</string>
-										<reference key="NSSuperview" ref="110803113"/>
+										<string key="NSFrame">{{1, 1}, {68, 40}}</string>
+										<reference key="NSSuperview" ref="944624331"/>
 									</object>
 								</object>
-								<string key="NSFrame">{{20, 94}, {240, 135}}</string>
+								<string key="NSFrame">{{42, 60}, {70, 42}}</string>
 								<reference key="NSSuperview" ref="1001"/>
 								<bool key="NSEnabled">YES</bool>
-								<reference key="HFController" ref="921850213"/>
-								<reference key="HFLayoutRepresenter" ref="921639817"/>
-								<reference key="HFBackgroundColors" ref="648371395"/>
+								<reference key="HFController" ref="887705254"/>
+								<reference key="HFLayoutRepresenter" ref="845268041"/>
+								<reference key="HFBackgroundColors" ref="567111413"/>
+								<bool key="HFBordered">YES</bool>
+								<object class="NSMutableData" key="HFByteArrayMutableData">
+									<bytes key="NS.bytes">/u36zkgWA</bytes>
+								</object>
 							</object>
 						</object>
-						<string key="NSFrame">{{20, 33}, {315, 249}}</string>
+						<string key="NSFrame">{{20, 116}, {165, 166}}</string>
 						<reference key="NSSuperview" ref="1000"/>
 						<string key="label">HFTextView</string>
 						<string key="identifier">53C781D8-3B5C-4138-B642-034072DEADC0</string>
@@ -255,43 +267,45 @@
 						<int key="NSTitlePosition">0</int>
 						<bool key="NSTransparent">NO</bool>
 					</object>
-					<object class="HFTextView" id="944624331">
+					<object class="HFTextView" id="917143214">
 						<reference key="NSNextResponder" ref="1000"/>
 						<int key="NSvFlags">268</int>
 						<object class="NSMutableArray" key="NSSubviews">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<object class="NSView" id="221424557">
-								<reference key="NSNextResponder" ref="944624331"/>
+							<object class="NSView" id="885777432">
+								<reference key="NSNextResponder" ref="917143214"/>
 								<int key="NSvFlags">274</int>
 								<object class="NSMutableArray" key="NSSubviews">
 									<bool key="EncodedWithXMLCoder">YES</bool>
-									<object class="HFRepresenterHexTextView" id="79445538">
-										<reference key="NSNextResponder" ref="221424557"/>
+									<object class="HFRepresenterHexTextView" id="505040832">
+										<reference key="NSNextResponder" ref="885777432"/>
 										<int key="NSvFlags">274</int>
-										<string key="NSFrameSize">{34, 44}</string>
-										<reference key="NSSuperview" ref="221424557"/>
-										<object class="HFHexTextRepresenter" key="HFRepresenter" id="457639080">
-											<object class="HFController" key="HFController" id="887705254">
+										<string key="NSFrameSize">{170, 163}</string>
+										<reference key="NSSuperview" ref="885777432"/>
+										<object class="HFHexTextRepresenter" key="HFRepresenter" id="561354486">
+											<object class="HFController" key="HFController" id="990180212">
 												<object class="NSMutableArray" key="HFRepresenters">
 													<bool key="EncodedWithXMLCoder">YES</bool>
-													<object class="HFLayoutRepresenter" id="845268041">
-														<reference key="HFController" ref="887705254"/>
+													<object class="HFLayoutRepresenter" id="551615572">
+														<reference key="HFController" ref="990180212"/>
 														<string key="HFLayoutPosition">{0, 0}</string>
-														<reference key="HFRepresenterView" ref="221424557"/>
+														<reference key="HFRepresenterView" ref="885777432"/>
 														<object class="NSMutableArray" key="HFRepresenters">
 															<bool key="EncodedWithXMLCoder">YES</bool>
-															<reference ref="457639080"/>
-															<object class="HFStringEncodingTextRepresenter" id="650719041">
-																<reference key="HFController" ref="887705254"/>
+															<reference ref="561354486"/>
+															<object class="HFStringEncodingTextRepresenter" id="995003405">
+																<reference key="HFController" ref="990180212"/>
 																<string key="HFLayoutPosition">{1, 0}</string>
-																<object class="HFRepresenterStringEncodingTextView" key="HFRepresenterView" id="250846637">
-																	<reference key="NSNextResponder" ref="221424557"/>
+																<object class="HFRepresenterStringEncodingTextView" key="HFRepresenterView" id="122029809">
+																	<reference key="NSNextResponder" ref="885777432"/>
 																	<int key="NSvFlags">272</int>
-																	<string key="NSFrame">{{34, 0}, {14, 44}}</string>
-																	<reference key="NSSuperview" ref="221424557"/>
-																	<reference key="HFRepresenter" ref="650719041"/>
+																	<string key="NSFrame">{{170, 0}, {62, 163}}</string>
+																	<reference key="NSSuperview" ref="885777432"/>
+																	<reference key="HFRepresenter" ref="995003405"/>
 																	<reference key="HFFont" ref="776039628"/>
-																	<nil key="HFData"/>
+																	<object class="NSData" key="HFData" id="832406520">
+																		<characters key="NS.bytes"/>
+																	</object>
 																	<double key="HFVerticalOffset">0.000000e+00</double>
 																	<double key="HFHorizontalContainerOffset">4.000000e+00</double>
 																	<double key="HFDefaultLineHeight">1.400000e+01</double>
@@ -303,22 +317,22 @@
 																	<int key="HFStringEncoding">30</int>
 																</object>
 																<bool key="HFBehavesAsTextField">NO</bool>
-																<object class="NSArray" key="HFRowBackgroundColors" id="567111413">
+																<object class="NSArray" key="HFRowBackgroundColors" id="339360687">
 																	<bool key="EncodedWithXMLCoder">YES</bool>
 																	<reference ref="568110648"/>
 																	<reference ref="133965558"/>
 																</object>
 																<int key="HFStringEncoding">30</int>
 															</object>
-															<object class="HFVerticalScrollerRepresenter" id="447994848">
-																<reference key="HFController" ref="887705254"/>
+															<object class="HFVerticalScrollerRepresenter" id="564714582">
+																<reference key="HFController" ref="990180212"/>
 																<string key="HFLayoutPosition">{2, 0}</string>
-																<object class="NSScroller" key="HFRepresenterView" id="785564108">
-																	<reference key="NSNextResponder" ref="221424557"/>
+																<object class="NSScroller" key="HFRepresenterView" id="1063058989">
+																	<reference key="NSNextResponder" ref="885777432"/>
 																	<int key="NSvFlags">272</int>
-																	<string key="NSFrame">{{48, 0}, {15, 44}}</string>
-																	<reference key="NSSuperview" ref="221424557"/>
-																	<reference key="NSTarget" ref="447994848"/>
+																	<string key="NSFrame">{{232, 0}, {15, 163}}</string>
+																	<reference key="NSSuperview" ref="885777432"/>
+																	<reference key="NSTarget" ref="564714582"/>
 																	<string key="NSAction">scrollerDidChangeValue:</string>
 																	<double key="NSPercent">1.000000e+00</double>
 																</object>
@@ -326,11 +340,11 @@
 														</object>
 														<bool key="HFMaximizesBytesPerLine">YES</bool>
 													</object>
-													<reference ref="457639080"/>
-													<reference ref="650719041"/>
-													<reference ref="447994848"/>
+													<reference ref="561354486"/>
+													<reference ref="995003405"/>
+													<reference ref="564714582"/>
 												</object>
-												<int key="HFBytesPerLine">1</int>
+												<int key="HFBytesPerLine">9</int>
 												<int key="HFBytesPerColumn">1</int>
 												<reference key="HFFont" ref="776039628"/>
 												<double key="HFLineHeight">1.400000e+01</double>
@@ -340,12 +354,12 @@
 												<bool key="HFSelectable">YES</bool>
 											</object>
 											<string key="HFLayoutPosition">{0, 0}</string>
-											<reference key="HFRepresenterView" ref="79445538"/>
+											<reference key="HFRepresenterView" ref="505040832"/>
 											<bool key="HFBehavesAsTextField">NO</bool>
-											<reference key="HFRowBackgroundColors" ref="567111413"/>
+											<reference key="HFRowBackgroundColors" ref="339360687"/>
 										</object>
 										<reference key="HFFont" ref="776039628"/>
-										<nil key="HFData"/>
+										<reference key="HFData" ref="832406520"/>
 										<double key="HFVerticalOffset">0.000000e+00</double>
 										<double key="HFHorizontalContainerOffset">4.000000e+00</double>
 										<double key="HFDefaultLineHeight">1.400000e+01</double>
@@ -355,19 +369,20 @@
 										<bool key="HFAntialias">YES</bool>
 										<bool key="HFEditable">YES</bool>
 									</object>
-									<reference ref="250846637"/>
-									<reference ref="785564108"/>
+									<reference ref="122029809"/>
+									<reference ref="1063058989"/>
 								</object>
-								<string key="NSFrameSize">{63, 44}</string>
-								<reference key="NSSuperview" ref="944624331"/>
+								<string key="NSFrame">{{1, 1}, {247, 163}}</string>
+								<reference key="NSSuperview" ref="917143214"/>
 							</object>
 						</object>
-						<string key="NSFrame">{{400, 157}, {63, 44}}</string>
+						<string key="NSFrame">{{266, 116}, {249, 165}}</string>
 						<reference key="NSSuperview" ref="1000"/>
 						<bool key="NSEnabled">YES</bool>
-						<reference key="HFController" ref="887705254"/>
-						<reference key="HFLayoutRepresenter" ref="845268041"/>
-						<reference key="HFBackgroundColors" ref="567111413"/>
+						<reference key="HFController" ref="990180212"/>
+						<reference key="HFLayoutRepresenter" ref="551615572"/>
+						<reference key="HFBackgroundColors" ref="339360687"/>
+						<bool key="HFBordered">YES</bool>
 					</object>
 				</object>
 				<string key="NSFrameSize">{585, 327}</string>
@@ -380,19 +395,19 @@
 				<bool key="EncodedWithXMLCoder">YES</bool>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
-						<string key="label">representedObject</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="110803113"/>
-					</object>
-					<int key="connectionID">46</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
 						<string key="label">draggedView</string>
 						<reference key="source" ref="1001"/>
 						<reference key="destination" ref="944624331"/>
 					</object>
 					<int key="connectionID">48</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">representedObject</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="917143214"/>
+					</object>
+					<int key="connectionID">52</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -432,7 +447,7 @@
 							<reference ref="1025445589"/>
 							<reference ref="71754860"/>
 							<reference ref="1001"/>
-							<reference ref="944624331"/>
+							<reference ref="917143214"/>
 						</object>
 						<reference key="parent" ref="1014"/>
 						<string key="objectName">Library Objects</string>
@@ -442,7 +457,7 @@
 						<reference key="object" ref="1001"/>
 						<object class="NSMutableArray" key="children">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<reference ref="110803113"/>
+							<reference ref="944624331"/>
 						</object>
 						<reference key="parent" ref="1000"/>
 					</object>
@@ -466,14 +481,14 @@
 						<reference key="parent" ref="71754860"/>
 					</object>
 					<object class="IBObjectRecord">
-						<int key="objectID">45</int>
-						<reference key="object" ref="110803113"/>
-						<reference key="parent" ref="1001"/>
+						<int key="objectID">50</int>
+						<reference key="object" ref="917143214"/>
+						<reference key="parent" ref="1000"/>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">47</int>
 						<reference key="object" ref="944624331"/>
-						<reference key="parent" ref="1000"/>
+						<reference key="parent" ref="1001"/>
 					</object>
 				</object>
 			</object>
@@ -490,8 +505,8 @@
 					<string>32.IBPluginDependency</string>
 					<string>33.IBPluginDependency</string>
 					<string>34.IBPluginDependency</string>
-					<string>45.IBPluginDependency</string>
 					<string>47.IBPluginDependency</string>
+					<string>50.IBPluginDependency</string>
 					<string>7.IBEditorWindowLastContentRect</string>
 					<string>7.IBPluginDependency</string>
 					<string>7.IBUserGuides</string>
@@ -528,7 +543,7 @@ b2JqZWN0IHRvIGRlcG9zaXQuA</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.yourcompany.HexFiend_IBPlugin</string>
 					<string>com.yourcompany.HexFiend_IBPlugin</string>
-					<string>{{0, 657}, {585, 327}}</string>
+					<string>{{346, 657}, {585, 327}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<object class="NSMutableArray">
 						<bool key="EncodedWithXMLCoder">YES</bool>
@@ -557,7 +572,7 @@ b2JqZWN0IHRvIGRlcG9zaXQuA</string>
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">48</int>
+			<int key="maxID">52</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">

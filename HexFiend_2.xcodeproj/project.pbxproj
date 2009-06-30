@@ -1375,7 +1375,7 @@
 				GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = YES;
 				INFOPLIST_FILE = "framework/HexFiend_Framework-Info.plist";
 				INSTALL_PATH = "@loader_path/../Frameworks";
-				LD_DYLIB_INSTALL_NAME = "@executable_path/../Frameworks/HexFiend.framework/Versions/A/HexFiend";
+				LD_DYLIB_INSTALL_NAME = "@loader_path/../Frameworks/HexFiend.framework/Versions/A/HexFiend";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -1571,7 +1571,7 @@
 				GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = YES;
 				INFOPLIST_FILE = "framework/HexFiend_Framework-Info.plist";
 				INSTALL_PATH = "@loader_path/../Frameworks";
-				LD_DYLIB_INSTALL_NAME = "@executable_path/../Frameworks/HexFiend.framework/Versions/A/HexFiend";
+				LD_DYLIB_INSTALL_NAME = "@loader_path/../Frameworks/HexFiend.framework/Versions/A/HexFiend";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -1678,7 +1678,7 @@
 				GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = YES;
 				INFOPLIST_FILE = "framework/HexFiend_Framework-Info.plist";
 				INSTALL_PATH = "@loader_path/../Frameworks";
-				LD_DYLIB_INSTALL_NAME = "@executable_path/../Frameworks/HexFiend.framework/Versions/A/HexFiend";
+				LD_DYLIB_INSTALL_NAME = "@loader_path/../Frameworks/HexFiend.framework/Versions/A/HexFiend";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -1787,7 +1787,7 @@
 				GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = YES;
 				INFOPLIST_FILE = "framework/HexFiend_Framework-Info.plist";
 				INSTALL_PATH = "@loader_path/../Frameworks";
-				LD_DYLIB_INSTALL_NAME = "@executable_path/../Frameworks/HexFiend.framework/Versions/A/HexFiend";
+				LD_DYLIB_INSTALL_NAME = "@loader_path/../Frameworks/HexFiend.framework/Versions/A/HexFiend";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -1897,7 +1897,7 @@
 				GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = YES;
 				INFOPLIST_FILE = "framework/HexFiend_Framework-Info.plist";
 				INSTALL_PATH = "@loader_path/../Frameworks";
-				LD_DYLIB_INSTALL_NAME = "@executable_path/../Frameworks/HexFiend.framework/Versions/A/HexFiend";
+				LD_DYLIB_INSTALL_NAME = "@loader_path/../Frameworks/HexFiend.framework/Versions/A/HexFiend";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -2007,7 +2007,7 @@
 				GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = YES;
 				INFOPLIST_FILE = "framework/HexFiend_Framework-Info.plist";
 				INSTALL_PATH = "@loader_path/../Frameworks";
-				LD_DYLIB_INSTALL_NAME = "@executable_path/../Frameworks/HexFiend.framework/Versions/A/HexFiend";
+				LD_DYLIB_INSTALL_NAME = "@loader_path/../Frameworks/HexFiend.framework/Versions/A/HexFiend";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
