@@ -3,7 +3,7 @@
 //  HexFiend_2
 //
 //  Created by Peter Ammon on 11/26/07.
-//  Copyright 2007 __MyCompanyName__. All rights reserved.
+//  Copyright 2007 ridiculous_fish. All rights reserved.
 //
 
 #import <HexFiend/HFLineCountingRepresenter.h>
@@ -158,7 +158,7 @@ NSString *const HFLineCountingRepresenterMinimumViewWidthChanged = @"HFLineCount
 }
 
 - (void)controllerDidChange:(HFControllerPropertyBits)bits {
-    if (bits & HFControllerDisplayedRange) [self updateLineRangeToDraw];
+    if (bits & HFControllerDisplayedLineRange) [self updateLineRangeToDraw];
     if (bits & HFControllerBytesPerLine) [self updateBytesPerLine];
     if (bits & (HFControllerFont | HFControllerLineHeight)) [self updateFontAndLineHeight];
     if (bits & (HFControllerContentLength)) [self updateMinimumViewWidth];

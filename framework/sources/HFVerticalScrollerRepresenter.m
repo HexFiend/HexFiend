@@ -3,7 +3,7 @@
 //  HexFiend_2
 //
 //  Created by Peter Ammon on 11/12/07.
-//  Copyright 2007 __MyCompanyName__. All rights reserved.
+//  Copyright 2007 ridiculous_fish. All rights reserved.
 //
 
 /* Note that on Tiger, NSScroller did not support double in any meaningful way; [scroller doubleValue] always returns 0, and setDoubleValue: doesn't look like it works either. */
@@ -130,7 +130,7 @@
 }
 
 - (void)controllerDidChange:(HFControllerPropertyBits)bits {
-    if (bits & (HFControllerContentLength | HFControllerDisplayedRange)) [self updateScrollerValue];
+    if (bits & (HFControllerContentLength | HFControllerDisplayedLineRange)) [self updateScrollerValue];
 }
 
 + (NSPoint)defaultLayoutPosition {

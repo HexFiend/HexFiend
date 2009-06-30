@@ -3,7 +3,7 @@
 //  HexFiend_2
 //
 //  Created by peter on 1/2/09.
-//  Copyright 2009 __MyCompanyName__. All rights reserved.
+//  Copyright 2009 ridiculous_fish. All rights reserved.
 //
 
 /* NOTE - THIS FILE IS COMPILED -O3 EVEN IN DEBUG BUILDS BECAUSE OF THE MUNGE LOOP (extra build flags for this file in Xcode) */

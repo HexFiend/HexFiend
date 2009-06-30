@@ -3,7 +3,7 @@
 //  HexFiend_2
 //
 //  Created by Peter Ammon on 11/3/07.
-//  Copyright 2007 __MyCompanyName__. All rights reserved.
+//  Copyright 2007 ridiculous_fish. All rights reserved.
 //
 
 #import <HexFiend/HFRepresenterTextView_Internal.h>
@@ -990,9 +990,9 @@ enum LineCoverage_t {
     NSUInteger newBytesPerLine = [self maximumBytesPerLineForViewWidth:size.width];
     double newLineCount = [self maximumAvailableLinesForViewHeight:NSHeight([self bounds])];
     HFControllerPropertyBits bits = 0;
-    if (newBytesPerLine != currentBytesPerLine) bits |= (HFControllerBytesPerLine | HFControllerDisplayedRange);
-    if (newLineCount != currentLineCount) bits |= HFControllerDisplayedRange;
-    if (bits) [[self representer] viewChangedProperties:bits];
+    if (newBytesPerLine != currentBytesPerLine) bits |= (HFControllerBytesPerLine | HFControllerDisplayedLineRange);
+    if (newLineCount != currentLineCount) bits |= HFControllerDisplayedLineRange;
+    if (bits) [[self representer] representerChangedProperties:bits];
 }
 
 - (CGFloat)advancePerByte {

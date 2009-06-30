@@ -3,7 +3,7 @@
 //  HexFiend_2
 //
 //  Created by Peter Ammon on 11/3/07.
-//  Copyright 2007 __MyCompanyName__. All rights reserved.
+//  Copyright 2007 ridiculous_fish. All rights reserved.
 //
 
 #import <Cocoa/Cocoa.h>
@@ -51,8 +51,8 @@
 
 - (void)selectAll:sender;
 
-// Called by the view to indicate that one or more properties has changed
-- (void)viewChangedProperties:(HFControllerPropertyBits)properties;
+// Called by the HFController to indicate that one or more properties has changed
+- (void)representerChangedProperties:(HFControllerPropertyBits)properties;
 
 // Method for simple auto-layout by HFRepresenterLayoutView.  See HFRepresenterLayoutView for comments.
 + (NSPoint)defaultLayoutPosition;

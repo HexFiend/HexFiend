@@ -9,21 +9,10 @@ HexFiend.framework is an Objective-C framework for displaying and manipulating p
 
 HexFiend is designed to handle more data than can fit in memory.  It uses the unsigned long long type pervasively.  The HFRange struct type is analagous to NSRange, but contains unsigned long longs.
 
-Hex Fiend relies heavily on a model-view-controller design.  Unlike most Cocoa controls, it is not possible to simply make a view and give it some data to display.  Instead, you must create a controller and model as well.
+Hex Fiend relies heavily on a model-view-controller design.  Unlike most Cocoa controls, it is not (yet) possible to simply make a view and give it some data to display.  Data is always kept externally to the view.  You must create a controller and model, and hook them together to provide data to the view.
 
-There are two principal model classes: HFByteArray and HFByteSlice.
+There are two principal model classes: HFByteArray and HFByteSlice.  HFByteSlice represents a portion of some source of random access binary data.  By subclassing HFByteSlice, you can enable new sources of random-access binary data to be viewed in Hex Fiend.  HFByteArray is logically a list of ByteSlices and represents the current state of the document.
 
-HFByteSlice represents a portion (slice) of some source of data, which might be a file, in-memory data, or algorithmically computed data.  The data is expected to be random-access.
-
-HFByteSlice has three primitive methods:
-
-- (unsigned long long)length;
-- (void)copyBytes:(unsigned char *)dst range:(HFRange)range;
-- (HFByteSlice *)subsliceWithRange:(HFRange)range;
-
-These are used to determine how much data is contained within a slice, to read the data, and to produce a subslice of the given slice.  New data sources can be added by subclassing HFByteSlice, and should override these methods.
-
-HFByteArray is logically a list of byte slices.
 
 
 */

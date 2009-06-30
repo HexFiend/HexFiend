@@ -3,7 +3,7 @@
 //  HexFiend_2
 //
 //  Created by Peter Ammon on 11/3/07.
-//  Copyright 2007 __MyCompanyName__. All rights reserved.
+//  Copyright 2007 ridiculous_fish. All rights reserved.
 //
 
 #import <HexFiend/HFTextRepresenter.h>
@@ -101,10 +101,10 @@
     if (bits & (HFControllerFont | HFControllerLineHeight)) {
         [[self view] setFont:[[self controller] font]];
     }
-    if (bits & (HFControllerContentValue | HFControllerDisplayedRange)) {
+    if (bits & (HFControllerContentValue | HFControllerDisplayedLineRange)) {
         [self updateText];
     }
-    if (bits & (HFControllerSelectedRanges | HFControllerDisplayedRange)) {
+    if (bits & (HFControllerSelectedRanges | HFControllerDisplayedLineRange)) {
         [[self view] updateSelectedRanges];
     }
     if (bits & (HFControllerSelectionPulseAmount)) {

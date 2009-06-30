@@ -3,7 +3,7 @@
 //  HexFiend_2
 //
 //  Created by Peter Ammon on 11/3/07.
-//  Copyright 2007 __MyCompanyName__. All rights reserved.
+//  Copyright 2007 ridiculous_fish. All rights reserved.
 //
 
 #import <HexFiend/HFController.h>
@@ -259,7 +259,7 @@ static inline Class preferredByteArrayClass(void) {
 #endif
     if (! HFFPRangeEqualsRange(range, displayedLineRange)) {
         displayedLineRange = range;
-        [self _addPropertyChangeBits:HFControllerDisplayedRange];
+        [self _addPropertyChangeBits:HFControllerDisplayedLineRange];
     }
 }
 
@@ -433,7 +433,7 @@ static inline Class preferredByteArrayClass(void) {
     HFASSERT(HFRangeIsSubrangeOfRange(range, HFRangeMake(0, [self contentsLength])));
     
     NSUInteger newGenerationIndex = [byteArray changeGenerationCount];
-    if (newGenerationIndex != cachedGenerationIndex || ! HFRangeEqualsRange(range, cachedRange)) {
+    if (cachedData == nil || newGenerationIndex != cachedGenerationIndex || ! HFRangeEqualsRange(range, cachedRange)) {
         //TODO - allow for subranges here
         [cachedData release];
         cachedGenerationIndex = newGenerationIndex;
@@ -501,7 +501,7 @@ static inline Class preferredByteArrayClass(void) {
     if (! HFRangeEqualsRange(proposedNewDisplayRange, displayedContentsRange) || ! HFFPRangeEqualsRange(proposedNewLineRange, displayedLineRange)) {
         displayedContentsRange = proposedNewDisplayRange;
         displayedLineRange = proposedNewLineRange;
-        [self _addPropertyChangeBits:HFControllerDisplayedRange];
+        [self _addPropertyChangeBits:HFControllerDisplayedLineRange];
     }
 }
 
@@ -555,6 +555,8 @@ static inline Class preferredByteArrayClass(void) {
     [val retain];
     [byteArray release];
     byteArray = val;
+    [cachedData release];
+    cachedData = nil;
     [byteArray addObserver:self forKeyPath:@"changesAreLocked" options:0 context:KVOContextChangesAreLocked];
     [self _updateDisplayedRange];
     [self _addPropertyChangeBits: HFControllerContentValue | HFControllerContentLength];
@@ -636,9 +638,9 @@ static inline Class preferredByteArrayClass(void) {
         [self _updateBytesPerLine];
         remainingProperties &= ~HFControllerBytesPerLine;
     }
-    if (remainingProperties & HFControllerDisplayedRange) {
+    if (remainingProperties & HFControllerDisplayedLineRange) {
         [self _updateDisplayedRange];
-        remainingProperties &= ~HFControllerDisplayedRange;
+        remainingProperties &= ~HFControllerDisplayedLineRange;
     }
     if (remainingProperties) {
         NSLog(@"Unknown properties: %lx", remainingProperties);

@@ -60,7 +60,6 @@ NSImage *HFImageNamed(NSString *name) {
 }
 
 - (BOOL)isEqual:(id)obj {
-    HFASSERT(obj != NULL);
     if (! [obj isKindOfClass:[HFRangeWrapper class]]) return NO;
     else return HFRangeEqualsRange(range, [obj HFRange]);
 }

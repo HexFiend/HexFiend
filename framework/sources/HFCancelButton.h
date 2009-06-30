@@ -3,7 +3,7 @@
 //  HexFiend_2
 //
 //  Created by peter on 6/11/08.
-//  Copyright 2008 __MyCompanyName__. All rights reserved.
+//  Copyright 2008 ridiculous_fish. All rights reserved.
 //
 
 #import <AppKit/NSButton.h>
