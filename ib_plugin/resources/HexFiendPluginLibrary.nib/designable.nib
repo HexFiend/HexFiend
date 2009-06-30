@@ -1,0 +1,601 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.03">
+	<data>
+		<int key="IBDocument.SystemTarget">1050</int>
+		<string key="IBDocument.SystemVersion">9J61</string>
+		<string key="IBDocument.InterfaceBuilderVersion">677</string>
+		<string key="IBDocument.AppKitVersion">949.46</string>
+		<string key="IBDocument.HIToolboxVersion">353.00</string>
+		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
+			<bool key="EncodedWithXMLCoder">YES</bool>
+			<integer value="18"/>
+		</object>
+		<object class="NSArray" key="IBDocument.PluginDependencies">
+			<bool key="EncodedWithXMLCoder">YES</bool>
+			<string>com.apple.InterfaceBuilderKit</string>
+			<string>com.yourcompany.HexFiend_IBPlugin</string>
+			<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+		</object>
+		<object class="NSMutableDictionary" key="IBDocument.Metadata">
+			<bool key="EncodedWithXMLCoder">YES</bool>
+			<object class="NSArray" key="dict.sortedKeys">
+				<bool key="EncodedWithXMLCoder">YES</bool>
+			</object>
+			<object class="NSMutableArray" key="dict.values">
+				<bool key="EncodedWithXMLCoder">YES</bool>
+			</object>
+		</object>
+		<object class="NSMutableArray" key="IBDocument.RootObjects" id="1012">
+			<bool key="EncodedWithXMLCoder">YES</bool>
+			<object class="NSCustomObject" id="1013">
+				<string key="NSClassName">NSObject</string>
+			</object>
+			<object class="NSCustomObject" id="1015">
+				<string key="NSClassName">FirstResponder</string>
+			</object>
+			<object class="NSCustomObject" id="1016">
+				<string key="NSClassName">NSApplication</string>
+			</object>
+			<object class="NSCustomView" id="1000">
+				<reference key="NSNextResponder"/>
+				<int key="NSvFlags">268</int>
+				<object class="NSMutableArray" key="NSSubviews">
+					<bool key="EncodedWithXMLCoder">YES</bool>
+					<object class="IBLibraryObjectTemplate" id="1001">
+						<reference key="NSNextResponder" ref="1000"/>
+						<int key="NSvFlags">268</int>
+						<object class="NSMutableArray" key="NSSubviews">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<object class="HFTextView" id="944624331">
+								<reference key="NSNextResponder" ref="1001"/>
+								<int key="NSvFlags">268</int>
+								<object class="NSMutableArray" key="NSSubviews">
+									<bool key="EncodedWithXMLCoder">YES</bool>
+									<object class="NSView" id="221424557">
+										<reference key="NSNextResponder" ref="944624331"/>
+										<int key="NSvFlags">274</int>
+										<object class="NSMutableArray" key="NSSubviews">
+											<bool key="EncodedWithXMLCoder">YES</bool>
+											<object class="HFRepresenterHexTextView" id="79445538">
+												<reference key="NSNextResponder" ref="221424557"/>
+												<int key="NSvFlags">274</int>
+												<string key="NSFrame">{{10, 0}, {38, 40}}</string>
+												<reference key="NSSuperview" ref="221424557"/>
+												<object class="HFHexTextRepresenter" key="HFRepresenter" id="457639080">
+													<object class="HFController" key="HFController" id="887705254">
+														<object class="NSMutableArray" key="HFRepresenters">
+															<bool key="EncodedWithXMLCoder">YES</bool>
+															<object class="HFLayoutRepresenter" id="845268041">
+																<reference key="HFController" ref="887705254"/>
+																<string key="HFLayoutPosition">{0, 0}</string>
+																<reference key="HFRepresenterView" ref="221424557"/>
+																<object class="NSMutableArray" key="HFRepresenters">
+																	<bool key="EncodedWithXMLCoder">YES</bool>
+																	<reference ref="457639080"/>
+																	<object class="HFStringEncodingTextRepresenter" id="650719041">
+																		<reference key="HFController" ref="887705254"/>
+																		<string key="HFLayoutPosition">{1, 0}</string>
+																		<object class="HFRepresenterStringEncodingTextView" key="HFRepresenterView" id="250846637">
+																			<reference key="NSNextResponder" ref="221424557"/>
+																			<int key="NSvFlags">272</int>
+																			<string key="NSFrame">{{48, 0}, {20, 40}}</string>
+																			<reference key="NSSuperview" ref="221424557"/>
+																			<reference key="HFRepresenter" ref="650719041"/>
+																			<object class="NSFont" key="HFFont" id="776039628">
+																				<string key="NSName">Monaco</string>
+																				<double key="NSSize">1.000000e+01</double>
+																				<int key="NSfFlags">16</int>
+																			</object>
+																			<object class="NSData" key="HFData" id="1059941393">
+																				<bytes key="NS.bytes">/u36zkgWA</bytes>
+																			</object>
+																			<double key="HFVerticalOffset">0.000000e+00</double>
+																			<double key="HFHorizontalContainerOffset">4.000000e+00</double>
+																			<double key="HFDefaultLineHeight">1.400000e+01</double>
+																			<int key="HFBytesBetweenVerticalGuides">0</int>
+																			<int key="HFStartingLineBackgroundColorIndex">0</int>
+																			<nil key="HFRowBackgroundColors"/>
+																			<bool key="HFAntialias">YES</bool>
+																			<bool key="HFEditable">YES</bool>
+																			<int key="HFStringEncoding">30</int>
+																		</object>
+																		<bool key="HFBehavesAsTextField">NO</bool>
+																		<object class="NSArray" key="HFRowBackgroundColors" id="567111413">
+																			<bool key="EncodedWithXMLCoder">YES</bool>
+																			<object class="NSColor" id="568110648">
+																				<int key="NSColorSpace">6</int>
+																				<string key="NSCatalogName">System</string>
+																				<string key="NSColorName">controlBackgroundColor</string>
+																				<object class="NSColor" key="NSColor" id="500930343">
+																					<int key="NSColorSpace">3</int>
+																					<bytes key="NSWhite">MC42NjY2NjY2OQA</bytes>
+																				</object>
+																			</object>
+																			<object class="NSColor" id="133965558">
+																				<int key="NSColorSpace">6</int>
+																				<string key="NSCatalogName">System</string>
+																				<string key="NSColorName">controlAlternatingRowColor</string>
+																				<reference key="NSColor" ref="500930343"/>
+																			</object>
+																		</object>
+																		<int key="HFStringEncoding">30</int>
+																	</object>
+																	<object class="HFLineCountingRepresenter" id="83852196">
+																		<reference key="HFController" ref="887705254"/>
+																		<string key="HFLayoutPosition">{-1, 0}</string>
+																		<object class="HFLineCountingView" key="HFRepresenterView" id="650980291">
+																			<reference key="NSNextResponder" ref="221424557"/>
+																			<int key="NSvFlags">272</int>
+																			<string key="NSFrameSize">{10, 40}</string>
+																			<reference key="NSSuperview" ref="221424557"/>
+																			<reference key="HFFont" ref="776039628"/>
+																			<double key="HFLineHeight">1.400000e+01</double>
+																			<reference key="HFRepresenter" ref="83852196"/>
+																			<int key="HFBytesPerLine">2</int>
+																			<int key="HFLineNumberFormat">0</int>
+																			<bool key="HFUseStringDrawingPath">YES</bool>
+																		</object>
+																		<double key="HFLineHeight">0.000000e+00</double>
+																		<int key="HFMinimumDigitCount">2</int>
+																		<int key="HFLineNumberFormat">0</int>
+																	</object>
+																</object>
+																<bool key="HFMaximizesBytesPerLine">YES</bool>
+															</object>
+															<reference ref="457639080"/>
+															<reference ref="650719041"/>
+															<reference ref="83852196"/>
+														</object>
+														<int key="HFBytesPerLine">2</int>
+														<int key="HFBytesPerColumn">1</int>
+														<reference key="HFFont" ref="776039628"/>
+														<double key="HFLineHeight">1.400000e+01</double>
+														<bool key="HFAntialias">YES</bool>
+														<bool key="HFOverwriteMode">NO</bool>
+														<bool key="HFEditable">YES</bool>
+														<bool key="HFSelectable">YES</bool>
+													</object>
+													<string key="HFLayoutPosition">{0, 0}</string>
+													<reference key="HFRepresenterView" ref="79445538"/>
+													<bool key="HFBehavesAsTextField">NO</bool>
+													<reference key="HFRowBackgroundColors" ref="567111413"/>
+												</object>
+												<reference key="HFFont" ref="776039628"/>
+												<reference key="HFData" ref="1059941393"/>
+												<double key="HFVerticalOffset">0.000000e+00</double>
+												<double key="HFHorizontalContainerOffset">4.000000e+00</double>
+												<double key="HFDefaultLineHeight">1.400000e+01</double>
+												<int key="HFBytesBetweenVerticalGuides">4</int>
+												<int key="HFStartingLineBackgroundColorIndex">0</int>
+												<nil key="HFRowBackgroundColors"/>
+												<bool key="HFAntialias">YES</bool>
+												<bool key="HFEditable">YES</bool>
+											</object>
+											<reference ref="250846637"/>
+											<reference ref="650980291"/>
+										</object>
+										<string key="NSFrame">{{1, 1}, {68, 40}}</string>
+										<reference key="NSSuperview" ref="944624331"/>
+									</object>
+								</object>
+								<string key="NSFrame">{{42, 60}, {70, 42}}</string>
+								<reference key="NSSuperview" ref="1001"/>
+								<bool key="NSEnabled">YES</bool>
+								<reference key="HFController" ref="887705254"/>
+								<reference key="HFLayoutRepresenter" ref="845268041"/>
+								<reference key="HFBackgroundColors" ref="567111413"/>
+								<bool key="HFBordered">YES</bool>
+								<object class="NSMutableData" key="HFByteArrayMutableData">
+									<bytes key="NS.bytes">/u36zkgWA</bytes>
+								</object>
+							</object>
+						</object>
+						<string key="NSFrame">{{20, 116}, {165, 166}}</string>
+						<reference key="NSSuperview" ref="1000"/>
+						<string key="label">HFTextView</string>
+						<string key="identifier">53C781D8-3B5C-4138-B642-034072DEADC0</string>
+						<nil key="briefDescription"/>
+						<nil key="fullDescription"/>
+						<string key="initialCategoryPath"/>
+						<nil key="draggableView"/>
+						<nil key="draggedView"/>
+						<nil key="representedObject"/>
+						<nil key="filterableNames"/>
+						<nil key="subtitle"/>
+						<int key="animationScalingMode">0</int>
+					</object>
+					<object class="NSTextField" id="71754860">
+						<reference key="NSNextResponder" ref="1000"/>
+						<int key="NSvFlags">268</int>
+						<string key="NSFrame">{{20, 290}, {117, 17}}</string>
+						<reference key="NSSuperview" ref="1000"/>
+						<bool key="NSEnabled">YES</bool>
+						<object class="NSTextFieldCell" key="NSCell" id="787386790">
+							<int key="NSCellFlags">67239488</int>
+							<int key="NSCellFlags2">272630784</int>
+							<string key="NSContents">Template</string>
+							<object class="NSFont" key="NSSupport" id="1007">
+								<string key="NSName">LucidaGrande</string>
+								<double key="NSSize">1.300000e+01</double>
+								<int key="NSfFlags">1044</int>
+							</object>
+							<reference key="NSControlView" ref="71754860"/>
+							<object class="NSColor" key="NSBackgroundColor">
+								<int key="NSColorSpace">6</int>
+								<string key="NSCatalogName">System</string>
+								<string key="NSColorName">controlColor</string>
+								<reference key="NSColor" ref="500930343"/>
+							</object>
+							<object class="NSColor" key="NSTextColor">
+								<int key="NSColorSpace">6</int>
+								<string key="NSCatalogName">System</string>
+								<string key="NSColorName">controlTextColor</string>
+								<object class="NSColor" key="NSColor">
+									<int key="NSColorSpace">3</int>
+									<bytes key="NSWhite">MAA</bytes>
+								</object>
+							</object>
+						</object>
+					</object>
+					<object class="NSBox" id="1025445589">
+						<reference key="NSNextResponder" ref="1000"/>
+						<int key="NSvFlags">12</int>
+						<string key="NSFrame">{{20, 288}, {224, 5}}</string>
+						<reference key="NSSuperview" ref="1000"/>
+						<string key="NSOffsets">{0, 0}</string>
+						<object class="NSTextFieldCell" key="NSTitleCell">
+							<int key="NSCellFlags">67239424</int>
+							<int key="NSCellFlags2">0</int>
+							<string key="NSContents">Box</string>
+							<reference key="NSSupport" ref="1007"/>
+							<object class="NSColor" key="NSBackgroundColor">
+								<int key="NSColorSpace">6</int>
+								<string key="NSCatalogName">System</string>
+								<string key="NSColorName">textBackgroundColor</string>
+								<object class="NSColor" key="NSColor">
+									<int key="NSColorSpace">3</int>
+									<bytes key="NSWhite">MQA</bytes>
+								</object>
+							</object>
+							<object class="NSColor" key="NSTextColor">
+								<int key="NSColorSpace">3</int>
+								<bytes key="NSWhite">MCAwLjgwMDAwMDAxAA</bytes>
+							</object>
+						</object>
+						<int key="NSBorderType">3</int>
+						<int key="NSBoxType">2</int>
+						<int key="NSTitlePosition">0</int>
+						<bool key="NSTransparent">NO</bool>
+					</object>
+					<object class="HFTextView" id="917143214">
+						<reference key="NSNextResponder" ref="1000"/>
+						<int key="NSvFlags">268</int>
+						<object class="NSMutableArray" key="NSSubviews">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<object class="NSView" id="885777432">
+								<reference key="NSNextResponder" ref="917143214"/>
+								<int key="NSvFlags">274</int>
+								<object class="NSMutableArray" key="NSSubviews">
+									<bool key="EncodedWithXMLCoder">YES</bool>
+									<object class="HFRepresenterHexTextView" id="505040832">
+										<reference key="NSNextResponder" ref="885777432"/>
+										<int key="NSvFlags">274</int>
+										<string key="NSFrameSize">{170, 163}</string>
+										<reference key="NSSuperview" ref="885777432"/>
+										<object class="HFHexTextRepresenter" key="HFRepresenter" id="561354486">
+											<object class="HFController" key="HFController" id="990180212">
+												<object class="NSMutableArray" key="HFRepresenters">
+													<bool key="EncodedWithXMLCoder">YES</bool>
+													<object class="HFLayoutRepresenter" id="551615572">
+														<reference key="HFController" ref="990180212"/>
+														<string key="HFLayoutPosition">{0, 0}</string>
+														<reference key="HFRepresenterView" ref="885777432"/>
+														<object class="NSMutableArray" key="HFRepresenters">
+															<bool key="EncodedWithXMLCoder">YES</bool>
+															<reference ref="561354486"/>
+															<object class="HFStringEncodingTextRepresenter" id="995003405">
+																<reference key="HFController" ref="990180212"/>
+																<string key="HFLayoutPosition">{1, 0}</string>
+																<object class="HFRepresenterStringEncodingTextView" key="HFRepresenterView" id="122029809">
+																	<reference key="NSNextResponder" ref="885777432"/>
+																	<int key="NSvFlags">272</int>
+																	<string key="NSFrame">{{170, 0}, {62, 163}}</string>
+																	<reference key="NSSuperview" ref="885777432"/>
+																	<reference key="HFRepresenter" ref="995003405"/>
+																	<reference key="HFFont" ref="776039628"/>
+																	<object class="NSData" key="HFData" id="832406520">
+																		<characters key="NS.bytes"/>
+																	</object>
+																	<double key="HFVerticalOffset">0.000000e+00</double>
+																	<double key="HFHorizontalContainerOffset">4.000000e+00</double>
+																	<double key="HFDefaultLineHeight">1.400000e+01</double>
+																	<int key="HFBytesBetweenVerticalGuides">0</int>
+																	<int key="HFStartingLineBackgroundColorIndex">0</int>
+																	<nil key="HFRowBackgroundColors"/>
+																	<bool key="HFAntialias">YES</bool>
+																	<bool key="HFEditable">YES</bool>
+																	<int key="HFStringEncoding">30</int>
+																</object>
+																<bool key="HFBehavesAsTextField">NO</bool>
+																<object class="NSArray" key="HFRowBackgroundColors" id="339360687">
+																	<bool key="EncodedWithXMLCoder">YES</bool>
+																	<reference ref="568110648"/>
+																	<reference ref="133965558"/>
+																</object>
+																<int key="HFStringEncoding">30</int>
+															</object>
+															<object class="HFVerticalScrollerRepresenter" id="564714582">
+																<reference key="HFController" ref="990180212"/>
+																<string key="HFLayoutPosition">{2, 0}</string>
+																<object class="NSScroller" key="HFRepresenterView" id="1063058989">
+																	<reference key="NSNextResponder" ref="885777432"/>
+																	<int key="NSvFlags">272</int>
+																	<string key="NSFrame">{{232, 0}, {15, 163}}</string>
+																	<reference key="NSSuperview" ref="885777432"/>
+																	<reference key="NSTarget" ref="564714582"/>
+																	<string key="NSAction">scrollerDidChangeValue:</string>
+																	<double key="NSPercent">1.000000e+00</double>
+																</object>
+															</object>
+														</object>
+														<bool key="HFMaximizesBytesPerLine">YES</bool>
+													</object>
+													<reference ref="561354486"/>
+													<reference ref="995003405"/>
+													<reference ref="564714582"/>
+												</object>
+												<int key="HFBytesPerLine">9</int>
+												<int key="HFBytesPerColumn">1</int>
+												<reference key="HFFont" ref="776039628"/>
+												<double key="HFLineHeight">1.400000e+01</double>
+												<bool key="HFAntialias">YES</bool>
+												<bool key="HFOverwriteMode">NO</bool>
+												<bool key="HFEditable">YES</bool>
+												<bool key="HFSelectable">YES</bool>
+											</object>
+											<string key="HFLayoutPosition">{0, 0}</string>
+											<reference key="HFRepresenterView" ref="505040832"/>
+											<bool key="HFBehavesAsTextField">NO</bool>
+											<reference key="HFRowBackgroundColors" ref="339360687"/>
+										</object>
+										<reference key="HFFont" ref="776039628"/>
+										<reference key="HFData" ref="832406520"/>
+										<double key="HFVerticalOffset">0.000000e+00</double>
+										<double key="HFHorizontalContainerOffset">4.000000e+00</double>
+										<double key="HFDefaultLineHeight">1.400000e+01</double>
+										<int key="HFBytesBetweenVerticalGuides">4</int>
+										<int key="HFStartingLineBackgroundColorIndex">0</int>
+										<nil key="HFRowBackgroundColors"/>
+										<bool key="HFAntialias">YES</bool>
+										<bool key="HFEditable">YES</bool>
+									</object>
+									<reference ref="122029809"/>
+									<reference ref="1063058989"/>
+								</object>
+								<string key="NSFrame">{{1, 1}, {247, 163}}</string>
+								<reference key="NSSuperview" ref="917143214"/>
+							</object>
+						</object>
+						<string key="NSFrame">{{266, 116}, {249, 165}}</string>
+						<reference key="NSSuperview" ref="1000"/>
+						<bool key="NSEnabled">YES</bool>
+						<reference key="HFController" ref="990180212"/>
+						<reference key="HFLayoutRepresenter" ref="551615572"/>
+						<reference key="HFBackgroundColors" ref="339360687"/>
+						<bool key="HFBordered">YES</bool>
+					</object>
+				</object>
+				<string key="NSFrameSize">{585, 327}</string>
+				<reference key="NSSuperview"/>
+				<string key="NSClassName">NSView</string>
+			</object>
+		</object>
+		<object class="IBObjectContainer" key="IBDocument.Objects">
+			<object class="NSMutableArray" key="connectionRecords">
+				<bool key="EncodedWithXMLCoder">YES</bool>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">draggedView</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="944624331"/>
+					</object>
+					<int key="connectionID">48</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">representedObject</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="917143214"/>
+					</object>
+					<int key="connectionID">52</int>
+				</object>
+			</object>
+			<object class="IBMutableOrderedSet" key="objectRecords">
+				<object class="NSArray" key="orderedObjects">
+					<bool key="EncodedWithXMLCoder">YES</bool>
+					<object class="IBObjectRecord">
+						<int key="objectID">0</int>
+						<object class="NSArray" key="object" id="1014">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+						</object>
+						<reference key="children" ref="1012"/>
+						<nil key="parent"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">-2</int>
+						<reference key="object" ref="1013"/>
+						<reference key="parent" ref="1014"/>
+						<string type="base64-UTF8" key="objectName">RmlsZSdzIE93bmVyA</string>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">-1</int>
+						<reference key="object" ref="1015"/>
+						<reference key="parent" ref="1014"/>
+						<string key="objectName">First Responder</string>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">-3</int>
+						<reference key="object" ref="1016"/>
+						<reference key="parent" ref="1014"/>
+						<string key="objectName">Application</string>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">7</int>
+						<reference key="object" ref="1000"/>
+						<object class="NSMutableArray" key="children">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<reference ref="1025445589"/>
+							<reference ref="71754860"/>
+							<reference ref="1001"/>
+							<reference ref="917143214"/>
+						</object>
+						<reference key="parent" ref="1014"/>
+						<string key="objectName">Library Objects</string>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">18</int>
+						<reference key="object" ref="1001"/>
+						<object class="NSMutableArray" key="children">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<reference ref="944624331"/>
+						</object>
+						<reference key="parent" ref="1000"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">32</int>
+						<reference key="object" ref="1025445589"/>
+						<reference key="parent" ref="1000"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">33</int>
+						<reference key="object" ref="71754860"/>
+						<object class="NSMutableArray" key="children">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<reference ref="787386790"/>
+						</object>
+						<reference key="parent" ref="1000"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">34</int>
+						<reference key="object" ref="787386790"/>
+						<reference key="parent" ref="71754860"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">50</int>
+						<reference key="object" ref="917143214"/>
+						<reference key="parent" ref="1000"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">47</int>
+						<reference key="object" ref="944624331"/>
+						<reference key="parent" ref="1001"/>
+					</object>
+				</object>
+			</object>
+			<object class="NSMutableDictionary" key="flattenedProperties">
+				<bool key="EncodedWithXMLCoder">YES</bool>
+				<object class="NSMutableArray" key="dict.sortedKeys">
+					<bool key="EncodedWithXMLCoder">YES</bool>
+					<string>-1.IBPluginDependency</string>
+					<string>-2.IBPluginDependency</string>
+					<string>-3.IBPluginDependency</string>
+					<string>18.IBPluginDependency</string>
+					<string>18.notes</string>
+					<string>18.showNotes</string>
+					<string>32.IBPluginDependency</string>
+					<string>33.IBPluginDependency</string>
+					<string>34.IBPluginDependency</string>
+					<string>47.IBPluginDependency</string>
+					<string>50.IBPluginDependency</string>
+					<string>7.IBEditorWindowLastContentRect</string>
+					<string>7.IBPluginDependency</string>
+					<string>7.IBUserGuides</string>
+					<string>7.WindowOrigin</string>
+					<string>7.editorWindowContentRectSynchronizationRect</string>
+				</object>
+				<object class="NSMutableArray" key="dict.values">
+					<bool key="EncodedWithXMLCoder">YES</bool>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilderKit</string>
+					<string>com.apple.InterfaceBuilderKit</string>
+					<string>com.apple.InterfaceBuilderKit</string>
+					<object class="NSAttributedString">
+						<string type="base64-UTF8" key="NSString">SWYgeW91IHdvdWxkIGxpa2UgeW91ciB2aWV3IHRvIGFuaW1hdGUgZnJvbSBhIHNtYWxsLCBpY29uaWMg
+cmVwcmVzZW50YXRpb24sIHRvIGEgZmluYWwgcmVwcmVzZW50YXRpb24sIGNvbm5lY3QgdGhpcyB2aWV3
+J3MgJ2RyYWdnZWRWaWV3JyBvdXRsZXQgYnkgY29udHJvbCBjbGlja2luZyBvbiBpdC4KCklmIHRoZSBv
+YmplY3QgeW91IHdvdWxkIGxpa2UgZGVwb3NpdGVkIGFmdGVyIHRoZSBkcmFnLCBpcyBzb21ldGhpbmcg
+b3RoZXIgdGhhbiB0aGlzIHZpZXcncyBzdWJ2aWV3LCBvciBkcmFnZ2VkVmlldywgdGhlbiB5b3Ugc2hv
+dWxkIGNvbm5lY3QgdGhlIHJlcHJlc2VudGVkT2JqZWN0IG91dGxldCBvZiB0aGlzIHZpZXcgdG8gYW4g
+b2JqZWN0IHRvIGRlcG9zaXQuA</string>
+						<object class="NSDictionary" key="NSAttributes">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<object class="NSArray" key="dict.sortedKeys">
+								<bool key="EncodedWithXMLCoder">YES</bool>
+							</object>
+							<object class="NSMutableArray" key="dict.values">
+								<bool key="EncodedWithXMLCoder">YES</bool>
+							</object>
+						</object>
+					</object>
+					<integer value="1"/>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.yourcompany.HexFiend_IBPlugin</string>
+					<string>com.yourcompany.HexFiend_IBPlugin</string>
+					<string>{{346, 657}, {585, 327}}</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<object class="NSMutableArray">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+					</object>
+					<string>{332, 343}</string>
+					<string>{{403, 401}, {264, 327}}</string>
+				</object>
+			</object>
+			<object class="NSMutableDictionary" key="unlocalizedProperties">
+				<bool key="EncodedWithXMLCoder">YES</bool>
+				<object class="NSArray" key="dict.sortedKeys">
+					<bool key="EncodedWithXMLCoder">YES</bool>
+				</object>
+				<object class="NSMutableArray" key="dict.values">
+					<bool key="EncodedWithXMLCoder">YES</bool>
+				</object>
+			</object>
+			<nil key="activeLocalization"/>
+			<object class="NSMutableDictionary" key="localizations">
+				<bool key="EncodedWithXMLCoder">YES</bool>
+				<object class="NSArray" key="dict.sortedKeys">
+					<bool key="EncodedWithXMLCoder">YES</bool>
+				</object>
+				<object class="NSMutableArray" key="dict.values">
+					<bool key="EncodedWithXMLCoder">YES</bool>
+				</object>
+			</object>
+			<nil key="sourceID"/>
+			<int key="maxID">52</int>
+		</object>
+		<object class="IBClassDescriber" key="IBDocument.Classes">
+			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
+				<bool key="EncodedWithXMLCoder">YES</bool>
+				<object class="IBPartialClassDescription">
+					<string key="className">HFTextView</string>
+					<string key="superclassName">NSControl</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">framework/sources/HFTextView.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">NSObject</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">framework/sources/HFProgressTracker.h</string>
+					</object>
+				</object>
+			</object>
+		</object>
+		<int key="IBDocument.localizationMode">0</int>
+		<string key="IBDocument.LastKnownRelativeProjectPath">../../HexFiend_2.xcodeproj</string>
+		<int key="IBDocument.defaultPropertyAccessControl">3</int>
+	</data>
+</archive>
