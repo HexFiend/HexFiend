@@ -210,6 +210,7 @@
 			<array>
 				<string>active-target-popup</string>
 				<string>active-buildstyle-popup</string>
+				<string>active-executable-popup</string>
 				<string>action</string>
 				<string>NSToolbarFlexibleSpaceItem</string>
 				<string>buildOrClean</string>
@@ -231,6 +232,8 @@
 			<key>Layout</key>
 			<array>
 				<dict>
+					<key>BecomeActive</key>
+					<true/>
 					<key>ContentConfiguration</key>
 					<dict>
 						<key>PBXBottomSmartGroupGIDs</key>
@@ -278,6 +281,8 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
+									<integer>17</integer>
+									<integer>2</integer>
 									<integer>0</integer>
 								</array>
 							</array>
@@ -301,7 +306,7 @@
 							<real>401</real>
 						</array>
 						<key>RubberWindowFrame</key>
-						<string>500 339 1420 839 0 0 1920 1178 </string>
+						<string>260 189 1420 839 0 0 1680 1028 </string>
 					</dict>
 					<key>Module</key>
 					<string>PBXSmartGroupTreeModule</string>
@@ -317,7 +322,7 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>HFController.m</string>
+								<string>FiendlingAppDelegate.h</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -325,11 +330,11 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>HFController.m</string>
+										<string>FiendlingAppDelegate.h</string>
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>D03E846D0FF9B4A600E09E56</string>
+										<string>D0B42A370FF9CE5E00DF27E5</string>
 										<key>history</key>
 										<array>
 											<string>D0A319CD0E83A69300A95B45</string>
@@ -391,7 +396,6 @@
 											<string>D00C164C0FF49058006D021F</string>
 											<string>D05E7B0A0FF61BC600767D95</string>
 											<string>D05E7B2D0FF61C7800767D95</string>
-											<string>D05E7C120FF63EF400767D95</string>
 											<string>D05E7C290FF63F9D00767D95</string>
 											<string>D0B4215F0FF73E6100DF27E5</string>
 											<string>D0B421D10FF8334000DF27E5</string>
@@ -433,7 +437,8 @@
 											<string>D03E83F10FF97E9A00E09E56</string>
 											<string>D03E841F0FF98C3400E09E56</string>
 											<string>D03E84470FF99B3F00E09E56</string>
-											<string>D03E84480FF99B3F00E09E56</string>
+											<string>D0B42A350FF9CE5E00DF27E5</string>
+											<string>D05E7C120FF63EF400767D95</string>
 										</array>
 										<key>prevStack</key>
 										<array>
@@ -492,10 +497,9 @@
 											<string>D0B427BC0FF8DB2F00DF27E5</string>
 											<string>D0B429610FF8F01F00DF27E5</string>
 											<string>D0B429950FF8F0DC00DF27E5</string>
-											<string>D03E83F20FF97E9A00E09E56</string>
 											<string>D03E83F30FF97E9A00E09E56</string>
-											<string>D03E84200FF98C3400E09E56</string>
 											<string>D03E84490FF99B3F00E09E56</string>
+											<string>D0B42A360FF9CE5E00DF27E5</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -509,7 +513,7 @@
 								<key>Frame</key>
 								<string>{{0, 0}, {997, 383}}</string>
 								<key>RubberWindowFrame</key>
-								<string>500 339 1420 839 0 0 1920 1178 </string>
+								<string>260 189 1420 839 0 0 1680 1028 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXNavigatorGroup</string>
@@ -517,8 +521,6 @@
 							<string>383pt</string>
 						</dict>
 						<dict>
-							<key>BecomeActive</key>
-							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
@@ -531,7 +533,7 @@
 								<key>Frame</key>
 								<string>{{0, 388}, {997, 410}}</string>
 								<key>RubberWindowFrame</key>
-								<string>500 339 1420 839 0 0 1920 1178 </string>
+								<string>260 189 1420 839 0 0 1680 1028 </string>
 							</dict>
 							<key>Module</key>
 							<string>XCDetailModule</string>
@@ -555,9 +557,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>D03E83C50FF95BBA00E09E56</string>
+				<string>D0B42A380FF9CE5E00DF27E5</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>D03E83C60FF95BBA00E09E56</string>
+				<string>D0B42A390FF9CE5E00DF27E5</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -693,13 +695,10 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>D0560B2F0CDC421E009D2484</string>
-		<string>/Users/peter/HexFiend2/HexFiend2/trunk/HexFiend_2/HexFiend_2.xcodeproj</string>
-		<string>1C530D57069F1CE1000CFCEE</string>
-		<string>D03E84180FF9861D00E09E56</string>
+		<string>/Users/peter/Bell/HexFiend2/trunk/HexFiend_2/HexFiend_2.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
-	<string>500 339 1420 839 0 0 1920 1178 </string>
+	<string>260 189 1420 839 0 0 1680 1028 </string>
 	<key>WindowToolsV3</key>
 	<array>
 		<dict>
