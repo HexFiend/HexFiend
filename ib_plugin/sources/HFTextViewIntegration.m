@@ -42,7 +42,7 @@
         id rep = [[class alloc] init];
         if (class == [HFHexTextRepresenter class]) [[rep view] setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
         if ([class isSubclassOfClass:[HFTextRepresenter class]]) {
-            [rep setBackgroundColors:[self backgroundColors]];
+            [rep setRowBackgroundColors:[self backgroundColors]];
         }
         [[self controller] addRepresenter:rep];
         [[self layoutRepresenter] addRepresenter:rep];
