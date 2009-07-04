@@ -7,7 +7,7 @@
 //
 
 #import <HexFiend/HFRepresenter.h>
-#import <HexFiend/HFByteArray_ToString.h>
+#import <HexFiend/HFByteArray.h>
 
 /* A representer that draws into a text view (e.g. the hex or ASCII view) */
 

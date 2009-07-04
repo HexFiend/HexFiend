@@ -29,7 +29,7 @@
 #import <HexFiend/HFLayoutRepresenter.h>
 #import <HexFiend/HFStringEncodingTextRepresenter.h>
 #import <HexFiend/HFVerticalScrollerRepresenter.h>
-#import <HexFiend/HFByteArray_ToString.h>
+#import <HexFiend/HFByteArray.h>
 #import <HexFiend/HFFileByteSlice.h>
 #import <HexFiend/HFFileReference.h>
 #import <HexFiend/HFBTreeByteArray.h>

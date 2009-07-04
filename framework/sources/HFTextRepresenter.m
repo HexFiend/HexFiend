@@ -9,6 +9,7 @@
 #import <HexFiend/HFTextRepresenter.h>
 #import <HexFiend/HFRepresenterTextView.h>
 #import <HexFiend/HFPasteboardOwner.h>
+#import <HexFiend/HFByteArray.h>
 
 @implementation HFTextRepresenter
 

@@ -10,6 +10,11 @@
 
 @class HFFileReference;
 
+/*! @class HFByteSlice
+@brief A class representing a source of data for an HFByteArray.
+
+HFByteSlice is an abstract class encapsulating primitive data sources (files, memory buffers, etc.).  Each memory source must have a well defined length and support random access.
+*/
 @interface HFByteSlice : NSObject {
     NSUInteger retainCount;
 }

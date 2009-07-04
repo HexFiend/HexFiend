@@ -52,7 +52,7 @@
 }
 
 - (void)insertByteSlice:(HFByteSlice *)slice inRange:(HFRange)lrange {
-    [self _incrementGenerationOrRaiseIfLockedForSelector:_cmd];
+    [self incrementGenerationOrRaiseIfLockedForSelector:_cmd];
     HFASSERT([slice length] <= NSUIntegerMax);
     NSUInteger length = ll2l([slice length]);
     NSRange range;

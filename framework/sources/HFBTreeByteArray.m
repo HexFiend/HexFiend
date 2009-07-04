@@ -136,7 +136,7 @@ static inline HFByteSlice *findInitialSlice(HFBTree *btree, HFRange *inoutArrayR
 }
 
 - (void)insertByteSlice:(HFByteSlice *)slice atOffset:(unsigned long long)offset {
-    [self _incrementGenerationOrRaiseIfLockedForSelector:_cmd];
+    [self incrementGenerationOrRaiseIfLockedForSelector:_cmd];
     
     unsigned long long beforeLength = [self length];
     
@@ -185,7 +185,7 @@ static inline HFByteSlice *findInitialSlice(HFBTree *btree, HFRange *inoutArrayR
 }
 
 - (void)deleteBytesInRange:(const HFRange)range {
-    [self _incrementGenerationOrRaiseIfLockedForSelector:_cmd];
+    [self incrementGenerationOrRaiseIfLockedForSelector:_cmd];
     HFRange remainingRange = range;
     
     HFASSERT(HFMaxRange(range) <= [self length]);
@@ -234,7 +234,7 @@ static inline HFByteSlice *findInitialSlice(HFBTree *btree, HFRange *inoutArrayR
 }
 
 - (void)insertByteSlice:(HFByteSlice *)slice inRange:(HFRange)lrange {
-    [self _incrementGenerationOrRaiseIfLockedForSelector:_cmd];
+    [self incrementGenerationOrRaiseIfLockedForSelector:_cmd];
 
     if (lrange.length > 0) {
         [self deleteBytesInRange:lrange];

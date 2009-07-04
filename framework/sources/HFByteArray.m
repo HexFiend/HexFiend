@@ -14,7 +14,7 @@
 
 - init {
     if ([self class] == [HFByteArray class]) {
-        [NSException raise:NSInvalidArgumentException format:@"init sent to HFByteArray, but HFByteArray is an abstract class.  Instantiate one of its subclasses instead."];
+        [NSException raise:NSInvalidArgumentException format:@"init sent to HFByteArray, but HFByteArray is an abstract class.  Instantiate one of its subclasses instead, like HFBTreeByteArray."];
     }
     return [super init];
 }
@@ -34,7 +34,7 @@
 #ifndef NDEBUG
     unsigned long long expectedLength = [self length] - lrange.length + [array length];
 #endif
-    [self _incrementGenerationOrRaiseIfLockedForSelector:_cmd];
+    [self incrementGenerationOrRaiseIfLockedForSelector:_cmd];
     NSEnumerator *sliceEnumerator;
     HFByteSlice *byteSlice;
     if (array == self) {
@@ -71,7 +71,7 @@
 }
 
 - (void)deleteBytesInRange:(HFRange)lrange {
-    [self _incrementGenerationOrRaiseIfLockedForSelector:_cmd];
+    [self incrementGenerationOrRaiseIfLockedForSelector:_cmd];
     HFByteSlice* slice = [[HFFullMemoryByteSlice alloc] initWithData:[NSData data]];
     [self insertByteSlice:slice inRange:lrange];
     [slice release];
@@ -186,7 +186,7 @@
     return changeGenerationCount;
 }
 
-- (void)_incrementGenerationOrRaiseIfLockedForSelector:(SEL)sel {
+- (void)incrementGenerationOrRaiseIfLockedForSelector:(SEL)sel {
     if (changeLockCounter) {
         [NSException raise:NSInvalidArgumentException format:@"Selector %@ sent to a locked byte array %@", NSStringFromSelector(sel), self];
     }

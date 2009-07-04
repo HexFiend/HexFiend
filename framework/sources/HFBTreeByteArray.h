@@ -10,10 +10,21 @@
 
 @class HFBTree;
 
+/*! @class HFBTreeByteArray
+@brief The principal efficient implementation of HFByteArray.
+
+HFBTreeByteArray is an efficient subclass of HFByteArray that stores @link HFByteSlice HFByteSlices@endlink, using a 10-way B+ tree.  This allows for insertion, deletion, and searching in approximately log-base-10 time.
+
+Create an HFBTreeByteArray via -init.  It has no methods other than those on HFByteArray.
+*/
+
 @interface HFBTreeByteArray : HFByteArray {
+@private
     HFBTree *btree;
 }
 
+/*! Designated initializer for HFBTreeByteArray.
+*/
 - init;
 
 @end

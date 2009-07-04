@@ -10,7 +10,7 @@
 
 /*!
 @class HFFullMemoryByteArray
-@discussion
+
   HFFullMemoryByteSlice is a simple subclass of HFByteSlice that wraps an NSData.  It is not especially efficient.  Prefer using HFSharedMemoryByteSlice instead.
 */
 @interface HFFullMemoryByteSlice : HFByteSlice {

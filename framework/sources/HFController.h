@@ -38,7 +38,8 @@ enum
 typedef NSUInteger HFControllerPropertyBits;
 
 /*! @enum HFControllerMovementDirection
-    @discussion The HFControllerMovementDirection enum is used to specify a direction (either left or right) in various text editing APIs.  HexFiend does not support left-to-right languages.
+    
+The HFControllerMovementDirection enum is used to specify a direction (either left or right) in various text editing APIs.  HexFiend does not support left-to-right languages.
 */
 enum
 {
@@ -48,7 +49,8 @@ enum
 typedef NSInteger HFControllerMovementDirection;
 
 /*! @enum HFControllerSelectionTransformation
-    @discussion The HFControllerSelectionTransformation enum is used to specify what happens to the selection in various APIs.  This is mainly interesting for text-editing style Representers.
+    
+The HFControllerSelectionTransformation enum is used to specify what happens to the selection in various APIs.  This is mainly interesting for text-editing style Representers.
 */
 enum
 {
@@ -59,7 +61,8 @@ enum
 typedef NSInteger HFControllerSelectionTransformation;
 
 /*! @enum HFControllerMovementGranularity
-    @discussion The HFControllerMovementGranularity enum is used to specify the granularity of text movement in various APIs.  This is mainly interesting for text-editing style Representers.
+    
+The HFControllerMovementGranularity enum is used to specify the granularity of text movement in various APIs.  This is mainly interesting for text-editing style Representers.
 */
 enum
 {
@@ -71,7 +74,7 @@ enum
 typedef NSInteger HFControllerMovementGranularity;
 
 /*! @class HFController
-@brief Acts as the controller layer for HexFiend.framework
+@brief A central class that acts as the controller layer for HexFiend.framework
 
 HFController acts as the controller layer in the MVC architecture of HexFiend.  The HFController plays several significant central roles, including:
  - Mediating between the data itself (in the HFByteArray) and the views of the data (the @link HFRepresenter HFRepresenters@endlink).
@@ -85,7 +88,6 @@ You create an HFController via <tt>[[HFController alloc] init]</tt>.  After that
 
 */
 @interface HFController : NSObject <NSCoding> {
-#ifndef DOXYGEN_ONLY /* Hide ivars from doxygen so it doesn't try to document private stuff */
 @private
     NSMutableArray *representers;
     HFByteArray *byteArray;
@@ -127,7 +129,6 @@ You create an HFController via <tt>[[HFController alloc] init]</tt>.  After that
         unsigned reserved1:25;
         unsigned reserved2:32;
     } _hfflags;
-#endif
 }
 
 /*! @name Representer handling.
@@ -410,7 +411,10 @@ You create an HFController via <tt>[[HFController alloc] init]</tt>.  After that
 */
 extern NSString * const HFPrepareForChangeInFileNotification;
 
-/* Keys in HFPrepareForChangeInFileNotification: */
+/*! @name HFPrepareForChangeInFileNotification keys 
+*/
+//@{
 extern NSString * const HFChangeInFileByteArrayKey; //!< A key in the HFPrepareForChangeInFileNotification specifying the byte array that will be written
 extern NSString * const HFChangeInFileModifiedRangesKey; //!< A key in the HFPrepareForChangeInFileNotification specifying the array of HFRangeWrappers indicating which parts of the file will be modified
 extern NSString * const HFChangeInFileShouldCancelKey; //!< A key in the HFPrepareForChangeInFileNotification specifying an NSValue containing a pointer to a BOOL.  If set to YES, then someone was unable to prepare and the file should not be saved.  It's a good idea to check if this value points to YES; if so your notification handler does not have to do anything.
+//@}

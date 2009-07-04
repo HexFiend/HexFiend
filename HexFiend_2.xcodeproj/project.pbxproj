@@ -103,8 +103,6 @@
 		D082ABCF0CDEB3F800554EB7 /* HFRepresenter_Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = D0A4360B0CDC7B65000F7550 /* HFRepresenter_Internal.h */; };
 		D082ABD40CDEB40F00554EB7 /* HFFullMemoryByteArray.h in Headers */ = {isa = PBXBuildFile; fileRef = D0D828FE0CDE8ABE00C2AB82 /* HFFullMemoryByteArray.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D082AC910CDEBD5300554EB7 /* HFByteArray_Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = D082AC900CDEBD5300554EB7 /* HFByteArray_Internal.h */; };
-		D082AF4C0CDF242500554EB7 /* HFByteArray_ToString.h in Headers */ = {isa = PBXBuildFile; fileRef = D082AF4A0CDF242500554EB7 /* HFByteArray_ToString.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		D082AF4D0CDF242500554EB7 /* HFByteArray_ToString.m in Sources */ = {isa = PBXBuildFile; fileRef = D082AF4B0CDF242500554EB7 /* HFByteArray_ToString.m */; };
 		D08399AF0CF85A540030DBF0 /* HFTextRepresenter_KeyBinding.m in Sources */ = {isa = PBXBuildFile; fileRef = D08399AD0CF85A540030DBF0 /* HFTextRepresenter_KeyBinding.m */; };
 		D08491FF0DBB60C700C7195C /* HFFastMemchr.m in Sources */ = {isa = PBXBuildFile; fileRef = D08491FE0DBB60C700C7195C /* HFFastMemchr.m */; };
 		D08630F00D8BEE9900FF0BE7 /* HFByteSliceFileOperationQueueEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = D08630EE0D8BEE9900FF0BE7 /* HFByteSliceFileOperationQueueEntry.h */; };
@@ -320,8 +318,6 @@
 		D0826EEF0D487A000006FB7D /* HFFileByteSlice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFFileByteSlice.h; path = framework/sources/HFFileByteSlice.h; sourceTree = "<group>"; };
 		D0826EF00D487A000006FB7D /* HFFileByteSlice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFFileByteSlice.m; path = framework/sources/HFFileByteSlice.m; sourceTree = "<group>"; };
 		D082AC900CDEBD5300554EB7 /* HFByteArray_Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFByteArray_Internal.h; path = framework/sources/HFByteArray_Internal.h; sourceTree = "<group>"; };
-		D082AF4A0CDF242500554EB7 /* HFByteArray_ToString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFByteArray_ToString.h; path = framework/sources/HFByteArray_ToString.h; sourceTree = "<group>"; };
-		D082AF4B0CDF242500554EB7 /* HFByteArray_ToString.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFByteArray_ToString.m; path = framework/sources/HFByteArray_ToString.m; sourceTree = "<group>"; };
 		D08399AD0CF85A540030DBF0 /* HFTextRepresenter_KeyBinding.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFTextRepresenter_KeyBinding.m; path = framework/sources/HFTextRepresenter_KeyBinding.m; sourceTree = "<group>"; };
 		D08491FE0DBB60C700C7195C /* HFFastMemchr.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFFastMemchr.m; path = framework/sources/HFFastMemchr.m; sourceTree = "<group>"; };
 		D08630EE0D8BEE9900FF0BE7 /* HFByteSliceFileOperationQueueEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFByteSliceFileOperationQueueEntry.h; path = framework/sources/HFByteSliceFileOperationQueueEntry.h; sourceTree = "<group>"; };
@@ -652,6 +648,8 @@
 		D0560B350CDC4248009D2484 /* Framework */ = {
 			isa = PBXGroup;
 			children = (
+				D0A6C9D70DCC68610077175C /* HFController.h */,
+				D01E7BEB0CDC55D000943F9E /* HFController.m */,
 				D0F6FE1D0FFF67C700C609F0 /* Global Headers */,
 				D0480E6A0DBB76970048F3FF /* Utilities */,
 				D026C7A70CDD4FD30082279E /* Representers */,
@@ -661,8 +659,6 @@
 				D0B4224F0FF8455E00DF27E5 /* Progress Tracking and Cancellation */,
 				D0B422550FF8456D00DF27E5 /* Pasteboard and Undo */,
 				D0B422A90FF87BDA00DF27E5 /* High Level Views */,
-				D0A6C9D70DCC68610077175C /* HFController.h */,
-				D01E7BEB0CDC55D000943F9E /* HFController.m */,
 				D01E7C010CDC569F00943F9E /* Resources */,
 			);
 			name = Framework;
@@ -735,8 +731,6 @@
 				D0B7E3380D5C50EA007874ED /* HFByteArray_FindReplace.m */,
 				D0D828FE0CDE8ABE00C2AB82 /* HFFullMemoryByteArray.h */,
 				D0D828FF0CDE8ABE00C2AB82 /* HFFullMemoryByteArray.m */,
-				D082AF4A0CDF242500554EB7 /* HFByteArray_ToString.h */,
-				D082AF4B0CDF242500554EB7 /* HFByteArray_ToString.m */,
 				D06D61EC0FA7FA7C002376EE /* HFBTreeByteArray.h */,
 				D06D61ED0FA7FA7C002376EE /* HFBTreeByteArray.m */,
 				D06D5FE70FA699B8002376EE /* BTree */,
@@ -809,7 +803,6 @@
 				D026C7BB0CDD546C0082279E /* HFRepresenterHexTextView.h in Headers */,
 				D026C7C00CDD54D00082279E /* HFHexTextRepresenter.h in Headers */,
 				D082AC910CDEBD5300554EB7 /* HFByteArray_Internal.h in Headers */,
-				D082AF4C0CDF242500554EB7 /* HFByteArray_ToString.h in Headers */,
 				D0CDB7540CE735590084926B /* HFRepresenterStringEncodingTextView.h in Headers */,
 				D0CDB77D0CE737130084926B /* HFStringEncodingTextRepresenter.h in Headers */,
 				D00EBA730CE866D50020E2D7 /* HFVerticalScrollerRepresenter.h in Headers */,
@@ -1020,8 +1013,8 @@
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# shell script goes here\nif ! [ -f $SOURCE_ROOT/hexfiend_doxyfile.config ] \nthen\n echo Doxygen config file does not exist!\n exit 1\nfi\n\n";
+			shellPath = /usr/bin/python;
+			shellScript = "import sys, os, subprocess\n\nenv = os.getenv\nnorm = os.path.normpath\nsrc_root = env(\"SOURCE_ROOT\")\n\nconfig_path= norm(src_root + \"/../DocumentationTools/hexfiend_doxyfile.config\")\nif not os.path.isfile(config_path):\n    print \"Doxygen config file does not exist at \" + config_path\n    sys.exit(1)\n\ndoxygen = norm(src_root + \"/../../doxygen\")\nif not os.path.isfile(doxygen):\n    print \"The doxygen binary does not exist at \" + doxygen\n    sys.exit(1)\n\nheaders = norm(env(\"BUILT_PRODUCTS_DIR\") + \"/HexFiend.framework/Headers\")\nif not os.path.isdir(headers):\n    print \"The HexFiend header directory does not exist at \" + headers\n    sys.exit(1)\n\noutput_dir = norm(src_root + \"/../../Documentation\")\nif not os.path.isdir(output_dir):\n    print \"The documentation output directory does not exist at \" + output_dir\n    sys.exit(1)\n\nnew_wd = norm(src_root + \"/../DocumentationTools/\")\n\nproc = subprocess.Popen([doxygen, '-'], shell=False, cwd=new_wd, stdin=subprocess.PIPE)\n\nconf_file = open(config_path, 'r')\nfor line in conf_file:\n\tif line.startswith('INPUT '):\n\t\tline = 'INPUT = ' + headers\n\telif line.startswith('OUTPUT_DIRECTORY '):\n\t\tline = 'OUTPUT_DIRECTORY = ' + output_dir\n\tproc.stdin.write(line)\nproc.stdin.close()\nproc.wait()\n\nprint 'Documentation written to ' + output_dir + '/html/index.html'\nsys.exit(0)\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -1078,7 +1071,6 @@
 				D08F5E500CDE872C007EFFE8 /* HFByteSlice.m in Sources */,
 				D08F5E510CDE872C007EFFE8 /* HFFullMemoryByteSlice.m in Sources */,
 				D082AB440CDE97DC00554EB7 /* HFFullMemoryByteArray.m in Sources */,
-				D082AF4D0CDF242500554EB7 /* HFByteArray_ToString.m in Sources */,
 				D0CDB7550CE735590084926B /* HFRepresenterStringEncodingTextView.m in Sources */,
 				D0CDB77E0CE737130084926B /* HFStringEncodingTextRepresenter.m in Sources */,
 				D00EBA740CE866D50020E2D7 /* HFVerticalScrollerRepresenter.m in Sources */,

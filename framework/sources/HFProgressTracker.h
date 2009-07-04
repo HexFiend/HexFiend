@@ -10,7 +10,7 @@
 
 /*!
 @class HFProgressTracker  
-@discussion
+
   HFProgressTracker is a class that helps handle progress indication and cancellation for long running threaded operations, while imposing minimal overhead.  Operations such as Find/Replace or Save take an HFProgressTracker to provide cancellation and progress reporting.
 
   The thread is expected to write directly into the public currentProgress field (with atomic functions) as it makes progress.  Once beginTrackingProgress is called, the HFProgressTracker will poll currentProgress until endTrackingProgress is called.
@@ -90,7 +90,7 @@
 
 /*!
 @protocol HFProgressTrackerDelegate
-@discussion
+
 The HFProgressTrackerDelegate methods are called on the the HFProgressTracker's delegate.  These are always called on the main thread.
 */
 @interface NSObject (HFProgressTrackerDelegate)
