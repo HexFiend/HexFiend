@@ -433,8 +433,7 @@ static inline Class preferredByteArrayClass(void) {
     HFASSERT(HFRangeIsSubrangeOfRange(range, HFRangeMake(0, [self contentsLength])));
     
     NSUInteger newGenerationIndex = [byteArray changeGenerationCount];
-    if (cachedData == nil || newGenerationIndex != cachedGenerationIndex || ! HFRangeEqualsRange(range, cachedRange)) {
-        //TODO - allow for subranges here
+    if (cachedData == nil || newGenerationIndex != cachedGenerationIndex || ! HFRangeIsSubrangeOfRange(range, cachedRange)) {
         [cachedData release];
         cachedGenerationIndex = newGenerationIndex;
         cachedRange = range;
@@ -444,7 +443,16 @@ static inline Class preferredByteArrayClass(void) {
         cachedData = [[NSData alloc] initWithBytesNoCopy:data length:length freeWhenDone:YES];
     }
     
-    return cachedData;
+    if (HFRangeEqualsRange(range, cachedRange)) {
+        return cachedData;
+    }
+    else {
+        HFASSERT(cachedRange.location <= range.location);
+        NSRange cachedDataSubrange;
+        cachedDataSubrange.location = ll2l(range.location - cachedRange.location);
+        cachedDataSubrange.length = ll2l(range.length);
+        return [cachedData subdataWithRange:cachedDataSubrange];
+    }
 }
 
 - (void)copyBytes:(unsigned char *)bytes range:(HFRange)range {

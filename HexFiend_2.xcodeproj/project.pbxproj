@@ -6,6 +6,21 @@
 	objectVersion = 44;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		D0F6FE0A0FFF679200C609F0 /* Documentation Generation */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = D0F6FE180FFF67AC00C609F0 /* Build configuration list for PBXAggregateTarget "Documentation Generation" */;
+			buildPhases = (
+				D0F6FE090FFF679200C609F0 /* ShellScript */,
+			);
+			dependencies = (
+				D0F6FE120FFF679D00C609F0 /* PBXTargetDependency */,
+			);
+			name = "Documentation Generation";
+			productName = "Documentation Generation";
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
 		8D11072A0486CEB800E47090 /* MainMenu.nib in Resources */ = {isa = PBXBuildFile; fileRef = 29B97318FDCFA39411CA2CEA /* MainMenu.nib */; };
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
@@ -161,6 +176,13 @@
 			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = D01E7BB70CDC530C00943F9E;
+			remoteInfo = HexFiend_Framework;
+		};
+		D0F6FE110FFF679D00C609F0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D01E7BB70CDC530C00943F9E /* HexFiend_Framework */;
 			remoteInfo = HexFiend_Framework;
 		};
 /* End PBXContainerItemProxy section */
@@ -630,8 +652,7 @@
 		D0560B350CDC4248009D2484 /* Framework */ = {
 			isa = PBXGroup;
 			children = (
-				D01E7BEF0CDC564B00943F9E /* HexFiend.h */,
-				D01E7C3B0CDC69E500943F9E /* HFTypes.h */,
+				D0F6FE1D0FFF67C700C609F0 /* Global Headers */,
 				D0480E6A0DBB76970048F3FF /* Utilities */,
 				D026C7A70CDD4FD30082279E /* Representers */,
 				D08F5DF40CDE822D007EFFE8 /* ByteArray */,
@@ -642,7 +663,6 @@
 				D0B422A90FF87BDA00DF27E5 /* High Level Views */,
 				D0A6C9D70DCC68610077175C /* HFController.h */,
 				D01E7BEB0CDC55D000943F9E /* HFController.m */,
-				D01E7BC60CDC53B300943F9E /* HexFiend_2_Framework_Prefix.pch */,
 				D01E7C010CDC569F00943F9E /* Resources */,
 			);
 			name = Framework;
@@ -755,6 +775,16 @@
 				D0B422A00FF845F800DF27E5 /* HFTextView.m */,
 			);
 			name = "High Level Views";
+			sourceTree = "<group>";
+		};
+		D0F6FE1D0FFF67C700C609F0 /* Global Headers */ = {
+			isa = PBXGroup;
+			children = (
+				D01E7BEF0CDC564B00943F9E /* HexFiend.h */,
+				D01E7C3B0CDC69E500943F9E /* HFTypes.h */,
+				D01E7BC60CDC53B300943F9E /* HexFiend_2_Framework_Prefix.pch */,
+			);
+			name = "Global Headers";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -923,6 +953,7 @@
 				D01930990D5AE3B40019B3F7 /* HexFiend_IBPlugin */,
 				D06D600F0FA69B26002376EE /* Test_BTree */,
 				D00C15E40FF091FF006D021F /* HexFiendling */,
+				D0F6FE0A0FFF679200C609F0 /* Documentation Generation */,
 			);
 		};
 /* End PBXProject section */
@@ -976,6 +1007,23 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		D0F6FE090FFF679200C609F0 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/../DocumentationTools/Doxyfile",
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# shell script goes here\nif ! [ -f $SOURCE_ROOT/hexfiend_doxyfile.config ] \nthen\n echo Doxygen config file does not exist!\n exit 1\nfi\n\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		8D11072C0486CEB800E47090 /* Sources */ = {
@@ -1090,6 +1138,11 @@
 			isa = PBXTargetDependency;
 			target = D01E7BB70CDC530C00943F9E /* HexFiend_Framework */;
 			targetProxy = D0A435540CDC70B3000F7550 /* PBXContainerItemProxy */;
+		};
+		D0F6FE120FFF679D00C609F0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D01E7BB70CDC530C00943F9E /* HexFiend_Framework */;
+			targetProxy = D0F6FE110FFF679D00C609F0 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -2077,6 +2130,52 @@
 			};
 			name = "Debug-UnitTests-Optimized";
 		};
+		D0F6FE0B0FFF679300C609F0 /* Debug-NoUnitTests */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "Documentation Generation";
+			};
+			name = "Debug-NoUnitTests";
+		};
+		D0F6FE0C0FFF679300C609F0 /* Debug-UnitTests */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "Documentation Generation";
+			};
+			name = "Debug-UnitTests";
+		};
+		D0F6FE0D0FFF679300C609F0 /* Debug-UnitTests-Optimized */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "Documentation Generation";
+			};
+			name = "Debug-UnitTests-Optimized";
+		};
+		D0F6FE0E0FFF679300C609F0 /* Debug-UnitTests-64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "Documentation Generation";
+			};
+			name = "Debug-UnitTests-64";
+		};
+		D0F6FE0F0FFF679300C609F0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				PRODUCT_NAME = "Documentation Generation";
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+		D0F6FE100FFF679300C609F0 /* Release-GC */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "Documentation Generation";
+			};
+			name = "Release-GC";
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -2154,6 +2253,19 @@
 				D06D60150FA69B27002376EE /* Debug-UnitTests-64 */,
 				D06D60160FA69B27002376EE /* Release */,
 				D06D60170FA69B27002376EE /* Release-GC */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = "Debug-NoUnitTests";
+		};
+		D0F6FE180FFF67AC00C609F0 /* Build configuration list for PBXAggregateTarget "Documentation Generation" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D0F6FE0B0FFF679300C609F0 /* Debug-NoUnitTests */,
+				D0F6FE0C0FFF679300C609F0 /* Debug-UnitTests */,
+				D0F6FE0D0FFF679300C609F0 /* Debug-UnitTests-Optimized */,
+				D0F6FE0E0FFF679300C609F0 /* Debug-UnitTests-64 */,
+				D0F6FE0F0FFF679300C609F0 /* Release */,
+				D0F6FE100FFF679300C609F0 /* Release-GC */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = "Debug-NoUnitTests";
