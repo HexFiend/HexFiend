@@ -23,7 +23,6 @@ extern NSString *const HFPrivateByteArrayPboardType;
     HFProgressTracker *progressTracker;
     unsigned long long dataAmountToCopy;
     BOOL retainedSelfOnBehalfOfPboard;
-    
     BOOL backgroundCopyOperationFinished;
     BOOL didStartModalSessionForBackgroundCopyOperation;
 }

@@ -180,7 +180,7 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = D01E7BB70CDC530C00943F9E /* HexFiend_Framework */;
+			remoteGlobalIDString = D01E7BB70CDC530C00943F9E;
 			remoteInfo = HexFiend_Framework;
 		};
 /* End PBXContainerItemProxy section */
