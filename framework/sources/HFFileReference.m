@@ -75,7 +75,7 @@
     }    
 }
 
-- (int)writeBytes:(unsigned char *)buff length:(NSUInteger)length to:(unsigned long long)offset {
+- (int)writeBytes:(const unsigned char *)buff length:(NSUInteger)length to:(unsigned long long)offset {
     HFASSERT(isWritable);
     HFASSERT(fileDescriptor >= 0);
     if (! length) return 0;
@@ -87,6 +87,7 @@
     ssize_t result = pwrite(fileDescriptor, buff, (size_t)length, (off_t)offset);
     HFASSERT(result == -1 || result == (ssize_t)length);
     if (result < 0) err = errno;
+    if (result == 0) fileLength = MAX(fileLength, HFSum(length, offset));
     return err;
 }
 
@@ -131,8 +132,9 @@
     return (NSUInteger)inode;
 }
 
-- (BOOL)isEqual:(HFFileReference *)ref {
-    if (! [ref isKindOfClass:[HFFileReference class]]) return NO;
+- (BOOL)isEqual:(id)val {
+    if (! [val isKindOfClass:[HFFileReference class]]) return NO;
+    HFFileReference *ref = (HFFileReference *)val;
     return ref->device == device && ref->inode == inode;
 }
 

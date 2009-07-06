@@ -9,7 +9,8 @@
 #import <HexFiend/HFByteArray.h>
 
 /*!
-@class HFFullMemoryByteArray
+  @class HFFullMemoryByteArray
+  @brief A naive subclass of HFByteArray suitable mainly for testing.  Use HFBTreeByteArray instead.
 
   HFFullMemoryByteArray is a simple subclass of HFByteArray that does not store any byte slices.  Because it stores all data in an NSMutableData, it is not efficient.  It is mainly useful as a naive implementation for testing.  Use HFBTreeByteArray instead.
 */

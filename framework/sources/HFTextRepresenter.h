@@ -28,7 +28,9 @@
 
 // Copy/Paste methods
 - (void)copySelectedBytesToPasteboard:(NSPasteboard *)pb;
+- (void)cutSelectedBytesToPasteboard:(NSPasteboard *)pb;
 - (BOOL)canPasteFromPasteboard:(NSPasteboard *)pb;
+- (BOOL)canCut;
 - (BOOL)pasteBytesFromPasteboard:(NSPasteboard *)pb;
 
 // Must be implemented by subclasses
@@ -39,6 +41,10 @@
 
 // Value between [0, 1]
 - (double)selectionPulseAmount;
+
+- (void)scrollWheel:(NSEvent *)event;
+
+- (void)selectAll:(id)sender;
 
 // Determines the per-row background colors.  Defaults to -[NSControl controlAlternatingRowBackgroundColors]
 - (NSArray *)rowBackgroundColors;

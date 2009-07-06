@@ -82,7 +82,7 @@
 - (BOOL)isFlipped { return YES; }
 
 - (void)getLineNumberFormatString:(char *)outString length:(NSUInteger)length {
-    enum HFLineNumberFormat_t format = [self lineNumberFormat];
+    HFLineNumberFormat format = [self lineNumberFormat];
     if (format == HFLineNumberFormatDecimal) {
         strlcpy(outString, "%llu", length);
     }
@@ -236,7 +236,7 @@ static inline int common_prefix_length(const char *a, const char *b) {
     NSUInteger lineCount = ll2l(range.length);
     const NSUInteger stride = bytesPerLine;
     HFLineCountingRepresenter *rep = [self representer];
-    enum HFLineNumberFormat_t format = [self lineNumberFormat];
+    HFLineNumberFormat format = [self lineNumberFormat];
     if (format == HFLineNumberFormatDecimal) {
         unsigned long long lineValue = HFProductULL(range.location, bytesPerLine);
         characterCount = lineCount /* newlines */;
@@ -521,7 +521,7 @@ static inline int common_prefix_length(const char *a, const char *b) {
     return bytesPerLine;
 }
 
-- (void)setLineNumberFormat:(enum HFLineNumberFormat_t)format {
+- (void)setLineNumberFormat:(HFLineNumberFormat)format {
     if (format != lineNumberFormat) {
         lineNumberFormat = format;
         storedLineCount = INVALID_LINE_COUNT;
@@ -529,7 +529,7 @@ static inline int common_prefix_length(const char *a, const char *b) {
     }
 }
 
-- (enum HFLineNumberFormat_t)lineNumberFormat {
+- (HFLineNumberFormat)lineNumberFormat {
     return lineNumberFormat;
 }
 
@@ -584,7 +584,7 @@ static inline int common_prefix_length(const char *a, const char *b) {
     return representer;
 }
 
-+ (NSUInteger)digitsRequiredToDisplayLineNumber:(unsigned long long)lineNumber inFormat:(enum HFLineNumberFormat_t)format {
++ (NSUInteger)digitsRequiredToDisplayLineNumber:(unsigned long long)lineNumber inFormat:(HFLineNumberFormat)format {
     switch (format) {
         case HFLineNumberFormatDecimal: return HFCountDigitsBase10(lineNumber);
 #if HEX_LINE_NUMBERS_HAVE_0X_PREFIX

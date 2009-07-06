@@ -34,7 +34,7 @@ NSString *const HFLineCountingRepresenterMinimumViewWidthChanged = @"HFLineCount
     [super initWithCoder:coder];
     lineHeight = (CGFloat)[coder decodeDoubleForKey:@"HFLineHeight"];
     minimumDigitCount = (NSUInteger)[coder decodeInt64ForKey:@"HFMinimumDigitCount"];
-    lineNumberFormat = (enum HFLineNumberFormat_t)[coder decodeInt64ForKey:@"HFLineNumberFormat"];
+    lineNumberFormat = (HFLineNumberFormat)[coder decodeInt64ForKey:@"HFLineNumberFormat"];
     return self;
 }
 
@@ -139,7 +139,7 @@ NSString *const HFLineCountingRepresenterMinimumViewWidthChanged = @"HFLineCount
     return [self preferredWidth];
 }
 
-- (enum HFLineNumberFormat_t)lineNumberFormat {
+- (HFLineNumberFormat)lineNumberFormat {
     return lineNumberFormat;
 }
 

@@ -1,7 +1,7 @@
 /*! @mainpage HexFiend.framework
  *
  * @section intro Introduction
- * HexFiend.framework (hereafter "Hex Fiend" when there is no risk of confusion with the app by the same name) is a framework designed for natural viewing and editing of binary data.  The emphasis is on editing data in a natural way, following Mac OS X text editing conventions.
+ * HexFiend.framework (hereafter "Hex Fiend" when there is no risk of confusion with the app by the same name) is a framework designed to enable applications to support viewing and editing of binary data.  The emphasis is on editing data in a natural way, following Mac OS X text editing conventions.
  *
  * Hex Fiend is designed to work efficiently with large amounts (64 bits worth) of data.  As such, it can work with arbitrarily large files without reading the entire file into memory.  This includes insertions, deletions, and in-place editing.  Hex Fiend can also efficiently save such changes back to the file, without requiring any additional temporary disk space.
  *
@@ -16,6 +16,7 @@
  *
  * The easiest way to get started is to use the Interface Builder plugin to drag a hex view into your project!  Hex Fiend also comes with some sample code ("HexFiendling"), distributed as part of the project.  And of course the Hex Fiend application itself is open source, acting as a more sophisticated sample code.
 */
+
 
 #import <HexFiend/HFTypes.h>
 #import <HexFiend/HFFunctions.h>
@@ -36,3 +37,45 @@
 #import <HexFiend/HFProgressTracker.h>
 #import <HexFiend/HFTextField.h>
 #import <HexFiend/HFSharedMemoryByteSlice.h>
+
+
+/* The following is all for Doxygen */
+
+
+/*! @defgroup model Model
+ *  Hex Fiend's model classes
+ */
+///@{
+///@class HFByteArray
+///@class HFBTreeByteArray
+///@class HFFullMemoryByteArray
+///@class HFByteSlice
+///@class HFFileByteSlice
+///@class HFSharedMemoryByteSlice
+///@class HFFullMemoryByteSlice
+
+///@}
+
+
+/*! @defgroup view View
+ *  Hex Fiend's view classes
+ */
+///@{
+///@class HFRepresenter
+///@class HFHexTextRepresenter
+///@class HFStringEncodingTextRepresenter
+///@class HFLayoutRepresenter
+///@class HFLineCountingRepresenter
+///@class HFStatusBarRepresenter
+///@class HFVerticalScrollerRepresenter
+///@class HFLineCountingRepresenter
+
+///@}
+
+/*! @defgroup controller Controller
+ *  Hex Fiend's controller classes
+ */
+///@{
+///@class HFController
+
+///@}

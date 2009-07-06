@@ -335,7 +335,9 @@ static inline NSUInteger HFDivideULRoundingUp(NSUInteger a, NSUInteger b) {
     else return ((a - 1) / b) + 1;
 }
 
-/*! A simple class responsible for holding an immutable HFRange as an object.  Methods that logically work on multiple HFRanges usually take or return arrays of HFRangeWrappers. */
+/*! @brief An object wrapper for the HFRange type.
+
+  A simple class responsible for holding an immutable HFRange as an object.  Methods that logically work on multiple HFRanges usually take or return arrays of HFRangeWrappers. */
 @interface HFRangeWrapper : NSObject {
     @public
     HFRange range;
@@ -350,10 +352,10 @@ static inline NSUInteger HFDivideULRoundingUp(NSUInteger a, NSUInteger b) {
 /*! Creates an NSArray of HFRangeWrappers for this HFRange. */
 + (NSArray *)withRanges:(const HFRange *)ranges count:(NSUInteger)count;
 
-/* Given an NSArray of HFRangeWrappers, get all of the HFRanges into a C array. */
+/*! Given an NSArray of HFRangeWrappers, get all of the HFRanges into a C array. */
 + (void)getRanges:(HFRange *)ranges fromArray:(NSArray *)array;
 
-/*! Given an array of HFRangeWrappers, returns a new array of ranges.  This new array represents the same indexes, but overlapping ranges will have been merged, and the ranges will be sorted in ascending order. */
+/*! Given an array of HFRangeWrappers, returns a "cleaned up" array of equivalent ranges.  This new array represents the same indexes, but overlapping ranges will have been merged, and the ranges will be sorted in ascending order. */
 + (NSArray *)organizeAndMergeRanges:(NSArray *)inputRanges;
 
 @end

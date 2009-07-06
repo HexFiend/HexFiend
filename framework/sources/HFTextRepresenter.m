@@ -94,6 +94,14 @@
     }
 }
 
+- (void)scrollWheel:(NSEvent *)event {
+    [[self controller] scrollWithScrollEvent:event];
+}
+
+- (void)selectAll:(id)sender {
+    [[self controller] selectAll:sender];
+}
+
 - (double)selectionPulseAmount {
     return [[self controller] selectionPulseAmount];
 }
@@ -202,6 +210,11 @@
     UNIMPLEMENTED_VOID();
 }
 
+- (void)cutSelectedBytesToPasteboard:(NSPasteboard *)pb {
+    [self copySelectedBytesToPasteboard:pb];
+    [[self controller] deleteSelection];
+}
+
 - (NSData *)dataFromPasteboardString:(NSString *)string {
     USE(string);
     UNIMPLEMENTED();
@@ -214,6 +227,18 @@
         return [HFPasteboardOwner unpackByteArrayFromPasteboard:pb] || [pb availableTypeFromArray:[NSArray arrayWithObject:NSStringPboardType]];
     }
     return NO;
+}
+
+- (BOOL)canCut {
+    /* We can cut if we are editable, we have at least one byte selected, and we are not in overwrite mode */
+    HFController *controller = [self controller];
+    if ([controller inOverwriteMode]) return NO;
+    if (! [controller editable]) return NO;
+
+    FOREACH(HFRangeWrapper *, rangeWrapper, [controller selectedContentsRanges]) {
+        if ([rangeWrapper HFRange].length > 0) return YES; //we have something selected
+    }
+    return NO; // we did not find anything selected
 }
 
 - (BOOL)pasteBytesFromPasteboard:(NSPasteboard *)pb {

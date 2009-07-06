@@ -9,7 +9,8 @@
 #import <Cocoa/Cocoa.h>
 
 /*!
-@class HFProgressTracker  
+@class HFProgressTracker
+@brief A class that helps handle progress indication and cancellation for long running threaded operations.
 
   HFProgressTracker is a class that helps handle progress indication and cancellation for long running threaded operations, while imposing minimal overhead.  Operations such as Find/Replace or Save take an HFProgressTracker to provide cancellation and progress reporting.
 
@@ -90,10 +91,11 @@
 
 /*!
 @protocol HFProgressTrackerDelegate
+@brief The delegate methods for the HFProgressTracker class.
 
 The HFProgressTrackerDelegate methods are called on the the HFProgressTracker's delegate.  These are always called on the main thread.
 */
-@interface NSObject (HFProgressTrackerDelegate)
+@protocol HFProgressTrackerDelegate <NSObject>
 
 /*!
   Once beginTrackingProgress is called, this is called on the delegate at regular intervals to report on the new progress.

@@ -22,7 +22,7 @@
     NSUInteger bytesPerLine;
     unsigned long long storedLineIndex;
     NSUInteger storedLineCount;
-    enum HFLineNumberFormat_t lineNumberFormat;
+    HFLineNumberFormat lineNumberFormat;
     BOOL useStringDrawingPath;
 }
 
@@ -38,12 +38,12 @@
 - (void)setBytesPerLine:(NSUInteger)val;
 - (NSUInteger)bytesPerLine;
 
-- (void)setLineNumberFormat:(enum HFLineNumberFormat_t)format;
-- (enum HFLineNumberFormat_t)lineNumberFormat;
+- (void)setLineNumberFormat:(HFLineNumberFormat)format;
+- (HFLineNumberFormat)lineNumberFormat;
 
 - (void)setRepresenter:(HFLineCountingRepresenter *)rep;
 - (HFLineCountingRepresenter *)representer;
 
-+ (NSUInteger)digitsRequiredToDisplayLineNumber:(unsigned long long)lineNumber inFormat:(enum HFLineNumberFormat_t)format;
++ (NSUInteger)digitsRequiredToDisplayLineNumber:(unsigned long long)lineNumber inFormat:(HFLineNumberFormat)format;
 
 @end

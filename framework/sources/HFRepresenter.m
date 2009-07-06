@@ -99,10 +99,6 @@
     return HFProductInt(bytesPerLine, (NSUInteger)ceil(availableLines));
 }
 
-- (void)scrollWheel:(NSEvent *)event {
-    [[self controller] scrollWithScrollEvent:event];
-}
-
 - (void)selectAll:sender {
     [[self controller] selectAll:sender];
 }

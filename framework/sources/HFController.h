@@ -397,12 +397,12 @@ You create an HFController via <tt>[[HFController alloc] init]</tt>.  After that
 /*! Returns total number of bytes.  This is equivalent to [[controller byteArray] length]. */
 - (unsigned long long)contentsLength;
 
-@end
-
-@interface HFController (HFFileWritingNotification)
-
+/*! @name File writing dependency handling
+*/
+//@{
 /*! Attempts to clear all dependencies on the given file (clipboard, undo, etc.) that could not be preserved if the file were written.  Returns YES if we successfully prepared, NO if someone objected. */
 + (BOOL)prepareForChangeInFile:(NSURL *)targetFile fromWritingByteArray:(HFByteArray *)array;
+//@}
 
 @end
 

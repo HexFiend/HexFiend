@@ -8,10 +8,9 @@
 
 #import <HexFiend/HFByteSlice.h>
 
-/*!
-@class HFFullMemoryByteArray
+/*! @class HFFullMemoryByteSlice
 
-  HFFullMemoryByteSlice is a simple subclass of HFByteSlice that wraps an NSData.  It is not especially efficient.  Prefer using HFSharedMemoryByteSlice instead.
+    @brief A simple subclass of HFByteSlice that wraps an NSData.  For most uses, prefer HFSharedMemoryByteSlice.
 */
 @interface HFFullMemoryByteSlice : HFByteSlice {
     NSData *data;

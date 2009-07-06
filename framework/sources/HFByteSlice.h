@@ -13,23 +13,33 @@
 /*! @class HFByteSlice
 @brief A class representing a source of data for an HFByteArray.
 
-HFByteSlice is an abstract class encapsulating primitive data sources (files, memory buffers, etc.).  Each memory source must have a well defined length and support random access.
+HFByteSlice is an abstract class encapsulating primitive data sources (files, memory buffers, etc.).  Each source must support random access reads, and have a well defined length.  All HFByteSlices are \b immutable.
+
+The two principal subclasses of HFByteSlice are HFSharedMemoryByteSlice and HFFileByteSlice, which respectively encapsulate data from memory and from a file.
 */
 @interface HFByteSlice : NSObject {
     NSUInteger retainCount;
 }
 
+/*! Return the length of the byte slice as a 64 bit value.  This is an abstract method that concrete subclasses must override. */
 - (unsigned long long)length;
+
+/*! Copies a range of data from the byte slice into an in-memory buffer.  This is an abstract method that concrete subclasses must override. */
 - (void)copyBytes:(unsigned char *)dst range:(HFRange)range;
+
+/*! Returns a new slice containing a subrange of the given slice.  This is an abstract method that concrete subclasses must override. */
 - (HFByteSlice *)subsliceWithRange:(HFRange)range;
 
-/* Attempts to append a given byte slice and return a new one.  This does not modify the receiver or the slice parameter.  This may return nil if the appending cannot be done efficiently (in which case, it should be done at the byte array level).
+/*! Attempts to create a new byte slice by appending one byte slice to another.  This does not modify the receiver or the slice argument (after all, both are immutable).  This is provided as an optimization, and is allowed to return nil if the appending cannot be done efficiently.  The default implementation returns nil.
 */
-- byteSliceByAppendingSlice:(HFByteSlice *)slice;
+- (id)byteSliceByAppendingSlice:(HFByteSlice *)slice;
 
-/* Used for file writing.  For a given file reference, returns the range within the file that it is sourced from; if it is not sourced from this file, returns {ULLONG_MAX, ULLONG_MAX}
+/*! Returns YES if the receiver is sourced from a file.  The default implementation returns NO.
 */
 - (BOOL)isSourcedFromFile;
+
+/*! For a given file reference, returns the range within the file that the receiver is sourced from.  If the receiver is not sourced from this file, returns {ULLONG_MAX, ULLONG_MAX}.  The default implementation returns {ULLONG_MAX, ULLONG_MAX}.
+*/
 - (HFRange)sourceRangeForFile:(HFFileReference *)reference;
 
 @end

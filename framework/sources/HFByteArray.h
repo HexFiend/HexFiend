@@ -11,11 +11,13 @@
 @class HFByteSlice, HFProgressTracker, HFFileReference;
 
 /*! @class HFByteArray
-@brief The principal Model class for HexFiend.framework.
+@brief The principal Model class for HexFiend's MVC architecture.
 
-HFByteArray implements the Model portion of HexFiend.framework.  It is logically a mutable, resizable array of bytes, with a 64 bit length.
+HFByteArray implements the Model portion of HexFiend.framework.  It is logically a mutable, resizable array of bytes, with a 64 bit length.  It is somewhat analagous to a 64 bit version of NSMutableData, except that it is designed to enable efficient (faster than O(n)) implementations of insertion and deletion.
 
-HFByteArray also exposes itself as an array of @link HFByteSlice HFByteSlices@endlink, which is useful for operations such as file saving that need to access the underlying byte slices.
+HFByteArray, being an abstract class, will raise an exception if you attempt to instantiate it directly.  For most uses, instantiate HFBTreeByteArray instead, with the usual <tt>[[class alloc] init]</tt>.
+
+HFByteArray also exposes itself as an array of @link HFByteSlice HFByteSlices@endlink, which are logically immutable arrays of bytes.   which is useful for operations such as file saving that need to access the underlying byte slices.
 
 HFByteArray contains a generation count, which is incremented whenever the HFByteArray changes (to allow caches to be implemented on top of it).  It also includes the notion of locking: a locked HFByteArray will raise an exception if written to, but it may still be read.
 
@@ -41,7 +43,7 @@ typedef NSUInteger HFByteArrayDataStringType;
 */
 //@{
 
-/*! Returns the length of the HFByteArray as a 64 bit unsigned int. This is an abstract method that concrete subclasses must override. */
+/*! Returns the length of the HFByteArray as a 64 bit unsigned long long. This is an abstract method that concrete subclasses must override. */
 - (unsigned long long)length;
 
 /*! Copies a range of bytes into a buffer.  This is an abstract method that concrete subclasses must override. */

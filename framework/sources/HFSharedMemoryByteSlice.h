@@ -8,6 +8,13 @@
 
 #import <HexFiend/HFByteSlice.h>
 
+/*! @class HFSharedMemoryByteSlice
+    @brief A subclass of HFByteSlice for working with data stored in memory.
+    
+    HFSharedMemoryByteSlice is a subclass of HFByteSlice that represents a portion of data from memory, e.g. typed or pasted in by the user.  The term "shared" refers to the ability for mutiple HFSharedMemoryByteSlices to reference the same NSData; it does not mean that the data is in shared memory or shared between processes.
+    
+    Instances of HFSharedMemoryByteSlice are immutable (like all instances of HFByteSlice).  However, to support efficient typing, the backing data is an instance of NSMutableData that may be grown.  A referenced range of the NSMutableData will never have its contents changed, but it may be allowed to grow larger, so that the data does not have to be copied merely to append a single byte.  This is implemented by overriding the  -byteSliceByAppendingSlice: method of HFByteSlice.
+*/
 @interface HFSharedMemoryByteSlice : HFByteSlice {
     NSMutableData *data;
     NSUInteger offset;
@@ -17,15 +24,10 @@
 }
 
 // copies the data
-- initWithUnsharedData:(NSData *)data;
+- (id)initWithUnsharedData:(NSData *)data;
 
 // retains, does not copy
-- initWithData:(NSMutableData *)data;
-- initWithData:(NSMutableData *)data offset:(NSUInteger)offset length:(NSUInteger)length;
-
-// Attempts to create a new slice by efficiently appending data.  This returns nil if it cannot be done efficiently.
-- byteSliceByAppendingSlice:(HFByteSlice *)slice;
-
-- initWithSharedData:(NSMutableData *)data offset:(NSUInteger)off length:(NSUInteger)len tail:(const void *)tail tailLength:(NSUInteger)tailLen;
+- (id)initWithData:(NSMutableData *)data;
+- (id)initWithData:(NSMutableData *)data offset:(NSUInteger)offset length:(NSUInteger)length;
 
 @end
