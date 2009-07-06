@@ -63,10 +63,16 @@
     unsigned long long lineEnd = HFFPToUL(ceill(displayedLineRange.location + displayedLineRange.length));
     HFASSERT(lineEnd >= lineStart);
     HFRange byteRange = HFRangeMake(HFProductULL(bytesPerLine, lineStart), HFProductULL(lineEnd - lineStart, bytesPerLine));
-    HFASSERT(byteRange.location <= contentsLength);
-    byteRange.length = MIN(byteRange.length, contentsLength - byteRange.location);
-    HFASSERT(HFRangeIsSubrangeOfRange(byteRange, HFRangeMake(0, [controller contentsLength])));
-    return byteRange;
+    if (byteRange.length == 0) {
+	/* This can happen if we are too small to even show one line */
+	return HFRangeMake(0, 0);
+    }
+    else {
+	HFASSERT(byteRange.location <= contentsLength);
+	byteRange.length = MIN(byteRange.length, contentsLength - byteRange.location);
+	HFASSERT(HFRangeIsSubrangeOfRange(byteRange, HFRangeMake(0, [controller contentsLength])));
+	return byteRange;
+    }
 }
 
 - (void)updateText {

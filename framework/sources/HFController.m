@@ -541,16 +541,14 @@ static inline Class preferredByteArrayClass(void) {
     long double linesInRange = HFULToFP(endLine - startLine);
     long double linesToDisplay = MIN(displayRange.length, linesInRange);
     HFASSERT(linesToDisplay <= linesInRange);
-    long double linesClippedFromRange = linesInRange - linesToDisplay;
-    HFFPRange lineRangeToDisplay = (HFFPRange){range.location + linesClippedFromRange / 2., linesToDisplay};
-    HFASSERT(lineRangeToDisplay.length <= displayRange.length);
     long double linesToMoveDownToMakeLastLineVisible = HFULToFP(endLine) - (displayRange.location + displayRange.length);
     long double linesToMoveUpToMakeFirstLineVisible = displayRange.location - HFULToFP(startLine);
     HFASSERT(linesToMoveUpToMakeFirstLineVisible <= 0 || linesToMoveDownToMakeLastLineVisible <= 0);
     if (linesToMoveDownToMakeLastLineVisible > 0) {
         newDisplayRange.location += linesToMoveDownToMakeLastLineVisible;
     }
-    else if (linesToMoveUpToMakeFirstLineVisible > 0) {
+    else if (linesToMoveUpToMakeFirstLineVisible > 0 && linesToDisplay >= 1) {
+	// the >= 1 check prevents some wacky behavior when we have less than one line's worth of space, that caused bouncing between the top and bottom of the line
         newDisplayRange.location -= linesToMoveUpToMakeFirstLineVisible;
     }
     [self setDisplayedLineRange:newDisplayRange];

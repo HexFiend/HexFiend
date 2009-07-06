@@ -80,8 +80,11 @@ static BOOL copy_bytes(id entry, HFBTreeIndex offset, void *userInfo) {
 
 - (void)copyBytes:(unsigned char *)dst range:(HFRange)range {
     HFASSERT(range.length <= NSUIntegerMax);
-    struct HFBTreeByteArrayCopyInfo_t copyInfo = {.dst = dst, .remainingLength = ll2l(range.length), .startingOffset = range.location};
-    [btree applyFunction:copy_bytes toEntriesStartingAtOffset:range.location withUserInfo:&copyInfo];
+    HFASSERT(HFMaxRange(range) <= [self length]);
+    if (range.length > 0) {
+	struct HFBTreeByteArrayCopyInfo_t copyInfo = {.dst = dst, .remainingLength = ll2l(range.length), .startingOffset = range.location};
+	[btree applyFunction:copy_bytes toEntriesStartingAtOffset:range.location withUserInfo:&copyInfo];
+    }
 }
 
 /* Given a HFByteArray and a range contained within it, return the first byte slice containing that range, and the range within that slice.  Modifies the given range to reflect what you get when the returned slice is removed. */

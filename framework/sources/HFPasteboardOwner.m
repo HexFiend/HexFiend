@@ -136,10 +136,28 @@ NSString *const HFPrivateByteArrayPboardType = @"HFPrivateByteArrayPboardType";
 
 - (void)backgroundMoveDataFinished:unused {
     USE(unused);
-    [NSApp stopModalWithCode:0];
-    //stopModal: won't trigger unless we post a do-nothing event
-    NSEvent *event = [NSEvent otherEventWithType:NSApplicationDefined location:NSZeroPoint modifierFlags:0 timestamp:0 windowNumber:0 context:NULL subtype:0 data1:0 data2:0];
-    [NSApp postEvent:event atStart:NO];
+    HFASSERT(backgroundCopyOperationFinished == NO);
+    backgroundCopyOperationFinished = YES;
+    if (! didStartModalSessionForBackgroundCopyOperation) {
+	/* We haven't started the modal session, so make sure it never happens */
+        [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(beginModalSessionForBackgroundCopyOperation:) object:nil];
+	CFRunLoopWakeUp(CFRunLoopGetCurrent());
+    }
+    else {
+	/* We have started the modal session, so end it. */
+	[NSApp stopModalWithCode:0];
+	//stopModal: won't trigger unless we post a do-nothing event
+	NSEvent *event = [NSEvent otherEventWithType:NSApplicationDefined location:NSZeroPoint modifierFlags:0 timestamp:0 windowNumber:0 context:NULL subtype:0 data1:0 data2:0];
+	[NSApp postEvent:event atStart:NO];
+    }
+}
+
+- (void)beginModalSessionForBackgroundCopyOperation:(id)unused {
+    USE(unused);
+    HFASSERT(backgroundCopyOperationFinished == NO);
+    HFASSERT(didStartModalSessionForBackgroundCopyOperation == NO);
+    didStartModalSessionForBackgroundCopyOperation = YES;
+    [NSApp runModalForWindow:progressTrackingWindow];
 }
 
 - (BOOL)moveDataWithProgressReportingToPasteboard:(NSPasteboard *)pboard forType:(NSString *)type {
@@ -154,13 +172,18 @@ NSString *const HFPrivateByteArrayPboardType = @"HFPrivateByteArrayPboardType";
         if (! [NSBundle loadNibNamed:@"HFModalProgress" owner:self] || ! progressTrackingWindow) {
             [NSException raise:NSInternalInconsistencyException format:@"Unable to load nib named %@", @"HFModalProgress"];
         }
+	backgroundCopyOperationFinished = NO;
+	didStartModalSessionForBackgroundCopyOperation = NO;
         dataAmountToCopy = amountToCopy;
         unsigned long long stringAmountToCopy = [self stringLengthForDataLength:amountToCopy];
         [progressTrackingDescriptionTextField setStringValue:HFDescribeByteCountWithPrefixAndSuffix("Copying ", stringAmountToCopy, " to the clipboard")];
         [progressTracker setProgressIndicator:progressTrackingIndicator];
         [progressTracker beginTrackingProgress];
         [NSThread detachNewThreadSelector:@selector(backgroundMoveDataToPasteboard:) toTarget:self withObject:type];
-        [NSApp runModalForWindow:progressTrackingWindow];
+	[self performSelector:@selector(beginModalSessionForBackgroundCopyOperation:) withObject:nil afterDelay:1.0 inModes:[NSArray arrayWithObject:NSModalPanelRunLoopMode]];
+	while (! backgroundCopyOperationFinished) {
+	    [[NSRunLoop currentRunLoop] runMode:NSModalPanelRunLoopMode beforeDate:[NSDate distantFuture]];
+	}
         [progressTracker endTrackingProgress];
         [progressTrackingWindow close];
         [progressTrackingWindow release];
