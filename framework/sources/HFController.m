@@ -926,6 +926,7 @@ static inline Class preferredByteArrayClass(void) {
     REQUIRE_NOT_NULL(selectedRanges);
     [selectedContentsRanges setArray:selectedRanges];
     VALIDATE_SELECTION();
+    selectionAnchor = NO_SELECTION;
     [self _addPropertyChangeBits:HFControllerSelectedRanges];
 }
 
@@ -935,7 +936,6 @@ static inline Class preferredByteArrayClass(void) {
         [self _setSingleSelectedContentsRange:HFRangeMake(0, [self contentsLength])];
     }
 }
-
 
 - (void)_addRangeToSelection:(HFRange)range {
     [selectedContentsRanges addObject:[HFRangeWrapper withRange:range]];

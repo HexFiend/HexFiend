@@ -190,8 +190,8 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 268616805;
-			PBXWorkspaceStateSaveDate = 268616805;
+			PBXPerProjectTemplateStateSaveDate = 268624537;
+			PBXWorkspaceStateSaveDate = 268624537;
 		};
 		perUserProjectItems = {
 			D00C16170FF47D8C006D021F = D00C16170FF47D8C006D021F /* PBXTextBookmark */;
@@ -1774,9 +1774,9 @@
 	};
 	D01E7BEB0CDC55D000943F9E /* HFController.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1329, 32452}}";
-			sepNavSelRange = "{28814, 24}";
-			sepNavVisRange = "{26832, 2153}";
+			sepNavIntBoundsRect = "{{0, 0}, {1329, 31416}}";
+			sepNavSelRange = "{87799, 25}";
+			sepNavVisRange = "{86335, 2903}";
 		};
 	};
 	D01E7BEF0CDC564B00943F9E /* HexFiend.h */ = {
@@ -1802,9 +1802,9 @@
 	};
 	D01E7C150CDC58AA00943F9E /* MyDocument.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {992, 18172}}";
-			sepNavSelRange = "{38367, 16}";
-			sepNavVisRange = "{38122, 325}";
+			sepNavIntBoundsRect = "{{0, 0}, {992, 18158}}";
+			sepNavSelRange = "{42419, 12}";
+			sepNavVisRange = "{42156, 326}";
 		};
 	};
 	D01E7C330CDC646800943F9E /* HFRepresenter.h */ = {
@@ -3020,9 +3020,9 @@
 	};
 	D0A6C9D70DCC68610077175C /* HFController.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {992, 5768}}";
+			sepNavIntBoundsRect = "{{0, 0}, {1329, 6090}}";
 			sepNavSelRange = "{2485, 5}";
-			sepNavVisRange = "{2272, 437}";
+			sepNavVisRange = "{4180, 1985}";
 		};
 	};
 	D0A6CAB80DCC839E0077175C /* PBXTextBookmark */ = {
@@ -4062,7 +4062,7 @@
 		fRef = D01E7BEB0CDC55D000943F9E /* HFController.m */;
 		name = "HFController.m: 2125";
 		rLen = 0;
-		rLoc = 98133;
+		rLoc = 98168;
 		rType = 0;
 		vrLen = 997;
 		vrLoc = 93018;
@@ -8803,7 +8803,7 @@
 		fRef = D01E7BEB0CDC55D000943F9E /* HFController.m */;
 		name = "HFController.m: 934";
 		rLen = 10;
-		rLoc = 39057;
+		rLoc = 39093;
 		rType = 0;
 		vrLen = 410;
 		vrLoc = 38800;
@@ -8843,7 +8843,7 @@
 		fRef = D01E7BEB0CDC55D000943F9E /* HFController.m */;
 		name = "HFController.m: 934";
 		rLen = 10;
-		rLoc = 39057;
+		rLoc = 39093;
 		rType = 0;
 		vrLen = 410;
 		vrLoc = 38800;
