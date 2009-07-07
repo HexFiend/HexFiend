@@ -332,7 +332,7 @@ static inline Class preferredByteArrayClass(void) {
 }
 
 
-- (HFDocumentOperationView *)createOperationViewOfName:(NSString *)name displayName:(NSString *)displayName {
+- (HFDocumentOperationView *)newOperationViewForNibName:(NSString *)name displayName:(NSString *)displayName {
     HFASSERT(name);
     HFDocumentOperationView *result = [[HFDocumentOperationView viewWithNibNamed:name owner:self] retain];
     [result setDisplayName:displayName];
@@ -629,7 +629,7 @@ static inline Class preferredByteArrayClass(void) {
     
     showSaveViewAfterDelayTimer = [[NSTimer scheduledTimerWithTimeInterval:.5 target:self selector:@selector(showSaveBannerHavingDelayed:) userInfo:nil repeats:NO] retain];
     
-    if (! saveView) saveView = [self createOperationViewOfName:@"SaveBanner" displayName:@"Saving"];
+    if (! saveView) saveView = [self newOperationViewForNibName:@"SaveBanner" displayName:@"Saving"];
     saveResult = 0;
     
     struct HFDocumentOperationCallbacks callbacks = {
@@ -697,7 +697,7 @@ static inline Class preferredByteArrayClass(void) {
     }
     
     if (! findReplaceView) {
-        findReplaceView = [self createOperationViewOfName:@"FindReplaceBanner" displayName:@"Finding"];
+        findReplaceView = [self newOperationViewForNibName:@"FindReplaceBanner" displayName:@"Finding"];
         [[findReplaceView viewNamed:@"searchField"] setTarget:self];
         [[findReplaceView viewNamed:@"searchField"] setAction:@selector(findNext:)];
         [[findReplaceView viewNamed:@"replaceField"] setTarget:self];
@@ -1002,7 +1002,7 @@ cancelled:;
 	[self saveFirstResponderIfNotInBannerAndThenSetItTo:[moveSelectionByView viewNamed:@"moveSelectionByTextField"]];
         return;
     }
-    if (! moveSelectionByView) moveSelectionByView = [self createOperationViewOfName:@"MoveSelectionByBanner" displayName:@"Moving Selection"];
+    if (! moveSelectionByView) moveSelectionByView = [self newOperationViewForNibName:@"MoveSelectionByBanner" displayName:@"Moving Selection"];
     [[moveSelectionByView viewNamed:@"extendSelectionByCheckbox"] setIntValue:extend];
     [self prepareBannerWithView:moveSelectionByView withTargetFirstResponder:[moveSelectionByView viewNamed:@"moveSelectionByTextField"]];
     
@@ -1044,7 +1044,7 @@ cancelled:;
         [self hideBannerFirstThenDo:_cmd];
         return;
     }
-    if (! jumpToOffsetView) jumpToOffsetView = [self createOperationViewOfName:@"JumpToOffsetBanner" displayName:@"Jumping to Offset"];
+    if (! jumpToOffsetView) jumpToOffsetView = [self newOperationViewForNibName:@"JumpToOffsetBanner" displayName:@"Jumping to Offset"];
     [self prepareBannerWithView:jumpToOffsetView withTargetFirstResponder:[jumpToOffsetView viewNamed:@"moveSelectionByTextField"]];
 }
 

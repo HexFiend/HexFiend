@@ -14,6 +14,13 @@
 
 /* Ligatures generally look not-so-hot with fixed pitch fonts.  Don't use them. */
 - (void)generateGlyphTable {
+    if ([self font] == nil || encoding == 0) {
+        bzero(glyphTable, sizeof glyphTable);
+        replacementGlyph = 0;
+        glyphAdvancement = 0;
+        return;
+    }
+    
     NSTextView *textView = [[NSTextView alloc] initWithFrame:NSMakeRect(0, 0, 500, 300)];
     [textView turnOffLigatures:nil];
     NSFont *font = [[self font] screenFont];
@@ -44,7 +51,7 @@
     unichar replacementChar = '.';
     [self _glyphsForString:[NSString stringWithCharacters:&replacementChar length:1] withGeneratingTextView:textView glyphs:glyphs];
     replacementGlyph = glyphs[0];
-//    replacementGlyph = 0;
+    [textView release];
 }
 
 - (void)setFont:(NSFont *)font {

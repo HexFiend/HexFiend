@@ -214,7 +214,7 @@ static NSString *sNibName;
     [result retain];
     [tracker noteFinished:self];
     [pool release];
-    return result;
+    return result; //result is released in spinUntilFinished
 }
 
 static void *startThread(void *self) {
