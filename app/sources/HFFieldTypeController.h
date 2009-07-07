@@ -11,10 +11,10 @@
 @class HFDocumentOperationView, HFTextField;
 
 @interface HFFieldTypeController : NSObject {
-	IBOutlet HFDocumentOperationView *operationView;
-	IBOutlet HFTextField *findField, *replaceField;
-	BOOL operationIsRunning;
-	BOOL fieldTypeIsASCII;
+    IBOutlet HFDocumentOperationView *operationView;
+    IBOutlet HFTextField *findField, *replaceField;
+    BOOL operationIsRunning;
+    BOOL fieldTypeIsASCII;
 }
 
 - (BOOL)operationIsRunning;

@@ -315,6 +315,7 @@ static inline Class preferredByteArrayClass(void) {
 	[views[i] removeObserver:self forKeyPath:@"progress"];
 	[views[i] release];
     }
+    [bannerDividerThumb release];
     [super dealloc];
 }
 

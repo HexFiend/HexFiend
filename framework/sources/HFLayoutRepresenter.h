@@ -34,25 +34,25 @@
 - (void)removeRepresenter:(HFRepresenter *)representer;
 //@}
 
-/*! Returns the rect in which to layout the representers.  Defaults to <tt>[[self view] bounds]</tt>.  This can be overridden to return a different rect. */
-- (NSRect)boundsRectForLayout;
-
-/* createView can be overridden to return any view within which to layout the representers' views.  This method should return a view with a retain count of 1, per the "create" rule. */
-- (NSView *)createView;
-
+/*! @name Configuration
+*/
+//@{
 /*! Sets whether the receiver will attempt to maximize the bytes per line so as to consume as much as possible of the bounds rect.  If this is YES, then upon relayout, the receiver will recalculate the maximum number of bytes per line that can fit in its boundsRectForLayout.  If this is NO, then the receiver will not change the bytes per line. */
 - (void)setMaximizesBytesPerLine:(BOOL)val;
 
 /*! Returns whether the receiver maximizes the bytes per line. */
 - (BOOL)maximizesBytesPerLine;
+//@}
 
+/*! @name Layout
+    Methods to get information about layout, and to explicitly trigger it.
+*/
+//@{
 /*! Returns the smallest width that produces the same layout (and, if maximizes bytesPerLine, the same bytes per line) as the proposed width. */
 - (CGFloat)minimumViewWidthForLayoutInProposedWidth:(CGFloat)proposedWidth;
 
-/*! Returns the minimum width that can display the given bytesPerLine */
-- (CGFloat)minimumViewWidthForBytesPerLine:(NSUInteger)bytesPerLine;
-
 /*! Relayouts are triggered when representers are added and removed, or when the view is resized.  You may call this explicitly to trigger a relayout. */
 - (void)performLayout;
+//@}
 
 @end

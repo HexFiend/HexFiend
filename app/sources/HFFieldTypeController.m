@@ -12,47 +12,62 @@
 @implementation HFFieldTypeController
 
 - (void)setOperationView:(HFDocumentOperationView *)view {
-	operationView = view;
-	[self bind:@"operationIsRunning" toObject:view withKeyPath:@"operationIsRunning" options:nil];
+    operationView = view;
+    [self bind:@"operationIsRunning" toObject:view withKeyPath:@"operationIsRunning" options:nil];
 }
 
 - (void)dealloc {
-	[self unbind:@"operationIsRunning"];
-	[super dealloc];
+    [self unbind:@"operationIsRunning"];
+    [super dealloc];
 }
 
 - (BOOL)operationIsRunning {
-	return operationIsRunning;
+    return operationIsRunning;
 }
 
 - (void)setOperationIsRunning:(BOOL)val {
-	operationIsRunning = val;
+    operationIsRunning = val;
 }
 
 - init {
-	[super init];
-	fieldTypeIsASCII = 	[[NSUserDefaults standardUserDefaults] boolForKey:@"FindPrefersASCII"];
-	return self;
+    [super init];
+    fieldTypeIsASCII = 	[[NSUserDefaults standardUserDefaults] boolForKey:@"FindPrefersASCII"];
+    return self;
 }
 
 - (BOOL)fieldTypeIsASCII {
-	return fieldTypeIsASCII;
+    return fieldTypeIsASCII;
+}
+
+- (void)setFindField:(HFTextField *)field {
+    [field retain];
+    [findField release];
+    findField = field;
+    [findField setUsesHexArea: ! fieldTypeIsASCII];
+    [findField setUsesTextArea: fieldTypeIsASCII];
+}
+
+- (void)setReplaceField:(HFTextField *)field {
+    [field retain];
+    [replaceField release];
+    replaceField = field;
+    [replaceField setUsesHexArea: ! fieldTypeIsASCII];
+    [replaceField setUsesTextArea: fieldTypeIsASCII];
 }
 
 - (void)setFieldTypeIsASCII:(BOOL)val {
-	fieldTypeIsASCII = val;
-	[[NSUserDefaults standardUserDefaults] setBool:val forKey:@"FindPrefersASCII"];
-	id firstResponder = [[findField window] firstResponder];
-	if (! [firstResponder isKindOfClass:[NSView class]]) firstResponder = nil;
-	BOOL restoreFRToFind = ([firstResponder ancestorSharedWithView:findField] == findField);
-	BOOL restoreFRToReplace = ([firstResponder ancestorSharedWithView:replaceField] == replaceField);
-	[findField setUsesHexArea: ! fieldTypeIsASCII];
-	[findField setUsesTextArea: fieldTypeIsASCII];
-	[replaceField setUsesHexArea: ! fieldTypeIsASCII];
-	[replaceField setUsesTextArea: fieldTypeIsASCII];
-	if (restoreFRToFind) [[findField window] makeFirstResponder:findField];
-	if (restoreFRToReplace) [[replaceField window] makeFirstResponder:replaceField];
+    fieldTypeIsASCII = val;
+    [[NSUserDefaults standardUserDefaults] setBool:val forKey:@"FindPrefersASCII"];
+    id firstResponder = [[findField window] firstResponder];
+    if (! [firstResponder isKindOfClass:[NSView class]]) firstResponder = nil;
+    BOOL restoreFRToFind = ([firstResponder ancestorSharedWithView:findField] == findField);
+    BOOL restoreFRToReplace = ([firstResponder ancestorSharedWithView:replaceField] == replaceField);
+    [findField setUsesHexArea: ! fieldTypeIsASCII];
+    [findField setUsesTextArea: fieldTypeIsASCII];
+    [replaceField setUsesHexArea: ! fieldTypeIsASCII];
+    [replaceField setUsesTextArea: fieldTypeIsASCII];
+    if (restoreFRToFind) [[findField window] makeFirstResponder:findField];
+    if (restoreFRToReplace) [[replaceField window] makeFirstResponder:replaceField];
 }
 
 @end
-
