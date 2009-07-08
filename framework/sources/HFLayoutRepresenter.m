@@ -48,7 +48,7 @@ static NSInteger sortByLayoutPosition(id a, id b, void *self) {
     NSMutableArray *currentReps = [NSMutableArray array];
     CGFloat currentRepY = - CGFLOAT_MAX;
     FOREACH(HFRepresenter*, rep, reps) {
-        HFRepresenterLayoutViewInfo *info = [[[HFRepresenterLayoutViewInfo alloc] init] autorelease];
+        HFRepresenterLayoutViewInfo *info = [[HFRepresenterLayoutViewInfo alloc] init];
         info->rep = rep;
         info->view = [rep view];
         info->frame = [info->view frame];
@@ -60,6 +60,7 @@ static NSInteger sortByLayoutPosition(id a, id b, void *self) {
         }
         currentRepY = info->layoutPosition.y;
         [currentReps addObject:info];
+	[info release];
     }
     if ([currentReps count]) [result addObject:[[currentReps copy] autorelease]];
     return result;
@@ -98,7 +99,7 @@ static NSInteger sortByLayoutPosition(id a, id b, void *self) {
     }
     
     CGFloat remainingWidth = NSMaxX(layoutRect) - nextX;
-    if (remainingWidth > 0) {
+    if (numHorizontallyResizable > 0 && remainingWidth > 0) {
         NSView *view = [self view];
         CGFloat remainingPixels = [view convertSize:NSMakeSize(remainingWidth, 0) toView:nil].width;
         HFASSERT(remainingPixels > 0);

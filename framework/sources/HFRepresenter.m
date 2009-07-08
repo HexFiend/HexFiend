@@ -90,15 +90,6 @@
     return DBL_MAX;
 }
 
-- (NSUInteger)maximumNumberOfBytesForViewSize:(NSSize)viewSize {
-    NSUInteger bytesPerLine = [self maximumBytesPerLineForViewWidth:viewSize.width];
-    double availableLines = [self maximumAvailableLinesForViewHeight:viewSize.height];
-    HFASSERT(availableLines >= 0.);
-    if (bytesPerLine == NSUIntegerMax || availableLines == DBL_MAX) return NSUIntegerMax;
-    HFASSERT(ceil(availableLines) <= (double)NSUIntegerMax);
-    return HFProductInt(bytesPerLine, (NSUInteger)ceil(availableLines));
-}
-
 - (void)selectAll:sender {
     [[self controller] selectAll:sender];
 }

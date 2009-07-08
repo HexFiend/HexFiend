@@ -9,48 +9,31 @@
 #import <HexFiend/HFRepresenter.h>
 #import <HexFiend/HFByteArray.h>
 
-/* A representer that draws into a text view (e.g. the hex or ASCII view) */
-
+/*! @class HFTextRepresenter
+    @brief An HFRepresenter that draws text (e.g. the hex or ASCII view).
+    
+    HFTextRepresenter is an abstract subclass of HFRepresenter that is responsible for displaying text.  There are two concrete subclass, HFHexTextRepresenter and HFStringEncodingTextRepresenter.
+    
+    Most of the functionality of HFTextRepresenter is private, and there is not yet enough exposed to allow creating new representers based on it.  However, there is a small amount of configurability.
+*/
 @interface HFTextRepresenter : HFRepresenter {
     BOOL behavesAsTextField;
     NSArray *rowBackgroundColors;
 }
 
-// HFTextRepresenter forwards these messages to its HFRepresenterTextView
-- (NSUInteger)maximumBytesPerLineForViewWidth:(CGFloat)viewWidth;
-- (CGFloat)minimumViewWidthForBytesPerLine:(NSUInteger)bytesPerLine;
 
-- (NSArray *)displayedSelectedContentsRanges; //returns an array of NSValues representing the selected ranges (as NSRanges) clipped to the displayed range.
-
-- (void)beginSelectionWithEvent:(NSEvent *)event forCharacterIndex:(NSUInteger)characterIndex;
-- (void)continueSelectionWithEvent:(NSEvent *)event forCharacterIndex:(NSUInteger)characterIndex;
-- (void)endSelectionWithEvent:(NSEvent *)event forCharacterIndex:(NSUInteger)characterIndex;
-
-// Copy/Paste methods
-- (void)copySelectedBytesToPasteboard:(NSPasteboard *)pb;
-- (void)cutSelectedBytesToPasteboard:(NSPasteboard *)pb;
-- (BOOL)canPasteFromPasteboard:(NSPasteboard *)pb;
-- (BOOL)canCut;
-- (BOOL)pasteBytesFromPasteboard:(NSPasteboard *)pb;
-
-// Must be implemented by subclasses
-- (void)insertText:(NSString *)text;
-
-// Must be implemented by subclasses.  Return NSData representing the string value.
-- (NSData *)dataFromPasteboardString:(NSString *)string;
-
-// Value between [0, 1]
-- (double)selectionPulseAmount;
-
-- (void)scrollWheel:(NSEvent *)event;
-
-- (void)selectAll:(id)sender;
-
-// Determines the per-row background colors.  Defaults to -[NSControl controlAlternatingRowBackgroundColors]
+/*! Returns the per-row background colors.  The default is <tt>-[NSControl controlAlternatingRowBackgroundColors]</tt>. */
 - (NSArray *)rowBackgroundColors;
+
+/*! Sets the per-row background colors.  Each row is drawn with the next color in turn, cycling back to the beginning when the array is exhausted.  Any empty space is filled with the first color in the array.  If the array is empty, then the background is drawn with \c clearColor. */
 - (void)setRowBackgroundColors:(NSArray *)colors;
 
+/*! Set whether the text view behaves like a text field (YES) or a text view (NO).  Currently this determines whether it draws a focus ring when it is the first responder.
+*/
 - (void)setBehavesAsTextField:(BOOL)val;
+
+/*! Returns whether the text view behaves like a text field (YES) or a text view (NO).
+*/
 - (BOOL)behavesAsTextField;
 
 @end

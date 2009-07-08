@@ -78,6 +78,7 @@
 		D05B77E00E00883B008C45EB /* HFCancelButton.m in Sources */ = {isa = PBXBuildFile; fileRef = D05B77DE0E00883B008C45EB /* HFCancelButton.m */; };
 		D05E7A970FF6160500767D95 /* HexFiend.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = D01E7BB80CDC530C00943F9E /* HexFiend.framework */; };
 		D05E7AAE0FF6167100767D95 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
+		D061A28F10042D6A0049B8B8 /* HFTextRepresenter_Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = D061A28E10042D6A0049B8B8 /* HFTextRepresenter_Internal.h */; };
 		D06B1DB10D13EE1D00B9A206 /* HFMetalGradient.tiff in Resources */ = {isa = PBXBuildFile; fileRef = D06B1DB00D13EE1D00B9A206 /* HFMetalGradient.tiff */; };
 		D06D60070FA69AFA002376EE /* HFBTree.h in Headers */ = {isa = PBXBuildFile; fileRef = D06D60050FA69AFA002376EE /* HFBTree.h */; };
 		D06D60080FA69AFA002376EE /* HFBTree.m in Sources */ = {isa = PBXBuildFile; fileRef = D06D60060FA69AFA002376EE /* HFBTree.m */; };
@@ -293,6 +294,7 @@
 		D04C78260DC47ECF00A76FF2 /* HFTextSelectionPulseView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFTextSelectionPulseView.m; path = framework/sources/HFTextSelectionPulseView.m; sourceTree = "<group>"; };
 		D05B77DD0E00883B008C45EB /* HFCancelButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFCancelButton.h; path = framework/sources/HFCancelButton.h; sourceTree = "<group>"; };
 		D05B77DE0E00883B008C45EB /* HFCancelButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFCancelButton.m; path = framework/sources/HFCancelButton.m; sourceTree = "<group>"; };
+		D061A28E10042D6A0049B8B8 /* HFTextRepresenter_Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFTextRepresenter_Internal.h; path = framework/sources/HFTextRepresenter_Internal.h; sourceTree = "<group>"; };
 		D06B1DB00D13EE1D00B9A206 /* HFMetalGradient.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = HFMetalGradient.tiff; path = framework/resources/HFMetalGradient.tiff; sourceTree = "<group>"; };
 		D06D60050FA69AFA002376EE /* HFBTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFBTree.h; path = framework/sources/BTree/HFBTree.h; sourceTree = "<group>"; };
 		D06D60060FA69AFA002376EE /* HFBTree.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFBTree.m; path = framework/sources/BTree/HFBTree.m; sourceTree = "<group>"; };
@@ -322,7 +324,6 @@
 		D08491FE0DBB60C700C7195C /* HFFastMemchr.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFFastMemchr.m; path = framework/sources/HFFastMemchr.m; sourceTree = "<group>"; };
 		D08630EE0D8BEE9900FF0BE7 /* HFByteSliceFileOperationQueueEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFByteSliceFileOperationQueueEntry.h; path = framework/sources/HFByteSliceFileOperationQueueEntry.h; sourceTree = "<group>"; };
 		D08630EF0D8BEE9900FF0BE7 /* HFByteSliceFileOperationQueueEntry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFByteSliceFileOperationQueueEntry.m; path = framework/sources/HFByteSliceFileOperationQueueEntry.m; sourceTree = "<group>"; };
-		D08F5DA30CDE7691007EFFE8 /* Design.graffle */ = {isa = PBXFileReference; lastKnownFileType = file; name = Design.graffle; path = ../../Design.graffle; sourceTree = SOURCE_ROOT; };
 		D08F5DEF0CDE8223007EFFE8 /* HFByteArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFByteArray.h; path = framework/sources/HFByteArray.h; sourceTree = "<group>"; };
 		D08F5DF00CDE8223007EFFE8 /* HFByteArray.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFByteArray.m; path = framework/sources/HFByteArray.m; sourceTree = "<group>"; };
 		D08F5E220CDE843E007EFFE8 /* HFByteSlice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFByteSlice.h; path = framework/sources/HFByteSlice.h; sourceTree = "<group>"; };
@@ -454,7 +455,6 @@
 		29B97314FDCFA39411CA2CEA /* HexFiend_2 */ = {
 			isa = PBXGroup;
 			children = (
-				D08F5DA30CDE7691007EFFE8 /* Design.graffle */,
 				D0560B350CDC4248009D2484 /* Framework */,
 				D0560B380CDC4253009D2484 /* App */,
 				D00C166E0FF4925A006D021F /* HexFiendling */,
@@ -599,6 +599,7 @@
 				D0CDB77B0CE737130084926B /* HFStringEncodingTextRepresenter.h */,
 				D0CDB77C0CE737130084926B /* HFStringEncodingTextRepresenter.m */,
 				D0A437380CDD4EDD000F7550 /* HFTextRepresenter.h */,
+				D061A28E10042D6A0049B8B8 /* HFTextRepresenter_Internal.h */,
 				D0A437390CDD4EDD000F7550 /* HFTextRepresenter.m */,
 				D04C78250DC47ECF00A76FF2 /* HFTextSelectionPulseView.h */,
 				D04C78260DC47ECF00A76FF2 /* HFTextSelectionPulseView.m */,
@@ -831,6 +832,7 @@
 				D06D60070FA69AFA002376EE /* HFBTree.h in Headers */,
 				D06D61EE0FA7FA7C002376EE /* HFBTreeByteArray.h in Headers */,
 				D0B422A10FF845F800DF27E5 /* HFTextView.h in Headers */,
+				D061A28F10042D6A0049B8B8 /* HFTextRepresenter_Internal.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1014,7 +1016,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /usr/bin/python;
-			shellScript = "import sys, os, subprocess\n\nenv = os.getenv\nnorm = os.path.normpath\nsrc_root = env(\"SOURCE_ROOT\")\n\nconfig_path= norm(src_root + \"/../DocumentationTools/hexfiend_doxyfile.config\")\nif not os.path.isfile(config_path):\n    print \"Doxygen config file does not exist at \" + config_path\n    sys.exit(1)\n\ndoxygen = norm(src_root + \"/../../doxygen\")\nif not os.path.isfile(doxygen):\n    print \"The doxygen binary does not exist at \" + doxygen\n    sys.exit(1)\n\nheaders = norm(env(\"BUILT_PRODUCTS_DIR\") + \"/HexFiend.framework/Headers\")\nif not os.path.isdir(headers):\n    print \"The HexFiend header directory does not exist at \" + headers\n    sys.exit(1)\n\noutput_dir = norm(src_root + \"/../../Documentation\")\nif not os.path.isdir(output_dir):\n    print \"The documentation output directory does not exist at \" + output_dir\n    sys.exit(1)\n\nnew_wd = norm(src_root + \"/../DocumentationTools/\")\n\nproc = subprocess.Popen([doxygen, '-'], shell=False, cwd=new_wd, stdin=subprocess.PIPE)\n\nconf_file = open(config_path, 'r')\nfor line in conf_file:\n\tif line.startswith('INPUT '):\n\t\tline = 'INPUT = ' + headers\n\telif line.startswith('OUTPUT_DIRECTORY '):\n\t\tline = 'OUTPUT_DIRECTORY = ' + output_dir\n\tproc.stdin.write(line)\nproc.stdin.close()\nproc.wait()\n\nprint 'Documentation written to ' + output_dir + '/html/index.html'\nsys.exit(0)\n";
+			shellScript = "import sys, os, subprocess\n\nenv = os.getenv\nnorm = os.path.normpath\nsrc_root = env(\"SOURCE_ROOT\")\n\nconfig_path= norm(src_root + \"/../DocumentationTools/hexfiend_doxyfile.config\")\nif not os.path.isfile(config_path):\n    print \"Doxygen config file does not exist at \" + config_path\n    sys.exit(1)\n\ndoxygen = norm(src_root + \"/../DocumentationTools/doxygen\")\nif not os.path.isfile(doxygen):\n    print \"The doxygen binary does not exist at \" + doxygen\n    sys.exit(1)\n\nheaders = norm(env(\"BUILT_PRODUCTS_DIR\") + \"/HexFiend.framework/Headers\")\nif not os.path.isdir(headers):\n    print \"The HexFiend header directory does not exist at \" + headers\n    sys.exit(1)\n\noutput_dir = norm(src_root + \"/../../Documentation\")\nif not os.path.isdir(output_dir):\n    print \"The documentation output directory does not exist at \" + output_dir\n    sys.exit(1)\n\nnew_wd = norm(src_root + \"/../DocumentationTools/\")\n\nproc = subprocess.Popen([doxygen, '-'], shell=False, cwd=new_wd, stdin=subprocess.PIPE)\n\nconf_file = open(config_path, 'r')\nfor line in conf_file:\n\tif line.startswith('INPUT '):\n\t\tline = 'INPUT = ' + headers\n\telif line.startswith('OUTPUT_DIRECTORY '):\n\t\tline = 'OUTPUT_DIRECTORY = ' + output_dir\n\tproc.stdin.write(line)\nproc.stdin.close()\nproc.wait()\n\nprint 'Documentation written to ' + output_dir + '/html/index.html'\nsys.exit(0)\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

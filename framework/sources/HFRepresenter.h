@@ -94,10 +94,6 @@
 
 /*! Returns the maximum number of lines that could be displayed at once for a given view height.  Default is to return DBL_MAX. */
 - (double)maximumAvailableLinesForViewHeight:(CGFloat)viewHeight;
-
-/*!  Returns the maximum number of total bytes that can be displayed for the given view size.  Default is to return maximumBytesPerLineForViewWidth * maximumAvailableLinesForViewHeight, rounded up, capped at NSUIntegerMax.
-*/
-- (NSUInteger)maximumNumberOfBytesForViewSize:(NSSize)viewSize;
 //@}
 
 /*! @name Auto-layout methods

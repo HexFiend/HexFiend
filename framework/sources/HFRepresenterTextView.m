@@ -7,7 +7,7 @@
 //
 
 #import <HexFiend/HFRepresenterTextView_Internal.h>
-#import <HexFiend/HFTextRepresenter.h>
+#import <HexFiend/HFTextRepresenter_Internal.h>
 #import <HexFiend/HFTextSelectionPulseView.h>
 
 static const NSTimeInterval HFCaretBlinkFrequency = 0.56;

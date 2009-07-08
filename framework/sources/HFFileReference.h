@@ -13,7 +13,7 @@
     
     HFFileReference encapsulates a reference to an open file.  Multiple instances of HFFileByteSlice may share an HFFileReference, so that the file only needs to be opened once.
     
-    All HFFileReferences use non-cacheing IO (F_NOCACHE is true).
+    All HFFileReferences use non-caching IO (F_NOCACHE is set).
 */
 @interface HFFileReference : NSObject {
     int fileDescriptor;
@@ -32,7 +32,7 @@
 /*! Closes the file. */
 - (void)close;
 
-/*! Reads from the file.  The sum of the length and the offset must not exceed the length of the file.
+/*! Reads from the file into a local memory buffer.  The sum of the length and the offset must not exceed the length of the file.
     @param buff The buffer to read into.
     @param length The number of bytes to read.
     @param offset The offset in the file to read.
@@ -49,7 +49,7 @@
 /*! Returns the length of the file, as a 64 bit unsigned long long. */
 - (unsigned long long)length;
 
-/*! Changes the length of the file via ftruncate.  Returns an errno-style error on failure, or 0 on success. */
+/*! Changes the length of the file via \c ftruncate.  Returns an errno-style error on failure, or 0 on success. */
 - (int)setLength:(unsigned long long)length;
 
 /*! isEqual: returns whether two file references both reference the same file, as in have the same inode and device. */

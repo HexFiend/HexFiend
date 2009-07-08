@@ -39,7 +39,7 @@ typedef NSUInteger HFLineNumberFormat;
 /*! Gets the minimum digit count. */
 - (NSUInteger)minimumDigitCount;
 
-/*! Returns the number of digits we are making space for */
+/*! Returns the number of digits we are making space for. */
 - (NSUInteger)digitCount;
 
 /*! Returns the current width that the HFRepresenter prefers to be laid out with. */
@@ -47,6 +47,9 @@ typedef NSUInteger HFLineNumberFormat;
 
 /*! Returns the current line number format. */
 - (HFLineNumberFormat)lineNumberFormat;
+
+/*! Sets the current line number format to a new format. */
+- (void)setLineNumberFormat:(HFLineNumberFormat)format;
 
 /*! Switches to the next line number format.  This is called from the view. */
 - (void)cycleLineNumberFormat;

@@ -15,7 +15,7 @@
 
 HFBTreeByteArray is an efficient subclass of HFByteArray that stores @link HFByteSlice HFByteSlices@endlink, using a 10-way B+ tree.  This allows for insertion, deletion, and searching in approximately log-base-10 time.
 
-Create an HFBTreeByteArray via -init.  It has no methods other than those on HFByteArray.
+Create an HFBTreeByteArray via \c -init.  It has no methods other than those on HFByteArray.
 */
 
 @interface HFBTreeByteArray : HFByteArray {

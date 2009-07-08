@@ -16,7 +16,7 @@
     NSData *data;
 }
 
-/*! Init with a given NSData, which is copied. */
+/*! Init with a given NSData, which is copied via the \c -copy message. */
 - initWithData:(NSData *)val;
 
 @end
