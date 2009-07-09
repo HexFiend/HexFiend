@@ -48,6 +48,9 @@ NSString * const HFChangeInFileByteArrayKey = @"HFChangeInFileByteArrayKey";
 NSString * const HFChangeInFileModifiedRangesKey = @"HFChangeInFileModifiedRangesKey";
 NSString * const HFChangeInFileShouldCancelKey = @"HFChangeInFileShouldCancelKey";
 
+NSString * const HFControllerDidChangePropertiesNotification = @"HFControllerDidChangePropertiesNotification";
+NSString * const HFControllerChangedPropertiesKey = @"HFControllerChangedPropertiesKey";
+
 
 typedef enum {
     eSelectResult,
@@ -146,6 +149,17 @@ static inline Class preferredByteArrayClass(void) {
     FOREACH(HFRepresenter*, rep, representers) {
         [rep controllerDidChange:bits];
     }
+    
+    /* Post the HFControllerDidChangePropertiesNotification */
+#if __LP64__
+    NSNumber *number = [[NSNumber alloc] initWithUnsignedInteger:bits];
+#else
+    NSNumber *number = [[NSNumber alloc] initWithUnsignedInt:bits];
+#endif
+    NSDictionary *userInfo = [[NSDictionary alloc] initWithObjects:&number forKeys:&HFControllerChangedPropertiesKey count:1];
+    [number release];
+    [[NSNotificationCenter defaultCenter] postNotificationName:HFControllerDidChangePropertiesNotification object:self userInfo:userInfo];
+    [userInfo release];
 }
 
 - (void)_firePropertyChanges {
@@ -157,7 +171,11 @@ static inline Class preferredByteArrayClass(void) {
     if (pendingTransactionCount > 0 || propertiesToUpdate != 0) {
         BEGIN_TRANSACTION();
         while (pendingTransactionCount--) {
+#if __LP64__
             HFControllerPropertyBits propertiesInThisTransaction = [[pendingTransactions objectAtIndex:0] unsignedIntegerValue];
+#else
+            HFControllerPropertyBits propertiesInThisTransaction = [[pendingTransactions objectAtIndex:0] unsignedIntValue];
+#endif
             [pendingTransactions removeObjectAtIndex:0];
             HFASSERT(propertiesInThisTransaction != 0);
             [self notifyRepresentersOfChanges:propertiesInThisTransaction];

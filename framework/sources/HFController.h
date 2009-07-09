@@ -21,7 +21,6 @@
 */
 enum
 {
-
     HFControllerContentValue = 1 << 0,		/*!< Indicates that the contents of the ByteArray has changed within the document.  There is no indication as to what the change is.  If redisplaying everything is expensive, Representers should cache their displayed data and compute any changes manually. */
     HFControllerContentLength = 1 << 1,		/*!< Indicates that the length of the ByteArray has changed. */
     HFControllerDisplayedLineRange = 1 << 2,	/*!< Indicates that the displayedLineRange property of the document has changed (e.g. the user scrolled). */
@@ -405,6 +404,16 @@ You create an HFController via <tt>[[HFController alloc] init]</tt>.  After that
 //@}
 
 @end
+
+/*! A notification posted whenever any of the HFController's properties change.  The object is the HFController.  The userInfo contains one key, HFControllerChangedPropertiesKey, which contains an NSNumber with the changed properties as a HFControllerPropertyBits bitmask.  This is useful for external objects to be notified of changes.  HFRepresenters added to the HFController are notified via the controllerDidChange: message.
+*/
+extern NSString * const HFControllerDidChangePropertiesNotification;
+
+/*! @name HFControllerDidChangePropertiesNotification keys 
+*/
+//@{
+extern NSString * const HFControllerChangedPropertiesKey; //!< A key in the HFControllerDidChangeProperties containing a bitmask of the changed properties, as a HFControllerPropertyBits
+//@}
 
 /*! A notification posted from prepareForChangeInFile:fromWritingByteArray: because we are about to write a ByteArray to a file.  The object is the FileReference.
   Currently, HFControllers do not listen for this notification.  This is because under GC there is no way of knowing whether the controller is live or not.  However, pasteboard owners do listen for it, because as long as we own a pasteboard we are guaranteed to be live.

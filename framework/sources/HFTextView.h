@@ -7,14 +7,16 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import <HexFiend/HFController.h>
 
-@class HFController, HFLayoutRepresenter;
+@class HFLayoutRepresenter;
 
 @interface HFTextView : NSControl {
     HFController *dataController;
     HFLayoutRepresenter *layoutRepresenter;
     NSArray *backgroundColors;
     BOOL bordered;
+    IBOutlet id delegate;
 }
 
 - (HFLayoutRepresenter *)layoutRepresenter;
@@ -25,5 +27,14 @@
 
 - (void)setBordered:(BOOL)val;
 - (BOOL)bordered;
+
+- (void)setDelegate:(id)delegate;
+- (id)delegate;
+
+@end
+
+@protocol HFTextViewDelegate <NSObject>
+
+- (void)hexTextView:(HFTextView *)view didChangeProperties:(HFControllerPropertyBits)properties;
 
 @end

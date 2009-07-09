@@ -25,6 +25,20 @@
     }
     [dataController setByteArray:byteArray];
     [byteArray release];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_HFControllerDidChangeProperties:) name:HFControllerDidChangePropertiesNotification object:dataController];
+}
+
+- (void)_HFControllerDidChangeProperties:(NSNotification *)note {
+    if ([delegate respondsToSelector:@selector(hexTextView:didChangeProperties:)]) {
+        NSNumber *propertyNumber = [[note userInfo] objectForKey:HFControllerChangedPropertiesKey];
+#if __LP64__
+        NSUInteger propertyMask = [propertyNumber unsignedIntegerValue];
+#else
+        NSUInteger propertyMask = [propertyNumber unsignedIntValue];
+#endif
+        [(id <HFTextViewDelegate>) delegate hexTextView:self didChangeProperties:propertyMask];
+        
+    }
 }
 
 - (NSRect)_desiredFrameForLayoutView {
@@ -151,6 +165,7 @@
 }
 
 - (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:HFControllerDidChangePropertiesNotification object:dataController];
     [dataController release];
     [layoutRepresenter release];
     [backgroundColors release];
