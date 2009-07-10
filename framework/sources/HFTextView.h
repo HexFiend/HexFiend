@@ -11,6 +11,11 @@
 
 @class HFLayoutRepresenter;
 
+/*! @class HFTextView
+    @brief A high-level view class analagous to NSTextView.
+    
+    HFTextField encapsulates a HFController and HFRepresenters into a single "do it all" NSControl analagous to NSTextView.  
+*/    
 @interface HFTextView : NSControl {
     HFController *dataController;
     HFLayoutRepresenter *layoutRepresenter;
@@ -30,6 +35,9 @@
 
 - (void)setDelegate:(id)delegate;
 - (id)delegate;
+
+- (NSData *)data;
+- (void)setData:(NSData *)data;
 
 @end
 

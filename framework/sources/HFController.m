@@ -2253,8 +2253,8 @@ static void exception_thrown(const char *methodName, NSException *exception) {
     @catch (NSException *localException) { exception_thrown("_testTextInsertion", localException); }
     @try { [NSClassFromString(@"HFObjectGraph") self]; }
     @catch (NSException *localException) { exception_thrown("HFObjectGraph", localException); }    
-//    @try { [self _testRandomOperationFileWriting]; }
-//    @catch (NSException *localException) { exception_thrown("_testRandomOperationFileWriting", localException); }
+    @try { [self _testRandomOperationFileWriting]; }
+    @catch (NSException *localException) { exception_thrown("_testRandomOperationFileWriting", localException); }
     @try { [self _testPermutationFileWriting]; }
     @catch (NSException *localException) { exception_thrown("_testPermutationFileWriting", localException); }
     @try { [self _testByteSearching]; }

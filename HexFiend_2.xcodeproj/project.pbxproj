@@ -32,6 +32,8 @@
 		D00C16790FF4925A006D021F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D00C16750FF4925A006D021F /* main.m */; };
 		D00EBA730CE866D50020E2D7 /* HFVerticalScrollerRepresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = D00EBA710CE866D50020E2D7 /* HFVerticalScrollerRepresenter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D00EBA740CE866D50020E2D7 /* HFVerticalScrollerRepresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = D00EBA720CE866D50020E2D7 /* HFVerticalScrollerRepresenter.m */; };
+		D0114CA91006D1DF00DAF4CE /* HFByteArrayDataProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = D0114CA71006D1DF00DAF4CE /* HFByteArrayDataProxy.h */; };
+		D0114CAA1006D1DF00DAF4CE /* HFByteArrayDataProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = D0114CA81006D1DF00DAF4CE /* HFByteArrayDataProxy.m */; };
 		D011E1B70DF8BE01003EAFB7 /* HFModalProgress.nib in Resources */ = {isa = PBXBuildFile; fileRef = D011E1B60DF8BE01003EAFB7 /* HFModalProgress.nib */; };
 		D01772F50D751DB1002E03DE /* HFDocumentOperationView.m in Sources */ = {isa = PBXBuildFile; fileRef = D01772F40D751DB1002E03DE /* HFDocumentOperationView.m */; };
 		D01773360D755551002E03DE /* FindReplaceBanner.nib in Resources */ = {isa = PBXBuildFile; fileRef = D01773340D755551002E03DE /* FindReplaceBanner.nib */; };
@@ -239,6 +241,8 @@
 		D00C16750FF4925A006D021F /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		D00EBA710CE866D50020E2D7 /* HFVerticalScrollerRepresenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFVerticalScrollerRepresenter.h; path = framework/sources/HFVerticalScrollerRepresenter.h; sourceTree = "<group>"; };
 		D00EBA720CE866D50020E2D7 /* HFVerticalScrollerRepresenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFVerticalScrollerRepresenter.m; path = framework/sources/HFVerticalScrollerRepresenter.m; sourceTree = "<group>"; };
+		D0114CA71006D1DF00DAF4CE /* HFByteArrayDataProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFByteArrayDataProxy.h; path = framework/sources/HFByteArrayDataProxy.h; sourceTree = "<group>"; };
+		D0114CA81006D1DF00DAF4CE /* HFByteArrayDataProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFByteArrayDataProxy.m; path = framework/sources/HFByteArrayDataProxy.m; sourceTree = "<group>"; };
 		D011E1B60DF8BE01003EAFB7 /* HFModalProgress.nib */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = HFModalProgress.nib; path = framework/resources/HFModalProgress.nib; sourceTree = "<group>"; };
 		D01772B70D72E024002E03DE /* HFCancelOn.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = HFCancelOn.tiff; path = framework/resources/HFCancelOn.tiff; sourceTree = "<group>"; };
 		D01772B80D72E024002E03DE /* HFCancelOff.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = HFCancelOff.tiff; path = framework/resources/HFCancelOff.tiff; sourceTree = "<group>"; };
@@ -734,6 +738,8 @@
 				D0D828FF0CDE8ABE00C2AB82 /* HFFullMemoryByteArray.m */,
 				D06D61EC0FA7FA7C002376EE /* HFBTreeByteArray.h */,
 				D06D61ED0FA7FA7C002376EE /* HFBTreeByteArray.m */,
+				D0114CA71006D1DF00DAF4CE /* HFByteArrayDataProxy.h */,
+				D0114CA81006D1DF00DAF4CE /* HFByteArrayDataProxy.m */,
 				D06D5FE70FA699B8002376EE /* BTree */,
 			);
 			name = ByteArray;
@@ -833,6 +839,7 @@
 				D06D61EE0FA7FA7C002376EE /* HFBTreeByteArray.h in Headers */,
 				D0B422A10FF845F800DF27E5 /* HFTextView.h in Headers */,
 				D061A28F10042D6A0049B8B8 /* HFTextRepresenter_Internal.h in Headers */,
+				D0114CA91006D1DF00DAF4CE /* HFByteArrayDataProxy.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -943,8 +950,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				D01E7BB70CDC530C00943F9E /* HexFiend_Framework */,
 				8D1107260486CEB800E47090 /* HexFiend_2 */,
+				D01E7BB70CDC530C00943F9E /* HexFiend_Framework */,
 				D01930990D5AE3B40019B3F7 /* HexFiend_IBPlugin */,
 				D06D600F0FA69B26002376EE /* Test_BTree */,
 				D00C15E40FF091FF006D021F /* HexFiendling */,
@@ -1101,6 +1108,7 @@
 				D06D60080FA69AFA002376EE /* HFBTree.m in Sources */,
 				D06D61EF0FA7FA7C002376EE /* HFBTreeByteArray.m in Sources */,
 				D0B422A20FF845F800DF27E5 /* HFTextView.m in Sources */,
+				D0114CAA1006D1DF00DAF4CE /* HFByteArrayDataProxy.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1392,7 +1400,7 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
-				INFOPLIST_FILE = "HexFiend_IBPlugin-Info.plist";
+				INFOPLIST_FILE = "ib_plugin/HexFiend_IBPlugin-Info.plist";
 				INSTALL_PATH = "$(HOME)/Library/Bundles";
 				PREBINDING = NO;
 				PRODUCT_NAME = HexFiend;
@@ -1673,7 +1681,7 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
-				INFOPLIST_FILE = "HexFiend_IBPlugin-Info.plist";
+				INFOPLIST_FILE = "ib_plugin/HexFiend_IBPlugin-Info.plist";
 				INSTALL_PATH = "$(HOME)/Library/Bundles";
 				PREBINDING = NO;
 				PRODUCT_NAME = HexFiend;
@@ -1786,7 +1794,7 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
-				INFOPLIST_FILE = "HexFiend_IBPlugin-Info.plist";
+				INFOPLIST_FILE = "ib_plugin/HexFiend_IBPlugin-Info.plist";
 				INSTALL_PATH = "$(HOME)/Library/Bundles";
 				PREBINDING = NO;
 				PRODUCT_NAME = HexFiend;
@@ -1895,7 +1903,7 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
-				INFOPLIST_FILE = "HexFiend_IBPlugin-Info.plist";
+				INFOPLIST_FILE = "ib_plugin/HexFiend_IBPlugin-Info.plist";
 				INSTALL_PATH = "$(HOME)/Library/Bundles";
 				PREBINDING = NO;
 				PRODUCT_NAME = HexFiend;
@@ -2005,7 +2013,7 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
-				INFOPLIST_FILE = "HexFiend_IBPlugin-Info.plist";
+				INFOPLIST_FILE = "ib_plugin/HexFiend_IBPlugin-Info.plist";
 				INSTALL_PATH = "$(HOME)/Library/Bundles";
 				PREBINDING = NO;
 				PRODUCT_NAME = HexFiend;
@@ -2115,7 +2123,7 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
-				INFOPLIST_FILE = "HexFiend_IBPlugin-Info.plist";
+				INFOPLIST_FILE = "ib_plugin/HexFiend_IBPlugin-Info.plist";
 				INSTALL_PATH = "$(HOME)/Library/Bundles";
 				PREBINDING = NO;
 				PRODUCT_NAME = HexFiend;

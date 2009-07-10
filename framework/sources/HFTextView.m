@@ -138,6 +138,15 @@
     }
 }
 
+- (void)setDelegate:(id)del {
+    delegate = del;
+}
+
+- (id)delegate {
+    return delegate;
+}
+
+
 - (void)drawRect:(NSRect)clipRect {
     USE(clipRect);
     if (bordered) {
@@ -164,12 +173,26 @@
     return bordered;
 }
 
+- (NSData *)data {
+
+}
+
+- (void)setData:(NSData *)data;
+
+
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self name:HFControllerDidChangePropertiesNotification object:dataController];
     [dataController release];
     [layoutRepresenter release];
     [backgroundColors release];
     [super dealloc];
+}
+
++ (void)initialize {
+    if (self == [HFTextView class]) {
+	[self exposeBinding:@"data"];
+    }
+    
 }
 
 @end
