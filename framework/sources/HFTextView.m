@@ -177,7 +177,9 @@
 
 }
 
-- (void)setData:(NSData *)data;
+- (void)setData:(NSData *)data {
+    
+}
 
 
 - (void)dealloc {

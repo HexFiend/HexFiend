@@ -31,10 +31,11 @@
 }
 
 - (const void *)bytes {
-
+    return NULL;
 }
 
 - (id)copyWithZone:(NSZone *)zone {
+    USE(zone);
     return [self retain];
 }
 
@@ -43,17 +44,17 @@
 }
 
 - (void)getBytes:(void *)buffer length:(NSUInteger)len {
-    return [self getBytes:buffer length:NSMakeRange(0, len)];
+    return [self getBytes:buffer range:NSMakeRange(0, len)];
 }
 
 - (void)getBytes:(void *)buffer range:(NSRange)range {
     if (underlyingData) {
-	return [underlyingData getBytes:buffer range:range]
+	return [underlyingData getBytes:buffer range:range];
     }
     
     HFASSERT(range.length <= length && length - range.length >= range.location);
     if (range.length > 0) {
-	[self getBytes:buffer length:NSMakeRange(0, len)];
+	//[self getBytes:buffer length:NSMakeRange(0, len)];
     }
 }
 

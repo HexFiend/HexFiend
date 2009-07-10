@@ -18,6 +18,7 @@
 @interface HFByteArrayDataProxy : NSData {
     NSData *underlyingData;
     HFByteArray *byteArray;
+    NSUInteger length;
 }
 
 - (id)initWithByteArray:(HFByteArray *)array;
