@@ -101,14 +101,8 @@
 }
 
 - (void)drawGradientWithClip:(NSRect)clip {
-#if 0
-    USE(clip);
-    NSImage *image = HFImageNamed(@"HFMetalGradient");
-    [image drawInRect:[self bounds] fromRect:NSZeroRect operation:NSCompositeCopy fraction:(CGFloat)1.];
-#else
     [[NSColor colorWithCalibratedWhite:(CGFloat).91 alpha:1] set];
     NSRectFill(clip);
-#endif
 }
 
 - (void)drawDividerWithClip:(NSRect)clipRect {

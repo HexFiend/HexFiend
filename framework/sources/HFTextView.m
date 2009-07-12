@@ -13,6 +13,8 @@
 #import <HexFiend/HFStringEncodingTextRepresenter.h>
 #import <HexFiend/HFVerticalScrollerRepresenter.h>
 #import <HexFiend/HFSharedMemoryByteSlice.h>
+#import <HexFiend/HFFullMemoryByteSlice.h>
+#import "HFByteArrayProxiedData.h"
 
 @implementation HFTextView
 
@@ -29,15 +31,22 @@
 }
 
 - (void)_HFControllerDidChangeProperties:(NSNotification *)note {
-    if ([delegate respondsToSelector:@selector(hexTextView:didChangeProperties:)]) {
         NSNumber *propertyNumber = [[note userInfo] objectForKey:HFControllerChangedPropertiesKey];
 #if __LP64__
         NSUInteger propertyMask = [propertyNumber unsignedIntegerValue];
 #else
         NSUInteger propertyMask = [propertyNumber unsignedIntValue];
 #endif
+    if (propertyMask & (HFControllerContentValue | HFControllerContentLength)) {
+        /* Note that this isn't quite right.  If we don't have any cached data, then we can't provide the "before" data for this change.  In practice, this is likely harmless, but it's still something that should be fixed at some point.
+        */
+        [self willChangeValueForKey:@"data"];
+        [cachedData release];
+        cachedData = nil; //set this to nil so that it gets recomputed on demand
+        [self didChangeValueForKey:@"data"];
+    }
+    if ([delegate respondsToSelector:@selector(hexTextView:didChangeProperties:)]) {
         [(id <HFTextViewDelegate>) delegate hexTextView:self didChangeProperties:propertyMask];
-        
     }
 }
 
@@ -174,19 +183,35 @@
 }
 
 - (NSData *)data {
-
+    if (! cachedData) {
+        HFByteArray *copiedArray = [[dataController byteArray] copy];
+        cachedData = [[HFByteArrayProxiedData alloc] initWithByteArray:copiedArray];
+        [copiedArray release];
+    }
+    return cachedData;
 }
 
 - (void)setData:(NSData *)data {
-    
+    if (data == nil || data != cachedData) {
+        [cachedData release];
+        cachedData = [data copy];
+        HFByteArray *newArray = [[HFBTreeByteArray alloc] init];
+        if (cachedData) {
+            HFByteSlice *newSlice = [[HFFullMemoryByteSlice alloc] initWithData:cachedData];
+            [newArray insertByteSlice:newSlice inRange:HFRangeMake(0, 0)];
+            [newSlice release];
+        }
+        [dataController replaceByteArray:newArray];
+        [newArray release];
+    }
 }
-
 
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self name:HFControllerDidChangePropertiesNotification object:dataController];
     [dataController release];
     [layoutRepresenter release];
     [backgroundColors release];
+    [cachedData release];
     [super dealloc];
 }
 

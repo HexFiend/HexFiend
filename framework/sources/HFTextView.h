@@ -22,6 +22,7 @@
     NSArray *backgroundColors;
     BOOL bordered;
     IBOutlet id delegate;
+    NSData *cachedData;
 }
 
 - (HFLayoutRepresenter *)layoutRepresenter;

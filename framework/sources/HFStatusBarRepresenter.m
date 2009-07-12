@@ -74,14 +74,9 @@
 
 - (void)drawRect:(NSRect)clip {
     USE(clip);
-#if 0
-    NSImage *image = HFImageNamed(@"HFMetalGradientVertical");
-    [image drawInRect:[self bounds] fromRect:NSZeroRect operation:NSCompositeSourceOver fraction:1];
-#else
     [[NSColor colorWithCalibratedWhite:(CGFloat).91 alpha:1] set];
     NSRectFill(clip);
     [self drawDividerWithClip:clip];
-#endif
     NSRect bounds = [self bounds];
     NSRect cellRect = NSMakeRect(NSMinX(bounds), HFCeil(NSMidY(bounds) - cellSize.height / 2), NSWidth(bounds), cellSize.height);
     [cell drawWithFrame:cellRect inView:self];
