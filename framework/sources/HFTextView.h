@@ -25,19 +25,56 @@
     NSData *cachedData;
 }
 
+/*! @name Accessing MVC components
+*/
+//@{
+/*! Returns the HFLayoutRepresenter for the receiver.  You may want to access this to add or remove HFRepresenters from the text view at runtime. */
 - (HFLayoutRepresenter *)layoutRepresenter;
+
+/*! Returns the HFController for the receiver.  You may want to access this to add or remove HFRepresenters from the text view at runtime. */
 - (HFController *)controller;
 
-- (NSArray *)backgroundColors;
+/*! Returns the HFByteArray for the receiver.  This is equivalent to <tt>[[self controller] byteArray]</tt>. */
+- (HFByteArray *)byteArray;
+
+//@}
+
+/*! @name Display configuration
+*/
+//@{
+/*! Sets the arry of background colors for the receiver. The background colors are used in sequence to draw each row. */
 - (void)setBackgroundColors:(NSArray *)colors;
 
+/*! Returns the array of background colors for the receiver. */
+- (NSArray *)backgroundColors;
+
+/*! Sets whether the receiver draws a border. */
 - (void)setBordered:(BOOL)val;
+
+/*! Returns whether the receiver draws a border. */
 - (BOOL)bordered;
+//@}
 
+/*! @name Delegate handling
+*/
+//@{
+/*! Sets the delegate, which may implement the methods in HFTextViewDelegate */
 - (void)setDelegate:(id)delegate;
-- (id)delegate;
 
+/*! Returns the delegate, which is initially nil. */
+- (id)delegate;
+//@}
+
+/*! @name Accessing contents as NSData
+*/
+//@{
+/*! Returns the contents of the HFTextView's HFByteArray as an NSData This NSData proxies an HFByteArray, and therefore it is usually more efficient than naively copying all of the bytes.   However, access to the \t -byte method will necessitate copying, a potentially expensive operation.  Furthermore, the NSData API is inherently 32 bit in a 32 bit process.  Lastly, there is no protection if the backing file for the data disappears.
+
+   For those reasons, this should only be used when its convenience outweighs the downside (e.g. some bindings scenarios).  For most use cases, it is better to use the \t -byteArray method above.
+*/
 - (NSData *)data;
+
+
 - (void)setData:(NSData *)data;
 
 @end

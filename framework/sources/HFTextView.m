@@ -129,6 +129,10 @@
     return dataController;
 }
 
+- (HFByteArray *)byteArray {
+    return [[self controller] byteArray];
+}
+
 - (NSArray *)backgroundColors {
     return backgroundColors;
 }
