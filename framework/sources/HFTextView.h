@@ -68,19 +68,25 @@
 /*! @name Accessing contents as NSData
 */
 //@{
-/*! Returns the contents of the HFTextView's HFByteArray as an NSData This NSData proxies an HFByteArray, and therefore it is usually more efficient than naively copying all of the bytes.   However, access to the \t -byte method will necessitate copying, a potentially expensive operation.  Furthermore, the NSData API is inherently 32 bit in a 32 bit process.  Lastly, there is no protection if the backing file for the data disappears.
+/*! Returns the contents of the HFTextView's HFByteArray as an NSData This NSData proxies an HFByteArray, and therefore it is usually more efficient than naively copying all of the bytes.   However, access to the \c -byte method will necessitate copying, a potentially expensive operation.  Furthermore, the NSData API is inherently 32 bit in a 32 bit process.  Lastly, there is no protection if the backing file for the data disappears.
 
-   For those reasons, this should only be used when its convenience outweighs the downside (e.g. some bindings scenarios).  For most use cases, it is better to use the \t -byteArray method above.
+   For those reasons, this should only be used when its convenience outweighs the downside (e.g. some bindings scenarios).  For most use cases, it is better to use the \c -byteArray method above.
 */
 - (NSData *)data;
 
-
+/*! Sets the contents of the HFTextView's HFByteArray to an \c NSData.  Note that the data is copied via the \c -copy message, so prefer to pass an immutable \c NSData when possible.
+*/
 - (void)setData:(NSData *)data;
+//@}
 
 @end
 
+/*! @protocol HFTextViewDelegate
+    @brief Delegate methods for HFTextView
+*/
 @protocol HFTextViewDelegate <NSObject>
 
+/*! Called on the delegate when the HFTextView's HFController changed some properties.  See the documentation for the #HFControllerPropertyBits enum. */
 - (void)hexTextView:(HFTextView *)view didChangeProperties:(HFControllerPropertyBits)properties;
 
 @end

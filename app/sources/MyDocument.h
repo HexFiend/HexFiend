@@ -43,6 +43,7 @@
     SEL commandToRunAfterBannerIsDoneHiding;
     
     NSInteger saveResult;
+    NSError *saveError;
 }
 
 - (void)moveSelectionForwards:(NSMenuItem *)sender;

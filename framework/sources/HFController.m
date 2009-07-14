@@ -1715,7 +1715,7 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
 + (BOOL)prepareForChangeInFile:(NSURL *)targetFile fromWritingByteArray:(HFByteArray *)array {
     REQUIRE_NOT_NULL(targetFile);
     REQUIRE_NOT_NULL(array);
-    HFFileReference *fileReference = [[HFFileReference alloc] initWithPath:[targetFile path]];
+    HFFileReference *fileReference = [[HFFileReference alloc] initWithPath:[targetFile path] error:NULL];
     if (! fileReference) return YES; //good luck writing that sucker
     
     BOOL shouldCancel = NO;
@@ -2091,7 +2091,7 @@ static NSUInteger random_upto(unsigned long long val) {
     if (! [data writeToURL:fileURL atomically:NO]) {
         [NSException raise:NSGenericException format:@"Unable to write test data to %@", fileURL];
     }
-    HFFileReference *ref = [[[HFFileReference alloc] initWithPath:[fileURL path]] autorelease];
+    HFFileReference *ref = [[[HFFileReference alloc] initWithPath:[fileURL path] error:NULL] autorelease];
     HFTEST([ref length] == [data length]);
     
     HFByteSlice *slice = [[[HFFileByteSlice alloc] initWithFile:ref] autorelease];
@@ -2180,7 +2180,7 @@ static NSUInteger random_upto(unsigned long long val) {
 	if (! [data writeToURL:fileURL atomically:NO]) {
 	    [NSException raise:NSGenericException format:@"Unable to write test data to %@", fileURL];
 	}
-	HFFileReference *ref = [[[HFFileReference alloc] initWithPath:[fileURL path]] autorelease];
+	HFFileReference *ref = [[[HFFileReference alloc] initWithPath:[fileURL path] error:NULL] autorelease];
 	HFTEST([ref length] == [data length]);
 	
 	HFByteSlice *slice = [[[HFFileByteSlice alloc] initWithFile:ref] autorelease];

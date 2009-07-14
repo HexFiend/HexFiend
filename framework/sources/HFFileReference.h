@@ -23,11 +23,12 @@
     BOOL isWritable;
 }
 
-/*! Open a file for reading and writing at the given path.  The permissions mode of any newly created file is 0744.  Returns nil if the file could not be opened. */
-- initWritableWithPath:(NSString *)path;
 
-/*! Open a file for reading only at the given path.  Returns nil if the file could not be opened. */
-- initWithPath:(NSString *)path;
+/*! Open a file for reading and writing at the given path.  The permissions mode of any newly created file is 0744.  Returns nil if the file could not be opened, in which case the error parameter (if not nil) will be set. */
+- initWritableWithPath:(NSString *)path error:(NSError **)error;
+
+/*! Open a file for reading only at the given path.  Returns nil if the file could not be opened, in which case the error parameter (if not nil) will be set. */
+- initWithPath:(NSString *)path error:(NSError **)error;
 
 /*! Closes the file. */
 - (void)close;
@@ -43,6 +44,7 @@
    @param buff The data to write.
    @param length The number of bytes to write.
    @param offset The offset in the file to write to.
+   @return 0 on success, or an errno-style error code on failure
 */
 - (int)writeBytes:(const unsigned char *)buff length:(NSUInteger)length to:(unsigned long long)offset;
 

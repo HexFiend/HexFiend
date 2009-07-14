@@ -14,6 +14,8 @@
  *
  * @section getting_started Getting Started
  *
+ * The Hex Fiend source code is available at http://ridiculousfish.com/hexfiend/
+ *
  * The easiest way to get started is to use the Interface Builder plugin to drag a hex view into your project!  Hex Fiend also comes with some sample code ("HexFiendling"), distributed as part of the project.  And of course the Hex Fiend application itself is open source, acting as a more sophisticated sample code.
 */
 
@@ -77,5 +79,14 @@
  */
 ///@{
 ///@class HFController
+
+///@}
+
+/*! @defgroup highlevel High Level
+ *  Hex Fiend's "do it all" classes
+ */
+///@{
+///@class HFTextView
+///@class HFTextField
 
 ///@}

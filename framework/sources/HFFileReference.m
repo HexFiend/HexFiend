@@ -14,9 +14,28 @@
 
 #define USE_STAT64 0
 
+static void returnReadError(NSError **error) {
+    if (error) {
+	int posixCode = errno;
+	NSInteger cocoaCode = 0;
+	switch (posixCode) {
+	    case ENOENT:	cocoaCode = NSFileReadNoSuchFileError; break;
+	    case EPERM:
+	    case EACCES:	cocoaCode = NSFileReadNoPermissionError; break;
+	    case ENAMETOOLONG:  cocoaCode = NSFileReadInvalidFileNameError; break;
+	}
+	if (cocoaCode != 0) {
+	    *error = [NSError errorWithDomain:NSCocoaErrorDomain code:cocoaCode userInfo:nil];	
+	}
+	else {
+	    *error = [NSError errorWithDomain:NSPOSIXErrorDomain code:posixCode userInfo:nil];
+	}
+    }
+}
+
 @implementation HFFileReference
 
-- sharedInitWithPath:(NSString *)path {
+- sharedInitWithPath:(NSString *)path error:(NSError **)error {
     int result;
     REQUIRE_NOT_NULL(path);
     const char* p = [path fileSystemRepresentation];
@@ -27,6 +46,7 @@
         fileDescriptor = open(p, O_RDONLY, 0);
     }
     if (fileDescriptor < 0) {
+	returnReadError(error);
         [self release];
 	return nil;
     }
@@ -39,6 +59,7 @@
 #endif
     if (result != 0) {
 	int err = errno;
+	returnReadError(error);
         close(fileDescriptor);
         NSLog(@"Unable to fstat64 file %@. %s.", path, strerror(err));
 	[self release];
@@ -50,16 +71,24 @@
     return self;
 }
 
-- initWithPath:(NSString *)path {
+- initWithPath:(NSString *)path error:(NSError **)error {
     [super init];
     isWritable = NO;
-    return [self sharedInitWithPath:path];
+    return [self sharedInitWithPath:path error:error];
+}
+
+- initWritableWithPath:(NSString *)path error:(NSError **)error{
+    [super init];
+    isWritable = YES;
+    return [self sharedInitWithPath:path error:error];
+}
+
+- initWithPath:(NSString *)path {
+    return [self initWithPath:path error:NULL];
 }
 
 - initWritableWithPath:(NSString *)path {
-    [super init];
-    isWritable = YES;
-    return [self sharedInitWithPath:path];
+    return [self initWritableWithPath:path error:NULL];
 }
 
 - (void)readBytes:(unsigned char*)buff length:(NSUInteger)length from:(unsigned long long)pos {

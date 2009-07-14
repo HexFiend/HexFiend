@@ -43,7 +43,7 @@
 
 - (void)setUpFileMultipleViewIntoView:(NSView *)containerView {
     /* We're going to show the contents of mach_kernel */
-    HFFileReference *reference = [[[HFFileReference alloc] initWithPath:@"/mach_kernel"] autorelease];
+    HFFileReference *reference = [[[HFFileReference alloc] initWithPath:@"/mach_kernel" error:NULL] autorelease];
 
     /* Make a controller to hook everything up, and then configure it a bit. */
     fileController = [[HFController alloc] init];

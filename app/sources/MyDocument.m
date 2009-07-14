@@ -308,6 +308,7 @@ static inline Class preferredByteArrayClass(void) {
     [[self representers] makeObjectsPerformSelector:@selector(release)];
     [controller release];
     [bannerView release];
+    [saveError release];
     
     /* Release and stop observing our banner views.  Note that any of these may be nil. */
     HFDocumentOperationView *views[] = {findReplaceView, moveSelectionByView, jumpToOffsetView, saveView};
@@ -383,7 +384,7 @@ static inline Class preferredByteArrayClass(void) {
     USE(outError);
     BOOL result = NO;
     HFASSERT([absoluteURL isFileURL]);
-    HFFileReference *fileReference = [[[HFFileReference alloc] initWithPath:[absoluteURL path]] autorelease];
+    HFFileReference *fileReference = [[[HFFileReference alloc] initWithPath:[absoluteURL path] error:outError] autorelease];
     if (fileReference) {
         HFFileByteSlice *byteSlice = [[[HFFileByteSlice alloc] initWithFile:fileReference] autorelease];
         HFByteArray *byteArray = [[[preferredByteArrayClass() alloc] init] autorelease];
@@ -666,7 +667,7 @@ static inline Class preferredByteArrayClass(void) {
     if (saveOperation == NSSaveOperation || saveOperation == NSSaveAsOperation) {
         /* We can no longer undo, since we may have overwritten our source data. */
         [[self undoManager] removeAllActions];	
-        HFFileReference *fileReference = [[[HFFileReference alloc] initWithPath:[inAbsoluteURL path]] autorelease];
+        HFFileReference *fileReference = [[[HFFileReference alloc] initWithPath:[inAbsoluteURL path] error:NULL] autorelease];
         if (fileReference) {
             HFFileByteSlice *byteSlice = [[[HFFileByteSlice alloc] initWithFile:fileReference] autorelease];
             HFByteArray *byteArray = [[[preferredByteArrayClass() alloc] init] autorelease];
@@ -677,6 +678,10 @@ static inline Class preferredByteArrayClass(void) {
     
     
     if (operationView != nil && operationView == saveView) [self hideBannerFirstThenDo:NULL];
+    
+    if (outError) *outError = saveError;
+    [saveError autorelease];
+    saveError = nil;
     
     return saveResult != HFSaveError;
 }
@@ -762,6 +767,7 @@ static inline Class preferredByteArrayClass(void) {
     NSError *error = nil;
     BOOL result = [byteArray writeToFile:targetURL trackingProgress:tracker error:&error];
     [tracker noteFinished:self];
+    saveError = [error retain];
     if (tracker->cancelRequested) return [NSNumber numberWithInt:HFSaveCancelled];
     else if (! result) return [NSNumber numberWithInt:HFSaveError];
     else return [NSNumber numberWithInt:HFSaveSuccessful];

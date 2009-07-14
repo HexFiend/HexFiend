@@ -97,7 +97,7 @@ typedef NSUInteger HFByteArrayDataStringType;
    Manipulate the generation count */
 // @{
 /*! Increments the generation count, unless the receiver is locked, in which case it raises an exception.  All subclasses of HFByteArray should call this method at the beginning of any overridden method that may modify the receiver.
-  @param sel The selector that would modify the receiver (e.g. <tt>deleteBytesInRange:</tt>).  This is usually <tt>_cmd></tt>. */
+  @param sel The selector that would modify the receiver (e.g. <tt>deleteBytesInRange:</tt>).  This is usually <tt>_cmd</tt>. */
 - (void)incrementGenerationOrRaiseIfLockedForSelector:(SEL)sel;
 
 /*! Return the change generation count.  Every change to the ByteArray increments this by one or more.  This can be used for caching layers on top of HFByteArray, to known when to expire their cache. */

@@ -276,11 +276,12 @@ static void verifyEveryObjectInExactlyOneConnectedComponent(NSArray *components,
     unsigned long long startLength, endLength;
     HFObjectGraph *cyclicGraph = nil, *acyclicGraph = nil;
     BOOL wasCancelled = NO;
-    HFFileReference *reference = [[HFFileReference alloc] initWritableWithPath:[targetURL path]];
-    HFASSERT(reference != NULL);
+    BOOL result = NO;
+    HFFileReference *reference = [[HFFileReference alloc] initWritableWithPath:[targetURL path] error:error];
+    if (reference == nil) goto bail;
+    
     startLength = [reference length];
     endLength = [self length];
-    BOOL result = NO;
     
     CHECK_CANCEL();
     
