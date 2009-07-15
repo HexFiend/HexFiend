@@ -3,7 +3,11 @@
 @class HFController;
 
 static inline BOOL HFIsRunningOnLeopardOrLater(void) {
-    return NSAppKitVersionNumber >= 860.;
+    return NSAppKitVersionNumber >= 949;
+}
+
+static inline BOOL HFIsRunningOnSnowLeopardOrLater(void) {
+    return NSAppKitVersionNumber >= 1034;
 }
 
 /* Returns the first index where the strings differ.  If the strings do not differ in any characters but are of different lengths, returns the smaller length; if they are the same length and do not differ, returns NSUIntegerMax */

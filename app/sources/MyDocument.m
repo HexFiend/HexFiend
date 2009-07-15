@@ -609,7 +609,7 @@ static inline Class preferredByteArrayClass(void) {
         NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
         [self animateBanner:nil];
         [window displayIfNeeded];
-        [pool release];
+        [pool drain];
     }
 }
 
@@ -664,8 +664,13 @@ static inline Class preferredByteArrayClass(void) {
     
     [[controller byteArray] decrementChangeLockCounter];
     
-    if (saveOperation == NSSaveOperation || saveOperation == NSSaveAsOperation) {
-        /* We can no longer undo, since we may have overwritten our source data. */
+    /* If we save to a file, then we've probably overwritten some source data, so throw away undo and just reset the document to reference the new file.  Only do this if there was no error.
+    
+    Note that this is actually quite wrong.  It's entirely possible that e.g. there was an error after the file was touched, e.g. when writing to the file.  In that case, we do want to just reference the file again.
+    
+    What we really need to know is "has a backing file been touched by this operation."  But we don't have access to that information yet.
+    */
+    if ((saveResult != HFSaveError) && (saveOperation == NSSaveOperation || saveOperation == NSSaveAsOperation)) {
         [[self undoManager] removeAllActions];	
         HFFileReference *fileReference = [[[HFFileReference alloc] initWithPath:[inAbsoluteURL path] error:NULL] autorelease];
         if (fileReference) {
@@ -675,7 +680,6 @@ static inline Class preferredByteArrayClass(void) {
             [controller setByteArray:byteArray];
         }
     }
-    
     
     if (operationView != nil && operationView == saveView) [self hideBannerFirstThenDo:NULL];
     

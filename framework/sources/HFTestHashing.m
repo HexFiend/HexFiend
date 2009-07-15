@@ -12,7 +12,6 @@
 #import <HexFiend/HFByteArray.h>
 #include <openssl/sha.h>
 
-
 NSData *HFHashFile(NSURL *url) {
     NSMutableData *data = [NSMutableData dataWithLength:SHA_DIGEST_LENGTH];
     SHA_CTX ctx;

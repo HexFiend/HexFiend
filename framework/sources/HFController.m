@@ -21,6 +21,7 @@
 #import <HexFiend/HFFileByteSlice.h>
 #import <HexFiend/HFTestHashing.h>
 #import <HexFiend/HFRandomDataByteSlice.h>
+#include <sys/stat.h>
 #endif
 
 /* Used for the anchor range and location */
@@ -572,6 +573,57 @@ static inline Class preferredByteArrayClass(void) {
     [self setDisplayedLineRange:newDisplayRange];
 }
 
+/* Clips the selection to a given length.  If this would clip the entire selection, returns a zero length selection at the end.  Indicates HFControllerSelectedRanges if the selection changes. */
+- (void)_clipSelectedContentsRangesToLength:(unsigned long long)newLength {
+    NSMutableArray *newTempSelection = [selectedContentsRanges mutableCopy];
+    NSUInteger i, max = [newTempSelection count];
+    for (i=0; i < max; i++) {
+	HFRange range = [[newTempSelection objectAtIndex:i] HFRange];
+	if (HFMaxRange(range) > newLength) {
+	    if (range.location > newLength) {
+		/* The range starts past our new max.  Just remove this range entirely */
+		[newTempSelection removeObjectAtIndex:i];
+		i--;
+		max--;
+	    }
+	    else {
+		/* Need to clip this range */
+		range.length = newLength - range.location;
+		[newTempSelection replaceObjectAtIndex:i withObject:[HFRangeWrapper withRange:range]];
+	    }
+	}
+    }
+    [newTempSelection setArray:[HFRangeWrapper organizeAndMergeRanges:newTempSelection]];
+    
+    /* If there are multiple empty ranges, remove all but the first */
+    BOOL foundEmptyRange = NO;
+    max = [newTempSelection count];
+    for (i=0; i < max; i++) {
+	HFRange range = [[newTempSelection objectAtIndex:i] HFRange];
+	HFASSERT(HFMaxRange(range) <= newLength);
+	if (range.length == 0) {
+	    if (foundEmptyRange) {
+		[newTempSelection removeObjectAtIndex:i];
+		i--;
+		max--;
+	    }
+	    foundEmptyRange = YES;
+	}
+    }
+    if (max == 0) {
+	/* Removed all ranges - insert one at the end */
+	[newTempSelection addObject:[HFRangeWrapper withRange:HFRangeMake(newLength, 0)]];
+    }
+    
+    /* If something changed, set the new selection and post the change bit */
+    if (! [selectedContentsRanges isEqualToArray:newTempSelection]) {
+	[selectedContentsRanges setArray:newTempSelection];
+	[self _addPropertyChangeBits:HFControllerSelectedRanges];
+    }
+    
+    [newTempSelection release];
+}
+
 - (void)setByteArray:(HFByteArray *)val {
     REQUIRE_NOT_NULL(val);
     BEGIN_TRANSACTION();
@@ -584,6 +636,7 @@ static inline Class preferredByteArrayClass(void) {
     [byteArray addObserver:self forKeyPath:@"changesAreLocked" options:0 context:KVOContextChangesAreLocked];
     [self _updateDisplayedRange];
     [self _addPropertyChangeBits: HFControllerContentValue | HFControllerContentLength];
+    [self _clipSelectedContentsRangesToLength:[byteArray length]];
     END_TRANSACTION();
 }
 
@@ -1243,44 +1296,7 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
     
     if (selectionAction == ePreserveSelection) {
         HFASSERT([selectedContentsRanges count] > 0);
-        NSUInteger i, max = [selectedContentsRanges count];
-        const unsigned long long dataLength = [self contentsLength];
-        for (i=0; i < max; i++) {
-            HFRange selectedRange = [[selectedContentsRanges objectAtIndex:i] HFRange];
-            if (selectedRange.location > dataLength) {
-                /* Entirely beyond the end, remove it */
-                [selectedContentsRanges removeObjectAtIndex:i];
-                i--;
-                max--;                
-            }
-            else if (HFMaxRange(selectedRange) > dataLength) {
-                /* End of the range is clipped */
-                HFRange newRange = HFRangeMake(selectedRange.location, dataLength - selectedRange.location);
-                [selectedContentsRanges replaceObjectAtIndex:i withObject:[HFRangeWrapper withRange:newRange]];
-            }
-        }
-        
-        [selectedContentsRanges setArray:[HFRangeWrapper organizeAndMergeRanges:selectedContentsRanges]];
-        max = [selectedContentsRanges count];
-        
-        /* If there are multiple empty ranges, remove all but the first */
-        BOOL foundEmptyRange = NO;
-        for (i=0; i < max; i++) {
-            HFRange range = [[selectedContentsRanges objectAtIndex:i] HFRange];
-            HFASSERT(HFMaxRange(range) <= dataLength);
-            if (range.length == 0) {
-                if (foundEmptyRange) {
-                    [selectedContentsRanges removeObjectAtIndex:i];
-                    i--;
-                    max--;
-                }
-                foundEmptyRange = YES;
-            }
-        }
-        if (max == 0) {
-            /* Removed all ranges - insert one at the end */
-            [selectedContentsRanges addObject:[HFRangeWrapper withRange:HFRangeMake(dataLength, 0)]];
-        }
+        [self _clipSelectedContentsRangesToLength:[self contentsLength]];
     }
     
     VALIDATE_SELECTION();
@@ -1770,7 +1786,7 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
 		break;
 	    }
 	}
-	[pool release];
+	[pool drain];
     }
 }
 
@@ -1983,7 +1999,7 @@ static NSUInteger random_upto(unsigned long long val) {
         
         if (! expectedCoalesced) [undoer endUndoGrouping];
         
-        [pool release];
+        [pool drain];
         
         coalescerActionPoint = HFSum(replacementRange.location, replacementDataLength);
     }
@@ -2020,7 +2036,7 @@ static NSUInteger random_upto(unsigned long long val) {
         DEBUG printf("Index %lu %lu\n", (unsigned long)i, (unsigned long)expectationIndex);
         HFTEST([[controller byteArray] _debugIsEqualToData:[expectations objectAtIndex:expectationIndex]]);
         
-        [pool release];
+        [pool drain];
     }
     
     DEBUG puts("Done!");
@@ -2068,7 +2084,7 @@ static NSUInteger random_upto(unsigned long long val) {
 		break;
 	    }
 	}
-	[pool release];
+	[pool drain];
 	fflush(NULL);
 	if ([first _debugIsEqual:second]) {
 	    DEBUG printf("OK! Length: %llu\t%s\n", [second length], [[second description] UTF8String]);
@@ -2085,7 +2101,7 @@ static NSUInteger random_upto(unsigned long long val) {
 + (void)_testRandomOperationFileWriting {
     const BOOL should_debug = NO;
     NSAutoreleasePool* pool=[[NSAutoreleasePool alloc] init];
-    NSData *data = randomDataOfLength(1 << 20);
+    NSData *data = randomDataOfLength(1 << 16);
     NSURL *fileURL = [NSURL fileURLWithPath:@"/tmp/HexFiendTestFile.data"];
     NSURL *asideFileURL = [NSURL fileURLWithPath:@"/tmp/HexFiendTestFile_External.data"];
     if (! [data writeToURL:fileURL atomically:NO]) {
@@ -2148,8 +2164,69 @@ static NSUInteger random_upto(unsigned long long val) {
     HFTEST([arrayHash isEqual:HFHashFile(fileURL)]);
     
     [[NSFileManager defaultManager] removeFileAtPath:[fileURL path] handler:nil];
-    [pool release];
+    [pool drain];
 }
+
++ (void)_testBadPermissionsFileWriting {
+    NSAutoreleasePool* pool=[[NSAutoreleasePool alloc] init];
+    NSString *pathObj = @"/tmp/HexFiendErroneousData_Permissions.data";
+    const char *path = [pathObj fileSystemRepresentation];
+    NSURL *url = [NSURL fileURLWithPath:pathObj isDirectory:NO];
+    NSData *data = randomDataOfLength(4 * 1024);
+    [data writeToURL:url atomically:NO];
+    chmod(path, 0400); //set permissions to read only, and only for owner
+    
+    // Try doubling the file.  Writing this should fail because it is read only.
+    HFFileReference *ref = [[[HFFileReference alloc] initWithPath:pathObj error:NULL] autorelease];
+    HFByteSlice *slice = [[[HFFileByteSlice alloc] initWithFile:ref] autorelease];
+    HFByteArray *array = [[[HFBTreeByteArray alloc] init] autorelease];
+    [array insertByteSlice:slice inRange:HFRangeMake(0, 0)];
+    [array insertByteSlice:slice inRange:HFRangeMake(0, 0)];
+    
+    NSError *error = nil;
+    BOOL writeResult = [array writeToFile:url trackingProgress:NULL error:&error];
+    HFTEST(writeResult == NO);
+    HFTEST(error != nil);
+    HFTEST([[error domain] isEqual:NSCocoaErrorDomain]);
+    HFTEST([error code] == NSFileReadNoPermissionError);
+    
+    chmod(path, 0644);
+    error = nil;
+    writeResult = [array writeToFile:url trackingProgress:NULL error:&error];
+    HFTEST(writeResult == YES);
+    HFTEST(error == nil);
+    
+    unlink(path);
+    
+    [pathObj self]; //make sure this sticks around under GC for its filesystemRepresentation
+    [pool drain];
+}
+
++ (void)_testBadLengthFileWriting {
+    NSAutoreleasePool* pool=[[NSAutoreleasePool alloc] init];
+    NSString *pathObj = @"/tmp/HexFiendErroneousData_Length.data";
+    const char *path = [pathObj fileSystemRepresentation];
+    NSURL *url = [NSURL fileURLWithPath:pathObj isDirectory:NO];
+    NSData *data = randomDataOfLength(4 * 1024);
+    [data writeToURL:url atomically:NO];
+    
+    HFByteSlice *slice = [[[HFRandomDataByteSlice alloc] initWithRandomDataLength:(1ULL << 42 /* 4 terabytes*/)] autorelease];
+    HFByteArray *array = [[[HFBTreeByteArray alloc] init] autorelease];
+    [array insertByteSlice:slice inRange:HFRangeMake(0, 0)];
+    
+    NSError *error = nil;
+    BOOL writeResult = [array writeToFile:url trackingProgress:NULL error:&error];
+    HFTEST(writeResult == NO);
+    HFTEST(error != nil);
+    HFTEST([[error domain] isEqual:NSCocoaErrorDomain]);
+    HFTEST([error code] == NSFileWriteOutOfSpaceError);
+    
+    unlink(path);
+    
+    [pathObj self]; //make sure this sticks around under GC for its filesystemRepresentation
+    [pool drain];
+}
+
 
 + (void)_testPermutationFileWriting {
     const BOOL should_debug = NO;
@@ -2159,7 +2236,7 @@ static NSUInteger random_upto(unsigned long long val) {
     while (iteration--) {
 	NSAutoreleasePool* pool=[[NSAutoreleasePool alloc] init];
 	
-#define BLOCK_SIZE (1024 * 1024)
+#define BLOCK_SIZE (16 * 1024)
 #define BLOCK_COUNT 64
 	
 	/* Construct an enumeration */
@@ -2191,7 +2268,7 @@ static NSUInteger random_upto(unsigned long long val) {
 	    NSUInteger index = permutation[p];
 	    HFByteSlice *subslice = [slice subsliceWithRange:HFRangeMake(index * BLOCK_SIZE, BLOCK_SIZE)];
 	    [array insertByteSlice:subslice inRange:HFRangeMake([array length], 0)];
-	}    
+	}
 	NSData *arrayHash = HFHashByteArray(array);
 	
 	HFTEST([array writeToFile:asideFileURL trackingProgress:NULL error:NULL]);
@@ -2204,7 +2281,7 @@ static NSUInteger random_upto(unsigned long long val) {
 	
 	[[NSFileManager defaultManager] removeFileAtPath:[fileURL path] handler:nil];
 	
-	[pool release];
+	[pool drain];
     }
 }
 
@@ -2229,10 +2306,10 @@ static NSUInteger random_upto(unsigned long long val) {
         [byteArray insertByteSlice:needleSlice inRange:HFRangeMake([byteArray length] - random_upto(1 << 15), 0)];
         [HFByteArray _testSearchAlgorithmsLookingForArray:needle inArray:byteArray];
         
-        [pool release];
+        [pool drain];
         pool = [[NSAutoreleasePool alloc] init];
     }
-    [pool release];
+    [pool drain];
 }
 
 static void exception_thrown(const char *methodName, NSException *exception) {
@@ -2243,21 +2320,26 @@ static void exception_thrown(const char *methodName, NSException *exception) {
 
 + (void)_runAllTests {
     CFAbsoluteTime start = CFAbsoluteTimeGetCurrent();
-    @try { [self _testFastMemchr]; }
+    BOOL enableTest = YES;
+    if (enableTest) @try { [self _testFastMemchr]; }
     @catch (NSException *localException) { exception_thrown("_testFastMemchr", localException); }
-    @try { [self _testRangeFunctions]; }
+    if (enableTest) @try { [self _testRangeFunctions]; }
     @catch (NSException *localException) { exception_thrown("_testRangeFunctions", localException); }
-    @try { [self _testByteArray]; }
+    if (enableTest) @try { [self _testByteArray]; }
     @catch (NSException *localException) { exception_thrown("_testByteArray", localException); }
-    @try { [self _testTextInsertion]; }
+    if (enableTest) @try { [self _testTextInsertion]; }
     @catch (NSException *localException) { exception_thrown("_testTextInsertion", localException); }
-    @try { [NSClassFromString(@"HFObjectGraph") self]; }
+    if (enableTest) @try { [NSClassFromString(@"HFObjectGraph") self]; }
     @catch (NSException *localException) { exception_thrown("HFObjectGraph", localException); }    
-    @try { [self _testRandomOperationFileWriting]; }
+    if (enableTest) @try { [self _testRandomOperationFileWriting]; }
     @catch (NSException *localException) { exception_thrown("_testRandomOperationFileWriting", localException); }
-    @try { [self _testPermutationFileWriting]; }
+    if (enableTest) @try { [self _testPermutationFileWriting]; }
     @catch (NSException *localException) { exception_thrown("_testPermutationFileWriting", localException); }
-    @try { [self _testByteSearching]; }
+    if (enableTest) @try { [self _testBadPermissionsFileWriting]; }
+    @catch (NSException *localException) { exception_thrown("_testBadPermissionsFileWriting", localException); }
+    if (enableTest) @try { [self _testBadLengthFileWriting]; }
+    @catch (NSException *localException) { exception_thrown("_testBadLengthFileWriting", localException); }
+    if (enableTest) @try { [self _testByteSearching]; }
     @catch (NSException *localException) { exception_thrown("_testByteSearching", localException); }
     CFAbsoluteTime end = CFAbsoluteTimeGetCurrent();
     printf("Unit tests completed in %.02f seconds\n", end - start);

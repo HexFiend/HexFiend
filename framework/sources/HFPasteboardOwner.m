@@ -131,7 +131,7 @@ NSString *const HFPrivateByteArrayPboardType = @"HFPrivateByteArrayPboardType";
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     [self writeDataInBackgroundToPasteboard:pasteboard ofLength:dataAmountToCopy forType:type trackingProgress:progressTracker];
     [self performSelectorOnMainThread:@selector(backgroundMoveDataFinished:) withObject:nil waitUntilDone:NO];
-    [pool release];
+    [pool drain];
 }
 
 - (void)backgroundMoveDataFinished:unused {

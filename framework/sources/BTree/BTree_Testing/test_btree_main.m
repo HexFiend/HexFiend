@@ -61,7 +61,7 @@ int main (int argc, const char * argv[]) {
     }
     if (runForShark) {
         run_for_shark();
-        [pool release];
+        [pool drain];
         return 0;
     }
     

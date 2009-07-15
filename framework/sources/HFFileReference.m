@@ -33,6 +33,24 @@ static void returnReadError(NSError **error) {
     }
 }
 
+static void returnFTruncateError(NSError **error) {
+    const NSInteger HF_NSFileWriteVolumeReadOnlyError = 642 /* NSFileWriteVolumeReadOnlyError, only on SnowLeopard and later */;
+    if (error) {
+	int posixCode = errno;
+	NSInteger cocoaCode = 0;
+	switch (posixCode) {
+	    case ENOSPC:	cocoaCode = NSFileWriteOutOfSpaceError; break;
+	    case EROFS:		if (HFIsRunningOnLeopardOrLater()) cocoaCode = HF_NSFileWriteVolumeReadOnlyError; break;
+	}
+	if (cocoaCode != 0) {
+	    *error = [NSError errorWithDomain:NSCocoaErrorDomain code:cocoaCode userInfo:nil];	
+	}
+	else {
+	    *error = [NSError errorWithDomain:NSPOSIXErrorDomain code:posixCode userInfo:nil];
+	}
+    }
+}
+
 @implementation HFFileReference
 
 - sharedInitWithPath:(NSString *)path error:(NSError **)error {
@@ -141,20 +159,19 @@ static void returnReadError(NSError **error) {
     return fileLength;
 }
 
-- (int)setLength:(unsigned long long)length {
+- (BOOL)setLength:(unsigned long long)length error:(NSError **)error {
     HFASSERT(isWritable);
     HFASSERT(fileDescriptor >= 0);
     HFASSERT(length <= LLONG_MAX);
-    int err = 0, result;
-    result = ftruncate(fileDescriptor, (off_t)length);
+    int result = ftruncate(fileDescriptor, (off_t)length);
     HFASSERT(result <= 0);
     if (result < 0) {
-        err = errno;
+	returnFTruncateError(error);
     }
     else {
         fileLength = length;
     }
-    return err;
+    return result == 0;
 }
 
 - (NSUInteger)hash {

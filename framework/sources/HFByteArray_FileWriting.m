@@ -287,10 +287,9 @@ static void verifyEveryObjectInExactlyOneConnectedComponent(NSArray *components,
     
     if (endLength > startLength) {
         /* If we're extending the file, make it longer so we can detect failure before trying to write anything. */
-        int err = [reference setLength:endLength];
-        if (err != 0) {
-            goto bail;
-        }
+        if (! [reference setLength:endLength error:error]) {
+	    goto bail;
+	}   
     }
     
     CHECK_CANCEL();
@@ -380,10 +379,9 @@ static void verifyEveryObjectInExactlyOneConnectedComponent(NSArray *components,
     
     if (endLength < startLength) {
         /* If we're shrinking the file, do it now, so we don't lose any data. */
-        int err = [reference setLength:endLength];
-        if (err != 0) {
-            goto bail;
-        }
+        if (! [reference setLength:endLength error:error]) {
+	    goto bail;
+	}
     }
     
     result = YES;

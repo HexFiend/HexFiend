@@ -51,8 +51,8 @@
 /*! Returns the length of the file, as a 64 bit unsigned long long. */
 - (unsigned long long)length;
 
-/*! Changes the length of the file via \c ftruncate.  Returns an errno-style error on failure, or 0 on success. */
-- (int)setLength:(unsigned long long)length;
+/*! Changes the length of the file via \c ftruncate.  Returns YES on success, NO on failure; on failure it optionally returns an NSError by reference. */
+- (BOOL)setLength:(unsigned long long)length error:(NSError **)error;
 
 /*! isEqual: returns whether two file references both reference the same file, as in have the same inode and device. */
 - (BOOL)isEqual:(id)val;

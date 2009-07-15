@@ -213,7 +213,7 @@ static NSString *sNibName;
     id result = [target performSelector:startSelector withObject:tracker];
     [result retain];
     [tracker noteFinished:self];
-    [pool release];
+    [pool drain];
     return result; //result is released in spinUntilFinished
 }
 

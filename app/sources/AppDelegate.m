@@ -58,7 +58,7 @@ static NSComparisonResult compareFontDisplayNames(NSFont *a, NSFont *b, void *un
     }
     [fonts sortUsingFunction:compareFontDisplayNames context:NULL];
     [self performSelectorOnMainThread:@selector(receiveFonts:) withObject:fonts waitUntilDone:NO modes:[NSArray arrayWithObjects:NSDefaultRunLoopMode, NSEventTrackingRunLoopMode, nil]];
-    [pool release];
+    [pool drain];
 }
 
 - (void)receiveFonts:(NSArray *)fonts {

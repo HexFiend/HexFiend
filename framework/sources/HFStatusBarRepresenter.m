@@ -6,7 +6,9 @@
 //  Copyright 2007 ridiculous_fish. All rights reserved.
 //
 
-#import "HFStatusBarRepresenter.h"
+#import <HexFiend/HFStatusBarRepresenter.h>
+
+#define kHFStatusBarDefaultModeUserDefaultsKey @"HFStatusBarDefaultMode"
 
 @interface HFStatusBarView : NSView {
     NSCell *cell;
@@ -84,16 +86,14 @@
 
 - (void)mouseDown:(NSEvent *)event {
     USE(event);
-    [representer setStatusMode:([representer statusMode] + 1) % HFSTATUSMODECOUNT];
+    HFStatusBarMode newMode = ([representer statusMode] + 1) % HFSTATUSMODECOUNT;
+    [representer setStatusMode:newMode];
+    [[NSUserDefaults standardUserDefaults] setInteger:newMode forKey:kHFStatusBarDefaultModeUserDefaultsKey];
 }
 
 @end
 
 @implementation HFStatusBarRepresenter
-
-static inline const char *plural(unsigned long long s) {
-    return (s == 1 ? "" : "s");
-}
 
 - (void)encodeWithCoder:(NSCoder *)coder {
     HFASSERT([coder allowsKeyedCoding]);
@@ -105,6 +105,12 @@ static inline const char *plural(unsigned long long s) {
     HFASSERT([coder allowsKeyedCoding]);
     [super initWithCoder:coder];
     statusMode = (NSUInteger)[coder decodeInt64ForKey:@"HFStatusMode"];
+    return self;
+}
+
+- (id)init {
+    [super init];
+    statusMode = [[NSUserDefaults standardUserDefaults] integerForKey:kHFStatusBarDefaultModeUserDefaultsKey];
     return self;
 }
 
@@ -124,20 +130,29 @@ static inline const char *plural(unsigned long long s) {
     }
 }
 
+- (NSString *)describeOffset:(unsigned long long)offset {
+    switch (statusMode) {
+        case HFStatusModeDecimal: return [NSString stringWithFormat:@"%llu", offset];
+        case HFStatusModeHexadecimal: return [NSString stringWithFormat:@"0x%llX", offset];
+        case HFStatusModeApproximate: return [NSString stringWithFormat:@"%@", HFDescribeByteCount(offset)];
+        default: [NSException raise:NSInternalInconsistencyException format:@"Unknown status mode %lu", (unsigned long)statusMode]; return @"";	
+    }
+}
+
 - (NSString *)stringForEmptySelectionAtOffset:(unsigned long long)offset length:(unsigned long long)length {
-    return [NSString stringWithFormat:@"%llu out of %@", offset, [self describeLength:length]];
+    return [NSString stringWithFormat:@"%@ out of %@", [self describeOffset:offset], [self describeLength:length]];
 }
 
 - (NSString *)stringForSingleByteSelectionAtOffset:(unsigned long long)offset length:(unsigned long long)length {
-    return [NSString stringWithFormat:@"Byte %llu selected out of %@", offset, [self describeLength:length]];
+    return [NSString stringWithFormat:@"Byte %@ selected out of %@", [self describeOffset:offset], [self describeLength:length]];
 }
 
 - (NSString *)stringForSingleRangeSelection:(HFRange)range length:(unsigned long long)length {
-    return [NSString stringWithFormat:@"%llu byte%s selected at offset %llu out of %@", range.length, plural(range.length), range.location, [self describeLength:length]];
+    return [NSString stringWithFormat:@"%@ selected at offset %@ out of %@", [self describeLength:range.length], [self describeOffset:range.location], [self describeLength:length]];
 }
 
 - (NSString *)stringForMultipleSelectionsWithLength:(unsigned long long)multipleSelectionLength length:(unsigned long long)length {
-    return [NSString stringWithFormat:@"%llu byte%s selected at multiple offsets out of %@", multipleSelectionLength, plural(multipleSelectionLength), [self describeLength:length]];
+    return [NSString stringWithFormat:@"%@ selected at multiple offsets out of %@", [self describeLength:multipleSelectionLength], [self describeLength:length]];
 }
 
 
