@@ -33,7 +33,6 @@
 		D00EBA740CE866D50020E2D7 /* HFVerticalScrollerRepresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = D00EBA720CE866D50020E2D7 /* HFVerticalScrollerRepresenter.m */; };
 		D0114CA91006D1DF00DAF4CE /* HFByteArrayProxiedData.h in Headers */ = {isa = PBXBuildFile; fileRef = D0114CA71006D1DF00DAF4CE /* HFByteArrayProxiedData.h */; };
 		D0114CAA1006D1DF00DAF4CE /* HFByteArrayProxiedData.m in Sources */ = {isa = PBXBuildFile; fileRef = D0114CA81006D1DF00DAF4CE /* HFByteArrayProxiedData.m */; };
-		D011E1B70DF8BE01003EAFB7 /* HFModalProgress.nib in Resources */ = {isa = PBXBuildFile; fileRef = D011E1B60DF8BE01003EAFB7 /* HFModalProgress.nib */; };
 		D01772F50D751DB1002E03DE /* HFDocumentOperationView.m in Sources */ = {isa = PBXBuildFile; fileRef = D01772F40D751DB1002E03DE /* HFDocumentOperationView.m */; };
 		D01773920D7A2F32002E03DE /* HFResizingView.m in Sources */ = {isa = PBXBuildFile; fileRef = D01773910D7A2F32002E03DE /* HFResizingView.m */; };
 		D01930C20D5AE64E0019B3F7 /* HexFiend.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D01E7BB80CDC530C00943F9E /* HexFiend.framework */; };
@@ -74,6 +73,7 @@
 		D04A6B9E100EA75400704963 /* MoveSelectionByBanner.xib in Resources */ = {isa = PBXBuildFile; fileRef = D04A6B9C100EA75400704963 /* MoveSelectionByBanner.xib */; };
 		D04A6BA5100EA78700704963 /* MyDocument.xib in Resources */ = {isa = PBXBuildFile; fileRef = D04A6BA3100EA78700704963 /* MyDocument.xib */; };
 		D04A6BAB100EA7B800704963 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = D04A6BA9100EA7B800704963 /* MainMenu.xib */; };
+		D04A6C16100EB02400704963 /* HFModalProgress.xib in Resources */ = {isa = PBXBuildFile; fileRef = D04A6C15100EB02400704963 /* HFModalProgress.xib */; };
 		D04C78270DC47ECF00A76FF2 /* HFTextSelectionPulseView.h in Headers */ = {isa = PBXBuildFile; fileRef = D04C78250DC47ECF00A76FF2 /* HFTextSelectionPulseView.h */; };
 		D04C78280DC47ECF00A76FF2 /* HFTextSelectionPulseView.m in Sources */ = {isa = PBXBuildFile; fileRef = D04C78260DC47ECF00A76FF2 /* HFTextSelectionPulseView.m */; };
 		D05B77BA0E00856D008C45EB /* HFCancelOn.tiff in Resources */ = {isa = PBXBuildFile; fileRef = D01772B70D72E024002E03DE /* HFCancelOn.tiff */; };
@@ -240,7 +240,6 @@
 		D00EBA720CE866D50020E2D7 /* HFVerticalScrollerRepresenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFVerticalScrollerRepresenter.m; path = framework/sources/HFVerticalScrollerRepresenter.m; sourceTree = "<group>"; };
 		D0114CA71006D1DF00DAF4CE /* HFByteArrayProxiedData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFByteArrayProxiedData.h; path = framework/sources/HFByteArrayProxiedData.h; sourceTree = "<group>"; };
 		D0114CA81006D1DF00DAF4CE /* HFByteArrayProxiedData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFByteArrayProxiedData.m; path = framework/sources/HFByteArrayProxiedData.m; sourceTree = "<group>"; };
-		D011E1B60DF8BE01003EAFB7 /* HFModalProgress.nib */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = HFModalProgress.nib; path = framework/resources/HFModalProgress.nib; sourceTree = "<group>"; };
 		D01772B70D72E024002E03DE /* HFCancelOn.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = HFCancelOn.tiff; path = framework/resources/HFCancelOn.tiff; sourceTree = "<group>"; };
 		D01772B80D72E024002E03DE /* HFCancelOff.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = HFCancelOff.tiff; path = framework/resources/HFCancelOff.tiff; sourceTree = "<group>"; };
 		D01772F30D751DB1002E03DE /* HFDocumentOperationView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFDocumentOperationView.h; path = app/sources/HFDocumentOperationView.h; sourceTree = "<group>"; };
@@ -248,7 +247,7 @@
 		D01773900D7A2F32002E03DE /* HFResizingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFResizingView.h; path = app/sources/HFResizingView.h; sourceTree = "<group>"; };
 		D01773910D7A2F32002E03DE /* HFResizingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFResizingView.m; path = app/sources/HFResizingView.m; sourceTree = "<group>"; };
 		D019309A0D5AE3B40019B3F7 /* HexFiend.ibplugin */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HexFiend.ibplugin; sourceTree = BUILT_PRODUCTS_DIR; };
-		D019309B0D5AE3B40019B3F7 /* HexFiend_IBPlugin-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "HexFiend_IBPlugin-Info.plist"; sourceTree = "<group>"; };
+		D019309B0D5AE3B40019B3F7 /* HexFiend_IBPlugin-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "HexFiend_IBPlugin-Info.plist"; path = "ib_plugin/HexFiend_IBPlugin-Info.plist"; sourceTree = "<group>"; };
 		D01930EA0D5AE7690019B3F7 /* HexFiendPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HexFiendPlugin.h; path = ib_plugin/sources/HexFiendPlugin.h; sourceTree = "<group>"; };
 		D01930EB0D5AE7690019B3F7 /* HexFiendPlugin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HexFiendPlugin.m; path = ib_plugin/sources/HexFiendPlugin.m; sourceTree = "<group>"; };
 		D019311F0D5AEADA0019B3F7 /* HexFiendPluginLibrary.nib */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = HexFiendPluginLibrary.nib; path = ib_plugin/resources/HexFiendPluginLibrary.nib; sourceTree = "<group>"; };
@@ -294,6 +293,7 @@
 		D04A6B9D100EA75400704963 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MoveSelectionByBanner.xib; sourceTree = "<group>"; };
 		D04A6BA4100EA78700704963 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MyDocument.xib; sourceTree = "<group>"; };
 		D04A6BAA100EA7B800704963 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		D04A6C15100EB02400704963 /* HFModalProgress.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = HFModalProgress.xib; path = framework/resources/HFModalProgress.xib; sourceTree = "<group>"; };
 		D04C78250DC47ECF00A76FF2 /* HFTextSelectionPulseView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFTextSelectionPulseView.h; path = framework/sources/HFTextSelectionPulseView.h; sourceTree = "<group>"; };
 		D04C78260DC47ECF00A76FF2 /* HFTextSelectionPulseView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFTextSelectionPulseView.m; path = framework/sources/HFTextSelectionPulseView.m; sourceTree = "<group>"; };
 		D05B77DD0E00883B008C45EB /* HFCancelButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFCancelButton.h; path = framework/sources/HFCancelButton.h; sourceTree = "<group>"; };
@@ -553,7 +553,7 @@
 		D01E7C010CDC569F00943F9E /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				D011E1B60DF8BE01003EAFB7 /* HFModalProgress.nib */,
+				D04A6C15100EB02400704963 /* HFModalProgress.xib */,
 				D01772B70D72E024002E03DE /* HFCancelOn.tiff */,
 				D01772B80D72E024002E03DE /* HFCancelOff.tiff */,
 				D01E7BB90CDC530C00943F9E /* HexFiend_Framework-Info.plist */,
@@ -996,7 +996,7 @@
 			files = (
 				D05B77BA0E00856D008C45EB /* HFCancelOn.tiff in Resources */,
 				D05B77BB0E00856D008C45EB /* HFCancelOff.tiff in Resources */,
-				D011E1B70DF8BE01003EAFB7 /* HFModalProgress.nib in Resources */,
+				D04A6C16100EB02400704963 /* HFModalProgress.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1396,6 +1396,7 @@
 				INSTALL_PATH = "$(HOME)/Library/Bundles";
 				PREBINDING = NO;
 				PRODUCT_NAME = HexFiend;
+				VALID_ARCHS = "armv6 i386 ppc ppc7400 ppc970 x86_64";
 				WRAPPER_EXTENSION = ibplugin;
 				ZERO_LINK = NO;
 			};
@@ -1677,6 +1678,7 @@
 				INSTALL_PATH = "$(HOME)/Library/Bundles";
 				PREBINDING = NO;
 				PRODUCT_NAME = HexFiend;
+				VALID_ARCHS = "armv6 i386 ppc ppc7400 ppc970 x86_64";
 				WRAPPER_EXTENSION = ibplugin;
 				ZERO_LINK = NO;
 			};
@@ -1790,6 +1792,7 @@
 				INSTALL_PATH = "$(HOME)/Library/Bundles";
 				PREBINDING = NO;
 				PRODUCT_NAME = HexFiend;
+				VALID_ARCHS = "armv6 i386 ppc ppc7400 ppc970 x86_64";
 				WRAPPER_EXTENSION = ibplugin;
 				ZERO_LINK = YES;
 			};
@@ -1899,6 +1902,7 @@
 				INSTALL_PATH = "$(HOME)/Library/Bundles";
 				PREBINDING = NO;
 				PRODUCT_NAME = HexFiend;
+				VALID_ARCHS = "armv6 i386 ppc ppc7400 ppc970 x86_64";
 				WRAPPER_EXTENSION = ibplugin;
 				ZERO_LINK = YES;
 			};
@@ -2009,6 +2013,7 @@
 				INSTALL_PATH = "$(HOME)/Library/Bundles";
 				PREBINDING = NO;
 				PRODUCT_NAME = HexFiend;
+				VALID_ARCHS = "armv6 i386 ppc ppc7400 ppc970 x86_64";
 				WRAPPER_EXTENSION = ibplugin;
 				ZERO_LINK = YES;
 			};
@@ -2119,6 +2124,7 @@
 				INSTALL_PATH = "$(HOME)/Library/Bundles";
 				PREBINDING = NO;
 				PRODUCT_NAME = HexFiend;
+				VALID_ARCHS = "armv6 i386 ppc ppc7400 ppc970 x86_64";
 				WRAPPER_EXTENSION = ibplugin;
 				ZERO_LINK = YES;
 			};

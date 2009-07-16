@@ -90,7 +90,7 @@ static unsigned char *kRepeatingData;
         unsigned int *ptr = (unsigned int *)kRepeatingData;
         NSUInteger i = REPEATING_DATA_LENGTH / sizeof *ptr;
         while (i--) {
-            unsigned int val = random();
+            unsigned int val = (unsigned int)random();
             if (random() & 1) {
                 val |= (1u << 31);
             }
