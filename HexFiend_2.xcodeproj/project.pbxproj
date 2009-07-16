@@ -22,7 +22,6 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		8D11072A0486CEB800E47090 /* MainMenu.nib in Resources */ = {isa = PBXBuildFile; fileRef = 29B97318FDCFA39411CA2CEA /* MainMenu.nib */; };
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
@@ -36,7 +35,6 @@
 		D0114CAA1006D1DF00DAF4CE /* HFByteArrayProxiedData.m in Sources */ = {isa = PBXBuildFile; fileRef = D0114CA81006D1DF00DAF4CE /* HFByteArrayProxiedData.m */; };
 		D011E1B70DF8BE01003EAFB7 /* HFModalProgress.nib in Resources */ = {isa = PBXBuildFile; fileRef = D011E1B60DF8BE01003EAFB7 /* HFModalProgress.nib */; };
 		D01772F50D751DB1002E03DE /* HFDocumentOperationView.m in Sources */ = {isa = PBXBuildFile; fileRef = D01772F40D751DB1002E03DE /* HFDocumentOperationView.m */; };
-		D01773360D755551002E03DE /* FindReplaceBanner.nib in Resources */ = {isa = PBXBuildFile; fileRef = D01773340D755551002E03DE /* FindReplaceBanner.nib */; };
 		D01773920D7A2F32002E03DE /* HFResizingView.m in Sources */ = {isa = PBXBuildFile; fileRef = D01773910D7A2F32002E03DE /* HFResizingView.m */; };
 		D01930C20D5AE64E0019B3F7 /* HexFiend.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D01E7BB80CDC530C00943F9E /* HexFiend.framework */; };
 		D01930EC0D5AE7690019B3F7 /* HexFiendPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = D01930EB0D5AE7690019B3F7 /* HexFiendPlugin.m */; };
@@ -52,10 +50,8 @@
 		D01E7BED0CDC55D000943F9E /* HFController.m in Sources */ = {isa = PBXBuildFile; fileRef = D01E7BEB0CDC55D000943F9E /* HFController.m */; };
 		D01E7BF00CDC564B00943F9E /* HexFiend.h in Headers */ = {isa = PBXBuildFile; fileRef = D01E7BEF0CDC564B00943F9E /* HexFiend.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D01E7C160CDC58AA00943F9E /* MyDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = D01E7C150CDC58AA00943F9E /* MyDocument.m */; };
-		D01E7C2A0CDC59B700943F9E /* MyDocument.nib in Resources */ = {isa = PBXBuildFile; fileRef = D01E7C280CDC59B700943F9E /* MyDocument.nib */; };
 		D01E7C3D0CDC6A3100943F9E /* HFTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = D01E7C3B0CDC69E500943F9E /* HFTypes.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D01E7C960CDC700400943F9E /* HFRepresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = D01E7C340CDC646800943F9E /* HFRepresenter.m */; };
-		D024AEF30E3463AB00F39EBB /* JumpToOffsetBanner.nib in Resources */ = {isa = PBXBuildFile; fileRef = D024AEF10E3463AB00F39EBB /* JumpToOffsetBanner.nib */; };
 		D024AFB30E349A7B00F39EBB /* hex_icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = D024AFB20E349A7B00F39EBB /* hex_icon.icns */; };
 		D026C7B00CDD50ED0082279E /* HFRepresenterTextView.h in Headers */ = {isa = PBXBuildFile; fileRef = D026C7AE0CDD50ED0082279E /* HFRepresenterTextView.h */; };
 		D026C7B10CDD50ED0082279E /* HFRepresenterTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = D026C7AF0CDD50ED0082279E /* HFRepresenterTextView.m */; };
@@ -72,6 +68,12 @@
 		D0422FDF0D62599300F8FCDE /* HFProgressTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = D0422FDD0D62599300F8FCDE /* HFProgressTracker.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D0422FE00D62599300F8FCDE /* HFProgressTracker.m in Sources */ = {isa = PBXBuildFile; fileRef = D0422FDE0D62599300F8FCDE /* HFProgressTracker.m */; };
 		D04327A40CF081CD00C14250 /* HFFunctions_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = D04327A30CF081CD00C14250 /* HFFunctions_Private.h */; };
+		D04A6B6B100EA47C00704963 /* SaveBanner.xib in Resources */ = {isa = PBXBuildFile; fileRef = D04A6B69100EA47C00704963 /* SaveBanner.xib */; };
+		D04A6B7A100EA4BC00704963 /* FindReplaceBanner.xib in Resources */ = {isa = PBXBuildFile; fileRef = D04A6B78100EA4BC00704963 /* FindReplaceBanner.xib */; };
+		D04A6B97100EA73800704963 /* JumpToOffsetBanner.xib in Resources */ = {isa = PBXBuildFile; fileRef = D04A6B95100EA73800704963 /* JumpToOffsetBanner.xib */; };
+		D04A6B9E100EA75400704963 /* MoveSelectionByBanner.xib in Resources */ = {isa = PBXBuildFile; fileRef = D04A6B9C100EA75400704963 /* MoveSelectionByBanner.xib */; };
+		D04A6BA5100EA78700704963 /* MyDocument.xib in Resources */ = {isa = PBXBuildFile; fileRef = D04A6BA3100EA78700704963 /* MyDocument.xib */; };
+		D04A6BAB100EA7B800704963 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = D04A6BA9100EA7B800704963 /* MainMenu.xib */; };
 		D04C78270DC47ECF00A76FF2 /* HFTextSelectionPulseView.h in Headers */ = {isa = PBXBuildFile; fileRef = D04C78250DC47ECF00A76FF2 /* HFTextSelectionPulseView.h */; };
 		D04C78280DC47ECF00A76FF2 /* HFTextSelectionPulseView.m in Sources */ = {isa = PBXBuildFile; fileRef = D04C78260DC47ECF00A76FF2 /* HFTextSelectionPulseView.m */; };
 		D05B77BA0E00856D008C45EB /* HFCancelOn.tiff in Resources */ = {isa = PBXBuildFile; fileRef = D01772B70D72E024002E03DE /* HFCancelOn.tiff */; };
@@ -91,7 +93,6 @@
 		D06D61EF0FA7FA7C002376EE /* HFBTreeByteArray.m in Sources */ = {isa = PBXBuildFile; fileRef = D06D61ED0FA7FA7C002376EE /* HFBTreeByteArray.m */; };
 		D07150670D5510CE00573D7A /* HFTextField.h in Headers */ = {isa = PBXBuildFile; fileRef = D07150650D5510CE00573D7A /* HFTextField.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D07150680D5510CE00573D7A /* HFTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = D07150660D5510CE00573D7A /* HFTextField.m */; };
-		D0728DEF0DC1E3A00052C78C /* MoveSelectionByBanner.nib in Resources */ = {isa = PBXBuildFile; fileRef = D0728DED0DC1E3A00052C78C /* MoveSelectionByBanner.nib */; };
 		D078CE770D4EE7F900492F46 /* CHUD.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D078CE760D4EE7F900492F46 /* CHUD.framework */; };
 		D078CF550D50491100492F46 /* HFBannerDividerThumb.h in Headers */ = {isa = PBXBuildFile; fileRef = D078CF530D50491100492F46 /* HFBannerDividerThumb.h */; };
 		D078D0520D50492F00492F46 /* HFBannerDividerThumb.m in Sources */ = {isa = PBXBuildFile; fileRef = D078CF540D50491100492F46 /* HFBannerDividerThumb.m */; };
@@ -112,7 +113,6 @@
 		D08F5E4F0CDE872C007EFFE8 /* HFByteArray.m in Sources */ = {isa = PBXBuildFile; fileRef = D08F5DF00CDE8223007EFFE8 /* HFByteArray.m */; };
 		D08F5E500CDE872C007EFFE8 /* HFByteSlice.m in Sources */ = {isa = PBXBuildFile; fileRef = D08F5E230CDE843E007EFFE8 /* HFByteSlice.m */; };
 		D08F5E510CDE872C007EFFE8 /* HFFullMemoryByteSlice.m in Sources */ = {isa = PBXBuildFile; fileRef = D08F5E380CDE84F4007EFFE8 /* HFFullMemoryByteSlice.m */; };
-		D0A229AE0D7D10240067A919 /* SaveBanner.nib in Resources */ = {isa = PBXBuildFile; fileRef = D0A229AC0D7D10240067A919 /* SaveBanner.nib */; };
 		D0A402F30D0D43F4006BC574 /* HFLayoutRepresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = D0A402F10D0D43F4006BC574 /* HFLayoutRepresenter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D0A402F40D0D43F4006BC574 /* HFLayoutRepresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = D0A402F20D0D43F4006BC574 /* HFLayoutRepresenter.m */; };
 		D0A435730CDC71DF000F7550 /* HFRepresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = D01E7C330CDC646800943F9E /* HFRepresenter.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -224,7 +224,6 @@
 		1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		13E42FB307B3F0F600E4EEF1 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = app/sources/main.m; sourceTree = "<group>"; };
-		29B97319FDCFA39411CA2CEA /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/MainMenu.nib; sourceTree = "<group>"; };
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		32CA4F630368D1EE00C91783 /* HexFiend_2_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HexFiend_2_Prefix.pch; path = app/sources/HexFiend_2_Prefix.pch; sourceTree = "<group>"; };
@@ -246,7 +245,6 @@
 		D01772B80D72E024002E03DE /* HFCancelOff.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = HFCancelOff.tiff; path = framework/resources/HFCancelOff.tiff; sourceTree = "<group>"; };
 		D01772F30D751DB1002E03DE /* HFDocumentOperationView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFDocumentOperationView.h; path = app/sources/HFDocumentOperationView.h; sourceTree = "<group>"; };
 		D01772F40D751DB1002E03DE /* HFDocumentOperationView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFDocumentOperationView.m; path = app/sources/HFDocumentOperationView.m; sourceTree = "<group>"; };
-		D01773350D755551002E03DE /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/FindReplaceBanner.nib; sourceTree = "<group>"; };
 		D01773900D7A2F32002E03DE /* HFResizingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFResizingView.h; path = app/sources/HFResizingView.h; sourceTree = "<group>"; };
 		D01773910D7A2F32002E03DE /* HFResizingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFResizingView.m; path = app/sources/HFResizingView.m; sourceTree = "<group>"; };
 		D019309A0D5AE3B40019B3F7 /* HexFiend.ibplugin */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HexFiend.ibplugin; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -270,11 +268,9 @@
 		D01E7C0A0CDC570400943F9E /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = app/Info.plist; sourceTree = "<group>"; };
 		D01E7C140CDC58AA00943F9E /* MyDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MyDocument.h; path = app/sources/MyDocument.h; sourceTree = "<group>"; };
 		D01E7C150CDC58AA00943F9E /* MyDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MyDocument.m; path = app/sources/MyDocument.m; sourceTree = "<group>"; };
-		D01E7C290CDC59B700943F9E /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/MyDocument.nib; sourceTree = "<group>"; };
 		D01E7C330CDC646800943F9E /* HFRepresenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFRepresenter.h; path = framework/sources/HFRepresenter.h; sourceTree = "<group>"; };
 		D01E7C340CDC646800943F9E /* HFRepresenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFRepresenter.m; path = framework/sources/HFRepresenter.m; sourceTree = "<group>"; };
 		D01E7C3B0CDC69E500943F9E /* HFTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFTypes.h; path = framework/sources/HFTypes.h; sourceTree = "<group>"; };
-		D024AEF20E3463AB00F39EBB /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/JumpToOffsetBanner.nib; sourceTree = "<group>"; };
 		D024AFB20E349A7B00F39EBB /* hex_icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = hex_icon.icns; path = app/resources/hex_icon.icns; sourceTree = "<group>"; };
 		D026C7AE0CDD50ED0082279E /* HFRepresenterTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFRepresenterTextView.h; path = framework/sources/HFRepresenterTextView.h; sourceTree = "<group>"; };
 		D026C7AF0CDD50ED0082279E /* HFRepresenterTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFRepresenterTextView.m; path = framework/sources/HFRepresenterTextView.m; sourceTree = "<group>"; };
@@ -292,6 +288,12 @@
 		D0422FDD0D62599300F8FCDE /* HFProgressTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFProgressTracker.h; path = framework/sources/HFProgressTracker.h; sourceTree = "<group>"; };
 		D0422FDE0D62599300F8FCDE /* HFProgressTracker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFProgressTracker.m; path = framework/sources/HFProgressTracker.m; sourceTree = "<group>"; };
 		D04327A30CF081CD00C14250 /* HFFunctions_Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFFunctions_Private.h; path = framework/sources/HFFunctions_Private.h; sourceTree = "<group>"; };
+		D04A6B6A100EA47C00704963 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/SaveBanner.xib; sourceTree = "<group>"; };
+		D04A6B79100EA4BC00704963 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/FindReplaceBanner.xib; sourceTree = "<group>"; };
+		D04A6B96100EA73800704963 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/JumpToOffsetBanner.xib; sourceTree = "<group>"; };
+		D04A6B9D100EA75400704963 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MoveSelectionByBanner.xib; sourceTree = "<group>"; };
+		D04A6BA4100EA78700704963 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MyDocument.xib; sourceTree = "<group>"; };
+		D04A6BAA100EA7B800704963 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		D04C78250DC47ECF00A76FF2 /* HFTextSelectionPulseView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFTextSelectionPulseView.h; path = framework/sources/HFTextSelectionPulseView.h; sourceTree = "<group>"; };
 		D04C78260DC47ECF00A76FF2 /* HFTextSelectionPulseView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFTextSelectionPulseView.m; path = framework/sources/HFTextSelectionPulseView.m; sourceTree = "<group>"; };
 		D05B77DD0E00883B008C45EB /* HFCancelButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFCancelButton.h; path = framework/sources/HFCancelButton.h; sourceTree = "<group>"; };
@@ -310,7 +312,6 @@
 		D06D61ED0FA7FA7C002376EE /* HFBTreeByteArray.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFBTreeByteArray.m; path = framework/sources/HFBTreeByteArray.m; sourceTree = "<group>"; };
 		D07150650D5510CE00573D7A /* HFTextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFTextField.h; path = framework/sources/HFTextField.h; sourceTree = "<group>"; };
 		D07150660D5510CE00573D7A /* HFTextField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFTextField.m; path = framework/sources/HFTextField.m; sourceTree = "<group>"; };
-		D0728DEE0DC1E3A00052C78C /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/MoveSelectionByBanner.nib; sourceTree = "<group>"; };
 		D078CE760D4EE7F900492F46 /* CHUD.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CHUD.framework; path = /System/Library/PrivateFrameworks/CHUD.framework; sourceTree = "<absolute>"; };
 		D078CF530D50491100492F46 /* HFBannerDividerThumb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFBannerDividerThumb.h; path = app/sources/HFBannerDividerThumb.h; sourceTree = "<group>"; };
 		D078CF540D50491100492F46 /* HFBannerDividerThumb.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFBannerDividerThumb.m; path = app/sources/HFBannerDividerThumb.m; sourceTree = "<group>"; };
@@ -331,7 +332,6 @@
 		D08F5E230CDE843E007EFFE8 /* HFByteSlice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFByteSlice.m; path = framework/sources/HFByteSlice.m; sourceTree = "<group>"; };
 		D08F5E370CDE84F4007EFFE8 /* HFFullMemoryByteSlice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFFullMemoryByteSlice.h; path = framework/sources/HFFullMemoryByteSlice.h; sourceTree = "<group>"; };
 		D08F5E380CDE84F4007EFFE8 /* HFFullMemoryByteSlice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFFullMemoryByteSlice.m; path = framework/sources/HFFullMemoryByteSlice.m; sourceTree = "<group>"; };
-		D0A229AD0D7D10240067A919 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/SaveBanner.nib; sourceTree = "<group>"; };
 		D0A402F10D0D43F4006BC574 /* HFLayoutRepresenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFLayoutRepresenter.h; path = framework/sources/HFLayoutRepresenter.h; sourceTree = "<group>"; };
 		D0A402F20D0D43F4006BC574 /* HFLayoutRepresenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFLayoutRepresenter.m; path = framework/sources/HFLayoutRepresenter.m; sourceTree = "<group>"; };
 		D0A4360B0CDC7B65000F7550 /* HFRepresenter_Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFRepresenter_Internal.h; path = framework/sources/HFRepresenter_Internal.h; sourceTree = "<group>"; };
@@ -472,12 +472,12 @@
 				D01E7C0A0CDC570400943F9E /* Info.plist */,
 				089C165CFE840E0CC02AAC07 /* InfoPlist.strings */,
 				D03CFA810FC7857B00EE79E4 /* DataInspectorView.xib */,
-				29B97318FDCFA39411CA2CEA /* MainMenu.nib */,
-				D01E7C280CDC59B700943F9E /* MyDocument.nib */,
-				D0728DED0DC1E3A00052C78C /* MoveSelectionByBanner.nib */,
-				D024AEF10E3463AB00F39EBB /* JumpToOffsetBanner.nib */,
-				D01773340D755551002E03DE /* FindReplaceBanner.nib */,
-				D0A229AC0D7D10240067A919 /* SaveBanner.nib */,
+				D04A6BA9100EA7B800704963 /* MainMenu.xib */,
+				D04A6BA3100EA78700704963 /* MyDocument.xib */,
+				D04A6B9C100EA75400704963 /* MoveSelectionByBanner.xib */,
+				D04A6B95100EA73800704963 /* JumpToOffsetBanner.xib */,
+				D04A6B78100EA4BC00704963 /* FindReplaceBanner.xib */,
+				D04A6B69100EA47C00704963 /* SaveBanner.xib */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -959,15 +959,15 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8D11072A0486CEB800E47090 /* MainMenu.nib in Resources */,
 				8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */,
-				D01E7C2A0CDC59B700943F9E /* MyDocument.nib in Resources */,
-				D01773360D755551002E03DE /* FindReplaceBanner.nib in Resources */,
-				D0A229AE0D7D10240067A919 /* SaveBanner.nib in Resources */,
-				D0728DEF0DC1E3A00052C78C /* MoveSelectionByBanner.nib in Resources */,
-				D024AEF30E3463AB00F39EBB /* JumpToOffsetBanner.nib in Resources */,
 				D024AFB30E349A7B00F39EBB /* hex_icon.icns in Resources */,
 				D03CFA820FC7857B00EE79E4 /* DataInspectorView.xib in Resources */,
+				D04A6B6B100EA47C00704963 /* SaveBanner.xib in Resources */,
+				D04A6B7A100EA4BC00704963 /* FindReplaceBanner.xib in Resources */,
+				D04A6B97100EA73800704963 /* JumpToOffsetBanner.xib in Resources */,
+				D04A6B9E100EA75400704963 /* MoveSelectionByBanner.xib in Resources */,
+				D04A6BA5100EA78700704963 /* MyDocument.xib in Resources */,
+				D04A6BAB100EA7B800704963 /* MainMenu.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1149,14 +1149,6 @@
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
 		};
-		29B97318FDCFA39411CA2CEA /* MainMenu.nib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				29B97319FDCFA39411CA2CEA /* English */,
-			);
-			name = MainMenu.nib;
-			sourceTree = "<group>";
-		};
 		D00C166F0FF4925A006D021F /* InfoPlist.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -1173,44 +1165,52 @@
 			name = MainMenu.xib;
 			sourceTree = "<group>";
 		};
-		D01773340D755551002E03DE /* FindReplaceBanner.nib */ = {
+		D04A6B69100EA47C00704963 /* SaveBanner.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				D01773350D755551002E03DE /* English */,
+				D04A6B6A100EA47C00704963 /* English */,
 			);
-			name = FindReplaceBanner.nib;
+			name = SaveBanner.xib;
 			sourceTree = "<group>";
 		};
-		D01E7C280CDC59B700943F9E /* MyDocument.nib */ = {
+		D04A6B78100EA4BC00704963 /* FindReplaceBanner.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				D01E7C290CDC59B700943F9E /* English */,
+				D04A6B79100EA4BC00704963 /* English */,
 			);
-			name = MyDocument.nib;
+			name = FindReplaceBanner.xib;
 			sourceTree = "<group>";
 		};
-		D024AEF10E3463AB00F39EBB /* JumpToOffsetBanner.nib */ = {
+		D04A6B95100EA73800704963 /* JumpToOffsetBanner.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				D024AEF20E3463AB00F39EBB /* English */,
+				D04A6B96100EA73800704963 /* English */,
 			);
-			name = JumpToOffsetBanner.nib;
+			name = JumpToOffsetBanner.xib;
 			sourceTree = "<group>";
 		};
-		D0728DED0DC1E3A00052C78C /* MoveSelectionByBanner.nib */ = {
+		D04A6B9C100EA75400704963 /* MoveSelectionByBanner.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				D0728DEE0DC1E3A00052C78C /* English */,
+				D04A6B9D100EA75400704963 /* English */,
 			);
-			name = MoveSelectionByBanner.nib;
+			name = MoveSelectionByBanner.xib;
 			sourceTree = "<group>";
 		};
-		D0A229AC0D7D10240067A919 /* SaveBanner.nib */ = {
+		D04A6BA3100EA78700704963 /* MyDocument.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				D0A229AD0D7D10240067A919 /* English */,
+				D04A6BA4100EA78700704963 /* English */,
 			);
-			name = SaveBanner.nib;
+			name = MyDocument.xib;
+			sourceTree = "<group>";
+		};
+		D04A6BA9100EA7B800704963 /* MainMenu.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D04A6BAA100EA7B800704963 /* English */,
+			);
+			name = MainMenu.xib;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */

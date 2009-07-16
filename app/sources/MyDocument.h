@@ -42,6 +42,7 @@
     id targetFirstResponderInBanner;
     SEL commandToRunAfterBannerIsDoneHiding;
     
+    BOOL saveInProgress;
     NSInteger saveResult;
     NSError *saveError;
 }

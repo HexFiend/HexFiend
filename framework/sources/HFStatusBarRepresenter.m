@@ -139,6 +139,16 @@
     }
 }
 
+/* same as describeOffset, except we treat Approximate like Hexadecimal */
+- (NSString *)describeOffsetExcludingApproximate:(unsigned long long)offset {
+    switch (statusMode) {
+        case HFStatusModeDecimal: return [NSString stringWithFormat:@"%llu", offset];
+        case HFStatusModeHexadecimal: 
+        case HFStatusModeApproximate: return [NSString stringWithFormat:@"0x%llX", offset];
+        default: [NSException raise:NSInternalInconsistencyException format:@"Unknown status mode %lu", (unsigned long)statusMode]; return @"";	
+    }    
+}
+
 - (NSString *)stringForEmptySelectionAtOffset:(unsigned long long)offset length:(unsigned long long)length {
     return [NSString stringWithFormat:@"%@ out of %@", [self describeOffset:offset], [self describeLength:length]];
 }
@@ -148,7 +158,7 @@
 }
 
 - (NSString *)stringForSingleRangeSelection:(HFRange)range length:(unsigned long long)length {
-    return [NSString stringWithFormat:@"%@ selected at offset %@ out of %@", [self describeLength:range.length], [self describeOffset:range.location], [self describeLength:length]];
+    return [NSString stringWithFormat:@"%@ selected at offset %@ out of %@", [self describeLength:range.length], [self describeOffsetExcludingApproximate:range.location], [self describeLength:length]];
 }
 
 - (NSString *)stringForMultipleSelectionsWithLength:(unsigned long long)multipleSelectionLength length:(unsigned long long)length {

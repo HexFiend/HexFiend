@@ -626,6 +626,9 @@ static inline Class preferredByteArrayClass(void) {
     USE(inTypeName);
     *outError = NULL;
     
+    HFASSERT(! saveInProgress);
+    saveInProgress = YES;
+    
     [HFController prepareForChangeInFile:inAbsoluteURL fromWritingByteArray:[controller byteArray]];
     
     showSaveViewAfterDelayTimer = [[NSTimer scheduledTimerWithTimeInterval:.5 target:self selector:@selector(showSaveBannerHavingDelayed:) userInfo:nil repeats:NO] retain];
@@ -641,6 +644,8 @@ static inline Class preferredByteArrayClass(void) {
     };
     
     [[controller byteArray] incrementChangeLockCounter];
+    
+    [[saveView viewNamed:@"saveLabelField"] setStringValue:[NSString stringWithFormat:@"Saving \"%@\"", [self displayName]]];
     
     [saveView startOperationWithCallbacks:callbacks];
     
@@ -687,7 +692,40 @@ static inline Class preferredByteArrayClass(void) {
     [saveError autorelease];
     saveError = nil;
     
+    saveInProgress = NO;
+    
     return saveResult != HFSaveError;
+}
+
+- (BOOL)displayCurrentSaveOperation {
+    BOOL result = NO;
+    if (saveInProgress) {
+        HFASSERT(saveView != nil);
+        result = YES;
+        if (operationView == saveView) {
+            /* Already showing the save view */
+        }
+        else if (operationView == nil) {
+            [self prepareBannerWithView:saveView withTargetFirstResponder:nil];
+        }
+    }
+    return result;
+}
+
+/* Prevent saving during saves */
+- (IBAction)saveDocument:(id)sender {
+    if ([self displayCurrentSaveOperation]) return;
+    [super saveDocument:sender];
+}
+
+- (IBAction)saveDocumentAs:(id)sender {
+    if ([self displayCurrentSaveOperation]) return;
+    [super saveDocumentAs:sender];    
+}
+
+- (IBAction)saveDocumentTo:(id)sender {
+    if ([self displayCurrentSaveOperation]) return;
+    [super saveDocumentTo:sender];
 }
 
 - (void)showFindPanel:(NSMenuItem *)item {

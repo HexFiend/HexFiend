@@ -29,7 +29,6 @@ NSImage *HFImageNamed(NSString *name) {
                 image = nil;
             }
             else {
-                [image retain];
                 [image setName:name];
                 [image setScalesWhenResized:YES];
             }
@@ -116,7 +115,7 @@ static int hfrange_compare(const void *ap, const void *bp) {
 }
 
 + (void)getRanges:(HFRange *)ranges fromArray:(NSArray *)array {
-    HFASSERT(ranges != NULL || [array count] > 0);
+    HFASSERT(ranges != NULL || [array count] == 0);
     FOREACH(HFRangeWrapper*, wrapper, array) *ranges++ = [wrapper HFRange];
 }
 
@@ -344,19 +343,34 @@ NSString *HFDescribeByteCount(unsigned long long count) {
 }
 
 NSString *HFDescribeByteCountWithPrefixAndSuffix(const char *stringPrefix, unsigned long long count, const char *stringSuffix) {
-    const unsigned long long sizes[] = {1ULL<<0, 1ULL<<10, 1ULL<<20, 1ULL<<30, 1ULL<<40, 1ULL<<50, 1ULL<<60};
-    const char* const suffixes[] = {"byte", "byte", "kilobyte", "megabyte", "gigabyte", "terabyte", "petabyte", "exabyte", "zettabyte"};
-    unsigned i;
-    unsigned long long base;
-    for (i=0; i < sizeof sizes / sizeof *sizes; i++) {
-        if (count < sizes[i]) break;
-    }
-    
     if (! stringPrefix) stringPrefix = "";
     if (! stringSuffix) stringSuffix = "";
+
+    if (count == 0) return [NSString stringWithFormat:@"%s0 bytes%s", stringPrefix, stringSuffix];
+                            
+    const struct {
+        unsigned long long size;
+        const char *suffix;
+    } suffixes[] = {
+        {1ULL<<0,   "byte"},
+        {1ULL<<10,  "byte"},
+        {1ULL<<20,  "kilobyte"},
+        {1ULL<<30,  "megabyte"},
+        {1ULL<<40,  "gigabyte"},
+        {1ULL<<50,  "terabyte"},
+        {1ULL<<60,  "petabyte"}
+        //exabyte, zettabyte
+    };
+    const unsigned numSuffixes = sizeof suffixes / sizeof *suffixes;
+    //HFASSERT((sizeof sizes / sizeof *sizes) == (sizeof suffixes / sizeof *suffixes));
+    unsigned i;
+    unsigned long long base;
+    for (i=0; i < numSuffixes; i++) {
+        if (count < suffixes[i].size) break;
+    }
     
-    if (i >= sizeof sizes / sizeof *sizes) return [NSString stringWithFormat:@"%san unbelievable number of bytes%s", stringPrefix, stringSuffix];
-    base = sizes[i-1];
+    if (i >= numSuffixes) return [NSString stringWithFormat:@"%san unbelievable number of bytes%s", stringPrefix, stringSuffix];
+    base = suffixes[i-1].size;
     
     unsigned long long dividend = count / base;
     
@@ -384,7 +398,7 @@ NSString *HFDescribeByteCountWithPrefixAndSuffix(const char *stringPrefix, unsig
     else remainderBuff[0] = 0;
     
     char* resultPointer = NULL;
-    int numChars = asprintf(&resultPointer, "%s%llu%s %s%s%s", stringPrefix, dividend, remainderBuff, suffixes[i], "s" + !needsPlural, stringSuffix);
+    int numChars = asprintf(&resultPointer, "%s%llu%s %s%s%s", stringPrefix, dividend, remainderBuff, suffixes[i].suffix, "s" + !needsPlural, stringSuffix);
     if (numChars < 0) return NULL;
     return [[[NSString alloc] initWithBytesNoCopy:resultPointer length:numChars encoding:NSASCIIStringEncoding freeWhenDone:YES] autorelease];
 }
