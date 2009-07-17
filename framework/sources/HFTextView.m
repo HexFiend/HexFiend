@@ -46,8 +46,15 @@
         [self didChangeValueForKey:@"data"];
     }
     if ([delegate respondsToSelector:@selector(hexTextView:didChangeProperties:)]) {
-        [(id <HFTextViewDelegate>) delegate hexTextView:self didChangeProperties:propertyMask];
+        [(id <HFTextViewDelegate>)delegate hexTextView:self didChangeProperties:propertyMask];
     }
+}
+
+- (void)bind:(NSString *)bindingName toObject:(id)observableController withKeyPath:(NSString *)keyPath options:(NSDictionary *)options {
+    if ([bindingName isEqual:@"data"]) {
+        
+    }
+    [super bind:bindingName toObject:observableController withKeyPath:keyPath options:options];
 }
 
 - (NSRect)_desiredFrameForLayoutView {

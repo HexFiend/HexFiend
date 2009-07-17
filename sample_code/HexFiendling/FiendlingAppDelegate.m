@@ -141,9 +141,20 @@
     return result;
 }
 
+
+- (void)setTextViewBoundData:(NSData *)data {
+    NSLog(@"Setting it %lu", [data length]);
+    [data retain];
+    [textViewBoundData release];
+    textViewBoundData = data;
+}
+
 - (void)applicationDidFinishLaunching:(NSNotification *)note {
     NSMutableArray *texts = [[NSMutableArray alloc] init];
     explanatoryTexts = texts;
+    
+    [texts addObject:@"This tab demonstrates showing and editing data via the \"data\" binding on both NSTextView and HFTextView."];
+    //nothing to set up programmatically!
     
     [texts addObject:@"This tab demonstrates showing in-memory data in a hex view."];
     [self setUpInMemoryHexViewIntoView:[self viewForIdentifier:@"in_memory_hex_view"]];

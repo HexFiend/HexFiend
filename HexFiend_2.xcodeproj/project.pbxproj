@@ -508,10 +508,10 @@
 				D00C16750FF4925A006D021F /* main.m */,
 				D0D110520FF602D800AE5CFB /* FiendlingAppDelegate.h */,
 				D0D110530FF602D800AE5CFB /* FiendlingAppDelegate.m */,
-				D00C166F0FF4925A006D021F /* InfoPlist.strings */,
-				D00C16710FF4925A006D021F /* MainMenu.xib */,
 				D00C16730FF4925A006D021F /* HexFiendling_Prefix.pch */,
+				D00C16710FF4925A006D021F /* MainMenu.xib */,
 				D00C16740FF4925A006D021F /* Info.plist */,
+				D00C166F0FF4925A006D021F /* InfoPlist.strings */,
 			);
 			name = HexFiendling;
 			path = sample_code/HexFiendling;
