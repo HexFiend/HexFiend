@@ -554,7 +554,6 @@ static HFByteArray *constructNewSlices(HFByteSlice *slice, HFRange rangeInFile, 
 	    HFASSERT(slice != nil);
 	    HFByteArray *replacementSlices = (id)CFDictionaryGetValue(sliceToNewSlicesDictionary, slice);
 	    HFASSERT(replacementSlices != nil);
-	    NSLog(@"replacing %@ with %@", slice, replacementSlices);
 	    [self insertByteArray:replacementSlices inRange:replacementRange];
 	}
     }

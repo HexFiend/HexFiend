@@ -816,7 +816,11 @@ static inline Class preferredByteArrayClass(void) {
 }
 
 - (void)endSave:(id)result {
+#if __LP64__
     saveResult = [result integerValue];
+#else
+    saveResult = [result intValue]; //Tiger compatibility
+#endif
     /* Post an event so our event loop wakes up */
     [NSApp postEvent:[NSEvent otherEventWithType:NSApplicationDefined location:NSZeroPoint modifierFlags:0 timestamp:0 windowNumber:0 context:NULL subtype:0 data1:0 data2:0] atStart:NO];
 }

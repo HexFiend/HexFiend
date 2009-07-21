@@ -90,7 +90,7 @@
 
 - (void)noteFinished:(id)sender {
     if (delegate != nil) {   
-        if (! [NSThread isMainThread]) {
+        if (! pthread_main_np()) { // [NSThread isMainThread] is not available on Tiger
             [self performSelectorOnMainThread:@selector(noteFinished:) withObject:sender waitUntilDone:NO];
         }
         else {
