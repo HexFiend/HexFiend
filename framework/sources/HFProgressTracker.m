@@ -7,6 +7,7 @@
 //
 
 #import <HexFiend/HFProgressTracker.h>
+#include <pthread.h>
 
 @implementation HFProgressTracker
 
