@@ -852,6 +852,7 @@ static BOOL btree_remove(HFBTree *tree, HFBTreeIndex deletionOffset) {
     return deleteNode;
 }
 
+#if ! NDEBUG
 static BOOL non_nulls_are_grouped_at_start(const id *ptr, NSUInteger count) {
     BOOL hasSeenNull = NO;
     for (NSUInteger i=0; i < count; i++) {
@@ -863,6 +864,7 @@ static BOOL non_nulls_are_grouped_at_start(const id *ptr, NSUInteger count) {
     }
     return YES;
 }
+#endif
 
 static void btree_recursive_check_integrity(HFBTree *tree, HFBTreeNode *branchOrLeaf, TreeDepth_t depth) {
     if (depth == 0) {

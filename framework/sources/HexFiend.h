@@ -38,6 +38,7 @@
 #import <HexFiend/HFBTreeByteArray.h>
 #import <HexFiend/HFProgressTracker.h>
 #import <HexFiend/HFTextField.h>
+#import <HexFiend/HFTextView.h>
 #import <HexFiend/HFSharedMemoryByteSlice.h>
 
 
