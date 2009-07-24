@@ -48,13 +48,19 @@
     if ([delegate respondsToSelector:@selector(hexTextView:didChangeProperties:)]) {
         [(id <HFTextViewDelegate>)delegate hexTextView:self didChangeProperties:propertyMask];
     }
-}
-
-- (void)bind:(NSString *)bindingName toObject:(id)observableController withKeyPath:(NSString *)keyPath options:(NSDictionary *)options {
-    if ([bindingName isEqual:@"data"]) {
-        
+    
+    /* Apply any view->model bindings */
+    NSDictionary *bindingInfo = [self infoForBinding:@"data"];
+    if (bindingInfo != nil) {
+        NSData *valueToSet = [self data];
+        id observedObject = [bindingInfo objectForKey:NSObservedObjectKey];
+        NSString *keyPath = [bindingInfo objectForKey:NSObservedKeyPathKey];
+        NSValueTransformer *transformer = [[bindingInfo objectForKey:NSOptionsKey] objectForKey:NSValueTransformerBindingOption];
+        if ([transformer isKindOfClass:[NSValueTransformer class]] && [[transformer class] allowsReverseTransformation]) { //often the transformer is NSNull :(
+            valueToSet = [transformer reverseTransformedValue:valueToSet];
+        }
+        [observedObject setValue:valueToSet forKeyPath:keyPath];
     }
-    [super bind:bindingName toObject:observableController withKeyPath:keyPath options:options];
 }
 
 - (NSRect)_desiredFrameForLayoutView {

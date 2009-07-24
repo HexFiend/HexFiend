@@ -143,7 +143,6 @@
 
 
 - (void)setTextViewBoundData:(NSData *)data {
-    NSLog(@"Setting it %lu", [data length]);
     [data retain];
     [textViewBoundData release];
     textViewBoundData = data;
