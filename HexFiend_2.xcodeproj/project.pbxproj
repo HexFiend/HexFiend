@@ -27,7 +27,6 @@
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		D00122E30D48A8D400540B10 /* HFFindReplaceBackgroundView.m in Sources */ = {isa = PBXBuildFile; fileRef = D00122E20D48A8D400540B10 /* HFFindReplaceBackgroundView.m */; };
 		D00C16760FF4925A006D021F /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = D00C166F0FF4925A006D021F /* InfoPlist.strings */; };
-		D00C16770FF4925A006D021F /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = D00C16710FF4925A006D021F /* MainMenu.xib */; };
 		D00C16790FF4925A006D021F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D00C16750FF4925A006D021F /* main.m */; };
 		D00EBA730CE866D50020E2D7 /* HFVerticalScrollerRepresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = D00EBA710CE866D50020E2D7 /* HFVerticalScrollerRepresenter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D00EBA740CE866D50020E2D7 /* HFVerticalScrollerRepresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = D00EBA720CE866D50020E2D7 /* HFVerticalScrollerRepresenter.m */; };
@@ -76,6 +75,7 @@
 		D04A6C16100EB02400704963 /* HFModalProgress.xib in Resources */ = {isa = PBXBuildFile; fileRef = D04A6C15100EB02400704963 /* HFModalProgress.xib */; };
 		D04C78270DC47ECF00A76FF2 /* HFTextSelectionPulseView.h in Headers */ = {isa = PBXBuildFile; fileRef = D04C78250DC47ECF00A76FF2 /* HFTextSelectionPulseView.h */; };
 		D04C78280DC47ECF00A76FF2 /* HFTextSelectionPulseView.m in Sources */ = {isa = PBXBuildFile; fileRef = D04C78260DC47ECF00A76FF2 /* HFTextSelectionPulseView.m */; };
+		D059FCCF101D729100B3787D /* MainMenu.nib in Resources */ = {isa = PBXBuildFile; fileRef = D059FCCD101D729100B3787D /* MainMenu.nib */; };
 		D05B77BA0E00856D008C45EB /* HFCancelOn.tiff in Resources */ = {isa = PBXBuildFile; fileRef = D01772B70D72E024002E03DE /* HFCancelOn.tiff */; };
 		D05B77BB0E00856D008C45EB /* HFCancelOff.tiff in Resources */ = {isa = PBXBuildFile; fileRef = D01772B80D72E024002E03DE /* HFCancelOff.tiff */; };
 		D05B77DF0E00883B008C45EB /* HFCancelButton.h in Headers */ = {isa = PBXBuildFile; fileRef = D05B77DD0E00883B008C45EB /* HFCancelButton.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -231,7 +231,6 @@
 		D00122E20D48A8D400540B10 /* HFFindReplaceBackgroundView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFFindReplaceBackgroundView.m; path = app/sources/HFFindReplaceBackgroundView.m; sourceTree = "<group>"; };
 		D00C15E50FF091FF006D021F /* HexFiendling.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HexFiendling.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D00C16700FF4925A006D021F /* English */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		D00C16720FF4925A006D021F /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		D00C16730FF4925A006D021F /* HexFiendling_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HexFiendling_Prefix.pch; sourceTree = "<group>"; };
 		D00C16740FF4925A006D021F /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D00C16750FF4925A006D021F /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -295,6 +294,7 @@
 		D04A6C15100EB02400704963 /* HFModalProgress.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = HFModalProgress.xib; path = framework/resources/HFModalProgress.xib; sourceTree = "<group>"; };
 		D04C78250DC47ECF00A76FF2 /* HFTextSelectionPulseView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFTextSelectionPulseView.h; path = framework/sources/HFTextSelectionPulseView.h; sourceTree = "<group>"; };
 		D04C78260DC47ECF00A76FF2 /* HFTextSelectionPulseView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFTextSelectionPulseView.m; path = framework/sources/HFTextSelectionPulseView.m; sourceTree = "<group>"; };
+		D059FCCE101D729100B3787D /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = sample_code/HexFiendling/English.lproj/MainMenu.nib; sourceTree = "<group>"; };
 		D05B77DD0E00883B008C45EB /* HFCancelButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFCancelButton.h; path = framework/sources/HFCancelButton.h; sourceTree = "<group>"; };
 		D05B77DE0E00883B008C45EB /* HFCancelButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFCancelButton.m; path = framework/sources/HFCancelButton.m; sourceTree = "<group>"; };
 		D061A28E10042D6A0049B8B8 /* HFTextRepresenter_Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFTextRepresenter_Internal.h; path = framework/sources/HFTextRepresenter_Internal.h; sourceTree = "<group>"; };
@@ -505,7 +505,7 @@
 				D0D110520FF602D800AE5CFB /* FiendlingAppDelegate.h */,
 				D0D110530FF602D800AE5CFB /* FiendlingAppDelegate.m */,
 				D00C16730FF4925A006D021F /* HexFiendling_Prefix.pch */,
-				D00C16710FF4925A006D021F /* MainMenu.xib */,
+				D059FCCD101D729100B3787D /* MainMenu.nib */,
 				D00C16740FF4925A006D021F /* Info.plist */,
 				D00C166F0FF4925A006D021F /* InfoPlist.strings */,
 			);
@@ -972,7 +972,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D00C16760FF4925A006D021F /* InfoPlist.strings in Resources */,
-				D00C16770FF4925A006D021F /* MainMenu.xib in Resources */,
+				D059FCCF101D729100B3787D /* MainMenu.nib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1153,14 +1153,6 @@
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
 		};
-		D00C16710FF4925A006D021F /* MainMenu.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				D00C16720FF4925A006D021F /* English */,
-			);
-			name = MainMenu.xib;
-			sourceTree = "<group>";
-		};
 		D04A6B69100EA47C00704963 /* SaveBanner.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -1207,6 +1199,15 @@
 				D04A6BAA100EA7B800704963 /* English */,
 			);
 			name = MainMenu.xib;
+			sourceTree = "<group>";
+		};
+		D059FCCD101D729100B3787D /* MainMenu.nib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D059FCCE101D729100B3787D /* English */,
+			);
+			name = MainMenu.nib;
+			path = ../..;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -1274,6 +1275,7 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = HexFiendling;
+				VALID_ARCHS = "ppc64 x86_64 i386 ppc ppc7400 ppc970";
 			};
 			name = "Debug-NoUnitTests";
 		};
@@ -1293,6 +1295,7 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = HexFiendling;
+				VALID_ARCHS = "ppc64 x86_64 i386 ppc ppc7400 ppc970";
 			};
 			name = "Debug-UnitTests";
 		};
@@ -1312,6 +1315,7 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = HexFiendling;
+				VALID_ARCHS = "ppc64 x86_64 i386 ppc ppc7400 ppc970";
 			};
 			name = "Debug-UnitTests-Optimized";
 		};
@@ -1331,6 +1335,7 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = HexFiendling;
+				VALID_ARCHS = "ppc64 x86_64 i386 ppc ppc7400 ppc970";
 			};
 			name = "Debug-UnitTests-64";
 		};
@@ -1352,6 +1357,7 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = HexFiendling;
+				VALID_ARCHS = "ppc64 x86_64 i386 ppc ppc7400 ppc970";
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -1372,6 +1378,7 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = HexFiendling;
+				VALID_ARCHS = "ppc64 x86_64 i386 ppc ppc7400 ppc970";
 			};
 			name = "Release-GC";
 		};
