@@ -247,8 +247,17 @@ static inline HFByteSlice *findInitialSlice(HFBTree *btree, HFRange *inoutArrayR
     }
 }
 
+- mutableCopyWithZone:(NSZone *)zone {
+    HFBTreeByteArray *result = [[[self class] alloc] init];
+    [result->btree release];
+    result->btree = [btree mutableCopy];
+    return result;
+}
 
 - subarrayWithRange:(HFRange)range {
+    if (range.location == 0 && range.length == [self length]) {
+        return [[self mutableCopy] autorelease];
+    }
     HFBTreeByteArray *result = [[[[self class] alloc] init] autorelease];
     HFRange remainingRange = range;
     unsigned long long offsetInResult = 0;

@@ -24,6 +24,8 @@
 #define MAX_EDITABLE_BYTE_COUNT 8
 #define INVALID_EDITING_BYTE_COUNT NSUIntegerMax
 
+#define kDataInspectorUserDefaultsKey @"DataInspectorDefaults"
+
 static BOOL isRunningOnLeopardOrLater(void) {
     return NSAppKitVersionNumber >= 860.;
 }
@@ -84,6 +86,10 @@ static NSString *errorStringForInspectionStatus(enum InspectionStatus_t status) 
 
 /* returns YES if types wrapped around */
 - (BOOL)incrementToNextType;
+
+/* Get and set a property list representation, for persisting to user defaults */
+- (id)propertyListRepresentation;
+- (void)setPropertyListRepresentation:(id)plist;
 
 @end
 
@@ -381,6 +387,15 @@ static BOOL valueCanFitInByteCount(unsigned long long unsignedValue, NSUInteger 
     }
 }
 
+- (id)propertyListRepresentation {
+    return [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithInt:inspectorType], @"InspectorType", [NSNumber numberWithInt:endianness], @"Endianness", nil];
+}
+
+- (void)setPropertyListRepresentation:(id)plist {
+    inspectorType = [[plist objectForKey:@"InspectorType"] intValue];
+    endianness = [[plist objectForKey:@"Endianness"] intValue];
+}
+
 @end
 
 @implementation DataInspectorScrollView
@@ -429,9 +444,33 @@ static BOOL valueCanFitInByteCount(unsigned long long unsignedValue, NSUInteger 
 }
 
 - (void)loadDefaultInspectors {
-    DataInspector *ins = [[DataInspector alloc] init];
-    [inspectors addObject:ins];
-    [ins release];
+    NSArray *defaultInspectorDictionaries = [[NSUserDefaults standardUserDefaults] objectForKey:kDataInspectorUserDefaultsKey];
+    if (! defaultInspectorDictionaries) {
+        DataInspector *ins = [[DataInspector alloc] init];
+        [inspectors addObject:ins];
+        [ins release];
+    }
+    else {
+        NSEnumerator *enumer = [defaultInspectorDictionaries objectEnumerator];
+        NSDictionary *inspectorDictionary;
+        while ((inspectorDictionary = [enumer nextObject])) {
+            DataInspector *ins = [[DataInspector alloc] init];
+            [ins setPropertyListRepresentation:inspectorDictionary];
+            [inspectors addObject:ins];
+            [ins release];            
+        }
+    }
+}
+
+- (void)saveDefaultInspectors {
+    NSMutableArray *inspectorDictionaries = [[NSMutableArray alloc] init];
+    DataInspector *inspector;
+    NSEnumerator *enumer = [inspectors objectEnumerator];
+    while ((inspector = [enumer nextObject])) {
+        [inspectorDictionaries addObject:[inspector propertyListRepresentation]];
+    }
+    [[NSUserDefaults standardUserDefaults] setObject:inspectorDictionaries forKey:kDataInspectorUserDefaultsKey];
+    [inspectorDictionaries release];
 }
 
 - (NSView *)createView {
@@ -447,8 +486,12 @@ static BOOL valueCanFitInByteCount(unsigned long long unsignedValue, NSUInteger 
     [table setBackgroundColor:[NSColor colorWithCalibratedWhite:(CGFloat).91 alpha:1]];
     [table setRefusesFirstResponder:YES];
     [table setTarget:self];
-    [table setDoubleAction:@selector(doubleClickedTable:)];
+    [table setDoubleAction:@selector(doubleClickedTable:)];    
     return resultView;
+}
+
+- (void)initializeView {
+    [self resizeTableViewAfterChangingRowCount];
 }
 
 + (NSPoint)defaultLayoutPosition {
@@ -595,6 +638,7 @@ static NSAttributedString *inspectionError(NSString *s) {
     NSInteger clickedRow = [table clickedRow];
     [inspectors insertObject:ins atIndex:clickedRow + 1];
     [ins release];
+    [self saveDefaultInspectors];
     [self resizeTableViewAfterChangingRowCount];
 }
 
@@ -606,6 +650,7 @@ static NSAttributedString *inspectionError(NSString *s) {
     else {
 	NSInteger clickedRow = [table clickedRow];
 	[inspectors removeObjectAtIndex:clickedRow];
+        [self saveDefaultInspectors];
 	[self resizeTableViewAfterChangingRowCount];
     }
 }

@@ -88,6 +88,12 @@ int main (int argc, const char * argv[]) {
         [btree insertEntry:entry atOffset:offset];
         
         test_trees(naiveArray, btree);
+        
+        /* Test a copy of the tree too */
+        HFBTree *copiedTree = [btree mutableCopy];
+        [copiedTree checkIntegrityOfBTreeStructure];
+        [copiedTree checkIntegrityOfCachedLengths];
+        [copiedTree release];
     }
     
     //deletion
@@ -96,6 +102,12 @@ int main (int argc, const char * argv[]) {
         [naiveArray removeEntryAtOffset:offset];
         [btree removeEntryAtOffset:offset];
         test_trees(naiveArray, btree);
+        
+        /* Test a copy of the tree too */
+        HFBTree *copiedTree = [btree mutableCopy];
+        [copiedTree checkIntegrityOfBTreeStructure];
+        [copiedTree checkIntegrityOfCachedLengths];
+        [copiedTree release];
     }
     
     [pool drain];

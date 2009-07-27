@@ -20,6 +20,7 @@ extern NSString * const DataInspectorDidDeleteAllRows;
 - (IBAction)addRow:(id)sender;
 - (IBAction)removeRow:(id)sender;
 - (IBAction)doubleClickedTable:(id)sender;
+- (void)resizeTableViewAfterChangingRowCount;
 
 @end
 

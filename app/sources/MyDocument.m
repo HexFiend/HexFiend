@@ -54,14 +54,24 @@ static inline Class preferredByteArrayClass(void) {
 
 @end
 
+#define USERDEFS_KEY_FOR_REP(r) @"RepresenterIsShown " @#r
+
 @implementation MyDocument
 
 + (void)initialize {
     if (self == [MyDocument class]) {
+        NSNumber *yes = [NSNumber numberWithBool:YES];
         NSDictionary *defs = [[NSDictionary alloc] initWithObjectsAndKeys:
-                              [NSNumber numberWithBool:YES], @"AntialiasText",
+                              yes, @"AntialiasText",
                               @"Monaco", @"DefaultFontName",
                               [NSNumber numberWithDouble:10.], @"DefaultFontSize",
+                              [NSNumber numberWithInteger:4], @"BytesPerColumn",
+                              yes, USERDEFS_KEY_FOR_REP(lineCountingRepresenter),
+                              yes, USERDEFS_KEY_FOR_REP(hexRepresenter),
+                              yes, USERDEFS_KEY_FOR_REP(asciiRepresenter),
+                              yes, USERDEFS_KEY_FOR_REP(dataInspectorRepresenter),
+                              yes, USERDEFS_KEY_FOR_REP(statusBarRepresenter),
+                              yes, USERDEFS_KEY_FOR_REP(scrollRepresenter),
                               nil];
         [[NSUserDefaults standardUserDefaults] registerDefaults:defs];
         [defs release];
@@ -86,6 +96,11 @@ static inline Class preferredByteArrayClass(void) {
     return [NSArray arrayWithObjects:lineCountingRepresenter, hexRepresenter, asciiRepresenter, scrollRepresenter, dataInspectorRepresenter, statusBarRepresenter, nil];
 }
 
+- (BOOL)representerIsShown:(HFRepresenter *)representer {
+    NSParameterAssert(representer);
+    return [[layoutRepresenter representers] containsObject:representer];
+}
+
 - (void)showViewForRepresenter:(HFRepresenter *)rep {
     NSView *repView = [rep view];
     HFASSERT([repView superview] == nil && [repView window] == nil);
@@ -98,6 +113,50 @@ static inline Class preferredByteArrayClass(void) {
     HFASSERT([[layoutRepresenter representers] indexOfObjectIdenticalTo:rep] != NSNotFound);
     [controller removeRepresenter:rep];
     [layoutRepresenter removeRepresenter:rep];
+}
+
+/* Code to save to user defs (NO) or apply from user defs (YES) the default representers to show. */
+- (void)saveOrApplyDefaultRepresentersToDisplay:(BOOL)isApplying {
+    const struct {
+        NSString *name;
+        HFRepresenter *rep;
+    } shownRepresentersData[] = {
+        {USERDEFS_KEY_FOR_REP(lineCountingRepresenter), lineCountingRepresenter},
+        {USERDEFS_KEY_FOR_REP(hexRepresenter), hexRepresenter},
+        {USERDEFS_KEY_FOR_REP(asciiRepresenter), asciiRepresenter},
+        {USERDEFS_KEY_FOR_REP(dataInspectorRepresenter), dataInspectorRepresenter},
+        {USERDEFS_KEY_FOR_REP(statusBarRepresenter), statusBarRepresenter},
+        {USERDEFS_KEY_FOR_REP(scrollRepresenter), scrollRepresenter}
+    };
+    NSUInteger i;
+    NSUserDefaults *defs = [NSUserDefaults standardUserDefaults];
+    for (i=0; i < sizeof shownRepresentersData / sizeof *shownRepresentersData; i++) {
+        if (isApplying) {
+            /* Read from user defaults */
+            NSNumber *boolObject = [defs objectForKey:shownRepresentersData[i].name];
+            if (boolObject != nil) {
+                BOOL shouldShow = [boolObject boolValue];
+                HFRepresenter *rep = shownRepresentersData[i].rep;
+                if (shouldShow != [self representerIsShown:rep]) {
+                    if (shouldShow) [self showViewForRepresenter:rep];
+                    else [self hideViewForRepresenter:rep];
+                }
+            }
+        }
+        else {
+            /* Save to user defaults */
+            BOOL isShown = [self representerIsShown:shownRepresentersData[i].rep];
+            [defs setBool:isShown forKey:shownRepresentersData[i].name];
+        }
+    }
+}
+
+- (void)saveDefaultRepresentersToDisplay {    
+    [self saveOrApplyDefaultRepresentersToDisplay:NO];
+}
+
+- (void)applyDefaultRepresentersToDisplay {
+    [self saveOrApplyDefaultRepresentersToDisplay:YES];
 }
 
 /* Return a format string that can take one argument which is the document name. */
@@ -196,13 +255,7 @@ static inline Class preferredByteArrayClass(void) {
     [layoutView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
     [layoutView setFrame:[containerView bounds]];
     [containerView addSubview:layoutView];
-    
-    [self showViewForRepresenter:hexRepresenter];
-    [self showViewForRepresenter:asciiRepresenter];
-    [self showViewForRepresenter:scrollRepresenter];
-    [self showViewForRepresenter:lineCountingRepresenter];
-    [self showViewForRepresenter:dataInspectorRepresenter];
-    [self showViewForRepresenter:statusBarRepresenter];
+    [self applyDefaultRepresentersToDisplay];
     NSRect windowFrame = [window frame];
     windowFrame.size = [self minimumWindowFrameSizeForProposedSize:windowFrame.size];
     [window setFrame:windowFrame display:NO];
@@ -244,6 +297,7 @@ static inline Class preferredByteArrayClass(void) {
 - (void)dataInspectorDeletedAllRows:(NSNotification *)note {
     DataInspectorRepresenter *inspector = [note object];
     [self hideViewForRepresenter:inspector];
+    [self saveDefaultRepresentersToDisplay]; // Save the representers in UserDefaults so we start out next time the same way
 }
 
 /* Called when our data inspector changes its size (number of rows) */
@@ -279,7 +333,7 @@ static inline Class preferredByteArrayClass(void) {
     controller = [[HFController alloc] init];
     [controller setShouldAntialias:[defs boolForKey:@"AntialiasText"]];
     [controller setUndoManager:[self undoManager]];
-    [controller setBytesPerColumn:4];
+    [controller setBytesPerColumn:[defs integerForKey:@"BytesPerColumn"]];
     [controller addRepresenter:layoutRepresenter];
     
     
@@ -404,8 +458,7 @@ static inline Class preferredByteArrayClass(void) {
     }
     else {
         HFRepresenter *rep = [representers objectAtIndex:arrayIndex];
-        NSView *repView = [rep view];
-        if ([repView window] == [self window]) {
+        if ([self representerIsShown:rep]) {
             [self hideViewForRepresenter:rep];
 	    [self relayoutAndResizeWindowPreservingFrame];
         }
@@ -413,6 +466,7 @@ static inline Class preferredByteArrayClass(void) {
             [self showViewForRepresenter:rep];
 	    [self relayoutAndResizeWindowPreservingFrame];
         }
+        [self saveDefaultRepresentersToDisplay];
     }
 }
 
@@ -1253,6 +1307,7 @@ invalidString:;
     newDesiredBytesPerLine = MAX(newBytesPerColumn, bytesPerLine - (bytesPerLine % newBytesPerColumn));
     [controller setBytesPerColumn:newBytesPerColumn];
     [self relayoutAndResizeWindowForBytesPerLine:newDesiredBytesPerLine]; //this ensures that the window does not shrink when going e.g. from 4->8->4
+    [[NSUserDefaults standardUserDefaults] setInteger:newBytesPerColumn forKey:@"BytesPerColumn"];
 }
 
 - (IBAction)toggleOverwriteMode:sender {

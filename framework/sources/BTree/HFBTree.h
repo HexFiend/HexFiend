@@ -13,7 +13,7 @@ typedef unsigned long long HFBTreeIndex;
 
 #define HFTEST_BTREES 1
 
-@interface HFBTree : NSObject {
+@interface HFBTree : NSObject <NSMutableCopying> {
     unsigned int depth;
     HFBTreeNode *root;
 }

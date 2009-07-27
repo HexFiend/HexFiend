@@ -36,13 +36,14 @@ typedef unsigned int TreeDepth_t;
 static TreeEntry *btree_search(HFBTree *tree, HFBTreeIndex offset, HFBTreeIndex *outBeginningOffset);
 static id btree_insert_returning_retained_value_for_parent(HFBTree *tree, TreeEntry *entry, HFBTreeIndex offset);
 static BOOL btree_remove(HFBTree *tree, HFBTreeIndex offset);
-static void btree_recursive_check_integrity(HFBTree *tree, HFBTreeNode *branchOrLeaf, TreeDepth_t depth);
+static void btree_recursive_check_integrity(HFBTree *tree, HFBTreeNode *branchOrLeaf, TreeDepth_t depth, HFBTreeNode **linkHelper);
 static HFBTreeIndex btree_recursive_fixup_cached_lengths(HFBTree *tree, HFBTreeNode *branchOrLeaf);
 static HFBTreeIndex btree_recursive_check_integrity_of_cached_lengths(HFBTreeNode *branchOrLeaf);
 static BOOL btree_are_cached_lengths_correct(HFBTreeNode *branchOrLeaf, HFBTreeIndex *outLength);
 static NSUInteger btree_entry_count(HFBTreeNode *branchOrLeaf);
 static ChildIndex_t count_node_values(HFBTreeNode *node);
 static HFBTreeIndex sum_child_lengths(const id *children, const BOOL isLeaf);
+static HFBTreeNode *mutable_copy_node(HFBTreeNode *node, TreeDepth_t depth, HFBTreeNode **linkingHelper);
 
 #if NDEBUG
 #define VERIFY_LENGTH(a)
@@ -186,7 +187,8 @@ static HFBTreeIndex sum_child_lengths(const id *children, const BOOL isLeaf);
         HFASSERT(root == nil);
     }
     else {
-        btree_recursive_check_integrity(self, root, depth);
+        HFBTreeNode *linkHelper[MAX_DEPTH + 1] = {};
+        btree_recursive_check_integrity(self, root, depth, linkHelper);
     }
 }
 #endif
@@ -272,6 +274,15 @@ static HFBTreeIndex sum_child_lengths(const id *children, const BOOL isLeaf);
         //printf("Length post-deletion was OK! (%lu)\n", fixupCount);
     }
 #endif
+}
+
+- (id)mutableCopyWithZone:(NSZone *)zone {
+    HFBTree *result = [[[self class] alloc] init];
+    result->depth = depth;
+    HFBTreeNode *linkingHelper[MAX_DEPTH + 1];
+    bzero(linkingHelper, (1 + depth) * sizeof *linkingHelper);
+    result->root = mutable_copy_node(root, depth, linkingHelper);
+    return result;
 }
 
 FORCE_STATIC_INLINE ChildIndex_t count_node_values(HFBTreeNode *node) {
@@ -852,6 +863,38 @@ static BOOL btree_remove(HFBTree *tree, HFBTreeIndex deletionOffset) {
     return deleteNode;
 }
 
+/* linkingHelper stores the last seen node for each depth.  */
+static HFBTreeNode *mutable_copy_node(HFBTreeNode *node, TreeDepth_t depth, HFBTreeNode **linkingHelper) {
+    if (node == nil) return nil;
+    HFASSERT(depth != BAD_DEPTH);
+    Class class = (depth == 0 ? [HFBTreeLeaf class] : [HFBTreeBranch class]);
+    HFBTreeNode *result = [[class alloc] init];
+    result->subtreeLength = node->subtreeLength;
+    
+    /* Link us in */
+    HFBTreeNode *leftNeighbor = linkingHelper[0];
+    if (leftNeighbor != nil) {
+        leftNeighbor->right = result;
+        result->left = leftNeighbor;
+    }
+    
+    /* Leave us for our future right neighbor to find */
+    linkingHelper[0] = (void *)result;
+    
+    HFBTreeIndex index;
+    for (index = 0; index < BTREE_ORDER; index++) {
+        id child = node->children[index];
+        if (! node->children[index]) break;
+        if (depth > 0) {
+            result->children[index] = mutable_copy_node(child, depth - 1, linkingHelper + 1);
+        }
+        else {
+            result->children[index] = [(TreeEntry *)child retain];
+        }
+    }
+    return result;
+}
+
 #if ! NDEBUG
 static BOOL non_nulls_are_grouped_at_start(const id *ptr, NSUInteger count) {
     BOOL hasSeenNull = NO;
@@ -866,7 +909,11 @@ static BOOL non_nulls_are_grouped_at_start(const id *ptr, NSUInteger count) {
 }
 #endif
 
-static void btree_recursive_check_integrity(HFBTree *tree, HFBTreeNode *branchOrLeaf, TreeDepth_t depth) {
+static void btree_recursive_check_integrity(HFBTree *tree, HFBTreeNode *branchOrLeaf, TreeDepth_t depth, HFBTreeNode **linkHelper) {
+    HFASSERT(linkHelper[0] == branchOrLeaf->left);
+    if (linkHelper[0]) HFASSERT(linkHelper[0]->right == branchOrLeaf);
+    linkHelper[0] = branchOrLeaf;
+    
     if (depth == 0) {
         HFBTreeLeaf *leaf = CHECK_CAST(branchOrLeaf, HFBTreeLeaf);
         HFASSERT(non_nulls_are_grouped_at_start(leaf->children, BTREE_LEAF_ORDER));
@@ -876,7 +923,7 @@ static void btree_recursive_check_integrity(HFBTree *tree, HFBTreeNode *branchOr
         HFASSERT(non_nulls_are_grouped_at_start(branch->children, BTREE_BRANCH_ORDER));
         for (ChildIndex_t i = 0; i < BTREE_BRANCH_ORDER; i++) {
             if (! branch->children[i]) break;
-            btree_recursive_check_integrity(tree, branch->children[i], depth - 1);
+            btree_recursive_check_integrity(tree, branch->children[i], depth - 1, linkHelper + 1);
         }
     }
     ChildIndex_t childCount = count_node_values(branchOrLeaf);

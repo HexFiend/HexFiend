@@ -20,8 +20,9 @@ static inline BOOL HFSumDoesNotOverflow(unsigned long long a, unsigned long long
 }
 
 static inline unsigned long long HFSum(unsigned long long a, unsigned long long b) {
-    assert(HFSumDoesNotOverflow(a, b));
-    return a + b;
+    unsigned long long result = a + b;
+    HFASSERT(a + b >= a);
+    return result;
 }
 
 static inline NSUInteger HFAtomicIncrement(NSUInteger *ptr, BOOL barrier) {
