@@ -3,7 +3,7 @@
 //  HexFiend_2
 //
 //  Created by Peter Ammon on 6/28/09.
-//  Copyright 2009 Apple Computer. All rights reserved.
+//  Copyright 2009 ridiculous_fish. All rights reserved.
 //
 
 #import <HexFiend/HFTextView.h>

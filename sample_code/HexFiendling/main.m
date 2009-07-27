@@ -3,7 +3,7 @@
 //  HexFiendling
 //
 //  Created by Peter Ammon on 6/22/09.
-//  Copyright Apple Computer 2009. All rights reserved.
+//  Copyright ridiculous_fish 2009. All rights reserved.
 //
 
 #import <Cocoa/Cocoa.h>
