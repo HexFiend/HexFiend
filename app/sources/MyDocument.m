@@ -65,7 +65,7 @@ static inline Class preferredByteArrayClass(void) {
                               yes, @"AntialiasText",
                               @"Monaco", @"DefaultFontName",
                               [NSNumber numberWithDouble:10.], @"DefaultFontSize",
-                              [NSNumber numberWithInteger:4], @"BytesPerColumn",
+                              [NSNumber numberWithInt:4], @"BytesPerColumn",
                               yes, USERDEFS_KEY_FOR_REP(lineCountingRepresenter),
                               yes, USERDEFS_KEY_FOR_REP(hexRepresenter),
                               yes, USERDEFS_KEY_FOR_REP(asciiRepresenter),
