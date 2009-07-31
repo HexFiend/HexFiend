@@ -44,7 +44,6 @@
 		D019B9020D83FEB3005789AA /* HFByteSliceFileOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = D019B9000D83FEB3005789AA /* HFByteSliceFileOperation.m */; };
 		D019B9550D840FE8005789AA /* HFObjectGraph.h in Headers */ = {isa = PBXBuildFile; fileRef = D019B9530D840FE8005789AA /* HFObjectGraph.h */; };
 		D019B9560D840FE8005789AA /* HFObjectGraph.m in Sources */ = {isa = PBXBuildFile; fileRef = D019B9540D840FE8005789AA /* HFObjectGraph.m */; };
-		D01E7BE20CDC54CE00943F9E /* HexFiend.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = D01E7BB80CDC530C00943F9E /* HexFiend.framework */; };
 		D01E7BED0CDC55D000943F9E /* HFController.m in Sources */ = {isa = PBXBuildFile; fileRef = D01E7BEB0CDC55D000943F9E /* HFController.m */; };
 		D01E7BF00CDC564B00943F9E /* HexFiend.h in Headers */ = {isa = PBXBuildFile; fileRef = D01E7BEF0CDC564B00943F9E /* HexFiend.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D01E7C160CDC58AA00943F9E /* MyDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = D01E7C150CDC58AA00943F9E /* MyDocument.m */; };
@@ -66,6 +65,12 @@
 		D0422FDF0D62599300F8FCDE /* HFProgressTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = D0422FDD0D62599300F8FCDE /* HFProgressTracker.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D0422FE00D62599300F8FCDE /* HFProgressTracker.m in Sources */ = {isa = PBXBuildFile; fileRef = D0422FDE0D62599300F8FCDE /* HFProgressTracker.m */; };
 		D04327A40CF081CD00C14250 /* HFFunctions_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = D04327A30CF081CD00C14250 /* HFFunctions_Private.h */; };
+		D047E3401022CFA800EF307B /* FortunateSon.defs in Sources */ = {isa = PBXBuildFile; fileRef = D047E33F1022CFA800EF307B /* FortunateSon.defs */; };
+		D047E48C1022E09300EF307B /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = D047E48B1022E09300EF307B /* main.c */; };
+		D047E4CA1022E1CA00EF307B /* HexFiend.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = D01E7BB80CDC530C00943F9E /* HexFiend.framework */; };
+		D047E4CB1022E1D200EF307B /* FortunateSon in CopyFiles */ = {isa = PBXBuildFile; fileRef = D047E3151022CEFE00EF307B /* FortunateSon */; };
+		D047E5071022E36400EF307B /* HFPrivilegedHelperConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = D047E5051022E36400EF307B /* HFPrivilegedHelperConnection.h */; };
+		D047E5081022E36400EF307B /* HFPrivilegedHelperConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = D047E5061022E36400EF307B /* HFPrivilegedHelperConnection.m */; };
 		D04A6B6B100EA47C00704963 /* SaveBanner.xib in Resources */ = {isa = PBXBuildFile; fileRef = D04A6B69100EA47C00704963 /* SaveBanner.xib */; };
 		D04A6B7A100EA4BC00704963 /* FindReplaceBanner.xib in Resources */ = {isa = PBXBuildFile; fileRef = D04A6B78100EA4BC00704963 /* FindReplaceBanner.xib */; };
 		D04A6B97100EA73800704963 /* JumpToOffsetBanner.xib in Resources */ = {isa = PBXBuildFile; fileRef = D04A6B95100EA73800704963 /* JumpToOffsetBanner.xib */; };
@@ -162,6 +167,13 @@
 			remoteGlobalIDString = D01E7BB70CDC530C00943F9E;
 			remoteInfo = HexFiend_Framework;
 		};
+		D047E49C1022E0D300EF307B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D047E3141022CEFE00EF307B /* Fortunate_Son */;
+			remoteInfo = Fortunate_Son;
+		};
 		D05E7A880FF615D800767D95 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
@@ -192,7 +204,17 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				D01E7BE20CDC54CE00943F9E /* HexFiend.framework in CopyFiles */,
+				D047E4CA1022E1CA00EF307B /* HexFiend.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D047E45D1022E05C00EF307B /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 6;
+			files = (
+				D047E4CB1022E1D200EF307B /* FortunateSon in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -285,6 +307,12 @@
 		D0422FDD0D62599300F8FCDE /* HFProgressTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFProgressTracker.h; path = framework/sources/HFProgressTracker.h; sourceTree = "<group>"; };
 		D0422FDE0D62599300F8FCDE /* HFProgressTracker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFProgressTracker.m; path = framework/sources/HFProgressTracker.m; sourceTree = "<group>"; };
 		D04327A30CF081CD00C14250 /* HFFunctions_Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFFunctions_Private.h; path = framework/sources/HFFunctions_Private.h; sourceTree = "<group>"; };
+		D047E3151022CEFE00EF307B /* FortunateSon */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = FortunateSon; sourceTree = BUILT_PRODUCTS_DIR; };
+		D047E33F1022CFA800EF307B /* FortunateSon.defs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.mig; name = FortunateSon.defs; path = helper_subprocess/FortunateSon.defs; sourceTree = "<group>"; };
+		D047E4431022DF6F00EF307B /* FortunateSonIPCTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FortunateSonIPCTypes.h; path = helper_subprocess/FortunateSonIPCTypes.h; sourceTree = "<group>"; };
+		D047E48B1022E09300EF307B /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = main.c; path = helper_subprocess/main.c; sourceTree = "<group>"; };
+		D047E5051022E36400EF307B /* HFPrivilegedHelperConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFPrivilegedHelperConnection.h; path = framework/sources/HFPrivilegedHelperConnection.h; sourceTree = "<group>"; };
+		D047E5061022E36400EF307B /* HFPrivilegedHelperConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFPrivilegedHelperConnection.m; path = framework/sources/HFPrivilegedHelperConnection.m; sourceTree = "<group>"; };
 		D04A6B6A100EA47C00704963 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/SaveBanner.xib; sourceTree = "<group>"; };
 		D04A6B79100EA4BC00704963 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/FindReplaceBanner.xib; sourceTree = "<group>"; };
 		D04A6B96100EA73800704963 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/JumpToOffsetBanner.xib; sourceTree = "<group>"; };
@@ -407,6 +435,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D047E3131022CEFE00EF307B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D06D600E0FA69B26002376EE /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -444,6 +479,7 @@
 				D019309A0D5AE3B40019B3F7 /* HexFiend.ibplugin */,
 				D06D60100FA69B26002376EE /* Test_BTree */,
 				D00C15E50FF091FF006D021F /* HexFiendling.app */,
+				D047E3151022CEFE00EF307B /* FortunateSon */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -453,6 +489,7 @@
 			children = (
 				D0560B350CDC4248009D2484 /* Framework */,
 				D0560B380CDC4253009D2484 /* App */,
+				D047E33B1022CF2B00EF307B /* PrivilegedHelper */,
 				D00C166E0FF4925A006D021F /* HexFiendling */,
 				D019310E0D5AE97A0019B3F7 /* IB Plugin */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
@@ -627,6 +664,25 @@
 			name = ByteSlice;
 			sourceTree = "<group>";
 		};
+		D047E33B1022CF2B00EF307B /* PrivilegedHelper */ = {
+			isa = PBXGroup;
+			children = (
+				D047E33F1022CFA800EF307B /* FortunateSon.defs */,
+				D047E4431022DF6F00EF307B /* FortunateSonIPCTypes.h */,
+				D047E48B1022E09300EF307B /* main.c */,
+			);
+			name = PrivilegedHelper;
+			sourceTree = "<group>";
+		};
+		D047E5001022E33300EF307B /* PrivilegedHelper */ = {
+			isa = PBXGroup;
+			children = (
+				D047E5051022E36400EF307B /* HFPrivilegedHelperConnection.h */,
+				D047E5061022E36400EF307B /* HFPrivilegedHelperConnection.m */,
+			);
+			name = PrivilegedHelper;
+			sourceTree = "<group>";
+		};
 		D0480E6A0DBB76970048F3FF /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
@@ -645,6 +701,7 @@
 			children = (
 				D0A6C9D70DCC68610077175C /* HFController.h */,
 				D01E7BEB0CDC55D000943F9E /* HFController.m */,
+				D047E5001022E33300EF307B /* PrivilegedHelper */,
 				D0F6FE1D0FFF67C700C609F0 /* Global Headers */,
 				D0480E6A0DBB76970048F3FF /* Utilities */,
 				D026C7A70CDD4FD30082279E /* Representers */,
@@ -830,6 +887,7 @@
 				D0B422A10FF845F800DF27E5 /* HFTextView.h in Headers */,
 				D061A28F10042D6A0049B8B8 /* HFTextRepresenter_Internal.h in Headers */,
 				D0114CA91006D1DF00DAF4CE /* HFByteArrayProxiedData.h in Headers */,
+				D047E5071022E36400EF307B /* HFPrivilegedHelperConnection.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -900,17 +958,35 @@
 			buildPhases = (
 				D01E7BB30CDC530C00943F9E /* Headers */,
 				D01E7BB40CDC530C00943F9E /* Resources */,
+				D047E45D1022E05C00EF307B /* CopyFiles */,
 				D01E7BB50CDC530C00943F9E /* Sources */,
 				D01E7BB60CDC530C00943F9E /* Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				D047E49D1022E0D300EF307B /* PBXTargetDependency */,
 			);
 			name = HexFiend_Framework;
 			productName = HexFiend_Framework;
 			productReference = D01E7BB80CDC530C00943F9E /* HexFiend.framework */;
 			productType = "com.apple.product-type.framework";
+		};
+		D047E3141022CEFE00EF307B /* FortunateSon */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D047E32A1022CF1200EF307B /* Build configuration list for PBXNativeTarget "FortunateSon" */;
+			buildPhases = (
+				D047E3121022CEFE00EF307B /* Sources */,
+				D047E3131022CEFE00EF307B /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = FortunateSon;
+			productName = Fortunate_Son;
+			productReference = D047E3151022CEFE00EF307B /* FortunateSon */;
+			productType = "com.apple.product-type.tool";
 		};
 		D06D600F0FA69B26002376EE /* Test_BTree */ = {
 			isa = PBXNativeTarget;
@@ -943,6 +1019,7 @@
 				8D1107260486CEB800E47090 /* HexFiend_2 */,
 				D01E7BB70CDC530C00943F9E /* HexFiend_Framework */,
 				D01930990D5AE3B40019B3F7 /* HexFiend_IBPlugin */,
+				D047E3141022CEFE00EF307B /* FortunateSon */,
 				D06D600F0FA69B26002376EE /* Test_BTree */,
 				D00C15E40FF091FF006D021F /* HexFiendling */,
 				D0F6FE0A0FFF679200C609F0 /* Documentation Generation */,
@@ -1097,6 +1174,16 @@
 				D06D61EF0FA7FA7C002376EE /* HFBTreeByteArray.m in Sources */,
 				D0B422A20FF845F800DF27E5 /* HFTextView.m in Sources */,
 				D0114CAA1006D1DF00DAF4CE /* HFByteArrayProxiedData.m in Sources */,
+				D047E5081022E36400EF307B /* HFPrivilegedHelperConnection.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D047E3121022CEFE00EF307B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D047E3401022CFA800EF307B /* FortunateSon.defs in Sources */,
+				D047E48C1022E09300EF307B /* main.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1118,6 +1205,11 @@
 			isa = PBXTargetDependency;
 			target = D01E7BB70CDC530C00943F9E /* HexFiend_Framework */;
 			targetProxy = D019309F0D5AE3BE0019B3F7 /* PBXContainerItemProxy */;
+		};
+		D047E49D1022E0D300EF307B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D047E3141022CEFE00EF307B /* FortunateSon */;
+			targetProxy = D047E49C1022E0D300EF307B /* PBXContainerItemProxy */;
 		};
 		D05E7A890FF615D800767D95 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -1443,6 +1535,123 @@
 				ZERO_LINK = NO;
 			};
 			name = Release;
+		};
+		D047E3191022CEFF00EF307B /* Debug-NoUnitTests */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				INSTALL_PATH = /usr/local/bin;
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = FortunateSon;
+			};
+			name = "Debug-NoUnitTests";
+		};
+		D047E31A1022CEFF00EF307B /* Debug-UnitTests */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				INSTALL_PATH = /usr/local/bin;
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = FortunateSon;
+			};
+			name = "Debug-UnitTests";
+		};
+		D047E31B1022CEFF00EF307B /* Debug-UnitTests-Optimized */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				INSTALL_PATH = /usr/local/bin;
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = FortunateSon;
+			};
+			name = "Debug-UnitTests-Optimized";
+		};
+		D047E31C1022CEFF00EF307B /* Debug-UnitTests-64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				INSTALL_PATH = /usr/local/bin;
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = FortunateSon;
+			};
+			name = "Debug-UnitTests-64";
+		};
+		D047E31D1022CEFF00EF307B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				INSTALL_PATH = /usr/local/bin;
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = FortunateSon;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+		D047E31E1022CEFF00EF307B /* Release-GC */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				INSTALL_PATH = /usr/local/bin;
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = FortunateSon;
+			};
+			name = "Release-GC";
 		};
 		D06D60120FA69B27002376EE /* Debug-NoUnitTests */ = {
 			isa = XCBuildConfiguration;
@@ -2243,6 +2452,19 @@
 				D08492710DBB70D200C7195C /* Debug-UnitTests-64 */,
 				D01E7BBB0CDC530C00943F9E /* Release */,
 				D083F7360DBCBD5F00C2B632 /* Release-GC */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = "Debug-NoUnitTests";
+		};
+		D047E32A1022CF1200EF307B /* Build configuration list for PBXNativeTarget "FortunateSon" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D047E3191022CEFF00EF307B /* Debug-NoUnitTests */,
+				D047E31A1022CEFF00EF307B /* Debug-UnitTests */,
+				D047E31B1022CEFF00EF307B /* Debug-UnitTests-Optimized */,
+				D047E31C1022CEFF00EF307B /* Debug-UnitTests-64 */,
+				D047E31D1022CEFF00EF307B /* Release */,
+				D047E31E1022CEFF00EF307B /* Release-GC */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = "Debug-NoUnitTests";
