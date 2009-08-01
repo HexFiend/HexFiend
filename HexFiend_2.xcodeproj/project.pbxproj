@@ -69,8 +69,6 @@
 		D047E48C1022E09300EF307B /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = D047E48B1022E09300EF307B /* main.c */; };
 		D047E4CA1022E1CA00EF307B /* HexFiend.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = D01E7BB80CDC530C00943F9E /* HexFiend.framework */; };
 		D047E4CB1022E1D200EF307B /* FortunateSon in CopyFiles */ = {isa = PBXBuildFile; fileRef = D047E3151022CEFE00EF307B /* FortunateSon */; };
-		D047E5071022E36400EF307B /* HFPrivilegedHelperConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = D047E5051022E36400EF307B /* HFPrivilegedHelperConnection.h */; };
-		D047E5081022E36400EF307B /* HFPrivilegedHelperConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = D047E5061022E36400EF307B /* HFPrivilegedHelperConnection.m */; };
 		D04A6B6B100EA47C00704963 /* SaveBanner.xib in Resources */ = {isa = PBXBuildFile; fileRef = D04A6B69100EA47C00704963 /* SaveBanner.xib */; };
 		D04A6B7A100EA4BC00704963 /* FindReplaceBanner.xib in Resources */ = {isa = PBXBuildFile; fileRef = D04A6B78100EA4BC00704963 /* FindReplaceBanner.xib */; };
 		D04A6B97100EA73800704963 /* JumpToOffsetBanner.xib in Resources */ = {isa = PBXBuildFile; fileRef = D04A6B95100EA73800704963 /* JumpToOffsetBanner.xib */; };
@@ -80,6 +78,8 @@
 		D04A6C16100EB02400704963 /* HFModalProgress.xib in Resources */ = {isa = PBXBuildFile; fileRef = D04A6C15100EB02400704963 /* HFModalProgress.xib */; };
 		D04C78270DC47ECF00A76FF2 /* HFTextSelectionPulseView.h in Headers */ = {isa = PBXBuildFile; fileRef = D04C78250DC47ECF00A76FF2 /* HFTextSelectionPulseView.h */; };
 		D04C78280DC47ECF00A76FF2 /* HFTextSelectionPulseView.m in Sources */ = {isa = PBXBuildFile; fileRef = D04C78260DC47ECF00A76FF2 /* HFTextSelectionPulseView.m */; };
+		D04D8FDF10239BB20013A2A1 /* HFPrivilegedHelperConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = D04D8FCB102396FC0013A2A1 /* HFPrivilegedHelperConnection.m */; };
+		D04D90531023AAEE0013A2A1 /* HFHelperProcessSharedCode.h in Headers */ = {isa = PBXBuildFile; fileRef = D04D90521023AAEE0013A2A1 /* HFHelperProcessSharedCode.h */; };
 		D059FCCF101D729100B3787D /* MainMenu.nib in Resources */ = {isa = PBXBuildFile; fileRef = D059FCCD101D729100B3787D /* MainMenu.nib */; };
 		D05B77BA0E00856D008C45EB /* HFCancelOn.tiff in Resources */ = {isa = PBXBuildFile; fileRef = D01772B70D72E024002E03DE /* HFCancelOn.tiff */; };
 		D05B77BB0E00856D008C45EB /* HFCancelOff.tiff in Resources */ = {isa = PBXBuildFile; fileRef = D01772B80D72E024002E03DE /* HFCancelOff.tiff */; };
@@ -171,7 +171,7 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = D047E3141022CEFE00EF307B /* Fortunate_Son */;
+			remoteGlobalIDString = D047E3141022CEFE00EF307B;
 			remoteInfo = Fortunate_Son;
 		};
 		D05E7A880FF615D800767D95 /* PBXContainerItemProxy */ = {
@@ -212,7 +212,7 @@
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
-			dstSubfolderSpec = 6;
+			dstSubfolderSpec = 12;
 			files = (
 				D047E4CB1022E1D200EF307B /* FortunateSon in CopyFiles */,
 			);
@@ -311,8 +311,6 @@
 		D047E33F1022CFA800EF307B /* FortunateSon.defs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.mig; name = FortunateSon.defs; path = helper_subprocess/FortunateSon.defs; sourceTree = "<group>"; };
 		D047E4431022DF6F00EF307B /* FortunateSonIPCTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FortunateSonIPCTypes.h; path = helper_subprocess/FortunateSonIPCTypes.h; sourceTree = "<group>"; };
 		D047E48B1022E09300EF307B /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = main.c; path = helper_subprocess/main.c; sourceTree = "<group>"; };
-		D047E5051022E36400EF307B /* HFPrivilegedHelperConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFPrivilegedHelperConnection.h; path = framework/sources/HFPrivilegedHelperConnection.h; sourceTree = "<group>"; };
-		D047E5061022E36400EF307B /* HFPrivilegedHelperConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFPrivilegedHelperConnection.m; path = framework/sources/HFPrivilegedHelperConnection.m; sourceTree = "<group>"; };
 		D04A6B6A100EA47C00704963 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/SaveBanner.xib; sourceTree = "<group>"; };
 		D04A6B79100EA4BC00704963 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/FindReplaceBanner.xib; sourceTree = "<group>"; };
 		D04A6B96100EA73800704963 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/JumpToOffsetBanner.xib; sourceTree = "<group>"; };
@@ -322,6 +320,9 @@
 		D04A6C15100EB02400704963 /* HFModalProgress.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = HFModalProgress.xib; path = framework/resources/HFModalProgress.xib; sourceTree = "<group>"; };
 		D04C78250DC47ECF00A76FF2 /* HFTextSelectionPulseView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFTextSelectionPulseView.h; path = framework/sources/HFTextSelectionPulseView.h; sourceTree = "<group>"; };
 		D04C78260DC47ECF00A76FF2 /* HFTextSelectionPulseView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFTextSelectionPulseView.m; path = framework/sources/HFTextSelectionPulseView.m; sourceTree = "<group>"; };
+		D04D8FCA102396FC0013A2A1 /* HFPrivilegedHelperConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFPrivilegedHelperConnection.h; path = framework/sources/HFPrivilegedHelperConnection.h; sourceTree = "<group>"; };
+		D04D8FCB102396FC0013A2A1 /* HFPrivilegedHelperConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFPrivilegedHelperConnection.m; path = framework/sources/HFPrivilegedHelperConnection.m; sourceTree = "<group>"; };
+		D04D90521023AAEE0013A2A1 /* HFHelperProcessSharedCode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFHelperProcessSharedCode.h; path = framework/sources/HFHelperProcessSharedCode.h; sourceTree = "<group>"; };
 		D059FCCE101D729100B3787D /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = sample_code/HexFiendling/English.lproj/MainMenu.nib; sourceTree = "<group>"; };
 		D05B77DD0E00883B008C45EB /* HFCancelButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFCancelButton.h; path = framework/sources/HFCancelButton.h; sourceTree = "<group>"; };
 		D05B77DE0E00883B008C45EB /* HFCancelButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFCancelButton.m; path = framework/sources/HFCancelButton.m; sourceTree = "<group>"; };
@@ -677,8 +678,9 @@
 		D047E5001022E33300EF307B /* PrivilegedHelper */ = {
 			isa = PBXGroup;
 			children = (
-				D047E5051022E36400EF307B /* HFPrivilegedHelperConnection.h */,
-				D047E5061022E36400EF307B /* HFPrivilegedHelperConnection.m */,
+				D04D8FCA102396FC0013A2A1 /* HFPrivilegedHelperConnection.h */,
+				D04D8FCB102396FC0013A2A1 /* HFPrivilegedHelperConnection.m */,
+				D04D90521023AAEE0013A2A1 /* HFHelperProcessSharedCode.h */,
 			);
 			name = PrivilegedHelper;
 			sourceTree = "<group>";
@@ -887,7 +889,7 @@
 				D0B422A10FF845F800DF27E5 /* HFTextView.h in Headers */,
 				D061A28F10042D6A0049B8B8 /* HFTextRepresenter_Internal.h in Headers */,
 				D0114CA91006D1DF00DAF4CE /* HFByteArrayProxiedData.h in Headers */,
-				D047E5071022E36400EF307B /* HFPrivilegedHelperConnection.h in Headers */,
+				D04D90531023AAEE0013A2A1 /* HFHelperProcessSharedCode.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1174,7 +1176,7 @@
 				D06D61EF0FA7FA7C002376EE /* HFBTreeByteArray.m in Sources */,
 				D0B422A20FF845F800DF27E5 /* HFTextView.m in Sources */,
 				D0114CAA1006D1DF00DAF4CE /* HFByteArrayProxiedData.m in Sources */,
-				D047E5081022E36400EF307B /* HFPrivilegedHelperConnection.m in Sources */,
+				D04D8FDF10239BB20013A2A1 /* HFPrivilegedHelperConnection.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
