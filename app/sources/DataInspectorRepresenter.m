@@ -36,6 +36,7 @@ NSString * const DataInspectorDidDeleteAllRows = @"DataInspectorDidDeleteAllRows
 /* Inspector types */
 enum InspectorType_t {
     eInspectorTypeInteger,
+    eInspectorTypeSignedInteger,
     eInspectorTypeFloatingPoint
 };
 
@@ -137,6 +138,7 @@ static NSString *errorStringForInspectionStatus(enum InspectionStatus_t status) 
 - (enum InspectionStatus_t)inspectionStatusForByteCount:(unsigned long long)count {
     switch ([self type]) {
         case eInspectorTypeInteger:
+        case eInspectorTypeSignedInteger:
             /* Only allow positive powers of 2 up to 8 */
 	    switch (count) {
 		case 0: return eInspectionNoData;
@@ -169,37 +171,82 @@ static uint64_t reverse(uint64_t val, NSUInteger amount) {
     return output;
 }
 
-static id integerDescription(const unsigned char *bytes, NSUInteger length, enum Endianness_t endianness) {
-    unsigned long long s = 0;
+static void flip(void *val, NSUInteger amount) {
+    uint8_t *bytes = (uint8_t *)val;
+    NSUInteger i;
+    for (i = 0; i < amount / 2; i++) {
+        uint8_t tmp = bytes[amount - i - 1];
+        bytes[amount - i - 1] = bytes[i];
+        bytes[i] = tmp;
+    }
+}
+
+#define FETCH(type) type s = *(const type *)bytes;
+#define FLIP(amount) if (endianness != eNativeEndianness) { flip(&s, amount); }
+#define FORMAT(specifier) return [NSString stringWithFormat:specifier, s];
+static id unsignedIntegerDescription(const unsigned char *bytes, NSUInteger length, enum Endianness_t endianness) {
     switch (length) {
         case 1:
         {
-            s = *(const uint8_t *)bytes;
-            break;
-
+            FETCH(int8_t)
+            FORMAT(@"%d")
         }
         case 2:
         {
-            s = *(const uint16_t *)bytes;
-            break;
+            FETCH(int16_t)
+            FLIP(2)
+            FORMAT(@"%hi")
         }
         case 4:
         {
-            s = *(const uint32_t *)bytes;
-            break;
+            FETCH(int32_t)
+            FLIP(4)
+            FORMAT(@"%d")
         }
         case 8:
         {
-            s = *(const uint64_t *)bytes;
-            break;
+            FETCH(int64_t)
+            FLIP(8)
+            FORMAT(@"%qi") 
+
         }
         default: return nil;
     }
-    if (endianness != eNativeEndianness) {
-        s = reverse(s, length);
-    }
-    return [NSString stringWithFormat:@"%lld", s];
 }
+
+static id signedIntegerDescription(const unsigned char *bytes, NSUInteger length, enum Endianness_t endianness) {
+    switch (length) {
+        case 1:
+        {
+            FETCH(uint8_t)
+            FORMAT(@"%u")
+        }
+        case 2:
+        {
+            FETCH(uint16_t)
+            FLIP(2)
+            FORMAT(@"%hu")
+        }
+        case 4:
+        {
+            FETCH(uint32_t)
+            FLIP(4)
+            FORMAT(@"%u")
+        }
+        case 8:
+        {
+            FETCH(uint64_t)
+            FLIP(8)
+            FORMAT(@"%qu") 
+            
+        }
+        default: return nil;
+    }
+}
+#undef FETCH
+#undef FLIP
+#undef FORMAT
+
 
 static id floatingPointDescription(const unsigned char *bytes, NSUInteger length, enum Endianness_t endianness) {
     switch (length) {
@@ -233,7 +280,10 @@ static id floatingPointDescription(const unsigned char *bytes, NSUInteger length
     assert([self inspectionStatusForByteCount:length] == eInspectionCanInspect);
     switch ([self type]) {
         case eInspectorTypeInteger:
-            return integerDescription(bytes, length, endianness);
+            return unsignedIntegerDescription(bytes, length, endianness);
+            
+        case eInspectorTypeSignedInteger:
+            return signedIntegerDescription(bytes, length, endianness);
         
         case eInspectorTypeFloatingPoint:
             return floatingPointDescription(bytes, length, endianness);
@@ -246,17 +296,16 @@ static id floatingPointDescription(const unsigned char *bytes, NSUInteger length
 - (BOOL)incrementToNextType {
     BOOL wrapped = NO;
     if (endianness == eEndianBig) {
-	endianness = eEndianLittle;
+        endianness = eEndianLittle;
     }
     else {
-	endianness = eEndianBig;
-	if (inspectorType == eInspectorTypeInteger) {
-	    inspectorType = eInspectorTypeFloatingPoint;
-	}
-	else {
-	    inspectorType = eInspectorTypeInteger;
-	    wrapped = YES;
-	}
+        endianness = eEndianBig;
+        inspectorType++;
+        
+        if (inspectorType > eInspectorTypeFloatingPoint) {
+            inspectorType = eInspectorTypeInteger;
+            wrapped = YES;
+        }        
     }
     return wrapped;
 }
@@ -278,7 +327,7 @@ static BOOL valueCanFitInByteCount(unsigned long long unsignedValue, NSUInteger 
 }
 
 - (BOOL)acceptStringValue:(NSString *)value replacingByteCount:(NSUInteger)count intoData:(unsigned char *)outData {
-    if (inspectorType == eInspectorTypeInteger) {
+    if (inspectorType == eInspectorTypeInteger || inspectorType == eInspectorTypeSignedInteger) {
 	if (! (count == 1 || count == 2 || count == 4 || count == 8)) return NO;
 	
 	char buffer[256];
