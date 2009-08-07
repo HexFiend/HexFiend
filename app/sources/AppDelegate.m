@@ -80,6 +80,8 @@ static NSComparisonResult compareFontDisplayNames(NSFont *a, NSFont *b, void *un
     NSFont *font = [item representedObject];
     HFASSERT([font isKindOfClass:[NSFont class]]);
     MyDocument *document = [[NSDocumentController sharedDocumentController] currentDocument];
+    NSFont *documentFont = [document font];
+    font = [[NSFontManager sharedFontManager] convertFont: font toSize: [documentFont pointSize]];
     [document setFont:font];
 }
 

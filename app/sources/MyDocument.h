@@ -45,6 +45,8 @@
     BOOL saveInProgress;
     NSInteger saveResult;
     NSError *saveError;
+    
+    BOOL currentlySettingFont;
 }
 
 - (void)moveSelectionForwards:(NSMenuItem *)sender;

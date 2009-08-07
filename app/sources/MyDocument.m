@@ -289,7 +289,9 @@ static inline Class preferredByteArrayClass(void) {
         
         NSRect windowFrame = [lineCountingViewWindow frame];
         windowFrame.size.width += windowWidthChange;
-        windowFrame.origin.x -= windowWidthChange;
+	
+	/* If we are not setting the font, we want to grow the window left, so that the content area is preserved.  If we are setting the font, grow the window right. */
+	if (! currentlySettingFont) windowFrame.origin.x -= windowWidthChange;
         [lineCountingViewWindow setFrame:windowFrame display:YES animate:NO];
     }
 }
@@ -336,6 +338,12 @@ static inline Class preferredByteArrayClass(void) {
     [controller setBytesPerColumn:[defs integerForKey:@"BytesPerColumn"]];
     [controller addRepresenter:layoutRepresenter];
     
+    NSString *fontName = [defs stringForKey:@"DefaultFontName"];
+    CGFloat fontSize = [defs floatForKey:@"DefaultFontSize"];
+    NSFont *font = [NSFont fontWithName:fontName size:fontSize];
+    if (font != nil) {
+        [controller setFont: font];
+    }
     
 #if ! NDEBUG
     static BOOL hasAddedMenu = NO;
@@ -460,11 +468,11 @@ static inline Class preferredByteArrayClass(void) {
         HFRepresenter *rep = [representers objectAtIndex:arrayIndex];
         if ([self representerIsShown:rep]) {
             [self hideViewForRepresenter:rep];
-	    [self relayoutAndResizeWindowPreservingFrame];
+            [self relayoutAndResizeWindowPreservingFrame];
         }
         else {
             [self showViewForRepresenter:rep];
-	    [self relayoutAndResizeWindowPreservingFrame];
+            [self relayoutAndResizeWindowPreservingFrame];
         }
         [self saveDefaultRepresentersToDisplay];
     }
@@ -474,14 +482,17 @@ static inline Class preferredByteArrayClass(void) {
     HFASSERT(font != nil);
     NSWindow *window = [self window];
     NSDisableScreenUpdates();
+    NSUInteger bytesPerLine = [controller bytesPerLine];
+    /* Record that we are currently setting the font.  We use this to decide which direction to grow the window if our line numbers change. */
+    currentlySettingFont = YES;
     [controller setFont:font];
-    [self relayoutAndResizeWindowPreservingFrame];
+    [self relayoutAndResizeWindowForBytesPerLine:bytesPerLine];
+    currentlySettingFont = NO;
     [window display];
     NSEnableScreenUpdates();
     NSUserDefaults *defs = [NSUserDefaults standardUserDefaults];
     [defs setDouble:[font pointSize] forKey:@"DefaultFontSize"];
     [defs setObject:[font fontName] forKey:@"DefaultFontName"];
-    
 }
 
 - (NSFont *)font {
