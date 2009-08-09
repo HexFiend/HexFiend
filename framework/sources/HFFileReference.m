@@ -14,7 +14,7 @@
 
 #define USE_STAT64 0
 
-static void returnReadError(NSError **error) {
+static BOOL returnReadError(NSError **error) {
     if (error) {
 	int posixCode = errno;
 	NSInteger cocoaCode = 0;
@@ -31,9 +31,10 @@ static void returnReadError(NSError **error) {
 	    *error = [NSError errorWithDomain:NSPOSIXErrorDomain code:posixCode userInfo:nil];
 	}
     }
+    return YES;
 }
 
-static void returnFTruncateError(NSError **error) {
+static BOOL returnFTruncateError(NSError **error) {
     const NSInteger HF_NSFileWriteVolumeReadOnlyError = 642 /* NSFileWriteVolumeReadOnlyError, only on SnowLeopard and later */;
     if (error) {
 	int posixCode = errno;
@@ -49,6 +50,7 @@ static void returnFTruncateError(NSError **error) {
 	    *error = [NSError errorWithDomain:NSPOSIXErrorDomain code:posixCode userInfo:nil];
 	}
     }
+    return YES;
 }
 
 @implementation HFFileReference

@@ -15,4 +15,5 @@ type FilePath = c_string[*:256];
 
 routine SayHey(
     server: mach_port_t;
-    in path : FilePath);
+    in path : FilePath;
+    out result : int);

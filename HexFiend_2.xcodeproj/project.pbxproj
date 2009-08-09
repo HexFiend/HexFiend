@@ -65,7 +65,7 @@
 		D0422FDF0D62599300F8FCDE /* HFProgressTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = D0422FDD0D62599300F8FCDE /* HFProgressTracker.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D0422FE00D62599300F8FCDE /* HFProgressTracker.m in Sources */ = {isa = PBXBuildFile; fileRef = D0422FDE0D62599300F8FCDE /* HFProgressTracker.m */; };
 		D04327A40CF081CD00C14250 /* HFFunctions_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = D04327A30CF081CD00C14250 /* HFFunctions_Private.h */; };
-		D047E3401022CFA800EF307B /* FortunateSon.defs in Sources */ = {isa = PBXBuildFile; fileRef = D047E33F1022CFA800EF307B /* FortunateSon.defs */; };
+		D047E3401022CFA800EF307B /* FortunateSon.defs in Sources */ = {isa = PBXBuildFile; fileRef = D047E33F1022CFA800EF307B /* FortunateSon.defs */; settings = {ATTRIBUTES = (Server, ); }; };
 		D047E48C1022E09300EF307B /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = D047E48B1022E09300EF307B /* main.c */; };
 		D047E4CA1022E1CA00EF307B /* HexFiend.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = D01E7BB80CDC530C00943F9E /* HexFiend.framework */; };
 		D047E4CB1022E1D200EF307B /* FortunateSon in CopyFiles */ = {isa = PBXBuildFile; fileRef = D047E3151022CEFE00EF307B /* FortunateSon */; };
@@ -88,6 +88,8 @@
 		D05E7A970FF6160500767D95 /* HexFiend.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = D01E7BB80CDC530C00943F9E /* HexFiend.framework */; };
 		D05E7AAE0FF6167100767D95 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		D061A28F10042D6A0049B8B8 /* HFTextRepresenter_Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = D061A28E10042D6A0049B8B8 /* HFTextRepresenter_Internal.h */; };
+		D0621CAD102ED50D00DAEB4D /* FortunateSonServerImpl.c in Sources */ = {isa = PBXBuildFile; fileRef = D0621CAC102ED50D00DAEB4D /* FortunateSonServerImpl.c */; };
+		D0621CF0102ED78900DAEB4D /* FortunateSon.defs in Sources */ = {isa = PBXBuildFile; fileRef = D047E33F1022CFA800EF307B /* FortunateSon.defs */; };
 		D06D60070FA69AFA002376EE /* HFBTree.h in Headers */ = {isa = PBXBuildFile; fileRef = D06D60050FA69AFA002376EE /* HFBTree.h */; };
 		D06D60080FA69AFA002376EE /* HFBTree.m in Sources */ = {isa = PBXBuildFile; fileRef = D06D60060FA69AFA002376EE /* HFBTree.m */; };
 		D06D60190FA69B3E002376EE /* HFBTree.m in Sources */ = {isa = PBXBuildFile; fileRef = D06D60060FA69AFA002376EE /* HFBTree.m */; };
@@ -327,6 +329,7 @@
 		D05B77DD0E00883B008C45EB /* HFCancelButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFCancelButton.h; path = framework/sources/HFCancelButton.h; sourceTree = "<group>"; };
 		D05B77DE0E00883B008C45EB /* HFCancelButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFCancelButton.m; path = framework/sources/HFCancelButton.m; sourceTree = "<group>"; };
 		D061A28E10042D6A0049B8B8 /* HFTextRepresenter_Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFTextRepresenter_Internal.h; path = framework/sources/HFTextRepresenter_Internal.h; sourceTree = "<group>"; };
+		D0621CAC102ED50D00DAEB4D /* FortunateSonServerImpl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = FortunateSonServerImpl.c; path = helper_subprocess/FortunateSonServerImpl.c; sourceTree = "<group>"; };
 		D06D60050FA69AFA002376EE /* HFBTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFBTree.h; path = framework/sources/BTree/HFBTree.h; sourceTree = "<group>"; };
 		D06D60060FA69AFA002376EE /* HFBTree.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFBTree.m; path = framework/sources/BTree/HFBTree.m; sourceTree = "<group>"; };
 		D06D60100FA69B26002376EE /* Test_BTree */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Test_BTree; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -671,6 +674,7 @@
 				D047E33F1022CFA800EF307B /* FortunateSon.defs */,
 				D047E4431022DF6F00EF307B /* FortunateSonIPCTypes.h */,
 				D047E48B1022E09300EF307B /* main.c */,
+				D0621CAC102ED50D00DAEB4D /* FortunateSonServerImpl.c */,
 			);
 			name = PrivilegedHelper;
 			sourceTree = "<group>";
@@ -1177,6 +1181,7 @@
 				D0B422A20FF845F800DF27E5 /* HFTextView.m in Sources */,
 				D0114CAA1006D1DF00DAF4CE /* HFByteArrayProxiedData.m in Sources */,
 				D04D8FDF10239BB20013A2A1 /* HFPrivilegedHelperConnection.m in Sources */,
+				D0621CF0102ED78900DAEB4D /* FortunateSon.defs in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1186,6 +1191,7 @@
 			files = (
 				D047E3401022CFA800EF307B /* FortunateSon.defs in Sources */,
 				D047E48C1022E09300EF307B /* main.c in Sources */,
+				D0621CAD102ED50D00DAEB4D /* FortunateSonServerImpl.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

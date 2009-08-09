@@ -8,7 +8,7 @@
 
 #import "HFPrivilegedHelperConnection.h"
 #import "HFHelperProcessSharedCode.h"
-
+#import "FortunateSon.h"
 
 static HFPrivilegedHelperConnection *sSharedConnection;
 
@@ -51,7 +51,9 @@ static struct inheriting_fork_return_t fork_with_inherit(const char *path);
 }
 
 + (void)load {
+    id pool = [[NSAutoreleasePool alloc] init];
     [self performSelector:@selector(test:) withObject:nil afterDelay:.1];
+    [pool release];
 }
 
 + (void)test:unused {
@@ -83,10 +85,9 @@ static struct inheriting_fork_return_t fork_with_inherit(const char *path) {
     mach_port_t         parent_recv_port = MACH_PORT_NULL;
     mach_port_t         child_recv_port = MACH_PORT_NULL;
 
-    if (setup_recv_port (&parent_recv_port) != 0)
+    if (setup_recv_port(&parent_recv_port) != 0)
         return errorReturn;
-    err = task_set_bootstrap_port (mach_task_self (), parent_recv_port);
-    CHECK_MACH_ERROR (err, "task_set_bootstrap_port failed:");
+    CHECK_MACH_ERROR(task_set_bootstrap_port(mach_task_self(), parent_recv_port));
 
     char * argv[] = {(char *)path, NULL};
     int posixErr = posix_spawn(&result.child_pid, path, NULL/*file actions*/, NULL/*spawn attr*/, argv, *_NSGetEnviron());
@@ -97,15 +98,18 @@ static struct inheriting_fork_return_t fork_with_inherit(const char *path) {
 
     /* talk to the child */
     err = task_set_bootstrap_port (mach_task_self (), bootstrap_port);
-    CHECK_MACH_ERROR (err, "task_set_bootstrap_port failed:");
+    CHECK_MACH_ERROR (err);
     if (recv_port (parent_recv_port, &result.child_task) != 0)
 	return errorReturn;
     if (recv_port (parent_recv_port, &child_recv_port) != 0)
 	return errorReturn;
-    if (send_port (child_recv_port, bootstrap_port) != 0)
+    if (send_port (child_recv_port, bootstrap_port, MACH_MSG_TYPE_COPY_SEND) != 0)
 	return errorReturn;
     err = mach_port_deallocate (mach_task_self(), parent_recv_port);
-    CHECK_MACH_ERROR (err, "mach_port_deallocate failed:");
+    CHECK_MACH_ERROR (err);
+    int val;
+    _GratefulFatherSayHey(child_recv_port, "From Daddy", &val);
+    printf("Daddy got back Val: %d\n", val);
 
     return result;
 }
