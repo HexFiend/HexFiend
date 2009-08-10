@@ -277,6 +277,7 @@ static HFBTreeNode *mutable_copy_node(HFBTreeNode *node, TreeDepth_t depth, HFBT
 }
 
 - (id)mutableCopyWithZone:(NSZone *)zone {
+    USE(zone);
     HFBTree *result = [[[self class] alloc] init];
     result->depth = depth;
     HFBTreeNode *linkingHelper[MAX_DEPTH + 1];

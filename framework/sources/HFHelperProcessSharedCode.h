@@ -57,7 +57,8 @@ recv_port (mach_port_t recv_port, mach_port_t *port)
         mach_msg_body_t            body;
         mach_msg_port_descriptor_t task_port;
         mach_msg_trailer_t         trailer;
-    } msg = {};
+    } msg;
+    bzero(&msg, sizeof msg);
 
     /* When we fork(), Xcode sends us some crap on our bootstrap port.  Ignore it.  I think this only happens when running in Xcode in the debugger. */
     err = mach_msg (&msg.header, MACH_RCV_MSG | MACH_RCV_LARGE,

@@ -248,7 +248,7 @@ static inline int common_prefix_length(const char *a, const char *b) {
     return characterCount;
 }
 
-- (NSString *)createLineStringForRange:(HFRange)range {
+- (NSString *)newLineStringForRange:(HFRange)range {
     HFASSERT(range.length <= NSUIntegerMax);
     NSUInteger lineCount = ll2l(range.length);
     const NSUInteger stride = bytesPerLine;
@@ -279,7 +279,7 @@ static inline int common_prefix_length(const char *a, const char *b) {
     
     if (storedLineCount == INVALID_LINE_COUNT) {
         /* This usually indicates that our bytes per line or line number format changed, and we need to just recalculate everything */
-        NSString *string = [self createLineStringForRange:HFRangeMake(startingLineIndex, linesRemaining)];
+        NSString *string = [self newLineStringForRange:HFRangeMake(startingLineIndex, linesRemaining)];
         [textStorage replaceCharactersInRange:NSMakeRange(0, [textStorage length]) withString:string];
         [string release];
         
@@ -324,7 +324,7 @@ static inline int common_prefix_length(const char *a, const char *b) {
                 if (debug) NSLog(@"Left deleting text range %@", NSStringFromRange(rangeToDelete));
             }
             else {
-                NSString *leftRangeString = [self createLineStringForRange:leftRangeToStore];
+                NSString *leftRangeString = [self newLineStringForRange:leftRangeToStore];
                 [textStorage replaceCharactersInRange:rangeToDelete withString:leftRangeString];
                 if (debug) NSLog(@"Replacing text range %@ with %@", NSStringFromRange(rangeToDelete), leftRangeString);
                 [leftRangeString release];
@@ -341,7 +341,7 @@ static inline int common_prefix_length(const char *a, const char *b) {
                 if (debug) NSLog(@"Right deleting text range %@", NSStringFromRange(rangeToDelete));
             }
             else {
-                NSString *rightRangeString = [self createLineStringForRange:rightRangeToStore];
+                NSString *rightRangeString = [self newLineStringForRange:rightRangeToStore];
                 [textStorage replaceCharactersInRange:rangeToDelete withString:rightRangeString];
                 if (debug) NSLog(@"Replacing text range %@ with %@ (for range %@)", NSStringFromRange(rangeToDelete), rightRangeString, HFRangeToString(rightRangeToStore));
                 [rightRangeString release];
@@ -362,7 +362,7 @@ static inline int common_prefix_length(const char *a, const char *b) {
     [textStorage endEditing];
     
 #if ! NDEBUG
-    NSString *comparisonString = [self createLineStringForRange:HFRangeMake(startingLineIndex, linesRemaining)];
+    NSString *comparisonString = [self newLineStringForRange:HFRangeMake(startingLineIndex, linesRemaining)];
     if (! [comparisonString isEqualToString:[textStorage string]]) {
         NSLog(@"Not equal!");
         NSLog(@"Expected:\n%@", comparisonString);
@@ -400,7 +400,7 @@ static inline int common_prefix_length(const char *a, const char *b) {
     }    
     
     
-    NSString *string = [self createLineStringForRange:HFRangeMake(lineIndex, linesRemaining)];
+    NSString *string = [self newLineStringForRange:HFRangeMake(lineIndex, linesRemaining)];
     [string drawInRect:textRect withAttributes:textAttributes];
     [string release];
 }
@@ -430,7 +430,7 @@ static inline int common_prefix_length(const char *a, const char *b) {
         [paragraphStyle release];
     }
     
-    NSString *string = [self createLineStringForRange:HFRangeMake(lineIndex, linesRemaining)];
+    NSString *string = [self newLineStringForRange:HFRangeMake(lineIndex, linesRemaining)];
     NSAttributedString *attributedString = [[NSAttributedString alloc] initWithString:string attributes:textAttributes];
     [string release];
     NSCell *cell = [[NSCell alloc] initTextCell:@""];

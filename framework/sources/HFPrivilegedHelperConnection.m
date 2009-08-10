@@ -12,8 +12,6 @@
 
 static HFPrivilegedHelperConnection *sSharedConnection;
 
-#define LAUNCH_HELPER_WITH_PRIVILEGES 0
-
 
 struct inheriting_fork_return_t {
     task_t child_task;
@@ -35,19 +33,31 @@ static struct inheriting_fork_return_t fork_with_inherit(const char *path);
     return self;
 }
 
-- (void)launchAndConnect {
-#if LAUNCH_HELPER_WITH_PRIVILEGES
-#warn Privileged launching not yet implemented
-#else
+- (BOOL)launchAndConnect {
+    BOOL result = YES;
     NSBundle *bund = [NSBundle bundleForClass:[self class]];
-    NSString *path = [bund pathForResource:@"FortunateSon" ofType:@""];
-    if (! path) {
+    NSString *helperPath = [bund pathForResource:@"FortunateSon" ofType:@""];
+    if (! helperPath) {
 	[NSException raise:NSInternalInconsistencyException format:@"Couldn't find FortunateSon helper tool in bundle %@", bund];
     }
+    NSString *launcherPath = [bund pathForResource:@"FortunateSon" ofType:@""];
+    if (! launcherPath) {
+	[NSException raise:NSInternalInconsistencyException format:@"Couldn't find FortunateSonCopier helper tool in bundle %@", bund];
+    }
+    
+    AuthorizationRef authorizationRef = NULL;
+    AuthorizationCreate(NULL, kAuthorizationEmptyEnvironment, kAuthorizationFlagInteractionAllowed, &authorizationRef);
+    OSStatus authorizationResult = AuthorizationExecuteWithPrivileges(authorizationRef, tool, kAuthorizationFlagDefaults, args, &pipe);
+    if (authorizationResult != errAuthorizationSuccess) {
+        result = NO;
+        if (authorizationResult == errAuthorizationCanceled || authorizationResult == errAuthorizationDenied) {
+            NSLog(@"Error authorizing: %ld", (long)authorizationResult);
+        }
+    }
+    
 
     struct inheriting_fork_return_t fork_return = fork_with_inherit([path fileSystemRepresentation]);
     printf("CHILD PID: %d\n", fork_return.child_pid);
-#endif
 }
 
 + (void)load {
@@ -57,6 +67,7 @@ static struct inheriting_fork_return_t fork_with_inherit(const char *path);
 }
 
 + (void)test:unused {
+    USE(unused);
     HFPrivilegedHelperConnection *helper = [HFPrivilegedHelperConnection sharedConnection];
     [helper launchAndConnect];
 }
@@ -89,6 +100,7 @@ static struct inheriting_fork_return_t fork_with_inherit(const char *path) {
         return errorReturn;
     CHECK_MACH_ERROR(task_set_bootstrap_port(mach_task_self(), parent_recv_port));
 
+    //TODO: use posix_spawnattr_setspecialport_np here instead of fiddling with the bootstrap port
     char * argv[] = {(char *)path, NULL};
     int posixErr = posix_spawn(&result.child_pid, path, NULL/*file actions*/, NULL/*spawn attr*/, argv, *_NSGetEnviron());
     if (posixErr != 0) {

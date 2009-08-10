@@ -158,6 +158,8 @@
 		D0D828E50CDE89E500C2AB82 /* HFByteSlice.h in Headers */ = {isa = PBXBuildFile; fileRef = D08F5E220CDE843E007EFFE8 /* HFByteSlice.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D0D828E60CDE89E800C2AB82 /* HFFullMemoryByteSlice.h in Headers */ = {isa = PBXBuildFile; fileRef = D08F5E370CDE84F4007EFFE8 /* HFFullMemoryByteSlice.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D0D829110CDE969F00C2AB82 /* HFByteArray.h in Headers */ = {isa = PBXBuildFile; fileRef = D08F5DEF0CDE8223007EFFE8 /* HFByteArray.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D0DEC2BF102F9C6C00F90467 /* launcher.c in Sources */ = {isa = PBXBuildFile; fileRef = D0DEC2BE102F9C6C00F90467 /* launcher.c */; };
+		D0DEC3DE103001C700F90467 /* FortunateSonCopier in CopyFiles */ = {isa = PBXBuildFile; fileRef = D0DEC2AB102F9B4C00F90467 /* FortunateSonCopier */; };
 		D0F2157D0DA61CF000ED1AA7 /* HFFieldTypeController.m in Sources */ = {isa = PBXBuildFile; fileRef = D0F2157C0DA61CF000ED1AA7 /* HFFieldTypeController.m */; };
 /* End PBXBuildFile section */
 
@@ -190,6 +192,13 @@
 			remoteGlobalIDString = D01E7BB70CDC530C00943F9E;
 			remoteInfo = HexFiend_Framework;
 		};
+		D0DEC2B7102F9B8700F90467 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D0DEC2AA102F9B4C00F90467;
+			remoteInfo = FortunateSonInstaller;
+		};
 		D0F6FE110FFF679D00C609F0 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
@@ -217,6 +226,7 @@
 			dstSubfolderSpec = 12;
 			files = (
 				D047E4CB1022E1D200EF307B /* FortunateSon in CopyFiles */,
+				D0DEC3DE103001C700F90467 /* FortunateSonCopier in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -401,6 +411,8 @@
 		D0D179450D46F20E00684270 /* HFByteSlice_Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFByteSlice_Private.h; path = framework/sources/HFByteSlice_Private.h; sourceTree = "<group>"; };
 		D0D828FE0CDE8ABE00C2AB82 /* HFFullMemoryByteArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFFullMemoryByteArray.h; path = framework/sources/HFFullMemoryByteArray.h; sourceTree = "<group>"; };
 		D0D828FF0CDE8ABE00C2AB82 /* HFFullMemoryByteArray.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFFullMemoryByteArray.m; path = framework/sources/HFFullMemoryByteArray.m; sourceTree = "<group>"; };
+		D0DEC2AB102F9B4C00F90467 /* FortunateSonCopier */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = FortunateSonCopier; sourceTree = BUILT_PRODUCTS_DIR; };
+		D0DEC2BE102F9C6C00F90467 /* launcher.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = launcher.c; path = helper_subprocess/launcher/launcher.c; sourceTree = "<group>"; };
 		D0F2157B0DA61CF000ED1AA7 /* HFFieldTypeController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFFieldTypeController.h; path = app/sources/HFFieldTypeController.h; sourceTree = "<group>"; };
 		D0F2157C0DA61CF000ED1AA7 /* HFFieldTypeController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFFieldTypeController.m; path = app/sources/HFFieldTypeController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -453,6 +465,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D0DEC2A9102F9B4C00F90467 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -484,6 +503,7 @@
 				D06D60100FA69B26002376EE /* Test_BTree */,
 				D00C15E50FF091FF006D021F /* HexFiendling.app */,
 				D047E3151022CEFE00EF307B /* FortunateSon */,
+				D0DEC2AB102F9B4C00F90467 /* FortunateSonCopier */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -675,6 +695,7 @@
 				D047E4431022DF6F00EF307B /* FortunateSonIPCTypes.h */,
 				D047E48B1022E09300EF307B /* main.c */,
 				D0621CAC102ED50D00DAEB4D /* FortunateSonServerImpl.c */,
+				D0DEC2BE102F9C6C00F90467 /* launcher.c */,
 			);
 			name = PrivilegedHelper;
 			sourceTree = "<group>";
@@ -972,6 +993,7 @@
 			);
 			dependencies = (
 				D047E49D1022E0D300EF307B /* PBXTargetDependency */,
+				D0DEC2B8102F9B8700F90467 /* PBXTargetDependency */,
 			);
 			name = HexFiend_Framework;
 			productName = HexFiend_Framework;
@@ -1010,6 +1032,22 @@
 			productReference = D06D60100FA69B26002376EE /* Test_BTree */;
 			productType = "com.apple.product-type.tool";
 		};
+		D0DEC2AA102F9B4C00F90467 /* FortunateSonCopier */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D0DEC2B6102F9B6600F90467 /* Build configuration list for PBXNativeTarget "FortunateSonCopier" */;
+			buildPhases = (
+				D0DEC2A8102F9B4C00F90467 /* Sources */,
+				D0DEC2A9102F9B4C00F90467 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = FortunateSonCopier;
+			productName = FortunateSonInstaller;
+			productReference = D0DEC2AB102F9B4C00F90467 /* FortunateSonCopier */;
+			productType = "com.apple.product-type.tool";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -1025,6 +1063,7 @@
 				8D1107260486CEB800E47090 /* HexFiend_2 */,
 				D01E7BB70CDC530C00943F9E /* HexFiend_Framework */,
 				D01930990D5AE3B40019B3F7 /* HexFiend_IBPlugin */,
+				D0DEC2AA102F9B4C00F90467 /* FortunateSonCopier */,
 				D047E3141022CEFE00EF307B /* FortunateSon */,
 				D06D600F0FA69B26002376EE /* Test_BTree */,
 				D00C15E40FF091FF006D021F /* HexFiendling */,
@@ -1206,6 +1245,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D0DEC2A8102F9B4C00F90467 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D0DEC2BF102F9C6C00F90467 /* launcher.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -1228,6 +1275,11 @@
 			isa = PBXTargetDependency;
 			target = D01E7BB70CDC530C00943F9E /* HexFiend_Framework */;
 			targetProxy = D0A435540CDC70B3000F7550 /* PBXContainerItemProxy */;
+		};
+		D0DEC2B8102F9B8700F90467 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D0DEC2AA102F9B4C00F90467 /* FortunateSonCopier */;
+			targetProxy = D0DEC2B7102F9B8700F90467 /* PBXContainerItemProxy */;
 		};
 		D0F6FE120FFF679D00C609F0 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -2350,6 +2402,81 @@
 			};
 			name = "Debug-UnitTests-Optimized";
 		};
+		D0DEC2AD102F9B4D00F90467 /* Debug-NoUnitTests */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				INSTALL_PATH = /usr/local/bin;
+				PREBINDING = NO;
+				PRODUCT_NAME = FortunateSonCopier;
+			};
+			name = "Debug-NoUnitTests";
+		};
+		D0DEC2AE102F9B4D00F90467 /* Debug-UnitTests */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				INSTALL_PATH = /usr/local/bin;
+				PREBINDING = NO;
+				PRODUCT_NAME = FortunateSonCopier;
+			};
+			name = "Debug-UnitTests";
+		};
+		D0DEC2AF102F9B4D00F90467 /* Debug-UnitTests-Optimized */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				INSTALL_PATH = /usr/local/bin;
+				PREBINDING = NO;
+				PRODUCT_NAME = FortunateSonCopier;
+			};
+			name = "Debug-UnitTests-Optimized";
+		};
+		D0DEC2B0102F9B4D00F90467 /* Debug-UnitTests-64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				INSTALL_PATH = /usr/local/bin;
+				PREBINDING = NO;
+				PRODUCT_NAME = FortunateSonCopier;
+			};
+			name = "Debug-UnitTests-64";
+		};
+		D0DEC2B1102F9B4D00F90467 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_MODEL_TUNING = G5;
+				INSTALL_PATH = /usr/local/bin;
+				PREBINDING = NO;
+				PRODUCT_NAME = FortunateSonCopier;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+		D0DEC2B2102F9B4D00F90467 /* Release-GC */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				INSTALL_PATH = /usr/local/bin;
+				PREBINDING = NO;
+				PRODUCT_NAME = FortunateSonCopier;
+			};
+			name = "Release-GC";
+		};
 		D0F6FE0B0FFF679300C609F0 /* Debug-NoUnitTests */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -2486,6 +2613,19 @@
 				D06D60150FA69B27002376EE /* Debug-UnitTests-64 */,
 				D06D60160FA69B27002376EE /* Release */,
 				D06D60170FA69B27002376EE /* Release-GC */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = "Debug-NoUnitTests";
+		};
+		D0DEC2B6102F9B6600F90467 /* Build configuration list for PBXNativeTarget "FortunateSonCopier" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D0DEC2AD102F9B4D00F90467 /* Debug-NoUnitTests */,
+				D0DEC2AE102F9B4D00F90467 /* Debug-UnitTests */,
+				D0DEC2AF102F9B4D00F90467 /* Debug-UnitTests-Optimized */,
+				D0DEC2B0102F9B4D00F90467 /* Debug-UnitTests-64 */,
+				D0DEC2B1102F9B4D00F90467 /* Release */,
+				D0DEC2B2102F9B4D00F90467 /* Release-GC */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = "Debug-NoUnitTests";

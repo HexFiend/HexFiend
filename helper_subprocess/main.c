@@ -78,7 +78,6 @@ static boolean_t do_server_thing(struct DummyMsg_t *requestMsg, struct DummyMsg_
             if ((r != MACH_SEND_INVALID_DEST) &&
                 (r != MACH_SEND_TIMED_OUT))
                 goto done_once;
-            r = MACH_MSG_SUCCESS;
         }
         if (reply->Head.msgh_bits & MACH_MSGH_BITS_COMPLEX)
             mach_msg_destroy(&reply->Head);

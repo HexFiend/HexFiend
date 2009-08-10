@@ -55,7 +55,7 @@ static BOOL returnFTruncateError(NSError **error) {
 
 @implementation HFFileReference
 
-- sharedInitWithPath:(NSString *)path error:(NSError **)error {
+- initSharedWithPath:(NSString *)path error:(NSError **)error {
     int result;
     REQUIRE_NOT_NULL(path);
     const char* p = [path fileSystemRepresentation];
@@ -94,13 +94,13 @@ static BOOL returnFTruncateError(NSError **error) {
 - initWithPath:(NSString *)path error:(NSError **)error {
     [super init];
     isWritable = NO;
-    return [self sharedInitWithPath:path error:error];
+    return [self initSharedWithPath:path error:error];
 }
 
 - initWritableWithPath:(NSString *)path error:(NSError **)error{
     [super init];
     isWritable = YES;
-    return [self sharedInitWithPath:path error:error];
+    return [self initSharedWithPath:path error:error];
 }
 
 - initWithPath:(NSString *)path {

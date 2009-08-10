@@ -248,6 +248,7 @@ static inline HFByteSlice *findInitialSlice(HFBTree *btree, HFRange *inoutArrayR
 }
 
 - mutableCopyWithZone:(NSZone *)zone {
+    USE(zone);
     HFBTreeByteArray *result = [[[self class] alloc] init];
     [result->btree release];
     result->btree = [btree mutableCopy];
