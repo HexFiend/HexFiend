@@ -26,6 +26,7 @@ static void fail(const char *fmt, ...) {
 }
 
 int main(int argc, char *argv[]) {
+    sleep(100);
     if (argc != 2) fail("Not enough arguments.");
     int err = 0;
     

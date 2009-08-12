@@ -40,24 +40,59 @@ static struct inheriting_fork_return_t fork_with_inherit(const char *path);
     if (! helperPath) {
 	[NSException raise:NSInternalInconsistencyException format:@"Couldn't find FortunateSon helper tool in bundle %@", bund];
     }
-    NSString *launcherPath = [bund pathForResource:@"FortunateSon" ofType:@""];
+    NSString *launcherPath = [bund pathForResource:@"FortunateSonCopier" ofType:@""];
     if (! launcherPath) {
 	[NSException raise:NSInternalInconsistencyException format:@"Couldn't find FortunateSonCopier helper tool in bundle %@", bund];
     }
     
+    OSStatus status;
+    
     AuthorizationRef authorizationRef = NULL;
-    AuthorizationCreate(NULL, kAuthorizationEmptyEnvironment, kAuthorizationFlagInteractionAllowed, &authorizationRef);
-    OSStatus authorizationResult = AuthorizationExecuteWithPrivileges(authorizationRef, tool, kAuthorizationFlagDefaults, args, &pipe);
-    if (authorizationResult != errAuthorizationSuccess) {
-        result = NO;
-        if (authorizationResult == errAuthorizationCanceled || authorizationResult == errAuthorizationDenied) {
-            NSLog(@"Error authorizing: %ld", (long)authorizationResult);
+    status = AuthorizationCreate(NULL, kAuthorizationEmptyEnvironment, kAuthorizationFlagDefaults, &authorizationRef);
+    result = result && (status == noErr);
+    
+    if (result) {
+        AuthorizationItem authItems = { kAuthorizationRightExecute, 0, NULL, 0};
+        AuthorizationRights authRights = {1, &authItems};
+
+        AuthorizationFlags authFlags = kAuthorizationFlagDefaults | kAuthorizationFlagInteractionAllowed | kAuthorizationFlagPreAuthorize | kAuthorizationFlagExtendRights;
+                    
+        status = AuthorizationCopyRights(authorizationRef, &authRights, NULL, authFlags, NULL);
+        if (status != errAuthorizationSuccess) {
+            result = NO;
+            if (status == errAuthorizationCanceled || status == errAuthorizationDenied) {
+                NSLog(@"AuthorizationCopyRights returned error: %ld", (long)status);
+            }
         }
     }
     
+    FILE *pipe = NULL;
+    if (result) {
+        const char *launcherPathCString = [launcherPath fileSystemRepresentation];
+        const char * const arguments[] = {launcherPathCString, [helperPath fileSystemRepresentation]};
+        OSStatus authorizationResult = AuthorizationExecuteWithPrivileges(authorizationRef, launcherPathCString, 0, (char * const *)arguments, &pipe);
+        
+        if (authorizationResult != errAuthorizationSuccess) {
+            NSLog(@"AuthorizationExecuteWithPrivileges %s returned error: %ld (%lx)", launcherPathCString, (long)authorizationResult, (long)authorizationResult);
+            result = NO;
+        }
+    }
+    
+    if (result) {
+        NSMutableString *resultString = [NSMutableString string];
+        /* Read from the tool until it exits */
+        char buffer[512];
+        while ((fgets(buffer, sizeof buffer, pipe))) {
+            [resultString appendString:[NSString stringWithUTF8String:buffer]];
+        }
+        
+        NSArray *resultStrings = [resultString componentsSeparatedByString:@"\n"];
+        NSLog(@"Results: %@", resultStrings);
+    }
 
-    struct inheriting_fork_return_t fork_return = fork_with_inherit([path fileSystemRepresentation]);
-    printf("CHILD PID: %d\n", fork_return.child_pid);
+    //struct inheriting_fork_return_t fork_return = fork_with_inherit([path fileSystemRepresentation]);
+    //printf("CHILD PID: %d\n", fork_return.child_pid);
+    return result;
 }
 
 + (void)load {
