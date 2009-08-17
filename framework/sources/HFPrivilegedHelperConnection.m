@@ -33,10 +33,31 @@ static struct inheriting_fork_return_t fork_with_inherit(const char *path);
     return self;
 }
 
+static NSString *read_line(FILE *file) {
+    NSMutableString *result = nil;
+    char buffer[256];
+    BOOL done = NO;
+    while (done == NO && fgets(buffer, sizeof buffer, file)) {
+        char *endPtr = strchr(buffer, '\n');
+        if (endPtr) {
+            *endPtr = '\0';
+            done = YES;
+        }
+        if (! result) {
+            result = [NSMutableString stringWithUTF8String:buffer];
+        }
+        else {
+            CFStringAppendCString((CFMutableStringRef)result, buffer, kCFStringEncodingUTF8);
+        }
+    }
+    return result;
+}
+
 - (BOOL)launchAndConnect {
     BOOL result = YES;
     NSBundle *bund = [NSBundle bundleForClass:[self class]];
     NSString *helperPath = [bund pathForResource:@"FortunateSon" ofType:@""];
+    NSString *privilegedHelperPath = nil;
     if (! helperPath) {
 	[NSException raise:NSInternalInconsistencyException format:@"Couldn't find FortunateSon helper tool in bundle %@", bund];
     }
@@ -69,7 +90,7 @@ static struct inheriting_fork_return_t fork_with_inherit(const char *path);
     FILE *pipe = NULL;
     if (result) {
         const char *launcherPathCString = [launcherPath fileSystemRepresentation];
-        const char * const arguments[] = {launcherPathCString, [helperPath fileSystemRepresentation]};
+        const char * const arguments[] = {[helperPath fileSystemRepresentation], NULL};
         OSStatus authorizationResult = AuthorizationExecuteWithPrivileges(authorizationRef, launcherPathCString, 0, (char * const *)arguments, &pipe);
         
         if (authorizationResult != errAuthorizationSuccess) {
@@ -79,23 +100,32 @@ static struct inheriting_fork_return_t fork_with_inherit(const char *path);
     }
     
     if (result) {
-        NSMutableString *resultString = [NSMutableString string];
-        /* Read from the tool until it exits */
-        char buffer[512];
-        while ((fgets(buffer, sizeof buffer, pipe))) {
-            [resultString appendString:[NSString stringWithUTF8String:buffer]];
+        privilegedHelperPath = read_line(pipe);
+        NSString *error = read_line(pipe);
+        if ([error length] > 0) {
+            NSLog(@"Error: %@", error);
+            result = NO;
         }
-        
-        NSArray *resultStrings = [resultString componentsSeparatedByString:@"\n"];
-        NSLog(@"Results: %@", resultStrings);
+        else if (! [privilegedHelperPath length]) {
+            NSLog(@"Unable to get path");
+            result = NO;
+        }
     }
+    
+    if (result) {
+        /* Launch the path */
+        const char *pathToLaunch = [privilegedHelperPath fileSystemRepresentation];
+        struct inheriting_fork_return_t fork_return = fork_with_inherit(pathToLaunch);
+        printf("CHILD PID: %d\n", fork_return.child_pid);
+    }
+    
+    /* Tell our launcher, OK, so it deletes it for us */
+    fputs("OK\n", pipe);
 
-    //struct inheriting_fork_return_t fork_return = fork_with_inherit([path fileSystemRepresentation]);
-    //printf("CHILD PID: %d\n", fork_return.child_pid);
     return result;
 }
 
-+ (void)load {
++ (void)UNUSEDload {
     id pool = [[NSAutoreleasePool alloc] init];
     [self performSelector:@selector(test:) withObject:nil afterDelay:.1];
     [pool release];
@@ -139,7 +169,7 @@ static struct inheriting_fork_return_t fork_with_inherit(const char *path) {
     char * argv[] = {(char *)path, NULL};
     int posixErr = posix_spawn(&result.child_pid, path, NULL/*file actions*/, NULL/*spawn attr*/, argv, *_NSGetEnviron());
     if (posixErr != 0) {
-	printf("posix_spawn failed\n");
+	printf("posix_spawn failed: %d %s\n", posixErr, strerror(posixErr));
 	return errorReturn;
     }
 

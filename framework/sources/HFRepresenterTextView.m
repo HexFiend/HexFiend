@@ -954,7 +954,7 @@ enum LineCoverage_t {
     NSUInteger byteCount = [data length];
     [[font screenFont] set];
     
-    [self _drawLineBackgrounds:clip withLineHeight:[self lineHeight] maxLines:ll2l(HFRoundUpToNextMultiple(byteCount, bytesPerLine) / bytesPerLine)];
+    [self _drawLineBackgrounds:clip withLineHeight:[self lineHeight] maxLines:ll2l(HFRoundUpToNextMultipleSaturate(byteCount, bytesPerLine) / bytesPerLine)];
     [self drawSelectionIfNecessaryWithClip:clip];
     
     NSColor *textColor = [NSColor blackColor];

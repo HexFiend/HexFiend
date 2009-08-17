@@ -253,12 +253,12 @@ static inline Class preferredByteArrayClass(void) {
 
 - (HFRange)_maximumDisplayedRangeSet {
     unsigned long long contentsLength = [self contentsLength];
-    HFRange maximumDisplayedRangeSet = HFRangeMake(0, HFRoundUpToNextMultiple(contentsLength, bytesPerLine));
+    HFRange maximumDisplayedRangeSet = HFRangeMake(0, HFRoundUpToNextMultipleSaturate(contentsLength, bytesPerLine));
     return maximumDisplayedRangeSet;
 }
 
 - (unsigned long long)totalLineCount {
-    return HFRoundUpToNextMultiple([self contentsLength], bytesPerLine) / bytesPerLine;
+    return HFDivideULLRoundingUp(HFRoundUpToNextMultipleSaturate([self contentsLength], bytesPerLine), bytesPerLine);
 }
 
 - (HFFPRange)displayedLineRange {
@@ -513,7 +513,7 @@ static inline Class preferredByteArrayClass(void) {
         if (maxBytesForViewSize % bytesPerLine != 0) {
             NSLog(@"Bad max bytes: %lu (%lu)", maxBytesForViewSize, bytesPerLine);
         }
-        if ((HFMaxRange(maxRangeSet) - proposedNewDisplayRange.location) % bytesPerLine != 0) {
+        if (HFMaxRange(maxRangeSet) != ULLONG_MAX && (HFMaxRange(maxRangeSet) - proposedNewDisplayRange.location) % bytesPerLine != 0) {
             NSLog(@"Bad max range minus: %llu (%lu)", HFMaxRange(maxRangeSet) - proposedNewDisplayRange.location, bytesPerLine);
         }
         
@@ -553,8 +553,8 @@ static inline Class preferredByteArrayClass(void) {
     HFFPRange displayRange = [self displayedLineRange];
     HFFPRange newDisplayRange = displayRange;
     unsigned long long startLine = range.location / bytesPerLine;
-    unsigned long long endLine = HFRoundUpToNextMultiple(HFMaxRange(range), bytesPerLine) / bytesPerLine;
-    HFASSERT(endLine > startLine);
+    unsigned long long endLine = HFDivideULLRoundingUp(HFRoundUpToNextMultipleSaturate(HFMaxRange(range), bytesPerLine), bytesPerLine);
+    HFASSERT(endLine > startLine || endLine == ULLONG_MAX);
     long double linesInRange = HFULToFP(endLine - startLine);
     long double linesToDisplay = MIN(displayRange.length, linesInRange);
     HFASSERT(linesToDisplay <= linesInRange);
@@ -1480,7 +1480,7 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
     else {
 	/* This always advances to the next line */
 	maxLocation = [self _maximumSelectionLocation];
-	unsigned long long proposedNewMaxLocation = HFRoundUpToNextMultiple(maxLocation, bytesPerLine);
+	unsigned long long proposedNewMaxLocation = HFRoundUpToNextMultipleSaturate(maxLocation, bytesPerLine);
 	newMaxLocation = MIN([self contentsLength], proposedNewMaxLocation);
 	HFASSERT(newMaxLocation >= maxLocation);
 	locationToMakeVisible = newMaxLocation;
@@ -1526,12 +1526,13 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
     REQUIRE_NOT_NULL(data);
     BOOL result;
 #if ! NDEBUG
+    const unsigned long long startLength = [byteArray length];
     unsigned long long expectedNewLength;
     if ([self inOverwriteMode]) {
-        expectedNewLength = [byteArray length];
+        expectedNewLength = startLength;
     }    
     else {
-        expectedNewLength = [byteArray length] + [data length] - previousBytes;
+        expectedNewLength = startLength + [data length] - previousBytes;
         FOREACH(HFRangeWrapper*, wrapper, [self selectedContentsRanges]) expectedNewLength -= [wrapper HFRange].length;
     }
 #endif
@@ -1544,7 +1545,7 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
     [slice release];
     [array release];
 #if ! NDEBUG
-    HFASSERT([byteArray length] == expectedNewLength);
+    HFASSERT((result && [byteArray length] == expectedNewLength) || (! result && [byteArray length] == startLength));
 #endif
     return result;
 }
@@ -1552,6 +1553,13 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
 - (BOOL)_insertionModeCoreInsertByteArray:(HFByteArray *)bytesToInsert replacingPreviousBytes:(unsigned long long)previousBytes allowUndoCoalescing:(BOOL)allowUndoCoalescing outNewSingleSelectedRange:(HFRange *)outSelectedRange {
     HFASSERT(! [self inOverwriteMode]);
     REQUIRE_NOT_NULL(bytesToInsert);
+    
+    /* Guard against overflow.  If [bytesToInsert length] + [self contentsLength] - previousBytes overflows, then we can't do it */
+    HFASSERT([self contentsLength] >= previousBytes);
+    if (! HFSumDoesNotOverflow([bytesToInsert length], [self contentsLength] - previousBytes)) {
+        return NO; //don't do anything
+    }
+    
     
     unsigned long long amountDeleted = 0, amountAdded = [bytesToInsert length];
     HFByteArray *bytes = [self byteArray];
@@ -1648,6 +1656,7 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
 #endif
     REQUIRE_NOT_NULL(bytesToInsert);
     
+
     BEGIN_TRANSACTION();
     unsigned long long beforeLength = [byteArray length];
     BOOL inOverwriteMode = [self inOverwriteMode];
@@ -1917,10 +1926,12 @@ static NSData *randomDataOfLength(NSUInteger length) {
     HFTEST(HFSumDoesNotOverflow(0, 0));
     HFTEST(ll2l((unsigned long long)UINT_MAX) == UINT_MAX);
     
-    HFTEST(HFRoundUpToNextMultiple(0, 2) == 2);
-    HFTEST(HFRoundUpToNextMultiple(2, 2) == 4);
-    HFTEST(HFRoundUpToNextMultiple(200, 200) == 400);
-    HFTEST(HFRoundUpToNextMultiple(1304, 600) == 1800);
+    HFTEST(HFRoundUpToNextMultipleSaturate(0, 2) == 2);
+    HFTEST(HFRoundUpToNextMultipleSaturate(2, 2) == 4);
+    HFTEST(HFRoundUpToNextMultipleSaturate(200, 200) == 400);
+    HFTEST(HFRoundUpToNextMultipleSaturate(1304, 600) == 1800);
+    HFTEST(HFRoundUpToNextMultipleSaturate(ULLONG_MAX - 17, 100) == ULLONG_MAX);
+    HFTEST(HFRoundUpToNextMultipleSaturate(ULLONG_MAX, 100) == ULLONG_MAX);
     
     const HFRange dirtyRanges1[] = { {4, 6}, {6, 2}, {7, 3} };
     const HFRange cleanedRanges1[] = { {4, 6} };

@@ -99,11 +99,13 @@ static inline unsigned long long HFSubtract(unsigned long long a, unsigned long 
 }
 
 /*!
- Returns the smallest multiple of B strictly larger than A.
+ Returns the smallest multiple of B strictly larger than A, or ULLONG_MAX if it would overflow
 */
-static inline unsigned long long HFRoundUpToNextMultiple(unsigned long long a, unsigned long long b) {
+static inline unsigned long long HFRoundUpToNextMultipleSaturate(unsigned long long a, unsigned long long b) {
     assert(b > 0);
-    return HFSum(a, b - a % b);
+    unsigned long long result = a + (b - a % b);
+    if (result < a) result = ULLONG_MAX; //the saturation...on overflow go to the max
+    return result;
 }
 
 /*! Like NSMaxRange, but for an HFRange. */

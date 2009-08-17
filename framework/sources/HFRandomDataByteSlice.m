@@ -35,6 +35,13 @@ static inline unsigned char munge(unsigned long long val64, unsigned char random
 }
 
 - (void)copyBytes:(unsigned char *)dst range:(HFRange)range {
+    bzero(dst, (NSUInteger)range.length);
+    if (range.length > 0 && range.location + range.length == length) {
+        dst[range.length - 1] = 1;
+    }
+}
+
+- (void)UNUSEDcopyBytes:(unsigned char *)dst range:(HFRange)range {
     HFASSERT(HFRangeIsSubrangeOfRange(range, HFRangeMake(0, length)));
     HFASSERT(range.length <= NSUIntegerMax);
     const unsigned long long localRandomizer = randomizer;

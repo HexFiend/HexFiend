@@ -219,7 +219,7 @@ static inline int common_prefix_length(const char *a, const char *b) {
 	}
 	textRect.origin.y += lineHeight;
 	lineIndex++;
-	lineValue = HFSum(lineValue, bytesPerLine);
+	if (linesRemaining > 0) lineValue = HFSum(lineValue, bytesPerLine); //we could do this unconditionally, but then we risk overflow
     }
 }
 

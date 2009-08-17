@@ -13,6 +13,6 @@
 }
 
 + (HFPrivilegedHelperConnection *)sharedConnection;
-- (void)launchAndConnect;
+- (BOOL)launchAndConnect;
 
 @end

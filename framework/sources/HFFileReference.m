@@ -164,7 +164,10 @@ static BOOL returnFTruncateError(NSError **error) {
 - (BOOL)setLength:(unsigned long long)length error:(NSError **)error {
     HFASSERT(isWritable);
     HFASSERT(fileDescriptor >= 0);
-    HFASSERT(length <= LLONG_MAX);
+    if (length > LLONG_MAX) { //largest file we can make is LLONG_MAX, because off_t has type long long
+        if (error) *error = [NSError errorWithDomain:NSCocoaErrorDomain code:NSFileWriteOutOfSpaceError userInfo:nil];
+        return NO;
+    }
     int result = ftruncate(fileDescriptor, (off_t)length);
     HFASSERT(result <= 0);
     if (result < 0) {

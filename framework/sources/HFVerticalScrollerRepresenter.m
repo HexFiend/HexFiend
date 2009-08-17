@@ -39,9 +39,9 @@
     unsigned long long contentsLength = [controller contentsLength];
     NSUInteger bytesPerLine = [controller bytesPerLine];
     HFASSERT(bytesPerLine > 0);
-    unsigned long long totalLineCountTimesBytesPerLine = HFRoundUpToNextMultiple(contentsLength, bytesPerLine);
-    HFASSERT(totalLineCountTimesBytesPerLine % bytesPerLine == 0);
-    unsigned long long totalLineCount = totalLineCountTimesBytesPerLine / bytesPerLine;
+    unsigned long long totalLineCountTimesBytesPerLine = HFRoundUpToNextMultipleSaturate(contentsLength, bytesPerLine);
+    HFASSERT(totalLineCountTimesBytesPerLine == ULLONG_MAX || totalLineCountTimesBytesPerLine % bytesPerLine == 0);
+    unsigned long long totalLineCount = HFDivideULLRoundingUp(totalLineCountTimesBytesPerLine, bytesPerLine);
     HFFPRange currentLineRange = [controller displayedLineRange];
     HFASSERT(currentLineRange.length < HFULToFP(totalLineCount));
     long double maxScroll = totalLineCount - currentLineRange.length;

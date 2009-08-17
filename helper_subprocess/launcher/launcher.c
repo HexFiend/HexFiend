@@ -26,8 +26,7 @@ static void fail(const char *fmt, ...) {
 }
 
 int main(int argc, char *argv[]) {
-    sleep(100);
-    if (argc != 2) fail("Not enough arguments.");
+    if (argc != 2) fail("Not enough arguments: %d", argc);
     int err = 0;
     
     int srcFD = open(argv[1], O_RDONLY);
@@ -38,10 +37,14 @@ int main(int argc, char *argv[]) {
     
     /* Get the temp directory */
     char dstPath[PATH_MAX + 1];
+    /* We could use confstr() below, but this gives us the temp directory for the root user, which we do not have access to.  So just use /tmp. */
+#if 0
     if (0 == confstr(_CS_DARWIN_USER_TEMP_DIR, dstPath, sizeof dstPath)) {
         err = errno;
         fail("confstr() returned error %d: %s", err, strerror(err));
     }
+#endif
+    strcpy(dstPath, "/tmp/");
     
     /* Append our suffix */
     const char *pathCompnent = "HexFiend_PrivilegedSon_." TMP_SUFFIX;
@@ -70,11 +73,22 @@ int main(int argc, char *argv[]) {
         err = errno;
         fail("fchmod failed with error %d: %s", err, strerror(err));        
     }
+
+    /* Output the destination, and no error message, and then wait to be told to go */
+    puts(dstPath);
+    puts("");
+    fflush(stdout);
+    
+    char readBuff[256];
+    fgets(readBuff, sizeof readBuff, stdin);
+    if (0 == strcmp(readBuff, "OK\n")) {
+        /* Our parent has executed the file, so unlink it so nobody else can execute it */
+        unlink(dstPath);
+    }
+
     
     /* Close the destination */
     close(srcFD);
     
-    puts(dstPath);
-    puts(""); //no error message
     return 0;
 }

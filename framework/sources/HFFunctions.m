@@ -342,6 +342,78 @@ NSString *HFDescribeByteCount(unsigned long long count) {
     return HFDescribeByteCountWithPrefixAndSuffix(NULL, count, NULL);
 }
 
+/* A big_num represents a number in some base.  Here it is value = big * base + little. */
+typedef struct big_num {
+    unsigned int big; 
+    unsigned long long little;
+} big_num;
+
+static inline big_num divide_bignum_by_2(big_num a, unsigned long long base) {
+    //value = a.big * base + a.little;
+    big_num result;
+    result.big = a.big / 2;
+    unsigned int shiftedRemainder = (unsigned int)(a.little & 1);
+    result.little = a.little / 2;
+    if (a.big & 1) {
+        //need to add base/2 to result.little.  We know that won't overflow because result.little is already a.little / 2
+        result.little += base / 2;
+        
+        // If we shift off a bit for base/2, and we also shifted off a bit for a.little/2, then we have a carry bit we need to add
+        if ((base & 1) && shiftedRemainder) {
+            /* Is there a chance that adding 1 will overflow?  We know base is odd (base & 1), so consider an example of base = 9.  Then the largest that result.little could be is (9 - 1)/2 + base/2 = 8.  We could add 1 and get back to base, but we can never exceed base, so we cannot overflow an unsigned long long. */
+            result.little += 1;
+            HFASSERT(result.little <= base);
+            if (result.little == base) {
+                result.big++;
+                result.little = 0;
+            }
+        }
+    }
+    HFASSERT(result.little < base);
+    return result;
+}
+
+static inline big_num add_big_nums(big_num a, big_num b, unsigned long long base) {
+    /* Perform the addition result += left.  The addition is:
+      result.big = a.big + b.big + (a.little + b.little) / base
+      result.little = (a.little + b.little) % base
+      
+      a.little + b.little may overflow, so we have to take some care in how we calculate them.
+      Since both a.little and b.little are less than base, we know that if we overflow, we can subtract base from it to underflow and still get the same remainder.
+    */
+    unsigned long long remainder = a.little + b.little;
+    unsigned int dividend = 0;
+    // remainder < a.little detects overflow, and remainder >= base detects the case where we did not overflow but are larger than base
+    if (remainder < a.little || remainder >= base) {
+        remainder -= base;
+        dividend++;
+    }
+    HFASSERT(remainder < base);
+    
+    big_num result = {a.big + b.big + dividend, remainder};
+    return result;
+}
+
+
+/* Returns the first digit after the decimal point for a / b, rounded off, without overflow.  This may return 10, indicating that the digit is 0 and we should carry. */
+static unsigned int computeRemainderPrincipalDigit(unsigned long long a, unsigned long long base) {
+    struct big_num result = {0, 0}, left = {(unsigned)(a / base), a % base}, right = {(unsigned)(100 / base), 100 % base};
+    while (right.big > 0 || right.little > 0) {
+        /* Determine the least significant bit of right, which is right.big * base + right.little */
+        unsigned int bigTermParity = (base & 1) && (right.big & 1);
+        unsigned int littleTermParity = (unsigned)(right.little & 1);
+        if (bigTermParity != littleTermParity) result = add_big_nums(result, left, base);
+
+        right = divide_bignum_by_2(right, base);
+        left = add_big_nums(left, left, base);
+    }
+
+    //result.big now contains 100 * a / base
+    unsigned int principalTwoDigits = (unsigned int)(result.big % 100);
+    unsigned int principalDigit = (principalTwoDigits / 10) + ((principalTwoDigits % 10) >= 5);
+    return principalDigit;
+}
+
 NSString *HFDescribeByteCountWithPrefixAndSuffix(const char *stringPrefix, unsigned long long count, const char *stringSuffix) {
     if (! stringPrefix) stringPrefix = "";
     if (! stringSuffix) stringSuffix = "";
@@ -358,43 +430,33 @@ NSString *HFDescribeByteCountWithPrefixAndSuffix(const char *stringPrefix, unsig
         {1ULL<<30,  "megabyte"},
         {1ULL<<40,  "gigabyte"},
         {1ULL<<50,  "terabyte"},
-        {1ULL<<60,  "petabyte"}
-        //exabyte, zettabyte
+        {1ULL<<60,  "petabyte"},
+        {ULLONG_MAX, "exabyte"}
     };
     const unsigned numSuffixes = sizeof suffixes / sizeof *suffixes;
     //HFASSERT((sizeof sizes / sizeof *sizes) == (sizeof suffixes / sizeof *suffixes));
     unsigned i;
     unsigned long long base;
     for (i=0; i < numSuffixes; i++) {
-        if (count < suffixes[i].size) break;
+        if (count < suffixes[i].size || suffixes[i].size == ULLONG_MAX) break;
     }
     
     if (i >= numSuffixes) return [NSString stringWithFormat:@"%san unbelievable number of bytes%s", stringPrefix, stringSuffix];
     base = suffixes[i-1].size;
     
     unsigned long long dividend = count / base;
-    
-    /* Determine the first base 10 digit of the remainder. We know the multiplication by 10 won't overflow because our largest base is 1ULL << 60, and 10 * 1<<60 does not overflow */
-    unsigned long long remainderTimes10 = (count % base) * 10;
-    unsigned long long remainderPrincipalDigit = remainderTimes10 / base;
-    HFASSERT(remainderPrincipalDigit < 10);
-    
-    /* Determine which way to round */
-    unsigned long long remainderPrincipalDigitRemainder = remainderTimes10 % base;
-    if (remainderPrincipalDigitRemainder * 2 >= base) {
-        /* Round up */
-        remainderPrincipalDigit++;
+    unsigned int remainderPrincipalDigit = computeRemainderPrincipalDigit(count % base, base);
+    HFASSERT(remainderPrincipalDigit <= 10);
+    if (remainderPrincipalDigit == 10) {
         /* Carry */
-        if (remainderPrincipalDigit == 10) {
-            remainderPrincipalDigit = 0;
-            dividend++;
-        }
+        dividend++;
+        remainderPrincipalDigit = 0;
     }
-    
+        
     BOOL needsPlural = (dividend != 1 || remainderPrincipalDigit > 0);
     
     char remainderBuff[64];
-    if (remainderPrincipalDigit > 0) snprintf(remainderBuff, sizeof remainderBuff, ".%llu", remainderPrincipalDigit);
+    if (remainderPrincipalDigit > 0) snprintf(remainderBuff, sizeof remainderBuff, ".%u", remainderPrincipalDigit);
     else remainderBuff[0] = 0;
     
     char* resultPointer = NULL;

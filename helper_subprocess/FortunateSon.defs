@@ -11,9 +11,30 @@ userprefix _GratefulFather;
 serverprefix _FortunateSon;
 
 type FilePath = c_string[*:256];
+type bool = int8_t;
 
+type VarData_t = ^ array [] of uint8_t;
 
 routine SayHey(
     server: mach_port_t;
     in path : FilePath;
     out result : int);
+
+routine OpenFile(
+    server: mach_port_t;
+    in path: FilePath;
+    in writable: int;
+    out result: int;
+    out result_error: int);
+    
+routine CloseFile(
+    server: mach_port_t;
+    in fd: int);
+
+
+routine ReadProcess(
+    server: mach_port_t;
+    in pid: int;
+    in offset: vm_offset_t;
+    in len: vm_offset_t;
+    out result: VarData_t);
