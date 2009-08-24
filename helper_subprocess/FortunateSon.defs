@@ -35,6 +35,7 @@ routine CloseFile(
 routine ReadProcess(
     server: mach_port_t;
     in pid: int;
-    in offset: vm_offset_t;
-    in len: vm_offset_t;
-    out result: VarData_t);
+    in offset: mach_vm_address_t;
+    in requestedLength: mach_vm_size_t;
+    out result: VarData_t
+);

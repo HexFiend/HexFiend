@@ -449,7 +449,9 @@ static inline Class preferredByteArrayClass(void) {
     HFFileReference *fileReference = [[[HFFileReference alloc] initWithPath:[absoluteURL path] error:outError] autorelease];
     if (fileReference) {
         //HFFileByteSlice *byteSlice = [[[HFFileByteSlice alloc] initWithFile:fileReference] autorelease];
-        HFByteSlice *byteSlice = [[[NSClassFromString(@"HFRandomDataByteSlice") alloc] initWithRandomDataLength:ULLONG_MAX] autorelease];
+//        HFByteSlice *byteSlice = [[[NSClassFromString(@"HFRandomDataByteSlice") alloc] initWithRandomDataLength:ULLONG_MAX] autorelease];
+        pid_t pid = [[[NSRunningApplication runningApplicationsWithBundleIdentifier:@"com.apple.TextEdit"] lastObject] processIdentifier];
+        HFByteSlice *byteSlice = [[[NSClassFromString(@"HFProcessMemoryByteSlice") alloc] initWithPID:pid range:HFRangeMake(0, 1 + (unsigned long long)UINT_MAX)] autorelease];
         HFByteArray *byteArray = [[[preferredByteArrayClass() alloc] init] autorelease];
         [byteArray insertByteSlice:byteSlice inRange:HFRangeMake(0, 0)];
         [controller setByteArray:byteArray];

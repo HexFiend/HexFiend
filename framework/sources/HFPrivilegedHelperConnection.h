@@ -10,9 +10,14 @@
 
 
 @interface HFPrivilegedHelperConnection : NSObject {
+    task_t childTask;
+    mach_port_t childReceivePort;
 }
 
 + (HFPrivilegedHelperConnection *)sharedConnection;
 - (BOOL)launchAndConnect;
+- (void)connectIfNecessary;
+
+- (BOOL)readBytes:(void *)bytes range:(HFRange)range process:(pid_t)process error:(NSError **)error;
 
 @end

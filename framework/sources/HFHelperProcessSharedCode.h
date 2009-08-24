@@ -70,4 +70,3 @@ recv_port (mach_port_t recv_port, mach_port_t *port)
     *port = msg.task_port.name;
     return 0;
 }
-

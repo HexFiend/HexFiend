@@ -136,6 +136,8 @@
 		D0A9F3F20CFBEA9F0077D577 /* HFLineCountingRepresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = D0A9F3F00CFBEA9F0077D577 /* HFLineCountingRepresenter.m */; };
 		D0A9F3FD0CFBEAD50077D577 /* HFLineCountingView.h in Headers */ = {isa = PBXBuildFile; fileRef = D0A9F3FB0CFBEAD50077D577 /* HFLineCountingView.h */; settings = {ATTRIBUTES = (); }; };
 		D0A9F3FE0CFBEAD50077D577 /* HFLineCountingView.m in Sources */ = {isa = PBXBuildFile; fileRef = D0A9F3FC0CFBEAD50077D577 /* HFLineCountingView.m */; };
+		D0B0919F10425AAB00B204AE /* HFProcessMemoryByteSlice.h in Headers */ = {isa = PBXBuildFile; fileRef = D0B0919D10425AAB00B204AE /* HFProcessMemoryByteSlice.h */; };
+		D0B091A010425AAB00B204AE /* HFProcessMemoryByteSlice.m in Sources */ = {isa = PBXBuildFile; fileRef = D0B0919E10425AAB00B204AE /* HFProcessMemoryByteSlice.m */; };
 		D0B422A10FF845F800DF27E5 /* HFTextView.h in Headers */ = {isa = PBXBuildFile; fileRef = D0B4229F0FF845F800DF27E5 /* HFTextView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D0B422A20FF845F800DF27E5 /* HFTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = D0B422A00FF845F800DF27E5 /* HFTextView.m */; };
 		D0B426B90FF8CF6800DF27E5 /* HFTextViewIntegration.m in Sources */ = {isa = PBXBuildFile; fileRef = D0B426B80FF8CF6800DF27E5 /* HFTextViewIntegration.m */; };
@@ -390,6 +392,8 @@
 		D0A9F3F00CFBEA9F0077D577 /* HFLineCountingRepresenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFLineCountingRepresenter.m; path = framework/sources/HFLineCountingRepresenter.m; sourceTree = "<group>"; };
 		D0A9F3FB0CFBEAD50077D577 /* HFLineCountingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFLineCountingView.h; path = framework/sources/HFLineCountingView.h; sourceTree = "<group>"; };
 		D0A9F3FC0CFBEAD50077D577 /* HFLineCountingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFLineCountingView.m; path = framework/sources/HFLineCountingView.m; sourceTree = "<group>"; };
+		D0B0919D10425AAB00B204AE /* HFProcessMemoryByteSlice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFProcessMemoryByteSlice.h; path = framework/sources/HFProcessMemoryByteSlice.h; sourceTree = "<group>"; };
+		D0B0919E10425AAB00B204AE /* HFProcessMemoryByteSlice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFProcessMemoryByteSlice.m; path = framework/sources/HFProcessMemoryByteSlice.m; sourceTree = "<group>"; };
 		D0B4229F0FF845F800DF27E5 /* HFTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFTextView.h; path = framework/sources/HFTextView.h; sourceTree = "<group>"; };
 		D0B422A00FF845F800DF27E5 /* HFTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFTextView.m; path = framework/sources/HFTextView.m; sourceTree = "<group>"; };
 		D0B426B80FF8CF6800DF27E5 /* HFTextViewIntegration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFTextViewIntegration.m; path = ib_plugin/sources/HFTextViewIntegration.m; sourceTree = "<group>"; };
@@ -686,6 +690,8 @@
 				D08F5E220CDE843E007EFFE8 /* HFByteSlice.h */,
 				D0D179450D46F20E00684270 /* HFByteSlice_Private.h */,
 				D08F5E230CDE843E007EFFE8 /* HFByteSlice.m */,
+				D0B0919D10425AAB00B204AE /* HFProcessMemoryByteSlice.h */,
+				D0B0919E10425AAB00B204AE /* HFProcessMemoryByteSlice.m */,
 				D0826F190D4883A80006FB7D /* FileByteSlice */,
 				D0370A280D682EF200B3A8C6 /* MemoryByteSlice */,
 			);
@@ -919,6 +925,7 @@
 				D061A28F10042D6A0049B8B8 /* HFTextRepresenter_Internal.h in Headers */,
 				D0114CA91006D1DF00DAF4CE /* HFByteArrayProxiedData.h in Headers */,
 				D04D90531023AAEE0013A2A1 /* HFHelperProcessSharedCode.h in Headers */,
+				D0B0919F10425AAB00B204AE /* HFProcessMemoryByteSlice.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1057,12 +1064,16 @@
 /* Begin PBXProject section */
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				ORGANIZATIONNAME = ridiculous_fish;
+			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "HexFiend_2" */;
 			compatibilityVersion = "Xcode 3.0";
 			hasScannedForEncodings = 1;
 			mainGroup = 29B97314FDCFA39411CA2CEA /* HexFiend_2 */;
 			projectDirPath = "";
-			projectRoot = "";
+			projectRoot = ../..;
 			targets = (
 				8D1107260486CEB800E47090 /* HexFiend_2 */,
 				D01E7BB70CDC530C00943F9E /* HexFiend_Framework */,
@@ -1225,6 +1236,7 @@
 				D0114CAA1006D1DF00DAF4CE /* HFByteArrayProxiedData.m in Sources */,
 				D04D8FDF10239BB20013A2A1 /* HFPrivilegedHelperConnection.m in Sources */,
 				D0621CF0102ED78900DAEB4D /* FortunateSon.defs in Sources */,
+				D0B091A010425AAB00B204AE /* HFProcessMemoryByteSlice.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

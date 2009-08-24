@@ -75,7 +75,7 @@
 }
 
 - (NSUInteger)retainCount {
-    return retainCount;
+    return 1 + retainCount;
 }
 
 @end
