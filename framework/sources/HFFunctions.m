@@ -116,7 +116,9 @@ static int hfrange_compare(const void *ap, const void *bp) {
 
 + (void)getRanges:(HFRange *)ranges fromArray:(NSArray *)array {
     HFASSERT(ranges != NULL || [array count] == 0);
-    FOREACH(HFRangeWrapper*, wrapper, array) *ranges++ = [wrapper HFRange];
+    if (ranges) {
+        FOREACH(HFRangeWrapper*, wrapper, array) *ranges++ = [wrapper HFRange];
+    }
 }
 
 @end

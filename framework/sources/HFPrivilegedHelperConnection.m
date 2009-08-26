@@ -195,7 +195,7 @@ static struct inheriting_fork_return_t fork_with_inherit(const char *path) {
         return errorReturn;
     CHECK_MACH_ERROR(task_set_bootstrap_port(mach_task_self(), parent_recv_port));
 
-    //TODO: use posix_spawnattr_setspecialport_np here instead of fiddling with the bootstrap port
+    /* TODO: use posix_spawnattr_setspecialport_np here instead of fiddling with the bootstrap port */
     char * argv[] = {(char *)path, NULL};
     int posixErr = posix_spawn(&result.child_pid, path, NULL/*file actions*/, NULL/*spawn attr*/, argv, *_NSGetEnviron());
     if (posixErr != 0) {
