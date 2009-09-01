@@ -11,10 +11,10 @@
 
 @interface HFByteRangeAttributeArray : NSObject {
     NSMutableArray *attributeRuns;
-    
 }
 
-- (NSArray *)attributesAtIndex:(NSUInteger)index range:(NSRange *)range;
-- (void)addAttribute:(NSString *)attributeName range:(NSRange)range;
+- (NSSet *)attributesAtIndex:(unsigned long long)index length:(unsigned long long *)length;
+- (void)addAttribute:(NSString *)attributeName range:(HFRange)range;
+- (void)transferAttributesFromAttributeArray:(HFByteRangeAttributeArray *)array baseOffset:(unsigned long long)baseOffset;
 
 @end

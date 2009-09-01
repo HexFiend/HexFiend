@@ -9,6 +9,8 @@
 #import <HexFiend/HFByteSlice_Private.h>
 #import <HexFiend/HFFileByteSlice.h>
 #import <HexFiend/HFFileReference.h>
+#import <HexFiend/HFByteRangeAttribute.h>
+#import <HexFiend/HFByteRangeAttributeArray.h>
 
 @implementation HFFileByteSlice
 
@@ -60,6 +62,21 @@
     if ([fileReference isEqual:reference]) {
         result.location = offset;
         result.length = length;
+    }
+    return result;
+}
+
+- (HFByteRangeAttributeArray *)attributesForBytesInRange:(HFRange)range {
+    HFByteRangeAttributeArray *result = nil;
+    HFASSERT(HFMaxRange(range) <= [self length]);
+    /* Middle half of file is magic */
+    unsigned long long fileLength = [fileReference length];
+    HFRange magicRange = HFRangeMake(fileLength / 4, fileLength / 2);
+    printf("Magic location: %llu\n", fileLength / 4);
+    HFRange intersectionRange = HFIntersectionRange(magicRange, range);
+    if (intersectionRange.length > 0) {
+        result = [[[HFByteRangeAttributeArray alloc] init] autorelease];
+        [result addAttribute:kHFAttributeMagic range:intersectionRange];
     }
     return result;
 }

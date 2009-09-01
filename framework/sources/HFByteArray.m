@@ -8,6 +8,7 @@
 
 #import <HexFiend/HFByteArray_Internal.h>
 #import <HexFiend/HFFullMemoryByteSlice.h>
+#import <HexFiend/HFByteRangeAttributeArray.h>
 
 
 @implementation HFByteArray
@@ -26,6 +27,19 @@
 
 - (NSEnumerator *)byteSliceEnumerator {
     return [[self byteSlices] objectEnumerator];
+}
+
+- (HFByteSlice *)sliceContainingByteAtIndex:(unsigned long long)offset beginningOffset:(unsigned long long *)actualOffset {
+    HFByteSlice *slice;
+    unsigned long long current = 0;
+    NSEnumerator *enumer = [self byteSliceEnumerator];
+    while ((slice = [enumer nextObject])) {
+        unsigned long long sum = HFSum([slice length], current);
+        if (sum > offset) break;
+        current = sum;
+    }
+    if (actualOffset) *actualOffset = current;
+    return slice;
 }
 
 - (void)insertByteArray:(HFByteArray*)array inRange:(HFRange)lrange {
@@ -151,6 +165,31 @@
     return YES;
 }
 
+- (HFByteRangeAttributeArray *)attributesForBytesInRange:(HFRange)range {
+    HFByteRangeAttributeArray *result = [[[HFByteRangeAttributeArray alloc] init] autorelease];
+    HFASSERT(range.length < NSUIntegerMax);
+    const unsigned long long rangeEnd = HFMaxRange(range);
+    HFASSERT(rangeEnd <= [self length]);
+    HFRange remainingRange = range;
+    while (remainingRange.length > 0) {
+        unsigned long long beginningOffset;
+        HFByteSlice *slice = [self sliceContainingByteAtIndex:remainingRange.location beginningOffset:&beginningOffset];
+        HFASSERT(beginningOffset <= remainingRange.location);
+        HFRange sliceRange = HFRangeMake(beginningOffset, [slice length]);
+        HFRange overlap = HFIntersectionRange(sliceRange, remainingRange);
+        
+        HFByteRangeAttributeArray *sliceAttributes = [slice attributesForBytesInRange:HFRangeMake(overlap.location - beginningOffset, overlap.length)];
+        if (sliceAttributes) {
+            [result transferAttributesFromAttributeArray:sliceAttributes baseOffset:beginningOffset];
+        }
+        
+        HFASSERT(overlap.location == remainingRange.location);
+        remainingRange.location = HFSum(remainingRange.location, overlap.length);
+        remainingRange.length = HFSubtract(remainingRange.length, overlap.length);
+    }
+    return result;
+}
+
 - (BOOL)_debugIsEqualToData:(NSData *)val {
     REQUIRE_NOT_NULL(val);
     HFByteArray *byteArray = [[NSClassFromString(@"HFFullMemoryByteArray") alloc] init];
@@ -194,6 +233,7 @@
         HFAtomicIncrement(&changeGenerationCount, YES);
     }
 }
+
 
 
 @end

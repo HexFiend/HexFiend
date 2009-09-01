@@ -28,6 +28,7 @@
     NSArray *cachedSelectedRanges;
     NSFont *font;
     NSData *data;
+    NSArray *styles;
     CGFloat verticalOffset;
     CGFloat horizontalContainerInset;
     CGFloat defaultLineHeight;
@@ -73,6 +74,9 @@
 - (BOOL)isEditable;
 - (void)setEditable:(BOOL)val;
 
+- (NSArray *)styles;
+- (void)setStyles:(NSArray *)theStyles;
+
 - (BOOL)shouldAntialias;
 - (void)setShouldAntialias:(BOOL)val;
 
@@ -94,7 +98,6 @@
 - (NSUInteger)bytesBetweenVerticalGuides;
 
 /* To be invoked from drawRect:. */
-- (void)drawGlyphs:(CGGlyph *)glyphs withAdvances:(CGSize *)advances count:(NSUInteger)glyphCount;
 - (void)drawCaretIfNecessaryWithClip:(NSRect)clipRect;
 - (void)drawSelectionIfNecessaryWithClip:(NSRect)clipRect;
 

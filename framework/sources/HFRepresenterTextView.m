@@ -9,6 +9,7 @@
 #import <HexFiend/HFRepresenterTextView_Internal.h>
 #import <HexFiend/HFTextRepresenter_Internal.h>
 #import <HexFiend/HFTextSelectionPulseView.h>
+#import <HexFiend/HFTextVisualStyleRun.h>
 
 static const NSTimeInterval HFCaretBlinkFrequency = 0.56;
 
@@ -669,6 +670,17 @@ enum LineCoverage_t {
     }
 }
 
+- (NSArray *)styles {
+    return styles; 
+}
+
+- (void)setStyles:(NSArray *)theStyles {
+    if (styles != theStyles) {
+        [styles release];
+        styles = [theStyles retain];
+    }
+}
+
 - (void)setVerticalOffset:(CGFloat)val {
     if (val != verticalOffset) {
         verticalOffset = val;
@@ -701,6 +713,7 @@ enum LineCoverage_t {
     [caretTimer release];
     [font release];
     [data release];
+    [styles release];
     [cachedSelectedRanges release];
     NSWindow *window = [self window];
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
@@ -807,10 +820,12 @@ enum LineCoverage_t {
     UNIMPLEMENTED();
 }
 
-- (void)drawGlyphs:(CGGlyph *)glyphs withAdvances:(CGSize *)advances count:(NSUInteger)glyphCount {
+- (void)drawGlyphs:(CGGlyph *)glyphs withStyleRun:(HFTextVisualStyleRun *)styleRun withAdvances:(CGSize *)advances count:(NSUInteger)glyphCount {
     HFASSERT(glyphs != NULL);
     HFASSERT(advances != NULL);
     HFASSERT(glyphCount > 0);
+    HFASSERT(styleRun != NULL);
+    [[styleRun foregroundColor] set];
     CGContextRef ctx = [[NSGraphicsContext currentContext] graphicsPort];
     CGContextShowGlyphsWithAdvances(ctx, glyphs, advances, glyphCount);
 }
@@ -868,6 +883,17 @@ enum LineCoverage_t {
     if (resultingGlyphCount) *resultingGlyphCount = glyphBufferIndex;
 }
 
+- (HFTextVisualStyleRun *)styleRunForByteAtIndex:(NSUInteger)byteIndex {
+    if (! styles) return nil;
+    FOREACH(HFTextVisualStyleRun *, run, styles) {
+        if (NSLocationInRange(byteIndex, [run range])) {
+            return run;
+        }
+    }
+    [NSException raise:NSInvalidArgumentException format:@"Byte index %lu not present in runs %@", (unsigned long)byteIndex, styles];
+    return nil;
+}
+
 - (void)drawTextWithClip:(NSRect)clip restrictingToTextInRanges:(NSArray *)restrictingToRanges {
     CGContextRef ctx = [[NSGraphicsContext currentContext] graphicsPort];
     NSRect bounds = [self bounds];
@@ -876,10 +902,10 @@ enum LineCoverage_t {
     CGAffineTransform textTransform = CGContextGetTextMatrix(ctx);
     CGContextSetTextDrawingMode(ctx, kCGTextFill);
     
-    NSUInteger byteIndex, bytesPerLine = [self bytesPerLine];
+    NSUInteger lineStartIndex, bytesPerLine = [self bytesPerLine];
     NSData *dataObject = [self data];
     NSFont *fontObject = [[self font] screenFont];
-    NSUInteger byteCount = [dataObject length];
+    const NSUInteger byteCount = [dataObject length];
     
     const unsigned char * const bytePtr = [dataObject bytes];
     
@@ -893,28 +919,38 @@ enum LineCoverage_t {
     const NSUInteger maxGlyphCount = [self maximumGlyphCountForByteCount:bytesPerLine];
     NEW_ARRAY(CGGlyph, glyphs, maxGlyphCount);
     NEW_ARRAY(CGSize, advances, maxGlyphCount);
-    for (byteIndex = 0; byteIndex < byteCount; byteIndex += bytesPerLine) {
-        if (byteIndex > 0) {
+    for (lineStartIndex = 0; lineStartIndex < byteCount; lineStartIndex += bytesPerLine) {
+        if (lineStartIndex > 0) {
             textTransform.ty += lineHeight;
             lineRectInBoundsSpace.origin.y += lineHeight;
         }
         if (NSIntersectsRect(lineRectInBoundsSpace, clip)) {
-            NSUInteger numBytes = MIN(bytesPerLine, byteCount - byteIndex);
-            NSUInteger resultGlyphCount = 0;
-            CGFloat initialTextOffset = 0;
-            if (restrictingToRanges == nil) {
-                [self extractGlyphsForBytes:bytePtr + byteIndex count:numBytes offsetIntoLine:0 intoArray:glyphs advances:advances resultingGlyphCount:&resultGlyphCount];
-            }
-            else {
-                [self extractGlyphsForBytes:bytePtr range:NSMakeRange(byteIndex, numBytes) intoArray:glyphs advances:advances withInclusionRanges:restrictingToRanges initialTextOffset:&initialTextOffset resultingGlyphCount:&resultGlyphCount];
-            }
-            HFASSERT(resultGlyphCount <= maxGlyphCount);
-            
-            if (resultGlyphCount > 0) {
-                textTransform.tx += initialTextOffset;
-                CGContextSetTextMatrix(ctx, textTransform);
-                textTransform.tx -= initialTextOffset;
-                [self drawGlyphs:glyphs withAdvances:advances count:resultGlyphCount];
+            const NSUInteger bytesInThisLine = MIN(bytesPerLine, byteCount - lineStartIndex);
+            NSUInteger byteIndexInLine = 0;
+            while (byteIndexInLine < bytesInThisLine) {
+                const NSUInteger byteIndex = lineStartIndex + byteIndexInLine;
+                HFTextVisualStyleRun *styleRun = [self styleRunForByteAtIndex:byteIndex];
+                HFASSERT(styleRun != nil);
+                HFASSERT(byteIndex >= [styleRun range].location);
+                const NSUInteger bytesInThisRun = MIN(NSMaxRange([styleRun range]) - byteIndex, bytesInThisLine - byteIndexInLine);
+                
+                NSUInteger resultGlyphCount = 0;
+                CGFloat initialTextOffset = 0;
+                if (restrictingToRanges == nil) {
+                    [self extractGlyphsForBytes:bytePtr + byteIndex count:bytesInThisRun offsetIntoLine:byteIndexInLine intoArray:glyphs advances:advances resultingGlyphCount:&resultGlyphCount];
+                }
+                else {
+                    [self extractGlyphsForBytes:bytePtr range:NSMakeRange(byteIndex, bytesInThisRun) intoArray:glyphs advances:advances withInclusionRanges:restrictingToRanges initialTextOffset:&initialTextOffset resultingGlyphCount:&resultGlyphCount];
+                }
+                HFASSERT(resultGlyphCount <= maxGlyphCount);
+                
+                if (resultGlyphCount > 0) {
+                    textTransform.tx += initialTextOffset;
+                    CGContextSetTextMatrix(ctx, textTransform);
+                    textTransform.tx -= initialTextOffset;
+                    [self drawGlyphs:glyphs withStyleRun:styleRun withAdvances:advances count:resultGlyphCount];
+                }
+                byteIndexInLine += bytesInThisRun;
             }
         }
         else if (NSMinY(lineRectInBoundsSpace) > NSMaxY(clip)) {

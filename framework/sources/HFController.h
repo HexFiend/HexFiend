@@ -14,7 +14,7 @@
     @abstract The HFController.h header contains the HFController class, which is a central class in Hex Fiend. 
 */
 
-@class HFRepresenter, HFByteArray, HFControllerCoalescedUndo;
+@class HFRepresenter, HFByteArray, HFControllerCoalescedUndo, HFByteRangeAttributeArray;
 
 /*! @enum HFControllerPropertyBits
     The HFControllerPropertyBits bitmask is used to inform the HFRepresenters of a change in the current state that they may need to react to.  A bitmask of the changed properties is passed to representerChangedProperties:.  It is common for multiple properties to be included in such a bitmask.        
@@ -392,6 +392,9 @@ You create an HFController via <tt>[[HFController alloc] init]</tt>.  After that
 
 /*! Copies data within the given HFRange into an in-memory buffer.  This is equivalent to [[controller byteArray] copyBytes:bytes range:range]. */
 - (void)copyBytes:(unsigned char *)bytes range:(HFRange)range;
+
+/*! Returns the attributes for the given range.  range.length must be <= NSUIntegerMax. */
+- (HFByteRangeAttributeArray *)attributesForBytesInRange:(HFRange)range;
 
 /*! Returns total number of bytes.  This is equivalent to [[controller byteArray] length]. */
 - (unsigned long long)contentsLength;

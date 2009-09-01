@@ -8,7 +8,7 @@
 
 #import <Cocoa/Cocoa.h>
 
-@class HFFileReference;
+@class HFFileReference, HFByteRangeAttributeArray;
 
 /*! @class HFByteSlice
 @brief A class representing a source of data for an HFByteArray.
@@ -41,5 +41,11 @@ The two principal subclasses of HFByteSlice are HFSharedMemoryByteSlice and HFFi
 /*! For a given file reference, returns the range within the file that the receiver is sourced from.  If the receiver is not sourced from this file, returns {ULLONG_MAX, ULLONG_MAX}.  The default implementation returns {ULLONG_MAX, ULLONG_MAX}.  This is used during file saving to to determine how to properly overwrite a given file.
 */
 - (HFRange)sourceRangeForFile:(HFFileReference *)reference;
+
+@end
+
+@interface HFByteSlice (HFAttributes)
+
+- (HFByteRangeAttributeArray *)attributesForBytesInRange:(HFRange)range;
 
 @end

@@ -30,6 +30,8 @@
 		D00C16790FF4925A006D021F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D00C16750FF4925A006D021F /* main.m */; };
 		D00EBA730CE866D50020E2D7 /* HFVerticalScrollerRepresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = D00EBA710CE866D50020E2D7 /* HFVerticalScrollerRepresenter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D00EBA740CE866D50020E2D7 /* HFVerticalScrollerRepresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = D00EBA720CE866D50020E2D7 /* HFVerticalScrollerRepresenter.m */; };
+		D010173610491BB200536FBC /* HFTextVisualStyleRun.h in Headers */ = {isa = PBXBuildFile; fileRef = D010173410491BB200536FBC /* HFTextVisualStyleRun.h */; settings = {ATTRIBUTES = (); }; };
+		D010173710491BB200536FBC /* HFTextVisualStyleRun.m in Sources */ = {isa = PBXBuildFile; fileRef = D010173510491BB200536FBC /* HFTextVisualStyleRun.m */; };
 		D0114CA91006D1DF00DAF4CE /* HFByteArrayProxiedData.h in Headers */ = {isa = PBXBuildFile; fileRef = D0114CA71006D1DF00DAF4CE /* HFByteArrayProxiedData.h */; };
 		D0114CAA1006D1DF00DAF4CE /* HFByteArrayProxiedData.m in Sources */ = {isa = PBXBuildFile; fileRef = D0114CA81006D1DF00DAF4CE /* HFByteArrayProxiedData.m */; };
 		D01772F50D751DB1002E03DE /* HFDocumentOperationView.m in Sources */ = {isa = PBXBuildFile; fileRef = D01772F40D751DB1002E03DE /* HFDocumentOperationView.m */; };
@@ -277,6 +279,8 @@
 		D00C16750FF4925A006D021F /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		D00EBA710CE866D50020E2D7 /* HFVerticalScrollerRepresenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFVerticalScrollerRepresenter.h; path = framework/sources/HFVerticalScrollerRepresenter.h; sourceTree = "<group>"; };
 		D00EBA720CE866D50020E2D7 /* HFVerticalScrollerRepresenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFVerticalScrollerRepresenter.m; path = framework/sources/HFVerticalScrollerRepresenter.m; sourceTree = "<group>"; };
+		D010173410491BB200536FBC /* HFTextVisualStyleRun.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFTextVisualStyleRun.h; path = framework/sources/HFTextVisualStyleRun.h; sourceTree = "<group>"; };
+		D010173510491BB200536FBC /* HFTextVisualStyleRun.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFTextVisualStyleRun.m; path = framework/sources/HFTextVisualStyleRun.m; sourceTree = "<group>"; };
 		D0114CA71006D1DF00DAF4CE /* HFByteArrayProxiedData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFByteArrayProxiedData.h; path = framework/sources/HFByteArrayProxiedData.h; sourceTree = "<group>"; };
 		D0114CA81006D1DF00DAF4CE /* HFByteArrayProxiedData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFByteArrayProxiedData.m; path = framework/sources/HFByteArrayProxiedData.m; sourceTree = "<group>"; };
 		D01772B70D72E024002E03DE /* HFCancelOn.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = HFCancelOn.tiff; path = framework/resources/HFCancelOn.tiff; sourceTree = "<group>"; };
@@ -675,6 +679,8 @@
 				D04C78250DC47ECF00A76FF2 /* HFTextSelectionPulseView.h */,
 				D04C78260DC47ECF00A76FF2 /* HFTextSelectionPulseView.m */,
 				D08399AD0CF85A540030DBF0 /* HFTextRepresenter_KeyBinding.m */,
+				D010173410491BB200536FBC /* HFTextVisualStyleRun.h */,
+				D010173510491BB200536FBC /* HFTextVisualStyleRun.m */,
 			);
 			name = "Text Representers";
 			sourceTree = "<group>";
@@ -948,6 +954,7 @@
 				D0B0919F10425AAB00B204AE /* HFProcessMemoryByteSlice.h in Headers */,
 				D08943F81042B57800AB9141 /* HFByteRangeAttribute.h in Headers */,
 				D089443C1042BA7100AB9141 /* HFByteRangeAttributeArray.h in Headers */,
+				D010173610491BB200536FBC /* HFTextVisualStyleRun.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1261,6 +1268,7 @@
 				D0B091A010425AAB00B204AE /* HFProcessMemoryByteSlice.m in Sources */,
 				D08943F91042B57800AB9141 /* HFByteRangeAttribute.m in Sources */,
 				D089443D1042BA7100AB9141 /* HFByteRangeAttributeArray.m in Sources */,
+				D010173710491BB200536FBC /* HFTextVisualStyleRun.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

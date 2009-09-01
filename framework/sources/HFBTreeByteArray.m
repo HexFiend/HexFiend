@@ -87,6 +87,10 @@ static BOOL copy_bytes(id entry, HFBTreeIndex offset, void *userInfo) {
     }
 }
 
+- (HFByteSlice *)sliceContainingByteAtIndex:(unsigned long long)offset beginningOffset:(unsigned long long *)actualOffset {
+    return [btree entryContainingOffset:offset beginningOffset:actualOffset];
+}
+
 /* Given a HFByteArray and a range contained within it, return the first byte slice containing that range, and the range within that slice.  Modifies the given range to reflect what you get when the returned slice is removed. */
 static inline HFByteSlice *findInitialSlice(HFBTree *btree, HFRange *inoutArrayRange, HFRange *outRangeWithinSlice) {
     const HFRange arrayRange = *inoutArrayRange;

@@ -54,6 +54,11 @@
     return nil;
 }
 
+- (HFByteRangeAttributeArray *)attributesForBytesInRange:(HFRange)range {
+    USE(range);
+    return nil;
+}
+
 - (BOOL)isSourcedFromFile {
     return NO;
 }

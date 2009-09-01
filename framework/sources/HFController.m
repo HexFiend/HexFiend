@@ -478,6 +478,10 @@ static inline Class preferredByteArrayClass(void) {
     [byteArray copyBytes:bytes range:range];
 }
 
+- (HFByteRangeAttributeArray *)attributesForBytesInRange:(HFRange)range {
+    return [[self byteArray] attributesForBytesInRange:range];
+}
+
 - (void)_updateDisplayedRange {
     HFRange proposedNewDisplayRange;
     HFFPRange proposedNewLineRange;

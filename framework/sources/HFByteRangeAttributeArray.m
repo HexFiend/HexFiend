@@ -11,21 +11,25 @@
 @interface HFByteRangeAttributeRun : NSObject {
 @public
     NSString *name;
-    NSRange range;
+    HFRange range;
 }
 
-- (id)initWithName:(NSString *)nameParameter range:(NSRange)rangeParameter;
+- (id)initWithName:(NSString *)nameParameter range:(HFRange)rangeParameter;
 
 @end
 
 @implementation HFByteRangeAttributeRun
 
-- (id)initWithName:(NSString *)nameParameter range:(NSRange)rangeParameter {
+- (id)initWithName:(NSString *)nameParameter range:(HFRange)rangeParameter {
     HFASSERT(nameParameter != nil);
     [super init];
     name = [nameParameter copy];
     range = rangeParameter;
     return self;
+}
+
+- (NSString *)description {
+    return [NSString stringWithFormat:@"[%@ {%llu, %llu}]", name, range.location, range.length];
 }
 
 - (void)dealloc {
@@ -38,6 +42,10 @@
 
 @implementation HFByteRangeAttributeArray
 
+- (NSString *)description {
+    return [NSString stringWithFormat:@"<%@: %p %@>", [self class], self, attributeRuns];
+}
+
 - (id)init {
     [super init];
     attributeRuns = [[NSMutableArray alloc] init];
@@ -49,24 +57,35 @@
     [super dealloc];
 }
 
-- (void)addAttribute:(NSString *)attributeName range:(NSRange)range {
+- (void)addAttribute:(NSString *)attributeName range:(HFRange)range {
     HFASSERT(attributeName != nil);
     HFByteRangeAttributeRun *run = [[HFByteRangeAttributeRun alloc] initWithName:attributeName range:range];
     [attributeRuns addObject:run];
     [run release];
 }
 
-- (NSArray *)attributesAtIndex:(NSUInteger)index range:(NSRange *)range {
-    NSMutableArray *result = [NSMutableArray array];
-    NSUInteger maxLocation = NSUIntegerMax;
+- (NSSet *)attributesAtIndex:(unsigned long long)index length:(unsigned long long *)length {
+    NSMutableSet *result = [NSMutableSet set];
+    unsigned long long maxLocation = ULLONG_MAX;
     FOREACH(HFByteRangeAttributeRun *, run, attributeRuns) {
-        if (NSLocationInRange(index, run->range)) {
+        unsigned long long runEnd = HFMaxRange(run->range);
+        if (runEnd > index && runEnd < maxLocation) {
+            maxLocation = runEnd;
+        }
+        if (HFLocationInRange(index, run->range)) {
             [result addObject:run->name];
-            maxLocation = MIN(maxLocation, NSMaxRange(run->range));
         }
     }
-    if (range) *range = NSMakeRange(index, maxLocation - index);
+    if (length) *length = maxLocation - index;
     return result;
+}
+
+- (void)transferAttributesFromAttributeArray:(HFByteRangeAttributeArray *)array baseOffset:(unsigned long long)baseOffset {
+    HFASSERT(array != NULL);
+    EXPECT_CLASS(array, HFByteRangeAttributeArray);
+    FOREACH(HFByteRangeAttributeRun *, run, array->attributeRuns) {
+        [self addAttribute:run->name range:HFRangeMake(HFSum(baseOffset, run->range.location), run->range.length)];
+    }
 }
 
 @end

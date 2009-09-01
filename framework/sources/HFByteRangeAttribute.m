@@ -9,3 +9,4 @@
 #import <HexFiend/HFByteRangeAttribute.h>
 
 NSString * const kHFAttributeUnallocated = @"HFAttributeUnallocated";
+NSString * const kHFAttributeMagic = @"HFAttributeMagic";

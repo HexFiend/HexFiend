@@ -10,6 +10,9 @@
 #import <HexFiend/HFRepresenterTextView.h>
 #import <HexFiend/HFPasteboardOwner.h>
 #import <HexFiend/HFByteArray.h>
+#import <HexFiend/HFByteRangeAttributeArray.h>
+#import <HexFiend/HFTextVisualStyleRun.h>
+#import <HexFiend/HFByteRangeAttribute.h>
 
 @implementation HFTextRepresenter
 
@@ -75,10 +78,45 @@
     }
 }
 
+- (HFTextVisualStyleRun *)styleForAttributes:(NSSet *)attributes range:(NSRange)range {
+    HFTextVisualStyleRun *run = [[[HFTextVisualStyleRun alloc] init] autorelease];
+    [run setRange:range];
+    if ([attributes containsObject:kHFAttributeMagic]) {
+        [run setForegroundColor:[NSColor blueColor]];
+    }
+    else {
+        [run setForegroundColor:[NSColor blackColor]];
+    }
+    return run;
+}
+
+- (NSArray *)stylesForRange:(HFRange)range {
+    HFASSERT(range.length <= NSUIntegerMax);
+    HFByteRangeAttributeArray *runs = [[self controller] attributesForBytesInRange:range];
+    if (! runs) return nil;
+    NSMutableArray *result = [NSMutableArray array];
+    HFRange remainingRange = range;
+    NSUInteger localOffset = 0;
+    while (remainingRange.length > 0) {
+        unsigned long long attributeRunLength = 0;
+        NSSet *attributes = [runs attributesAtIndex:remainingRange.location length:&attributeRunLength];
+        NSLog(@"%llu: %@", remainingRange.location, attributes);
+        NSUInteger boundedRunLength = ll2l(MIN(attributeRunLength, remainingRange.length));
+        [result addObject:[self styleForAttributes:attributes range:NSMakeRange(localOffset, boundedRunLength)]];
+        localOffset += boundedRunLength;
+        remainingRange.length = HFSubtract(remainingRange.length, boundedRunLength);
+        remainingRange.location = HFSum(remainingRange.location, boundedRunLength);
+    }
+    NSLog(@"STyles: %@", result);
+    return result;
+}
+
 - (void)updateText {
     HFController *controller = [self controller];
     HFRepresenterTextView *view = [self view];
-    [view setData:[controller dataForRange:[self entireDisplayedRange]]];
+    HFRange entireDisplayedRange = [self entireDisplayedRange];
+    [view setData:[controller dataForRange:entireDisplayedRange]];
+    [view setStyles:[self stylesForRange:entireDisplayedRange]];
     HFFPRange lineRange = [controller displayedLineRange];
     long double offsetLongDouble = lineRange.location - floorl(lineRange.location);
     CGFloat offset = ld2f(offsetLongDouble);

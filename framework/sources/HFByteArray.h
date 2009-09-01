@@ -8,7 +8,7 @@
 
 #import <Cocoa/Cocoa.h>
 
-@class HFByteSlice, HFProgressTracker, HFFileReference;
+@class HFByteSlice, HFProgressTracker, HFFileReference, HFByteRangeAttributeArray;
 
 /*! @class HFByteArray
 @brief The principal Model class for HexFiend's MVC architecture.
@@ -59,6 +59,9 @@ typedef NSUInteger HFByteArrayDataStringType;
 
 /*! Returns an NSEnumerator representing the byte slices of the receiver.  This is implemented as enumerating over the result of -byteSlices, but subclasses can override this to be more efficient. */
 - (NSEnumerator *)byteSliceEnumerator;
+
+/*! Returns the byte slice containing the byte at the given index, and the actual offset of this slice. */
+- (HFByteSlice *)sliceContainingByteAtIndex:(unsigned long long)offset beginningOffset:(unsigned long long *)actualOffset;
 //@}
 
 /*! @name Modifying the byte array
@@ -147,5 +150,11 @@ typedef NSUInteger HFByteArrayDataStringType;
    @return A YES return indicates the operation was successful, and the receiver no longer contains byte slices that source data from any of the ranges of the given file (or never did).  A NO return indicates that breaking the dependencies would require too much memory, and so the receiver still depends on some of those ranges.
 */
 - (BOOL)clearDependenciesOnRanges:(NSArray *)ranges inFile:(HFFileReference *)reference;
+
+@end
+
+@interface HFByteArray (HFAttributes)
+
+- (HFByteRangeAttributeArray *)attributesForBytesInRange:(HFRange)range;
 
 @end
