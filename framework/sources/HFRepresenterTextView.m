@@ -1119,20 +1119,50 @@ enum LineCoverage_t {
     HFASSERT(_hftvflags.withinMouseDown == 0);
     _hftvflags.withinMouseDown = 1;
     [self _forceCaretOnIfHasCaretTimer];
-    NSPoint location = [self convertPoint:[event locationInWindow] fromView:nil];
-    NSUInteger characterIndex = [self characterAtPointForSelection:location];
+    NSPoint mouseDownLocation = [self convertPoint:[event locationInWindow] fromView:nil];
+    NSUInteger characterIndex = [self characterAtPointForSelection:mouseDownLocation];
     characterIndex = MIN(characterIndex, [[self data] length]); //characterIndex may be one beyond the last index, to represent the cursor at the end of the document
     [[self representer] beginSelectionWithEvent:event forCharacterIndex:characterIndex];
     
     /* Drive the event loop in event tracking mode until we're done */
     HFASSERT(_hftvflags.receivedMouseUp == NO); //paranoia - detect any weird recursive invocations
     NSDate *endDate = [NSDate distantFuture];
+    
+    /* Start periodic events for autoscroll */
+    [NSEvent startPeriodicEventsAfterDelay:0.1 withPeriod:0.05];
+    
+    NSPoint autoscrollLocation = mouseDownLocation;
     while (! _hftvflags.receivedMouseUp) {
         NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-        NSEvent *event = [NSApp nextEventMatchingMask: NSLeftMouseUpMask | NSLeftMouseDraggedMask untilDate:endDate inMode:NSEventTrackingRunLoopMode dequeue:YES];
+        NSEvent *event = [NSApp nextEventMatchingMask: NSLeftMouseUpMask | NSLeftMouseDraggedMask | NSPeriodicMask untilDate:endDate inMode:NSEventTrackingRunLoopMode dequeue:YES];
+	
+	if ([event type] == NSPeriodic) {
+	    // autoscroll if drag is out of view bounds
+	    CGFloat amountToScroll = 0;
+	    NSRect bounds = [self bounds];
+	    if (autoscrollLocation.y < NSMinY(bounds)) {
+		amountToScroll = (autoscrollLocation.y - NSMinY(bounds)) / [self lineHeight];
+	    }
+	    else if (autoscrollLocation.y > NSMaxY(bounds)) {
+		amountToScroll = (autoscrollLocation.y - NSMaxY(bounds)) / [self lineHeight];
+	    }
+	    if (amountToScroll != 0.) {
+		[[[self representer] controller] scrollByLines:amountToScroll];
+		NSUInteger characterIndex = [self characterAtPointForSelection:autoscrollLocation];
+		characterIndex = MIN(characterIndex, [[self data] length]);
+		[[self representer] continueSelectionWithEvent:event forCharacterIndex:characterIndex];
+	    }
+	}
+	else if ([event type] == NSLeftMouseDragged) {
+	    autoscrollLocation = [self convertPoint:[event locationInWindow] fromView:nil];
+	}
+	
         [NSApp sendEvent:event]; 
         [pool drain];
     }
+    
+    [NSEvent stopPeriodicEvents];
+    
     _hftvflags.receivedMouseUp = NO;
     _hftvflags.withinMouseDown = 0;
 }
