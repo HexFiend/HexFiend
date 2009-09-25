@@ -1314,8 +1314,12 @@ invalidString:;
 - (IBAction)modifyByteGrouping:sender {
     NSUInteger bytesPerLine = [controller bytesPerLine], newDesiredBytesPerLine;
     NSUInteger newBytesPerColumn = (NSUInteger)[sender tag];
-    HFASSERT(newBytesPerColumn > 0);
-    newDesiredBytesPerLine = MAX(newBytesPerColumn, bytesPerLine - (bytesPerLine % newBytesPerColumn));
+    if (newBytesPerColumn == 0) {
+        newDesiredBytesPerLine = bytesPerLine;
+    }
+    else {
+        newDesiredBytesPerLine = MAX(newBytesPerColumn, bytesPerLine - (bytesPerLine % newBytesPerColumn));
+    }
     [controller setBytesPerColumn:newBytesPerColumn];
     [self relayoutAndResizeWindowForBytesPerLine:newDesiredBytesPerLine]; //this ensures that the window does not shrink when going e.g. from 4->8->4
     [[NSUserDefaults standardUserDefaults] setInteger:newBytesPerColumn forKey:@"BytesPerColumn"];

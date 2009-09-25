@@ -61,7 +61,7 @@ static const NSTimeInterval HFCaretBlinkFrequency = 0.56;
     result.y = (index / bytesPerLine - [self verticalOffset]) * [self lineHeight];
     NSUInteger byteIndexIntoLine = index % bytesPerLine;
     NSUInteger bytesPerColumn = [self bytesPerColumn];
-    NSUInteger numConsumedColumns = byteIndexIntoLine / bytesPerColumn;
+    NSUInteger numConsumedColumns = (bytesPerColumn ? byteIndexIntoLine / bytesPerColumn : 0);
     result.x = [self horizontalContainerInset] + (index % bytesPerLine) * [self advancePerByte] + numConsumedColumns * [self advanceBetweenColumns];
     return result;
 }
@@ -1011,24 +1011,40 @@ enum LineCoverage_t {
     if (range.length == 0) return 0;
     NSUInteger bytesPerColumn = [self bytesPerColumn];
     HFASSERT([self bytesPerLine] % bytesPerColumn == 0);
-    NSUInteger numColumnSpaces = NSMaxRange(range) / bytesPerColumn - range.location / bytesPerColumn; //note that integer division does not distribute
-    return numColumnSpaces * [self advanceBetweenColumns] + range.length * [self advancePerByte];
+    CGFloat result = range.length * [self advancePerByte];
+    if (bytesPerColumn > 0) {
+        NSUInteger numColumnSpaces = NSMaxRange(range) / bytesPerColumn - range.location / bytesPerColumn; //note that integer division does not distribute
+        result += numColumnSpaces * [self advanceBetweenColumns];
+    }
+    return result;
 }
 
 - (NSUInteger)maximumBytesPerLineForViewWidth:(CGFloat)viewWidth {
     CGFloat availableSpace = (CGFloat)(viewWidth - 2. * [self horizontalContainerInset]);
-    CGFloat advancePerColumn = [self advancePerColumn];
-    //spaceRequiredForNColumns = N * (advancePerColumn) - spaceBetweenColumns
-    CGFloat fractionalColumns = (availableSpace + [self advanceBetweenColumns]) / advancePerColumn;
-    NSUInteger columnCount = (NSUInteger)fmax(1., HFFloor(fractionalColumns));
-    return columnCount * [self bytesPerColumn];
+    NSUInteger bytesPerColumn = [self bytesPerColumn];
+    if (bytesPerColumn == 0) {
+        return (NSUInteger)fmax(1., availableSpace / [self advancePerByte]);
+    }
+    else {
+        CGFloat advancePerColumn = [self advancePerColumn];
+        //spaceRequiredForNColumns = N * (advancePerColumn) - spaceBetweenColumns
+        CGFloat fractionalColumns = (availableSpace + [self advanceBetweenColumns]) / advancePerColumn;
+        NSUInteger columnCount = (NSUInteger)fmax(1., HFFloor(fractionalColumns));
+        return columnCount * [self bytesPerColumn];
+    }
 }
 
 
 - (CGFloat)minimumViewWidthForBytesPerLine:(NSUInteger)bytesPerLine {
     HFASSERT(bytesPerLine > 0);
-    HFASSERT(bytesPerLine % [self bytesPerColumn] == 0);
-    return (CGFloat)((2. * [self horizontalContainerInset]) + [self advancePerColumn] * (bytesPerLine / [self bytesPerColumn]) - [self advanceBetweenColumns]);
+    NSUInteger bytesPerColumn = [self bytesPerColumn];
+    if (bytesPerColumn == 0) {
+        return (CGFloat)((2. * [self horizontalContainerInset]) + bytesPerLine * [self advancePerByte]);
+    }
+    else {
+        HFASSERT(bytesPerLine % [self bytesPerColumn] == 0);
+        return (CGFloat)((2. * [self horizontalContainerInset]) + [self advancePerColumn] * (bytesPerLine / [self bytesPerColumn]) - [self advanceBetweenColumns]);
+    }
 }
 
 - (BOOL)isEditable {

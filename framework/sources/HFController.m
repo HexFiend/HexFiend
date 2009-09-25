@@ -322,7 +322,6 @@ static inline Class preferredByteArrayClass(void) {
 }
 
 - (void)setBytesPerColumn:(NSUInteger)val {
-    NSParameterAssert(val > 0);
     if (val != bytesPerColumn) {
         bytesPerColumn = val;
         [self _addPropertyChangeBits:HFControllerBytesPerColumn];
@@ -330,7 +329,6 @@ static inline Class preferredByteArrayClass(void) {
 }
 
 - (NSUInteger)bytesPerColumn {
-    HFASSERT(bytesPerColumn > 0);
     return bytesPerColumn;
 }
 

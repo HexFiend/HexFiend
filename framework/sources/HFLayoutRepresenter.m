@@ -134,13 +134,14 @@ static NSInteger sortByLayoutPosition(id a, id b, void *self) {
 
 - (NSUInteger)_computeBytesPerLineForArraysOfLayoutInfos:(NSArray *)arraysOfLayoutInfos forLayoutInRect:(NSRect)layoutRect {
     const NSUInteger bytesPerColumn = [self bytesPerColumn];
-    NSUInteger newNumColumns = (NSUIntegerMax - 1) / bytesPerColumn;
+    const NSUInteger applicableBytesPerColumn = MAX(bytesPerColumn, 1); //for bytesPerColumn == 0, treat it as 1
+    NSUInteger newNumColumns = (NSUIntegerMax - 1) / applicableBytesPerColumn;
     FOREACH(NSArray *, layoutInfos, arraysOfLayoutInfos) {
         NSUInteger maxKnownGood = 0, minKnownBad = newNumColumns + 1;
         while (maxKnownGood + 1 < minKnownBad) {
             CGFloat requiredSpace = 0;
             NSUInteger proposedNumColumns = maxKnownGood + (minKnownBad - maxKnownGood)/2;
-            NSUInteger proposedBytesPerLine = proposedNumColumns * bytesPerColumn;
+            NSUInteger proposedBytesPerLine = proposedNumColumns * applicableBytesPerColumn;
             FOREACH(HFRepresenterLayoutViewInfo *, info, layoutInfos) {
                 requiredSpace += [info->rep minimumViewWidthForBytesPerLine:proposedBytesPerLine];
                 if (requiredSpace > NSWidth(layoutRect)) break;
@@ -150,7 +151,7 @@ static NSInteger sortByLayoutPosition(id a, id b, void *self) {
         }
         newNumColumns = maxKnownGood;
     }
-    return MAX(1, newNumColumns) * bytesPerColumn;
+    return MAX(1, newNumColumns) * applicableBytesPerColumn;
 }
 
 - (BOOL)_anyLayoutInfoIsVerticallyResizable:(NSArray *)vals {

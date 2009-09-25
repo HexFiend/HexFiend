@@ -131,7 +131,7 @@
     HFASSERT(resultGlyphCount != NULL);
     const NSUInteger bytesPerColumn = [self bytesPerColumn];
     NSUInteger glyphIndex = 0, byteIndex = 0;
-    NSUInteger remainingBytesInThisColumn = bytesPerColumn - offsetIntoLine % bytesPerColumn;
+    NSUInteger remainingBytesInThisColumn = (bytesPerColumn ? bytesPerColumn - offsetIntoLine % bytesPerColumn : NSUIntegerMax);
     CGFloat advanceBetweenColumns = [self advanceBetweenColumns];
     while (byteIndex < numBytes) {
         unsigned char byte = bytes[byteIndex++];
