@@ -10,3 +10,8 @@
 
 NSString * const kHFAttributeUnallocated = @"HFAttributeUnallocated";
 NSString * const kHFAttributeMagic = @"HFAttributeMagic";
+NSString * const kHFAttributeUnmapped = @"HFAttributeUnmapped";
+NSString * const kHFAttributeUnreadable = @"HFAttributeUnreadable";
+NSString * const kHFAttributeWritable = @"HFAttributeWritable";
+NSString * const kHFAttributeExecutable = @"HFAttributeExecutable";
+NSString * const kHFAttributeShared = @"HFAttributeShared";

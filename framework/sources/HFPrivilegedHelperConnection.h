@@ -7,7 +7,7 @@
 //
 
 #import <Cocoa/Cocoa.h>
-
+#import "FortunateSonIPCTypes.h"
 
 @interface HFPrivilegedHelperConnection : NSObject {
     task_t childTask;
@@ -19,5 +19,7 @@
 - (void)connectIfNecessary;
 
 - (BOOL)readBytes:(void *)bytes range:(HFRange)range process:(pid_t)process error:(NSError **)error;
+
+- (BOOL)getAttributes:(VMRegionAttributes *)outAttributes length:(unsigned long long *)outLength offset:(unsigned long long)offset process:(pid_t)process error:(NSError **)error;
 
 @end

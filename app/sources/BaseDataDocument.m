@@ -6,7 +6,7 @@
 //  Copyright 2007 ridiculous_fish. All rights reserved.
 //
 
-#import "MyDocument.h"
+#import "BaseDataDocument.h"
 #import "HFBannerDividerThumb.h"
 #import "HFDocumentOperationView.h"
 #import "DataInspectorRepresenter.h"
@@ -30,7 +30,7 @@ static inline Class preferredByteArrayClass(void) {
     return [HFBTreeByteArray class];
 }
 
-@interface MyDocument (ForwardDeclarations)
+@interface BaseDataDocument (ForwardDeclarations)
 - (NSString *)documentWindowTitleFormatString;
 @end
 
@@ -56,10 +56,10 @@ static inline Class preferredByteArrayClass(void) {
 
 #define USERDEFS_KEY_FOR_REP(r) @"RepresenterIsShown " @#r
 
-@implementation MyDocument
+@implementation BaseDataDocument
 
 + (void)initialize {
-    if (self == [MyDocument class]) {
+    if (self == [BaseDataDocument class]) {
         NSNumber *yes = [NSNumber numberWithBool:YES];
         NSDictionary *defs = [[NSDictionary alloc] initWithObjectsAndKeys:
                               yes, @"AntialiasText",
@@ -1356,7 +1356,7 @@ invalidString:;
     
     /* Determine which document contains this byte array so we can make a nice dialog */
     NSDocument *documentForThisByteArray = nil;
-    FOREACH(MyDocument *, testDocument, allDocuments) {
+    FOREACH(BaseDataDocument *, testDocument, allDocuments) {
         if ([testDocument->controller byteArray] == byteArray) {
             documentForThisByteArray = testDocument;
             break;
@@ -1364,8 +1364,8 @@ invalidString:;
     }
     HFASSERT(documentForThisByteArray != nil); //for now we require that saving a ByteArray is associated with a document save
     
-    FOREACH(MyDocument *, document, allDocuments) {
-	if (! [document isKindOfClass:[MyDocument class]]) {
+    FOREACH(BaseDataDocument *, document, allDocuments) {
+	if (! [document isKindOfClass:[BaseDataDocument class]]) {
 	    /* Paranoia in case other NSDocument classes slip in */
 	    continue;
 	}

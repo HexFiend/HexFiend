@@ -7,7 +7,14 @@
 //
 
 #import "AppDelegate.h"
-#import "MyDocument.h"
+#import "BaseDataDocument.h"
+#import "ProcessMemoryDocument.h"
+#include <assert.h>
+#include <errno.h>
+#include <stdbool.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <sys/sysctl.h>
 
 @implementation AppDelegate
 
@@ -79,7 +86,7 @@ static NSComparisonResult compareFontDisplayNames(NSFont *a, NSFont *b, void *un
 - (void)setFontFromMenuItem:(NSMenuItem *)item {
     NSFont *font = [item representedObject];
     HFASSERT([font isKindOfClass:[NSFont class]]);
-    MyDocument *document = [[NSDocumentController sharedDocumentController] currentDocument];
+    BaseDataDocument *document = [[NSDocumentController sharedDocumentController] currentDocument];
     NSFont *documentFont = [document font];
     font = [[NSFontManager sharedFontManager] convertFont: font toSize: [documentFont pointSize]];
     [document setFont:font];
@@ -89,7 +96,7 @@ static NSComparisonResult compareFontDisplayNames(NSFont *a, NSFont *b, void *un
 - (BOOL)validateMenuItem:(NSMenuItem *)item {
     SEL sel = [item action];
     if (sel == @selector(setFontFromMenuItem:)) {
-        MyDocument *document = [[NSDocumentController sharedDocumentController] currentDocument];
+        BaseDataDocument *document = [[NSDocumentController sharedDocumentController] currentDocument];
         BOOL check = NO;
         if (document) {
             NSFont *font = [document font];
@@ -99,6 +106,212 @@ static NSComparisonResult compareFontDisplayNames(NSFont *a, NSFont *b, void *un
         return document != nil;
     }
     return YES;
+}
+
+static NSString *nameForProcessWithPID(pid_t pidNum)
+{
+    NSString *returnString = nil;
+    int mib[4], maxarg = 0, numArgs = 0;
+    size_t size = 0;
+    char *args = NULL, *namePtr = NULL, *stringPtr = NULL;
+    
+    mib[0] = CTL_KERN;
+    mib[1] = KERN_ARGMAX;
+    
+    size = sizeof(maxarg);
+    if ( sysctl(mib, 2, &maxarg, &size, NULL, 0) == -1 ) {
+	return nil;
+    }
+    
+    args = (char *)malloc( maxarg );
+    if ( args == NULL ) {
+	return nil;
+    }
+    
+    mib[0] = CTL_KERN;
+    mib[1] = KERN_PROCARGS2;
+    mib[2] = pidNum;
+    
+    size = (size_t)maxarg;
+    if ( sysctl(mib, 3, args, &size, NULL, 0) == -1 ) {
+	free( args );
+	return nil;
+    }
+    
+    memcpy( &numArgs, args, sizeof(numArgs) );
+    stringPtr = args + sizeof(numArgs);
+    
+    if ( (namePtr = strrchr(stringPtr, '/')) != NULL ) {
+	returnString = [[NSString alloc] initWithUTF8String:namePtr + 1];
+    } else {
+	returnString = [[NSString alloc] initWithUTF8String:stringPtr];
+    }
+    
+    return [returnString autorelease];
+}
+
+static int GetBSDProcessList(struct kinfo_proc **procList, size_t *procCount)
+    // Returns a list of all BSD processes on the system.  This routine
+    // allocates the list and puts it in *procList and a count of the
+    // number of entries in *procCount.  You are responsible for freeing
+    // this list (use "free" from System framework).
+    // On success, the function returns 0.
+    // On error, the function returns a BSD errno value.
+{
+    int                 err;
+    struct kinfo_proc * result;
+    bool                done;
+    static const int    name[] = { CTL_KERN, KERN_PROC, KERN_PROC_ALL, 0 };
+    // Declaring name as const requires us to cast it when passing it to
+    // sysctl because the prototype doesn't include the const modifier.
+    size_t              length;
+
+    assert( procList != NULL);
+    assert(*procList == NULL);
+    assert(procCount != NULL);
+
+    *procCount = 0;
+
+    // We start by calling sysctl with result == NULL and length == 0.
+    // That will succeed, and set length to the appropriate length.
+    // We then allocate a buffer of that size and call sysctl again
+    // with that buffer.  If that succeeds, we're done.  If that fails
+    // with ENOMEM, we have to throw away our buffer and loop.  Note
+    // that the loop causes use to call sysctl with NULL again; this
+    // is necessary because the ENOMEM failure case sets length to
+    // the amount of data returned, not the amount of data that
+    // could have been returned.
+
+    result = NULL;
+    done = false;
+    do {
+        assert(result == NULL);
+
+        // Call sysctl with a NULL buffer.
+
+        length = 0;
+        err = sysctl( (int *) name, (sizeof(name) / sizeof(*name)) - 1,
+                      NULL, &length,
+                      NULL, 0);
+        if (err == -1) {
+            err = errno;
+        }
+
+        // Allocate an appropriately sized buffer based on the results
+        // from the previous call.
+
+        if (err == 0) {
+            result = malloc(length);
+            if (result == NULL) {
+                err = ENOMEM;
+            }
+        }
+
+        // Call sysctl again with the new buffer.  If we get an ENOMEM
+        // error, toss away our buffer and start again.
+
+        if (err == 0) {
+            err = sysctl( (int *) name, (sizeof(name) / sizeof(*name)) - 1,
+                          result, &length,
+                          NULL, 0);
+            if (err == -1) {
+                err = errno;
+            }
+            if (err == 0) {
+                done = true;
+            } else if (err == ENOMEM) {
+                assert(result != NULL);
+                free(result);
+                result = NULL;
+                err = 0;
+            }
+        }
+    } while (err == 0 && ! done);
+
+    // Clean up and establish post conditions.
+
+    if (err != 0 && result != NULL) {
+        free(result);
+        result = NULL;
+    }
+    *procList = result;
+    if (err == 0) {
+        *procCount = length / sizeof(struct kinfo_proc);
+    }
+
+    assert( (err == 0) == (*procList != NULL) );
+
+    return err;
+}
+
+- (void)openProcessByPID:(pid_t)pid {
+    ProcessMemoryDocument *doc = [[ProcessMemoryDocument alloc] init];
+    [doc openProcessWithPID:pid];
+    [[NSDocumentController sharedDocumentController] addDocument:doc];
+    [doc makeWindowControllers];
+    [doc showWindows];
+    [doc release];
+}
+
+- (void)openProcessByProcessMenuItem:(id)sender {
+    USE(sender);
+    pid_t pid = (long)[[sender representedObject] longValue];
+    HFASSERT(pid > 0);
+    [self openProcessByPID:pid];
+}
+
+static NSInteger compareMenuItems(id item1, id item2, void *unused) {
+    USE(unused);
+    return [[item1 title] caseInsensitiveCompare:[item2 title]];
+}
+
+- (void)menuNeedsUpdate:(NSMenu *)menu {
+    if (menu == [processListMenuItem submenu]) {
+        if ([menu respondsToSelector:@selector(removeAllItems)]) {
+            [menu removeAllItems];
+        }
+        else {
+            NSUInteger count = [menu numberOfItems];
+            while (count--) [menu removeItemAtIndex:count];
+        }
+        struct kinfo_proc *procs = NULL;
+        size_t procIndex, numProcs = -1;
+        GetBSDProcessList(&procs, &numProcs);
+        Class runningAppClass = NSClassFromString(@"NSRunningApplication");
+        NSMutableArray *items = [NSMutableArray array];
+        for (procIndex = 0; procIndex < numProcs; procIndex++) {
+            pid_t pid = procs[procIndex].kp_proc.p_pid;
+            NSString *name = nameForProcessWithPID(pid);
+            if (name) {
+                NSString *title = [name stringByAppendingFormat:@" (%ld)", (long)pid];
+                NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:title action:@selector(openProcessByProcessMenuItem:) keyEquivalent:@""];
+                [item setRepresentedObject:[NSNumber numberWithLong:pid]];
+                NSImage *image = [[runningAppClass runningApplicationWithProcessIdentifier:pid] icon];
+                if (image) {
+                    NSImage *icon = [image copy];
+                    [icon setSize:NSMakeSize(16, 16)];
+                    [item setImage:icon];
+                    [icon release];
+                }
+                [items addObject:item];
+                [item release];
+            }
+        }
+        [items sortUsingFunction:compareMenuItems context:NULL];
+        FOREACH(NSMenuItem *, item, items) {
+            [menu addItem:item];
+        }
+    }
+    else if (menu == [fontMenuItem submenu]) {
+        /* Nothing to do */
+    }
+    else {
+        NSLog(@"Unknown menu in menuNeedsUpdate: %@", menu);
+    }
+}
+
+- (IBAction)openProcess:(id)sender {
+    USE(sender);
 }
 
 @end

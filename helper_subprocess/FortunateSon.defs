@@ -12,6 +12,7 @@ serverprefix _FortunateSon;
 
 type FilePath = c_string[*:256];
 type bool = int8_t;
+type VMRegionAttributes = uint32_t;
 
 type VarData_t = ^ array [] of uint8_t;
 
@@ -38,4 +39,12 @@ routine ReadProcess(
     in offset: mach_vm_address_t;
     in requestedLength: mach_vm_size_t;
     out result: VarData_t
+);
+
+routine AttributesForAddress(
+    server: mach_port_t;
+    in pid: int;
+    in offset: mach_vm_address_t;
+    out result: VMRegionAttributes;
+    out applicableLength: mach_vm_size_t
 );

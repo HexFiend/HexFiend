@@ -68,9 +68,13 @@
     NSMutableSet *result = [NSMutableSet set];
     unsigned long long maxLocation = ULLONG_MAX;
     FOREACH(HFByteRangeAttributeRun *, run, attributeRuns) {
-        unsigned long long runEnd = HFMaxRange(run->range);
-        if (runEnd > index && runEnd < maxLocation) {
-            maxLocation = runEnd;
+        unsigned long long runStart = run->range.location;            
+        unsigned long long runEnd = HFMaxRange(run->range);        
+        if (runStart > index) {
+            maxLocation = MIN(maxLocation, runStart);
+        }
+        else if (runEnd > index) {
+            maxLocation = MIN(maxLocation, runEnd);
         }
         if (HFLocationInRange(index, run->range)) {
             [result addObject:run->name];

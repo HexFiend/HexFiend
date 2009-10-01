@@ -125,22 +125,25 @@ static void *allocate_mach_memory(vm_size_t *size) {
     return (void *)localAddress;
 }
 
-kern_return_t _FortunateSonReadProcess(mach_port_t server, int pid, mach_vm_address_t offset, mach_vm_size_t requestedLength, VarData_t* result, mach_msg_type_number_t *resultCnt) {
-    mach_port_name_t task;
+static mach_port_name_t check_task_for_pid(pid_t pid) {
+    mach_port_name_t task = MACH_PORT_NULL;
     kern_return_t kr = task_for_pid(mach_task_self(), pid, &task);
     if (kr != KERN_SUCCESS) {
         fprintf(stdout, "failed to get task for pid %d\nmach error: %s\n", pid, (char*) mach_error_string(kr));
         exit(-1);
     }
+    return task;
+}
 
+kern_return_t _FortunateSonReadProcess(mach_port_t server, int pid, mach_vm_address_t offset, mach_vm_size_t requestedLength, VarData_t* result, mach_msg_type_number_t *resultCnt) {
     printf("Reading %p, %llu\n", (void *)(long)offset, requestedLength);
-
+    mach_port_name_t task = check_task_for_pid(pid);
     mach_vm_address_t startPage = mach_vm_trunc_page(offset);
     mach_vm_size_t pageLength = mach_vm_round_page(offset + requestedLength - startPage);
     
     vm_offset_t data = 0;
     mach_msg_type_number_t dataLen = 0;
-    kr = mach_vm_read(task, startPage, pageLength, &data, &dataLen);
+    kern_return_t kr = mach_vm_read(task, startPage, pageLength, &data, &dataLen);
     if (kr == KERN_PROTECTION_FAILURE) {
         /* Can't read this range */
         vm_size_t localSize = requestedLength;
@@ -181,5 +184,42 @@ kern_return_t _FortunateSonReadProcess(mach_port_t server, int pid, mach_vm_addr
         *resultCnt = localSize;
     }
     
+    return KERN_SUCCESS;
+}
+
+kern_return_t _FortunateSonAttributesForAddress(mach_port_t server, int pid, mach_vm_address_t offset, VMRegionAttributes *result, mach_vm_size_t *applicableLength) {
+    printf("Reading attributes for %p\n", (void *)(long)offset);
+    mach_port_name_t task = check_task_for_pid(pid);
+    mach_vm_address_t regionAddress = offset;
+    mach_vm_size_t regionSize = 0;
+    struct vm_region_basic_info_64 info = {0};
+    mach_msg_type_number_t infoCount = VM_REGION_BASIC_INFO_COUNT_64;
+    mach_port_t unused_object_name;
+    kern_return_t kr = mach_vm_region(task, &regionAddress, &regionSize, VM_REGION_BASIC_INFO_64, (vm_region_info_t)&info, &infoCount, &unused_object_name);
+    VMRegionAttributes resultingAttributes = 0;
+    mach_vm_size_t resultingLength = 0;
+    if (kr == KERN_INVALID_ADDRESS) {
+        printf("Bad address %p -> %p, size is %ld\n", (void *)(long)offset, (void *)(long)regionAddress, (long)regionSize);
+    }
+    else if (kr == KERN_SUCCESS) {
+        if (regionAddress > offset) {
+            /* We found a region larger than the given offset.  We are unmapped up to that found region. */
+            resultingAttributes |= VMRegionUnmapped;
+            resultingLength = regionAddress - offset;
+        }
+        else {
+            if (info.protection & VM_PROT_READ) resultingAttributes |= VMRegionReadable;
+            if (info.protection & VM_PROT_WRITE) resultingAttributes |= VMRegionWritable;
+            if (info.protection & VM_PROT_EXECUTE) resultingAttributes |= VMRegionExecutable;
+            if (info.shared) resultingAttributes |= VMRegionShared;
+            assert(offset - regionAddress <= regionSize);
+            resultingLength = regionSize - (offset - regionAddress);
+        }
+    }
+    else {
+        fprintf(stdout, "failed to mach_vm_region for pid %d\nmach error: %s\n", pid, (char*) mach_error_string(kr));
+    }
+    *result = resultingAttributes;
+    *applicableLength = resultingLength;
     return KERN_SUCCESS;
 }

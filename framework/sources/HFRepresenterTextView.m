@@ -820,14 +820,22 @@ enum LineCoverage_t {
     UNIMPLEMENTED();
 }
 
-- (void)drawGlyphs:(CGGlyph *)glyphs withStyleRun:(HFTextVisualStyleRun *)styleRun withAdvances:(CGSize *)advances count:(NSUInteger)glyphCount {
+- (void)drawGlyphs:(const CGGlyph *)glyphs withAdvances:(const CGSize *)advances withStyleRun:(HFTextVisualStyleRun *)styleRun count:(NSUInteger)glyphCount rect:(NSRect)backgroundRect {
     HFASSERT(glyphs != NULL);
     HFASSERT(advances != NULL);
     HFASSERT(glyphCount > 0);
-    HFASSERT(styleRun != NULL);
-    [[styleRun foregroundColor] set];
-    CGContextRef ctx = [[NSGraphicsContext currentContext] graphicsPort];
-    CGContextShowGlyphsWithAdvances(ctx, glyphs, advances, glyphCount);
+    if ([styleRun shouldDraw]) {
+        NSColor *background = [styleRun backgroundColor];
+        if (background) {
+            [NSGraphicsContext saveGraphicsState];
+            [background set];
+            NSRectFill(backgroundRect);
+            [NSGraphicsContext restoreGraphicsState];
+        }
+        [styleRun set];
+        CGContextRef ctx = [[NSGraphicsContext currentContext] graphicsPort];
+        CGContextShowGlyphsWithAdvances(ctx, glyphs, advances, glyphCount);
+    }
 }
 
 
@@ -927,6 +935,7 @@ enum LineCoverage_t {
         if (NSIntersectsRect(lineRectInBoundsSpace, clip)) {
             const NSUInteger bytesInThisLine = MIN(bytesPerLine, byteCount - lineStartIndex);
             NSUInteger byteIndexInLine = 0;
+            CGFloat advanceIntoLine = 0;
             while (byteIndexInLine < bytesInThisLine) {
                 const NSUInteger byteIndex = lineStartIndex + byteIndexInLine;
                 HFTextVisualStyleRun *styleRun = [self styleRunForByteAtIndex:byteIndex];
@@ -945,10 +954,15 @@ enum LineCoverage_t {
                 HFASSERT(resultGlyphCount <= maxGlyphCount);
                 
                 if (resultGlyphCount > 0) {
-                    textTransform.tx += initialTextOffset;
+                    textTransform.tx += initialTextOffset + advanceIntoLine;
                     CGContextSetTextMatrix(ctx, textTransform);
-                    textTransform.tx -= initialTextOffset;
-                    [self drawGlyphs:glyphs withStyleRun:styleRun withAdvances:advances count:resultGlyphCount];
+                    textTransform.tx -= initialTextOffset + advanceIntoLine;
+                    [self drawGlyphs:glyphs withAdvances:advances withStyleRun:styleRun count:resultGlyphCount rect:lineRectInBoundsSpace];
+                    /* Add up all the advances */
+                    NSUInteger glyphIndex;
+                    for (glyphIndex = 0; glyphIndex < resultGlyphCount; glyphIndex++) {
+                        advanceIntoLine += advances[glyphIndex].width;
+                    }
                 }
                 byteIndexInLine += bytesInThisRun;
             }

@@ -53,12 +53,13 @@
 - (void)scrollByLines:(long long)linesInt {
     if (linesInt == 0) return;
     
-    long double lines = HFULToFP(linesInt);
+    //note - this properly computes the absolute value even for LLONG_MIN
+    long double lines = HFULToFP((unsigned long long)llabs(linesInt));
     
     HFController *controller = [self controller];
     HFASSERT(controller != NULL);
     HFFPRange displayedRange = [[self controller] displayedLineRange];
-    if (lines < 0) {
+    if (linesInt < 0) {
         displayedRange.location -= MIN(lines, displayedRange.location);
     }
     else {

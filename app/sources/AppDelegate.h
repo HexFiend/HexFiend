@@ -10,8 +10,11 @@
 
 
 @interface AppDelegate : NSObject {
-	IBOutlet NSMenuItem *extendForwardsItem, *extendBackwardsItem;
-	IBOutlet NSMenuItem *fontMenuItem;
+    IBOutlet NSMenuItem *extendForwardsItem, *extendBackwardsItem;
+    IBOutlet NSMenuItem *fontMenuItem;
+    IBOutlet NSMenuItem *processListMenuItem;
 }
+
+- (IBAction)openProcess:(id)sender;
 
 @end

@@ -12,6 +12,7 @@
     NSColor *foregroundColor;
     NSColor *backgroundColor;
     NSRange range;
+    BOOL shouldDraw;
 }
 
 - (NSColor *)foregroundColor;
@@ -22,5 +23,10 @@
 
 - (NSRange)range;
 - (void)setRange:(NSRange)theRange;
+
+- (BOOL)shouldDraw;
+- (void)setShouldDraw:(BOOL)val;
+
+- (void)set;
 
 @end

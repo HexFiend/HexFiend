@@ -62,9 +62,11 @@ static NSString *read_line(FILE *file) {
     if (childReceivePort != MACH_PORT_NULL) {
         void *resultData = NULL;
         mach_msg_type_number_t resultCnt;
+        
         kern_return_t kr = _GratefulFatherReadProcess(childReceivePort, process, range.location, range.length, (unsigned char **)&resultData, &resultCnt);
         if (kr != KERN_SUCCESS) {
             fprintf(stdout, "_GratefulFatherReadProcess failed with mach error: %s\n", (char*) mach_error_string(kr));
+            return NO;
         }
         memcpy(bytes, resultData, (size_t)range.length);
         kr = vm_deallocate(mach_task_self(), (vm_address_t)resultData, resultCnt);
@@ -72,6 +74,19 @@ static NSString *read_line(FILE *file) {
             fprintf(stdout, "failed to vm_deallocate(%p) for pid %d\nmach error: %s\n", resultData, process, (char*) mach_error_string(kr));
         }
     }
+    return YES;
+}
+
+- (BOOL)getAttributes:(VMRegionAttributes *)outAttributes length:(unsigned long long *)outLength offset:(unsigned long long)offset process:(pid_t)process error:(NSError **)error {
+    VMRegionAttributes atts = 0;
+    mach_vm_size_t length = 0;
+    kern_return_t kr = _GratefulFatherAttributesForAddress(childReceivePort, process, offset, &atts, &length);
+    if (kr != KERN_SUCCESS) {
+        fprintf(stdout, "_GratefulFatherAttributesForAddress failed with mach error: %s\n", (char*) mach_error_string(kr));
+        return NO;
+    }
+    if (outAttributes) *outAttributes = atts;
+    if (outLength) *outLength = length;
     return YES;
 }
 

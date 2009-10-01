@@ -87,6 +87,18 @@
     else {
         [run setForegroundColor:[NSColor blackColor]];
     }
+    if ([attributes containsObject:kHFAttributeUnmapped]) {
+        [run setShouldDraw:NO];
+    }
+    if ([attributes containsObject:kHFAttributeUnreadable]) {
+        [run setBackgroundColor:[NSColor colorWithCalibratedWhite:.5 alpha:.5]];
+    }
+    else if ([attributes containsObject:kHFAttributeWritable]) {
+        [run setBackgroundColor:[NSColor colorWithCalibratedRed:.5 green:1. blue:.5 alpha:.5]];
+    }
+    else if ([attributes containsObject:kHFAttributeExecutable]) {
+        [run setBackgroundColor:[NSColor colorWithCalibratedRed:1. green:.5 blue:0. alpha:.5]];
+    }
     return run;
 }
 
@@ -100,14 +112,12 @@
     while (remainingRange.length > 0) {
         unsigned long long attributeRunLength = 0;
         NSSet *attributes = [runs attributesAtIndex:remainingRange.location length:&attributeRunLength];
-        NSLog(@"%llu: %@", remainingRange.location, attributes);
         NSUInteger boundedRunLength = ll2l(MIN(attributeRunLength, remainingRange.length));
         [result addObject:[self styleForAttributes:attributes range:NSMakeRange(localOffset, boundedRunLength)]];
         localOffset += boundedRunLength;
         remainingRange.length = HFSubtract(remainingRange.length, boundedRunLength);
         remainingRange.location = HFSum(remainingRange.location, boundedRunLength);
     }
-    NSLog(@"STyles: %@", result);
     return result;
 }
 

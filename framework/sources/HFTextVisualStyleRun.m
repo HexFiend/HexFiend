@@ -11,12 +11,17 @@
 
 @implementation HFTextVisualStyleRun
 
+- (id)init {
+    [super init];
+    shouldDraw = YES;
+    return self;
+}
+
 - (void)dealloc {
     [foregroundColor release];
     [backgroundColor release];
     [super dealloc];
 }
-
 
 - (NSColor *)foregroundColor {
     return [[foregroundColor retain] autorelease]; 
@@ -40,12 +45,24 @@
     }
 }
 
+- (BOOL)shouldDraw {
+    return shouldDraw;
+}
+
+- (void)setShouldDraw:(BOOL)val {
+    shouldDraw = val;
+}
+
 - (NSRange)range {
     return range;
 }
 
 - (void)setRange:(NSRange)theRange {
     range = theRange;
+}
+
+- (void)set {
+    [foregroundColor set];
 }
 
 @end

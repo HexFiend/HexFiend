@@ -10,7 +10,7 @@
 
 @class HFRepresenter, HFLineCountingRepresenter, HFLayoutRepresenter, HFFindReplaceRepresenter, HFDocumentOperationView, DataInspectorRepresenter;
 
-@interface MyDocument : NSDocument {
+@interface BaseDataDocument : NSDocument {
     IBOutlet NSSplitView *containerView;
     HFController *controller;
     
