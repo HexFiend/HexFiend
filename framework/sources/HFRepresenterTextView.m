@@ -68,20 +68,25 @@ static const NSTimeInterval HFCaretBlinkFrequency = 0.56;
 
 - (NSUInteger)indexOfCharacterAtPoint:(NSPoint)point {
     NSUInteger bytesPerLine = [self bytesPerLine];
-    CGFloat advancePerColumn = [self advancePerColumn];
     CGFloat advancePerByte = [self advancePerByte];
     NSUInteger bytesPerColumn = [self bytesPerColumn];
     CGFloat floatRow = (CGFloat)floor([self verticalOffset] + point.y / [self lineHeight]);
     NSUInteger indexWithinRow;
     
-    // to compute the column, we need to solve for byteIndexIntoLine in something like this: point.x = [self advancePerByte] * byteIndexIntoLine + [self spaceBetweenColumns] * floor(byteIndexIntoLine / [self bytesPerColumn]).  Start by computing the column.
+    // to compute the column, we need to solve for byteIndexIntoLine in something like this: point.x = [self advancePerByte] * byteIndexIntoLine + [self spaceBetweenColumns] * floor(byteIndexIntoLine / [self bytesPerColumn]).  Start by computing the column (or if bytesPerColumn is 0, we don't have columns)
     CGFloat insetX = point.x - [self horizontalContainerInset];
-    CGFloat floatColumn = insetX / advancePerColumn;
-    if (floatColumn < 0) {
+    if (insetX < 0) {
         //handle the case of dragging within the container inset
         indexWithinRow = 0;
     }
+    else if (bytesPerColumn == 0) {
+        /* We don't have columns */
+        indexWithinRow = insetX / advancePerByte;
+    }
     else {
+        CGFloat advancePerColumn = [self advancePerColumn];
+        HFASSERT(advancePerColumn > 0);
+        CGFloat floatColumn = insetX / advancePerColumn;
         HFASSERT(floatColumn >= 0 && floatColumn <= NSUIntegerMax);
         CGFloat startOfColumn = advancePerColumn * HFFloor(floatColumn);
         HFASSERT(startOfColumn <= insetX);
@@ -1004,13 +1009,19 @@ enum LineCoverage_t {
 }
 
 - (CGFloat)advancePerColumn {
-    return [self advancePerByte] * [self bytesPerColumn] + [self advanceBetweenColumns];
+    NSUInteger bytesPerColumn = [self bytesPerColumn];
+    if (bytesPerColumn == 0) {
+        return 0;
+    }
+    else {
+        return [self advancePerByte] * [self bytesPerColumn] + [self advanceBetweenColumns];
+    }
 }
 
 - (CGFloat)totalAdvanceForBytesInRange:(NSRange)range {
     if (range.length == 0) return 0;
     NSUInteger bytesPerColumn = [self bytesPerColumn];
-    HFASSERT([self bytesPerLine] % bytesPerColumn == 0);
+    HFASSERT(bytesPerColumn == 0 || [self bytesPerLine] % bytesPerColumn == 0);
     CGFloat result = range.length * [self advancePerByte];
     if (bytesPerColumn > 0) {
         NSUInteger numColumnSpaces = NSMaxRange(range) / bytesPerColumn - range.location / bytesPerColumn; //note that integer division does not distribute
