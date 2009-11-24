@@ -209,6 +209,7 @@
 }
 
 - (void)setData:(NSData *)data {
+    if ([data length] == 0 && [cachedData length] == 0) return; //prevent an infinite regress where someone tries to set a nil data on us
     if (data == nil || data != cachedData) {
         [cachedData release];
         cachedData = [data copy];
@@ -234,7 +235,7 @@
 
 + (void)initialize {
     if (self == [HFTextView class]) {
-	[self exposeBinding:@"data"];
+        [self exposeBinding:@"data"];
     }
     
 }
