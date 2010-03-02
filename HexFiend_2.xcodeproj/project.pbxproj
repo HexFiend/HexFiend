@@ -75,6 +75,7 @@
 		D047E48C1022E09300EF307B /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = D047E48B1022E09300EF307B /* main.c */; };
 		D047E4CA1022E1CA00EF307B /* HexFiend.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = D01E7BB80CDC530C00943F9E /* HexFiend.framework */; };
 		D047E4CB1022E1D200EF307B /* FortunateSon in CopyFiles */ = {isa = PBXBuildFile; fileRef = D047E3151022CEFE00EF307B /* FortunateSon */; };
+		D0484271113D306F008BAD96 /* DiffEditScript.m in Sources */ = {isa = PBXBuildFile; fileRef = D0484270113D306F008BAD96 /* DiffEditScript.m */; };
 		D04A6B6B100EA47C00704963 /* SaveBanner.xib in Resources */ = {isa = PBXBuildFile; fileRef = D04A6B69100EA47C00704963 /* SaveBanner.xib */; };
 		D04A6B7A100EA4BC00704963 /* FindReplaceBanner.xib in Resources */ = {isa = PBXBuildFile; fileRef = D04A6B78100EA4BC00704963 /* FindReplaceBanner.xib */; };
 		D04A6B97100EA73800704963 /* JumpToOffsetBanner.xib in Resources */ = {isa = PBXBuildFile; fileRef = D04A6B95100EA73800704963 /* JumpToOffsetBanner.xib */; };
@@ -345,6 +346,8 @@
 		D047E33F1022CFA800EF307B /* FortunateSon.defs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.mig; name = FortunateSon.defs; path = helper_subprocess/FortunateSon.defs; sourceTree = "<group>"; };
 		D047E4431022DF6F00EF307B /* FortunateSonIPCTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FortunateSonIPCTypes.h; path = helper_subprocess/FortunateSonIPCTypes.h; sourceTree = "<group>"; };
 		D047E48B1022E09300EF307B /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = main.c; path = helper_subprocess/main.c; sourceTree = "<group>"; };
+		D048426F113D306F008BAD96 /* DiffEditScript.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DiffEditScript.h; path = app/sources/DiffEditScript.h; sourceTree = "<group>"; };
+		D0484270113D306F008BAD96 /* DiffEditScript.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DiffEditScript.m; path = app/sources/DiffEditScript.m; sourceTree = "<group>"; };
 		D04A6B6A100EA47C00704963 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/SaveBanner.xib; sourceTree = "<group>"; };
 		D04A6B79100EA4BC00704963 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/FindReplaceBanner.xib; sourceTree = "<group>"; };
 		D04A6B96100EA73800704963 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/JumpToOffsetBanner.xib; sourceTree = "<group>"; };
@@ -708,6 +711,8 @@
 				D02BD6CB10545E5600535EDE /* ProcessMemoryDocument.m */,
 				D018F151107ABAC600AE805F /* DiffDocument.h */,
 				D018F152107ABAC600AE805F /* DiffDocument.m */,
+				D048426F113D306F008BAD96 /* DiffEditScript.h */,
+				D0484270113D306F008BAD96 /* DiffEditScript.m */,
 			);
 			name = DocumentTypes;
 			sourceTree = "<group>";
@@ -1225,6 +1230,7 @@
 				D02BD6CC10545E5600535EDE /* ProcessMemoryDocument.m in Sources */,
 				D02BD6E010545E9000535EDE /* FileDataDocument.m in Sources */,
 				D018F153107ABAC600AE805F /* DiffDocument.m in Sources */,
+				D0484271113D306F008BAD96 /* DiffEditScript.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

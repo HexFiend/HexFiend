@@ -16,14 +16,29 @@
         leftBytes = [left retain];
         rightBytes = [right retain];
         [controller setByteArray:leftBytes];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(synchronizeControllers:) name:HFControllerDidChangePropertiesNotification object:controller];
     }
     return self;
 }
 
 - (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:HFControllerDidChangePropertiesNotification object:controller];
     [leftBytes release];
     [rightBytes release];
     [super dealloc];
+}
+
+- (void)synchronizeControllers:(NSNotification *)note {
+    NSNumber *propertyNumber = [[note userInfo] objectForKey:HFControllerChangedPropertiesKey];
+#if __LP64__
+    HFControllerPropertyBits propertyMask = [propertyNumber unsignedIntegerValue];
+#else
+    HFControllerPropertyBits propertyMask = [propertyNumber unsignedIntValue];
+#endif
+    if (propertyMask & HFControllerDisplayedLineRange) {
+        HFFPRange lineRange = [controller displayedLineRange];
+        
+    }
 }
 
 - (void)fixupTextView:(HFTextView *)textView {
@@ -45,9 +60,9 @@
     [layoutRepresenter removeRepresenter:scrollRepresenter];
     
     NSScroller *scroller = [scrollRepresenter view];
+    NSRect scrollerRect = [scroller frame];
     NSView *contentView = [[self window] contentView];
     NSRect contentBounds = [contentView bounds];
-    NSRect scrollerRect = [contentView bounds];
     [scroller setFrame:NSMakeRect(NSMaxX(contentBounds) - NSWidth(scrollerRect), NSMinY(contentBounds), NSWidth(scrollerRect), NSHeight(contentBounds))];
     [scroller setAutoresizingMask:NSViewHeightSizable | NSViewMinXMargin];
     [contentView addSubview:scroller];
