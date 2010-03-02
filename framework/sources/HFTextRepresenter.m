@@ -83,6 +83,7 @@
     [run setRange:range];
     if ([attributes containsObject:kHFAttributeMagic]) {
         [run setForegroundColor:[NSColor blueColor]];
+        [run setBackgroundColor:[NSColor orangeColor]];
     }
     else {
         [run setForegroundColor:[NSColor blackColor]];

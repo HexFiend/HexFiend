@@ -36,6 +36,8 @@
 		D0114CAA1006D1DF00DAF4CE /* HFByteArrayProxiedData.m in Sources */ = {isa = PBXBuildFile; fileRef = D0114CA81006D1DF00DAF4CE /* HFByteArrayProxiedData.m */; };
 		D01772F50D751DB1002E03DE /* HFDocumentOperationView.m in Sources */ = {isa = PBXBuildFile; fileRef = D01772F40D751DB1002E03DE /* HFDocumentOperationView.m */; };
 		D01773920D7A2F32002E03DE /* HFResizingView.m in Sources */ = {isa = PBXBuildFile; fileRef = D01773910D7A2F32002E03DE /* HFResizingView.m */; };
+		D018F139107AB64900AE805F /* DiffDocument.xib in Resources */ = {isa = PBXBuildFile; fileRef = D018F137107AB64900AE805F /* DiffDocument.xib */; };
+		D018F153107ABAC600AE805F /* DiffDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = D018F152107ABAC600AE805F /* DiffDocument.m */; };
 		D01930C20D5AE64E0019B3F7 /* HexFiend.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D01E7BB80CDC530C00943F9E /* HexFiend.framework */; };
 		D01930EC0D5AE7690019B3F7 /* HexFiendPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = D01930EB0D5AE7690019B3F7 /* HexFiendPlugin.m */; };
 		D01931200D5AEADA0019B3F7 /* HexFiendPluginLibrary.nib in Resources */ = {isa = PBXBuildFile; fileRef = D019311F0D5AEADA0019B3F7 /* HexFiendPluginLibrary.nib */; };
@@ -291,6 +293,9 @@
 		D01772F40D751DB1002E03DE /* HFDocumentOperationView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFDocumentOperationView.m; path = app/sources/HFDocumentOperationView.m; sourceTree = "<group>"; };
 		D01773900D7A2F32002E03DE /* HFResizingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFResizingView.h; path = app/sources/HFResizingView.h; sourceTree = "<group>"; };
 		D01773910D7A2F32002E03DE /* HFResizingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFResizingView.m; path = app/sources/HFResizingView.m; sourceTree = "<group>"; };
+		D018F138107AB64900AE805F /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/DiffDocument.xib; sourceTree = "<group>"; };
+		D018F151107ABAC600AE805F /* DiffDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DiffDocument.h; path = app/sources/DiffDocument.h; sourceTree = "<group>"; };
+		D018F152107ABAC600AE805F /* DiffDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DiffDocument.m; path = app/sources/DiffDocument.m; sourceTree = "<group>"; };
 		D019309A0D5AE3B40019B3F7 /* HexFiend.ibplugin */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HexFiend.ibplugin; sourceTree = BUILT_PRODUCTS_DIR; };
 		D019309B0D5AE3B40019B3F7 /* HexFiend_IBPlugin-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "HexFiend_IBPlugin-Info.plist"; path = "ib_plugin/HexFiend_IBPlugin-Info.plist"; sourceTree = "<group>"; };
 		D01930EA0D5AE7690019B3F7 /* HexFiendPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HexFiendPlugin.h; path = ib_plugin/sources/HexFiendPlugin.h; sourceTree = "<group>"; };
@@ -560,6 +565,7 @@
 				D04A6B95100EA73800704963 /* JumpToOffsetBanner.xib */,
 				D04A6B78100EA4BC00704963 /* FindReplaceBanner.xib */,
 				D04A6B69100EA47C00704963 /* SaveBanner.xib */,
+				D018F137107AB64900AE805F /* DiffDocument.xib */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -700,6 +706,8 @@
 				D02BD6DF10545E9000535EDE /* FileDataDocument.m */,
 				D02BD6CA10545E5600535EDE /* ProcessMemoryDocument.h */,
 				D02BD6CB10545E5600535EDE /* ProcessMemoryDocument.m */,
+				D018F151107ABAC600AE805F /* DiffDocument.h */,
+				D018F152107ABAC600AE805F /* DiffDocument.m */,
 			);
 			name = DocumentTypes;
 			sourceTree = "<group>";
@@ -1148,6 +1156,7 @@
 				D04A6B9E100EA75400704963 /* MoveSelectionByBanner.xib in Resources */,
 				D04A6BA5100EA78700704963 /* MyDocument.xib in Resources */,
 				D04A6BAB100EA7B800704963 /* MainMenu.xib in Resources */,
+				D018F139107AB64900AE805F /* DiffDocument.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1215,6 +1224,7 @@
 				D03CFA8A0FC78BCD00EE79E4 /* DataInspectorRepresenter.m in Sources */,
 				D02BD6CC10545E5600535EDE /* ProcessMemoryDocument.m in Sources */,
 				D02BD6E010545E9000535EDE /* FileDataDocument.m in Sources */,
+				D018F153107ABAC600AE805F /* DiffDocument.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1373,6 +1383,14 @@
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
 		};
+		D018F137107AB64900AE805F /* DiffDocument.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D018F138107AB64900AE805F /* English */,
+			);
+			name = DiffDocument.xib;
+			sourceTree = "<group>";
+		};
 		D04A6B69100EA47C00704963 /* SaveBanner.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -1469,6 +1487,7 @@
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_PREPROCESSOR_DEFINITIONS = "NDEBUG=1";
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.4;
@@ -1928,6 +1947,7 @@
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_PREPROCESSOR_DEFINITIONS = "NDEBUG=1";
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.4;
@@ -2035,6 +2055,7 @@
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = "HFUNIT_TESTS=1";
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.4;
@@ -2144,6 +2165,7 @@
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.4;
@@ -2255,6 +2277,7 @@
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = "HFUNIT_TESTS=1";
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.4;
@@ -2366,6 +2389,7 @@
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_PREPROCESSOR_DEFINITIONS = "HFUNIT_TESTS=1";
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.4;

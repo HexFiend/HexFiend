@@ -67,7 +67,10 @@ static NSInteger sortByLayoutPosition(id a, id b, void *self) {
 }
 
 - (NSRect)boundsRectForLayout {
-    return [[self view] bounds];
+    NSRect result = [[self view] bounds];
+    /* Sometimes when we are not yet in a window, we get wonky bounds, so be paranoid. */
+    if (result.size.width < 0 || result.size.height < 0) result = NSZeroRect;
+    return result;
 }
 
 - (CGFloat)_computeMinHeightForLayoutInfos:(NSArray *)infos {

@@ -118,7 +118,7 @@ bail:;
 - initWithByteSlice:(HFByteSlice *)val sourceRange:(HFRange)source targetRange:(HFRange)target;
 
 - (BOOL)hasRemainingTargetRange;
-- (HFByteSliceFileOperationQueueEntry *)createQueueEntryWithBuffer:(unsigned char *)buffer ofLength:(NSUInteger)length forFile:(HFFileReference *)file trackingProgress:(HFProgressTracker *)progressTracker;
+- (HFByteSliceFileOperationQueueEntry *)createQueueEntryWithBuffer:(unsigned char *)buffer ofLength:(NSUInteger)length forFile:(HFFileReference *)file trackingProgress:(HFProgressTracker *)progressTracker NS_RETURNS_RETAINED;
 - (NSUInteger)amountOfOverlapForEntry:(HFByteSliceFileOperationQueueEntry *)potentiallyOverlappingEntry;
 
 - (void)addQueueEntriesOverlappedByEntry:(HFByteSliceFileOperationQueueEntry *)overlap withContext:(HFByteSliceFileOperationContext *)context;

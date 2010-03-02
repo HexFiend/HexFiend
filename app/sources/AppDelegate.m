@@ -9,6 +9,7 @@
 #import "AppDelegate.h"
 #import "BaseDataDocument.h"
 #import "ProcessMemoryDocument.h"
+#import "DiffDocument.h"
 #include <assert.h>
 #include <errno.h>
 #include <stdbool.h>
@@ -92,6 +93,23 @@ static NSComparisonResult compareFontDisplayNames(NSFont *a, NSFont *b, void *un
     [document setFont:font];
 }
 
+/* Returns either nil, or an array of two documents that would be compared in the "Compare Front Documents" menu item. */
+- (NSArray *)documentsForDiffing {
+    id resultDocs[2];
+    NSUInteger i = 0;
+    FOREACH(NSDocument *, doc, [NSApp orderedDocuments]) {
+        if ([doc isKindOfClass:[BaseDataDocument class]] && ! [doc isKindOfClass:[DiffDocument class]]) {
+            resultDocs[i++] = doc;
+            if (i == 2) break;
+        }
+    }
+    if (i == 2) {
+        return [NSArray arrayWithObjects:resultDocs count:2];
+    }
+    else {
+        return nil;
+    }
+}
 
 - (BOOL)validateMenuItem:(NSMenuItem *)item {
     SEL sel = [item action];
@@ -104,6 +122,20 @@ static NSComparisonResult compareFontDisplayNames(NSFont *a, NSFont *b, void *un
         }
         [item setState:check];
         return document != nil;
+    }
+    else if (sel == @selector(diffFrontDocuments:)) {
+        NSArray *docs = [self documentsForDiffing];
+        if (docs) {
+            NSString *firstTitle = [[docs objectAtIndex:0] displayName];
+            NSString *secondTitle = [[docs objectAtIndex:1] displayName];
+            [item setTitle:[NSString stringWithFormat:@"Compare \u201C%@\u201D and \u201C%@\u201D", firstTitle, secondTitle]];
+            return YES;
+        }
+        else {
+            /* Zero or one document, so give it a generic title and disable it */
+            [item setTitle:@"Compare Front Documents"];
+            return NO;
+        }
     }
     return YES;
 }
@@ -253,7 +285,27 @@ static int GetBSDProcessList(struct kinfo_proc **procList, size_t *procCount)
     [doc release];
 }
 
-- (void)openProcessByProcessMenuItem:(id)sender {
+- (void)openDiffFromFile:(NSString *)leftPath toFile:(NSString *)rightPath {
+    DiffDocument *doc = [[DiffDocument alloc] init];
+    [[NSDocumentController sharedDocumentController] addDocument:doc];
+    [doc makeWindowControllers];
+    [doc showWindows];
+    [doc release];
+}
+
+- (IBAction)diffFrontDocuments:(id)sender {
+    NSArray *docs = [self documentsForDiffing];
+    if (! docs) return; //the menu item would be disabled in this case
+    HFByteArray *left = [[docs objectAtIndex:0] byteArray];
+    HFByteArray *right = [[docs objectAtIndex:1] byteArray];
+    DiffDocument *doc = [[DiffDocument alloc] initWithLeftByteArray:left rightByteArray:right];
+    [[NSDocumentController sharedDocumentController] addDocument:doc];
+    [doc makeWindowControllers];
+    [doc showWindows];
+    [doc release];
+}
+
+- (IBAction)openProcessByProcessMenuItem:(id)sender {
     USE(sender);
     pid_t pid = (long)[[sender representedObject] longValue];
     HFASSERT(pid > 0);

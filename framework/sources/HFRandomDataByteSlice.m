@@ -26,7 +26,7 @@ static inline unsigned char munge(unsigned long long val64, unsigned char random
     [super init];
     start = 0;
     length = len;    
-    randomizer = (unsigned char)random();
+    randomizer = (unsigned char)arc4random();
     return self;
 }
 
@@ -97,10 +97,7 @@ static unsigned char *kRepeatingData;
         unsigned int *ptr = (unsigned int *)kRepeatingData;
         NSUInteger i = REPEATING_DATA_LENGTH / sizeof *ptr;
         while (i--) {
-            unsigned int val = (unsigned int)random();
-            if (random() & 1) {
-                val |= (1u << 31);
-            }
+            unsigned int val = (unsigned int)arc4random();
             *ptr++ = val;
         }
     }

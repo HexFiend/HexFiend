@@ -957,12 +957,24 @@ enum LineCoverage_t {
                     textTransform.tx += initialTextOffset + advanceIntoLine;
                     CGContextSetTextMatrix(ctx, textTransform);
                     textTransform.tx -= initialTextOffset + advanceIntoLine;
-                    [self drawGlyphs:glyphs withAdvances:advances withStyleRun:styleRun count:resultGlyphCount rect:lineRectInBoundsSpace];
+                    
                     /* Add up all the advances */
                     NSUInteger glyphIndex;
+                    CGFloat totalAdvanceOfThisStyleRun = 0;
                     for (glyphIndex = 0; glyphIndex < resultGlyphCount; glyphIndex++) {
-                        advanceIntoLine += advances[glyphIndex].width;
+                        totalAdvanceOfThisStyleRun += advances[glyphIndex].width;
                     }
+                    
+                    /* Compute the rect consumed by these glyphs */
+                    NSRect glyphsRect = lineRectInBoundsSpace;
+                    glyphsRect.origin.x += initialTextOffset + advanceIntoLine;
+                    glyphsRect.size.width = totalAdvanceOfThisStyleRun;
+                    
+                    /* Draw them */
+                    [self drawGlyphs:glyphs withAdvances:advances withStyleRun:styleRun count:resultGlyphCount rect:glyphsRect];
+                    
+                    /* Record how far into our line this made us move */
+                    advanceIntoLine += totalAdvanceOfThisStyleRun;
                 }
                 byteIndexInLine += bytesInThisRun;
             }

@@ -48,7 +48,7 @@ static NSData *newDataFromByteArray(HFByteArray *array) {
     return length;
 }
 
-- (id)_getRetainedBacking {
+- (id)_copyRetainedBacking {
     id result = nil;
     @synchronized(self) {
         if (serializedData) result = [serializedData retain];
@@ -88,7 +88,7 @@ static NSData *newDataFromByteArray(HFByteArray *array) {
 }
 
 - (void)getBytes:(void *)buffer range:(NSRange)range {
-    id backing = [self _getRetainedBacking];
+    id backing = [self _copyRetainedBacking];
     if (backingIsByteArray(backing)) {
         [(HFByteArray *)backing copyBytes:buffer range:HFRangeMake(range.location, range.length)];
     }

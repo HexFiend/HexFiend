@@ -8,7 +8,7 @@
 
 #import <Cocoa/Cocoa.h>
 
-@class HFRepresenter, HFLineCountingRepresenter, HFLayoutRepresenter, HFFindReplaceRepresenter, HFDocumentOperationView, DataInspectorRepresenter;
+@class HFByteArray, HFRepresenter, HFLineCountingRepresenter, HFLayoutRepresenter, HFFindReplaceRepresenter, HFDocumentOperationView, DataInspectorRepresenter;
 
 @interface BaseDataDocument : NSDocument {
     IBOutlet NSSplitView *containerView;
@@ -58,6 +58,8 @@
 - (void)setFont:(NSFont *)font;
 - (NSFont *)font;
 
+- (NSWindow *)window;
+
 - (IBAction)showFontPanel:sender;
 - (IBAction)setAntialiasFromMenuItem:sender;
 
@@ -69,5 +71,7 @@
 
 - (IBAction)toggleOverwriteMode:sender;
 - (IBAction)modifyByteGrouping:sender;
+
+- (HFByteArray *)byteArray; //accessed during diffing
 
 @end

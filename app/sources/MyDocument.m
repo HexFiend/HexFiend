@@ -6,7 +6,7 @@
 //  Copyright 2007 ridiculous_fish. All rights reserved.
 //
 
-#import "BaseDataDocument.h"
+#import "MyDocument.h"
 #import "HFBannerDividerThumb.h"
 #import "HFDocumentOperationView.h"
 #import "DataInspectorRepresenter.h"
@@ -30,7 +30,7 @@ static inline Class preferredByteArrayClass(void) {
     return [HFBTreeByteArray class];
 }
 
-@interface BaseDataDocument (ForwardDeclarations)
+@interface MyDocument (ForwardDeclarations)
 - (NSString *)documentWindowTitleFormatString;
 @end
 
@@ -56,16 +56,16 @@ static inline Class preferredByteArrayClass(void) {
 
 #define USERDEFS_KEY_FOR_REP(r) @"RepresenterIsShown " @#r
 
-@implementation BaseDataDocument
+@implementation MyDocument
 
 + (void)initialize {
-    if (self == [BaseDataDocument class]) {
+    if (self == [MyDocument class]) {
         NSNumber *yes = [NSNumber numberWithBool:YES];
         NSDictionary *defs = [[NSDictionary alloc] initWithObjectsAndKeys:
                               yes, @"AntialiasText",
                               @"Monaco", @"DefaultFontName",
                               [NSNumber numberWithDouble:10.], @"DefaultFontSize",
-                              [NSNumber numberWithInt:4], @"BytesPerColumn",
+                              [NSNumber numberWithInteger:4], @"BytesPerColumn",
                               yes, USERDEFS_KEY_FOR_REP(lineCountingRepresenter),
                               yes, USERDEFS_KEY_FOR_REP(hexRepresenter),
                               yes, USERDEFS_KEY_FOR_REP(asciiRepresenter),
@@ -94,10 +94,6 @@ static inline Class preferredByteArrayClass(void) {
 
 - (NSArray *)representers {
     return [NSArray arrayWithObjects:lineCountingRepresenter, hexRepresenter, asciiRepresenter, scrollRepresenter, dataInspectorRepresenter, statusBarRepresenter, nil];
-}
-
-- (HFByteArray *)byteArray {
-    return [controller byteArray];
 }
 
 - (BOOL)representerIsShown:(HFRepresenter *)representer {
@@ -1360,7 +1356,7 @@ invalidString:;
     
     /* Determine which document contains this byte array so we can make a nice dialog */
     NSDocument *documentForThisByteArray = nil;
-    FOREACH(BaseDataDocument *, testDocument, allDocuments) {
+    FOREACH(MyDocument *, testDocument, allDocuments) {
         if ([testDocument->controller byteArray] == byteArray) {
             documentForThisByteArray = testDocument;
             break;
@@ -1368,8 +1364,8 @@ invalidString:;
     }
     HFASSERT(documentForThisByteArray != nil); //for now we require that saving a ByteArray is associated with a document save
     
-    FOREACH(BaseDataDocument *, document, allDocuments) {
-	if (! [document isKindOfClass:[BaseDataDocument class]]) {
+    FOREACH(MyDocument *, document, allDocuments) {
+	if (! [document isKindOfClass:[MyDocument class]]) {
 	    /* Paranoia in case other NSDocument classes slip in */
 	    continue;
 	}
