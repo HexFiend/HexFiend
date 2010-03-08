@@ -35,6 +35,7 @@
 #import <HexFiend/HFByteArray.h>
 #import <HexFiend/HFFileByteSlice.h>
 #import <HexFiend/HFFileReference.h>
+#import <HexFiend/HFByteArrayEditScript.h>
 #import <HexFiend/HFBTreeByteArray.h>
 #import <HexFiend/HFProgressTracker.h>
 #import <HexFiend/HFTextField.h>

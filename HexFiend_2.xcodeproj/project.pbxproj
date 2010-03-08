@@ -75,7 +75,6 @@
 		D047E48C1022E09300EF307B /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = D047E48B1022E09300EF307B /* main.c */; };
 		D047E4CA1022E1CA00EF307B /* HexFiend.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = D01E7BB80CDC530C00943F9E /* HexFiend.framework */; };
 		D047E4CB1022E1D200EF307B /* FortunateSon in CopyFiles */ = {isa = PBXBuildFile; fileRef = D047E3151022CEFE00EF307B /* FortunateSon */; };
-		D0484271113D306F008BAD96 /* DiffEditScript.m in Sources */ = {isa = PBXBuildFile; fileRef = D0484270113D306F008BAD96 /* DiffEditScript.m */; };
 		D04A6B6B100EA47C00704963 /* SaveBanner.xib in Resources */ = {isa = PBXBuildFile; fileRef = D04A6B69100EA47C00704963 /* SaveBanner.xib */; };
 		D04A6B7A100EA4BC00704963 /* FindReplaceBanner.xib in Resources */ = {isa = PBXBuildFile; fileRef = D04A6B78100EA4BC00704963 /* FindReplaceBanner.xib */; };
 		D04A6B97100EA73800704963 /* JumpToOffsetBanner.xib in Resources */ = {isa = PBXBuildFile; fileRef = D04A6B95100EA73800704963 /* JumpToOffsetBanner.xib */; };
@@ -131,6 +130,8 @@
 		D08F5E4F0CDE872C007EFFE8 /* HFByteArray.m in Sources */ = {isa = PBXBuildFile; fileRef = D08F5DF00CDE8223007EFFE8 /* HFByteArray.m */; };
 		D08F5E500CDE872C007EFFE8 /* HFByteSlice.m in Sources */ = {isa = PBXBuildFile; fileRef = D08F5E230CDE843E007EFFE8 /* HFByteSlice.m */; };
 		D08F5E510CDE872C007EFFE8 /* HFFullMemoryByteSlice.m in Sources */ = {isa = PBXBuildFile; fileRef = D08F5E380CDE84F4007EFFE8 /* HFFullMemoryByteSlice.m */; };
+		D0A1F30E11439DFE008BB3BA /* HFByteArrayEditScript.h in Headers */ = {isa = PBXBuildFile; fileRef = D0A1F2EB11439B9D008BB3BA /* HFByteArrayEditScript.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D0A1F31211439E3F008BB3BA /* HFByteArrayEditScript.m in Sources */ = {isa = PBXBuildFile; fileRef = D0A1F2EC11439B9D008BB3BA /* HFByteArrayEditScript.m */; };
 		D0A402F30D0D43F4006BC574 /* HFLayoutRepresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = D0A402F10D0D43F4006BC574 /* HFLayoutRepresenter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D0A402F40D0D43F4006BC574 /* HFLayoutRepresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = D0A402F20D0D43F4006BC574 /* HFLayoutRepresenter.m */; };
 		D0A435730CDC71DF000F7550 /* HFRepresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = D01E7C330CDC646800943F9E /* HFRepresenter.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -346,8 +347,6 @@
 		D047E33F1022CFA800EF307B /* FortunateSon.defs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.mig; name = FortunateSon.defs; path = helper_subprocess/FortunateSon.defs; sourceTree = "<group>"; };
 		D047E4431022DF6F00EF307B /* FortunateSonIPCTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FortunateSonIPCTypes.h; path = helper_subprocess/FortunateSonIPCTypes.h; sourceTree = "<group>"; };
 		D047E48B1022E09300EF307B /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = main.c; path = helper_subprocess/main.c; sourceTree = "<group>"; };
-		D048426F113D306F008BAD96 /* DiffEditScript.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DiffEditScript.h; path = app/sources/DiffEditScript.h; sourceTree = "<group>"; };
-		D0484270113D306F008BAD96 /* DiffEditScript.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DiffEditScript.m; path = app/sources/DiffEditScript.m; sourceTree = "<group>"; };
 		D04A6B6A100EA47C00704963 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/SaveBanner.xib; sourceTree = "<group>"; };
 		D04A6B79100EA4BC00704963 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/FindReplaceBanner.xib; sourceTree = "<group>"; };
 		D04A6B96100EA73800704963 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/JumpToOffsetBanner.xib; sourceTree = "<group>"; };
@@ -402,6 +401,8 @@
 		D08F5E230CDE843E007EFFE8 /* HFByteSlice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFByteSlice.m; path = framework/sources/HFByteSlice.m; sourceTree = "<group>"; };
 		D08F5E370CDE84F4007EFFE8 /* HFFullMemoryByteSlice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFFullMemoryByteSlice.h; path = framework/sources/HFFullMemoryByteSlice.h; sourceTree = "<group>"; };
 		D08F5E380CDE84F4007EFFE8 /* HFFullMemoryByteSlice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFFullMemoryByteSlice.m; path = framework/sources/HFFullMemoryByteSlice.m; sourceTree = "<group>"; };
+		D0A1F2EB11439B9D008BB3BA /* HFByteArrayEditScript.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFByteArrayEditScript.h; path = framework/sources/HFByteArrayEditScript.h; sourceTree = "<group>"; };
+		D0A1F2EC11439B9D008BB3BA /* HFByteArrayEditScript.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFByteArrayEditScript.m; path = framework/sources/HFByteArrayEditScript.m; sourceTree = "<group>"; };
 		D0A402F10D0D43F4006BC574 /* HFLayoutRepresenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFLayoutRepresenter.h; path = framework/sources/HFLayoutRepresenter.h; sourceTree = "<group>"; };
 		D0A402F20D0D43F4006BC574 /* HFLayoutRepresenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFLayoutRepresenter.m; path = framework/sources/HFLayoutRepresenter.m; sourceTree = "<group>"; };
 		D0A4360B0CDC7B65000F7550 /* HFRepresenter_Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFRepresenter_Internal.h; path = framework/sources/HFRepresenter_Internal.h; sourceTree = "<group>"; };
@@ -711,8 +712,6 @@
 				D02BD6CB10545E5600535EDE /* ProcessMemoryDocument.m */,
 				D018F151107ABAC600AE805F /* DiffDocument.h */,
 				D018F152107ABAC600AE805F /* DiffDocument.m */,
-				D048426F113D306F008BAD96 /* DiffEditScript.h */,
-				D0484270113D306F008BAD96 /* DiffEditScript.m */,
 			);
 			name = DocumentTypes;
 			sourceTree = "<group>";
@@ -881,6 +880,8 @@
 				D06D61ED0FA7FA7C002376EE /* HFBTreeByteArray.m */,
 				D0114CA71006D1DF00DAF4CE /* HFByteArrayProxiedData.h */,
 				D0114CA81006D1DF00DAF4CE /* HFByteArrayProxiedData.m */,
+				D0A1F2EB11439B9D008BB3BA /* HFByteArrayEditScript.h */,
+				D0A1F2EC11439B9D008BB3BA /* HFByteArrayEditScript.m */,
 				D06D5FE70FA699B8002376EE /* BTree */,
 			);
 			name = ByteArray;
@@ -936,6 +937,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D0A1F30E11439DFE008BB3BA /* HFByteArrayEditScript.h in Headers */,
 				D082ABD40CDEB40F00554EB7 /* HFFullMemoryByteArray.h in Headers */,
 				D082ABCF0CDEB3F800554EB7 /* HFRepresenter_Internal.h in Headers */,
 				D0D828E60CDE89E800C2AB82 /* HFFullMemoryByteSlice.h in Headers */,
@@ -1230,7 +1232,6 @@
 				D02BD6CC10545E5600535EDE /* ProcessMemoryDocument.m in Sources */,
 				D02BD6E010545E9000535EDE /* FileDataDocument.m in Sources */,
 				D018F153107ABAC600AE805F /* DiffDocument.m in Sources */,
-				D0484271113D306F008BAD96 /* DiffEditScript.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1287,6 +1288,7 @@
 				D0422FE00D62599300F8FCDE /* HFProgressTracker.m in Sources */,
 				D0370A400D68307A00B3A8C6 /* HFSharedMemoryByteSlice.m in Sources */,
 				D019B8C00D83E8D5005789AA /* HFByteArray_FileWriting.m in Sources */,
+				D0A1F31211439E3F008BB3BA /* HFByteArrayEditScript.m in Sources */,
 				D019B9020D83FEB3005789AA /* HFByteSliceFileOperation.m in Sources */,
 				D019B9560D840FE8005789AA /* HFObjectGraph.m in Sources */,
 				D0D149320D8A37580018296B /* HFTestHashing.m in Sources */,

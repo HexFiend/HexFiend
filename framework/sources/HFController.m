@@ -21,6 +21,7 @@
 #import <HexFiend/HFFileByteSlice.h>
 #import <HexFiend/HFTestHashing.h>
 #import <HexFiend/HFRandomDataByteSlice.h>
+#import <HexFiend/HFByteArrayEditScript.h>
 #include <sys/stat.h>
 #endif
 
@@ -2111,6 +2112,110 @@ static NSUInteger random_upto(unsigned long long val) {
     DEBUG printf("%s\n", [[second description] UTF8String]);
 }
 
+static HFByteArray *byteArrayForFile(NSString *path) {
+    HFFileReference *ref = [[[HFFileReference alloc] initWithPath:path] autorelease];
+    HFFileByteSlice *slice = [[[HFFileByteSlice alloc] initWithFile:ref] autorelease];
+    HFByteArray *array = [[[HFBTreeByteArray alloc] init] autorelease];
+    [array insertByteSlice:slice inRange:HFRangeMake(0, 0)];
+    return array;
+}
+
++ (void)_testByteArrayEditScripts {
+    NSString *leftPath = @"/Users/peter/Desktop/diff/dif_orig.bin";
+    NSString *rightPath = @"/Users/peter/Desktop/diff/dif.bin";
+    leftPath = @"/Users/peter/Desktop/left.data";
+    rightPath = @"/Users/peter/Desktop/right.data";
+    HFByteArray *left = byteArrayForFile(leftPath);
+    HFByteArray *right = byteArrayForFile(rightPath);
+    HFByteArrayEditScript *script = [HFByteArrayEditScript scriptWithDifferenceFromSource:left toDestination:right];
+    HFByteArray *guineaPig = [left mutableCopy];
+    [script applyToByteArray:guineaPig];
+    if ([right _debugIsEqual:guineaPig]) {
+         printf("Edit script success with length %llu\n", [right length]);
+    }
+    else {
+         printf("Error! Edit script failure with length %llu\n", [right length]);
+        exit(EXIT_FAILURE);
+    }            
+    
+    [guineaPig release];
+}
+
++ (void)_testByteArrayEditScripts2 {
+    const BOOL should_debug = NO;
+    NSMutableArray *byteArrays = [NSMutableArray array];
+    NSUInteger i, arrayCount = 16;
+    
+    HFByteArray *base = [[HFBTreeByteArray alloc] init];
+    [byteArrays addObject:base];
+    [base release];
+    NSData *data = randomDataOfLength(1000);
+    HFByteSlice *slice = [[HFFullMemoryByteSlice alloc] initWithData:data];
+    [base insertByteSlice:slice inRange:HFRangeMake(0, 0)];
+    [slice release];
+    unsigned long long baseLength = [base length];
+    
+    for (i=1; i < arrayCount; i++) {
+        NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
+        HFByteArray *modified = [base mutableCopy];
+        unsigned long long length = baseLength;
+        
+        NSUInteger j, opCount = 8;
+        for (j=0; j < opCount; j++) {
+            unsigned long long offset;
+            unsigned long long number;
+            NSUInteger op;
+            switch ((op = (random()%2))) {
+                case 0: { //insert
+                    NSData *data = randomDataOfLength(1 + random()%100);
+                    offset = random() % (1 + length);
+                    HFByteSlice* slice = [[HFFullMemoryByteSlice alloc] initWithData:data];
+                    DEBUG printf("%u)\tInserting %llu bytes at %llu...", i, [slice length], offset);
+                    [modified insertByteSlice:slice inRange:HFRangeMake(offset, 0)];
+                    [slice release];
+                    length += [data length];
+                    break;
+                }
+                case 1: { //delete
+                    if (length > 0) {
+                        offset = random() % length;
+                        number = 1 + random() % (length - offset);
+                        DEBUG printf("%u)\tDeleting at %llu for %llu...", i, offset, number);
+                        [modified deleteBytesInRange:HFRangeMake(offset, number)];
+                        length -= number;
+                    }
+                    else DEBUG printf("%u)\tLength of zero, no delete...", i);
+                    break;
+                }
+            }
+        }
+        
+        [byteArrays addObject:modified];
+        [modified release];
+        
+        [pool drain];        
+    }
+    
+    for (i=0; i < arrayCount; i++) {
+        HFByteArray *src = [byteArrays objectAtIndex:i];
+        NSUInteger j;
+        for (j=0; j < arrayCount; j++) {
+            HFByteArray *dst = [byteArrays objectAtIndex:j];
+            HFByteArrayEditScript *script = [HFByteArrayEditScript scriptWithDifferenceFromSource:src toDestination:dst];
+            HFByteArray *guineaPig = [src mutableCopy];
+            [script applyToByteArray:guineaPig];
+            if ([dst _debugIsEqual:guineaPig]) {
+                DEBUG printf("Edit script success with length %llu\n", [dst length]);
+            }
+            else {
+                DEBUG printf("Error! Edit script failure with length %llu\n", [dst length]);
+                exit(EXIT_FAILURE);
+            }            
+        }
+    }
+}
+
+
 + (void)_testRandomOperationFileWriting {
     const BOOL should_debug = NO;
     NSAutoreleasePool* pool=[[NSAutoreleasePool alloc] init];
@@ -2333,13 +2438,15 @@ static void exception_thrown(const char *methodName, NSException *exception) {
 
 + (void)_runAllTests {
     CFAbsoluteTime start = CFAbsoluteTimeGetCurrent();
-    BOOL enableTest = YES;
+    BOOL enableTest = NO;
     if (enableTest) @try { [self _testFastMemchr]; }
     @catch (NSException *localException) { exception_thrown("_testFastMemchr", localException); }
     if (enableTest) @try { [self _testRangeFunctions]; }
     @catch (NSException *localException) { exception_thrown("_testRangeFunctions", localException); }
     if (enableTest) @try { [self _testByteArray]; }
     @catch (NSException *localException) { exception_thrown("_testByteArray", localException); }
+    if (1) @try { [self _testByteArrayEditScripts]; }
+    @catch (NSException *localException) { exception_thrown("_testByteArrayEditScripts", localException); }
     if (enableTest) @try { [self _testTextInsertion]; }
     @catch (NSException *localException) { exception_thrown("_testTextInsertion", localException); }
     if (enableTest) @try { [NSClassFromString(@"HFObjectGraph") self]; }

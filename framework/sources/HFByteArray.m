@@ -165,6 +165,12 @@
     return YES;
 }
 
+- (NSData *)_debugData {
+    NSMutableData *data = [NSMutableData dataWithLength:(NSUInteger)[self length]];
+    [self copyBytes:[data bytes] range:HFRangeMake(0, [self length])];
+    return data;
+}
+
 - (HFByteRangeAttributeArray *)attributesForBytesInRange:(HFRange)range {
     HFByteRangeAttributeArray *result = [[[HFByteRangeAttributeArray alloc] init] autorelease];
     HFASSERT(range.length < NSUIntegerMax);

@@ -17,6 +17,8 @@
         rightBytes = [right retain];
         [controller setByteArray:leftBytes];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(synchronizeControllers:) name:HFControllerDidChangePropertiesNotification object:controller];
+        
+        HFByteArrayEditScript *script = [HFByteArrayEditScript scriptWithDifferenceFromSource:left toDestination:right];
     }
     return self;
 }
