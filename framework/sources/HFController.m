@@ -2120,28 +2120,24 @@ static HFByteArray *byteArrayForFile(NSString *path) {
     return array;
 }
 
-+ (void)_testByteArrayEditScripts {
-    NSString *leftPath = @"/Users/peter/Desktop/diff/dif_orig.bin";
-    NSString *rightPath = @"/Users/peter/Desktop/diff/dif.bin";
-    leftPath = @"/Users/peter/Desktop/left.data";
-    rightPath = @"/Users/peter/Desktop/right.data";
-    HFByteArray *left = byteArrayForFile(leftPath);
-    HFByteArray *right = byteArrayForFile(rightPath);
-    HFByteArrayEditScript *script = [HFByteArrayEditScript scriptWithDifferenceFromSource:left toDestination:right];
-    HFByteArray *guineaPig = [left mutableCopy];
++ (void)_testByteArrayEditScripts1 {
+    NSString *leftPath = @"/Users/peter/Desktop/left.data", *rightPath = @"/Users/peter/Desktop/right.data";
+    HFByteArray *src = byteArrayForFile(leftPath), *dst = byteArrayForFile(rightPath);
+    HFByteArrayEditScript *script = [HFByteArrayEditScript scriptWithDifferenceFromSource:src toDestination:dst];
+    HFByteArray *guineaPig = [src mutableCopy];
     [script applyToByteArray:guineaPig];
-    if ([right _debugIsEqual:guineaPig]) {
-         printf("Edit script success with length %llu\n", [right length]);
+    if ([dst _debugIsEqual:guineaPig]) {
+        printf("Edit script success with length %llu\n", [dst length]);
+        exit(0);
     }
     else {
-         printf("Error! Edit script failure with length %llu\n", [right length]);
+        printf("Error! Edit script failure with length %llu\n", [dst length]);
         exit(EXIT_FAILURE);
     }            
-    
     [guineaPig release];
 }
 
-+ (void)_testByteArrayEditScripts2 {
++ (void)_testByteArrayEditScripts {
     const BOOL should_debug = NO;
     NSMutableArray *byteArrays = [NSMutableArray array];
     NSUInteger i, arrayCount = 16;

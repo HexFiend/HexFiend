@@ -47,7 +47,7 @@ static void free_paths(struct DPath_t *path) {
 #define READ_AMOUNT 1024
 #define CACHE_AMOUNT (2 * READ_AMOUNT)
 
-static const unsigned char *getCachedBytes(HFByteArray *array, unsigned long arrayLen, HFRange range, NSMutableData *data, HFRange *cacheRange) {
+static inline const unsigned char *getCachedBytes(HFByteArray *array, unsigned long arrayLen, HFRange range, NSMutableData *data, HFRange *cacheRange) {
     HFASSERT(range.length <= READ_AMOUNT);
     HFRange newCacheRange = *cacheRange;
     if (! HFRangeIsSubrangeOfRange(range, *cacheRange)) {
@@ -77,26 +77,6 @@ static unsigned long compute_forwards_snake_length(HFByteArrayEditScript *self, 
     return alreadyRead;
 }
 
-static unsigned long compute_backwards_snake_length(HFByteArray *a, unsigned long a_offset, HFByteArray *b, unsigned long b_offset) {
-    NSCParameterAssert(a_offset <= [a length]);
-    NSCParameterAssert(b_offset <= [b length]);
-    unsigned long i, alreadyRead = 0, remainingToRead = MIN(a_offset, b_offset);
-    while (remainingToRead > 0) {
-        unsigned char a_buff[READ_AMOUNT], b_buff[READ_AMOUNT];
-        unsigned long amountToRead = MIN(READ_AMOUNT, remainingToRead);
-        [a copyBytes:a_buff range:HFRangeMake(a_offset - alreadyRead - amountToRead, amountToRead)];
-        [b copyBytes:b_buff range:HFRangeMake(b_offset - alreadyRead - amountToRead, amountToRead)];
-        i = amountToRead;
-        while (i > 0 && a_buff[i-1] == b_buff[i-1]) {
-            i--;
-        }
-        remainingToRead -= amountToRead - i;
-        alreadyRead += amountToRead - i;
-        if (i != 0) break; //found some non-matching byte
-    }
-    return alreadyRead;
-}
-
 static BOOL can_compute_diff(unsigned long long a_len, unsigned long long b_len) {
     BOOL result = NO;
     // we require (2 * max + 1) * sizeof(long) < LONG_MAX
@@ -108,7 +88,7 @@ static BOOL can_compute_diff(unsigned long long a_len, unsigned long long b_len)
     return result;
 }
 
-- (long)computeGraph:(struct DPath_t **)outPaths {
+- (size_t)computeGraph:(struct DPath_t **)outPaths {
     HFByteArray * const a = source, * const b = destination;
     if (! can_compute_diff([a length], [b length])) {
         [NSException raise:NSInvalidArgumentException format:@"Cannot compute diff between %@ and %@: it would require too much memory!", a, b];
@@ -119,6 +99,7 @@ static BOOL can_compute_diff(unsigned long long a_len, unsigned long long b_len)
     long * const array_base = malloc((2 * max + 1) * sizeof *array_base);
     long * const V = array_base + max;
     int finished = 0;
+    size_t numInsns = 0;
     
     struct DPath_t *path_list = NULL;
     
@@ -147,6 +128,7 @@ static BOOL can_compute_diff(unsigned long long a_len, unsigned long long b_len)
             struct DPath_t *next_path = new_path(V, D);
             next_path->next = path_list;
             path_list = next_path;
+            numInsns++;
         }
     }
 DONE:
@@ -154,70 +136,64 @@ DONE:
     if (outPaths) {
         *outPaths = path_list;
     }
-    printf("Done!\n");
-    return D;
+    numInsns -= 1; //ignore the first "fake" instruction
+    return numInsns;
 }
 
-- (void)generateInstructions:(const struct DPath_t *)pathsHead count:(long)instructionMaxCount diagonal:(long)diagonal {
+- (void)generateInstructions:(const struct DPath_t *)pathsHead count:(size_t)numInsns diagonal:(long)diagonal {
     if (pathsHead == NULL || pathsHead->D == 0) return;
-    insns = NSAllocateCollectable(instructionMaxCount * sizeof *insns, 0); //not scanned, not collectable
-    size_t insnIndex = 0;
+    insnCount = numInsns;
+    insns = NSAllocateCollectable(insnCount * sizeof *insns, 0); //not scanned, not collectable
     const struct DPath_t *paths = pathsHead;
-    while (paths) {
-        assert((diagonal >= -paths->D) && (diagonal <= paths->D));
-        long X = paths->V[diagonal];
-        long Y = X - diagonal;
-        
+    size_t insnTop = insnCount;
+    long currentDiagonal = diagonal;
+    while (paths->next) {
+        assert((currentDiagonal >= -paths->D) && (currentDiagonal <= paths->D));
+        long X = paths->V[currentDiagonal];
+        long Y = X - currentDiagonal;
+
         assert(X >= 0);
         assert(Y >= 0);
-        /* Follow the "snake" backwards as far as we can */
-        unsigned long snakeLength = compute_backwards_snake_length(source, X, destination, Y);
-        X -= snakeLength;
-        Y -= snakeLength;
+
+        /* We are either the result of a horizontal movement followed by a snake, or a vertical movement followed by a snake (or possibly both).  To figure out which, look at the X coordinate of the end of the farthest reaching path in the diagonal above us and below us, and pick the larger; this is because if the smaller is also just one away from the snake, the larger must be too. */
         
-        if (X == 0 && Y == 0) {
-            /* We are done */
-            break;
-        }
+        const struct DPath_t * const next = paths->next;
+        long xCoordForVertical = (currentDiagonal + 1 <= next->D ? next->V[currentDiagonal + 1] : -2);
+        long xCoordForHorizontal = (currentDiagonal - 1 >= - next->D ? next->V[currentDiagonal - 1] : -2);
         
-        /* Determine if we are the result of a vertical movement or a horizontal movement */
-        const struct DPath_t *next = paths->next;
-        long xCoordForVertical = (diagonal + 1 <= next->D ? next->V[diagonal + 1] : -2);
-        long xCoordForHorizontal = (diagonal - 1 >= - next->D ? next->V[diagonal - 1] : -2);
-        
-        if (xCoordForVertical == X) {
+        assert(xCoordForVertical >= 0 || xCoordForHorizontal >= 0);
+        BOOL wasVertical = (xCoordForVertical > xCoordForHorizontal);
+        if (wasVertical) {
             /* It was vertical */
-            diagonal += 1;
-            insns[insnIndex++] = (struct HFEditInstruction_t){.range = HFRangeMake(Y - 1, 1), .offsetInDestinationForInsertion = Y - 1, .isInsertion = YES};
-            printf("Insert 1 at offset %lu\n", Y - 1);
+            currentDiagonal += 1;
+            X = xCoordForVertical;
+            Y = X - currentDiagonal;
+            insns[--insnTop] = (struct HFEditInstruction_t){.range = HFRangeMake(X, 1), .offsetInDestinationForInsertion = Y, .isInsertion = YES};
+
         }
         else {
             /* It was horizontal */
-            diagonal -= 1;
-            insns[insnIndex++] = (struct HFEditInstruction_t){.range = HFRangeMake(X - 1, 1), .offsetInDestinationForInsertion = -1, .isInsertion = NO};
-            printf("Delete 1 from offset %lu\n", X - 1);
+            X = xCoordForHorizontal;
+            Y = X - currentDiagonal;
+                       
+            currentDiagonal -= 1;
+            insns[--insnTop] = (struct HFEditInstruction_t){.range = HFRangeMake(X, 1), .offsetInDestinationForInsertion = -1, .isInsertion = NO};
         }
-        paths = paths->next;
+        paths = next;
     }
-    insnCount = insnIndex;
-}
-
-static int compare_instructions(const void *ap, const void *bp) {
-    const struct HFEditInstruction_t *a = ap, *b = bp;
-    if (a->range.location != b->range.location) {
-        /* Sort lower locations to the front */
-        return (a->range.location > b->range.location) - (b->range.location > a->range.location);
-    }
-    else {
-        /* If the locations are equal, sort insertions first */
-        return b->isInsertion - a->isInsertion;
-    }
+    assert(insnTop == 0);
 }
 
 static BOOL merge_instruction(struct HFEditInstruction_t *left, const struct HFEditInstruction_t *right) {
-    if (left->isInsertion == right->isInsertion && HFMaxRange(left->range) == right->range.location) {
+    if (! left->isInsertion && ! right->isInsertion && HFMaxRange(left->range) == right->range.location) {
+        /* Merge abutting deletions */
         left->range.length += right->range.length;
-        return YES;    
+        return YES;
+    }
+    else if (left->isInsertion && right->isInsertion && left->range.location == right->range.location && left->offsetInDestinationForInsertion + left->range.length == right->offsetInDestinationForInsertion) {
+        /* Merge insertions at the same location from abutting ranges */
+        left->range.length += right->range.length;
+        return YES;
     }
     else {
         /* Not mergeable */
@@ -264,14 +240,13 @@ static BOOL merge_instruction(struct HFEditInstruction_t *left, const struct HFE
 
 - (void)computeDifference {
     struct DPath_t *paths;
-    long D = [self computeGraph:&paths];
-    [self generateInstructions:paths count:D diagonal:(long)[source length] - (long)[destination length]];
+    size_t numIsns = [self computeGraph:&paths];
+    [self generateInstructions:paths count:numIsns diagonal:(long)[source length] - (long)[destination length]];
     free_paths(paths);
-    mergesort(insns, insnCount, sizeof *insns, compare_instructions); //sort the instructions in ascending order
     [self mergeInstructions];
-    [self _dumpDebug];
+//    [self _dumpDebug];
     [self convertInstructionsToIncrementalForm];
-    [self _dumpDebug];
+//    [self _dumpDebug];
 }
 
 - (id)initWithDifferenceFromSource:(HFByteArray *)src toDestination:(HFByteArray *)dst {
@@ -280,7 +255,6 @@ static BOOL merge_instruction(struct HFEditInstruction_t *left, const struct HFE
     destination = [dst retain];
     sourceCache = [[NSMutableData alloc] initWithLength:CACHE_AMOUNT];
     destCache = [[NSMutableData alloc] initWithLength:CACHE_AMOUNT];
-    NSLog(@"Initializing with %llu + %llu = %llu", [src length], [dst length], [src length] + [dst length]);
     [self computeDifference];
     return self;
 }
@@ -305,12 +279,10 @@ static BOOL merge_instruction(struct HFEditInstruction_t *left, const struct HFE
         if (isn->isInsertion) {
             HFByteArray *sub = [destination subarrayWithRange:HFRangeMake(isn->offsetInDestinationForInsertion, isn->range.length)];
             [target insertByteArray:sub inRange:HFRangeMake(isn->range.location, 0)];
-            NSLog(@"Insert %llu at %llu (from %llu)", isn->range.length, isn->range.location, isn->offsetInDestinationForInsertion);
         }
         else {
             /* Deletion */
             [target deleteBytesInRange:isn->range];
-            NSLog(@"Delete %llu from %llu", isn->range.length, isn->range.location);
         }
     }
 }
