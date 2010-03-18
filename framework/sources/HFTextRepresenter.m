@@ -100,6 +100,9 @@
     else if ([attributes containsObject:kHFAttributeExecutable]) {
         [run setBackgroundColor:[NSColor colorWithCalibratedRed:1. green:.5 blue:0. alpha:.5]];
     }
+    if ([attributes containsObject:kHFAttributeDiffInsertion]) {
+        [run setBackgroundColor:[NSColor colorWithCalibratedRed:(CGFloat)179./255 green:(CGFloat).847/255 blue:1. alpha:1.]];
+    }
     return run;
 }
 
@@ -165,7 +168,7 @@
     if (bits & (HFControllerFont | HFControllerLineHeight)) {
         [[self view] setFont:[[self controller] font]];
     }
-    if (bits & (HFControllerContentValue | HFControllerDisplayedLineRange)) {
+    if (bits & (HFControllerContentValue | HFControllerDisplayedLineRange | HFControllerByteRangeAttributes)) {
         [self updateText];
     }
     if (bits & (HFControllerSelectedRanges | HFControllerDisplayedLineRange)) {

@@ -8,6 +8,7 @@
 
 #import <HexFiend/HFByteArrayEditScript.h>
 #import <HexFiend/HFByteArray.h>
+#include <malloc/malloc.h>
 
 @implementation HFByteArrayEditScript
 
@@ -17,13 +18,6 @@ struct DPath_t {
     long *V;
     long array_base[];
 };
-
-struct HFEditInstruction_t {
-    HFRange range;
-    unsigned long long offsetInDestinationForInsertion;
-    BOOL isInsertion;
-};
-
 
 static struct DPath_t *new_path(const long *V, long D) {
     // valid indexes in V are from -D to D, so we need to allocate 2*D + 1
@@ -73,6 +67,26 @@ static unsigned long compute_forwards_snake_length(HFByteArrayEditScript *self, 
         alreadyRead += i;
         remainingToRead -= i;
         if (i < amountToRead) break;
+    }
+    return alreadyRead;
+}
+
+static unsigned long compute_backwards_snake_length(HFByteArray *a, unsigned long a_offset, HFByteArray *b, unsigned long b_offset) {
+    NSCParameterAssert(a_offset <= [a length]);
+    NSCParameterAssert(b_offset <= [b length]);
+    unsigned long i, alreadyRead = 0, remainingToRead = MIN(a_offset, b_offset);
+    while (remainingToRead > 0) {
+        unsigned char a_buff[READ_AMOUNT], b_buff[READ_AMOUNT];
+        unsigned long amountToRead = MIN(READ_AMOUNT, remainingToRead);
+        [a copyBytes:a_buff range:HFRangeMake(a_offset - alreadyRead - amountToRead, amountToRead)];
+        [b copyBytes:b_buff range:HFRangeMake(b_offset - alreadyRead - amountToRead, amountToRead)];
+        i = amountToRead;
+        while (i > 0 && a_buff[i-1] == b_buff[i-1]) {
+            i--;
+        }
+        remainingToRead -= amountToRead - i;
+        alreadyRead += amountToRead - i;
+        if (i != 0) break; //found some non-matching byte
     }
     return alreadyRead;
 }
@@ -137,6 +151,7 @@ DONE:
         *outPaths = path_list;
     }
     numInsns -= 1; //ignore the first "fake" instruction
+    printf("******** D: %lu\n", D);
     return numInsns;
 }
 
@@ -210,8 +225,11 @@ static BOOL merge_instruction(struct HFEditInstruction_t *left, const struct HFE
             insns[trailing] = insns[leading];
         }
     }
+    printf("Merge: %lu -> %lu\n", insnCount, trailing + 1);
     insnCount = trailing + 1;
+    printf("Before: %lu\n", malloc_size(insns));
     insns = NSReallocateCollectable(insns, insnCount * sizeof *insns, 0);
+    printf("After: %lu (could be as small as %lu)\n", malloc_size(insns), insnCount * sizeof *insns);
 }
 
 - (void)convertInstructionsToIncrementalForm {
@@ -239,13 +257,14 @@ static BOOL merge_instruction(struct HFEditInstruction_t *left, const struct HFE
 }
 
 - (void)computeDifference {
+    printf("Computing %llu + %llu = %llu\n", [source length], [destination length], [source length] + [destination length]);
     struct DPath_t *paths;
     size_t numIsns = [self computeGraph:&paths];
     [self generateInstructions:paths count:numIsns diagonal:(long)[source length] - (long)[destination length]];
     free_paths(paths);
     [self mergeInstructions];
 //    [self _dumpDebug];
-    [self convertInstructionsToIncrementalForm];
+//    [self convertInstructionsToIncrementalForm];
 //    [self _dumpDebug];
 }
 
@@ -268,23 +287,33 @@ static BOOL merge_instruction(struct HFEditInstruction_t *left, const struct HFE
     [super dealloc];
 }
 
-+ (id)scriptWithDifferenceFromSource:(HFByteArray *)src toDestination:(HFByteArray *)dst {
-    return [[[self alloc] initWithDifferenceFromSource:src toDestination:dst] autorelease];
-}
-
 - (void)applyToByteArray:(HFByteArray *)target {
     size_t i;
+    long long accumulatedLengthChange = 0;
     for (i=0; i < insnCount; i++) {
         const struct HFEditInstruction_t *isn = insns + i;
         if (isn->isInsertion) {
             HFByteArray *sub = [destination subarrayWithRange:HFRangeMake(isn->offsetInDestinationForInsertion, isn->range.length)];
-            [target insertByteArray:sub inRange:HFRangeMake(isn->range.location, 0)];
+            [target insertByteArray:sub inRange:HFRangeMake(isn->range.location + accumulatedLengthChange, 0)];
+            accumulatedLengthChange += isn->range.length;
         }
         else {
             /* Deletion */
-            [target deleteBytesInRange:isn->range];
+            HFRange deletionRange = isn->range;
+            deletionRange.location += accumulatedLengthChange;
+            [target deleteBytesInRange:deletionRange];
+            accumulatedLengthChange -= isn->range.length;
         }
     }
+}
+
+- (NSUInteger)numberOfInstructions {
+    return insnCount;
+}
+
+- (struct HFEditInstruction_t)instructionAtIndex:(NSUInteger)index {
+    HFASSERT(index < insnCount);
+    return insns[index];
 }
 
 @end

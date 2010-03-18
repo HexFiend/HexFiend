@@ -41,6 +41,8 @@
 #import <HexFiend/HFTextField.h>
 #import <HexFiend/HFTextView.h>
 #import <HexFiend/HFSharedMemoryByteSlice.h>
+#import <HexFiend/HFByteRangeAttribute.h>
+#import <HexFiend/HFByteRangeAttributeArray.h>
 
 
 /* The following is all for Doxygen */

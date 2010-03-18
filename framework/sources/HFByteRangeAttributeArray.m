@@ -8,6 +8,8 @@
 
 #import "HFByteRangeAttributeArray.h"
 
+/* This is a very naive class and it should use a better data structure than an array. */
+
 @interface HFByteRangeAttributeRun : NSObject {
 @public
     NSString *name;
@@ -57,11 +59,62 @@
     [super dealloc];
 }
 
+- (id)mutableCopyWithZone:(NSZone *)zone {
+    HFByteRangeAttributeArray *result = [[[self class] allocWithZone:zone] init];
+    [result->attributeRuns addObjectsFromArray:attributeRuns];
+    return result;
+}
+
+- (BOOL)isEmpty {
+    return [attributeRuns count] == 0;
+}
+
 - (void)addAttribute:(NSString *)attributeName range:(HFRange)range {
     HFASSERT(attributeName != nil);
     HFByteRangeAttributeRun *run = [[HFByteRangeAttributeRun alloc] initWithName:attributeName range:range];
     [attributeRuns addObject:run];
     [run release];
+}
+
+-  (void)removeAttribute:(NSString *)attributeName range:(HFRange)range {
+    HFASSERT(attributeName != nil);
+    NSMutableIndexSet *indexesToRemove = [[NSMutableIndexSet alloc] init];
+    NSUInteger index = 0, max = [attributeRuns count];
+    for (index = 0; index < max; index++) {
+        HFByteRangeAttributeRun *run = [attributeRuns objectAtIndex:index];
+        if ([attributeName isEqualToString:run->name] && HFIntersectsRange(range, run->range)) {
+            HFRange leftRemainder = {0, 0}, rightRemainder = {0, 0};
+            if (run->range.location < range.location) {
+                leftRemainder = HFRangeMake(run->range.location, range.location - run->range.location);
+            }
+            if (HFRangeExtendsPastRange(run->range, range)) {
+                rightRemainder.location = HFMaxRange(range);
+                rightRemainder.length = HFMaxRange(run->range) - rightRemainder.location;
+            }
+            if (leftRemainder.length || rightRemainder.length) {
+                /* Replacing existing run with remainder */
+                run = [[HFByteRangeAttributeRun alloc] initWithName:attributeName range:(leftRemainder.length ? leftRemainder : rightRemainder)];
+                [attributeRuns replaceObjectAtIndex:index withObject:run];
+                [run release];
+            }
+            if (leftRemainder.length && rightRemainder.length) {
+                /* We have two to insert.  The second must be the right remainder, because we inserted the left up above. */
+                index += 1;
+                max += 1;
+                run = [[HFByteRangeAttributeRun alloc] initWithName:attributeName range:rightRemainder];
+                [attributeRuns insertObject:run atIndex:index];
+                [run release];                
+            }
+            if (! leftRemainder.length && ! rightRemainder.length) {
+                /* We don't have any remainder.  Just delete it. */
+                [attributeRuns removeObjectAtIndex:index];
+                index -= 1;
+                max -= 1;
+            }     
+        }
+    }
+    [attributeRuns removeObjectsAtIndexes:indexesToRemove];
+    [indexesToRemove release];
 }
 
 - (NSSet *)attributesAtIndex:(unsigned long long)index length:(unsigned long long *)length {
@@ -84,12 +137,17 @@
     return result;
 }
 
-- (void)transferAttributesFromAttributeArray:(HFByteRangeAttributeArray *)array baseOffset:(unsigned long long)baseOffset {
+- (void)transferAttributesFromAttributeArray:(HFByteRangeAttributeArray *)array range:(HFRange)range baseOffset:(unsigned long long)baseOffset {
     HFASSERT(array != NULL);
     EXPECT_CLASS(array, HFByteRangeAttributeArray);
     FOREACH(HFByteRangeAttributeRun *, run, array->attributeRuns) {
-        [self addAttribute:run->name range:HFRangeMake(HFSum(baseOffset, run->range.location), run->range.length)];
+        HFRange intersection = HFIntersectionRange(range, run->range);
+        if (intersection.length > 0) {
+            intersection.location += baseOffset;
+            [self addAttribute:run->name range:intersection];
+        }
     }
 }
+
 
 @end

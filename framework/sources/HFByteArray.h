@@ -130,7 +130,7 @@ typedef NSUInteger HFByteArrayDataStringType;
     @brief HFByteArray methods for writing to files, and preparing other HFByteArrays for potentially destructive file writes.
 */
 @interface HFByteArray (HFFileWriting)
-/* Attempts to write the receiver to a file.  This is a concrete method on HFByteArray.
+/*! Attempts to write the receiver to a file.  This is a concrete method on HFByteArray.
    @param targetURL A URL to the file to be written to.  It is OK for the receiver to contain one or more instances of HFByteSlice that are sourced from the file.
    @param progressTracker An HFProgressTracker to allow progress reporting and cancelleation for the write operation.
    @param error An out NSError parameter.
@@ -155,6 +155,7 @@ typedef NSUInteger HFByteArrayDataStringType;
 
 @interface HFByteArray (HFAttributes)
 
+/*! Returns a byte range attribute array for the bytes in the given range. */
 - (HFByteRangeAttributeArray *)attributesForBytesInRange:(HFRange)range;
 
 @end

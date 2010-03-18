@@ -125,7 +125,7 @@
 		D08630F10D8BEE9900FF0BE7 /* HFByteSliceFileOperationQueueEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = D08630EF0D8BEE9900FF0BE7 /* HFByteSliceFileOperationQueueEntry.m */; };
 		D08943F81042B57800AB9141 /* HFByteRangeAttribute.h in Headers */ = {isa = PBXBuildFile; fileRef = D08943F61042B57800AB9141 /* HFByteRangeAttribute.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D08943F91042B57800AB9141 /* HFByteRangeAttribute.m in Sources */ = {isa = PBXBuildFile; fileRef = D08943F71042B57800AB9141 /* HFByteRangeAttribute.m */; };
-		D089443C1042BA7100AB9141 /* HFByteRangeAttributeArray.h in Headers */ = {isa = PBXBuildFile; fileRef = D089443A1042BA7100AB9141 /* HFByteRangeAttributeArray.h */; };
+		D089443C1042BA7100AB9141 /* HFByteRangeAttributeArray.h in Headers */ = {isa = PBXBuildFile; fileRef = D089443A1042BA7100AB9141 /* HFByteRangeAttributeArray.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D089443D1042BA7100AB9141 /* HFByteRangeAttributeArray.m in Sources */ = {isa = PBXBuildFile; fileRef = D089443B1042BA7100AB9141 /* HFByteRangeAttributeArray.m */; };
 		D08F5E4F0CDE872C007EFFE8 /* HFByteArray.m in Sources */ = {isa = PBXBuildFile; fileRef = D08F5DF00CDE8223007EFFE8 /* HFByteArray.m */; };
 		D08F5E500CDE872C007EFFE8 /* HFByteSlice.m in Sources */ = {isa = PBXBuildFile; fileRef = D08F5E230CDE843E007EFFE8 /* HFByteSlice.m */; };
@@ -935,6 +935,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D01E7BF00CDC564B00943F9E /* HexFiend.h in Headers */,
 				D0A1F30E11439DFE008BB3BA /* HFByteArrayEditScript.h in Headers */,
 				D082ABD40CDEB40F00554EB7 /* HFFullMemoryByteArray.h in Headers */,
 				D082ABCF0CDEB3F800554EB7 /* HFRepresenter_Internal.h in Headers */,
@@ -942,7 +943,6 @@
 				D0D829110CDE969F00C2AB82 /* HFByteArray.h in Headers */,
 				D0D828E50CDE89E500C2AB82 /* HFByteSlice.h in Headers */,
 				D0A436310CDC7EB1000F7550 /* HFFunctions.h in Headers */,
-				D01E7BF00CDC564B00943F9E /* HexFiend.h in Headers */,
 				D01E7C3D0CDC6A3100943F9E /* HFTypes.h in Headers */,
 				D0CDB7330CE7338E0084926B /* HFRepresenterTextView_Internal.h in Headers */,
 				D0A435730CDC71DF000F7550 /* HFRepresenter.h in Headers */,

@@ -32,7 +32,8 @@ enum
     HFControllerFont = 1 << 8,			/*!< Indicates that the font property has changed. */
     HFControllerAntialias = 1 << 9,		/*!< Indicates that the shouldAntialias property has changed. */
     HFControllerLineHeight = 1 << 10,		/*!< Indicates that the lineHeight property has changed. */
-    HFControllerViewSizeRatios = 1 << 11	/*!< Indicates that the optimum size for each view may have changed; used by HFLayoutController after font changes. */
+    HFControllerViewSizeRatios = 1 << 11,	/*!< Indicates that the optimum size for each view may have changed; used by HFLayoutController after font changes. */
+    HFControllerByteRangeAttributes = 1 << 12     /*!< Indicates that some attributes of the ByteArray has changed within the document.  There is no indication as to what the change is. */
 };
 typedef NSUInteger HFControllerPropertyBits;
 
@@ -106,6 +107,8 @@ You create an HFController via <tt>[[HFController alloc] init]</tt>.  After that
     
     unsigned long long selectionAnchor;
     HFRange selectionAnchorRange;
+    
+    HFByteRangeAttributeArray *byteRangeAttributeArray;
     
     HFControllerCoalescedUndo *undoCoalescer;
     
@@ -393,7 +396,10 @@ You create an HFController via <tt>[[HFController alloc] init]</tt>.  After that
 /*! Copies data within the given HFRange into an in-memory buffer.  This is equivalent to [[controller byteArray] copyBytes:bytes range:range]. */
 - (void)copyBytes:(unsigned char *)bytes range:(HFRange)range;
 
-/*! Returns the attributes for the given range.  range.length must be <= NSUIntegerMax. */
+/* Returns the HFController level byte range attribute array.  You can message it directly to add and remove attributes. */
+- (HFByteRangeAttributeArray *)byteRangeAttributeArray;
+
+/*! Returns the attributes for the given range.  This is a union of the receiver's byteRangeAttributeArray properties and the properties returned by the byte array itself.  range.length must be <= NSUIntegerMax. */
 - (HFByteRangeAttributeArray *)attributesForBytesInRange:(HFRange)range;
 
 /*! Returns total number of bytes.  This is equivalent to [[controller byteArray] length]. */

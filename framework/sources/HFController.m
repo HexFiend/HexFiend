@@ -16,6 +16,7 @@
 #import <HexFiend/HFSharedMemoryByteSlice.h>
 #import <HexFiend/HFRandomDataByteSlice.h>
 #import <HexFiend/HFFileReference.h>
+#import <HexFiend/HFByteRangeAttributeArray.h>
 
 #if HFUNIT_TESTS
 #import <HexFiend/HFFileByteSlice.h>
@@ -95,6 +96,7 @@ static inline Class preferredByteArrayClass(void) {
     _hfflags.antialias = YES;
     _hfflags.selectable = YES;
     representers = [[NSMutableArray alloc] init];
+    byteRangeAttributeArray = [[HFByteRangeAttributeArray alloc] init];
     [self setFont:[NSFont fontWithName:@"Monaco" size:10.f]];
     return self;
 }
@@ -106,6 +108,7 @@ static inline Class preferredByteArrayClass(void) {
     [self _removeUndoManagerNotifications];
     [undoManager release];
     [undoCoalescer release];
+    [byteRangeAttributeArray release];
     [font release];
     [byteArray removeObserver:self forKeyPath:@"changesAreLocked"];
     [byteArray release];
@@ -479,8 +482,20 @@ static inline Class preferredByteArrayClass(void) {
     [byteArray copyBytes:bytes range:range];
 }
 
+- (HFByteRangeAttributeArray *)byteRangeAttributeArray {
+    return byteRangeAttributeArray;
+}
+
 - (HFByteRangeAttributeArray *)attributesForBytesInRange:(HFRange)range {
-    return [[self byteArray] attributesForBytesInRange:range];
+    HFByteRangeAttributeArray *result = [[self byteArray] attributesForBytesInRange:range];
+    if ([result isEmpty]) {
+        return byteRangeAttributeArray;
+    }
+    else if (! [byteRangeAttributeArray isEmpty]) {
+        result = [[result mutableCopy] autorelease];
+        [result transferAttributesFromAttributeArray:byteRangeAttributeArray range:range baseOffset:0];
+    }
+    return result;
 }
 
 - (void)_updateDisplayedRange {
@@ -721,6 +736,10 @@ static inline Class preferredByteArrayClass(void) {
     if (remainingProperties & HFControllerDisplayedLineRange) {
         [self _updateDisplayedRange];
         remainingProperties &= ~HFControllerDisplayedLineRange;
+    }
+    if (remainingProperties & HFControllerByteRangeAttributes) {
+        [self _addPropertyChangeBits:HFControllerByteRangeAttributes];
+        remainingProperties &= ~HFControllerByteRangeAttributes;
     }
     if (remainingProperties) {
         NSLog(@"Unknown properties: %lx", remainingProperties);
@@ -2145,7 +2164,7 @@ static HFByteArray *byteArrayForFile(NSString *path) {
     HFByteArray *base = [[HFBTreeByteArray alloc] init];
     [byteArrays addObject:base];
     [base release];
-    NSData *data = randomDataOfLength(1000);
+    NSData *data = randomDataOfLength(5000);
     HFByteSlice *slice = [[HFFullMemoryByteSlice alloc] initWithData:data];
     [base insertByteSlice:slice inRange:HFRangeMake(0, 0)];
     [slice release];
@@ -2156,14 +2175,14 @@ static HFByteArray *byteArrayForFile(NSString *path) {
         HFByteArray *modified = [base mutableCopy];
         unsigned long long length = baseLength;
         
-        NSUInteger j, opCount = 8;
+        NSUInteger j, opCount = 256;
         for (j=0; j < opCount; j++) {
             unsigned long long offset;
             unsigned long long number;
             NSUInteger op;
             switch ((op = (random()%2))) {
                 case 0: { //insert
-                    NSData *data = randomDataOfLength(1 + random()%100);
+                    NSData *data = randomDataOfLength(1 + random()%64);
                     offset = random() % (1 + length);
                     HFByteSlice* slice = [[HFFullMemoryByteSlice alloc] initWithData:data];
                     DEBUG printf("%u)\tInserting %llu bytes at %llu...", i, [slice length], offset);
@@ -2197,16 +2216,18 @@ static HFByteArray *byteArrayForFile(NSString *path) {
         NSUInteger j;
         for (j=0; j < arrayCount; j++) {
             HFByteArray *dst = [byteArrays objectAtIndex:j];
-            HFByteArrayEditScript *script = [HFByteArrayEditScript scriptWithDifferenceFromSource:src toDestination:dst];
+            HFByteArrayEditScript *script = [[HFByteArrayEditScript alloc] initWithDifferenceFromSource:src toDestination:dst];
             HFByteArray *guineaPig = [src mutableCopy];
             [script applyToByteArray:guineaPig];
+            [script release];
             if ([dst _debugIsEqual:guineaPig]) {
                 DEBUG printf("Edit script success with length %llu\n", [dst length]);
             }
             else {
                 DEBUG printf("Error! Edit script failure with length %llu\n", [dst length]);
                 exit(EXIT_FAILURE);
-            }            
+            }
+            [guineaPig release];
         }
     }
 }

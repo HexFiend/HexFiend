@@ -8,7 +8,7 @@
 
 #import <HexFiend/HFByteRangeAttribute.h>
 
-NSString * const kHFAttributeUnallocated = @"HFAttributeUnallocated";
+NSString * const kHFAttributeDiffInsertion = @"HFAttributeDiffInsertion";
 NSString * const kHFAttributeMagic = @"HFAttributeMagic";
 NSString * const kHFAttributeUnmapped = @"HFAttributeUnmapped";
 NSString * const kHFAttributeUnreadable = @"HFAttributeUnreadable";

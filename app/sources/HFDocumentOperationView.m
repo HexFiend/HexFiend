@@ -14,6 +14,10 @@ static NSString *sNibName;
 
 #define NO_TRACKING_PERCENTAGE (-1)
 
+@interface HFDocumentOperationView (PrivateStuff)
+- (id)beginThread NS_RETURNS_RETAINED;
+@end
+
 @implementation HFDocumentOperationView
 
 + viewWithNibNamed:(NSString *)name owner:(id)owner {

@@ -58,7 +58,7 @@
         if (! (attributes & VMRegionReadable)) [attributeArray addAttribute:kHFAttributeUnreadable range:attributeRange];
         if (attributes & VMRegionWritable) [attributeArray addAttribute:kHFAttributeWritable range:attributeRange];
         if (attributes & VMRegionExecutable) [attributeArray addAttribute:kHFAttributeExecutable range:attributeRange];
-        if (attributes & VMRegionShared) [attributeArray addAttribute:VMRegionShared range:attributeRange];
+        if (attributes & VMRegionShared) [attributeArray addAttribute:kHFAttributeShared range:attributeRange];
         
         remainingRange.location += runLength; //don't care about overflow here
         remainingRange.length -= MAX(runLength, remainingRange.length);

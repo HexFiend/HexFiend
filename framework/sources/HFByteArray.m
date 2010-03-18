@@ -167,7 +167,7 @@
 
 - (NSData *)_debugData {
     NSMutableData *data = [NSMutableData dataWithLength:(NSUInteger)[self length]];
-    [self copyBytes:[data bytes] range:HFRangeMake(0, [self length])];
+    [self copyBytes:[data mutableBytes] range:HFRangeMake(0, [self length])];
     return data;
 }
 
@@ -181,12 +181,13 @@
         unsigned long long beginningOffset;
         HFByteSlice *slice = [self sliceContainingByteAtIndex:remainingRange.location beginningOffset:&beginningOffset];
         HFASSERT(beginningOffset <= remainingRange.location);
-        HFRange sliceRange = HFRangeMake(beginningOffset, [slice length]);
+        unsigned long long sliceLength = [slice length];
+        HFRange sliceRange = HFRangeMake(beginningOffset, sliceLength);
         HFRange overlap = HFIntersectionRange(sliceRange, remainingRange);
         
         HFByteRangeAttributeArray *sliceAttributes = [slice attributesForBytesInRange:HFRangeMake(overlap.location - beginningOffset, overlap.length)];
         if (sliceAttributes) {
-            [result transferAttributesFromAttributeArray:sliceAttributes baseOffset:beginningOffset];
+            [result transferAttributesFromAttributeArray:sliceAttributes range:HFRangeMake(0, sliceLength) baseOffset:beginningOffset];
         }
         
         HFASSERT(overlap.location == remainingRange.location);

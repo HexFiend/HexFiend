@@ -16,6 +16,12 @@
 
 @class HFByteArray;
 
+struct HFEditInstruction_t {
+    HFRange range;
+    unsigned long long offsetInDestinationForInsertion;
+    BOOL isInsertion;
+};
+
 @interface HFByteArrayEditScript : NSObject {
     HFByteArray *source;
     HFByteArray *destination;
@@ -31,9 +37,15 @@
 }
 
 /*! Returns an HFByteArrayEditScript that represents the difference from src to dst.  This retains both src and dst, and if they are modified then the receiver will likely no longer function. */
-+ (id)scriptWithDifferenceFromSource:(HFByteArray *)src toDestination:(HFByteArray *)dst;
+- (id)initWithDifferenceFromSource:(HFByteArray *)src toDestination:(HFByteArray *)dst;
 
 /*! Applies the receiver to an HFByteArray. */
 - (void)applyToByteArray:(HFByteArray *)byteArray;
+
+/*! Returns the number of instructions. */
+- (NSUInteger)numberOfInstructions;
+
+/*! Returns the instruction at a given index. */
+- (struct HFEditInstruction_t)instructionAtIndex:(NSUInteger)index;
 
 @end

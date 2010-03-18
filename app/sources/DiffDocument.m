@@ -11,14 +11,27 @@
 
 @implementation DiffDocument
 
+- (void)showInstructionsFromEditScript:(HFByteArrayEditScript *)script {
+    NSUInteger i, insnCount = [script numberOfInstructions];
+    for (i=0; i < insnCount; i++) {
+        struct HFEditInstruction_t insn = [script instructionAtIndex:i];
+        if (insn.isInsertion) {
+            [[[rightTextView controller] byteRangeAttributeArray] addAttribute:kHFAttributeDiffInsertion range:HFRangeMake(insn.offsetInDestinationForInsertion, insn.range.length)];
+        }
+        else {
+            [[[leftTextView controller] byteRangeAttributeArray] addAttribute:kHFAttributeDiffInsertion range:insn.range];        
+        }
+    }
+    [[rightTextView controller] representer:nil changedProperties:HFControllerByteRangeAttributes];
+    [[leftTextView controller] representer:nil changedProperties:HFControllerByteRangeAttributes];
+}
+
 - (id)initWithLeftByteArray:(HFByteArray *)left rightByteArray:(HFByteArray *)right {
     if ((self = [super init])) {
         leftBytes = [left retain];
         rightBytes = [right retain];
         [controller setByteArray:leftBytes];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(synchronizeControllers:) name:HFControllerDidChangePropertiesNotification object:controller];
-        
-        HFByteArrayEditScript *script = [HFByteArrayEditScript scriptWithDifferenceFromSource:left toDestination:right];
     }
     return self;
 }
@@ -46,7 +59,7 @@
 - (void)fixupTextView:(HFTextView *)textView {
     [textView setBordered:YES];
     FOREACH(HFRepresenter *, rep, [[textView controller] representers]) {
-        if ([rep isKindOfClass:[HFVerticalScrollerRepresenter class]]) {
+        if ([rep isKindOfClass:[HFVerticalScrollerRepresenter class]] || [rep isKindOfClass:[HFStringEncodingTextRepresenter class]]) {
             [[textView layoutRepresenter] removeRepresenter:rep];
             [[textView controller] removeRepresenter:rep];
         }
@@ -68,6 +81,10 @@
     [scroller setFrame:NSMakeRect(NSMaxX(contentBounds) - NSWidth(scrollerRect), NSMinY(contentBounds), NSWidth(scrollerRect), NSHeight(contentBounds))];
     [scroller setAutoresizingMask:NSViewHeightSizable | NSViewMinXMargin];
     [contentView addSubview:scroller];
+    
+    HFByteArrayEditScript *script = [[HFByteArrayEditScript alloc] initWithDifferenceFromSource:leftBytes toDestination:rightBytes];
+    [self showInstructionsFromEditScript:script];
+    [script release];
 }
 
 - (NSString *)windowNibName {
