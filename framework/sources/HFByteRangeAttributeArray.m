@@ -117,6 +117,17 @@
     [indexesToRemove release];
 }
 
+- (void)removeAttribute:(NSString *)attributeName {
+    HFASSERT(attributeName != nil);
+    NSUInteger idx = [attributeRuns count];
+    while (idx--) {
+        HFByteRangeAttributeRun *run = [attributeRuns objectAtIndex:idx];
+        if ([attributeName isEqualToString:run->name]) {
+            [attributeRuns removeObjectAtIndex:idx];
+        }
+    }
+}
+
 - (NSSet *)attributesAtIndex:(unsigned long long)index length:(unsigned long long *)length {
     NSMutableSet *result = [NSMutableSet set];
     unsigned long long maxLocation = ULLONG_MAX;

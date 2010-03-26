@@ -11,10 +11,10 @@
 
 @implementation DiffDocument
 
-- (void)showInstructionsFromEditScript:(HFByteArrayEditScript *)script {
-    NSUInteger i, insnCount = [script numberOfInstructions];
+- (void)showInstructionsFromEditScript {
+    NSUInteger i, insnCount = [editScript numberOfInstructions];
     for (i=0; i < insnCount; i++) {
-        struct HFEditInstruction_t insn = [script instructionAtIndex:i];
+        struct HFEditInstruction_t insn = [editScript instructionAtIndex:i];
         if (insn.isInsertion) {
             [[[rightTextView controller] byteRangeAttributeArray] addAttribute:kHFAttributeDiffInsertion range:HFRangeMake(insn.offsetInDestinationForInsertion, insn.range.length)];
         }
@@ -26,11 +26,72 @@
     [[leftTextView controller] representer:nil changedProperties:HFControllerByteRangeAttributes];
 }
 
+- (void)setFocusedInstructionIndex:(NSUInteger)idx {
+    focusedInstructionIndex = idx;
+    struct HFEditInstruction_t insn = [editScript instructionAtIndex:focusedInstructionIndex];
+    [[[leftTextView controller] byteRangeAttributeArray] removeAttribute:
+    if (insn.isInsertion) {
+        [[[rightTextView controller] byteRangeAttributeArray] addAttribute:kHFAttributeDiffInsertion range:HFRangeMake(insn.offsetInDestinationForInsertion, insn.range.length)];
+    }
+}
+
+- (void)selectInDirection:(NSInteger)direction {
+    if (direction < 0 && -direction > focusedInstructionIndex) {
+        /* Underflow */
+        NSBeep();
+    }
+    else if (direction > 0 && direction + focusedInstructionIndex >= [editScript numberOfInstructions]) {
+        /* Overflow */
+        NSBeep();
+    }
+    else {
+        [self setFocusedInstructionIndex:focusedInstructionIndex + direction];
+    }
+}
+
+- (long long)changeInLengthBeforeByte:(unsigned long long)rightByte {
+    return 0;
+}
+
+- (BOOL)firstResponderIsInView:(NSView *)view {
+    id fr = [[self window] firstResponder];
+    if ([fr isKindOfClass:[NSView class]]) {
+        while (fr) {
+            if (fr == view) break;
+            fr = [fr superview];
+        }
+    }
+    return fr && fr == view;
+}
+
+- (BOOL)handleEvent:(NSEvent *)event {
+    BOOL handled = NO;
+    BOOL frInLeftView = [self firstResponderIsInView:leftTextView], frInRightView = [self firstResponderIsInView:rightTextView];
+    if (frInLeftView || frInRightView) {
+        NSUInteger prohibitedFlags = (NSShiftKeyMask | NSControlKeyMask | NSAlternateKeyMask | NSCommandKeyMask);
+        if ([event type] == NSKeyDown && ! (prohibitedFlags & [event modifierFlags])) {
+            NSString *chars = [event characters];
+            if ([chars length] == 1) {
+                unichar c = [chars characterAtIndex:0];
+                if (c == NSUpArrowFunctionKey) {
+                    [self selectInDirection:-1];
+                    handled = YES;
+                }
+                else if (c == NSDownArrowFunctionKey) {
+                    [self selectInDirection:1];
+                    handled = YES;
+                }
+            }
+        }
+    }
+    return handled;
+}
+
 - (id)initWithLeftByteArray:(HFByteArray *)left rightByteArray:(HFByteArray *)right {
     if ((self = [super init])) {
         leftBytes = [left retain];
         rightBytes = [right retain];
-        [controller setByteArray:leftBytes];
+        [controller setByteArray:rightBytes];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(synchronizeControllers:) name:HFControllerDidChangePropertiesNotification object:controller];
     }
     return self;
@@ -43,6 +104,23 @@
     [super dealloc];
 }
 
+- (void)synchronizeController:(HFController *)client properties:(HFControllerPropertyBits)propertyMask {
+    if (propertyMask & HFControllerDisplayedLineRange) {
+        HFFPRange displayedLineRange = [controller displayedLineRange];
+        NSUInteger bytesPerLine = [controller bytesPerLine];
+        unsigned long long lineStart = HFFPToUL(floorl(displayedLineRange.location));
+        unsigned long long firstByteShown = HFProductULL(bytesPerLine, lineStart);
+        unsigned long long leftByteToShow = firstByteShown + [self changeInLengthBeforeByte:firstByteShown];
+        
+    }
+    if (propertyMask & HFControllerBytesPerColumn) {
+        [client setBytesPerColumn:[controller bytesPerColumn]];
+    }
+    if (propertyMask & HFControllerFont) {
+        [client setFont:[controller font]];
+    }    
+}
+
 - (void)synchronizeControllers:(NSNotification *)note {
     NSNumber *propertyNumber = [[note userInfo] objectForKey:HFControllerChangedPropertiesKey];
 #if __LP64__
@@ -50,10 +128,8 @@
 #else
     HFControllerPropertyBits propertyMask = [propertyNumber unsignedIntValue];
 #endif
-    if (propertyMask & HFControllerDisplayedLineRange) {
-        HFFPRange lineRange = [controller displayedLineRange];
-        
-    }
+    [self synchronizeController:[leftTextView controller] properties:propertyMask];
+    [self synchronizeController:[rightTextView controller] properties:propertyMask];
 }
 
 - (void)fixupTextView:(HFTextView *)textView {
@@ -82,9 +158,11 @@
     [scroller setAutoresizingMask:NSViewHeightSizable | NSViewMinXMargin];
     [contentView addSubview:scroller];
     
-    HFByteArrayEditScript *script = [[HFByteArrayEditScript alloc] initWithDifferenceFromSource:leftBytes toDestination:rightBytes];
-    [self showInstructionsFromEditScript:script];
-    [script release];
+    editScript = [[HFByteArrayEditScript alloc] initWithDifferenceFromSource:leftBytes toDestination:rightBytes];
+    [self showInstructionsFromEditScript];
+    
+    [self synchronizeController:[leftTextView controller] properties:(HFControllerPropertyBits)-1];
+    [self synchronizeController:[rightTextView controller] properties:(HFControllerPropertyBits)-1];
 }
 
 - (NSString *)windowNibName {

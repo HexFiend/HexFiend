@@ -924,6 +924,7 @@ enum LineCoverage_t {
     textTransform.tx += [self horizontalContainerInset];
     textTransform.ty += [fontObject ascender] - lineHeight * [self verticalOffset];
     NSUInteger lineIndex = 0;
+    const NSUInteger bytesPerColumn = [self bytesPerColumn];
     const NSUInteger maxGlyphCount = [self maximumGlyphCountForByteCount:bytesPerLine];
     NEW_ARRAY(CGGlyph, glyphs, maxGlyphCount);
     NEW_ARRAY(CGSize, advances, maxGlyphCount);
@@ -968,6 +969,11 @@ enum LineCoverage_t {
                     NSRect glyphsRect = lineRectInBoundsSpace;
                     glyphsRect.origin.x += textTransform.tx;
                     glyphsRect.size.width = totalAdvanceOfThisStyleRun;
+                    
+                    /* Do a hack - if we end at a column boundary, subtract the advance between columns from the background rect. */
+                    if (bytesPerColumn > 0 && (bytesInThisRun + byteIndexInLine) % bytesPerColumn == 0) {
+                        glyphsRect.size.width -= MIN([self advanceBetweenColumns], glyphsRect.size.width);
+                    }
                     
                     /* Draw them */
                     [self drawGlyphs:glyphs withAdvances:advances withStyleRun:styleRun count:resultGlyphCount rect:glyphsRect];

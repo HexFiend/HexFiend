@@ -101,7 +101,7 @@
         [run setBackgroundColor:[NSColor colorWithCalibratedRed:1. green:.5 blue:0. alpha:.5]];
     }
     if ([attributes containsObject:kHFAttributeDiffInsertion]) {
-        [run setBackgroundColor:[NSColor colorWithCalibratedRed:(CGFloat)179./255 green:(CGFloat).847/255 blue:1. alpha:1.]];
+        [run setBackgroundColor:[NSColor colorWithCalibratedRed:(CGFloat)255/255. green:(CGFloat)184/255. blue:96/255. alpha:1.]];
     }
     return run;
 }

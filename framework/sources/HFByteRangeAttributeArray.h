@@ -19,7 +19,10 @@
 - (void)addAttribute:(NSString *)attributeName range:(HFRange)range;
 
 /*! Removes the given attribute within the given range. */
--  (void)removeAttribute:(NSString *)attributeName range:(HFRange)range;
+- (void)removeAttribute:(NSString *)attributeName range:(HFRange)range;
+
+/*! Removes the given attribute entirely. */
+- (void)removeAttribute:(NSString *)attributeName;
 
 /*! Returns whether the receiver is empty. */
 - (BOOL)isEmpty;

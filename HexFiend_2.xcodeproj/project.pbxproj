@@ -107,6 +107,7 @@
 		D06D61EF0FA7FA7C002376EE /* HFBTreeByteArray.m in Sources */ = {isa = PBXBuildFile; fileRef = D06D61ED0FA7FA7C002376EE /* HFBTreeByteArray.m */; };
 		D07150670D5510CE00573D7A /* HFTextField.h in Headers */ = {isa = PBXBuildFile; fileRef = D07150650D5510CE00573D7A /* HFTextField.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D07150680D5510CE00573D7A /* HFTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = D07150660D5510CE00573D7A /* HFTextField.m */; };
+		D074B0D5115B2075002D5FA8 /* DiffDocumentWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = D074B0D4115B2075002D5FA8 /* DiffDocumentWindow.m */; };
 		D078CF550D50491100492F46 /* HFBannerDividerThumb.h in Headers */ = {isa = PBXBuildFile; fileRef = D078CF530D50491100492F46 /* HFBannerDividerThumb.h */; };
 		D078D0520D50492F00492F46 /* HFBannerDividerThumb.m in Sources */ = {isa = PBXBuildFile; fileRef = D078CF540D50491100492F46 /* HFBannerDividerThumb.m */; };
 		D081DDAA0F0E75FB00F66150 /* HFRandomDataByteSlice.h in Headers */ = {isa = PBXBuildFile; fileRef = D081DDA80F0E75FB00F66150 /* HFRandomDataByteSlice.h */; settings = {ATTRIBUTES = (); }; };
@@ -377,6 +378,8 @@
 		D06D61ED0FA7FA7C002376EE /* HFBTreeByteArray.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFBTreeByteArray.m; path = framework/sources/HFBTreeByteArray.m; sourceTree = "<group>"; };
 		D07150650D5510CE00573D7A /* HFTextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFTextField.h; path = framework/sources/HFTextField.h; sourceTree = "<group>"; };
 		D07150660D5510CE00573D7A /* HFTextField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFTextField.m; path = framework/sources/HFTextField.m; sourceTree = "<group>"; };
+		D074B0D3115B2075002D5FA8 /* DiffDocumentWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DiffDocumentWindow.h; path = app/sources/DiffDocumentWindow.h; sourceTree = "<group>"; };
+		D074B0D4115B2075002D5FA8 /* DiffDocumentWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DiffDocumentWindow.m; path = app/sources/DiffDocumentWindow.m; sourceTree = "<group>"; };
 		D078CF530D50491100492F46 /* HFBannerDividerThumb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFBannerDividerThumb.h; path = app/sources/HFBannerDividerThumb.h; sourceTree = "<group>"; };
 		D078CF540D50491100492F46 /* HFBannerDividerThumb.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFBannerDividerThumb.m; path = app/sources/HFBannerDividerThumb.m; sourceTree = "<group>"; };
 		D081DDA80F0E75FB00F66150 /* HFRandomDataByteSlice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFRandomDataByteSlice.h; path = framework/sources/HFRandomDataByteSlice.h; sourceTree = "<group>"; };
@@ -710,6 +713,8 @@
 				D02BD6CB10545E5600535EDE /* ProcessMemoryDocument.m */,
 				D018F151107ABAC600AE805F /* DiffDocument.h */,
 				D018F152107ABAC600AE805F /* DiffDocument.m */,
+				D074B0D3115B2075002D5FA8 /* DiffDocumentWindow.h */,
+				D074B0D4115B2075002D5FA8 /* DiffDocumentWindow.m */,
 			);
 			name = DocumentTypes;
 			sourceTree = "<group>";
@@ -1230,6 +1235,7 @@
 				D02BD6CC10545E5600535EDE /* ProcessMemoryDocument.m in Sources */,
 				D02BD6E010545E9000535EDE /* FileDataDocument.m in Sources */,
 				D018F153107ABAC600AE805F /* DiffDocument.m in Sources */,
+				D074B0D5115B2075002D5FA8 /* DiffDocumentWindow.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
