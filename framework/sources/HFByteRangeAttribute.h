@@ -3,6 +3,9 @@
 /* Attributes used to illustrate diffs. */
 extern NSString * const kHFAttributeDiffInsertion;
 
+/* Attribute used for illustrating a focused range of characters. */
+extern NSString * const kHFAttributeFocused;
+
 /* Attributes used for address spaces of other processes. */
 extern NSString * const kHFAttributeUnmapped;   /* A range that is not allocated, used to describe sparse data sets (e.g. a virtual address space). */
 extern NSString * const kHFAttributeUnreadable; /* A range that is allocated but is not readable. */

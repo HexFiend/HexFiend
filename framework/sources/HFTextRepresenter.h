@@ -21,6 +21,13 @@
     NSArray *rowBackgroundColors;
 }
 
+/*! Given a rect edge, return an NSRect representing the maximum edge in that direction.  The dimension in the direction of the edge is 0 (so if edge is NSMaxXEdge, the resulting width is 0).  The returned rect is in the coordinate space of the receiver's view.  If the byte range is not displayed, returns NSZeroRect.
+*/
+- (NSRect)furthestRectOnEdge:(NSRectEdge)edge forByteRange:(HFRange)range;
+
+/*! Returns the origin of the character at the given byte index.  The returned point is in the coordinate space of the receiver's view.  If the character is not displayed, returns {-1, -1}.
+ */
+- (NSPoint)locationOfCharacterAtByteIndex:(unsigned long long)byteIndex;
 
 /*! Returns the per-row background colors.  The default is <tt>-[NSControl controlAlternatingRowBackgroundColors]</tt>. */
 - (NSArray *)rowBackgroundColors;

@@ -451,6 +451,7 @@ enum LineCoverage_t {
                 [self drawTextWithClip:windowFrameInBoundsCoords restrictingToTextInRanges:ranges];
                 [image unlockFocus];
                 [pulseView setImage:image];
+                [image release];
                 
                 if (thisWindow) {
                     [thisWindow addChildWindow:pulseWindow ordered:NSWindowAbove];
@@ -639,6 +640,19 @@ enum LineCoverage_t {
     return data;
 }
 
+- (void)setNeedsDisplayForLinesInRange:(NSRange)lineRange {
+    // redisplay the lines in the given range
+    if (lineRange.length == 0) return;
+    NSUInteger firstLine = lineRange.location, lastLine = NSMaxRange(lineRange);
+    CGFloat lineHeight = [self lineHeight];
+    CGFloat vertOffset = [self verticalOffset];
+    CGFloat yOrigin = (firstLine - vertOffset) * lineHeight;
+    CGFloat lastLineBottom = (lastLine - vertOffset) * lineHeight;
+    NSRect bounds = [self bounds];
+    NSRect dirtyRect = NSMakeRect(bounds.origin.x, bounds.origin.y + yOrigin, NSWidth(bounds), lastLineBottom - yOrigin);
+    [self setNeedsDisplayInRect:dirtyRect];
+}
+
 - (void)setData:(NSData *)val {
     if (val != data) {
         NSUInteger oldLength = [data length];
@@ -652,17 +666,13 @@ enum LineCoverage_t {
         }
         else {
             const NSUInteger bytesPerLine = [self bytesPerLine];
-            const CGFloat lineHeight = [self lineHeight];
-            CGFloat vertOffset = [self verticalOffset];
+            NSUInteger firstLine = firstDifferingIndex / bytesPerLine;
             NSUInteger lastLine = HFDivideULRoundingUp(MAX(oldLength, newLength), bytesPerLine);
             /* The +1 is for the following case - if we change the last character, then it may push the caret into the next line (even though there's no text there).  This last line may have a background color, so we need to make it draw if it did not draw before (or vice versa - when deleting the last character which pulls the caret from the last line). */
             NSUInteger lastDifferingLine = (lastDifferingIndex == NSNotFound ? lastLine : HFDivideULRoundingUp(lastDifferingIndex + 1, bytesPerLine));
-            CGFloat lastDifferingLineBottom = (lastDifferingLine - vertOffset) * lineHeight;
-            NSUInteger line = firstDifferingIndex / bytesPerLine;
-            CGFloat yOrigin = (line - vertOffset) * lineHeight;
-            NSRect bounds = [self bounds];
-            NSRect dirtyRect = NSMakeRect(0, yOrigin, NSWidth(bounds), lastDifferingLineBottom - yOrigin);
-            [self setNeedsDisplayInRect:dirtyRect];
+            if (lastDifferingLine > firstLine) {
+                [self setNeedsDisplayForLinesInRange:NSMakeRange(firstLine, lastDifferingLine - firstLine)];
+            }
         }
         [data release];
         data = [val copy];
@@ -674,10 +684,44 @@ enum LineCoverage_t {
     return styles; 
 }
 
-- (void)setStyles:(NSArray *)theStyles {
-    if (styles != theStyles) {
+- (void)setStyles:(NSArray *)newStyles {
+    if (! [styles isEqual:newStyles]) {
+    
+        /* Figure out which styles changed - that is, we want to compute those objects that are not in oldStyles or newStyles, but not both. */
+        NSMutableSet *changedStyles = styles ? [[NSMutableSet alloc] initWithArray:styles] : [[NSMutableSet alloc] init];
+        FOREACH(HFTextVisualStyleRun *, run, newStyles) {
+            if ([changedStyles containsObject:run]) {
+                [changedStyles removeObject:run];
+            }
+            else {
+                [changedStyles addObject:run];
+            }
+        }
+        
+        /* Now figure out the first and last indexes of changed ranges. */
+        NSUInteger firstChangedIndex = NSUIntegerMax, lastChangedIndex = 0;
+        FOREACH(HFTextVisualStyleRun *, changedRun, changedStyles) {
+            NSRange range = [changedRun range];
+            if (range.length > 0) {
+                firstChangedIndex = MIN(firstChangedIndex, range.location);
+                lastChangedIndex = MAX(lastChangedIndex, NSMaxRange(range) - 1);
+            }
+        }
+        
+        /* Don't need this any more */
+        [changedStyles release];
+        
+        /* Figure out the changed lines, and trigger redisplay */
+        if (firstChangedIndex <= lastChangedIndex) {
+            const NSUInteger bytesPerLine = [self bytesPerLine];
+            NSUInteger firstLine = firstChangedIndex / bytesPerLine;
+            NSUInteger lastLine = HFDivideULRoundingUp(lastChangedIndex, bytesPerLine);
+            [self setNeedsDisplayForLinesInRange:NSMakeRange(firstLine, lastLine - firstLine + 1)];   
+        }
+        
+        /* Do the usual Cocoa thing */
         [styles release];
-        styles = [theStyles retain];
+        styles = [newStyles retain];
     }
 }
 
@@ -1045,6 +1089,66 @@ enum LineCoverage_t {
     }
     
     [self drawCaretIfNecessaryWithClip:clip];
+}
+
+- (NSRect)furthestRectOnEdge:(NSRectEdge)edge forRange:(NSRange)byteRange {
+    HFASSERT(edge == NSMinXEdge || edge == NSMaxXEdge || edge == NSMinYEdge || edge == NSMaxYEdge);
+    const NSUInteger bytesPerLine = [self bytesPerLine];
+    CGFloat lineHeight = [self lineHeight];
+    CGFloat vertOffset = [self verticalOffset];
+    NSUInteger firstLine = byteRange.location / bytesPerLine, lastLine = (NSMaxRange(byteRange) - 1) / bytesPerLine;
+    NSRect result = NSZeroRect;
+    
+    if (edge == NSMinYEdge || edge == NSMaxYEdge) {
+        /* This is the top (MinY) or bottom (MaxY).  We only have to look at one line. */
+        NSUInteger lineIndex = (edge == NSMinYEdge ? firstLine : lastLine);
+        NSRange lineRange = NSMakeRange(lineIndex * bytesPerLine, bytesPerLine);
+        NSRange intersection = NSIntersectionRange(lineRange, byteRange);
+        HFASSERT(intersection.length > 0);
+        CGFloat yOrigin = (lineIndex - vertOffset) * lineHeight;
+        CGFloat xStart = [self originForCharacterAtByteIndex:intersection.location].x;
+        CGFloat xEnd = [self originForCharacterAtByteIndex:NSMaxRange(intersection) - 1].x + [self advancePerByte];
+        result = NSMakeRect(xStart, yOrigin, xEnd - xStart, 0);
+    }
+    else {
+        if (firstLine == lastLine) {
+            /* We only need to consider this one line */
+            NSRange lineRange = NSMakeRange(firstLine * bytesPerLine, bytesPerLine);
+            NSRange intersection = NSIntersectionRange(lineRange, byteRange);
+            HFASSERT(intersection.length > 0);
+            CGFloat yOrigin = (firstLine - vertOffset) * lineHeight;
+            CGFloat xCoord;
+            if (edge == NSMinXEdge) {
+                xCoord = [self originForCharacterAtByteIndex:intersection.location].x;
+            }
+            else {
+                xCoord = [self originForCharacterAtByteIndex:NSMaxRange(intersection) - 1].x + [self advancePerByte];
+            }
+            result = NSMakeRect(xCoord, yOrigin, 0, lineHeight);            
+        }
+        else {
+            /* We have more than one line.  If we are asking for the left edge, sum up the left edge of every line but the first, and handle the first specially.  Likewise for the right edge (except handle the last specially) */
+            BOOL includeFirstLine, includeLastLine;
+            CGFloat xCoord;
+            if (edge == NSMinXEdge) {
+                /* Left edge, include the first line only if it starts at the beginning of the line or there's only one line */
+                includeFirstLine = (byteRange.location % bytesPerLine == 0);
+                includeLastLine = YES;
+                xCoord = [self horizontalContainerInset];
+            }
+            else {
+                /* Right edge, include the last line only if it starts at the beginning of the line or there's only one line */
+                includeFirstLine = YES;
+                includeLastLine = (NSMaxRange(byteRange) % bytesPerLine == 0);
+                NSUInteger bytesPerColumn = [self bytesPerColumn];
+                NSUInteger numColumns = (bytesPerColumn ? bytesPerLine / bytesPerColumn : 0);
+                xCoord = [self horizontalContainerInset] + [self advancePerByte] * bytesPerLine + [self advanceBetweenColumns] * numColumns;
+            }
+            NSUInteger firstLineToInclude = (includeFirstLine ? firstLine : firstLine + 1), lastLineToInclude = (includeLastLine ? lastLine : lastLine - 1);
+            result = NSMakeRect(xCoord, (firstLineToInclude - [self verticalOffset]) * lineHeight, 0, (lastLineToInclude - firstLineToInclude + 1) * lineHeight);
+        }
+    }
+    return result;
 }
 
 - (NSUInteger)availableLineCount {

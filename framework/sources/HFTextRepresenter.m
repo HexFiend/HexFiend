@@ -78,6 +78,29 @@
     }
 }
 
+- (NSRect)furthestRectOnEdge:(NSRectEdge)edge forByteRange:(HFRange)byteRange {
+    HFRange displayedRange = [self entireDisplayedRange];
+    HFRange intersection = HFIntersectionRange(displayedRange, byteRange);
+    NSRect result = NSZeroRect;
+    if (intersection.length > 0) {
+        NSRange intersectionNSRange = NSMakeRange(ll2l(intersection.location - displayedRange.location), ll2l(intersection.length));
+        if (intersectionNSRange.length > 0) {
+            result = [[self view] furthestRectOnEdge:edge forRange:intersectionNSRange];
+        }
+    }
+    return result;
+}
+
+- (NSPoint)locationOfCharacterAtByteIndex:(unsigned long long)index {
+    NSPoint result = {-1, -1};
+    HFRange displayedRange = [self entireDisplayedRange];
+    if (HFLocationInRange(index, displayedRange)) {
+        NSUInteger location = ll2l(index - displayedRange.location);
+        result = [[self view] originForCharacterAtByteIndex:location];
+    }
+    return result;
+}
+
 - (HFTextVisualStyleRun *)styleForAttributes:(NSSet *)attributes range:(NSRange)range {
     HFTextVisualStyleRun *run = [[[HFTextVisualStyleRun alloc] init] autorelease];
     [run setRange:range];
@@ -100,7 +123,11 @@
     else if ([attributes containsObject:kHFAttributeExecutable]) {
         [run setBackgroundColor:[NSColor colorWithCalibratedRed:1. green:.5 blue:0. alpha:.5]];
     }
-    if ([attributes containsObject:kHFAttributeDiffInsertion]) {
+    if ([attributes containsObject:kHFAttributeFocused]) {
+        [run setBackgroundColor:[NSColor colorWithCalibratedRed:(CGFloat)229/255. green:(CGFloat)255/255. blue:0/255. alpha:1.]];
+        [run setScale:1.3];
+    }
+    else if ([attributes containsObject:kHFAttributeDiffInsertion]) {
         [run setBackgroundColor:[NSColor colorWithCalibratedRed:(CGFloat)255/255. green:(CGFloat)184/255. blue:96/255. alpha:1.]];
     }
     return run;

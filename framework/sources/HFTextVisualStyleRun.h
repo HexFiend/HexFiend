@@ -12,6 +12,7 @@
     NSColor *foregroundColor;
     NSColor *backgroundColor;
     NSRange range;
+    CGFloat scale;
     BOOL shouldDraw;
 }
 
@@ -26,6 +27,9 @@
 
 - (BOOL)shouldDraw;
 - (void)setShouldDraw:(BOOL)val;
+
+- (CGFloat)scale;
+- (void)setScale:(CGFloat)val;
 
 - (void)set;
 

@@ -114,6 +114,10 @@
 - (void)updateSelectedRanges;
 - (void)updateSelectionPulse;
 
+/* Given a rect edge, return an NSRect representing the maximum edge in that direction.  The dimension in the direction of the edge is 0 (so if edge is NSMaxXEdge, the resulting width is 0).  The returned rect is in the coordinate space of the receiver's view.  If the byte range is not displayed, returns NSZeroRect.
+ */
+- (NSRect)furthestRectOnEdge:(NSRectEdge)edge forRange:(NSRange)range;
+
 /* The background color for the line at the given index.  You may override this to return different colors.  You may return nil to draw no color in this line (and then the empty space color will appear) */
 - (NSColor *)backgroundColorForLine:(NSUInteger)line;
 - (NSColor *)backgroundColorForEmptySpace;

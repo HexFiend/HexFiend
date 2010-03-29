@@ -7,6 +7,7 @@
 //
 
 #import "DiffDocument.h"
+#import "DiffOverlayView.h"
 #import <HexFiend/HexFiend.h>
 
 @implementation DiffDocument
@@ -26,17 +27,62 @@
     [[leftTextView controller] representer:nil changedProperties:HFControllerByteRangeAttributes];
 }
 
-- (void)setFocusedInstructionIndex:(NSUInteger)idx {
-    focusedInstructionIndex = idx;
-    struct HFEditInstruction_t insn = [editScript instructionAtIndex:focusedInstructionIndex];
-    [[[leftTextView controller] byteRangeAttributeArray] removeAttribute:
-    if (insn.isInsertion) {
-        [[[rightTextView controller] byteRangeAttributeArray] addAttribute:kHFAttributeDiffInsertion range:HFRangeMake(insn.offsetInDestinationForInsertion, insn.range.length)];
+- (HFTextRepresenter *)textRepresenterFromTextView:(HFTextView *)textView {
+    FOREACH(HFRepresenter *, rep, [[textView controller] representers]) {
+        if ([rep isKindOfClass:[HFTextRepresenter class]]) {
+            return (HFTextRepresenter *)rep;
+        }
+    }    
+    return nil; 
+}
+
+- (void)updateOverlayViewForLeftRange:(HFRange)leftRange rightRange:(HFRange)rightRange {
+    HFTextRepresenter *left = [self textRepresenterFromTextView:leftTextView], *right = [self textRepresenterFromTextView:rightTextView];
+    if (left && right) {
+        NSRect leftRect, rightRect;
+        if (leftRange.length == 0) {
+            leftRect.origin = [left locationOfCharacterAtByteIndex:leftRange.location];
+            leftRect.size = NSMakeSize(0, [[leftTextView controller] lineHeight]);
+        }
+        else {
+            leftRect = [left furthestRectOnEdge:NSMaxXEdge forByteRange:leftRange];
+        }
+        if (rightRange.length == 0) {
+            rightRect.origin = [right locationOfCharacterAtByteIndex:rightRange.location];
+            rightRect.size = NSMakeSize(0, [[rightTextView controller] lineHeight]);
+        }
+        else {
+            rightRect = [right furthestRectOnEdge:NSMinXEdge forByteRange:rightRange];
+        }
+        [overlayView setLeftRect:[overlayView convertRect:leftRect fromView:[left view]]];
+        [overlayView setRightRect:[overlayView convertRect:rightRect fromView:[right view]]];
     }
 }
 
+- (void)setFocusedInstructionIndex:(NSUInteger)idx {
+    focusedInstructionIndex = idx;
+    struct HFEditInstruction_t insn = [editScript instructionAtIndex:focusedInstructionIndex];
+    [[[leftTextView controller] byteRangeAttributeArray] removeAttribute:kHFAttributeFocused];
+    [[[rightTextView controller] byteRangeAttributeArray] removeAttribute:kHFAttributeFocused];
+    HFRange leftRange, rightRange;
+    if (insn.isInsertion) {
+        leftRange = HFRangeMake(insn.range.location, 0);
+        rightRange = HFRangeMake(insn.offsetInDestinationForInsertion, insn.range.length);
+        [[[rightTextView controller] byteRangeAttributeArray] addAttribute:kHFAttributeFocused range:rightRange];
+    }
+    else {
+        leftRange = insn.range;
+        rightRange = HFRangeMake(insn.range.location, 0);
+        [[[leftTextView controller] byteRangeAttributeArray] addAttribute:kHFAttributeFocused range:insn.range];        
+    }
+    [[rightTextView controller] representer:nil changedProperties:HFControllerByteRangeAttributes];
+    [[leftTextView controller] representer:nil changedProperties:HFControllerByteRangeAttributes];
+    
+    [self updateOverlayViewForLeftRange:leftRange rightRange:rightRange];
+}
+
 - (void)selectInDirection:(NSInteger)direction {
-    if (direction < 0 && -direction > focusedInstructionIndex) {
+    if (direction < 0 && (NSUInteger)(-direction) > focusedInstructionIndex) {
         /* Underflow */
         NSBeep();
     }
@@ -144,6 +190,7 @@
 
 - (void)windowControllerDidLoadNib:(NSWindowController *)windowController {
     [super windowControllerDidLoadNib:windowController];
+    NSWindow *window = [self window];
     [self fixupTextView:leftTextView];
     [self fixupTextView:rightTextView];
     [[leftTextView controller] setByteArray:leftBytes];
@@ -152,7 +199,7 @@
     
     NSScroller *scroller = [scrollRepresenter view];
     NSRect scrollerRect = [scroller frame];
-    NSView *contentView = [[self window] contentView];
+    NSView *contentView = [window contentView];
     NSRect contentBounds = [contentView bounds];
     [scroller setFrame:NSMakeRect(NSMaxX(contentBounds) - NSWidth(scrollerRect), NSMinY(contentBounds), NSWidth(scrollerRect), NSHeight(contentBounds))];
     [scroller setAutoresizingMask:NSViewHeightSizable | NSViewMinXMargin];
@@ -163,6 +210,11 @@
     
     [self synchronizeController:[leftTextView controller] properties:(HFControllerPropertyBits)-1];
     [self synchronizeController:[rightTextView controller] properties:(HFControllerPropertyBits)-1];
+    
+    overlayView = [[DiffOverlayView alloc] initWithFrame:[[window contentView] bounds]];
+    [overlayView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
+    [[window contentView] addSubview:overlayView];
+    [overlayView release];
 }
 
 - (NSString *)windowNibName {
