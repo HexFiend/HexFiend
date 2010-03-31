@@ -1501,7 +1501,7 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
 }
 
 - (void)deleteSelection {
-    if ([self inOverwriteMode]) {
+    if ([self inOverwriteMode] || ! [self isEditable]) {
         NSBeep();
     }
     else {
