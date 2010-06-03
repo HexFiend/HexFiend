@@ -13,9 +13,14 @@
 @interface DiffOverlayView : NSView {
     NSRect leftRect;
     NSRect rightRect;
+    NSView *leftView;
+    NSView *rightView;
 }
 
 - (void)setLeftRect:(NSRect)rect;
 - (void)setRightRect:(NSRect)rect;
+
+- (void)setLeftView:(NSView *)view;
+- (void)setRightView:(NSView *)view;
 
 @end

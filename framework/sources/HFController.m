@@ -580,7 +580,8 @@ static inline Class preferredByteArrayClass(void) {
     HFASSERT(linesToDisplay <= linesInRange);
     long double linesToMoveDownToMakeLastLineVisible = HFULToFP(endLine) - (displayRange.location + displayRange.length);
     long double linesToMoveUpToMakeFirstLineVisible = displayRange.location - HFULToFP(startLine);
-    HFASSERT(linesToMoveUpToMakeFirstLineVisible <= 0 || linesToMoveDownToMakeLastLineVisible <= 0);
+    //HFASSERT(linesToMoveUpToMakeFirstLineVisible <= 0 || linesToMoveDownToMakeLastLineVisible <= 0);
+    // in general, we expect either linesToMoveUpToMakeFirstLineVisible to be <= zero, or linesToMoveDownToMakeLastLineVisible to be <= zero.  However, if the available space is smaller than one line, then that won't be true.
     if (linesToMoveDownToMakeLastLineVisible > 0) {
         newDisplayRange.location += linesToMoveDownToMakeLastLineVisible;
     }
@@ -1954,7 +1955,7 @@ static NSData *randomDataOfLength(NSUInteger length) {
     HFTEST(HFRoundUpToNextMultipleSaturate(2, 2) == 4);
     HFTEST(HFRoundUpToNextMultipleSaturate(200, 200) == 400);
     HFTEST(HFRoundUpToNextMultipleSaturate(1304, 600) == 1800);
-    HFTEST(HFRoundUpToNextMultipleSaturate(ULLONG_MAX - 17, 100) == ULLONG_MAX);
+    HFTEST(HFRoundUpToNextMultipleSaturate(ULLONG_MAX - 13, 100) == ULLONG_MAX);
     HFTEST(HFRoundUpToNextMultipleSaturate(ULLONG_MAX, 100) == ULLONG_MAX);
     
     const HFRange dirtyRanges1[] = { {4, 6}, {6, 2}, {7, 3} };
@@ -2455,14 +2456,14 @@ static void exception_thrown(const char *methodName, NSException *exception) {
 
 + (void)_runAllTests {
     CFAbsoluteTime start = CFAbsoluteTimeGetCurrent();
-    BOOL enableTest = NO;
+    BOOL enableTest = YES;
     if (enableTest) @try { [self _testFastMemchr]; }
     @catch (NSException *localException) { exception_thrown("_testFastMemchr", localException); }
     if (enableTest) @try { [self _testRangeFunctions]; }
     @catch (NSException *localException) { exception_thrown("_testRangeFunctions", localException); }
     if (enableTest) @try { [self _testByteArray]; }
     @catch (NSException *localException) { exception_thrown("_testByteArray", localException); }
-    if (1) @try { [self _testByteArrayEditScripts]; }
+    if (enableTest) @try { [self _testByteArrayEditScripts]; }
     @catch (NSException *localException) { exception_thrown("_testByteArrayEditScripts", localException); }
     if (enableTest) @try { [self _testTextInsertion]; }
     @catch (NSException *localException) { exception_thrown("_testTextInsertion", localException); }

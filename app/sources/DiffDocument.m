@@ -16,12 +16,12 @@
     NSUInteger i, insnCount = [editScript numberOfInstructions];
     for (i=0; i < insnCount; i++) {
         struct HFEditInstruction_t insn = [editScript instructionAtIndex:i];
-        if (insn.isInsertion) {
-            [[[rightTextView controller] byteRangeAttributeArray] addAttribute:kHFAttributeDiffInsertion range:HFRangeMake(insn.offsetInDestinationForInsertion, insn.range.length)];
-        }
-        else {
-            [[[leftTextView controller] byteRangeAttributeArray] addAttribute:kHFAttributeDiffInsertion range:insn.range];        
-        }
+	if (insn.dst.length > 0) {
+	    [[[rightTextView controller] byteRangeAttributeArray] addAttribute:kHFAttributeDiffInsertion range:insn.dst];
+	}
+	if (insn.src.length > 0) {
+	    [[[leftTextView controller] byteRangeAttributeArray] addAttribute:kHFAttributeDiffInsertion range:insn.src];        	    
+	}
     }
     [[rightTextView controller] representer:nil changedProperties:HFControllerByteRangeAttributes];
     [[leftTextView controller] representer:nil changedProperties:HFControllerByteRangeAttributes];
@@ -64,19 +64,19 @@
     struct HFEditInstruction_t insn = [editScript instructionAtIndex:focusedInstructionIndex];
     [[[leftTextView controller] byteRangeAttributeArray] removeAttribute:kHFAttributeFocused];
     [[[rightTextView controller] byteRangeAttributeArray] removeAttribute:kHFAttributeFocused];
-    HFRange leftRange, rightRange;
-    if (insn.isInsertion) {
-        leftRange = HFRangeMake(insn.range.location, 0);
-        rightRange = HFRangeMake(insn.offsetInDestinationForInsertion, insn.range.length);
-        [[[rightTextView controller] byteRangeAttributeArray] addAttribute:kHFAttributeFocused range:rightRange];
+    HFRange leftRange = insn.src, rightRange = insn.dst;
+    if (insn.src.length > 0) {
+	[[[leftTextView controller] byteRangeAttributeArray] addAttribute:kHFAttributeFocused range:insn.src];
     }
-    else {
-        leftRange = insn.range;
-        rightRange = HFRangeMake(insn.range.location, 0);
-        [[[leftTextView controller] byteRangeAttributeArray] addAttribute:kHFAttributeFocused range:insn.range];        
+    if (insn.dst.length > 0) {
+        [[[rightTextView controller] byteRangeAttributeArray] addAttribute:kHFAttributeFocused range:insn.dst];
     }
     [[rightTextView controller] representer:nil changedProperties:HFControllerByteRangeAttributes];
     [[leftTextView controller] representer:nil changedProperties:HFControllerByteRangeAttributes];
+    
+    // if we are deleting, then the rightRange is empty and has a nonsense location.  Point it at the beginning of the range we're deleting
+    if (! rightRange.length) rightRange.location = leftRange.location;
+    NSLog(@"Range %@ %@", HFRangeToString(leftRange), HFRangeToString(rightRange));
     
     [self updateOverlayViewForLeftRange:leftRange rightRange:rightRange];
 }
@@ -116,6 +116,7 @@
     if (frInLeftView || frInRightView) {
         NSUInteger prohibitedFlags = (NSShiftKeyMask | NSControlKeyMask | NSAlternateKeyMask | NSCommandKeyMask);
         if ([event type] == NSKeyDown && ! (prohibitedFlags & [event modifierFlags])) {
+	    /* Handle arrow keys */
             NSString *chars = [event characters];
             if ([chars length] == 1) {
                 unichar c = [chars characterAtIndex:0];
@@ -129,6 +130,11 @@
                 }
             }
         }
+	else if ([event type] == NSScrollWheel) {
+	    /* Redirect scroll wheel events to our main view */
+	    [controller scrollWithScrollEvent:event];
+	    handled = YES;
+	}
     }
     return handled;
 }
@@ -157,6 +163,10 @@
         unsigned long long lineStart = HFFPToUL(floorl(displayedLineRange.location));
         unsigned long long firstByteShown = HFProductULL(bytesPerLine, lineStart);
         unsigned long long leftByteToShow = firstByteShown + [self changeInLengthBeforeByte:firstByteShown];
+	
+	if ([client contentsLength] > leftByteToShow) {
+	    [client maximizeVisibilityOfContentsRange:HFRangeMake(leftByteToShow, 1)];
+	}
         
     }
     if (propertyMask & HFControllerBytesPerColumn) {
@@ -213,6 +223,8 @@
     
     overlayView = [[DiffOverlayView alloc] initWithFrame:[[window contentView] bounds]];
     [overlayView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
+    [overlayView setLeftView:leftTextView];
+    [overlayView setRightView:rightTextView];
     [[window contentView] addSubview:overlayView];
     [overlayView release];
 }

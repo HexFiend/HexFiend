@@ -183,7 +183,8 @@ DONE:
             currentDiagonal += 1;
             X = xCoordForVertical;
             Y = X - currentDiagonal;
-            insns[--insnTop] = (struct HFEditInstruction_t){.range = HFRangeMake(X, 1), .offsetInDestinationForInsertion = Y, .isInsertion = YES};
+	    //insertion
+            insns[--insnTop] = (struct HFEditInstruction_t){.src = HFRangeMake(X, 0), .dst = HFRangeMake(Y, 1)};
 
         }
         else {
@@ -191,8 +192,9 @@ DONE:
             X = xCoordForHorizontal;
             Y = X - currentDiagonal;
                        
+	    //deletion
             currentDiagonal -= 1;
-            insns[--insnTop] = (struct HFEditInstruction_t){.range = HFRangeMake(X, 1), .offsetInDestinationForInsertion = -1, .isInsertion = NO};
+            insns[--insnTop] = (struct HFEditInstruction_t){.src = HFRangeMake(X, 1), .dst = HFRangeMake(-1, 0)};
         }
         paths = next;
     }
@@ -200,14 +202,15 @@ DONE:
 }
 
 static BOOL merge_instruction(struct HFEditInstruction_t *left, const struct HFEditInstruction_t *right) {
-    if (! left->isInsertion && ! right->isInsertion && HFMaxRange(left->range) == right->range.location) {
+    enum HFEditInstructionType leftType = HFByteArrayInstructionType(*left), rightType = HFByteArrayInstructionType(*right);
+    if (leftType == HFEditInstructionTypeDelete && rightType == HFEditInstructionTypeDelete && HFMaxRange(left->src) == right->src.location) {
         /* Merge abutting deletions */
-        left->range.length += right->range.length;
+        left->src.length += right->src.length;
         return YES;
     }
-    else if (left->isInsertion && right->isInsertion && left->range.location == right->range.location && left->offsetInDestinationForInsertion + left->range.length == right->offsetInDestinationForInsertion) {
+    else if (leftType == HFEditInstructionTypeInsert && rightType == HFEditInstructionTypeInsert && left->src.location == right->src.location && HFMaxRange(left->dst) == right->dst.location) {
         /* Merge insertions at the same location from abutting ranges */
-        left->range.length += right->range.length;
+        left->dst.length += right->dst.length;
         return YES;
     }
     else {
@@ -233,12 +236,12 @@ static BOOL merge_instruction(struct HFEditInstruction_t *left, const struct HFE
 }
 
 - (void)convertInstructionsToIncrementalForm {
-    long accumulatedLengthChange = 0;
+    long long accumulatedLengthChange = 0;
     size_t idx;
     for (idx = 0; idx < insnCount; idx++) {
-        insns[idx].range.location += accumulatedLengthChange;
-        if (insns[idx].isInsertion) accumulatedLengthChange += insns[idx].range.length;
-        else accumulatedLengthChange -= insns[idx].range.length;
+        insns[idx].src.location += accumulatedLengthChange;
+	accumulatedLengthChange -= insns[idx].src.length;
+	accumulatedLengthChange += insns[idx].dst.length;
     }
 }
 
@@ -247,11 +250,11 @@ static BOOL merge_instruction(struct HFEditInstruction_t *left, const struct HFE
     size_t i;
     for (i=0; i < insnCount; i++) {
         const struct HFEditInstruction_t *isn = insns + i;
-        if (isn->isInsertion) {
-            printf("\tInsert %llu at %llu (from %llu)\n", isn->range.length, isn->range.location, isn->offsetInDestinationForInsertion);
+        if (HFByteArrayInstructionType(*isn) == HFEditInstructionTypeInsert) {
+            printf("\tInsert %llu at %llu (from %llu)\n", isn->dst.length, isn->src.location, isn->dst.location);
         }
         else {
-            printf("\tDelete %llu from %llu\n", isn->range.length, isn->range.location);
+            printf("\tDelete %llu from %llu\n", isn->src.length, isn->src.location);
         }
     }
 }
@@ -290,20 +293,19 @@ static BOOL merge_instruction(struct HFEditInstruction_t *left, const struct HFE
 - (void)applyToByteArray:(HFByteArray *)target {
     size_t i;
     long long accumulatedLengthChange = 0;
+    const struct HFEditInstruction_t *isn = insns;
     for (i=0; i < insnCount; i++) {
-        const struct HFEditInstruction_t *isn = insns + i;
-        if (isn->isInsertion) {
-            HFByteArray *sub = [destination subarrayWithRange:HFRangeMake(isn->offsetInDestinationForInsertion, isn->range.length)];
-            [target insertByteArray:sub inRange:HFRangeMake(isn->range.location + accumulatedLengthChange, 0)];
-            accumulatedLengthChange += isn->range.length;
+        if (isn->dst.length > 0) {
+	    /* Replace or insertion */
+            HFByteArray *sub = [destination subarrayWithRange:isn->dst];
+            [target insertByteArray:sub inRange:HFRangeMake(isn->src.location + accumulatedLengthChange, isn->src.length)];
         }
         else {
             /* Deletion */
-            HFRange deletionRange = isn->range;
-            deletionRange.location += accumulatedLengthChange;
-            [target deleteBytesInRange:deletionRange];
-            accumulatedLengthChange -= isn->range.length;
+            [target deleteBytesInRange:HFRangeMake(isn->src.location + accumulatedLengthChange, isn->src.length)];
         }
+	accumulatedLengthChange += isn->dst.length - isn->src.length;
+	isn++;
     }
 }
 

@@ -16,11 +16,26 @@
 
 @class HFByteArray;
 
-struct HFEditInstruction_t {
-    HFRange range;
-    unsigned long long offsetInDestinationForInsertion;
-    BOOL isInsertion;
+enum HFEditInstructionType {
+    HFEditInstructionTypeDelete,
+    HFEditInstructionTypeInsert,
+    HFEditInstructionTypeReplace
 };
+
+/*! @struct HFEditInstruction
+ @breief A struct that represents a single instruction in an @link HFByteArrayEditScript @link.  Replace the bytes in the source in range 'src' with the from the destination in range 'dst'.  Note that if src is empty, then it is a pure insertion at src.location; if dst is empty it is a pure deletion of src.  If neither is empty, it is replacing some bytes with others.  Both are empty should never happen.
+ */
+struct HFEditInstruction_t {
+    HFRange src;
+    HFRange dst;
+};
+
+static inline enum HFEditInstructionType HFByteArrayInstructionType(struct HFEditInstruction_t insn) {
+    HFASSERT(insn.src.length > 0 || insn.dst.length > 0);
+    if (insn.src.length == 0) return HFEditInstructionTypeInsert;
+    else if (insn.dst.length == 0) return HFEditInstructionTypeDelete;
+    else return HFEditInstructionTypeReplace;
+}
 
 @interface HFByteArrayEditScript : NSObject {
     HFByteArray *source;
