@@ -10,8 +10,11 @@
 
 @implementation DiffOverlayView
 
+
 - (void)drawRect:(NSRect)rect {
     if (! leftView || ! rightView) return;
+    CGFloat x, y;
+    CGFloat lineHeight = 14;
     const NSRect bounds = [self bounds];
     const NSRect leftViewBounds = [self convertRect:[leftView bounds] fromView:leftView];
     const NSRect rightViewBounds = [self convertRect:[rightView bounds] fromView:rightView];
@@ -20,13 +23,26 @@
     CGMutablePathRef path = CGPathCreateMutable();
     CGAffineTransform transform = CGContextGetCTM(ctx);
     
+    x = NSMaxX(leftRect);
+    y = NSMidY(leftRect);
+    
+    /* Left side vertical */
+    CGPathMoveToPoint(path, &transform, x, y + lineHeight / 2);
+    CGPathAddLineToPoint(path, &transform, x, y - lineHeight / 2);
+    
     /* Go from the center of the left rect to the center */
     CGPathMoveToPoint(path, &transform, NSMaxX(leftRect), NSMidY(leftRect));
     CGPathAddLineToPoint(path, &transform, NSMaxX(leftViewBounds), NSMidY(leftRect));
     
     /* Now go to the right */
     CGPathAddLineToPoint(path, &transform, NSMinX(rightViewBounds), NSMidY(rightRect));
-    CGPathAddLineToPoint(path, &transform, NSMinX(rightRect), NSMidY(rightRect));
+    
+    x = NSMinX(rightRect), y = NSMidY(rightRect);
+    CGPathAddLineToPoint(path, &transform, x, y);
+    
+    /* Add vertical line to end */
+    CGPathAddLineToPoint(path, &transform, x, y + lineHeight / 2);
+    CGPathAddLineToPoint(path, &transform, x, y - lineHeight / 2);
     
     CGContextAddPath(ctx, path);
     [[NSColor colorWithCalibratedRed:1. green:0. blue:0. alpha:.5] set];

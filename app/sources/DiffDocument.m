@@ -59,12 +59,35 @@
     }
 }
 
+- (long long)changeInLengthBeforeByte:(unsigned long long)byte onLeft:(BOOL)isLeft {
+    long long diff = 0;
+    NSUInteger insnIndex, insnCount = [editScript numberOfInstructions];
+    for (insnIndex = 0; insnIndex < insnCount; insnIndex++) {
+	struct HFEditInstruction_t insn = [editScript instructionAtIndex:insnIndex];
+	
+	/* If we've gone past the byte we care about, we're done */
+	unsigned long long insnStartByte = (isLeft ? insn.src.location : insn.dst.location);
+	if (byte <= insnStartByte) break;
+	
+	/* Compute how the length changed according to this instruction, by adding the left amount and deleting the right amount (or vice-versa if isLeft is NO) */
+	long long lengthChange = (long long)(insn.src.length - insn.dst.length);
+	if (isLeft) lengthChange = - lengthChange;
+	diff += lengthChange;
+    }
+    
+    return diff;
+}
+
 - (void)setFocusedInstructionIndex:(NSUInteger)idx {
     focusedInstructionIndex = idx;
     struct HFEditInstruction_t insn = [editScript instructionAtIndex:focusedInstructionIndex];
     [[[leftTextView controller] byteRangeAttributeArray] removeAttribute:kHFAttributeFocused];
     [[[rightTextView controller] byteRangeAttributeArray] removeAttribute:kHFAttributeFocused];
     HFRange leftRange = insn.src, rightRange = insn.dst;
+    
+    NSLog(@"leftRange.location: %llu", leftRange.location);
+//    rightRange.location += [self changeInLengthBeforeByte:leftRange.location onLeft:NO];
+    
     if (insn.src.length > 0) {
 	[[[leftTextView controller] byteRangeAttributeArray] addAttribute:kHFAttributeFocused range:insn.src];
     }
@@ -76,7 +99,6 @@
     
     // if we are deleting, then the rightRange is empty and has a nonsense location.  Point it at the beginning of the range we're deleting
     if (! rightRange.length) rightRange.location = leftRange.location;
-    NSLog(@"Range %@ %@", HFRangeToString(leftRange), HFRangeToString(rightRange));
     
     [self updateOverlayViewForLeftRange:leftRange rightRange:rightRange];
 }
@@ -93,10 +115,6 @@
     else {
         [self setFocusedInstructionIndex:focusedInstructionIndex + direction];
     }
-}
-
-- (long long)changeInLengthBeforeByte:(unsigned long long)rightByte {
-    return 0;
 }
 
 - (BOOL)firstResponderIsInView:(NSView *)view {
@@ -162,7 +180,7 @@
         NSUInteger bytesPerLine = [controller bytesPerLine];
         unsigned long long lineStart = HFFPToUL(floorl(displayedLineRange.location));
         unsigned long long firstByteShown = HFProductULL(bytesPerLine, lineStart);
-        unsigned long long leftByteToShow = firstByteShown + [self changeInLengthBeforeByte:firstByteShown];
+        unsigned long long leftByteToShow = firstByteShown + [self changeInLengthBeforeByte:firstByteShown onLeft:YES];
 	
 	if ([client contentsLength] > leftByteToShow) {
 	    [client maximizeVisibilityOfContentsRange:HFRangeMake(leftByteToShow, 1)];

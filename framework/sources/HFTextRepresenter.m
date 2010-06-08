@@ -124,11 +124,12 @@
         [run setBackgroundColor:[NSColor colorWithCalibratedRed:1. green:.5 blue:0. alpha:.5]];
     }
     if ([attributes containsObject:kHFAttributeFocused]) {
-        [run setBackgroundColor:[NSColor colorWithCalibratedRed:(CGFloat)229/255. green:(CGFloat)255/255. blue:0/255. alpha:1.]];
-        [run setScale:1.3];
+        [run setBackgroundColor:[NSColor colorWithCalibratedRed:(CGFloat)255./255. green:(CGFloat)175./255. blue:175./255. alpha:1.]];
+        [run setScale:1.15];
     }
     else if ([attributes containsObject:kHFAttributeDiffInsertion]) {
-        [run setBackgroundColor:[NSColor colorWithCalibratedRed:(CGFloat)255/255. green:(CGFloat)184/255. blue:96/255. alpha:1.]];
+	CGFloat white = 220.;
+        [run setBackgroundColor:[NSColor colorWithCalibratedRed:(CGFloat)255./255. green:(CGFloat)white/255. blue:white/255. alpha:1.]];
     }
     return run;
 }
