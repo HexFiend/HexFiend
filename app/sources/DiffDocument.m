@@ -12,6 +12,10 @@
 
 @implementation DiffDocument
 
+- (NSString *)displayName {
+    return [NSString stringWithFormat:@"%@ vs %@", leftFileName, rightFileName];
+}
+
 - (void)showInstructionsFromEditScript {
     NSUInteger i, insnCount = [editScript numberOfInstructions];
     for (i=0; i < insnCount; i++) {
@@ -115,8 +119,24 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
     }    
 }
 
+- (void)scrollToFocusedInstruction {
+    if (focusedInstructionIndex < [editScript numberOfInstructions]) {
+	struct HFEditInstruction_t instruction = [editScript instructionAtIndex:focusedInstructionIndex];
+	
+	HFRange leftRange = instruction.src, rightRange = instruction.dst;
+	if (! rightRange.length) {
+	    rightRange.location = leftRange.location + [self changeInLengthBeforeByte:leftRange.location onLeft:YES];
+	}
+	
+	[controller centerContentsRange:rightRange];
+	[[leftTextView controller] centerContentsRange:leftRange];
+	[[rightTextView controller] centerContentsRange:rightRange];
+    }
+}
+
 - (void)setFocusedInstructionIndex:(NSUInteger)idx {
     focusedInstructionIndex = idx;
+    [self scrollToFocusedInstruction];
     [self updateInstructionOverlayView];
 }
 
@@ -188,6 +208,8 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
     [[NSNotificationCenter defaultCenter] removeObserver:self name:HFControllerDidChangePropertiesNotification object:controller];
     [leftBytes release];
     [rightBytes release];
+    [leftFileName release];
+    [rightFileName release];
     [super dealloc];
 }
 
@@ -200,7 +222,7 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
         unsigned long long leftByteToShow = firstByteShown + [self changeInLengthBeforeByte:firstByteShown onLeft:YES];
 	
 	if ([client contentsLength] > leftByteToShow) {
-	    [client maximizeVisibilityOfContentsRange:HFRangeMake(leftByteToShow, 1)];
+	    [client centerContentsRange:HFRangeMake(leftByteToShow, 1)];
 	}
         
     }
@@ -281,5 +303,28 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
     [[rightTextView controller] setFont:font];
     [[self window] enableFlushWindow];
 }
+
+- (void)setLeftFileName:(NSString *)val {
+    if (val != leftFileName) {
+	[leftFileName release];
+	leftFileName = [val copy];
+    }
+}
+
+- (NSString *)leftFileName {
+    return leftFileName;
+}
+
+- (void)setRightFileName:(NSString *)val {
+    if (val != rightFileName) {
+	[rightFileName release];
+	rightFileName = [val copy];
+    }    
+}
+
+- (NSString *)rightFileName {
+    return rightFileName;
+}
+
 
 @end

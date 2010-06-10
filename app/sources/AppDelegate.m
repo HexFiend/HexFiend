@@ -299,6 +299,8 @@ static int GetBSDProcessList(struct kinfo_proc **procList, size_t *procCount)
     HFByteArray *left = [[docs objectAtIndex:0] byteArray];
     HFByteArray *right = [[docs objectAtIndex:1] byteArray];
     DiffDocument *doc = [[DiffDocument alloc] initWithLeftByteArray:left rightByteArray:right];
+    [doc setLeftFileName:[[docs objectAtIndex:0] displayName]];
+    [doc setRightFileName:[[docs objectAtIndex:1] displayName]];
     [[NSDocumentController sharedDocumentController] addDocument:doc];
     [doc makeWindowControllers];
     [doc showWindows];

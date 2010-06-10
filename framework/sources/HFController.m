@@ -161,7 +161,7 @@ static inline Class preferredByteArrayClass(void) {
 #else
     NSNumber *number = [[NSNumber alloc] initWithUnsignedInt:bits];
 #endif
-    NSDictionary *userInfo = [[NSDictionary alloc] initWithObjects:&number forKeys:&HFControllerChangedPropertiesKey count:1];
+    NSDictionary *userInfo = [[NSDictionary alloc] initWithObjects:&number forKeys:(id *)&HFControllerChangedPropertiesKey count:1];
     [number release];
     [[NSNotificationCenter defaultCenter] postNotificationName:HFControllerDidChangePropertiesNotification object:self userInfo:userInfo];
     [userInfo release];
@@ -595,21 +595,27 @@ static inline Class preferredByteArrayClass(void) {
 - (void)centerContentsRange:(HFRange)range {
     HFASSERT(HFRangeIsSubrangeOfRange(range, HFRangeMake(0, [self contentsLength])));
     HFFPRange displayRange = [self displayedLineRange];
-    HFFPRange newDisplayRange = displayRange;
+    const long double numDisplayedLines = displayRange.length;
+    HFFPRange newDisplayRange;
     unsigned long long startLine = range.location / bytesPerLine;
     unsigned long long endLine = HFDivideULLRoundingUp(HFRoundUpToNextMultipleSaturate(HFMaxRange(range), bytesPerLine), bytesPerLine);
     HFASSERT(endLine > startLine || endLine == ULLONG_MAX);
     long double linesInRange = HFULToFP(endLine - startLine);
     
     /* Handle the case of a line range bigger than we can display by choosing the top lines. */
-    if (displayRange.length <= linesInRange) {
-	linesInRange = displayRange.length;
-	endLine = startLine + linesInRange;
+    if (numDisplayedLines <= linesInRange) {
+	newDisplayRange = (HFFPRange){startLine, numDisplayedLines};
     }
     else {
-	/* */
+	/* Construct a newDisplayRange that centers {startLine, endLine} */
+	long double center = startLine + (endLine - startLine) / 2.;
+	newDisplayRange = (HFFPRange){center - numDisplayedLines / 2., numDisplayedLines};
     }
     
+    /* Move the newDisplayRange up or down as necessary */
+    newDisplayRange.location = fmaxl(newDisplayRange.location, (long double)0.);
+    newDisplayRange.location = fminl(newDisplayRange.location, HFULToFP([self totalLineCount]) - numDisplayedLines);
+    [self setDisplayedLineRange:newDisplayRange];
 }
 
 /* Clips the selection to a given length.  If this would clip the entire selection, returns a zero length selection at the end.  Indicates HFControllerSelectedRanges if the selection changes. */
