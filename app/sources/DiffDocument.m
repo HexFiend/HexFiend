@@ -36,6 +36,12 @@
     return nil; 
 }
 
+static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
+    if (value == CGFLOAT_MAX) return DiffOverlayViewRangeIsBelow;	
+    else if (value == -CGFLOAT_MAX) return DiffOverlayViewRangeIsAbove;
+    else return DiffOverlayViewRangeIsVisible;
+}
+
 - (void)updateOverlayViewForLeftRange:(HFRange)leftRange rightRange:(HFRange)rightRange {
     HFTextRepresenter *left = [self textRepresenterFromTextView:leftTextView], *right = [self textRepresenterFromTextView:rightTextView];
     if (left && right) {
@@ -54,8 +60,10 @@
         else {
             rightRect = [right furthestRectOnEdge:NSMinXEdge forByteRange:rightRange];
         }
-        [overlayView setLeftRect:[overlayView convertRect:leftRect fromView:[left view]]];
-        [overlayView setRightRect:[overlayView convertRect:rightRect fromView:[right view]]];
+	 //leftRect and rightRect may have origins of CGFLOAT_MAX and -CGFLOAT_MAX.  Converting them is a sketchy thing to do.  But in that case, the range type will be RangeIsAbove or RangeIsBelow, in which case the rect is ignored
+	
+        [overlayView setLeftRangeType:rangeTypeForValue(leftRect.origin.x) rect:[overlayView convertRect:leftRect fromView:[left view]]];
+        [overlayView setRightRangeType:rangeTypeForValue(rightRect.origin.x) rect:[overlayView convertRect:rightRect fromView:[right view]]];
     }
 }
 
@@ -78,29 +86,38 @@
     return diff;
 }
 
+- (void)updateInstructionOverlayView {
+    if (focusedInstructionIndex >= [editScript numberOfInstructions]) {
+	[overlayView setHidden:YES];
+    }
+    else {
+	struct HFEditInstruction_t instruction = [editScript instructionAtIndex:focusedInstructionIndex];
+	[[[leftTextView controller] byteRangeAttributeArray] removeAttribute:kHFAttributeFocused];
+	[[[rightTextView controller] byteRangeAttributeArray] removeAttribute:kHFAttributeFocused];
+	HFRange leftRange = instruction.src, rightRange = instruction.dst;
+	
+	if (leftRange.length > 0) {
+	    [[[leftTextView controller] byteRangeAttributeArray] addAttribute:kHFAttributeFocused range:leftRange];
+	}
+	if (rightRange.length > 0) {
+	    [[[rightTextView controller] byteRangeAttributeArray] addAttribute:kHFAttributeFocused range:rightRange];
+	}
+	[[rightTextView controller] representer:nil changedProperties:HFControllerByteRangeAttributes];
+	[[leftTextView controller] representer:nil changedProperties:HFControllerByteRangeAttributes];
+	
+	// if we are deleting, then the rightRange is empty and has a nonsense location.  Point it at the beginning of the range we're deleting
+	if (! rightRange.length) {
+	    rightRange.location = leftRange.location + [self changeInLengthBeforeByte:leftRange.location onLeft:YES];
+	}
+	
+	[self updateOverlayViewForLeftRange:leftRange rightRange:rightRange];
+	[overlayView setHidden:NO];
+    }    
+}
+
 - (void)setFocusedInstructionIndex:(NSUInteger)idx {
     focusedInstructionIndex = idx;
-    struct HFEditInstruction_t insn = [editScript instructionAtIndex:focusedInstructionIndex];
-    [[[leftTextView controller] byteRangeAttributeArray] removeAttribute:kHFAttributeFocused];
-    [[[rightTextView controller] byteRangeAttributeArray] removeAttribute:kHFAttributeFocused];
-    HFRange leftRange = insn.src, rightRange = insn.dst;
-    
-    NSLog(@"leftRange.location: %llu", leftRange.location);
-//    rightRange.location += [self changeInLengthBeforeByte:leftRange.location onLeft:NO];
-    
-    if (insn.src.length > 0) {
-	[[[leftTextView controller] byteRangeAttributeArray] addAttribute:kHFAttributeFocused range:insn.src];
-    }
-    if (insn.dst.length > 0) {
-        [[[rightTextView controller] byteRangeAttributeArray] addAttribute:kHFAttributeFocused range:insn.dst];
-    }
-    [[rightTextView controller] representer:nil changedProperties:HFControllerByteRangeAttributes];
-    [[leftTextView controller] representer:nil changedProperties:HFControllerByteRangeAttributes];
-    
-    // if we are deleting, then the rightRange is empty and has a nonsense location.  Point it at the beginning of the range we're deleting
-    if (! rightRange.length) rightRange.location = leftRange.location;
-    
-    [self updateOverlayViewForLeftRange:leftRange rightRange:rightRange];
+    [self updateInstructionOverlayView];
 }
 
 - (void)selectInDirection:(NSInteger)direction {
@@ -204,6 +221,9 @@
 #endif
     [self synchronizeController:[leftTextView controller] properties:propertyMask];
     [self synchronizeController:[rightTextView controller] properties:propertyMask];
+    
+    /* Update the overlay view to react to things like the bytes per line changing. */
+    [self updateInstructionOverlayView];
 }
 
 - (void)fixupTextView:(HFTextView *)textView {
@@ -245,6 +265,8 @@
     [overlayView setRightView:rightTextView];
     [[window contentView] addSubview:overlayView];
     [overlayView release];
+    
+    [self setFocusedInstructionIndex:0];
 }
 
 - (NSString *)windowNibName {

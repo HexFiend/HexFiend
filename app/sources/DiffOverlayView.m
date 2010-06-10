@@ -10,39 +10,71 @@
 
 @implementation DiffOverlayView
 
+- (BOOL)isFlipped {
+    return YES;
+}
+
 
 - (void)drawRect:(NSRect)rect {
-    if (! leftView || ! rightView) return;
-    CGFloat x, y;
+    if (! leftView || ! rightView) return;    
+    CGFloat x, y, bottom, top;
     CGFloat lineHeight = 14;
     const NSRect bounds = [self bounds];
     const NSRect leftViewBounds = [self convertRect:[leftView bounds] fromView:leftView];
     const NSRect rightViewBounds = [self convertRect:[rightView bounds] fromView:rightView];
+    const CGFloat xMiddle = (NSMaxX(leftViewBounds) + NSMinX(rightViewBounds)) / 2;
+    
+    /* Clip to the bounds of our left and right views so we don't draw into the content region below */
+    [NSBezierPath clipRect:NSUnionRect(leftViewBounds, rightViewBounds)];
     
     CGContextRef ctx = [[NSGraphicsContext currentContext] graphicsPort];
     CGMutablePathRef path = CGPathCreateMutable();
-    CGAffineTransform transform = CGContextGetCTM(ctx);
+    const CGAffineTransform transform = CGAffineTransformIdentity;
     
     x = NSMaxX(leftRect);
     y = NSMidY(leftRect);
+    bottom = ([self isFlipped] ? NSMaxY : NSMinY)(leftViewBounds);
+    top = ([self isFlipped] ? NSMinY : NSMaxY)(leftViewBounds);
     
-    /* Left side vertical */
-    CGPathMoveToPoint(path, &transform, x, y + lineHeight / 2);
-    CGPathAddLineToPoint(path, &transform, x, y - lineHeight / 2);
+    /* Left half */
+    if (leftRangeType == DiffOverlayViewRangeIsAbove) {
+	/* Come from the top */
+	CGPathMoveToPoint(path, &transform, xMiddle, top);	
+    }
+    else if (leftRangeType == DiffOverlayViewRangeIsBelow) {
+	/* Come from the bottom */
+	CGPathMoveToPoint(path, &transform, xMiddle, bottom);		
+    }
+    else {
+	/* Left side vertical */
+	CGPathMoveToPoint(path, &transform, x, y + lineHeight / 2);
+	CGPathAddLineToPoint(path, &transform, x, y - lineHeight / 2);
+	
+	/* Go from the center of the left rect to the center */
+	CGPathMoveToPoint(path, &transform, NSMaxX(leftRect), NSMidY(leftRect));
+	CGPathAddLineToPoint(path, &transform, NSMaxX(leftViewBounds), NSMidY(leftRect));
+    }    
     
-    /* Go from the center of the left rect to the center */
-    CGPathMoveToPoint(path, &transform, NSMaxX(leftRect), NSMidY(leftRect));
-    CGPathAddLineToPoint(path, &transform, NSMaxX(leftViewBounds), NSMidY(leftRect));
-    
-    /* Now go to the right */
-    CGPathAddLineToPoint(path, &transform, NSMinX(rightViewBounds), NSMidY(rightRect));
-    
-    x = NSMinX(rightRect), y = NSMidY(rightRect);
-    CGPathAddLineToPoint(path, &transform, x, y);
-    
-    /* Add vertical line to end */
-    CGPathAddLineToPoint(path, &transform, x, y + lineHeight / 2);
-    CGPathAddLineToPoint(path, &transform, x, y - lineHeight / 2);
+    /* Right half */
+    if (rightRangeType == DiffOverlayViewRangeIsAbove) {
+	/* Go off the top */
+	CGPathAddLineToPoint(path, &transform, xMiddle, top);	
+    }
+    else if (rightRangeType == DiffOverlayViewRangeIsBelow) {
+	/* Go off the bottom */
+	CGPathAddLineToPoint(path, &transform, xMiddle, bottom);
+    }
+    else {
+	/* Now go to the right */
+	CGPathAddLineToPoint(path, &transform, NSMinX(rightViewBounds), NSMidY(rightRect));
+	
+	x = NSMinX(rightRect), y = NSMidY(rightRect);
+	CGPathAddLineToPoint(path, &transform, x, y);
+	
+	/* Add vertical line to end */
+	CGPathAddLineToPoint(path, &transform, x, y + lineHeight / 2);
+	CGPathAddLineToPoint(path, &transform, x, y - lineHeight / 2);
+    }
     
     CGContextAddPath(ctx, path);
     [[NSColor colorWithCalibratedRed:1. green:0. blue:0. alpha:.5] set];
@@ -56,77 +88,20 @@
     //    CGContextStrokePath(ctx);    
 }
 
-
-- (void)drawRectSlightlyLessOld:(NSRect)rect {
-    CGContextRef ctx = [[NSGraphicsContext currentContext] graphicsPort];
-    CGMutablePathRef path = CGPathCreateMutable();
-    CGAffineTransform transform = CGContextGetCTM(ctx);
-    
-    /* Find the midpoint of our two lines */
-    CGPoint mid1, mid2;
-    mid1.x = (NSMaxX(leftRect) + NSMinX(rightRect)) / 2;
-    mid1.y = (NSMinY(leftRect) + NSMinY(rightRect)) / 2;
-    
-    mid2.x = (NSMaxX(leftRect) + NSMinX(rightRect)) / 2;
-    mid2.y = (NSMaxY(leftRect) + NSMaxY(rightRect)) / 2;
-    
-    /* Find the midpoint of the line connecting the midpoints */
-    CGPoint secondMid;
-    secondMid.x = (mid1.x + mid2.x) / 2;
-    secondMid.y = (mid1.y + mid2.y) / 2;
-    
-    /* Use it as a control point */
-    if (1) {
-	CGPathMoveToPoint(path, &transform, NSMaxX(leftRect), NSMinY(leftRect));
-	CGPathAddLineToPoint(path, &transform, NSMaxX(leftRect), NSMaxY(leftRect));
-	CGPathAddQuadCurveToPoint(path, &transform, secondMid.x, secondMid.y, NSMinX(rightRect), NSMaxY(rightRect));
-	CGPathAddLineToPoint(path, &transform, NSMinX(rightRect), NSMinY(rightRect));
-	CGPathAddQuadCurveToPoint(path, &transform, secondMid.x, secondMid.y, NSMaxX(leftRect), NSMinY(leftRect));
-	CGPathCloseSubpath(path);
+- (void)setLeftRangeType:(enum DiffOverlayViewRangeType_t)type rect:(NSRect)rect {
+    if (leftRangeType != type || ! NSEqualRects(rect, leftRect)) {
+	leftRangeType = type;
+	leftRect = rect;
+	[self setNeedsDisplay:YES];
     }
-    else {
-	CGPathMoveToPoint(path, &transform, NSMaxX(leftRect), NSMinY(leftRect));
-	CGPathAddLineToPoint(path, &transform, NSMaxX(leftRect), NSMaxY(leftRect));
-	CGPathAddLineToPoint(path, &transform, NSMinX(rightRect), NSMaxY(rightRect));
-	CGPathAddLineToPoint(path, &transform, NSMinX(rightRect), NSMinY(rightRect));
-	CGPathCloseSubpath(path);
+}
+
+- (void)setRightRangeType:(enum DiffOverlayViewRangeType_t)type rect:(NSRect)rect {
+    if (rightRangeType != type || ! NSEqualRects(rect, rightRect)) {
+	rightRangeType = type;
+	rightRect = rect;
+	[self setNeedsDisplay:YES];
     }
-    
-    
-    
-    CGContextAddPath(ctx, path);
-    [[NSColor colorWithCalibratedRed:0. green:0. blue:0. alpha:.15] set];
-    CGContextSetBlendMode(ctx, kCGBlendModeNormal);
-    CGContextFillPath(ctx);
-    CGPathRelease(path);
-    
-    //    CGContextAddPath(ctx, path);
-    //    [[NSColor colorWithCalibratedRed:0. green:0. blue:0. alpha:.75] set];
-    //    CGContextStrokePath(ctx);    
-}
-
-- (void)drawRectOld:(NSRect)rect {
-    NSPoint lowerLeft, upperRight;
-    lowerLeft.x = MIN(NSMinX(leftRect), NSMinX(rightRect));
-    lowerLeft.y = MIN(NSMinY(leftRect), NSMinY(rightRect));
-    upperRight.x = MAX(NSMaxX(leftRect), NSMaxX(rightRect));
-    upperRight.y = MAX(NSMaxY(leftRect), NSMaxY(rightRect));
-    NSRect unionRect;
-    unionRect.origin = lowerLeft;
-    unionRect.size.width = upperRight.x - lowerLeft.x;
-    unionRect.size.height = upperRight.y - lowerLeft.y;
-    [[NSColor colorWithCalibratedRed:0. green:0. blue:1. alpha:.5] set];
-    NSRectFillUsingOperation(unionRect, NSCompositeSourceOver);
-}
-
-- (void)setLeftRect:(NSRect)rect {
-    leftRect = rect;
-    [self setNeedsDisplay:YES];
-}
-
-- (void)setRightRect:(NSRect)rect {
-    rightRect = rect;
-    [self setNeedsDisplay:YES];
 }
 
 - (NSView *)hitTest:(NSPoint)point {

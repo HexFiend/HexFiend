@@ -592,6 +592,26 @@ static inline Class preferredByteArrayClass(void) {
     [self setDisplayedLineRange:newDisplayRange];
 }
 
+- (void)centerContentsRange:(HFRange)range {
+    HFASSERT(HFRangeIsSubrangeOfRange(range, HFRangeMake(0, [self contentsLength])));
+    HFFPRange displayRange = [self displayedLineRange];
+    HFFPRange newDisplayRange = displayRange;
+    unsigned long long startLine = range.location / bytesPerLine;
+    unsigned long long endLine = HFDivideULLRoundingUp(HFRoundUpToNextMultipleSaturate(HFMaxRange(range), bytesPerLine), bytesPerLine);
+    HFASSERT(endLine > startLine || endLine == ULLONG_MAX);
+    long double linesInRange = HFULToFP(endLine - startLine);
+    
+    /* Handle the case of a line range bigger than we can display by choosing the top lines. */
+    if (displayRange.length <= linesInRange) {
+	linesInRange = displayRange.length;
+	endLine = startLine + linesInRange;
+    }
+    else {
+	/* */
+    }
+    
+}
+
 /* Clips the selection to a given length.  If this would clip the entire selection, returns a zero length selection at the end.  Indicates HFControllerSelectedRanges if the selection changes. */
 - (void)_clipSelectedContentsRangesToLength:(unsigned long long)newLength {
     NSMutableArray *newTempSelection = [selectedContentsRanges mutableCopy];

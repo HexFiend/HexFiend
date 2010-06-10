@@ -21,11 +21,15 @@
     NSArray *rowBackgroundColors;
 }
 
-/*! Given a rect edge, return an NSRect representing the maximum edge in that direction.  The dimension in the direction of the edge is 0 (so if edge is NSMaxXEdge, the resulting width is 0).  The returned rect is in the coordinate space of the receiver's view.  If the byte range is not displayed, returns NSZeroRect.
+/*! Given a rect edge, return an NSRect representing the maximum edge in that direction, in the coordinate system of the receiver's view.  The dimension in the direction of the edge is 0 (so if edge is NSMaxXEdge, the resulting width is 0).  The returned rect is in the coordinate space of the receiver's view.  If the byte range is not displayed, returns NSZeroRect.
+ 
+    If range is entirely above the visible region, returns an NSRect whose width and height are 0, and whose origin is -CGFLOAT_MAX (the most negative CGFloat).  If range is entirely below the visible region, returns the same except with CGFLOAT_MAX (positive).
+ 
+    This raises an exception if range is empty.
 */
 - (NSRect)furthestRectOnEdge:(NSRectEdge)edge forByteRange:(HFRange)range;
 
-/*! Returns the origin of the character at the given byte index.  The returned point is in the coordinate space of the receiver's view.  If the character is not displayed, returns {-1, -1}.
+/*! Returns the origin of the character at the given byte index.  The returned point is in the coordinate space of the receiver's view.  If the character is not displayed because it would be above the displayed range, returns {0, -CGFLOAT_MAX}.  If it is not displayed because it is below the displayed range, returns {0, CGFLOAT_MAX}.
  */
 - (NSPoint)locationOfCharacterAtByteIndex:(unsigned long long)byteIndex;
 

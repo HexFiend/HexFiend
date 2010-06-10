@@ -72,7 +72,7 @@
     /* Middle half of file is magic */
     unsigned long long fileLength = [fileReference length];
     HFRange magicRange = HFRangeMake(fileLength / 4, fileLength / 2);
-    printf("Magic location: %llu\n", fileLength / 4);
+//    printf("Magic location: %llu\n", fileLength / 4);
     HFRange intersectionRange = HFIntersectionRange(magicRange, range);
     if (intersectionRange.length > 0) {
         //result = [[[HFByteRangeAttributeArray alloc] init] autorelease];

@@ -38,6 +38,21 @@ static void free_paths(struct DPath_t *path) {
     }
 }
 
+enum HFEditInstructionType {
+    HFEditInstructionTypeDelete,
+    HFEditInstructionTypeInsert,
+    HFEditInstructionTypeReplace
+};
+
+
+static inline enum HFEditInstructionType HFByteArrayInstructionType(struct HFEditInstruction_t insn) {
+    HFASSERT(insn.src.length > 0 || insn.dst.length > 0);
+    if (insn.src.length == 0) return HFEditInstructionTypeInsert;
+    else if (insn.dst.length == 0) return HFEditInstructionTypeDelete;
+    else return HFEditInstructionTypeReplace;
+}
+
+
 #define READ_AMOUNT 1024
 #define CACHE_AMOUNT (2 * READ_AMOUNT)
 
@@ -202,6 +217,20 @@ DONE:
 }
 
 static BOOL merge_instruction(struct HFEditInstruction_t *left, const struct HFEditInstruction_t *right) {
+    if (HFMaxRange(left->src) == right->src.location) {
+	/* We can merge these if one (or both) of the dest ranges are empty, or if they are abutting.  Note that if a destination is empty, we have to copy the location from the other one, because we like to give nonsense locations (-1) to zero length ranges.  src never has a nonsense location. */
+	if (left->dst.length == 0 || right->dst.length == 0 || HFMaxRange(left->dst) == right->dst.location) {
+	    left->src.length = HFSum(left->src.length, right->src.length);
+	    if (left->dst.length == 0) left->dst.location = right->dst.location;
+	    left->dst.length = HFSum(left->dst.length, right->dst.length);
+	    return YES;
+	}
+    }
+    return NO;
+}
+
+/* This function can be used if we want each instruction to be either insert or delete (no replaces) */
+static BOOL merge_instruction_old(struct HFEditInstruction_t *left, const struct HFEditInstruction_t *right) {
     enum HFEditInstructionType leftType = HFByteArrayInstructionType(*left), rightType = HFByteArrayInstructionType(*right);
     if (leftType == HFEditInstructionTypeDelete && rightType == HFEditInstructionTypeDelete && HFMaxRange(left->src) == right->src.location) {
         /* Merge abutting deletions */
@@ -250,11 +279,15 @@ static BOOL merge_instruction(struct HFEditInstruction_t *left, const struct HFE
     size_t i;
     for (i=0; i < insnCount; i++) {
         const struct HFEditInstruction_t *isn = insns + i;
-        if (HFByteArrayInstructionType(*isn) == HFEditInstructionTypeInsert) {
+	enum HFEditInstructionType type = HFByteArrayInstructionType(*isn);
+        if (type == HFEditInstructionTypeInsert) {
             printf("\tInsert %llu at %llu (from %llu)\n", isn->dst.length, isn->src.location, isn->dst.location);
         }
+	else if (type == HFEditInstructionTypeDelete) {
+	    printf("\tDelete %llu from %llu\n", isn->src.length, isn->src.location);
+	}
         else {
-            printf("\tDelete %llu from %llu\n", isn->src.length, isn->src.location);
+            printf("\tReplace %llu with %llu at %llu (from %llu)\n", isn->src.length, isn->dst.length, isn->src.location, isn->dst.location);
         }
     }
 }

@@ -79,24 +79,43 @@
 }
 
 - (NSRect)furthestRectOnEdge:(NSRectEdge)edge forByteRange:(HFRange)byteRange {
+    HFASSERT(byteRange.length > 0);
     HFRange displayedRange = [self entireDisplayedRange];
     HFRange intersection = HFIntersectionRange(displayedRange, byteRange);
-    NSRect result = NSZeroRect;
+    NSRect result;
     if (intersection.length > 0) {
         NSRange intersectionNSRange = NSMakeRange(ll2l(intersection.location - displayedRange.location), ll2l(intersection.length));
         if (intersectionNSRange.length > 0) {
             result = [[self view] furthestRectOnEdge:edge forRange:intersectionNSRange];
         }
     }
+    else if (byteRange.location < displayedRange.location) {
+	/* We're below it. */
+	return NSMakeRect(-CGFLOAT_MAX, -CGFLOAT_MAX, 0, 0);
+    }
+    else if (byteRange.location >= HFMaxRange(displayedRange)) {
+	/* We're above it */
+	return NSMakeRect(CGFLOAT_MAX, CGFLOAT_MAX, 0, 0);
+    }
+    else {
+	/* Shouldn't be possible to get here */
+	[NSException raise:NSInternalInconsistencyException format:@"furthestRectOnEdge: expected an intersection, or a range below or above the byte range, but nothin'"];
+    }
     return result;
 }
 
 - (NSPoint)locationOfCharacterAtByteIndex:(unsigned long long)index {
-    NSPoint result = {-1, -1};
+    NSPoint result;
     HFRange displayedRange = [self entireDisplayedRange];
     if (HFLocationInRange(index, displayedRange)) {
         NSUInteger location = ll2l(index - displayedRange.location);
         result = [[self view] originForCharacterAtByteIndex:location];
+    }
+    else if (index < displayedRange.location) {
+	result = NSMakePoint(-CGFLOAT_MAX, -CGFLOAT_MAX);
+    }
+    else {
+	result = NSMakePoint(CGFLOAT_MAX, CGFLOAT_MAX);
     }
     return result;
 }
@@ -124,8 +143,9 @@
         [run setBackgroundColor:[NSColor colorWithCalibratedRed:1. green:.5 blue:0. alpha:.5]];
     }
     if ([attributes containsObject:kHFAttributeFocused]) {
-        [run setBackgroundColor:[NSColor colorWithCalibratedRed:(CGFloat)255./255. green:(CGFloat)175./255. blue:175./255. alpha:1.]];
+        [run setBackgroundColor:[NSColor colorWithCalibratedRed:(CGFloat)128/255. green:(CGFloat)0/255. blue:0/255. alpha:1.]];
         [run setScale:1.15];
+	[run setForegroundColor:[NSColor whiteColor]];
     }
     else if ([attributes containsObject:kHFAttributeDiffInsertion]) {
 	CGFloat white = 220.;
