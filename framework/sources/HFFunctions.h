@@ -337,6 +337,9 @@ static inline NSUInteger HFDivideULRoundingUp(NSUInteger a, NSUInteger b) {
     else return ((a - 1) / b) + 1;
 }
 
+/*! Returns a description of the given byte count (e.g. "24 kilobytes") */
+NSString *HFDescribeByteCount(unsigned long long count);
+
 /*! @brief An object wrapper for the HFRange type.
 
   A simple class responsible for holding an immutable HFRange as an object.  Methods that logically work on multiple HFRanges usually take or return arrays of HFRangeWrappers. */

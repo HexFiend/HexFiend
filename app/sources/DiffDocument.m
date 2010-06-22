@@ -29,6 +29,7 @@
     }
     [[rightTextView controller] representer:nil changedProperties:HFControllerByteRangeAttributes];
     [[leftTextView controller] representer:nil changedProperties:HFControllerByteRangeAttributes];
+    [diffTable reloadData];
 }
 
 - (HFTextRepresenter *)textRepresenterFromTextView:(HFTextView *)textView {
@@ -326,5 +327,24 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
     return rightFileName;
 }
 
+#pragma mark NSTableView methods
+
+- (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView {
+    USE(tableView);
+    return [editScript numberOfInstructions];
+}
+
+- (id)tableView:(NSTableView *)tableView objectValueForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row {
+    struct HFEditInstruction_t insn = [editScript instructionAtIndex:row];
+    if (insn.src.length == 0) {
+	return [NSString stringWithFormat:@"Insert %@ at offset 0x%llx", HFDescribeByteCount(insn.dst.length), insn.dst.location];
+    }
+    else if (insn.dst.length == 0) {
+	return [NSString stringWithFormat:@"Delete %@ at offset 0x%llx", HFDescribeByteCount(insn.src.length), insn.src.location];
+    }
+    else {
+	return [NSString stringWithFormat:@"Delete %@ at offset 0x%llx", HFDescribeByteCount(insn.src.length), insn.src.location];	
+    }
+}
 
 @end

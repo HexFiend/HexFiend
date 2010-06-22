@@ -30,11 +30,11 @@
         
         hexRepresenter = [[HFHexTextRepresenter alloc] init];
         [hexRepresenter setBehavesAsTextField:YES];
-        [[hexRepresenter view] setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
+        [(NSView *)[hexRepresenter view] setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
         
         textRepresenter = [[HFStringEncodingTextRepresenter alloc] init];
         [textRepresenter setBehavesAsTextField:YES];
-        [[textRepresenter view] setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
+        [(NSView *)[textRepresenter view] setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
         
         
         [dataController addRepresenter:hexRepresenter];

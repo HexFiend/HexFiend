@@ -112,7 +112,7 @@
     [dataController addRepresenter:layoutRepresenter];
     
     HFHexTextRepresenter *hexRep = [[[HFHexTextRepresenter alloc] init] autorelease];
-    [[hexRep view] setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable]; //by default make the hex view fill remaining space
+    [(NSView *)[hexRep view] setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable]; //by default make the hex view fill remaining space
     
     HFStringEncodingTextRepresenter *textRep = [[[HFStringEncodingTextRepresenter alloc] init] autorelease];
     HFVerticalScrollerRepresenter *scrollRep = [[[HFVerticalScrollerRepresenter alloc] init] autorelease];

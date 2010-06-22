@@ -11,6 +11,7 @@
     NSString *rightFileName;
     IBOutlet HFTextView *leftTextView;
     IBOutlet HFTextView *rightTextView;
+    IBOutlet NSTableView *diffTable;
     DiffOverlayView *overlayView;
     NSUInteger focusedInstructionIndex;
     NSString *title;
