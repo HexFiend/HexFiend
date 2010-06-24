@@ -120,6 +120,17 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
     }    
 }
 
+- (void)updateTableViewSelection {
+    NSIndexSet *idxs;
+    if (focusedInstructionIndex >= [editScript numberOfInstructions]) {
+	idxs = [NSIndexSet indexSet];
+    }
+    else {
+	idxs = [NSIndexSet indexSetWithIndex:focusedInstructionIndex];
+    }
+    [diffTable selectRowIndexes:idxs byExtendingSelection:NO];
+}
+
 - (void)scrollToFocusedInstruction {
     if (focusedInstructionIndex < [editScript numberOfInstructions]) {
 	struct HFEditInstruction_t instruction = [editScript instructionAtIndex:focusedInstructionIndex];
@@ -139,6 +150,7 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
     focusedInstructionIndex = idx;
     [self scrollToFocusedInstruction];
     [self updateInstructionOverlayView];
+    [self updateTableViewSelection];
 }
 
 - (void)selectInDirection:(NSInteger)direction {
@@ -335,6 +347,7 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
 }
 
 - (id)tableView:(NSTableView *)tableView objectValueForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row {
+    USE(tableView);
     struct HFEditInstruction_t insn = [editScript instructionAtIndex:row];
     if (insn.src.length == 0) {
 	return [NSString stringWithFormat:@"Insert %@ at offset 0x%llx", HFDescribeByteCount(insn.dst.length), insn.dst.location];
@@ -343,8 +356,13 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
 	return [NSString stringWithFormat:@"Delete %@ at offset 0x%llx", HFDescribeByteCount(insn.src.length), insn.src.location];
     }
     else {
-	return [NSString stringWithFormat:@"Delete %@ at offset 0x%llx", HFDescribeByteCount(insn.src.length), insn.src.location];	
+	return [NSString stringWithFormat:@"Replace %@ at offset 0x%llx with %@", HFDescribeByteCount(insn.src.length), insn.src.location, HFDescribeByteCount(insn.dst.length)];
     }
+}
+
+- (void)tableViewSelectionDidChange:(NSNotification *)notification {
+    NSInteger row = [diffTable selectedRow];
+    [self setFocusedInstructionIndex:row];
 }
 
 @end

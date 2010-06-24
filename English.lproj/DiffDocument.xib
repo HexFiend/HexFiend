@@ -12,7 +12,7 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="13"/>
+			<integer value="3"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -199,7 +199,7 @@
 										<object class="NSScroller" id="37769254">
 											<reference key="NSNextResponder" ref="613062438"/>
 											<int key="NSvFlags">-2147483392</int>
-											<string key="NSFrame">{{224, 17}, {15, 102}}</string>
+											<string key="NSFrame">{{-100, -100}, {15, 102}}</string>
 											<reference key="NSSuperview" ref="613062438"/>
 											<reference key="NSTarget" ref="613062438"/>
 											<string key="NSAction">_doScroller:</string>
@@ -208,7 +208,7 @@
 										<object class="NSScroller" id="914193897">
 											<reference key="NSNextResponder" ref="613062438"/>
 											<int key="NSvFlags">-2147483392</int>
-											<string key="NSFrame">{{1, 119}, {223, 15}}</string>
+											<string key="NSFrame">{{-100, -100}, {223, 15}}</string>
 											<reference key="NSSuperview" ref="613062438"/>
 											<int key="NSsFlags">1</int>
 											<reference key="NSTarget" ref="613062438"/>
@@ -219,7 +219,7 @@
 									<string key="NSFrame">{{0, 262}, {660, 118}}</string>
 									<reference key="NSSuperview" ref="1062866321"/>
 									<reference key="NSNextKeyView" ref="412209851"/>
-									<int key="NSsFlags">562</int>
+									<int key="NSsFlags">546</int>
 									<reference key="NSVScroller" ref="37769254"/>
 									<reference key="NSHScroller" ref="914193897"/>
 									<reference key="NSContentView" ref="412209851"/>
@@ -382,6 +382,9 @@
 					<object class="IBObjectRecord">
 						<int key="objectID">5</int>
 						<reference key="object" ref="1033328373"/>
+						<object class="NSMutableArray" key="children">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+						</object>
 						<reference key="parent" ref="1062866321"/>
 					</object>
 					<object class="IBObjectRecord">
@@ -399,21 +402,11 @@
 						<reference key="object" ref="613062438"/>
 						<object class="NSMutableArray" key="children">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<reference ref="37769254"/>
-							<reference ref="914193897"/>
 							<reference ref="517437523"/>
+							<reference ref="914193897"/>
+							<reference ref="37769254"/>
 						</object>
 						<reference key="parent" ref="1062866321"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">14</int>
-						<reference key="object" ref="37769254"/>
-						<reference key="parent" ref="613062438"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">15</int>
-						<reference key="object" ref="914193897"/>
-						<reference key="parent" ref="613062438"/>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">16</int>
@@ -437,6 +430,16 @@
 						<int key="objectID">21</int>
 						<reference key="object" ref="118746282"/>
 						<reference key="parent" ref="632544989"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">15</int>
+						<reference key="object" ref="914193897"/>
+						<reference key="parent" ref="613062438"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">14</int>
+						<reference key="object" ref="37769254"/>
+						<reference key="parent" ref="613062438"/>
 					</object>
 				</object>
 			</object>
@@ -471,9 +474,9 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{672, 223}, {673, 533}}</string>
+					<string>{{295, 223}, {673, 533}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{672, 223}, {673, 533}}</string>
+					<string>{{295, 223}, {673, 533}}</string>
 					<boolean value="NO"/>
 					<string>{196, 240}</string>
 					<string>{{357, 418}, {480, 270}}</string>
