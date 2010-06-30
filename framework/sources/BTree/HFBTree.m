@@ -689,13 +689,6 @@ FORCE_STATIC_INLINE BOOL remove_value_from_node_with_possible_rebalance(HFBTreeN
 
 FORCE_STATIC_INLINE void update_node_having_changed_size_of_child(HFBTreeNode *node, BOOL isLeaf) {
     HFBTreeIndex newLength = sum_child_lengths(node->children, isLeaf);
-    
-    for (ChildIndex_t childIndex = 0; childIndex < BTREE_ORDER; childIndex++) {
-        id child = node->children[childIndex];
-        if (! child) break;
-    }
-    
-    
     /* This should only be called if the length actually changes - so assert as such */
     HFASSERT(node->subtreeLength != newLength);
     node->subtreeLength = newLength;

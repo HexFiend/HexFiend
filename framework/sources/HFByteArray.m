@@ -17,7 +17,13 @@
     if ([self class] == [HFByteArray class]) {
         [NSException raise:NSInvalidArgumentException format:@"init sent to HFByteArray, but HFByteArray is an abstract class.  Instantiate one of its subclasses instead, like HFBTreeByteArray."];
     }
+    arrayAttributes = [[HFByteRangeAttributeArray alloc] init];
     return [super init];
+}
+
+- (void)dealloc {
+    [arrayAttributes release];
+    [super dealloc];
 }
 
 - (NSArray *)byteSlices { UNIMPLEMENTED(); }
@@ -194,7 +200,17 @@
         remainingRange.location = HFSum(remainingRange.location, overlap.length);
         remainingRange.length = HFSubtract(remainingRange.length, overlap.length);
     }
+    
+    /* Transfer from arrayAttributes */
+    if (! [arrayAttributes isEmpty]) {
+	[result transferAttributesFromAttributeArray:arrayAttributes range:range baseOffset:0];
+    }
+    
     return result;
+}
+
+- (HFByteRangeAttributeArray *)byteRangeAttributeArray {
+    return arrayAttributes;
 }
 
 - (BOOL)_debugIsEqualToData:(NSData *)val {
@@ -240,7 +256,5 @@
         HFAtomicIncrement(&changeGenerationCount, YES);
     }
 }
-
-
 
 @end

@@ -14,6 +14,7 @@
     NSRange range;
     CGFloat scale;
     BOOL shouldDraw;
+    NSIndexSet *bookmarks;
 }
 
 - (NSColor *)foregroundColor;
@@ -30,6 +31,9 @@
 
 - (CGFloat)scale;
 - (void)setScale:(CGFloat)val;
+
+- (NSIndexSet *)bookmarks;
+- (void)setBookmarks:(NSIndexSet *)val;
 
 - (void)set;
 

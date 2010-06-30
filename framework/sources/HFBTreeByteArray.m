@@ -191,7 +191,7 @@ static inline HFByteSlice *findInitialSlice(HFBTree *btree, HFRange *inoutArrayR
     HFASSERT(afterLength - beforeLength == [slice length]);
 }
 
-- (void)deleteBytesInRange:(const HFRange)range {
+- (void)deleteBytesInRange:(HFRange)range {
     [self incrementGenerationOrRaiseIfLockedForSelector:_cmd];
     HFRange remainingRange = range;
     

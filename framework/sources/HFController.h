@@ -67,6 +67,7 @@ The HFControllerMovementGranularity enum is used to specify the granularity of t
 enum
 {
     HFControllerMovementByte, /*!< Move by individual bytes */
+    HFControllerMovementColumn, /*!< Move by a column */
     HFControllerMovementLine, /*!< Move by lines */
     HFControllerMovementPage, /*!< Move by pages */
     HFControllerMovementDocument /*!< Move by the whole document */
@@ -404,6 +405,13 @@ You create an HFController via <tt>[[HFController alloc] init]</tt>.  After that
 
 /*! Returns the attributes for the given range.  This is a union of the receiver's byteRangeAttributeArray properties and the properties returned by the byte array itself.  range.length must be <= NSUIntegerMax. */
 - (HFByteRangeAttributeArray *)attributesForBytesInRange:(HFRange)range;
+
+/*! Returns the range for the given bookmark.  If there is no bookmark, returns {ULLONG_MAX, ULLONG_MAX}. */
+- (HFRange)rangeForBookmark:(NSInteger)bookmark;
+
+/*! Sets the range for the given bookmark.  Pass {ULLONG_MAX, ULLONG_MAX} to remove the bookmark. */
+- (void)setRange:(HFRange)range forBookmark:(NSInteger)bookmark;
+
 
 /*! Returns total number of bytes.  This is equivalent to [[controller byteArray] length]. */
 - (unsigned long long)contentsLength;

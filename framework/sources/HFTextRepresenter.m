@@ -107,7 +107,7 @@
 - (NSPoint)locationOfCharacterAtByteIndex:(unsigned long long)index {
     NSPoint result;
     HFRange displayedRange = [self entireDisplayedRange];
-    if (HFLocationInRange(index, displayedRange)) {
+    if (HFLocationInRange(index, displayedRange) || index == HFMaxRange(displayedRange)) {
         NSUInteger location = ll2l(index - displayedRange.location);
         result = [[self view] originForCharacterAtByteIndex:location];
     }
@@ -151,6 +151,21 @@
 	CGFloat white = 220.;
         [run setBackgroundColor:[NSColor colorWithCalibratedRed:(CGFloat)255./255. green:(CGFloat)white/255. blue:white/255. alpha:1.]];
     }
+    
+    /* Process bookmarks */
+    NSMutableIndexSet *bookmarks = nil;
+    FOREACH(NSString *, attribute, attributes) {
+	NSUInteger bookmark = HFBookmarkFromBookmarkAttribute(attribute);
+	if (bookmark != NSNotFound) {
+	    if (! bookmarks) bookmarks = [[NSMutableIndexSet alloc] init];
+	    [bookmarks addIndex:bookmark];
+	}
+    }
+    if (bookmarks != nil) {
+	[run setBookmarks:bookmarks];
+	[bookmarks release];
+    }
+    
     return run;
 }
 

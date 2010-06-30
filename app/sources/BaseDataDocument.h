@@ -72,6 +72,9 @@
 - (IBAction)toggleOverwriteMode:sender;
 - (IBAction)modifyByteGrouping:sender;
 
+- (IBAction)jumpToBookmark:sender;
+- (IBAction)setBookmark:sender;
+
 - (HFByteArray *)byteArray; //accessed during diffing
 
 @end

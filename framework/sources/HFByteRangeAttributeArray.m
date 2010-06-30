@@ -148,6 +148,13 @@
     return result;
 }
 
+- (HFRange)rangeOfAttribute:(NSString *)attribute {
+    FOREACH(HFByteRangeAttributeRun *, run, attributeRuns) {
+	if ([attribute isEqualToString:run->name]) return run->range;
+    }
+    return HFRangeMake(ULLONG_MAX, ULLONG_MAX);
+}
+
 - (void)transferAttributesFromAttributeArray:(HFByteRangeAttributeArray *)array range:(HFRange)range baseOffset:(unsigned long long)baseOffset {
     HFASSERT(array != NULL);
     EXPECT_CLASS(array, HFByteRangeAttributeArray);

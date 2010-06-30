@@ -121,14 +121,13 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
 }
 
 - (void)updateTableViewSelection {
-    NSIndexSet *idxs;
     if (focusedInstructionIndex >= [editScript numberOfInstructions]) {
-	idxs = [NSIndexSet indexSet];
+	[diffTable selectRowIndexes:[NSIndexSet indexSet] byExtendingSelection:NO];
     }
     else {
-	idxs = [NSIndexSet indexSetWithIndex:focusedInstructionIndex];
+	[diffTable selectRowIndexes:[NSIndexSet indexSetWithIndex:focusedInstructionIndex] byExtendingSelection:NO];
+	[diffTable scrollRowToVisible:focusedInstructionIndex];
     }
-    [diffTable selectRowIndexes:idxs byExtendingSelection:NO];
 }
 
 - (void)scrollToFocusedInstruction {
@@ -263,6 +262,11 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
 
 - (void)fixupTextView:(HFTextView *)textView {
     [textView setBordered:YES];
+    HFLineCountingRepresenter *lineCounter = [[HFLineCountingRepresenter alloc] init];
+    [[textView controller] addRepresenter:lineCounter];
+    [[textView layoutRepresenter] addRepresenter:lineCounter];
+    [lineCounter release];
+    
     FOREACH(HFRepresenter *, rep, [[textView controller] representers]) {
         if ([rep isKindOfClass:[HFVerticalScrollerRepresenter class]] || [rep isKindOfClass:[HFStringEncodingTextRepresenter class]]) {
             [[textView layoutRepresenter] removeRepresenter:rep];
@@ -348,6 +352,7 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
 
 - (id)tableView:(NSTableView *)tableView objectValueForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row {
     USE(tableView);
+    USE(tableColumn);
     struct HFEditInstruction_t insn = [editScript instructionAtIndex:row];
     if (insn.src.length == 0) {
 	return [NSString stringWithFormat:@"Insert %@ at offset 0x%llx", HFDescribeByteCount(insn.dst.length), insn.dst.location];
@@ -361,6 +366,7 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
 }
 
 - (void)tableViewSelectionDidChange:(NSNotification *)notification {
+    USE(notification);
     NSInteger row = [diffTable selectedRow];
     [self setFocusedInstructionIndex:row];
 }

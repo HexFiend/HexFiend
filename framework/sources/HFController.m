@@ -11,6 +11,7 @@
 #import <HexFiend/HFByteArray_Internal.h>
 #import <HexFiend/HFFullMemoryByteArray.h>
 #import <HexFiend/HFBTreeByteArray.h>
+#import <HexFiend/HFByteRangeAttribute.h>
 #import <HexFiend/HFFullMemoryByteSlice.h>
 #import <HexFiend/HFControllerCoalescedUndo.h>
 #import <HexFiend/HFSharedMemoryByteSlice.h>
@@ -497,6 +498,22 @@ static inline Class preferredByteArrayClass(void) {
     }
     return result;
 }
+
+- (HFRange)rangeForBookmark:(NSInteger)bookmark {
+    if (! byteArray) return HFRangeMake(ULLONG_MAX, ULLONG_MAX);
+    NSString *attribute = HFBookmarkAttributeFromBookmark(bookmark);
+    HFByteRangeAttributeArray *attributes = [byteArray byteRangeAttributeArray];
+    return [attributes rangeOfAttribute:attribute];
+}
+
+- (void)setRange:(HFRange)range forBookmark:(NSInteger)bookmark {
+    HFByteRangeAttributeArray *attributes = [byteArray byteRangeAttributeArray];
+    NSString *attribute = HFBookmarkAttributeFromBookmark(bookmark);
+    [attributes removeAttribute:attribute];
+    [attributes addAttribute:attribute range:range];
+    [self _addPropertyChangeBits:HFControllerByteRangeAttributes];
+}
+
 
 - (void)_updateDisplayedRange {
     HFRange proposedNewDisplayRange;
@@ -1494,12 +1511,16 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
 }
 
 - (void)moveInDirection:(HFControllerMovementDirection)direction withGranularity:(HFControllerMovementGranularity)granularity andModifySelection:(BOOL)extendSelection {
-    HFASSERT(granularity == HFControllerMovementByte || granularity == HFControllerMovementLine || granularity == HFControllerMovementPage || granularity == HFControllerMovementDocument);
+    HFASSERT(granularity == HFControllerMovementByte || granularity == HFControllerMovementColumn || granularity == HFControllerMovementLine || granularity == HFControllerMovementPage || granularity == HFControllerMovementDocument);
     HFASSERT(direction == HFControllerDirectionLeft || direction == HFControllerDirectionRight);
     unsigned long long bytesToMove = 0;
     switch (granularity) {
 	case HFControllerMovementByte:
 	    bytesToMove = 1;
+	    break;
+	case HFControllerMovementColumn:
+	    /* This is a tricky case because the amount we have to move depends on our position in the column. */
+	    NSLog(@"Move by column");
 	    break;
 	case HFControllerMovementLine:
 	    bytesToMove = [self bytesPerLine];

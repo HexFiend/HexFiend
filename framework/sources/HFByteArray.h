@@ -33,10 +33,13 @@ enum
 };
 typedef NSUInteger HFByteArrayDataStringType;
 
+@class HFByteRangeAttributeArray;
+
 @interface HFByteArray : NSObject <NSCopying, NSMutableCopying> {
 @private
     NSUInteger changeLockCounter;
     NSUInteger changeGenerationCount;
+    HFByteRangeAttributeArray *arrayAttributes;
 }
 
 /*! @name Accessing raw data
@@ -157,5 +160,8 @@ typedef NSUInteger HFByteArrayDataStringType;
 
 /*! Returns a byte range attribute array for the bytes in the given range. */
 - (HFByteRangeAttributeArray *)attributesForBytesInRange:(HFRange)range;
+
+/*! Returns the HFByteArray level byte range attribute array. */
+- (HFByteRangeAttributeArray *)byteRangeAttributeArray;
 
 @end

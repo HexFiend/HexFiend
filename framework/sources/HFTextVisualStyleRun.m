@@ -21,6 +21,7 @@
 - (void)dealloc {
     [foregroundColor release];
     [backgroundColor release];
+    [bookmarks release];
     [super dealloc];
 }
 
@@ -60,6 +61,17 @@
 
 - (void)setScale:(CGFloat)val {
     scale = val;
+}
+
+- (NSIndexSet *)bookmarks {
+    return bookmarks;
+}
+
+- (void)setBookmarks:(NSIndexSet *)val {
+    if (bookmarks != val) {
+	[bookmarks release];
+	bookmarks = [val copy];
+    }
 }
 
 - (NSRange)range {

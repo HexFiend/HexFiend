@@ -327,8 +327,8 @@ static inline Class preferredByteArrayClass(void) {
     statusBarRepresenter = [[HFStatusBarRepresenter alloc] init];
     dataInspectorRepresenter = [[DataInspectorRepresenter alloc] init];
     
-    [[hexRepresenter view] setAutoresizingMask:NSViewHeightSizable];
-    [[asciiRepresenter view] setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
+    [(NSView *)[hexRepresenter view] setAutoresizingMask:NSViewHeightSizable];
+    [(NSView *)[asciiRepresenter view] setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
     
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
     [center addObserver:self selector:@selector(lineCountingViewChangedWidth:) name:HFLineCountingRepresenterMinimumViewWidthChanged object:lineCountingRepresenter];
@@ -559,6 +559,10 @@ static inline Class preferredByteArrayClass(void) {
     else if (action == @selector(modifyByteGrouping:)) {
         [item setState:(NSUInteger)[item tag] == [controller bytesPerColumn]];
         return YES;
+    }
+    else if (action == @selector(jumpToBookmark:)) {
+	HFRange range = [controller rangeForBookmark:[item tag]];
+	return range.location != ULLONG_MAX || range.length != ULLONG_MAX;
     }
     else return [super validateMenuItem:item];
 }
@@ -1337,6 +1341,25 @@ invalidString:;
     USE(sender);
     [controller setInOverwriteMode:![controller inOverwriteMode]];
     [self updateDocumentWindowTitle];
+}
+
+- (IBAction)jumpToBookmark:sender {
+    NSInteger bookmark = [sender tag];
+    if (controller) {
+	HFRange range = [controller rangeForBookmark:bookmark];
+	if (range.location != ULLONG_MAX || range.length != ULLONG_MAX) {
+	    [controller maximizeVisibilityOfContentsRange:range];
+	}
+    }
+}
+
+- (IBAction)setBookmark:sender {
+    NSInteger bookmark = [sender tag];
+    NSArray *ranges = [controller selectedContentsRanges];
+    if ([ranges count] > 0) {
+	HFRange range = [[ranges objectAtIndex:0] HFRange];
+	[controller setRange:range forBookmark:bookmark];
+    }
 }
 
 

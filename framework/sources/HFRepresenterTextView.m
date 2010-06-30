@@ -876,6 +876,14 @@ enum LineCoverage_t {
             NSRectFill(backgroundRect);
             [NSGraphicsContext restoreGraphicsState];
         }
+	NSIndexSet *bookmarks = [styleRun bookmarks];
+	if (bookmarks) {
+	    NSUInteger bookmark;
+	    for (bookmark = [bookmarks firstIndex]; bookmark != NSNotFound; bookmark = [bookmarks indexGreaterThanIndex:bookmark]) {
+		
+	    }
+	}
+	
         [styleRun set];
         CGContextRef ctx = [[NSGraphicsContext currentContext] graphicsPort];
         CGContextShowGlyphsWithAdvances(ctx, glyphs, advances, glyphCount);
