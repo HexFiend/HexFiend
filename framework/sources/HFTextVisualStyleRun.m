@@ -21,7 +21,8 @@
 - (void)dealloc {
     [foregroundColor release];
     [backgroundColor release];
-    [bookmarks release];
+    [bookmarkStarts release];
+    [bookmarkExtents release];
     [super dealloc];
 }
 
@@ -63,16 +64,28 @@
     scale = val;
 }
 
-- (NSIndexSet *)bookmarks {
-    return bookmarks;
+- (NSIndexSet *)bookmarkExtents {
+    return bookmarkExtents;
 }
 
-- (void)setBookmarks:(NSIndexSet *)val {
-    if (bookmarks != val) {
-	[bookmarks release];
-	bookmarks = [val copy];
+- (void)setBookmarkExtents:(NSIndexSet *)val {
+    if (bookmarkExtents != val) {
+	[bookmarkExtents release];
+	bookmarkExtents = [val copy];
     }
 }
+
+- (NSIndexSet *)bookmarkStarts {
+    return bookmarkStarts;
+}
+
+- (void)setBookmarkStarts:(NSIndexSet *)val {
+    if (bookmarkStarts != val) {
+	[bookmarkStarts release];
+	bookmarkStarts = [val copy];
+    }
+}
+
 
 - (NSRange)range {
     return range;
@@ -115,6 +128,8 @@ static BOOL objectsAreEqual(id a, id b) {
     if (! [run isKindOfClass:[HFTextVisualStyleRun class]]) return NO;
     if (! objectsAreEqual(foregroundColor, run->foregroundColor)) return NO;
     if (! objectsAreEqual(backgroundColor, run->backgroundColor)) return NO;
+    if (! objectsAreEqual(bookmarkStarts, run->bookmarkStarts)) return NO;
+    if (! objectsAreEqual(bookmarkExtents, run->bookmarkExtents)) return NO;
     return YES;
 }
 

@@ -162,7 +162,7 @@
 	}
     }
     if (bookmarks != nil) {
-	[run setBookmarks:bookmarks];
+	[run setBookmarkExtents:bookmarks];
 	[bookmarks release];
     }
     

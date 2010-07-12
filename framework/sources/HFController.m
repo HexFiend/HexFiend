@@ -227,6 +227,7 @@ static inline Class preferredByteArrayClass(void) {
     if (currentPropertyChangeToken != token) {
         [NSException raise:NSInvalidArgumentException format:@"endPropertyChangeTransaction passed token %lu, but expected token %lu", (unsigned long)token, (unsigned long)currentPropertyChangeToken];
     }
+    HFASSERT(currentPropertyChangeToken > 0);
     if (--currentPropertyChangeToken == 0) [self _firePropertyChanges];
 }
 

@@ -65,19 +65,19 @@
 										<object class="NSCustomView" id="421932578">
 											<reference key="NSNextResponder" ref="49024198"/>
 											<int key="NSvFlags">275</int>
-											<string key="NSFrame">{{335, 0}, {324, 252}}</string>
+											<string key="NSFrame">{{335, 0}, {324, 356}}</string>
 											<reference key="NSSuperview" ref="49024198"/>
 											<string key="NSClassName">HFTextView</string>
 										</object>
 										<object class="NSCustomView" id="280087183">
 											<reference key="NSNextResponder" ref="49024198"/>
 											<int key="NSvFlags">278</int>
-											<string key="NSFrameSize">{324, 252}</string>
+											<string key="NSFrameSize">{324, 356}</string>
 											<reference key="NSSuperview" ref="49024198"/>
 											<string key="NSClassName">HFTextView</string>
 										</object>
 									</object>
-									<string key="NSFrameSize">{660, 252}</string>
+									<string key="NSFrameSize">{660, 356}</string>
 									<reference key="NSSuperview" ref="1062866321"/>
 									<string key="NSClassName">NSView</string>
 								</object>
@@ -94,7 +94,7 @@
 												<object class="NSTableView" id="517437523">
 													<reference key="NSNextResponder" ref="412209851"/>
 													<int key="NSvFlags">256</int>
-													<string key="NSFrameSize">{658, 116}</string>
+													<string key="NSFrameSize">{658, 165}</string>
 													<reference key="NSSuperview" ref="412209851"/>
 													<bool key="NSEnabled">YES</bool>
 													<object class="_NSCornerView" key="NSCornerView">
@@ -189,7 +189,7 @@
 													<int key="NSTableViewDraggingDestinationStyle">0</int>
 												</object>
 											</object>
-											<string key="NSFrame">{{1, 1}, {658, 116}}</string>
+											<string key="NSFrame">{{1, 1}, {658, 165}}</string>
 											<reference key="NSSuperview" ref="613062438"/>
 											<reference key="NSNextKeyView" ref="517437523"/>
 											<reference key="NSDocView" ref="517437523"/>
@@ -216,7 +216,7 @@
 											<double key="NSPercent">0.99848254931714719</double>
 										</object>
 									</object>
-									<string key="NSFrame">{{0, 262}, {660, 118}}</string>
+									<string key="NSFrame">{{0, 366}, {660, 167}}</string>
 									<reference key="NSSuperview" ref="1062866321"/>
 									<reference key="NSNextKeyView" ref="412209851"/>
 									<int key="NSsFlags">546</int>
@@ -224,13 +224,6 @@
 									<reference key="NSHScroller" ref="914193897"/>
 									<reference key="NSContentView" ref="412209851"/>
 									<bytes key="NSScrollAmts">QSAAAEEgAABBmAAAQZgAAA</bytes>
-								</object>
-								<object class="NSCustomView" id="1033328373">
-									<reference key="NSNextResponder" ref="1062866321"/>
-									<int key="NSvFlags">256</int>
-									<string key="NSFrame">{{0, 390}, {660, 143}}</string>
-									<reference key="NSSuperview" ref="1062866321"/>
-									<string key="NSClassName">NSSplitView</string>
 								</object>
 							</object>
 							<string key="NSFrameSize">{660, 533}</string>
@@ -248,14 +241,6 @@
 		<object class="IBObjectContainer" key="IBDocument.Objects">
 			<object class="NSMutableArray" key="connectionRecords">
 				<bool key="EncodedWithXMLCoder">YES</bool>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">containerView</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="1033328373"/>
-					</object>
-					<int key="connectionID">8</int>
-				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
 						<string key="label">window</string>
@@ -364,7 +349,6 @@
 						<object class="NSMutableArray" key="children">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<reference ref="49024198"/>
-							<reference ref="1033328373"/>
 							<reference ref="613062438"/>
 						</object>
 						<reference key="parent" ref="1006"/>
@@ -376,14 +360,6 @@
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<reference ref="280087183"/>
 							<reference ref="421932578"/>
-						</object>
-						<reference key="parent" ref="1062866321"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">5</int>
-						<reference key="object" ref="1033328373"/>
-						<object class="NSMutableArray" key="children">
-							<bool key="EncodedWithXMLCoder">YES</bool>
 						</object>
 						<reference key="parent" ref="1062866321"/>
 					</object>
@@ -465,7 +441,6 @@
 					<string>21.IBPluginDependency</string>
 					<string>3.IBPluginDependency</string>
 					<string>4.IBPluginDependency</string>
-					<string>5.IBPluginDependency</string>
 					<string>6.IBPluginDependency</string>
 					<string>7.IBPluginDependency</string>
 				</object>
@@ -474,13 +449,12 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{295, 223}, {673, 533}}</string>
+					<string>{{361, 223}, {673, 533}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{295, 223}, {673, 533}}</string>
+					<string>{{361, 223}, {673, 533}}</string>
 					<boolean value="NO"/>
 					<string>{196, 240}</string>
 					<string>{{357, 418}, {480, 270}}</string>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -525,6 +499,7 @@
 							<string>extendSelectionForwards:</string>
 							<string>findNext:</string>
 							<string>findPrevious:</string>
+							<string>jumpToBookmark:</string>
 							<string>jumpToOffset:</string>
 							<string>modifyByteGrouping:</string>
 							<string>moveSelectionByAction:</string>
@@ -533,6 +508,7 @@
 							<string>replaceAll:</string>
 							<string>replaceAndFind:</string>
 							<string>setAntialiasFromMenuItem:</string>
+							<string>setBookmark:</string>
 							<string>showFontPanel:</string>
 							<string>toggleOverwriteMode:</string>
 						</object>
@@ -541,10 +517,12 @@
 							<string>NSMenuItem</string>
 							<string>id</string>
 							<string>id</string>
+							<string>id</string>
 							<string>NSMenuItem</string>
 							<string>id</string>
 							<string>id</string>
 							<string>NSMenuItem</string>
+							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>

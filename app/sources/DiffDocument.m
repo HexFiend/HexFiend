@@ -8,6 +8,7 @@
 
 #import "DiffDocument.h"
 #import "DiffOverlayView.h"
+#import "DataInspectorRepresenter.h"
 #import <HexFiend/HexFiend.h>
 
 @implementation DiffDocument
@@ -212,12 +213,14 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
         rightBytes = [right retain];
         [controller setByteArray:rightBytes];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(synchronizeControllers:) name:HFControllerDidChangePropertiesNotification object:controller];
+
     }
     return self;
 }
 
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self name:HFControllerDidChangePropertiesNotification object:controller];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:HFControllerDidChangePropertiesNotification object:[leftTextView controller]];
     [leftBytes release];
     [rightBytes release];
     [leftFileName release];
@@ -236,7 +239,6 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
 	if ([client contentsLength] > leftByteToShow) {
 	    [client centerContentsRange:HFRangeMake(leftByteToShow, 1)];
 	}
-        
     }
     if (propertyMask & HFControllerBytesPerColumn) {
         [client setBytesPerColumn:[controller bytesPerColumn]];
@@ -246,43 +248,142 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
     }    
 }
 
+/* Return the property bits that our overlay view cares about */
+- (HFControllerPropertyBits)propertiesAffectingOverlayView {
+    return HFControllerContentLength | HFControllerDisplayedLineRange | HFControllerBytesPerLine | HFControllerBytesPerColumn;
+}
+
+- (NSRange)visibleInstructionRangeInController:(HFController *)targetController {
+    /* TODO: this should be a binary search */
+    NSUInteger i, insnCount = [editScript numberOfInstructions];
+    HFFPRange displayedLineRange = [targetController displayedLineRange];
+    NSUInteger bpl = [targetController bytesPerLine];
+    const unsigned long long firstVisibleByte = bpl * HFFPToUL(floorl(displayedLineRange.location));
+    const unsigned long long lastVisibleByte = bpl * HFFPToUL(ceill(displayedLineRange.location + displayedLineRange.length));
+    NSUInteger firstVisibleInstruction = NSNotFound, lastVisibleInstruction = NSNotFound;
+    for (i=0; i < insnCount; i++) {
+	struct HFEditInstruction_t insn = [editScript instructionAtIndex:i];
+	
+	HFRange rightRange  = insn.dst;
+	// if we are deleting, then the rightRange is empty and has a nonsense location.  Point it at the beginning of the range we're deleting
+	if (! rightRange.length) {
+	    rightRange.location = insn.src.location + [self changeInLengthBeforeByte:insn.src.location onLeft:YES];
+	}
+	
+	if (firstVisibleInstruction == NSNotFound) {
+	    if (rightRange.location >= firstVisibleByte) {
+		firstVisibleInstruction = i;
+		lastVisibleInstruction = i;
+	    }
+	}
+	
+	if (firstVisibleInstruction != NSNotFound) {
+	    if (rightRange.location >= lastVisibleByte) break;
+	    lastVisibleInstruction = i;
+	}
+    }
+    return NSMakeRange(firstVisibleInstruction, lastVisibleInstruction - firstVisibleInstruction);
+}
+
 - (void)synchronizeControllers:(NSNotification *)note {
+    NSNumber *propertyNumber = [[note userInfo] objectForKey:HFControllerChangedPropertiesKey];
+    HFController *changedController = [note object];
+#if __LP64__
+    HFControllerPropertyBits propertyMask = [propertyNumber unsignedIntegerValue];
+#else
+    HFControllerPropertyBits propertyMask = [propertyNumber unsignedIntValue];
+#endif
+    if (changedController != [leftTextView controller]) {
+	[self synchronizeController:[leftTextView controller] properties:propertyMask];
+    }
+    if (changedController != [rightTextView controller]) {
+	[self synchronizeController:[rightTextView controller] properties:propertyMask];
+    }
+    
+    if (changedController == [rightTextView controller] && (propertyMask & HFControllerDisplayedLineRange)) {
+	/* Scroll our table view to show the instruction.  If our focused instruction is visible, scroll to that; otherwise scroll to the first visible one. */
+	NSRange visibleInstructions = [self visibleInstructionRangeInController:changedController];
+	
+	NSLog(@"visible instructions: %@", NSStringFromRange(visibleInstructions));
+	if (visibleInstructions.location != NSNotFound) {
+	    [diffTable scrollRowToVisible:NSMaxRange(visibleInstructions)];
+	    [diffTable scrollRowToVisible:visibleInstructions.location];
+	}
+	
+    }
+    
+    /* Update the overlay view to react to things like the bytes per line changing. */
+    if (propertyMask & [self propertiesAffectingOverlayView]) {
+	[self updateInstructionOverlayView];
+    }
+}
+
+- (void)updateOverlayViewForChangedLeftScroller:(NSNotification *)note {
     NSNumber *propertyNumber = [[note userInfo] objectForKey:HFControllerChangedPropertiesKey];
 #if __LP64__
     HFControllerPropertyBits propertyMask = [propertyNumber unsignedIntegerValue];
 #else
     HFControllerPropertyBits propertyMask = [propertyNumber unsignedIntValue];
 #endif
-    [self synchronizeController:[leftTextView controller] properties:propertyMask];
-    [self synchronizeController:[rightTextView controller] properties:propertyMask];
-    
-    /* Update the overlay view to react to things like the bytes per line changing. */
-    [self updateInstructionOverlayView];
+    if (propertyMask & [self propertiesAffectingOverlayView]) {
+	[self updateInstructionOverlayView];
+    }
 }
 
 - (void)fixupTextView:(HFTextView *)textView {
     [textView setBordered:YES];
-    HFLineCountingRepresenter *lineCounter = [[HFLineCountingRepresenter alloc] init];
-    [[textView controller] addRepresenter:lineCounter];
-    [[textView layoutRepresenter] addRepresenter:lineCounter];
-    [lineCounter release];
+    BOOL foundLineCountingRep = NO;
     
-    FOREACH(HFRepresenter *, rep, [[textView controller] representers]) {
-        if ([rep isKindOfClass:[HFVerticalScrollerRepresenter class]] || [rep isKindOfClass:[HFStringEncodingTextRepresenter class]]) {
+    /* Install our undo manager */
+    [[textView controller] setUndoManager:[self undoManager]]; 
+    
+    /* Remove the representers we don't want */
+    FOREACH(HFRepresenter *, rep, [[textView layoutRepresenter] representers]) {
+        if ([rep isKindOfClass:[HFVerticalScrollerRepresenter class]] || [rep isKindOfClass:[HFStringEncodingTextRepresenter class]] || [rep isKindOfClass:[HFStatusBarRepresenter class]] || [rep isKindOfClass:[DataInspectorRepresenter class]]) {
             [[textView layoutRepresenter] removeRepresenter:rep];
             [[textView controller] removeRepresenter:rep];
         }
+	else if ([rep isKindOfClass:[HFTextRepresenter class]]) {
+	    /* Ensure our hex representer is horizontally resizable */
+	    [(NSView *)[hexRepresenter view] setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
+	}
+	else if ([rep isKindOfClass:[HFLineCountingRepresenter class]]) {
+	    foundLineCountingRep = YES;
+	}
+    }
+    /* Install a line counting rep if it doesn't already have one */
+    if (! foundLineCountingRep) {
+	/* Ensure our left text view has a line counting representer. */
+	HFLineCountingRepresenter *lineCounter = [[HFLineCountingRepresenter alloc] init];
+	[[leftTextView controller] addRepresenter:lineCounter];
+	[[leftTextView layoutRepresenter] addRepresenter:lineCounter];
+	[lineCounter release];	
     }
 }
 
 - (void)windowControllerDidLoadNib:(NSWindowController *)windowController {
     [super windowControllerDidLoadNib:windowController];
     NSWindow *window = [self window];
+    
+    /* Remove the vertical scroller representer.  We want to install that elsewhere. */
+    if ([[layoutRepresenter representers] containsObject:scrollRepresenter]) {
+	[layoutRepresenter removeRepresenter:scrollRepresenter];
+    }
+        
+    /* Replace the right text view's controller and layout representer with our own */
+    [rightTextView setController:controller];
+    [rightTextView setLayoutRepresenter:layoutRepresenter];
+    
+    /* Fix up our two text views */
     [self fixupTextView:leftTextView];
     [self fixupTextView:rightTextView];
+    
+    /* Install the two byte arrays */
     [[leftTextView controller] setByteArray:leftBytes];
     [[rightTextView controller] setByteArray:rightBytes];
-    [layoutRepresenter removeRepresenter:scrollRepresenter];
+    
+    /* Get told when our left one scrolls */
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateOverlayViewForChangedLeftScroller:) name:HFControllerDidChangePropertiesNotification object:[leftTextView controller]];
     
     NSScroller *scroller = [scrollRepresenter view];
     NSRect scrollerRect = [scroller frame];
@@ -298,6 +399,7 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
     [self synchronizeController:[leftTextView controller] properties:(HFControllerPropertyBits)-1];
     [self synchronizeController:[rightTextView controller] properties:(HFControllerPropertyBits)-1];
     
+    /* Create and install the overlay view */
     overlayView = [[DiffOverlayView alloc] initWithFrame:[[window contentView] bounds]];
     [overlayView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
     [overlayView setLeftView:leftTextView];
@@ -305,6 +407,7 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
     [[window contentView] addSubview:overlayView];
     [overlayView release];
     
+    /* Start at instruction zero */
     [self setFocusedInstructionIndex:0];
 }
 
@@ -317,7 +420,6 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
     [[self window] disableFlushWindow];
     [super setFont:font];
     [[leftTextView controller] setFont:font];
-    [[rightTextView controller] setFont:font];
     [[self window] enableFlushWindow];
 }
 
@@ -354,6 +456,18 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
     USE(tableView);
     USE(tableColumn);
     struct HFEditInstruction_t insn = [editScript instructionAtIndex:row];
+    char offsetBuffer[64];
+    HFLineNumberFormat format = [lineCountingRepresenter lineNumberFormat];
+    switch (format) {
+	default:
+	case HFLineNumberFormatHexadecimal:
+	    snprintf(offsetBuffer, sizeof offsetBuffer, "0x%llx", insn.dst.location);
+	    break;
+	case HFLineNumberFormatDecimal:
+	    snprintf(offsetBuffer, sizeof offsetBuffer, "%llx", insn.dst.location);
+	    break;
+    }
+    
     if (insn.src.length == 0) {
 	return [NSString stringWithFormat:@"Insert %@ at offset 0x%llx", HFDescribeByteCount(insn.dst.length), insn.dst.location];
     }

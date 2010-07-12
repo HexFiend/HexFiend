@@ -27,7 +27,6 @@
     }
     [dataController setByteArray:byteArray];
     [byteArray release];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_HFControllerDidChangeProperties:) name:HFControllerDidChangePropertiesNotification object:dataController];
 }
 
 - (void)_HFControllerDidChangeProperties:(NSNotification *)note {
@@ -78,6 +77,7 @@
     bordered = [coder decodeBoolForKey:@"HFBordered"];
     NSMutableData *byteArrayData = [coder decodeObjectForKey:@"HFByteArrayMutableData"]; //may be nil
     [self _sharedInitHFTextViewWithMutableData:byteArrayData];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_HFControllerDidChangeProperties:) name:HFControllerDidChangePropertiesNotification object:dataController];
     return self;
 }
 
@@ -130,6 +130,7 @@
     [self addSubview:layoutView];
     
     [self _sharedInitHFTextViewWithMutableData:NULL];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_HFControllerDidChangeProperties:) name:HFControllerDidChangePropertiesNotification object:dataController];
     
     return self;
 }
@@ -138,8 +139,31 @@
     return layoutRepresenter;
 }
 
+- (void)setLayoutRepresenter:(HFLayoutRepresenter *)val {
+    if (val == layoutRepresenter) return;
+    
+    /* Remove the old view and representer */
+    NSView *oldLayoutView = [layoutRepresenter view];
+    [oldLayoutView removeFromSuperview];
+    [layoutRepresenter release];
+    
+    /* Install the new view and representer */
+    layoutRepresenter = [val retain];
+    NSView *newLayoutView = [layoutRepresenter view];
+    [newLayoutView setFrame:[self _desiredFrameForLayoutView]];
+    [self addSubview:newLayoutView];
+}
+
 - (HFController *)controller {
     return dataController;
+}
+
+- (void)setController:(HFController *)controller {
+    if (controller == dataController) return;
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:HFControllerDidChangePropertiesNotification object:dataController];
+    [dataController release];
+    dataController = [controller retain];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_HFControllerDidChangeProperties:) name:HFControllerDidChangePropertiesNotification object:dataController];
 }
 
 - (HFByteArray *)byteArray {

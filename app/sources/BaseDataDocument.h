@@ -55,8 +55,11 @@
 
 - (IBAction)moveSelectionByAction:(id)sender;
 
-- (void)setFont:(NSFont *)font;
+- (void)setFont:(NSFont *)font registeringUndo:(BOOL)undo;
 - (NSFont *)font;
+
+- (IBAction)increaseFontSize:(id)sender;
+- (IBAction)decreaseFontSize:(id)sender;
 
 - (NSWindow *)window;
 
@@ -76,5 +79,8 @@
 - (IBAction)setBookmark:sender;
 
 - (HFByteArray *)byteArray; //accessed during diffing
+
+/* Returns a string identifier used as an NSUserDefault prefix for storing the layout for documents of this type.  If you return nil, the layout will not be stored.  The default is to return the class name. */
++ (NSString *)layoutUserDefaultIdentifier;
 
 @end

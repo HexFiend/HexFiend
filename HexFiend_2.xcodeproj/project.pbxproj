@@ -800,7 +800,8 @@
 				D01E7C010CDC569F00943F9E /* Resources */,
 			);
 			name = Framework;
-			sourceTree = "<group>";
+			path = /Users/peter/Bell/experimental/Subprocess;
+			sourceTree = "<absolute>";
 		};
 		D0560B380CDC4253009D2484 /* App */ = {
 			isa = PBXGroup;

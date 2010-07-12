@@ -864,23 +864,44 @@ enum LineCoverage_t {
     UNIMPLEMENTED();
 }
 
+- (void)drawBookmark:(NSUInteger)bookmark inRect:(NSRect)rect {
+    [NSGraphicsContext saveGraphicsState];
+    NSColor *color = nil;
+    switch (bookmark) {
+	case 1: color = [NSColor colorWithCalibratedRed:1. green:0. blue:0. alpha:1. ]; break;
+	case 2: color = [NSColor orangeColor]; break;
+	case 3: color = [NSColor yellowColor]; break;
+	case 4: color = [NSColor greenColor]; break;
+	case 5: color = [NSColor blueColor]; break;
+	case 6: color = [NSColor colorWithCalibratedRed:(CGFloat)(0x4B / 255.) green:0 blue:(CGFloat)(0x82 / 255.) alpha:1]; break; //#4B0082
+	case 7: color = [NSColor colorWithCalibratedRed:(CGFloat)(0xEE / 255.) green:(CGFloat)(0x82 / 255.) blue:(CGFloat)(0xEE / 255.) alpha:1]; break; //#EE82EE
+    }
+    if (color) {
+	[[color colorWithAlphaComponent:.66] set];
+
+	NSBezierPath *path = [[NSBezierPath alloc] init];
+	[path appendBezierPathWithOvalInRect:NSMakeRect(rect.origin.x, rect.origin.y, 6, 6)];
+	[path appendBezierPathWithRect:NSMakeRect(rect.origin.x, rect.origin.y, 2, defaultLineHeight)];
+	[path fill];
+	[path release];
+	NSRectFill(NSMakeRect(rect.origin.x, NSMaxY(rect) - 1, rect.size.width, .75));
+    }
+    [NSGraphicsContext restoreGraphicsState];
+}
+
 - (void)drawGlyphs:(const CGGlyph *)glyphs withAdvances:(const CGSize *)advances withStyleRun:(HFTextVisualStyleRun *)styleRun count:(NSUInteger)glyphCount rect:(NSRect)backgroundRect {
     HFASSERT(glyphs != NULL);
     HFASSERT(advances != NULL);
     HFASSERT(glyphCount > 0);
     if ([styleRun shouldDraw]) {
         NSColor *background = [styleRun backgroundColor];
-        if (background) {
-            [NSGraphicsContext saveGraphicsState];
-            [background set];
-            NSRectFill(backgroundRect);
-            [NSGraphicsContext restoreGraphicsState];
-        }
-	NSIndexSet *bookmarks = [styleRun bookmarks];
+        if (background) NSRectFillListWithColors(&backgroundRect, &background, 1);
+	
+	NSIndexSet *bookmarks = [styleRun bookmarkExtents];
 	if (bookmarks) {
 	    NSUInteger bookmark;
 	    for (bookmark = [bookmarks firstIndex]; bookmark != NSNotFound; bookmark = [bookmarks indexGreaterThanIndex:bookmark]) {
-		
+		[self drawBookmark:bookmark inRect:backgroundRect];
 	    }
 	}
 	

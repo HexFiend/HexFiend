@@ -12,6 +12,7 @@
 #import "DataInspectorRepresenter.h"
 #import <HexFiend/HexFiend.h>
 #include <pthread.h>
+#include <objc/runtime.h>
 
 static const char *const kProgressContext = "context";
 
@@ -54,9 +55,62 @@ static inline Class preferredByteArrayClass(void) {
 
 @end
 
-#define USERDEFS_KEY_FOR_REP(r) @"RepresenterIsShown " @#r
-
 @implementation BaseDataDocument
+
++ (NSString *)userDefKeyForRepresenterWithName:(const char *)repName {
+    NSString *result = nil;
+    NSString *layoutIdentifier = [self layoutUserDefaultIdentifier];
+    if (layoutIdentifier) {
+	result = [NSString stringWithFormat:@"RepresenterIsShown %@ %s", layoutIdentifier, repName];
+    }
+    return result;
+}
+
+#define USERDEFS_KEY_FOR_REP(r) [[self class] userDefKeyForRepresenterWithName: #r]
+
++ (NSString *)layoutUserDefaultIdentifier {
+    return NSStringFromClass(self);
+}
+
+/* Register the default-defaults for this class. */
++ (void)registerDefaultDefaults {
+    static OSSpinLock sLock = OS_SPINLOCK_INIT;
+    OSSpinLockLock(&sLock); //use a spinlock to be safe, but contention should be very low because we only expect to make these on the main thread
+    static BOOL sRegisteredGlobalDefaults = NO;
+    const id yes = (id)kCFBooleanTrue;
+    if (! sRegisteredGlobalDefaults) {
+	/* Defaults common to all subclasses */
+        NSDictionary *defs = [[NSDictionary alloc] initWithObjectsAndKeys:
+                              yes, @"AntialiasText",
+                              @"Monaco", @"DefaultFontName",
+                              [NSNumber numberWithDouble:10.], @"DefaultFontSize",
+                              [NSNumber numberWithInteger:4], @"BytesPerColumn",
+			      nil];
+	[[NSUserDefaults standardUserDefaults] registerDefaults:defs];
+	[defs release];
+	sRegisteredGlobalDefaults = YES;
+    }
+    
+    static NSMutableArray *sRegisteredDefaultsByIdentifier = nil;
+    NSString *ident = [self layoutUserDefaultIdentifier];
+    if (ident && ! [sRegisteredDefaultsByIdentifier containsObject:ident]) {
+	/* Register defaults for this identifier */
+	if (! sRegisteredDefaultsByIdentifier) sRegisteredDefaultsByIdentifier = [[NSMutableArray alloc] init];
+	[sRegisteredDefaultsByIdentifier addObject:ident];
+	
+        NSDictionary *defs = [[NSDictionary alloc] initWithObjectsAndKeys:
+			      yes, USERDEFS_KEY_FOR_REP(lineCountingRepresenter),
+                              yes, USERDEFS_KEY_FOR_REP(hexRepresenter),
+                              yes, USERDEFS_KEY_FOR_REP(asciiRepresenter),
+                              yes, USERDEFS_KEY_FOR_REP(dataInspectorRepresenter),
+                              yes, USERDEFS_KEY_FOR_REP(statusBarRepresenter),
+                              yes, USERDEFS_KEY_FOR_REP(scrollRepresenter),
+                              nil];
+        [[NSUserDefaults standardUserDefaults] registerDefaults:defs];
+        [defs release];
+    }
+    OSSpinLockUnlock(&sLock);
+}
 
 + (void)initialize {
     if (self == [BaseDataDocument class]) {
@@ -319,6 +373,10 @@ static inline Class preferredByteArrayClass(void) {
 
 - init {
     [super init];
+    
+    /* Make sure we register our defaults for this class */
+    [[self class] registerDefaultDefaults];
+    
     lineCountingRepresenter = [[HFLineCountingRepresenter alloc] init];
     hexRepresenter = [[HFHexTextRepresenter alloc] init];
     asciiRepresenter = [[HFStringEncodingTextRepresenter alloc] init];
@@ -486,8 +544,16 @@ static inline Class preferredByteArrayClass(void) {
     }
 }
 
-- (void)setFont:(NSFont *)font {
+- (void)setFont:(NSFont *)font registeringUndo:(BOOL)undo {
     HFASSERT(font != nil);
+    
+    /* If we should register undo, do so, but do it behind NSDocument's back so it doesn't think the document was edited.  I tried temporarily clearing our undo manager, but that resulted in some wacky infinite loop, so do it this way instead. */
+    if (undo) {
+	NSFont *existingFont = [self font];
+	NSUndoManager *undoer = [self undoManager];
+	[[undoer prepareWithInvocationTarget:self] setFont:existingFont registeringUndo:YES];
+    }
+    
     NSWindow *window = [self window];
     NSDisableScreenUpdates();
     NSUInteger bytesPerLine = [controller bytesPerLine];
@@ -509,7 +575,19 @@ static inline Class preferredByteArrayClass(void) {
 
 - (void)setFontSizeFromMenuItem:(NSMenuItem *)item {
     NSString *fontName = [[self font] fontName];
-    [self setFont:[NSFont fontWithName:fontName size:(CGFloat)[item tag]]];
+    [self setFont:[NSFont fontWithName:fontName size:(CGFloat)[item tag]] registeringUndo:YES];
+}
+
+- (IBAction)increaseFontSize:(id)sender {
+    USE(sender);
+    NSFont *font = [self font];
+    [self setFont:[NSFont fontWithName:[font fontName] size:[font pointSize] + 1] registeringUndo:YES];
+}
+
+- (IBAction)decreaseFontSize:(id)sender {
+    USE(sender);
+    NSFont *font = [self font];
+    [self setFont:[NSFont fontWithName:[font fontName] size:[font pointSize] - 1] registeringUndo:YES];
 }
 
 - (IBAction)setAntialiasFromMenuItem:(id)sender {
@@ -547,6 +625,9 @@ static inline Class preferredByteArrayClass(void) {
         [item setState:[[self font] pointSize] == [item tag]];
         return YES;
     }
+    else if (action == @selector(decreaseFontSize:)) {
+	return [[self font] pointSize] >= 5.; //5 is our minimum font size
+    }    
     else if (action == @selector(setAntialiasFromMenuItem:)) {
         [item setState:[controller shouldAntialias]];
         return YES;		
@@ -1320,7 +1401,7 @@ invalidString:;
 }
 
 - (void)changeFont:(id)sender {
-    [self setFont:[sender convertFont:[self font]]];
+    [self setFont:[sender convertFont:[self font]] registeringUndo:YES];
 }
 
 - (IBAction)modifyByteGrouping:sender {
