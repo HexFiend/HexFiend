@@ -47,6 +47,7 @@
     NSError *saveError;
     
     BOOL currentlySettingFont;
+    NSUInteger lastUsedBookmark;
 }
 
 - (void)moveSelectionForwards:(NSMenuItem *)sender;
@@ -77,8 +78,11 @@
 
 - (IBAction)jumpToBookmark:sender;
 - (IBAction)setBookmark:sender;
+- (IBAction)deleteBookmark:sender;
 
 - (HFByteArray *)byteArray; //accessed during diffing
+
+- (void)populateBookmarksMenu:(NSMenu *)menu;
 
 /* Returns a string identifier used as an NSUserDefault prefix for storing the layout for documents of this type.  If you return nil, the layout will not be stored.  The default is to return the class name. */
 + (NSString *)layoutUserDefaultIdentifier;

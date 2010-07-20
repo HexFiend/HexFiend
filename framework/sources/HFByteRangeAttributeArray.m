@@ -39,6 +39,10 @@
     [super dealloc];
 }
 
+- (NSComparisonResult)compare:(HFByteRangeAttributeRun *)run {
+    return (range.location > run->range.location) - (run->range.location > range.location);
+}
+
 @end
 
 
@@ -128,6 +132,16 @@
     }
 }
 
+- (void)removeAttributes:(NSSet *)attributeNames {
+    NSUInteger idx = [attributeRuns count];
+    while (idx--) {
+        HFByteRangeAttributeRun *run = [attributeRuns objectAtIndex:idx];
+        if ([attributeNames containsObject:run->name]) {
+            [attributeRuns removeObjectAtIndex:idx];
+        }
+    }    
+}
+
 - (NSSet *)attributesAtIndex:(unsigned long long)index length:(unsigned long long *)length {
     NSMutableSet *result = [NSMutableSet set];
     unsigned long long maxLocation = ULLONG_MAX;
@@ -167,5 +181,14 @@
     }
 }
 
+- (NSEnumerator *)attributeEnumerator {
+    /* Sort our runs by their first location, and then extract the attributes from them. */
+    NSArray *sortedRuns = [attributeRuns sortedArrayUsingSelector:@selector(compare:)];
+    NSMutableArray *attributes = [NSMutableArray arrayWithCapacity:[sortedRuns count]];
+    FOREACH(HFByteRangeAttributeRun *, run, sortedRuns) {
+	[attributes addObject:run->name];
+    }
+    return [attributes objectEnumerator];
+}
 
 @end

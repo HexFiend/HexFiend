@@ -18,28 +18,46 @@ NSString * const kHFAttributeExecutable = @"HFAttributeExecutable";
 NSString * const kHFAttributeShared = @"HFAttributeShared";
 
 
-static NSString * const sStaticBookmarkStrings[] = {
-    @"HFAttributeBookmark:0",
-    @"HFAttributeBookmark:1",
-    @"HFAttributeBookmark:2",
-    @"HFAttributeBookmark:3",
-    @"HFAttributeBookmark:4",
-    @"HFAttributeBookmark:5",
-    @"HFAttributeBookmark:6",
-    @"HFAttributeBookmark:7",
-    @"HFAttributeBookmark:8",
-    @"HFAttributeBookmark:9"
+static NSString * const sStaticBookmarkStrings[][3] = {
+    {@"HFAttributeBookmarkStart:0", @"HFAttributeBookmarkMiddle:0", @"HFAttributeBookmarkEnd:0"},
+    {@"HFAttributeBookmarkStart:1", @"HFAttributeBookmarkMiddle:1", @"HFAttributeBookmarkEnd:1"},
+    {@"HFAttributeBookmarkStart:2", @"HFAttributeBookmarkMiddle:2", @"HFAttributeBookmarkEnd:2"},
+    {@"HFAttributeBookmarkStart:3", @"HFAttributeBookmarkMiddle:3", @"HFAttributeBookmarkEnd:3"},
+    {@"HFAttributeBookmarkStart:4", @"HFAttributeBookmarkMiddle:4", @"HFAttributeBookmarkEnd:4"},
+    {@"HFAttributeBookmarkStart:5", @"HFAttributeBookmarkMiddle:5", @"HFAttributeBookmarkEnd:5"},
+    {@"HFAttributeBookmarkStart:6", @"HFAttributeBookmarkMiddle:6", @"HFAttributeBookmarkEnd:6"},
+    {@"HFAttributeBookmarkStart:7", @"HFAttributeBookmarkMiddle:7", @"HFAttributeBookmarkEnd:7"},
+    {@"HFAttributeBookmarkStart:8", @"HFAttributeBookmarkMiddle:8", @"HFAttributeBookmarkEnd:8"},
+    {@"HFAttributeBookmarkStart:9", @"HFAttributeBookmarkMiddle:9", @"HFAttributeBookmarkEnd:9"}
 };
 
-NSString *HFBookmarkAttributeFromBookmark(NSInteger bookmark) {
+NSArray *HFBookmarkAttributesFromBookmark(NSInteger bookmark) {
     HFASSERT(bookmark != NSNotFound);
     if (bookmark >= 0 && bookmark < sizeof sStaticBookmarkStrings / sizeof *sStaticBookmarkStrings) {
-	return sStaticBookmarkStrings[bookmark];
+	return [NSArray arrayWithObjects:sStaticBookmarkStrings[bookmark] count:3];
     }
-    return [NSString stringWithFormat:@"HFAttributeBookmark:%ld", (long)bookmark];
+    else {
+	NSString *strings[3];
+	strings[0] = [NSString stringWithFormat:@"HFAttributeBookmarkStart:%ld", (long)bookmark];
+	strings[1] = [NSString stringWithFormat:@"HFAttributeBookmarkMiddle:%ld", (long)bookmark];
+	strings[2] = [NSString stringWithFormat:@"HFAttributeBookmarkEnd:%ld", (long)bookmark];
+	return [NSArray arrayWithObjects:strings count:3];
+    }
 }
 
-NSInteger HFBookmarkFromBookmarkAttribute(NSString *bookmark) {
-    if (! [bookmark hasPrefix:@"HFAttributeBookmark:"]) return NSNotFound;
-    return [[bookmark substringFromIndex:strlen("HFAttributeBookmark:")] integerValue];
+static NSInteger parseBookmarkAttribute(NSString *bookmark, NSString *prefix) {
+    if (! [bookmark hasPrefix:prefix]) return NSNotFound;
+    return [[bookmark substringFromIndex:[prefix length]] integerValue];
+}
+
+extern NSInteger HFBookmarkFromBookmarkStartAttribute(NSString *string) {
+    return parseBookmarkAttribute(string, @"HFAttributeBookmarkStart:");
+}
+
+extern NSInteger HFBookmarkFromBookmarkMiddleAttribute(NSString *string) {
+    return parseBookmarkAttribute(string, @"HFAttributeBookmarkMiddle:");
+}
+
+extern NSInteger HFBookmarkFromBookmarkEndAttribute(NSString *string) {
+    return parseBookmarkAttribute(string, @"HFAttributeBookmarkEnd:");
 }

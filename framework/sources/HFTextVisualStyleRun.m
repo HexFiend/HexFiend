@@ -86,6 +86,17 @@
     }
 }
 
+- (NSIndexSet *)bookmarkEnds {
+    return bookmarkEnds;
+}
+
+- (void)setBookmarkEnds:(NSIndexSet *)ends {
+    if (bookmarkEnds != ends) {
+	[bookmarkEnds release];
+	bookmarkEnds = [ends copy];
+    }
+}
+
 
 - (NSRange)range {
     return range;
@@ -109,7 +120,7 @@
 
 - (NSUInteger)hash {
     //simple
-    return [foregroundColor hash] ^ [backgroundColor hash] ^ range.length ^ range.location ^ shouldDraw;
+    return [foregroundColor hash] ^ [backgroundColor hash] ^ range.length ^ range.location ^ shouldDraw ^ [bookmarkStarts hash] ^ [bookmarkEnds hash] ^ [bookmarkExtents hash];
 }
 
 // return whether two objects are equal, properly handling NULL
@@ -130,6 +141,7 @@ static BOOL objectsAreEqual(id a, id b) {
     if (! objectsAreEqual(backgroundColor, run->backgroundColor)) return NO;
     if (! objectsAreEqual(bookmarkStarts, run->bookmarkStarts)) return NO;
     if (! objectsAreEqual(bookmarkExtents, run->bookmarkExtents)) return NO;
+    if (! objectsAreEqual(bookmarkEnds, run->bookmarkEnds)) return NO;
     return YES;
 }
 

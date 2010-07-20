@@ -319,42 +319,59 @@ static NSInteger compareMenuItems(id item1, id item2, void *unused) {
     return [[item1 title] caseInsensitiveCompare:[item2 title]];
 }
 
+- (void)populateProcessListMenu:(NSMenu *)menu {
+    if ([menu respondsToSelector:@selector(removeAllItems)]) {
+	[menu removeAllItems];
+    }
+    else {
+	NSUInteger count = [menu numberOfItems];
+	while (count--) [menu removeItemAtIndex:count];
+    }
+    struct kinfo_proc *procs = NULL;
+    size_t procIndex, numProcs = -1;
+    GetBSDProcessList(&procs, &numProcs);
+    Class runningAppClass = NSClassFromString(@"NSRunningApplication");
+    NSMutableArray *items = [NSMutableArray array];
+    for (procIndex = 0; procIndex < numProcs; procIndex++) {
+	pid_t pid = procs[procIndex].kp_proc.p_pid;
+	NSString *name = nameForProcessWithPID(pid);
+	if (name) {
+	    NSString *title = [name stringByAppendingFormat:@" (%ld)", (long)pid];
+	    NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:title action:@selector(openProcessByProcessMenuItem:) keyEquivalent:@""];
+	    [item setRepresentedObject:[NSNumber numberWithLong:pid]];
+	    NSImage *image = [[runningAppClass runningApplicationWithProcessIdentifier:pid] icon];
+	    if (image) {
+		NSImage *icon = [image copy];
+		[icon setSize:NSMakeSize(16, 16)];
+		[item setImage:icon];
+		[icon release];
+	    }
+	    [items addObject:item];
+	    [item release];
+	}
+    }
+    [items sortUsingFunction:compareMenuItems context:NULL];
+    FOREACH(NSMenuItem *, item, items) {
+	[menu addItem:item];
+    }    
+}
+
 - (void)menuNeedsUpdate:(NSMenu *)menu {
     if (menu == [processListMenuItem submenu]) {
-        if ([menu respondsToSelector:@selector(removeAllItems)]) {
-            [menu removeAllItems];
-        }
-        else {
-            NSUInteger count = [menu numberOfItems];
-            while (count--) [menu removeItemAtIndex:count];
-        }
-        struct kinfo_proc *procs = NULL;
-        size_t procIndex, numProcs = -1;
-        GetBSDProcessList(&procs, &numProcs);
-        Class runningAppClass = NSClassFromString(@"NSRunningApplication");
-        NSMutableArray *items = [NSMutableArray array];
-        for (procIndex = 0; procIndex < numProcs; procIndex++) {
-            pid_t pid = procs[procIndex].kp_proc.p_pid;
-            NSString *name = nameForProcessWithPID(pid);
-            if (name) {
-                NSString *title = [name stringByAppendingFormat:@" (%ld)", (long)pid];
-                NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:title action:@selector(openProcessByProcessMenuItem:) keyEquivalent:@""];
-                [item setRepresentedObject:[NSNumber numberWithLong:pid]];
-                NSImage *image = [[runningAppClass runningApplicationWithProcessIdentifier:pid] icon];
-                if (image) {
-                    NSImage *icon = [image copy];
-                    [icon setSize:NSMakeSize(16, 16)];
-                    [item setImage:icon];
-                    [icon release];
-                }
-                [items addObject:item];
-                [item release];
-            }
-        }
-        [items sortUsingFunction:compareMenuItems context:NULL];
-        FOREACH(NSMenuItem *, item, items) {
-            [menu addItem:item];
-        }
+	[self populateProcessListMenu:menu];
+    }
+    else if (menu == bookmarksMenu) {
+	NSDocument *currentDocument = [[NSDocumentController sharedDocumentController] currentDocument];
+	if ([currentDocument respondsToSelector:@selector(populateBookmarksMenu:)]) {
+	    [currentDocument populateBookmarksMenu:menu];
+	}
+	else {
+	    /* Nil document, or unknown type.  Remove all menu items except the first one. */
+	    NSUInteger itemCount = [bookmarksMenu numberOfItems];
+	    while (itemCount > 1) {
+		[bookmarksMenu removeItemAtIndex:--itemCount];
+	    }
+	}
     }
     else if (menu == [fontMenuItem submenu]) {
         /* Nothing to do */

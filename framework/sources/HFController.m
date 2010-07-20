@@ -502,16 +502,22 @@ static inline Class preferredByteArrayClass(void) {
 
 - (HFRange)rangeForBookmark:(NSInteger)bookmark {
     if (! byteArray) return HFRangeMake(ULLONG_MAX, ULLONG_MAX);
-    NSString *attribute = HFBookmarkAttributeFromBookmark(bookmark);
+    NSString *attribute = [HFBookmarkAttributesFromBookmark(bookmark) objectAtIndex:1];
     HFByteRangeAttributeArray *attributes = [byteArray byteRangeAttributeArray];
     return [attributes rangeOfAttribute:attribute];
 }
 
 - (void)setRange:(HFRange)range forBookmark:(NSInteger)bookmark {
-    HFByteRangeAttributeArray *attributes = [byteArray byteRangeAttributeArray];
-    NSString *attribute = HFBookmarkAttributeFromBookmark(bookmark);
-    [attributes removeAttribute:attribute];
-    [attributes addAttribute:attribute range:range];
+    HFASSERT(range.length > 0);
+    HFByteRangeAttributeArray *attributeArray = [byteArray byteRangeAttributeArray];
+    NSArray *bookmarkAttributes = HFBookmarkAttributesFromBookmark(bookmark);
+    [attributeArray removeAttributes:[NSSet setWithArray:bookmarkAttributes]];
+    if (! (range.location == ULLONG_MAX && range.location == ULLONG_MAX)) {
+	// apply start, middle, and end
+	[attributeArray addAttribute:[bookmarkAttributes objectAtIndex:0] range:HFRangeMake(range.location, 1)];
+	[attributeArray addAttribute:[bookmarkAttributes objectAtIndex:1] range:range];
+	[attributeArray addAttribute:[bookmarkAttributes objectAtIndex:2] range:HFRangeMake(HFMaxRange(range) - 1, 1)];
+    }
     [self _addPropertyChangeBits:HFControllerByteRangeAttributes];
 }
 

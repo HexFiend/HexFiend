@@ -27,9 +27,15 @@
 /*! Removes the given attribute entirely. */
 - (void)removeAttribute:(NSString *)attributeName;
 
-/*! Returns whether the receiver is empty. */
+/*! Removes the given attributes entirely. */
+- (void)removeAttributes:(NSSet *)attributeName;
+
+/*! Returns whether the receiver is empty.  This should be a count instead. */
 - (BOOL)isEmpty;
 
+/*! Returns an NSEnumerator of the attributes.  The attributes are returned in order, but there is no way to get the range of each attribute. */
+- (NSEnumerator *)attributeEnumerator;
+ 
 /*! Transfer attributes in the given range from array, adding baseOffset to each attribute range. range is interpreted as a range in array. */
 - (void)transferAttributesFromAttributeArray:(HFByteRangeAttributeArray *)array range:(HFRange)range baseOffset:(unsigned long long)baseOffset;
 

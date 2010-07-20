@@ -16,7 +16,9 @@ extern NSString * const kHFAttributeShared;     /* A range that is shared memory
 extern NSString * const kHFAttributeMagic; /* For testing. */
 
 /* Bookmark attributes.  Pass an integer (the bookmark) and get back a string that can be used as an attribute. */
-extern NSString *HFBookmarkAttributeFromBookmark(NSInteger bookmark);
+extern NSArray *HFBookmarkAttributesFromBookmark(NSInteger bookmark);
 
 /* Given a bookmark string, return the bookmark index for it, or NSNotFound if the string does not represent a bookmark attribute. */
-extern NSInteger HFBookmarkFromBookmarkAttribute(NSString *bookmark);
+extern NSInteger HFBookmarkFromBookmarkStartAttribute(NSString *bookmarkStartString);
+extern NSInteger HFBookmarkFromBookmarkMiddleAttribute(NSString *bookmark);
+extern NSInteger HFBookmarkFromBookmarkEndAttribute(NSString *bookmarkEndString);

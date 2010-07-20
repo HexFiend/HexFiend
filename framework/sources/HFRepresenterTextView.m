@@ -864,6 +864,17 @@ enum LineCoverage_t {
     UNIMPLEMENTED();
 }
 
+- (NSColor *)colorForBookmark:(NSUInteger)bookmark {
+    /* Two different Ss and Bs, 7 different Hs, for a total of 28 bookmark colors */
+    CGFloat h, s, b;
+    NSUInteger ns = 2, nb = 2, nh = 7; //number of Saturation, Brightness, Hues
+    NSUInteger si, bi, hi; //index of Saturation, Brightness, Hue
+    hi = (4 + bookmark) % nh; bookmark /= nh; //4 means we start at blue (ROYGBIV)
+    bi = nb - bookmark % nb; bookmark /= nb;
+    si = ns - bookmark % ns;
+    return [NSColor colorWithCalibratedHue:hi / (CGFloat)nh saturation:si / (CGFloat)ns brightness:bi / (CGFloat)nb alpha:.88];
+}
+
 - (void)drawBookmark:(NSUInteger)bookmark inRect:(NSRect)rect {
     [NSGraphicsContext saveGraphicsState];
     NSColor *color = nil;
@@ -889,6 +900,70 @@ enum LineCoverage_t {
     [NSGraphicsContext restoreGraphicsState];
 }
 
+- (void)drawBookmarkStarts:(NSIndexSet *)bookmarkStarts inRect:(NSRect)rect {
+    NSUInteger i = 0;
+    NSUInteger idx;
+    NSRect ovalRect = NSMakeRect(rect.origin.x, rect.origin.y, 6, 6);
+    NSGraphicsContext *context = [NSGraphicsContext currentContext];
+    for (idx = [bookmarkStarts firstIndex]; idx != NSNotFound; idx = [bookmarkStarts indexGreaterThanIndex:idx]) {
+	NSBezierPath *path = [[NSBezierPath alloc] init];
+	[path appendBezierPathWithOvalInRect:ovalRect];
+	if (i == 0) [path appendBezierPathWithRect:NSMakeRect(rect.origin.x, rect.origin.y, 2, defaultLineHeight)];
+	[[self colorForBookmark:idx] set];
+	BOOL needsClip = ! NSContainsRect(rect, ovalRect);
+	if (needsClip) {
+	    [context saveGraphicsState];
+	    [NSBezierPath clipRect:rect];
+	}
+	[path fill];
+	if (needsClip) {
+	    [context restoreGraphicsState];
+	}
+	[path release];
+	
+	i++;
+	ovalRect.origin.y += ovalRect.size.height;
+	if (ovalRect.origin.y > NSMaxY(rect)) break;
+    }
+}
+
+- (void)drawBookmarkExtents:(NSIndexSet *)bookmarkExtents inRect:(NSRect)rect {
+    NSUInteger idx;
+    for (idx = [bookmarkExtents firstIndex]; idx != NSNotFound; idx = [bookmarkExtents indexGreaterThanIndex:idx]) {
+	[[self colorForBookmark:idx] set];
+	NSRectFill(NSMakeRect(rect.origin.x, NSMaxY(rect) - 1, rect.size.width, .75));
+	break;
+    }
+}
+
+- (void)drawBookmarkEnds:(NSIndexSet *)bookmarkEnds inRect:(NSRect)rect {
+    NSUInteger i = 0;
+    NSUInteger idx;
+    NSRect ovalRect = NSMakeRect(NSMaxX(rect) - 6, rect.origin.y, 6, 6);
+    NSGraphicsContext *context = [NSGraphicsContext currentContext];
+    for (idx = [bookmarkEnds firstIndex]; idx != NSNotFound; idx = [bookmarkEnds indexGreaterThanIndex:idx]) {
+	NSBezierPath *path = [[NSBezierPath alloc] init];
+	[path appendBezierPathWithOvalInRect:ovalRect];
+	if (i == 0) [path appendBezierPathWithRect:NSMakeRect(NSMaxX(rect) - 2, rect.origin.y, 2, defaultLineHeight)];
+	[[self colorForBookmark:idx] set];
+	BOOL needsClip = ! NSContainsRect(rect, ovalRect);
+	if (needsClip) {
+	    [context saveGraphicsState];
+	    [NSBezierPath clipRect:rect];
+	}
+	[path fill];
+	if (needsClip) {
+	    [context restoreGraphicsState];
+	}
+	[path release];
+	
+	i++;
+	ovalRect.origin.y += ovalRect.size.height;
+	if (ovalRect.origin.y > NSMaxY(rect)) break;
+    }
+}
+
+
 - (void)drawGlyphs:(const CGGlyph *)glyphs withAdvances:(const CGSize *)advances withStyleRun:(HFTextVisualStyleRun *)styleRun count:(NSUInteger)glyphCount rect:(NSRect)backgroundRect {
     HFASSERT(glyphs != NULL);
     HFASSERT(advances != NULL);
@@ -897,14 +972,11 @@ enum LineCoverage_t {
         NSColor *background = [styleRun backgroundColor];
         if (background) NSRectFillListWithColors(&backgroundRect, &background, 1);
 	
-	NSIndexSet *bookmarks = [styleRun bookmarkExtents];
-	if (bookmarks) {
-	    NSUInteger bookmark;
-	    for (bookmark = [bookmarks firstIndex]; bookmark != NSNotFound; bookmark = [bookmarks indexGreaterThanIndex:bookmark]) {
-		[self drawBookmark:bookmark inRect:backgroundRect];
-	    }
-	}
-	
+	NSIndexSet *bookmarks;
+	if ((bookmarks = [styleRun bookmarkStarts])) [self drawBookmarkStarts:bookmarks inRect:backgroundRect];
+	if ((bookmarks = [styleRun bookmarkExtents])) [self drawBookmarkExtents:bookmarks inRect:backgroundRect];
+	if ((bookmarks = [styleRun bookmarkEnds])) [self drawBookmarkEnds:bookmarks inRect:backgroundRect];
+		
         [styleRun set];
         CGContextRef ctx = [[NSGraphicsContext currentContext] graphicsPort];
         CGContextShowGlyphsWithAdvances(ctx, glyphs, advances, glyphCount);

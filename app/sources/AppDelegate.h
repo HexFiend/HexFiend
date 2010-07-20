@@ -13,6 +13,7 @@
     IBOutlet NSMenuItem *extendForwardsItem, *extendBackwardsItem;
     IBOutlet NSMenuItem *fontMenuItem;
     IBOutlet NSMenuItem *processListMenuItem;
+    IBOutlet NSMenu *bookmarksMenu;
 }
 
 

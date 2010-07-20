@@ -16,6 +16,7 @@
     BOOL shouldDraw;
     NSIndexSet *bookmarkStarts;
     NSIndexSet *bookmarkExtents;
+    NSIndexSet *bookmarkEnds;
 }
 
 - (NSColor *)foregroundColor;
@@ -33,11 +34,14 @@
 - (CGFloat)scale;
 - (void)setScale:(CGFloat)val;
 
-- (NSIndexSet *)bookmarkStarts:(NSIndexSet *)bookmarksStarts;
+- (NSIndexSet *)bookmarkStarts;
 - (void)setBookmarkStarts:(NSIndexSet *)starts;
 
 - (NSIndexSet *)bookmarkExtents;
 - (void)setBookmarkExtents:(NSIndexSet *)val;
+
+- (NSIndexSet *)bookmarkEnds;
+- (void)setBookmarkEnds:(NSIndexSet *)ends;
 
 - (void)set;
 

@@ -1393,6 +1393,13 @@ invalidString:;
     if (! success) NSBeep();
 }
 
+- (void)populateBookmarksMenu:(NSMenu *)bookmarksMenu {
+    /* Remove all items except the first two */
+    NSUInteger itemCount = [bookmarksMenu numberOfItems];
+    while (itemCount > 2) {
+	[bookmarksMenu removeItemAtIndex:--itemCount];
+    }
+}
 
 - (IBAction)showFontPanel:(id)sender {
     NSFontPanel *panel = [NSFontPanel sharedFontPanel];
@@ -1424,6 +1431,24 @@ invalidString:;
     [self updateDocumentWindowTitle];
 }
 
+/* Returns the selected bookmark, or NSNotFound */
+- (NSInteger)selectedBookmark {
+    NSInteger result = NSNotFound;
+    NSArray *ranges = [controller selectedContentsRanges];
+    if ([ranges count] > 0) {
+	HFRange range = [[ranges objectAtIndex:0] HFRange];
+	if (range.length == 0 && range.location < [controller contentsLength]) range.length = 1;
+	NSEnumerator *attributeEnumerator = [[controller attributesForBytesInRange:range] attributeEnumerator];
+	NSString *attribute;
+	while ((attribute = [attributeEnumerator nextObject])) {
+	    if ((result = HFBookmarkFromBookmarkMiddleAttribute(attribute)) != NSNotFound) {
+		break;
+	    }
+	}
+    }
+    return result;
+}
+
 - (IBAction)jumpToBookmark:sender {
     NSInteger bookmark = [sender tag];
     if (controller) {
@@ -1435,11 +1460,19 @@ invalidString:;
 }
 
 - (IBAction)setBookmark:sender {
-    NSInteger bookmark = [sender tag];
+    USE(sender);
     NSArray *ranges = [controller selectedContentsRanges];
     if ([ranges count] > 0) {
 	HFRange range = [[ranges objectAtIndex:0] HFRange];
-	[controller setRange:range forBookmark:bookmark];
+	[controller setRange:range forBookmark:++lastUsedBookmark];
+    }
+}
+
+- (IBAction)deleteBookmark:sender {
+    USE(sender);
+    NSInteger bookmark = [self selectedBookmark];
+    if (bookmark != NSNotFound) {
+	[controller setRange:HFRangeMake(ULLONG_MAX, ULLONG_MAX) forBookmark:bookmark];
     }
 }
 
