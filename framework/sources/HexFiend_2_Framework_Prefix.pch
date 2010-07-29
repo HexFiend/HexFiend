@@ -28,8 +28,9 @@
 /* Macro to "use" a variable to prevent unused variable warnings. */
 #define USE(x) if (0) x=x
 
-#define check_malloc(x) ({ size_t _count = x; void* result = malloc(_count); if (! result) { fprintf(stderr, "Out of memory allocating %lu bytes\n", (unsigned long)_count); exit(EXIT_FAILURE); } result; })
-#define check_calloc(x) ({ size_t _count = x; void* result = calloc(_count, 1); if (! result) { fprintf(stderr, "Out of memory allocating %lu bytes\n", (unsigned long)_count); exit(EXIT_FAILURE); } result; })
+#define check_malloc(x) ({ size_t _count = (x); void* result = malloc(_count); if (! result) { fprintf(stderr, "Out of memory allocating %lu bytes\n", (unsigned long)_count); exit(EXIT_FAILURE); } result; })
+#define check_calloc(x) ({ size_t _count = (x); void* result = calloc(_count, 1); if (! result) { fprintf(stderr, "Out of memory allocating %lu bytes\n", (unsigned long)_count); exit(EXIT_FAILURE); } result; })
+#define check_realloc(p, x) ({ size_t _count = (x); void *result = realloc((p), x); if (! result) { fprintf(stderr, "Out of memory reallocating %lu bytes\n", (unsigned long)_count); exit(EXIT_FAILURE); } result; })
 
 #if ! NDEBUG
 #define REQUIRE_NOT_NULL(a) do { \

@@ -10,6 +10,7 @@
 #import <HexFiend/HFTextRepresenter_Internal.h>
 #import <HexFiend/HFTextSelectionPulseView.h>
 #import <HexFiend/HFTextVisualStyleRun.h>
+#import <objc/message.h>
 
 static const NSTimeInterval HFCaretBlinkFrequency = 0.56;
 
@@ -797,7 +798,7 @@ enum LineCoverage_t {
     return [[self representer] bytesPerColumn];
 }
 
-- (void)_drawLineBackgrounds:(NSRect)clip withLineHeight:(CGFloat)lineHeight maxLines:(NSUInteger)maxLines {
+- (void)_drawDefaultLineBackgrounds:(NSRect)clip withLineHeight:(CGFloat)lineHeight maxLines:(NSUInteger)maxLines {
     NSRect bounds = [self bounds];
     NSUInteger lineIndex;
     NSRect lineRect = NSMakeRect(NSMinX(bounds), NSMinY(bounds), NSWidth(bounds), lineHeight);
@@ -825,7 +826,64 @@ enum LineCoverage_t {
     
     FREE_ARRAY(lineRects);
     FREE_ARRAY(lineColors);
-}                              
+}
+
+- (HFTextVisualStyleRun *)styleRunForByteAtIndex:(NSUInteger)byteIndex {
+    if (! styles) return nil;
+    FOREACH(HFTextVisualStyleRun *, run, styles) {
+        if (NSLocationInRange(byteIndex, [run range])) {
+            return run;
+        }
+    }
+    [NSException raise:NSInvalidArgumentException format:@"Byte index %lu not present in runs %@", (unsigned long)byteIndex, styles];
+    return nil;
+}
+
+/* Given a list of rects and a parallel list of values, find cases of equal adjacent values, and union together their corresponding rects, deleting the second element from the list.  Next, delete all nil values.  Returns the new count of the list. */
+static size_t unionAndCleanLists(NSRect *rectList, id *valueList, size_t count) {
+    size_t trailing = 0, leading = 0;
+    while (leading < count) {
+	/* Copy our value left */
+	valueList[trailing] = valueList[leading];
+	rectList[trailing] = rectList[leading];
+	
+	/* Skip one - no point unioning with ourselves */
+	leading += 1;
+	
+	/* Sweep right, unioning until we reach a different value or the end */
+	id targetValue = valueList[trailing];
+	for (; leading < count; leading++) {
+	    id testValue = valueList[leading];
+	    if (targetValue == testValue || (testValue && [targetValue isEqual:testValue])) {
+		/* Values match, so union the two rects */
+		rectList[trailing] = NSUnionRect(rectList[trailing], rectList[leading]);
+	    }
+	    else {
+		/* Values don't match, we're done sweeping */
+		break;
+	    }
+	}
+	
+	/* We're done with this index */
+	trailing += 1;
+    }
+    
+    /* trailing keeps track of how many values we have */
+    count = trailing;
+    
+    /* Now do the same thing, except delete nil values */
+    for (trailing = leading = 0; leading < count; leading++) {
+	if (valueList[leading] != nil) {
+	    valueList[trailing] = valueList[leading];
+	    rectList[trailing] = rectList[leading];
+	    trailing += 1;
+	}
+    }
+    count = trailing;    
+    
+    /* All done */
+    return count;
+}
 
 /* Draw vertical guidelines every four bytes */
 - (void)drawVerticalGuideLines:(NSRect)clip {
@@ -963,20 +1021,123 @@ enum LineCoverage_t {
     }
 }
 
+- (void)drawStyledBackgroundsForByteRange:(NSRange)range inRect:(NSRect)rect {
+    NSRect remainingRunRect = rect;
+    NSRange remainingRange = range;
+    
+    /* Our caller lies to us a little */
+    remainingRunRect.origin.x += [self horizontalContainerInset];
+    
+    const NSUInteger bytesPerColumn = [self bytesPerColumn];
+    
+    /* Here are the properties we care about */
+    struct PropertyInfo_t {
+	SEL stylePropertyAccessor; // the selector we use to get the property
+	NSRect *rectList; // the list of rects corresponding to the property values
+	id *propertyValueList; // the list of the property values
+	size_t count; //list count, only gets set after cleaning up our lists
+    } propertyInfos[] = {
+	{@selector(backgroundColor)},
+	{@selector(bookmarkStarts)},
+	{@selector(bookmarkExtents)},
+	{@selector(bookmarkEnds)}
+    };
+    
+    /* Each list has the same capacity, and (initially) the same count */
+    size_t i, listCount = 0, listCapacity = 0;
+    
+    /* The function pointer we use to get our property values */
+    id (* const funcPtr)(id, SEL) = (id (*)(id, SEL))objc_msgSend;
+    
+    size_t propertyIndex;
+    const size_t propertyInfoCount = sizeof propertyInfos / sizeof *propertyInfos;
+    
+    while (remainingRange.length > 0) {
+	/* Get the next run for the remaining range. */
+	HFTextVisualStyleRun *styleRun = [self styleRunForByteAtIndex:remainingRange.location];
+	
+	/* The length of the run is the end of the style run or the end of the range we're given (whichever is smaller), minus the beginning of the range we care about. */
+	NSUInteger runStart = remainingRange.location;
+	NSUInteger runLength = MIN(NSMaxRange(range), NSMaxRange([styleRun range])) - runStart;
+	
+	/* Get the width of this run and use it to compute the rect */
+	CGFloat runRectWidth = [self totalAdvanceForBytesInRange:NSMakeRange(remainingRange.location, runLength)];
+	NSRect runRect = remainingRunRect;
+	runRect.size.width = runRectWidth;
+	
+	/* Update runRect and remainingRunRect based on what we just learned */
+	remainingRunRect.origin.x += runRectWidth;
+	remainingRunRect.size.width -= runRectWidth;
+		
+	/* Do a hack - if we end at a column boundary, subtract the advance between columns.  If the next run has the same value for this property, then we'll end up unioning the rects together and the column gap will be filled.  This is the primary purpose of this function. */
+	if (bytesPerColumn > 0 && (runStart + runLength) % bytesPerColumn == 0) {
+	    runRect.size.width -= MIN([self advanceBetweenColumns], runRect.size.width);
+	}
+			
+	/* Extend our lists if necessary */
+	if (listCount == listCapacity) {
+	    /* Our list is too small, extend it */
+	    listCapacity = listCapacity + 16;
+	    
+	    for (propertyIndex = 0; propertyIndex < propertyInfoCount; propertyIndex++) {
+		struct PropertyInfo_t *p = propertyInfos + propertyIndex;
+		p->rectList = check_realloc(p->rectList, listCapacity * sizeof *p->rectList);
+		p->propertyValueList = check_realloc(p->propertyValueList, listCapacity * sizeof *p->propertyValueList);
+	    }
+	}
+	
+	/* Now append our values to our lists, even if it's nil */
+	for (propertyIndex = 0; propertyIndex < propertyInfoCount; propertyIndex++) {
+	    struct PropertyInfo_t *p = propertyInfos + propertyIndex;
+	    id value = funcPtr(styleRun, p->stylePropertyAccessor);
+	    p->rectList[listCount] = runRect;
+	    p->propertyValueList[listCount] = value;
+	}
+	
+	listCount++;
+		
+	/* Update remainingRange */
+	remainingRange.location += runLength;
+	remainingRange.length -= runLength;		
+	
+    }
+    
+    /* Now clean up our lists, to delete the gaps we may have introduced */
+    for (propertyIndex = 0; propertyIndex < propertyInfoCount; propertyIndex++) {
+	struct PropertyInfo_t *p = propertyInfos + propertyIndex;
+	p->count = unionAndCleanLists(p->rectList, p->propertyValueList, listCount);
+    }
+    
+    /* Finally we can draw them! */
+    const struct PropertyInfo_t *p;
+    
+    /* Draw backgrounds */
+    p = propertyInfos + 0;
+    if (p->count > 0) NSRectFillListWithColors(p->rectList, p->propertyValueList, p->count);
+    
+    /* Draw bookmark starts, extents, and ends */
+    p = propertyInfos + 1;
+    for (i=0; i < p->count; i++) [self drawBookmarkStarts:p->propertyValueList[i] inRect:p->rectList[i]];
 
-- (void)drawGlyphs:(const CGGlyph *)glyphs withAdvances:(const CGSize *)advances withStyleRun:(HFTextVisualStyleRun *)styleRun count:(NSUInteger)glyphCount rect:(NSRect)backgroundRect {
+    p = propertyInfos + 2;
+    for (i=0; i < p->count; i++) [self drawBookmarkExtents:p->propertyValueList[i] inRect:p->rectList[i]];
+    
+    p = propertyInfos + 3;
+    for (i=0; i < p->count; i++) [self drawBookmarkEnds:p->propertyValueList[i] inRect:p->rectList[i]];
+    
+    /* Clean up */
+    for (propertyIndex = 0; propertyIndex < propertyInfoCount; propertyIndex++) {
+	struct PropertyInfo_t *p = propertyInfos + propertyIndex;
+	free(p->rectList);
+	free(p->propertyValueList);
+    }    
+}
+
+- (void)drawGlyphs:(const CGGlyph *)glyphs withAdvances:(const CGSize *)advances withStyleRun:(HFTextVisualStyleRun *)styleRun count:(NSUInteger)glyphCount {
     HFASSERT(glyphs != NULL);
     HFASSERT(advances != NULL);
     HFASSERT(glyphCount > 0);
     if ([styleRun shouldDraw]) {
-        NSColor *background = [styleRun backgroundColor];
-        if (background) NSRectFillListWithColors(&backgroundRect, &background, 1);
-	
-	NSIndexSet *bookmarks;
-	if ((bookmarks = [styleRun bookmarkStarts])) [self drawBookmarkStarts:bookmarks inRect:backgroundRect];
-	if ((bookmarks = [styleRun bookmarkExtents])) [self drawBookmarkExtents:bookmarks inRect:backgroundRect];
-	if ((bookmarks = [styleRun bookmarkEnds])) [self drawBookmarkEnds:bookmarks inRect:backgroundRect];
-		
         [styleRun set];
         CGContextRef ctx = [[NSGraphicsContext currentContext] graphicsPort];
         CGContextShowGlyphsWithAdvances(ctx, glyphs, advances, glyphCount);
@@ -1036,17 +1197,6 @@ enum LineCoverage_t {
     if (resultingGlyphCount) *resultingGlyphCount = glyphBufferIndex;
 }
 
-- (HFTextVisualStyleRun *)styleRunForByteAtIndex:(NSUInteger)byteIndex {
-    if (! styles) return nil;
-    FOREACH(HFTextVisualStyleRun *, run, styles) {
-        if (NSLocationInRange(byteIndex, [run range])) {
-            return run;
-        }
-    }
-    [NSException raise:NSInvalidArgumentException format:@"Byte index %lu not present in runs %@", (unsigned long)byteIndex, styles];
-    return nil;
-}
-
 - (void)drawTextWithClip:(NSRect)clip restrictingToTextInRanges:(NSArray *)restrictingToRanges {
     CGContextRef ctx = [[NSGraphicsContext currentContext] graphicsPort];
     NSRect bounds = [self bounds];
@@ -1069,7 +1219,6 @@ enum LineCoverage_t {
     textTransform.tx += [self horizontalContainerInset];
     textTransform.ty += [fontObject ascender] - lineHeight * [self verticalOffset];
     NSUInteger lineIndex = 0;
-    const NSUInteger bytesPerColumn = [self bytesPerColumn];
     const NSUInteger maxGlyphCount = [self maximumGlyphCountForByteCount:bytesPerLine];
     NEW_ARRAY(CGGlyph, glyphs, maxGlyphCount);
     NEW_ARRAY(CGSize, advances, maxGlyphCount);
@@ -1078,8 +1227,12 @@ enum LineCoverage_t {
             textTransform.ty += lineHeight;
             lineRectInBoundsSpace.origin.y += lineHeight;
         }
-        if (NSIntersectsRect(lineRectInBoundsSpace, clip)) {
+        if (NSIntersectsRect(lineRectInBoundsSpace, clip)) {	    
             const NSUInteger bytesInThisLine = MIN(bytesPerLine, byteCount - lineStartIndex);
+	    
+	    /* Draw the backgrounds of any styles. */
+	    [self drawStyledBackgroundsForByteRange:NSMakeRange(lineStartIndex, bytesInThisLine) inRect:lineRectInBoundsSpace];
+	    
             NSUInteger byteIndexInLine = 0;
             CGFloat advanceIntoLine = 0;
             while (byteIndexInLine < bytesInThisLine) {
@@ -1103,31 +1256,17 @@ enum LineCoverage_t {
                     textTransform.tx += initialTextOffset + advanceIntoLine;
                     CGContextSetTextMatrix(ctx, textTransform);
                     
-                    /* Add up all the advances */
-                    NSUInteger glyphIndex;
-                    CGFloat totalAdvanceOfThisStyleRun = 0;
-                    for (glyphIndex = 0; glyphIndex < resultGlyphCount; glyphIndex++) {
-                        totalAdvanceOfThisStyleRun += advances[glyphIndex].width;
-                    }
-                    
-                    /* Compute the rect consumed by these glyphs */
-                    NSRect glyphsRect = lineRectInBoundsSpace;
-                    glyphsRect.origin.x += textTransform.tx;
-                    glyphsRect.size.width = totalAdvanceOfThisStyleRun;
-                    
-                    /* Do a hack - if we end at a column boundary, subtract the advance between columns from the background rect. */
-                    if (bytesPerColumn > 0 && (bytesInThisRun + byteIndexInLine) % bytesPerColumn == 0) {
-                        glyphsRect.size.width -= MIN([self advanceBetweenColumns], glyphsRect.size.width);
-                    }
-                    
                     /* Draw them */
-                    [self drawGlyphs:glyphs withAdvances:advances withStyleRun:styleRun count:resultGlyphCount rect:glyphsRect];
+                    [self drawGlyphs:glyphs withAdvances:advances withStyleRun:styleRun count:resultGlyphCount];
 
                     /* Undo the work we did before so as not to screw up the next run */
                     textTransform.tx -= initialTextOffset + advanceIntoLine;
                     
                     /* Record how far into our line this made us move */
-                    advanceIntoLine += totalAdvanceOfThisStyleRun;                    
+		    NSUInteger glyphIndex;
+                    for (glyphIndex = 0; glyphIndex < resultGlyphCount; glyphIndex++) {
+                        advanceIntoLine += advances[glyphIndex].width;
+                    }
                 }
                 byteIndexInLine += bytesInThisRun;
             }
@@ -1169,7 +1308,8 @@ enum LineCoverage_t {
     NSUInteger byteCount = [data length];
     [[font screenFont] set];
     
-    [self _drawLineBackgrounds:clip withLineHeight:[self lineHeight] maxLines:ll2l(HFRoundUpToNextMultipleSaturate(byteCount, bytesPerLine) / bytesPerLine)];
+    [self _drawDefaultLineBackgrounds:clip withLineHeight:[self lineHeight] maxLines:ll2l(HFRoundUpToNextMultipleSaturate(byteCount, bytesPerLine) / bytesPerLine)];
+//    [self _drawStyledLineBackgrounds:clip];
     [self drawSelectionIfNecessaryWithClip:clip];
     
     NSColor *textColor = [NSColor blackColor];
