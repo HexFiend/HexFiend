@@ -521,6 +521,17 @@ static inline Class preferredByteArrayClass(void) {
     [self _addPropertyChangeBits:HFControllerByteRangeAttributes];
 }
 
+- (NSIndexSet *)bookmarksInRange:(HFRange)range {
+    NSMutableIndexSet *result = [NSMutableIndexSet indexSet];
+    HFASSERT(HFRangeIsSubrangeOfRange(range, HFRangeMake(0, [self contentsLength])));
+    HFByteRangeAttributeArray *attributeArray = [byteArray byteRangeAttributeArray];
+    NSSet *attributes = [attributeArray attributesInRange:range];
+    FOREACH(NSString *, attribute, attributes) {
+	NSInteger bookmark = HFBookmarkFromBookmarkMiddleAttribute(attribute);
+	if (bookmark != NSNotFound) [result addIndex:bookmark];
+    }
+    return result;
+}
 
 - (void)_updateDisplayedRange {
     HFRange proposedNewDisplayRange;

@@ -412,6 +412,8 @@ You create an HFController via <tt>[[HFController alloc] init]</tt>.  After that
 /*! Sets the range for the given bookmark.  Pass {ULLONG_MAX, ULLONG_MAX} to remove the bookmark. */
 - (void)setRange:(HFRange)range forBookmark:(NSInteger)bookmark;
 
+/*! Returns an NSIndexSet of the bookmarks in the given range. */
+- (NSIndexSet *)bookmarksInRange:(HFRange)range;
 
 /*! Returns total number of bytes.  This is equivalent to [[controller byteArray] length]. */
 - (unsigned long long)contentsLength;

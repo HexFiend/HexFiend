@@ -47,7 +47,6 @@
     NSError *saveError;
     
     BOOL currentlySettingFont;
-    NSUInteger lastUsedBookmark;
 }
 
 - (void)moveSelectionForwards:(NSMenuItem *)sender;

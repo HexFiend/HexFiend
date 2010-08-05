@@ -15,6 +15,9 @@
 /*! Returns the set of attributes at the given index, and the length over which those attributes are valid (if not NULL). */
 - (NSSet *)attributesAtIndex:(unsigned long long)index length:(unsigned long long *)length;
 
+/*! Returns the set of attributes within the given range. */
+- (NSSet *)attributesInRange:(HFRange)range;
+
 /*! Returns the first range of a given attribute.  If it is not present, returns {ULLONG_MAX, ULLONG_MAX} */
 - (HFRange)rangeOfAttribute:(NSString *)attribute;
 

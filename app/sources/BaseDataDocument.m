@@ -597,6 +597,25 @@ static inline Class preferredByteArrayClass(void) {
     [[NSUserDefaults standardUserDefaults] setBool:newVal forKey:@"AntialiasText"];
 }
 
+
+/* Returns the selected bookmark, or NSNotFound */
+- (NSInteger)selectedBookmark {
+    NSInteger result = NSNotFound;
+    NSArray *ranges = [controller selectedContentsRanges];
+    if ([ranges count] > 0) {
+	HFRange range = [[ranges objectAtIndex:0] HFRange];
+	if (range.length == 0 && range.location < [controller contentsLength]) range.length = 1;
+	NSEnumerator *attributeEnumerator = [[controller attributesForBytesInRange:range] attributeEnumerator];
+	NSString *attribute;
+	while ((attribute = [attributeEnumerator nextObject])) {
+	    if ((result = HFBookmarkFromBookmarkMiddleAttribute(attribute)) != NSNotFound) {
+		break;
+	    }
+	}
+    }
+    return result;
+}
+
 - (BOOL)validateMenuItem:(NSMenuItem *)item {
     SEL action = [item action];
     if (action == @selector(toggleVisibleControllerView:)) {
@@ -641,9 +660,12 @@ static inline Class preferredByteArrayClass(void) {
         [item setState:(NSUInteger)[item tag] == [controller bytesPerColumn]];
         return YES;
     }
-    else if (action == @selector(jumpToBookmark:)) {
+    else if (action == @selector(scrollToBookmark:) || action == @selector(selectBookmark:)) {
 	HFRange range = [controller rangeForBookmark:[item tag]];
 	return range.location != ULLONG_MAX || range.length != ULLONG_MAX;
+    }
+    else if (action == @selector(deleteBookmark:)) {
+	return [self selectedBookmark] != NSNotFound;
     }
     else return [super validateMenuItem:item];
 }
@@ -1394,11 +1416,70 @@ invalidString:;
 }
 
 - (void)populateBookmarksMenu:(NSMenu *)bookmarksMenu {
-    /* Remove all items except the first two */
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    
     NSUInteger itemCount = [bookmarksMenu numberOfItems];
-    while (itemCount > 2) {
-	[bookmarksMenu removeItemAtIndex:--itemCount];
+    HFASSERT(itemCount >= 2); //we never delete the first two items
+    
+    /* Get a list of the bookmarks. */
+    NSIndexSet *bookmarks = [controller bookmarksInRange:HFRangeMake(0, [controller contentsLength])];
+    const NSUInteger numberOfBookmarks = [bookmarks count];
+    
+    /* Initial two items, plus maybe a separator, plus two bookmark items per bookmark */
+    NSUInteger desiredItemCount = 2 + (numberOfBookmarks > 0) + 2 * numberOfBookmarks;
+    
+    /* Delete items until we get to the desired amount */
+    while (itemCount > desiredItemCount) [bookmarksMenu removeItemAtIndex:--itemCount];
+    
+    /* Add items until we get to the new amount */
+    while (itemCount < desiredItemCount) {
+	if (itemCount == 2) {
+	    [bookmarksMenu insertItem:[NSMenuItem separatorItem] atIndex:itemCount++];
+	}
+	else {
+	    NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:@"" action:@selector(self) keyEquivalent:@""];
+	    [bookmarksMenu insertItem:item atIndex:itemCount++];
+	    [item release];
+	}
     }
+    
+    /* Update the items */
+    NSUInteger itemIndex = 3, bookmarkIndex = 0; //0 is an invalid bookmark
+    while (itemIndex < itemCount) {
+	/* Get this bookmark index */
+	bookmarkIndex = [bookmarks indexGreaterThanIndex:bookmarkIndex];
+	
+	/* Compute our KE */
+	NSString *keString;
+	if (bookmarkIndex <= 10) {
+	    char ke = '0' + (bookmarkIndex % 10);
+	    keString = [[NSString alloc] initWithBytes:&ke length:1 encoding:NSASCIIStringEncoding];	
+	}
+	else {
+	    keString = [@"" retain];
+	}
+	
+	/* The first item is Scroll to Bookmark, the second (alternate) is Select Bookmark */
+	NSMenuItem *item = [bookmarksMenu itemAtIndex:itemIndex++];
+	[item setKeyEquivalent:keString];
+	[item setAction:@selector(scrollToBookmark:)];
+	[item setKeyEquivalentModifierMask:NSCommandKeyMask];
+	[item setAlternate:NO];
+	[item setTitle:[NSString stringWithFormat:@"Scroll to Bookmark %lu", bookmarkIndex]];
+	[item setTag:bookmarkIndex];
+	
+	item = [bookmarksMenu itemAtIndex:itemIndex++];
+	[item setTitle:[NSString stringWithFormat:@"Select Bookmark %lu", bookmarkIndex]];
+	[item setKeyEquivalent:keString];
+	[item setAction:@selector(selectBookmark:)];
+	[item setKeyEquivalentModifierMask:NSCommandKeyMask | NSShiftKeyMask];
+	[item setAlternate:YES];
+	[item setTag:bookmarkIndex];
+	
+	[keString release];
+    }
+    
+    [pool drain];
 }
 
 - (IBAction)showFontPanel:(id)sender {
@@ -1431,32 +1512,22 @@ invalidString:;
     [self updateDocumentWindowTitle];
 }
 
-/* Returns the selected bookmark, or NSNotFound */
-- (NSInteger)selectedBookmark {
-    NSInteger result = NSNotFound;
-    NSArray *ranges = [controller selectedContentsRanges];
-    if ([ranges count] > 0) {
-	HFRange range = [[ranges objectAtIndex:0] HFRange];
-	if (range.length == 0 && range.location < [controller contentsLength]) range.length = 1;
-	NSEnumerator *attributeEnumerator = [[controller attributesForBytesInRange:range] attributeEnumerator];
-	NSString *attribute;
-	while ((attribute = [attributeEnumerator nextObject])) {
-	    if ((result = HFBookmarkFromBookmarkMiddleAttribute(attribute)) != NSNotFound) {
-		break;
-	    }
-	}
-    }
-    return result;
-}
-
-- (IBAction)jumpToBookmark:sender {
-    NSInteger bookmark = [sender tag];
+- (void)jumpToBookmarkIndex:(NSInteger)bookmark selecting:(BOOL)select {
     if (controller) {
 	HFRange range = [controller rangeForBookmark:bookmark];
 	if (range.location != ULLONG_MAX || range.length != ULLONG_MAX) {
 	    [controller maximizeVisibilityOfContentsRange:range];
+	    if (select) [controller setSelectedContentsRanges:[HFRangeWrapper withRanges:&range count:1]];
 	}
-    }
+    }    
+}
+
+- (IBAction)scrollToBookmark:sender {
+    [self jumpToBookmarkIndex:[sender tag] selecting:NO];
+}
+
+- (IBAction)selectBookmark:sender {
+    [self jumpToBookmarkIndex:[sender tag] selecting:YES];
 }
 
 - (IBAction)setBookmark:sender {
@@ -1464,7 +1535,17 @@ invalidString:;
     NSArray *ranges = [controller selectedContentsRanges];
     if ([ranges count] > 0) {
 	HFRange range = [[ranges objectAtIndex:0] HFRange];
-	[controller setRange:range forBookmark:++lastUsedBookmark];
+	NSIndexSet *usedBookmarks = [controller bookmarksInRange:HFRangeMake(0, [controller contentsLength])];
+	
+	/* Find the first index that bookmarks does not contain, excepting 0 */
+	NSMutableIndexSet *availableBookmarks = [[NSMutableIndexSet alloc] initWithIndexesInRange:NSMakeRange(1, NSNotFound - 2)];
+	[availableBookmarks removeIndexes:usedBookmarks];
+	NSUInteger newBookmark = [availableBookmarks firstIndex];
+	
+	if (newBookmark != NSNotFound) {
+	    [controller setRange:range forBookmark:newBookmark];
+	}
+	[availableBookmarks release];
     }
 }
 

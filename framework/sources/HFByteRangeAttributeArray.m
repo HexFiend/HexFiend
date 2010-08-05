@@ -162,6 +162,16 @@
     return result;
 }
 
+- (NSSet *)attributesInRange:(HFRange)range {
+    NSMutableSet *result = [NSMutableSet set];
+    FOREACH(HFByteRangeAttributeRun *, run, attributeRuns) {
+	if (HFIntersectsRange(range, run->range)) {
+	    [result addObject:run->name];
+	}
+    }
+    return result;
+}
+
 - (HFRange)rangeOfAttribute:(NSString *)attribute {
     FOREACH(HFByteRangeAttributeRun *, run, attributeRuns) {
 	if ([attribute isEqualToString:run->name]) return run->range;
