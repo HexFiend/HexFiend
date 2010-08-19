@@ -13,7 +13,7 @@ static inline HFRange HFRangeMake(unsigned long long loc, unsigned long long len
 }
 
 /*!
-  Returns true if a given location is within a given HFRange.
+  Returns true if a given location is within a given HFRange.  If the location is at the end of the range (range.location + range.length) this returns NO.
 */
 static inline BOOL HFLocationInRange(unsigned long long location, HFRange range) {
     return location >= range.location && location - range.location < range.length;

@@ -206,7 +206,6 @@ static HFBTreeNode *mutable_copy_node(HFBTreeNode *node, TreeDepth_t depth, HFBT
         HFASSERT([self length] == 0);
         HFASSERT(depth == BAD_DEPTH);
         HFBTreeLeaf *leaf = [[HFBTreeLeaf alloc] init];
-//        printf("Leaf size: %lu\n", malloc_size(leaf));
         leaf->children[0] = [entry retain];
         leaf->subtreeLength = HFBTreeLength(entry);
         root = leaf;
@@ -216,7 +215,6 @@ static HFBTreeNode *mutable_copy_node(HFBTreeNode *node, TreeDepth_t depth, HFBT
         HFBTreeNode *newParentValue = btree_insert_returning_retained_value_for_parent(self, entry, offset);
         if (newParentValue) {
             HFBTreeBranch *newRoot = [[HFBTreeBranch alloc] init];
-//            printf("Branch size: %lu\n", malloc_size(newRoot));
             newRoot->children[0] = root; //transfer our retain
             newRoot->children[1] = newParentValue; //transfer the retain we got from the function
             newRoot->subtreeLength = HFSum(root->subtreeLength, newParentValue->subtreeLength);

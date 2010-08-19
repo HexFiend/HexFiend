@@ -2513,6 +2513,41 @@ static HFByteArray *byteArrayForFile(NSString *path) {
     [pool drain];
 }
 
++ (void)_testIndexSet {
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    NSMutableIndexSet *nsindexset = [[NSMutableIndexSet alloc] init];
+    HFMutableIndexSet *hfindexset = [[HFMutableIndexSet alloc] init];
+    NSUInteger round;
+    for (round = 0; round < 4096; round++) {
+	BOOL insert = ([nsindexset count] == 0 || (random() % 2));
+	NSUInteger end = random() % NSNotFound;
+	NSUInteger start = random() % end;
+	if (insert) {
+	    [nsindexset addIndexesInRange:NSMakeRange(start, end - start)];
+	    [hfindexset addIndexesInRange:HFRangeMake(start, end - start)];
+	}
+	else {
+	    [nsindexset removeIndexesInRange:NSMakeRange(start, end - start)];
+	    [hfindexset removeIndexesInRange:HFRangeMake(start, end - start)];	    
+	}
+	
+	HFASSERT([hfindexset isEqualToNSIndexSet:nsindexset]);
+	
+	if ([nsindexset count] > 0) {
+	    if (random() % 2) {
+		/* Shift left */
+		NSUInteger amountToShift = (1 + random() % [nsindexset firstIndex]);
+	    }
+	    else {
+		/* Shift right */
+		NSUInteger maxAmountToShift = (NSNotFound - 1 - [nsindexset lastIndex]);
+		NSUInteger amountToShift = (1 + random() % maxAmountToShift);
+	    }
+	}
+    }
+    [pool drain];
+}
+
 static void exception_thrown(const char *methodName, NSException *exception) {
     printf("Test %s threw exception %s\n", methodName, [[exception description] UTF8String]);
     puts("I'm bailing out.  Better luck next time.");
@@ -2521,7 +2556,7 @@ static void exception_thrown(const char *methodName, NSException *exception) {
 
 + (void)_runAllTests {
     CFAbsoluteTime start = CFAbsoluteTimeGetCurrent();
-    BOOL enableTest = YES;
+    BOOL enableTest = NO;
     if (enableTest) @try { [self _testFastMemchr]; }
     @catch (NSException *localException) { exception_thrown("_testFastMemchr", localException); }
     if (enableTest) @try { [self _testRangeFunctions]; }
@@ -2544,6 +2579,10 @@ static void exception_thrown(const char *methodName, NSException *exception) {
     @catch (NSException *localException) { exception_thrown("_testBadLengthFileWriting", localException); }
     if (enableTest) @try { [self _testByteSearching]; }
     @catch (NSException *localException) { exception_thrown("_testByteSearching", localException); }
+    enableTest = YES;
+    if (enableTest) @try { [self _testIndexSet]; }
+    @catch (NSException *localException) { exception_thrown("_testIndexSet", localException); }
+
     CFAbsoluteTime end = CFAbsoluteTimeGetCurrent();
     printf("Unit tests completed in %.02f seconds\n", end - start);
     
