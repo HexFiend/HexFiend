@@ -154,31 +154,23 @@
 	/* Single range */
 	result = (idx < HFMaxRange(singleRange)) ? 0 : 1;
     }
+    else if (HFMaxRange(multipleRanges[0]) > idx) {
+        result = 0;
+    }
     else {
 	/* Now try the binary search */
 	NSUInteger lo = 0, hi = rangeCount;
 	while (lo + 1 < hi) {
-	    NSUInteger mid = lo + (hi - lo) / 2;
-	    if (idx < multipleRanges[mid].location) {
-		/* Too high */
-		hi = mid;
-	    }
-	    else if (idx >= HFMaxRange(multipleRanges[mid])) {
+	    NSUInteger mid = lo + (hi - lo + 1) / 2;
+	    if (HFMaxRange(multipleRanges[mid]) <= idx) {
 		/* Too low */
-		lo = mid + 1;
+		lo = mid;
 	    }
 	    else {
-		/* This porridge is just right */
-		break;
+		hi = mid;
 	    }
 	}
-	/* lo may contain the index of the last range before idx.  We want the first range after it. */
-	if (HFLocationInRange(idx, multipleRanges[lo])) {
-	    result = lo;
-	}
-	else {
-	    result = lo + 1;
-	}
+        result = hi;
     }
 #if ! NDEBUG
     HFASSERT([self lsearchOnIndex:idx] == result);
@@ -207,6 +199,17 @@
 	}
     }
     return resultRange;
+}
+
+- (void)verifyIntegrity {
+    if (rangeCapacity == 0) HFASSERT(rangeCount <= 1);
+    if (rangeCapacity > 0) HFASSERT(rangeCount <= rangeCapacity);
+    if (rangeCount > 1) {
+        NSUInteger i;
+        for (i=1; i < rangeCount; i++) {
+            HFASSERT(HFMaxRange(multipleRanges[i-1]) < multipleRanges[i].location);
+        }
+    }
 }
 
 @end
@@ -275,6 +278,7 @@ static NSUInteger deleteFromRange(HFRange source, HFRange rangeToDelete, HFRange
 	/* Handle inserting a single range over an empty set */
 	[self setCapacity:1];
 	*[self pointerToRangeAtIndex:0] = singleRange;
+        rangeCount = 1;
     }
     else {
 	/* Handle multiple ranges */
@@ -370,7 +374,6 @@ static NSUInteger deleteFromRange(HFRange source, HFRange rangeToDelete, HFRange
 	NSUInteger count = deleteFromRange([self rangeAtIndex:0], rangeToDelete, newRanges);
 	if (count == 0) {
 	    /* Deletes everything */
-	    rangeCount = 0;
 	}
 	else if (count == 1) {
 	    /* One range */
@@ -380,52 +383,57 @@ static NSUInteger deleteFromRange(HFRange source, HFRange rangeToDelete, HFRange
 	    /* Two ranges */
 	    [self setCapacity:2];
 	    multipleRanges[0] = newRanges[0];
-	    multipleRanges[1] = newRanges[2];
+	    multipleRanges[1] = newRanges[1];
 	}
+        rangeCount = count;
     }
     else {
 	/* Find the left range that we intersect */
 	NSUInteger leftIndex = [self bsearchOnValue:rangeToDelete.location];
 	NSUInteger rightIndex = [self bsearchOnValue:HFMaxRange(rangeToDelete)];
 	HFASSERT(rightIndex >= leftIndex);
-	if (leftIndex == rightIndex) {
-	    /* We only have to replace one range */
-	    HFRange newRanges[2];
-	    NSUInteger count = deleteFromRange([self rangeAtIndex:0], rangeToDelete, newRanges);
-	    if (count == 0) {
-		/* Delete it, copy right */
-		[self deleteRangesInRange:NSMakeRange(leftIndex, 1)];
-	    }
-	    else if (count == 1) {
-		/* Just replace it */
-		*[self pointerToRangeAtIndex:leftIndex] = newRanges[0];
-	    }
-	    else {
-		/* Two ranges */
-		*[self pointerToRangeAtIndex:leftIndex] = newRanges[0];
-		[self addIndexesInRange:newRanges[1]];
-	    }
-	}
-	else {
-	    /* We have to replace more than one range */
-	    HFRange newRanges[4];
-	    NSUInteger rangesToDelete = rightIndex - leftIndex;
-	    NSUInteger rangesToInsert = 0;
-	    rangesToInsert += deleteFromRange(multipleRanges[leftIndex], rangeToDelete, newRanges);
-	    rangesToInsert += deleteFromRange(multipleRanges[rightIndex], rangeToDelete, newRanges + rangesToDelete);
-	    
-	    /* Replace as many ranges as we can without inserting or deleting */
-	    NSUInteger inPlaceReplacementCount;
-	    for (inPlaceReplacementCount = 0; inPlaceReplacementCount < MIN(rangesToDelete, rangesToInsert); inPlaceReplacementCount++) {
-		*[self pointerToRangeAtIndex:leftIndex + inPlaceReplacementCount] = newRanges[inPlaceReplacementCount];
-	    }
-	    
-	    /* Insert or delete any remaining ones */
-	    [self deleteRangesInRange:NSMakeRange(leftIndex + inPlaceReplacementCount, rangesToDelete - inPlaceReplacementCount)];
-	    [self insertRanges:newRanges + inPlaceReplacementCount atIndex:leftIndex + inPlaceReplacementCount count:rangesToInsert - inPlaceReplacementCount];
-	    
-	    /* No need to merge, because deleting ranges never fills holes */
-	}
+        if (leftIndex < rangeCount) {
+            if (leftIndex == rightIndex) {
+                /* We only have to replace one range */
+                HFRange newRanges[2];
+                NSUInteger count = deleteFromRange([self rangeAtIndex:leftIndex], rangeToDelete, newRanges);
+                if (count == 0) {
+                    /* Delete it, copy right */
+                    [self deleteRangesInRange:NSMakeRange(leftIndex, 1)];
+                }
+                else if (count == 1) {
+                    /* Just replace it */
+                    *[self pointerToRangeAtIndex:leftIndex] = newRanges[0];
+                }
+                else {
+                    /* Two ranges */
+                    *[self pointerToRangeAtIndex:leftIndex] = newRanges[0];
+                    [self addIndexesInRange:newRanges[1]];
+                }
+            }
+            else {
+                /* We have to replace more than one range */
+                HFRange newRanges[4];
+                NSUInteger rangesToDelete = rightIndex - leftIndex + (rightIndex < rangeCount);
+                NSUInteger rangesToInsert = 0;
+                rangesToInsert += deleteFromRange(multipleRanges[leftIndex], rangeToDelete, newRanges);
+                if (rightIndex < rangeCount) {
+                    rangesToInsert += deleteFromRange(multipleRanges[rightIndex], rangeToDelete, newRanges + rangesToInsert);
+                }
+                
+                /* Replace as many ranges as we can without inserting or deleting */
+                NSUInteger inPlaceReplacementCount;
+                for (inPlaceReplacementCount = 0; inPlaceReplacementCount < MIN(rangesToDelete, rangesToInsert); inPlaceReplacementCount++) {
+                    *[self pointerToRangeAtIndex:leftIndex + inPlaceReplacementCount] = newRanges[inPlaceReplacementCount];
+                }
+                
+                /* Insert or delete any remaining ones */
+                [self deleteRangesInRange:NSMakeRange(leftIndex + inPlaceReplacementCount, rangesToDelete - inPlaceReplacementCount)];
+                [self insertRanges:newRanges + inPlaceReplacementCount atIndex:leftIndex + inPlaceReplacementCount count:rangesToInsert - inPlaceReplacementCount];
+                
+                /* No need to merge, because deleting ranges never fills holes */
+            }
+        }
     }
 }
 

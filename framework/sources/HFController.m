@@ -20,6 +20,7 @@
 #import <HexFiend/HFByteRangeAttributeArray.h>
 
 #if HFUNIT_TESTS
+#import <HexFiend/HFIndexSet.h>
 #import <HexFiend/HFFileByteSlice.h>
 #import <HexFiend/HFTestHashing.h>
 #import <HexFiend/HFRandomDataByteSlice.h>
@@ -2518,7 +2519,7 @@ static HFByteArray *byteArrayForFile(NSString *path) {
     NSMutableIndexSet *nsindexset = [[NSMutableIndexSet alloc] init];
     HFMutableIndexSet *hfindexset = [[HFMutableIndexSet alloc] init];
     NSUInteger round;
-    for (round = 0; round < 4096; round++) {
+    for (round = 0; round < 4096 * 1024; round++) {
 	BOOL insert = ([nsindexset count] == 0 || (random() % 2));
 	NSUInteger end = random() % NSNotFound;
 	NSUInteger start = random() % end;
@@ -2531,21 +2532,33 @@ static HFByteArray *byteArrayForFile(NSString *path) {
 	    [hfindexset removeIndexesInRange:HFRangeMake(start, end - start)];	    
 	}
 	
+        [hfindexset verifyIntegrity];
 	HFASSERT([hfindexset isEqualToNSIndexSet:nsindexset]);
-	
+
+#if 0
 	if ([nsindexset count] > 0) {
 	    NSUInteger amountToShift, indexToShift;
 	    if (random() % 2) {
 		/* Shift left */
 		amountToShift = (1 + random() % [nsindexset firstIndex]);
+                indexToShift = random() % [nsindexset lastIndex];
+                
+                [nsindexset shiftIndexesStartingAtIndex:indexToShift by:-amountToShift];
+                [hfindexset shiftValuesLeftByAmount:amountToShift startingAtValue:indexToShift];
 	    }
 	    else {
 		/* Shift right */
 		NSUInteger maxAmountToShift = (NSNotFound - 1 - [nsindexset lastIndex]);
 		amountToShift = (1 + random() % maxAmountToShift);
-		indexToShift = 
+		indexToShift = random() % [nsindexset lastIndex];
+                
+                [nsindexset shiftIndexesStartingAtIndex:indexToShift by:amountToShift];
+                [hfindexset shiftValuesRightByAmount:amountToShift startingAtValue:indexToShift];
 	    }
 	}
+        
+        HFASSERT([hfindexset isEqualToNSIndexSet:nsindexset]);
+#endif
     }
     [pool drain];
 }

@@ -31,6 +31,10 @@
 
 - (unsigned long long)numberOfValues;
 
+#if ! NDEBUG
+- (void)verifyIntegrity;
+#endif
+
 /* Returns the range containing the given value.  If the index is not present in the set, returns {ULLONG_MAX, ULLONG_MAX}. */
 - (HFRange)rangeContainingValue:(unsigned long long)idx;
 
