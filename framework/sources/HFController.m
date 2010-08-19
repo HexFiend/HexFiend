@@ -2534,14 +2534,16 @@ static HFByteArray *byteArrayForFile(NSString *path) {
 	HFASSERT([hfindexset isEqualToNSIndexSet:nsindexset]);
 	
 	if ([nsindexset count] > 0) {
+	    NSUInteger amountToShift, indexToShift;
 	    if (random() % 2) {
 		/* Shift left */
-		NSUInteger amountToShift = (1 + random() % [nsindexset firstIndex]);
+		amountToShift = (1 + random() % [nsindexset firstIndex]);
 	    }
 	    else {
 		/* Shift right */
 		NSUInteger maxAmountToShift = (NSNotFound - 1 - [nsindexset lastIndex]);
-		NSUInteger amountToShift = (1 + random() % maxAmountToShift);
+		amountToShift = (1 + random() % maxAmountToShift);
+		indexToShift = 
 	    }
 	}
     }
