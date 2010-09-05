@@ -11,6 +11,12 @@
 
 /* A range capacity of 0 means we're using our single range in our union.  A range capacity > 0 means we are using the multiple ranges. */
 
+#if ! NDEBUG
+#define VERIFY_INTEGRITY() [self verifyIntegrity]
+#else
+#define VERIFY_INTEGRITY()
+#endif
+
 @interface HFIndexSet (HFPrivateStuff)
 
 - (NSUInteger)bsearchOnValue:(unsigned long long)idx;
@@ -53,6 +59,7 @@
 }
 
 - (HFRange *)pointerToRangeAtIndex:(NSUInteger)idx {
+    if (rangeCount == 0) return NULL;
     HFASSERT(idx < rangeCount);
     if (rangeCapacity == 0) return &singleRange;
     return multipleRanges + idx;    
@@ -62,14 +69,15 @@
     if (self == val) return YES;
     if (! [val isKindOfClass:[HFIndexSet class]]) return NO;
     if (val->rangeCount != rangeCount) return NO;
-    NSUInteger i, max = rangeCount;
-    for (i=0; i < max; i++) {
-	if (! HFRangeEqualsRange([self rangeAtIndex:i], [val rangeAtIndex:i])) return NO;
+    NSUInteger count = rangeCount;
+    const HFRange *mine = [self pointerToRangeAtIndex:0], *his = [val pointerToRangeAtIndex:0];
+    while (count--) {
+	if (! HFRangeEqualsRange(*mine++, *his++)) return NO;
     }
     return YES;
 }
 
-- (unsigned long long)numberOfValues {
+- (unsigned long long)countOfValues {
     /* This should maybe be cached */
     unsigned long long result;
     if (rangeCount == 0) {
@@ -87,13 +95,42 @@
     return result;
 }
 
+
+- (unsigned long long)countOfValuesInRange:(HFRange)probeRange {
+    unsigned long long result = 0;
+    NSUInteger index, startIndex = [self bsearchOnValue:probeRange.location];
+    for (index = startIndex; index < rangeCount; index++) {
+	HFRange range = [self rangeAtIndex:index];
+	unsigned long long intersectionLength = HFIntersectionRange(range, probeRange).length;
+	if (intersectionLength == 0) break;
+	result += intersectionLength;
+    }
+    return result;
+}
+
+//NSIndexSet containsIndexesInRange: may return a false negative (8355127), so use our own for testing purposes
+static BOOL nsindexset_containsIndexesInRange(NSIndexSet *indexSet, NSRange range) {
+    return [indexSet countOfIndexesInRange:range] == range.length;
+}
+
 - (BOOL)isEqualToNSIndexSet:(NSIndexSet *)indexSet {
-    if ((unsigned long long)[indexSet count] != [self numberOfValues]) return NO;
+    BOOL explainWhy = NO;
+    if ((unsigned long long)[indexSet count] != [self countOfValues]) {
+	if (explainWhy) NSLog(@"Failure %d: %llu vs %llu", __LINE__, (unsigned long long)[indexSet count], [self countOfValues]);
+	return NO;
+    }
     for (NSUInteger i=0; i < rangeCount; i++) {
 	const HFRange *rangePtr = [self pointerToRangeAtIndex:i];
-	if (HFMaxRange(*rangePtr) >= NSNotFound) return NO; //NSIndexSet does not support indices at or above NSNotFound
+	if (HFMaxRange(*rangePtr) >= NSNotFound) {
+	    if (explainWhy) NSLog(@"Failure overflowed maxptr %@", HFRangeToString(*rangePtr));
+	    return NO; //NSIndexSet does not support indices at or above NSNotFound
+	}
 	NSRange nsrange = NSMakeRange(ll2l(rangePtr->location), ll2l(rangePtr->length));
-	if (! [indexSet containsIndexesInRange:nsrange]) return NO;
+	
+	if (! nsindexset_containsIndexesInRange(indexSet, nsrange)) {
+	    if (explainWhy) NSLog(@"Does not contain indexes in range %@", NSStringFromRange(nsrange));
+	    return NO;
+	}
     }
     return YES;
 }
@@ -201,6 +238,30 @@
     return resultRange;
 }
 
+- (NSString *)description {
+    NSMutableString *result = [[[super description] mutableCopy] autorelease];
+    [result appendString:@"("];
+    if (rangeCount == 0) {
+	[result appendString:@"no indexes"];
+    }
+    else {
+	NSUInteger i;
+	const HFRange *range = [self pointerToRangeAtIndex:0];
+	for (i=0; i < rangeCount; i++) {
+	    if (i > 0) [result appendString:@" "];
+	    if (range->length == 1) {
+		[result appendFormat:@"%llu", range->location];
+	    }
+	    else {
+		[result appendFormat:@"%llu-%llu", range->location, range->location + range->length - 1];
+	    }
+	    range++;
+	}
+    }
+    [result appendString:@")"];
+    return result;
+}
+
 - (void)verifyIntegrity {
     if (rangeCapacity == 0) HFASSERT(rangeCount <= 1);
     if (rangeCapacity > 0) HFASSERT(rangeCount <= rangeCapacity);
@@ -225,7 +286,7 @@
     }
     else if (newCapacity == 0) {
 	/* Go singular */
-	singleRange = [self rangeAtIndex:0];
+	if (rangeCount > 0) singleRange = [self rangeAtIndex:0];
 	if (! objc_collectingEnabled()) free(multipleRanges);
 	multipleRanges = NULL;
     }
@@ -270,6 +331,7 @@ static NSUInteger deleteFromRange(HFRange source, HFRange rangeToDelete, HFRange
 
 - (void)insertRanges:(const HFRange * restrict)ranges atIndex:(NSUInteger)idx count:(NSUInteger)newRangeCount {
     HFASSERT(idx <= rangeCount);
+    VERIFY_INTEGRITY();
     
     if (newRangeCount == 0) {
 	/* Nothing to do */
@@ -295,8 +357,8 @@ static NSUInteger deleteFromRange(HFRange source, HFRange rangeToDelete, HFRange
     }
 }
 
-- (void)deleteRangesInRange:(NSRange)range {
-    HFASSERT(NSMaxRange(range) <= rangeCount);
+- (void)deleteRangesInRange:(NSRange)range {    
+//    HFASSERT(NSMaxRange(range) <= rangeCount);
     if (range.length == 0) {
 	/* Nothing to do */
     }
@@ -321,6 +383,7 @@ static NSUInteger deleteFromRange(HFRange source, HFRange rangeToDelete, HFRange
 	HFASSERT(rangeCount > 1);
 	[self setCapacity:rangeCount];
     }
+    VERIFY_INTEGRITY();
 }
 
 - (void)mergeRightStartingAtIndex:(NSUInteger)idx {
@@ -338,6 +401,7 @@ static NSUInteger deleteFromRange(HFRange source, HFRange rangeToDelete, HFRange
 }
 
 - (void)addIndexesInRange:(HFRange)range {
+    VERIFY_INTEGRITY();
     if (rangeCount == 0) {
 	/* No ranges */
 	rangeCount = 1;
@@ -363,9 +427,14 @@ static NSUInteger deleteFromRange(HFRange source, HFRange rangeToDelete, HFRange
 	    [self insertRanges:&range atIndex:idx count:1];
 	}
     }
+    VERIFY_INTEGRITY();
 }
 
 - (void)removeIndexesInRange:(HFRange)rangeToDelete {
+    VERIFY_INTEGRITY();
+#if ! NDEBUG
+    const unsigned long long expectedCount = [self countOfValues] - [self countOfValuesInRange:rangeToDelete];
+#endif
     if (rangeCount == 0 || rangeToDelete.length == 0) {
 	/* Nothing to do */
     }
@@ -435,23 +504,34 @@ static NSUInteger deleteFromRange(HFRange source, HFRange rangeToDelete, HFRange
             }
         }
     }
+#if ! NDEBUG
+    HFASSERT(expectedCount == [self countOfValues]);
+#endif
+    
+    VERIFY_INTEGRITY();
 }
 
 - (BOOL)splitRangeAtIndex:(NSInteger)index aboutLocation:(unsigned long long)location {
     HFASSERT(index < rangeCount);
     BOOL result;
     HFRange *nearestRange = [self pointerToRangeAtIndex:index];
+    HFASSERT(location < HFMaxRange(*nearestRange));
     if (location <= nearestRange->location) {
 	/* We're either before the range or just at the start, so we don't need to split this range */
 	result = NO;
     }
     else {
+	/* We're in the middle of a range, so we need to split this */
+	HFRange rightRange = HFRangeMake(location, HFSubtract(HFMaxRange(*nearestRange), location));
+	nearestRange->length = HFSubtract(location, nearestRange->location);
+	[self insertRanges:&rightRange atIndex:index + 1 count:1];
 	result = YES;
     }
     return result;
 }
 
 - (void)shiftValuesRightByAmount:(unsigned long long)delta startingAtValue:(unsigned long long)startValue {
+    VERIFY_INTEGRITY();
     /* Do nothing if we're empty or are shifted by 0. */
     if (rangeCount == 0 || delta == 0) return;
     
@@ -488,45 +568,51 @@ static NSUInteger deleteFromRange(HFRange source, HFRange rangeToDelete, HFRange
 	    multipleRanges[rangeIndexToShift].location = HFSum(multipleRanges[rangeIndexToShift].location, delta); 
 	}
     }
+    VERIFY_INTEGRITY();
 }
 
 - (void)shiftValuesLeftByAmount:(unsigned long long)delta startingAtValue:(unsigned long long)value {
+    VERIFY_INTEGRITY();
     /* It doesn't make sense to shift left more than the starting value */
     HFASSERT(value >= delta);
     
     /* Do nothing if we're empty or are shifted by 0. */
     if (rangeCount == 0 || delta == 0) return;
     
+#if ! NDEBUG
+    const unsigned long long expectedCount = [self countOfValues] - [self countOfValuesInRange:HFRangeMake(value - delta, delta)];
+#endif    
+    
     /* Delete values in the covered range */
     [self removeIndexesInRange:HFRangeMake(value - delta, delta)];
     
     /* Now shift any ranges over.  We have nice property that our range is already split by the deletion (though maybe we'll have to merge it */
     NSUInteger rangeIndex = [self bsearchOnValue:value];
-    if (rangeIndex < rangeCount) {
-	const HFRange *rangePtr = [self pointerToRangeAtIndex:rangeIndex];
-	
-	/* We expect that we can't be within the range, because we deleted ranges in that index */
-	HFASSERT(rangePtr->location >= value);
-	
-	/* Now shift any ranges */
-	for (NSUInteger rangeIndexToShift = rangeIndex; rangeIndexToShift < rangeCount; rangeIndexToShift++) {
-	    if (rangeCapacity == 0) {
-		/* One single range, we know we must shift it */
-		HFASSERT(rangeIndexToShift == 0);
-		singleRange.location = HFSubtract(singleRange.location, delta);
-	    }
-	    else {
-		/* Multiple ranges */
-		multipleRanges[rangeIndexToShift].location = HFSubtract(multipleRanges[rangeIndexToShift].location, delta); 
-	    }
+    for (NSUInteger rangeIndexToShift = rangeIndex; rangeIndexToShift < rangeCount; rangeIndexToShift++) {
+	if (rangeCapacity == 0) {
+	    /* One single range, we know we must shift it */
+	    HFASSERT(rangeIndexToShift == 0);
+	    singleRange.location = HFSubtract(singleRange.location, delta);
 	}
-	
-	/* We may have to merge */
-	if (rangeIndex > 0) [self mergeRightStartingAtIndex:rangeIndex - 1];
+	else {
+	    /* Multiple ranges */
+	    multipleRanges[rangeIndexToShift].location = HFSubtract(multipleRanges[rangeIndexToShift].location, delta); 
+	}
     }
+    
+    /* We may have to merge */
+    if (rangeIndex > 0) [self mergeRightStartingAtIndex:rangeIndex - 1];
+    
+    
+#if ! NDEBUG
+    HFASSERT(expectedCount == [self countOfValues]);
+#endif    
+    
+    VERIFY_INTEGRITY();
 }
 
 - (void)shiftValuesLeftByAmount:(unsigned long long)delta endingAtValue:(unsigned long long)endValue {
+    VERIFY_INTEGRITY();
     /* Do nothing if we're empty or are shifted by 0. */
     if (rangeCount == 0 || delta == 0) return;
     
@@ -561,6 +647,7 @@ static NSUInteger deleteFromRange(HFRange source, HFRange rangeToDelete, HFRange
 	    multipleRanges[rangeIndexToShift].location = HFSubtract(multipleRanges[rangeIndexToShift].location, delta); 
 	}
     }
+    VERIFY_INTEGRITY();
 }
 
 @end

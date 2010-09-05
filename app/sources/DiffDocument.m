@@ -416,9 +416,9 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
     return @"DiffDocument";
 }
 
-- (void)setFont:(NSFont *)font {
+- (void)setFont:(NSFont *)font registeringUndo:(BOOL)undo {
     [[self window] disableFlushWindow];
-    [super setFont:font];
+    [super setFont:font registeringUndo:undo];
     [[leftTextView controller] setFont:font];
     [[self window] enableFlushWindow];
 }

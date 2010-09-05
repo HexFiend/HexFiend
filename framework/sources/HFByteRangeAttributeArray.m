@@ -6,7 +6,8 @@
 //  Copyright 2009 ridiculous_fish. All rights reserved.
 //
 
-#import "HFByteRangeAttributeArray.h"
+#import <HexFiend/HFByteRangeAttributeArray.h>
+#import <HexFiend/HFAnnotatedTree.h>
 
 /* This is a very naive class and it should use a better data structure than an array. */
 
@@ -45,8 +46,67 @@
 
 @end
 
-
 @implementation HFByteRangeAttributeArray
+
+- (id)init {
+    if ([self class] == [HFByteRangeAttributeArray class]) {
+        [NSException raise:NSInvalidArgumentException format:@"init sent to HFByteRangeAttributeArray, but HFByteRangeAttributeArray is an abstract class.  Instantiate one of its subclasses instead, like HFAnnotatedTreeByteRangeAttributeArray."];
+    }
+    return [super init];
+}
+
+- (id)mutableCopyWithZone:(NSZone *)zone { UNIMPLEMENTED(); }
+- (NSSet *)attributesAtIndex:(unsigned long long)index length:(unsigned long long *)length { UNIMPLEMENTED(); }
+- (NSSet *)attributesInRange:(HFRange)range { UNIMPLEMENTED(); }
+- (HFRange)rangeOfAttribute:(NSString *)attribute { UNIMPLEMENTED_VOID(); return HFRangeMake(0, 0); }
+- (void)addAttribute:(NSString *)attributeName range:(HFRange)range { UNIMPLEMENTED_VOID(); }
+- (void)removeAttribute:(NSString *)attributeName range:(HFRange)range { UNIMPLEMENTED_VOID(); }
+- (void)removeAttribute:(NSString *)attributeName { UNIMPLEMENTED_VOID(); }
+- (void)removeAttributes:(NSSet *)attributeName { UNIMPLEMENTED_VOID(); }
+- (BOOL)isEmpty { UNIMPLEMENTED(); }
+- (NSEnumerator *)attributeEnumerator { UNIMPLEMENTED(); }
+- (void)transferAttributesFromAttributeArray:(HFByteRangeAttributeArray *)array range:(HFRange)range baseOffset:(unsigned long long)baseOffset { UNIMPLEMENTED_VOID(); }
+
+- (BOOL)isEqual:(HFByteRangeAttributeArray *)array {
+    if (! [array isKindOfClass:[HFByteRangeAttributeArray class]]) return NO;
+    HFRange remaining = HFRangeMake(0, ULLONG_MAX);
+    const BOOL log = YES;
+    BOOL result = YES;
+    NSUInteger amt = 0;
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    while (remaining.length > 0) {
+	unsigned long long applied1, applied2;
+	NSSet *atts1 = [self attributesAtIndex:remaining.location length:&applied1];
+	NSSet *atts2 = [self attributesAtIndex:remaining.location length:&applied2];
+	if (applied1 != applied2) {
+	    if (log) NSLog(@"Failed %d", __LINE__);
+	    result = NO;
+	    break;
+	}
+	if (result && !atts1 != !atts2) {
+	    if (log) NSLog(@"Failed %d", __LINE__);
+	    result = NO;
+	    break;
+	}
+	if (! (atts1 == atts2 || [atts1 isEqual:atts2])) {
+	    if (log) NSLog(@"Failed %d", __LINE__);
+	    result = NO;
+	    break;
+	}
+	HFASSERT(applied1 <= remaining.length);
+	remaining.length -= applied1;
+	remaining.location += applied1;
+	amt++;
+	[pool release];
+	pool = [[NSAutoreleasePool alloc] init];
+    }
+    [pool release];
+    return result;
+}
+
+@end
+
+@implementation HFNaiveByteRangeAttributeArray
 
 - (NSString *)description {
     return [NSString stringWithFormat:@"<%@: %p %@>", [self class], self, attributeRuns];
@@ -64,7 +124,7 @@
 }
 
 - (id)mutableCopyWithZone:(NSZone *)zone {
-    HFByteRangeAttributeArray *result = [[[self class] allocWithZone:zone] init];
+    HFNaiveByteRangeAttributeArray *result = [[[self class] allocWithZone:zone] init];
     [result->attributeRuns addObjectsFromArray:attributeRuns];
     return result;
 }
@@ -179,7 +239,7 @@
     return HFRangeMake(ULLONG_MAX, ULLONG_MAX);
 }
 
-- (void)transferAttributesFromAttributeArray:(HFByteRangeAttributeArray *)array range:(HFRange)range baseOffset:(unsigned long long)baseOffset {
+- (void)transferAttributesFromAttributeArray:(HFNaiveByteRangeAttributeArray *)array range:(HFRange)range baseOffset:(unsigned long long)baseOffset {
     HFASSERT(array != NULL);
     EXPECT_CLASS(array, HFByteRangeAttributeArray);
     FOREACH(HFByteRangeAttributeRun *, run, array->attributeRuns) {
@@ -199,6 +259,221 @@
 	[attributes addObject:run->name];
     }
     return [attributes objectEnumerator];
+}
+
+@end
+
+@interface HFByteRangeAttributeArrayNode : HFAnnotatedTreeNode {
+    NSString *attribute;
+    HFRange range;
+}
+
+- (id)initWithAttribute:(NSString *)attribute range:(HFRange)val;
+- (NSString *)attribute;
+- (HFRange)range;
+
+@end
+
+@implementation HFByteRangeAttributeArrayNode
+
+- (id)initWithAttribute:(NSString *)attr range:(HFRange)val {
+    [super init];
+    attribute = [attr copy];
+    range = val;
+    return self;
+}
+
+- (void)dealloc {
+    [attribute release];
+    [super dealloc];
+}
+
+- (NSString *)attribute {
+    return attribute;
+}
+
+- (HFRange)range {
+    return range;
+}
+
+- (NSComparisonResult)compare:(HFByteRangeAttributeArrayNode *)node {
+    EXPECT_CLASS(node, HFByteRangeAttributeArrayNode);
+    /* We are ordered by our range location */
+    return (range.location > node->range.location) - (range.location < node->range.location);
+}
+
+static unsigned long long node_max_range(id left, id right) {
+    if (left) EXPECT_CLASS(left, HFByteRangeAttributeArrayNode);
+    if (right) EXPECT_CLASS(right, HFByteRangeAttributeArrayNode);
+    HFByteRangeAttributeArrayNode *leftNode = left, *rightNode = right;
+    unsigned long long leftVal = (leftNode ? HFMaxRange(leftNode->range) : 0);
+    unsigned long long rightVal = (rightNode ? HFMaxRange(rightNode->range) : 0);
+    return MAX(leftVal, rightVal);
+}
+
+static void collectNodes(HFByteRangeAttributeArrayNode *node, HFRange intersectionRange, NSString *attribute, NSMutableArray *output, BOOL isRoot) {
+    if (! isRoot) {
+	/* The root node is the base node class, but if we're not root we should have a HFByteRangeAttributeArrayNode */
+	EXPECT_CLASS(node, HFByteRangeAttributeArrayNode);
+	/* See if this node matches */
+	if (HFIntersectsRange(intersectionRange, node->range)) {
+	    if (attribute == nil || [attribute isEqualToString:node->attribute]) {
+		/* It's a match */
+		[output addObject:node];
+	    }
+	}
+    }
+    
+    if (intersectionRange.location >= node->annotation) {
+	/* The range is to the right of the max range in this subtree, so we don't recurse to any children */
+    }
+    else {
+	/* Always search our left node if we have one */
+	BOOL recurseLeft = !! node->left;
+	
+	/* We don't need to search our right node if our range is entirely to the right of the given range, because our right children must be at least as far to the right. */
+	BOOL recurseRight = node->right && (isRoot || node->range.location < HFMaxRange(intersectionRange));
+	
+	if (recurseLeft) {
+	    collectNodes((HFByteRangeAttributeArrayNode *)node->left, intersectionRange, attribute, output, NO /* not isRoot */);
+	}
+	if (recurseRight) {
+	    collectNodes((HFByteRangeAttributeArrayNode *)node->right, intersectionRange, attribute, output, NO /* not isRoot */);
+	}
+    }
+}
+
+/* Because our tree types left and right as HFAnnotatedTreeNode, but we want HFByteRangeAttributeArrayNode, use this function to avoid having to cast everywhere. */
+static inline HFByteRangeAttributeArrayNode * leftChild(HFByteRangeAttributeArrayNode *node) { return (HFByteRangeAttributeArrayNode *)(node->left); }
+static inline HFByteRangeAttributeArrayNode * rightChild(HFByteRangeAttributeArrayNode *node) { return (HFByteRangeAttributeArrayNode *)(node->right); }
+
+static void collectAttributes(HFByteRangeAttributeArrayNode *node, unsigned long long location, NSMutableSet *attributes, unsigned long long *outLength, BOOL isRoot) {
+    /* Add all attributes whose range intersects the given index.  Store in outLength the largest length over which all those attributes are valid. */
+    if (! isRoot) {
+	/* The root node is the base node class, but if we're not root we should have a HFByteRangeAttributeArrayNode */
+	EXPECT_CLASS(node, HFByteRangeAttributeArrayNode);
+	/* See if this node matches */
+	if (HFLocationInRange(location, node->range)) {
+	    /* It's a match - add the attribute and calculate our new max length */
+	    [attributes addObject:node->attribute];
+	    if (outLength) *outLength = MIN(*outLength, HFMaxRange(node->range) - location);
+	}	
+    }
+    
+    if (location >= node->annotation) {
+	/* The location is to the right of everything beneath us, so don't recurse */
+    }
+    else {
+	/* Always search our left node if we have one */
+	BOOL recurseLeft = !! node->left;
+	
+	/* Search our right node if our range starts at or left of the location.  If it's to the right, then everything else is further to the right. */
+	BOOL recurseRight = node->right && (isRoot || node->range.location <= location);
+	
+	if (recurseLeft) {
+	    collectAttributes(leftChild(node), location, attributes, outLength, NO /* not isRoot */);
+	}
+	if (recurseRight) {
+	    collectAttributes(rightChild(node), location, attributes, outLength, NO /* not isRoot */);
+	}
+    }
+}
+
+static BOOL findAttribute(HFByteRangeAttributeArrayNode *node, NSString *attribute, HFRange *outResult, BOOL isRoot) {
+    BOOL result = NO;
+    
+    /* Search left first */
+    if (! result && node->left) {
+	result = findAttribute(leftChild(node), attribute, outResult, NO);
+    }
+    
+    /* Try us */
+    if (! result && ! isRoot) {
+	EXPECT_CLASS(node, HFByteRangeAttributeArrayNode);
+	if (attribute == node->attribute || [attribute isEqualToString:node->attribute]) {
+	    *outResult = node->range;
+	    result = YES;
+	}
+    }
+    
+    /* Search right */
+    if (! result && node->right) {
+	result = findAttribute(rightChild(node), attribute, outResult, NO);
+    }
+    
+    return result;
+}
+
+@end
+
+@interface HFAnnotatedTreeByteRangeAttributeArrayEnumerator : NSEnumerator {
+    HFByteRangeAttributeArrayNode *node;
+}
+
+- (id)initWithNode:(HFByteRangeAttributeArrayNode *)val;
+
+@end
+
+@implementation HFAnnotatedTreeByteRangeAttributeArray
+
+- (id)init {
+    [super init];
+    atree = [[HFAnnotatedTree alloc] initWithAnnotater:node_max_range];
+    return self;
+}
+
+- (void)addAttribute:(NSString *)attributeName range:(HFRange)range {
+    HFByteRangeAttributeArrayNode *node = [[HFByteRangeAttributeArrayNode alloc] initWithAttribute:attributeName range:range];
+    [atree insertNode:node];
+    [node release];
+}
+
+- (void)removeAttribute:(NSString *)attributeName range:(HFRange)range {
+    NSMutableArray *nodes = [[NSMutableArray alloc] init];
+    collectNodes([atree rootNode], range, attributeName, nodes, YES);
+    for (HFByteRangeAttributeArrayNode *node in nodes) {
+	[atree removeNode:node];
+    }
+    [nodes release];
+}
+
+- (void)removeAttribute:(NSString *)attributeName {
+    [self removeAttribute:attributeName range:HFRangeMake(0, ULLONG_MAX)];
+}
+
+- (NSSet *)attributesAtIndex:(unsigned long long)index length:(unsigned long long *)length {
+    NSMutableSet *attributes = [[NSMutableSet alloc] init];
+    if (length) *length = ULLONG_MAX - index;
+    collectAttributes([atree rootNode], index, attributes, length, YES);
+    return [attributes autorelease];
+}
+
+- (HFRange)rangeOfAttribute:(NSString *)attribute {
+    HFRange result = {ULLONG_MAX, ULLONG_MAX};
+    findAttribute([atree rootNode], attribute, &result, YES);
+    return result;
+}
+
+- (BOOL)isEmpty {
+    return [atree isEmpty];
+}
+
+- (NSEnumerator *)attributeEnumerator {
+    return [[[HFAnnotatedTreeByteRangeAttributeArrayEnumerator alloc] initWithNode:[atree firstNode]] autorelease];
+}
+
+@end
+
+@implementation HFAnnotatedTreeByteRangeAttributeArrayEnumerator
+
+- (id)initWithNode:(HFByteRangeAttributeArrayNode *)val {
+    node = val;
+}
+
+- (id)nextObject {
+    id result = [node attribute];
+    node = [node nextNode];
+    return result;
 }
 
 @end

@@ -9,7 +9,6 @@
 #import <Foundation/Foundation.h>
 
 @interface HFByteRangeAttributeArray : NSObject <NSMutableCopying> {
-    NSMutableArray *attributeRuns;
 }
 
 /*! Returns the set of attributes at the given index, and the length over which those attributes are valid (if not NULL). */
@@ -42,4 +41,15 @@
 /*! Transfer attributes in the given range from array, adding baseOffset to each attribute range. range is interpreted as a range in array. */
 - (void)transferAttributesFromAttributeArray:(HFByteRangeAttributeArray *)array range:(HFRange)range baseOffset:(unsigned long long)baseOffset;
 
+@end
+
+@interface HFNaiveByteRangeAttributeArray : HFByteRangeAttributeArray {
+    NSMutableArray *attributeRuns;
+}
+@end
+
+@class HFAnnotatedTree;
+@interface HFAnnotatedTreeByteRangeAttributeArray : HFByteRangeAttributeArray {
+    HFAnnotatedTree *atree;
+}
 @end

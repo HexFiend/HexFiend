@@ -924,20 +924,19 @@ static size_t unionAndCleanLists(NSRect *rectList, id *valueList, size_t count) 
 
 - (NSColor *)colorForBookmark:(NSUInteger)bookmark {
     /* Two different Ss and Bs, 7 different Hs, for a total of 28 bookmark colors */
-    CGFloat h, s, b;
     NSUInteger ns = 2, nb = 2, nh = 7; //number of Saturation, Brightness, Hues
     NSUInteger si, bi, hi; //index of Saturation, Brightness, Hue
     hi = (4 + bookmark) % nh; bookmark /= nh; //4 means we start at blue (ROYGBIV)
     bi = nb - bookmark % nb; bookmark /= nb;
     si = ns - bookmark % ns;
-    return [NSColor colorWithCalibratedHue:hi / (CGFloat)nh saturation:si / (CGFloat)ns brightness:bi / (CGFloat)nb alpha:.88];
+    return [NSColor colorWithCalibratedHue:hi / (CGFloat)nh saturation:si / (CGFloat)ns brightness:bi / (CGFloat)nb alpha:(CGFloat).88];
 }
 
 - (void)drawBookmark:(NSUInteger)bookmark inRect:(NSRect)rect {
     [NSGraphicsContext saveGraphicsState];
     NSColor *color = nil;
     switch (bookmark) {
-	case 1: color = [NSColor colorWithCalibratedRed:1. green:0. blue:0. alpha:1. ]; break;
+	case 1: color = [NSColor colorWithCalibratedRed:1 green:0 blue:0 alpha:1 ]; break;
 	case 2: color = [NSColor orangeColor]; break;
 	case 3: color = [NSColor yellowColor]; break;
 	case 4: color = [NSColor greenColor]; break;
@@ -946,14 +945,14 @@ static size_t unionAndCleanLists(NSRect *rectList, id *valueList, size_t count) 
 	case 7: color = [NSColor colorWithCalibratedRed:(CGFloat)(0xEE / 255.) green:(CGFloat)(0x82 / 255.) blue:(CGFloat)(0xEE / 255.) alpha:1]; break; //#EE82EE
     }
     if (color) {
-	[[color colorWithAlphaComponent:.66] set];
+	[[color colorWithAlphaComponent:(CGFloat).66] set];
 
 	NSBezierPath *path = [[NSBezierPath alloc] init];
 	[path appendBezierPathWithOvalInRect:NSMakeRect(rect.origin.x, rect.origin.y, 6, 6)];
 	[path appendBezierPathWithRect:NSMakeRect(rect.origin.x, rect.origin.y, 2, defaultLineHeight)];
 	[path fill];
 	[path release];
-	NSRectFill(NSMakeRect(rect.origin.x, NSMaxY(rect) - 1, rect.size.width, .75));
+	NSRectFill(NSMakeRect(rect.origin.x, NSMaxY(rect) - 1, rect.size.width, (CGFloat).75));
     }
     [NSGraphicsContext restoreGraphicsState];
 }
@@ -989,7 +988,7 @@ static size_t unionAndCleanLists(NSRect *rectList, id *valueList, size_t count) 
     NSUInteger idx;
     for (idx = [bookmarkExtents firstIndex]; idx != NSNotFound; idx = [bookmarkExtents indexGreaterThanIndex:idx]) {
 	[[self colorForBookmark:idx] set];
-	NSRectFill(NSMakeRect(rect.origin.x, NSMaxY(rect) - 1, rect.size.width, .75));
+	NSRectFill(NSMakeRect(rect.origin.x, NSMaxY(rect) - 1, rect.size.width, (CGFloat).75));
 	break;
     }
 }

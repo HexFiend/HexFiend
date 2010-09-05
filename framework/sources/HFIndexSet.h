@@ -29,7 +29,9 @@
 - (NSUInteger)numberOfRanges;
 - (HFRange)rangeAtIndex:(NSUInteger)idx;
 
-- (unsigned long long)numberOfValues;
+- (unsigned long long)countOfValuesInRange:(HFRange)range;
+
+- (unsigned long long)countOfValues;
 
 #if ! NDEBUG
 - (void)verifyIntegrity;

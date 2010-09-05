@@ -257,11 +257,11 @@ static BOOL merge_instruction_old(struct HFEditInstruction_t *left, const struct
             insns[trailing] = insns[leading];
         }
     }
-    printf("Merge: %lu -> %lu\n", insnCount, trailing + 1);
+    NSUInteger beforeInsnCount = insnCount;
+    size_t beforeSize = malloc_size(insns);
     insnCount = trailing + 1;
-    printf("Before: %lu\n", malloc_size(insns));
     insns = NSReallocateCollectable(insns, insnCount * sizeof *insns, 0);
-    printf("After: %lu (could be as small as %lu)\n", malloc_size(insns), insnCount * sizeof *insns);
+    printf("Merge: %lu -> %lu, size from %lu to %lu (could be as small as %lu)\n", beforeInsnCount, insnCount, malloc_size(insns), beforeSize, insnCount * sizeof *insns);
 }
 
 - (void)convertInstructionsToIncrementalForm {

@@ -44,6 +44,7 @@
 #import <HexFiend/HFIndexSet.h>
 #import <HexFiend/HFByteRangeAttribute.h>
 #import <HexFiend/HFByteRangeAttributeArray.h>
+#import <HexFiend/HFAnnotatedTree.h>
 
 
 /* The following is all for Doxygen */
