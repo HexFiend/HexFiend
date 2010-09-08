@@ -302,17 +302,19 @@ static inline Class preferredByteArrayClass(void) {
 - (void)windowControllerDidLoadNib:(NSWindowController *)windowController {
     USE(windowController);
     
-    NSWindow *window = [windowController window];
-    [containerView setVertical:NO];
-    if ([containerView respondsToSelector:@selector(setDividerStyle:)]) {
-        [containerView setDividerStyle:2/*NSSplitViewDividerStyleThin*/];
-    }
-    [containerView setDelegate:(id)self];
-    
     NSView *layoutView = [layoutRepresenter view];
     [layoutView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
-    [layoutView setFrame:[containerView bounds]];
-    [containerView addSubview:layoutView];
+    
+    NSWindow *window = [windowController window];
+    if (containerView) {
+	[containerView setVertical:NO];
+	if ([containerView respondsToSelector:@selector(setDividerStyle:)]) {
+	    [containerView setDividerStyle:2/*NSSplitViewDividerStyleThin*/];
+	}
+	[containerView setDelegate:(id)self];
+	[layoutView setFrame:[containerView bounds]];
+	[containerView addSubview:layoutView];
+    }
     [self applyDefaultRepresentersToDisplay];
     NSRect windowFrame = [window frame];
     windowFrame.size = [self minimumWindowFrameSizeForProposedSize:windowFrame.size];
