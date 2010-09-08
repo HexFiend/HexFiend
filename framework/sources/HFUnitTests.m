@@ -705,16 +705,18 @@ static HFByteArray *byteArrayForFile(NSString *path) {
     HFAnnotatedTreeByteRangeAttributeArray *smartTree = [[HFAnnotatedTreeByteRangeAttributeArray alloc] init];
     
     NSString * const attributes[3] = {@"Alpha", @"Beta", @"Gamma"};
-    
-    const NSUInteger supportedIndexEnd = NSNotFound;
+    BOOL log = NO;
     NSUInteger round;
-    for (round = 0; round < 4096 * 1024; round++) {
+    for (round = 0; round < 4096 * 6; round++) {
 	NSString *attribute = attributes[random() % (sizeof attributes / sizeof *attributes)];
 	if (round % 4096 == 0) printf("%s %lu\n", _cmd, round);
 	BOOL insert = ([smartTree isEmpty] || (random() % 2));
 	
-	unsigned long long end = random();
-	unsigned long long start = random();
+	unsigned long long end, start;
+	end = random() % 16;
+	do {
+	    start = random() % 16;
+	} while (start == end);
 	if (end < start) {
 	    unsigned long long temp = end;
 	    end = start;
@@ -722,11 +724,14 @@ static HFByteArray *byteArrayForFile(NSString *path) {
 	}
 	HFRange range = HFRangeMake(start, end - start);
 	
+	if (log) NSLog(@"Round %lu", round);
 	if (insert) {
+	    if (log) NSLog(@"Add %@ in %@", attribute, HFRangeToString(range));
 	    [naiveTree addAttribute:attribute range:range];
 	    [smartTree addAttribute:attribute range:range];
 	}
 	else {
+	    if (log) NSLog(@"Remove %@ in %@", attribute, HFRangeToString(range));
 	    [naiveTree removeAttribute:attribute range:range];
 	    [smartTree removeAttribute:attribute range:range];
 	}

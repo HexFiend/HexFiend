@@ -17,7 +17,7 @@
     if ([self class] == [HFByteArray class]) {
         [NSException raise:NSInvalidArgumentException format:@"init sent to HFByteArray, but HFByteArray is an abstract class.  Instantiate one of its subclasses instead, like HFBTreeByteArray."];
     }
-    arrayAttributes = [[HFAnnotatedTreeByteRangeAttributeArray alloc] init];
+    arrayAttributes = [[HFByteRangeAttributeArray alloc] init];
     return [super init];
 }
 

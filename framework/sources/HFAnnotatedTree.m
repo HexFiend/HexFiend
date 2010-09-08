@@ -117,6 +117,10 @@ static HFAnnotatedTreeAnnotaterFunction_t get_annotater(HFAnnotatedTree *tree) {
     return next_node(self);
 }
 
+- (id)leftNode { return left; }
+- (id)rightNode { return right; }
+- (id)parentNode { return parent; }
+
 static HFAnnotatedTreeNode *left_child(HFAnnotatedTreeNode *node) {
     return node->left;
 }

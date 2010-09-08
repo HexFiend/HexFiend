@@ -158,16 +158,16 @@ static inline HFRange HFUnionRange(HFRange a, HFRange b) {
 
 /*! Returns whether a+b > c+d, as if there were no overflow (so ULLONG_MAX + 1 > 10 + 20) */
 static inline BOOL HFSumIsLargerThanSum(unsigned long long a, unsigned long long b, unsigned long long c, unsigned long long d) {
-    //theory: compare a/2 + b/2 to c/2 + d/2, and if they're equal, compare a%2 + b%2 to c%2 + d%2
-    unsigned long long sum1 = a/2 + b/2;
-    unsigned long long sum2 = c/2 + d/2;
+    // Theory: compare a/2 + b/2 to c/2 + d/2, and if they're equal, compare a%2 + b%2 to c%2 + d%2.  We may get into trouble if a and b are both even and c and d are both odd: e.g. a = 2, b = 2, c = 1, d = 3.  We would compare 1 + 1 vs 0 + 1, and therefore that 2 + 2 > 1 + 3.  To address this, if both remainders are 1, we add this to the sum.  We know this cannot overflow because ULLONG_MAX is odd, so (ULLONG_MAX/2) + (ULLONG_MAX/2) + 1 does not overflow.
+    unsigned int rem1 = a%2 + b%2;
+    unsigned int rem2 = c%2 + d%2;
+    unsigned long long sum1 = a/2 + b/2 + rem1/2;
+    unsigned long long sum2 = c/2 + d/2 + rem2/2;
     if (sum1 > sum2) return YES;
     else if (sum1 < sum2) return NO;
     else {
-        // sum1 == sum2
-        unsigned int sum3 = (unsigned int)(a%2) + (unsigned int)(b%2);
-        unsigned int sum4 = (unsigned int)(c%2) + (unsigned int)(d%2);
-        if (sum3 > sum4) return YES;
+        // sum1 == sum2, so compare the remainders.  But we have already added in the remainder / 2, so compare the remainders mod 2.
+        if (rem1%2 > rem2%2) return YES;
         else return NO;
     }
 }

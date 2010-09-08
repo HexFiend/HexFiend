@@ -85,7 +85,7 @@ static inline Class preferredByteArrayClass(void) {
     _hfflags.antialias = YES;
     _hfflags.selectable = YES;
     representers = [[NSMutableArray alloc] init];
-    byteRangeAttributeArray = [[HFAnnotatedTreeByteRangeAttributeArray alloc] init];
+    byteRangeAttributeArray = [[HFByteRangeAttributeArray alloc] init];
     [self setFont:[NSFont fontWithName:@"Monaco" size:10.f]];
     return self;
 }

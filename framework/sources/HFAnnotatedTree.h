@@ -16,6 +16,7 @@ typedef unsigned long long (*HFAnnotatedTreeAnnotaterFunction_t)(id left, id rig
     HFAnnotatedTreeNode *right;
     HFAnnotatedTreeNode *parent;
     uint32_t level;
+@public
     unsigned long long annotation;
 }
 
@@ -24,6 +25,10 @@ typedef unsigned long long (*HFAnnotatedTreeAnnotaterFunction_t)(id left, id rig
 
 /* Returns the next in-order node. */
 - (id)nextNode;
+
+- (id)leftNode;
+- (id)rightNode;
+- (id)parentNode;
 
 #if ! NDEBUG
 - (void)verifyIntegrity;
