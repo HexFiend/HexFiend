@@ -1,3 +1,8 @@
+#define INDENT_HIDDEN_FROM_XCODE {
+#define UNINDENT_HIDDEN_FROM_XCODE }
+
+extern "C" INDENT_HIDDEN_FROM_XCODE
+
 #include "FortunateSonServer.h"
 #include <stdio.h>
 #include <limits.h>
@@ -7,6 +12,7 @@
 #include <stdarg.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <sys/stat.h>
 #include <mach/mach_vm.h>
 #include <mach/mach_init.h>
 #include <mach/vm_map.h>
@@ -14,19 +20,9 @@
 #include <mach/mach_traps.h>
 #include <mach/mach_error.h>
 
-
 #define MAX_FD_VALUE 1024
-unsigned char sOpenFiles[MAX_FD_VALUE / CHAR_BIT];
 
-static void print_error(const char *fmt, ...) __attribute__ ((format (printf, 1, 2)));
-static void print_error(const char *fmt, ...) {
-    va_list argp;
-    va_start(argp, fmt);
-    vfprintf(stderr, fmt, argp);
-    va_end(argp);
-    fputc('\n', stderr);
-    fflush(stderr);
-}
+static char sOpenFiles[MAX_FD_VALUE / CHAR_BIT];
 
 static unsigned get_bit_value(int index) {
     if (index < 0 || index >= MAX_FD_VALUE) return 0;
@@ -47,28 +43,131 @@ static void set_bit_value(int index, unsigned val) {
     }
 }
 
+static void print_error(const char *fmt, ...) __attribute__ ((format (printf, 1, 2)));
+static void print_error(const char *fmt, ...) {
+    va_list argp;
+    va_start(argp, fmt);
+    vfprintf(stderr, fmt, argp);
+    va_end(argp);
+    fputc('\n', stderr);
+    fflush(stderr);
+}
+
+static void *allocate_mach_memory(vm_size_t *size) {
+    vm_size_t localSize = mach_vm_round_page(*size);
+    void *localAddress = NULL;
+    kern_return_t kr = vm_allocate(mach_task_self(), (vm_address_t *)&localAddress, localSize, VM_FLAGS_ANYWHERE);
+    if (kr != KERN_SUCCESS) {
+        fprintf(stdout, "failed to vm_allocate(%ld)\nmach error: %s\n", (long)localSize, (char*)mach_error_string(kr));
+        exit(-1);
+    }
+    *size = localSize;
+    return (void *)localAddress;
+}
+
+static void free_mach_memory(void *ptr, vm_size_t size) {
+    kern_return_t kr = vm_deallocate(mach_task_self(), (vm_address_t)ptr, size);
+    if (kr != KERN_SUCCESS) {
+	fprintf(stdout, "failed to vm_deallocate(%p)\nmach error: %s\n", ptr, (char*) mach_error_string(kr));
+	exit(-1);
+    }    
+}
+
+
 kern_return_t _FortunateSonSayHey(mach_port_t server, FilePath path, int *result) {
     printf("Hey guys this is my function %s\n", path);
     *result = 12345;
     return KERN_SUCCESS;
 }
 
-kern_return_t _FortunateSonOpenFile(mach_port_t server, FilePath path, int writable, int *result, int *result_error) {
+kern_return_t _FortunateSonOpenFile(mach_port_t server, FilePath path, int writable, int *result, int *result_error, uint64_t *file_size, uint16_t *file_type, uint64_t *inode, int *device) {
     if (! result || ! result_error) {
         print_error("Cannot pass NULL pointers to OpenFile()");
         return KERN_SUCCESS;
     }
+    writable = 0;
+    printf("Opening %s\n", path);    
     int flags = (writable ? O_RDONLY : O_RDWR);
+    errno = 0;
     int fd = open(path, flags);
     if (fd == -1) {
         *result_error = errno;
     }
-    else {
+    int oldErr = errno;
+    printf("Seeking: %d - %lld\n", fd, lseek(fd, 100, SEEK_END));
+    errno = oldErr;
+    
+    if (fd >= 0) {
         fcntl(fd, F_NOCACHE, 0); //disable caching
         set_bit_value(fd, 1);
         *result_error = 0;
     }
+    
+    struct stat sb = {0};
+    if (fd >= 0) {
+	int statresult = fstat(fd, &sb);
+	if (statresult != 0) {
+	    *result_error = errno;
+	    close(fd);
+	    fd = -1;
+	}
+    }
+    
+    if (fd >= 0) {
+	if (S_ISBLK(sb.st_mode) || S_ISCHR(sb.st_mode)) {
+	    /* Block and character files don't return their size in the stat struct.  We can get it with lseek */
+	    off_t ret = lseek(fd, 0, SEEK_END);
+	    if (ret == -1 && errno != EOVERFLOW) {
+		/* EOVERFLOW?  Whoa.  If the device is so big that it doesn't fit in an off_t, then we'll return -1 (== ULLONG_MAX) as the size. */
+		*result_error = errno;
+		close(fd);
+		fd = -1;
+	    }
+	    else {
+		ret = UINT_MAX;
+		*file_size = ret;
+		printf("File size: %lld\n", ret);
+	    }
+	}
+	else {
+	    *file_size = sb.st_size;
+	}
+	
+	*file_type = sb.st_mode;
+	*inode = sb.st_ino;
+	*device = sb.st_dev;
+    }
     *result = fd;
+    return KERN_SUCCESS;
+}
+
+kern_return_t _FortunateSonReadFile(mach_port_t server, int fd, FileOffset_t offset, uint32_t *requestedLength, VarData_t *result, mach_msg_type_number_t *resultCnt, int *result_error) {
+    if (! result || ! result_error || ! resultCnt || ! requestedLength) {
+        print_error("Cannot pass NULL pointers to ReadFile()");
+        return KERN_SUCCESS;
+    }
+    if (! get_bit_value(fd)) {
+        print_error("File %d is not open", fd);
+        return KERN_SUCCESS;
+    }
+
+    vm_size_t localSize = *requestedLength;
+    void *localAddress = allocate_mach_memory(&localSize);
+    
+    int localError = 0;
+    ssize_t amountRead = pread(fd, localAddress, *requestedLength, offset);
+    if (amountRead == -1) {
+	localError = errno;
+	free_mach_memory(localAddress, localSize);
+	localAddress = 0;
+	localSize = 0;
+    }
+    
+    *result = (VarData_t)localAddress;
+    *resultCnt = localSize;
+    *requestedLength = (uint32_t)amountRead;
+    *result_error = localError;
+    
     return KERN_SUCCESS;
 }
 
@@ -113,18 +212,6 @@ kern_return_t _FortunateSonCloseFile(mach_port_t server, int fd) {
     return ranges;
 #endif
 
-static void *allocate_mach_memory(vm_size_t *size) {
-    vm_size_t localSize = mach_vm_round_page(*size);
-    void *localAddress = NULL;
-    kern_return_t kr = vm_allocate(mach_task_self(), (vm_address_t *)&localAddress, localSize, VM_FLAGS_ANYWHERE);
-    if (kr != KERN_SUCCESS) {
-        fprintf(stdout, "failed to vm_allocate(%ld)\nmach error: %s\n", (long)localSize, (char*)mach_error_string(kr));
-        exit(-1);
-    }
-    *size = localSize;
-    return (void *)localAddress;
-}
-
 static mach_port_name_t check_task_for_pid(pid_t pid) {
     mach_port_name_t task = MACH_PORT_NULL;
     kern_return_t kr = task_for_pid(mach_task_self(), pid, &task);
@@ -149,20 +236,20 @@ kern_return_t _FortunateSonReadProcess(mach_port_t server, int pid, mach_vm_addr
         vm_size_t localSize = requestedLength;
         void *localAddress = allocate_mach_memory(&localSize);
         bzero(localAddress, localSize); //probably not necessary
-        *result = localAddress;
+        *result = (VarData_t)localAddress;
         *resultCnt = localSize;
     }
     else if (kr == KERN_INVALID_ADDRESS) {
         vm_size_t localSize = requestedLength;
         void *localAddress = allocate_mach_memory(&localSize);
         bzero(localAddress, localSize); //probably not necessary
-        *result = localAddress;
+        *result = (VarData_t)localAddress;
         *resultCnt = localSize;
     }
     else if (kr == KERN_SUCCESS) {
         if (startPage == offset) {
             /* We can return the data immediately */
-            *result = (unsigned char *)data;
+            *result = (VarData_t)data;
             *resultCnt = dataLen;
         }
         else {
@@ -171,7 +258,7 @@ kern_return_t _FortunateSonReadProcess(mach_port_t server, int pid, mach_vm_addr
             void *localAddress = allocate_mach_memory(&localSize);
             memcpy(localAddress, (offset - startPage) + (const unsigned char *)data, requestedLength);
             vm_deallocate(mach_task_self(), data, dataLen);
-            *result = (void *)localAddress;
+            *result = (unsigned char *)localAddress;
             *resultCnt = localSize;
         }
     }
@@ -180,7 +267,7 @@ kern_return_t _FortunateSonReadProcess(mach_port_t server, int pid, mach_vm_addr
         vm_size_t localSize = requestedLength;
         void *localAddress = allocate_mach_memory(&localSize);
         bzero(localAddress, localSize); //probably not necessary
-        *result = localAddress;
+        *result = (VarData_t)localAddress;
         *resultCnt = localSize;
     }
     
@@ -223,3 +310,6 @@ kern_return_t _FortunateSonAttributesForAddress(mach_port_t server, int pid, mac
     *applicableLength = resultingLength;
     return KERN_SUCCESS;
 }
+
+//extern C
+UNINDENT_HIDDEN_FROM_XCODE

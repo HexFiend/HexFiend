@@ -14,6 +14,8 @@ type FilePath = c_string[*:256];
 type bool = int8_t;
 type VMRegionAttributes = uint32_t;
 
+type FileOffset_t = uint64_t;
+
 type VarData_t = ^ array [] of uint8_t;
 
 routine SayHey(
@@ -26,12 +28,23 @@ routine OpenFile(
     in path: FilePath;
     in writable: int;
     out result: int;
-    out result_error: int);
+    out result_error: int;
+    out file_size: uint64_t;
+    out file_type: uint16_t;
+    out inode: uint64_t;
+    out device: int);
     
 routine CloseFile(
     server: mach_port_t;
     in fd: int);
 
+routine ReadFile(
+    server: mach_port_t;
+    in fd: int;
+    in offset: FileOffset_t;
+    inout requestedLength: uint32_t;
+    out result: VarData_t;
+    out result_error: int);
 
 routine ReadProcess(
     server: mach_port_t;

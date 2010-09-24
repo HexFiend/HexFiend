@@ -10,6 +10,7 @@
 #import "BaseDataDocument.h"
 #import "ProcessMemoryDocument.h"
 #import "DiffDocument.h"
+#import "MyDocumentController.h"
 #include <assert.h>
 #include <errno.h>
 #include <stdbool.h>
@@ -18,6 +19,11 @@
 #include <sys/sysctl.h>
 
 @implementation AppDelegate
+
+- (void)applicationWillFinishLaunching:(NSNotification *)note {
+    /* Make sure our NSDocumentController subclass gets installed */
+    [MyDocumentController sharedDocumentController];
+}
 
 - (void)applicationDidFinishLaunching:(NSNotification *)note {
     USE(note);
@@ -363,7 +369,7 @@ static NSInteger compareMenuItems(id item1, id item2, void *unused) {
     else if (menu == bookmarksMenu) {
 	NSDocument *currentDocument = [[NSDocumentController sharedDocumentController] currentDocument];
 	if ([currentDocument respondsToSelector:@selector(populateBookmarksMenu:)]) {
-	    [currentDocument populateBookmarksMenu:menu];
+	    [(BaseDataDocument *)currentDocument populateBookmarksMenu:menu];
 	}
 	else {
 	    /* Nil document, or unknown type.  Remove all menu items except the first one. */

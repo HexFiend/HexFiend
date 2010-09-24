@@ -99,6 +99,16 @@ static inline unsigned long long HFSubtract(unsigned long long a, unsigned long 
 }
 
 /*!
+  Returns the smallest multiple of B that is equal to or larger than A, and asserts on overflow.
+*/
+static inline unsigned long long HFRoundUpToMultiple(unsigned long long a, unsigned long long b) {
+    // The usual approach of ((a + (b - 1)) / b) * b doesn't handle overflow correctly
+    unsigned long long remainder = a % b;
+    if (remainder == 0) return a;
+    else return HFSum(a, b - remainder);
+}
+
+/*!
  Returns the smallest multiple of B strictly larger than A, or ULLONG_MAX if it would overflow
 */
 static inline unsigned long long HFRoundUpToNextMultipleSaturate(unsigned long long a, unsigned long long b) {

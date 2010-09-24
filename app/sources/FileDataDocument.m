@@ -19,11 +19,20 @@ static inline Class preferredByteArrayClass(void) {
     USE(outError);
     BOOL result = NO;
     HFASSERT([absoluteURL isFileURL]);
-    HFFileReference *fileReference = [[[HFFileReference alloc] initWithPath:[absoluteURL path] error:outError] autorelease];
-    if (fileReference) {
-        
+    NSError *localError = nil;
+    NSString *path = [absoluteURL path];
+    HFFileReference *fileReference = [[[HFFileReference alloc] initWithPath:path error:&localError] autorelease];
+    if (localError && [[localError domain] isEqualToString:NSCocoaErrorDomain] && [localError code] == NSFileReadNoPermissionError) {
+	/* Try again with a privileged file reference */
+#ifndef HF_NO_PRIVILEGED_FILE_OPERATIONS
+	fileReference = [[[HFPrivilegedFileReference alloc] initWithPath:path error:&localError] autorelease];
+#endif
+    }
+    if (fileReference == nil) {
+	if (outError) *outError = localError;
+    }
+    else {
         HFFileByteSlice *byteSlice = [[[HFFileByteSlice alloc] initWithFile:fileReference] autorelease];
-//        HFByteSlice *byteSlice = [[[NSClassFromString(@"HFRandomDataByteSlice") alloc] initWithRandomDataLength:ULLONG_MAX] autorelease];
         HFByteArray *byteArray = [[[preferredByteArrayClass() alloc] init] autorelease];
         [byteArray insertByteSlice:byteSlice inRange:HFRangeMake(0, 0)];
         [controller setByteArray:byteArray];

@@ -58,42 +58,115 @@ static NSString *read_line(FILE *file) {
 - (BOOL)readBytes:(void *)bytes range:(HFRange)range process:(pid_t)process error:(NSError **)error {
     HFASSERT(range.length <= ULONG_MAX);
     HFASSERT(bytes != NULL || range.length > 0);
-    [self connectIfNecessary];
-    if (childReceivePort != MACH_PORT_NULL) {
-        void *resultData = NULL;
-        mach_msg_type_number_t resultCnt;
-        
-        kern_return_t kr = _GratefulFatherReadProcess(childReceivePort, process, range.location, range.length, (unsigned char **)&resultData, &resultCnt);
-        if (kr != KERN_SUCCESS) {
-            fprintf(stdout, "_GratefulFatherReadProcess failed with mach error: %s\n", (char*) mach_error_string(kr));
-            return NO;
-        }
-        memcpy(bytes, resultData, (size_t)range.length);
-        kr = vm_deallocate(mach_task_self(), (vm_address_t)resultData, resultCnt);
-        if (kr != KERN_SUCCESS) {
-            fprintf(stdout, "failed to vm_deallocate(%p) for pid %d\nmach error: %s\n", resultData, process, (char*) mach_error_string(kr));
-        }
+    if (! [self connectIfNecessary]) return NO;
+    void *resultData = NULL;
+    mach_msg_type_number_t resultCnt;
+    
+    kern_return_t kr = _GratefulFatherReadProcess(childReceivePort, process, range.location, range.length, (unsigned char **)&resultData, &resultCnt);
+    if (kr != KERN_SUCCESS) {
+	fprintf(stdout, "_GratefulFatherReadProcess failed with mach error: %s\n", (char*) mach_error_string(kr));
+	return NO;
+    }
+    memcpy(bytes, resultData, (size_t)range.length);
+    kr = vm_deallocate(mach_task_self(), (vm_address_t)resultData, resultCnt);
+    if (kr != KERN_SUCCESS) {
+	fprintf(stdout, "failed to vm_deallocate(%p) for pid %d\nmach error: %s\n", resultData, process, (char*) mach_error_string(kr));
     }
     return YES;
 }
 
 - (BOOL)getAttributes:(VMRegionAttributes *)outAttributes length:(unsigned long long *)outLength offset:(unsigned long long)offset process:(pid_t)process error:(NSError **)error {
+    if (! [self connectIfNecessary]) return NO;
     VMRegionAttributes atts = 0;
     mach_vm_size_t length = 0;
     kern_return_t kr = _GratefulFatherAttributesForAddress(childReceivePort, process, offset, &atts, &length);
     if (kr != KERN_SUCCESS) {
-        fprintf(stdout, "_GratefulFatherAttributesForAddress failed with mach error: %s\n", (char*) mach_error_string(kr));
-        return NO;
+	fprintf(stdout, "_GratefulFatherAttributesForAddress failed with mach error: %s\n", (char*) mach_error_string(kr));
+	return NO;
     }
     if (outAttributes) *outAttributes = atts;
     if (outLength) *outLength = length;
     return YES;
 }
 
-- (void)connectIfNecessary {
+- (BOOL)openFileAtPath:(const char *)path writable:(BOOL)writable result:(int *)outFD resultError:(int *)outErrno fileSize:(unsigned long long *)outFileSize fileType:(uint16_t *)outFileType inode:(unsigned long long *)outInode device:(int *)outDevice {
+    if (! [self connectIfNecessary]) return NO;
+    HFASSERT(outFD && outErrno && outFileSize && outFileType && outInode && outDevice);
+    kern_return_t kr = _GratefulFatherOpenFile(childReceivePort, path, writable, outFD, outErrno, outFileSize, outFileType, outInode, outDevice);
+    if (kr != KERN_SUCCESS) {
+	fprintf(stdout, "_GratefulFatherOpenFile failed with mach error: %s\n", (char*) mach_error_string(kr));
+	return NO;
+    }
+    return YES;
+}
+
+- (BOOL)closeFile:(int)fd {
+    HFASSERT(fd > 0);
+    if (! [self connectIfNecessary]) return NO;
+    kern_return_t kr = _GratefulFatherCloseFile(childReceivePort, fd);
+    if (kr != KERN_SUCCESS) {
+	fprintf(stdout, "_GratefulFatherCloseFile failed with mach error: %s\n", (char*) mach_error_string(kr));
+	return NO;
+    }    
+    return YES;
+}
+
+- (BOOL)readFile:(int)fd offset:(unsigned long long)requestedOffset alignment:(uint32_t)alignment length:(uint32_t *)inoutLength result:(unsigned char *)result error:(int *)outErr {
+    HFASSERT(inoutLength);
+    HFASSERT(alignment > 0);
+    if (! *inoutLength) return YES;
+    if (! [self connectIfNecessary]) return NO;
+    unsigned char * buffer = NULL;
+    const uint32_t requestedLength = *inoutLength;    
+    
+    /* Expand to multiples of alignment */
+    unsigned long long end = HFSum(requestedOffset, requestedLength);
+    unsigned long long alignedStart = requestedOffset - requestedOffset % alignment, alignedEnd = HFRoundUpToMultiple(end, alignment);
+    HFASSERT(alignedEnd > alignedStart);
+    HFASSERT(alignedEnd - alignedStart >= requestedLength);
+    HFRange alignedRange = HFRangeMake(alignedStart, alignedEnd - alignedStart);
+    HFASSERT(alignedRange.length < UINT_MAX); //there's no reason for this to necessarily be true - we just require the app to not pass us buffers that are so close to UINT_MAX that they overflow when aligned
+    
+    uint32_t alignedLength = (uint32_t)alignedRange.length;
+    mach_msg_type_number_t bufferAllocatedSize = 0;
+    NSLog(@"Issuing read %llu / %u", alignedRange.location, alignedLength);
+    kern_return_t kr = _GratefulFatherReadFile(childReceivePort, fd, alignedRange.location, &alignedLength, &buffer, &bufferAllocatedSize, outErr);
+    if (kr != KERN_SUCCESS) {
+	fprintf(stdout, "_GratefulFatherReadFile failed with mach error: %s\n", (char*) mach_error_string(kr));
+	return NO;
+    }
+    if (! buffer) return NO; // paranoia
+    
+    
+    /* Buffer now contains mach allocated memory that we own.  Copy it over to the result, handling the alignment, and then free it. */
+    uint32_t realAmountCopied = alignedLength;
+    NSUInteger prefix = ll2l(requestedOffset - alignedRange.location);
+    unsigned long long realBufferEnd = HFSum(alignedRange.location, realAmountCopied);
+    if (realBufferEnd <= requestedOffset) {
+	/* The only stuff that got copied was in the prefix */
+	*inoutLength = 0;
+    }
+    else {
+	/* Add alignedRange.location to amountCopied to get the true end of the buffer, and subtract pos to get the range from position to the end of the buffer, then take the smaller of that with the amount desired to get the amount to copy to the buffer. */
+	*inoutLength = MIN(realBufferEnd - requestedOffset, requestedLength);
+	memcpy(result, buffer + prefix, *inoutLength);
+    }
+    
+    if (buffer) {
+	kr = vm_deallocate(mach_task_self(), (vm_address_t)buffer, bufferAllocatedSize);
+	if (kr != KERN_SUCCESS) {
+	    fprintf(stdout, "failed to vm_deallocate(%p)\nmach error: %s\n", buffer, (char *)mach_error_string(kr));
+	}
+    }
+    
+    return YES;
+}
+
+- (BOOL)connectIfNecessary {
     if (childReceivePort == MACH_PORT_NULL) {
         [self launchAndConnect];
     }
+    return childReceivePort != MACH_PORT_NULL;
 }
 
 - (BOOL)launchAndConnect {
@@ -124,7 +197,7 @@ static NSString *read_line(FILE *file) {
         status = AuthorizationCopyRights(authorizationRef, &authRights, NULL, authFlags, NULL);
         if (status != errAuthorizationSuccess) {
             result = NO;
-            if (status == errAuthorizationCanceled || status == errAuthorizationDenied) {
+            if (status != errAuthorizationCanceled && status != errAuthorizationDenied) {
                 NSLog(@"AuthorizationCopyRights returned error: %ld", (long)status);
             }
         }
@@ -165,7 +238,7 @@ static NSString *read_line(FILE *file) {
     }
     
     /* Tell our launcher, OK, so it deletes it for us */
-    fputs("OK\n", pipe);
+    if (pipe) fputs("OK\n", pipe);
 
     return result;
 }

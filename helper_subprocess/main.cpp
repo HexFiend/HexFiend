@@ -1,3 +1,4 @@
+extern "C" {
 #include "HFHelperProcessSharedCode.h"
 #include "FortunateSonServer.h"
 #include <unistd.h>
@@ -138,4 +139,6 @@ int main(void) {
     ERR_FILE = fopen("/tmp/FortunateSonErrorFile.txt", "a");
     run_server(portSet, notificationPort);
     return 0;
+}
+
 }

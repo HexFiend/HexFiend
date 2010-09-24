@@ -1,5 +1,6 @@
 typedef const char *FilePath;
 typedef unsigned char *VarData_t;
+typedef long long FileOffset_t;
 
 enum {
     VMRegionUnmapped = 1 << 0,

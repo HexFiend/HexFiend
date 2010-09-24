@@ -74,7 +74,7 @@
 		D0422FE00D62599300F8FCDE /* HFProgressTracker.m in Sources */ = {isa = PBXBuildFile; fileRef = D0422FDE0D62599300F8FCDE /* HFProgressTracker.m */; };
 		D04327A40CF081CD00C14250 /* HFFunctions_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = D04327A30CF081CD00C14250 /* HFFunctions_Private.h */; };
 		D047E3401022CFA800EF307B /* FortunateSon.defs in Sources */ = {isa = PBXBuildFile; fileRef = D047E33F1022CFA800EF307B /* FortunateSon.defs */; settings = {ATTRIBUTES = (Server, ); }; };
-		D047E48C1022E09300EF307B /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = D047E48B1022E09300EF307B /* main.c */; };
+		D047E48C1022E09300EF307B /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D047E48B1022E09300EF307B /* main.cpp */; };
 		D047E4CA1022E1CA00EF307B /* HexFiend.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = D01E7BB80CDC530C00943F9E /* HexFiend.framework */; };
 		D047E4CB1022E1D200EF307B /* FortunateSon in CopyFiles */ = {isa = PBXBuildFile; fileRef = D047E3151022CEFE00EF307B /* FortunateSon */; };
 		D04A6B6B100EA47C00704963 /* SaveBanner.xib in Resources */ = {isa = PBXBuildFile; fileRef = D04A6B69100EA47C00704963 /* SaveBanner.xib */; };
@@ -97,8 +97,9 @@
 		D05E7A970FF6160500767D95 /* HexFiend.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = D01E7BB80CDC530C00943F9E /* HexFiend.framework */; };
 		D05E7AAE0FF6167100767D95 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		D061A28F10042D6A0049B8B8 /* HFTextRepresenter_Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = D061A28E10042D6A0049B8B8 /* HFTextRepresenter_Internal.h */; };
-		D0621CAD102ED50D00DAEB4D /* FortunateSonServerImpl.c in Sources */ = {isa = PBXBuildFile; fileRef = D0621CAC102ED50D00DAEB4D /* FortunateSonServerImpl.c */; };
+		D0621CAD102ED50D00DAEB4D /* FortunateSonServerImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D0621CAC102ED50D00DAEB4D /* FortunateSonServerImpl.cpp */; };
 		D0621CF0102ED78900DAEB4D /* FortunateSon.defs in Sources */ = {isa = PBXBuildFile; fileRef = D047E33F1022CFA800EF307B /* FortunateSon.defs */; };
+		D068D961123C3C9500DFBEEC /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D068D960123C3C9500DFBEEC /* IOKit.framework */; };
 		D06D60070FA69AFA002376EE /* HFBTree.h in Headers */ = {isa = PBXBuildFile; fileRef = D06D60050FA69AFA002376EE /* HFBTree.h */; };
 		D06D60080FA69AFA002376EE /* HFBTree.m in Sources */ = {isa = PBXBuildFile; fileRef = D06D60060FA69AFA002376EE /* HFBTree.m */; };
 		D06D60190FA69B3E002376EE /* HFBTree.m in Sources */ = {isa = PBXBuildFile; fileRef = D06D60060FA69AFA002376EE /* HFBTree.m */; };
@@ -135,6 +136,8 @@
 		D08F5E4F0CDE872C007EFFE8 /* HFByteArray.m in Sources */ = {isa = PBXBuildFile; fileRef = D08F5DF00CDE8223007EFFE8 /* HFByteArray.m */; };
 		D08F5E500CDE872C007EFFE8 /* HFByteSlice.m in Sources */ = {isa = PBXBuildFile; fileRef = D08F5E230CDE843E007EFFE8 /* HFByteSlice.m */; };
 		D08F5E510CDE872C007EFFE8 /* HFFullMemoryByteSlice.m in Sources */ = {isa = PBXBuildFile; fileRef = D08F5E380CDE84F4007EFFE8 /* HFFullMemoryByteSlice.m */; };
+		D09163CA123857BB009D7D47 /* OpenPathDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = D09163C9123857BB009D7D47 /* OpenPathDialog.xib */; };
+		D09163D4123857E5009D7D47 /* OpenPathWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = D09163D3123857E5009D7D47 /* OpenPathWindowController.m */; };
 		D0A1F30E11439DFE008BB3BA /* HFByteArrayEditScript.h in Headers */ = {isa = PBXBuildFile; fileRef = D0A1F2EB11439B9D008BB3BA /* HFByteArrayEditScript.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D0A1F31211439E3F008BB3BA /* HFByteArrayEditScript.m in Sources */ = {isa = PBXBuildFile; fileRef = D0A1F2EC11439B9D008BB3BA /* HFByteArrayEditScript.m */; };
 		D0A402F30D0D43F4006BC574 /* HFLayoutRepresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = D0A402F10D0D43F4006BC574 /* HFLayoutRepresenter.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -153,6 +156,7 @@
 		D0A9F3F20CFBEA9F0077D577 /* HFLineCountingRepresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = D0A9F3F00CFBEA9F0077D577 /* HFLineCountingRepresenter.m */; };
 		D0A9F3FD0CFBEAD50077D577 /* HFLineCountingView.h in Headers */ = {isa = PBXBuildFile; fileRef = D0A9F3FB0CFBEAD50077D577 /* HFLineCountingView.h */; settings = {ATTRIBUTES = (); }; };
 		D0A9F3FE0CFBEAD50077D577 /* HFLineCountingView.m in Sources */ = {isa = PBXBuildFile; fileRef = D0A9F3FC0CFBEAD50077D577 /* HFLineCountingView.m */; };
+		D0AFA786123C2BDF00CFC513 /* MyDocumentController.m in Sources */ = {isa = PBXBuildFile; fileRef = D0AFA785123C2BDF00CFC513 /* MyDocumentController.m */; };
 		D0B0919F10425AAB00B204AE /* HFProcessMemoryByteSlice.h in Headers */ = {isa = PBXBuildFile; fileRef = D0B0919D10425AAB00B204AE /* HFProcessMemoryByteSlice.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D0B091A010425AAB00B204AE /* HFProcessMemoryByteSlice.m in Sources */ = {isa = PBXBuildFile; fileRef = D0B0919E10425AAB00B204AE /* HFProcessMemoryByteSlice.m */; };
 		D0B422A10FF845F800DF27E5 /* HFTextView.h in Headers */ = {isa = PBXBuildFile; fileRef = D0B4229F0FF845F800DF27E5 /* HFTextView.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -354,7 +358,7 @@
 		D047E3151022CEFE00EF307B /* FortunateSon */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = FortunateSon; sourceTree = BUILT_PRODUCTS_DIR; };
 		D047E33F1022CFA800EF307B /* FortunateSon.defs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.mig; name = FortunateSon.defs; path = helper_subprocess/FortunateSon.defs; sourceTree = "<group>"; };
 		D047E4431022DF6F00EF307B /* FortunateSonIPCTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FortunateSonIPCTypes.h; path = helper_subprocess/FortunateSonIPCTypes.h; sourceTree = "<group>"; };
-		D047E48B1022E09300EF307B /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = main.c; path = helper_subprocess/main.c; sourceTree = "<group>"; };
+		D047E48B1022E09300EF307B /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = helper_subprocess/main.cpp; sourceTree = "<group>"; };
 		D04A6B6A100EA47C00704963 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/SaveBanner.xib; sourceTree = "<group>"; };
 		D04A6B79100EA4BC00704963 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/FindReplaceBanner.xib; sourceTree = "<group>"; };
 		D04A6B96100EA73800704963 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/JumpToOffsetBanner.xib; sourceTree = "<group>"; };
@@ -372,7 +376,8 @@
 		D05B77DD0E00883B008C45EB /* HFCancelButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFCancelButton.h; path = framework/sources/HFCancelButton.h; sourceTree = "<group>"; };
 		D05B77DE0E00883B008C45EB /* HFCancelButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFCancelButton.m; path = framework/sources/HFCancelButton.m; sourceTree = "<group>"; };
 		D061A28E10042D6A0049B8B8 /* HFTextRepresenter_Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFTextRepresenter_Internal.h; path = framework/sources/HFTextRepresenter_Internal.h; sourceTree = "<group>"; };
-		D0621CAC102ED50D00DAEB4D /* FortunateSonServerImpl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = FortunateSonServerImpl.c; path = helper_subprocess/FortunateSonServerImpl.c; sourceTree = "<group>"; };
+		D0621CAC102ED50D00DAEB4D /* FortunateSonServerImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FortunateSonServerImpl.cpp; path = helper_subprocess/FortunateSonServerImpl.cpp; sourceTree = "<group>"; };
+		D068D960123C3C9500DFBEEC /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = /System/Library/Frameworks/IOKit.framework; sourceTree = "<absolute>"; };
 		D06D60050FA69AFA002376EE /* HFBTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFBTree.h; path = framework/sources/BTree/HFBTree.h; sourceTree = "<group>"; };
 		D06D60060FA69AFA002376EE /* HFBTree.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFBTree.m; path = framework/sources/BTree/HFBTree.m; sourceTree = "<group>"; };
 		D06D60100FA69B26002376EE /* Test_BTree */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Test_BTree; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -414,6 +419,9 @@
 		D08F5E230CDE843E007EFFE8 /* HFByteSlice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFByteSlice.m; path = framework/sources/HFByteSlice.m; sourceTree = "<group>"; };
 		D08F5E370CDE84F4007EFFE8 /* HFFullMemoryByteSlice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFFullMemoryByteSlice.h; path = framework/sources/HFFullMemoryByteSlice.h; sourceTree = "<group>"; };
 		D08F5E380CDE84F4007EFFE8 /* HFFullMemoryByteSlice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFFullMemoryByteSlice.m; path = framework/sources/HFFullMemoryByteSlice.m; sourceTree = "<group>"; };
+		D09163C9123857BB009D7D47 /* OpenPathDialog.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = OpenPathDialog.xib; path = app/resources/OpenPathDialog.xib; sourceTree = "<group>"; };
+		D09163D2123857E5009D7D47 /* OpenPathWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OpenPathWindowController.h; path = app/sources/OpenPathWindowController.h; sourceTree = "<group>"; };
+		D09163D3123857E5009D7D47 /* OpenPathWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OpenPathWindowController.m; path = app/sources/OpenPathWindowController.m; sourceTree = "<group>"; };
 		D0A1F2EB11439B9D008BB3BA /* HFByteArrayEditScript.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFByteArrayEditScript.h; path = framework/sources/HFByteArrayEditScript.h; sourceTree = "<group>"; };
 		D0A1F2EC11439B9D008BB3BA /* HFByteArrayEditScript.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFByteArrayEditScript.m; path = framework/sources/HFByteArrayEditScript.m; sourceTree = "<group>"; };
 		D0A402F10D0D43F4006BC574 /* HFLayoutRepresenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFLayoutRepresenter.h; path = framework/sources/HFLayoutRepresenter.h; sourceTree = "<group>"; };
@@ -432,6 +440,8 @@
 		D0A9F3F00CFBEA9F0077D577 /* HFLineCountingRepresenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFLineCountingRepresenter.m; path = framework/sources/HFLineCountingRepresenter.m; sourceTree = "<group>"; };
 		D0A9F3FB0CFBEAD50077D577 /* HFLineCountingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFLineCountingView.h; path = framework/sources/HFLineCountingView.h; sourceTree = "<group>"; };
 		D0A9F3FC0CFBEAD50077D577 /* HFLineCountingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFLineCountingView.m; path = framework/sources/HFLineCountingView.m; sourceTree = "<group>"; };
+		D0AFA784123C2BDF00CFC513 /* MyDocumentController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MyDocumentController.h; path = app/sources/MyDocumentController.h; sourceTree = "<group>"; };
+		D0AFA785123C2BDF00CFC513 /* MyDocumentController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MyDocumentController.m; path = app/sources/MyDocumentController.m; sourceTree = "<group>"; };
 		D0B0919D10425AAB00B204AE /* HFProcessMemoryByteSlice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFProcessMemoryByteSlice.h; path = framework/sources/HFProcessMemoryByteSlice.h; sourceTree = "<group>"; };
 		D0B0919E10425AAB00B204AE /* HFProcessMemoryByteSlice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFProcessMemoryByteSlice.m; path = framework/sources/HFProcessMemoryByteSlice.m; sourceTree = "<group>"; };
 		D0B4229F0FF845F800DF27E5 /* HFTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFTextView.h; path = framework/sources/HFTextView.h; sourceTree = "<group>"; };
@@ -471,6 +481,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */,
+				D068D961123C3C9500DFBEEC /* IOKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -577,6 +588,7 @@
 				D01E7C0A0CDC570400943F9E /* Info.plist */,
 				089C165CFE840E0CC02AAC07 /* InfoPlist.strings */,
 				D03CFA810FC7857B00EE79E4 /* DataInspectorView.xib */,
+				D09163C9123857BB009D7D47 /* OpenPathDialog.xib */,
 				D04A6BA9100EA7B800704963 /* MainMenu.xib */,
 				D04A6BA3100EA78700704963 /* MyDocument.xib */,
 				D04A6B9C100EA75400704963 /* MoveSelectionByBanner.xib */,
@@ -718,6 +730,9 @@
 		D02BD6D910545E7B00535EDE /* DocumentTypes */ = {
 			isa = PBXGroup;
 			children = (
+				D0AFA784123C2BDF00CFC513 /* MyDocumentController.h */,
+				D0AFA785123C2BDF00CFC513 /* MyDocumentController.m */,
+				D068D960123C3C9500DFBEEC /* IOKit.framework */,
 				D01E7C140CDC58AA00943F9E /* BaseDataDocument.h */,
 				D01E7C150CDC58AA00943F9E /* BaseDataDocument.m */,
 				D02BD6DE10545E9000535EDE /* FileDataDocument.h */,
@@ -761,8 +776,8 @@
 			children = (
 				D047E33F1022CFA800EF307B /* FortunateSon.defs */,
 				D047E4431022DF6F00EF307B /* FortunateSonIPCTypes.h */,
-				D047E48B1022E09300EF307B /* main.c */,
-				D0621CAC102ED50D00DAEB4D /* FortunateSonServerImpl.c */,
+				D047E48B1022E09300EF307B /* main.cpp */,
+				D0621CAC102ED50D00DAEB4D /* FortunateSonServerImpl.cpp */,
 				D0DEC2BE102F9C6C00F90467 /* launcher.c */,
 			);
 			name = PrivilegedHelper;
@@ -826,6 +841,8 @@
 				D02BD6D910545E7B00535EDE /* DocumentTypes */,
 				D0CD51F40DA2B928006E8D1B /* AppDelegate.h */,
 				D0CD51F50DA2B928006E8D1B /* AppDelegate.m */,
+				D09163D2123857E5009D7D47 /* OpenPathWindowController.h */,
+				D09163D3123857E5009D7D47 /* OpenPathWindowController.m */,
 				D03CFA880FC78BCD00EE79E4 /* DataInspectorRepresenter.h */,
 				D03CFA890FC78BCD00EE79E4 /* DataInspectorRepresenter.m */,
 				D01772F30D751DB1002E03DE /* HFDocumentOperationView.h */,
@@ -1198,6 +1215,7 @@
 				D04A6BA5100EA78700704963 /* MyDocument.xib in Resources */,
 				D04A6BAB100EA7B800704963 /* MainMenu.xib in Resources */,
 				D018F139107AB64900AE805F /* DiffDocument.xib in Resources */,
+				D09163CA123857BB009D7D47 /* OpenPathDialog.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1268,6 +1286,8 @@
 				D018F153107ABAC600AE805F /* DiffDocument.m in Sources */,
 				D074B0D5115B2075002D5FA8 /* DiffDocumentWindow.m in Sources */,
 				D084E763115DAEAC004DC181 /* DiffOverlayView.m in Sources */,
+				D09163D4123857E5009D7D47 /* OpenPathWindowController.m in Sources */,
+				D0AFA786123C2BDF00CFC513 /* MyDocumentController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1354,8 +1374,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				D047E3401022CFA800EF307B /* FortunateSon.defs in Sources */,
-				D047E48C1022E09300EF307B /* main.c in Sources */,
-				D0621CAD102ED50D00DAEB4D /* FortunateSonServerImpl.c in Sources */,
+				D047E48C1022E09300EF307B /* main.cpp in Sources */,
+				D0621CAD102ED50D00DAEB4D /* FortunateSonServerImpl.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1502,6 +1522,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\"",
+				);
 				GCC_ENABLE_OBJC_GC = unsupported;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -1830,6 +1854,10 @@
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\"",
+				);
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_ENABLE_OBJC_GC = unsupported;
@@ -2177,6 +2205,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\"",
+				);
 				GCC_ENABLE_OBJC_GC = required;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -2288,6 +2320,10 @@
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\"",
+				);
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_ENABLE_OBJC_GC = unsupported;
@@ -2406,6 +2442,10 @@
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\"",
+				);
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_ENABLE_OBJC_GC = unsupported;
@@ -2523,6 +2563,10 @@
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\"",
+				);
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_ENABLE_OBJC_GC = unsupported;
