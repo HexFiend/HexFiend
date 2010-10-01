@@ -12,6 +12,7 @@ extern "C" INDENT_HIDDEN_FROM_XCODE
 #include <stdarg.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <sys/disk.h>
 #include <sys/stat.h>
 #include <mach/mach_vm.h>
 #include <mach/mach_init.h>
@@ -115,19 +116,19 @@ kern_return_t _FortunateSonOpenFile(mach_port_t server, FilePath path, int writa
     
     if (fd >= 0) {
 	if (S_ISBLK(sb.st_mode) || S_ISCHR(sb.st_mode)) {
-	    /* Block and character files don't return their size in the stat struct.  We can get it with lseek */
-	    off_t ret = lseek(fd, 0, SEEK_END);
-	    if (ret == -1 && errno != EOVERFLOW) {
-		/* EOVERFLOW?  Whoa.  If the device is so big that it doesn't fit in an off_t, then we'll return -1 (== ULLONG_MAX) as the size. */
+	    /* Block and character files don't return their size in the stat struct.  We can get it with some ioctls. There's a ton more ioctls we should be handling here, like DKIOCGETMAXBLOCKCOUNTREAD; we don't get these right yet. */
+	    uint32_t blockSize = 0;
+	    uint64_t blockCount = 0;
+	    int bsderr = 0;
+	    bsderr = bsderr || ioctl(fd, DKIOCGETBLOCKSIZE, &blockSize);
+	    bsderr = bsderr || ioctl(fd, DKIOCGETBLOCKCOUNT, &blockCount);
+	    if (bsderr) {
 		*result_error = errno;
 		close(fd);
 		fd = -1;
 	    }
-	    else {
-		ret = UINT_MAX;
-		*file_size = ret;
-		printf("File size: %lld\n", ret);
-	    }
+	    *file_size = blockSize * (uint64_t)blockCount;
+	    printf("SIZE: %llu\n", *file_size);
 	}
 	else {
 	    *file_size = sb.st_size;

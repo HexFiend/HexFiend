@@ -51,5 +51,6 @@
 @class HFAnnotatedTree;
 @interface HFAnnotatedTreeByteRangeAttributeArray : HFByteRangeAttributeArray {
     HFAnnotatedTree *atree;
+    NSMutableDictionary *attributesToNodes;
 }
 @end

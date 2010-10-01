@@ -370,7 +370,7 @@ static HFAnnotatedTreeNode *next_node(HFAnnotatedTreeNode *node) {
 
 static HFAnnotatedTreeNode *first_node(HFAnnotatedTreeNode *node) {
     /* Return the first node */ 
-    HFAnnotatedTreeNode *result = nil, *cursor = node;
+    HFAnnotatedTreeNode *result = nil, *cursor = node->left;
     while (cursor) {
 	/* Descend the left subtree */
 	result = cursor;

@@ -75,7 +75,6 @@
 - (IBAction)toggleOverwriteMode:sender;
 - (IBAction)modifyByteGrouping:sender;
 
-- (IBAction)jumpToBookmark:sender;
 - (IBAction)setBookmark:sender;
 - (IBAction)deleteBookmark:sender;
 

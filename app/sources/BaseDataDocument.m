@@ -1436,13 +1436,14 @@ invalidString:;
     /* Add items until we get to the new amount */
     while (itemCount < desiredItemCount) {
 	if (itemCount == 2) {
-	    [bookmarksMenu insertItem:[NSMenuItem separatorItem] atIndex:itemCount++];
+	    [bookmarksMenu insertItem:[NSMenuItem separatorItem] atIndex:itemCount];
 	}
 	else {
 	    NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:@"" action:@selector(self) keyEquivalent:@""];
-	    [bookmarksMenu insertItem:item atIndex:itemCount++];
+	    [bookmarksMenu insertItem:item atIndex:itemCount];
 	    [item release];
 	}
+	itemCount++;
     }
     
     /* Update the items */
@@ -1532,11 +1533,28 @@ invalidString:;
     [self jumpToBookmarkIndex:[sender tag] selecting:YES];
 }
 
-- (IBAction)setBookmark:sender {
-    USE(sender);
+- (BOOL)canSetBookmark {
+    /* We can set a bookmark unless we're at the end (or have no HFController) */
+    BOOL result = NO;
     NSArray *ranges = [controller selectedContentsRanges];
     if ([ranges count] > 0) {
 	HFRange range = [[ranges objectAtIndex:0] HFRange];
+	result = (range.length != 0 || range.location < [controller contentsLength]);
+    }
+    return result;
+}
+
+- (IBAction)setBookmark:sender {
+    USE(sender);
+    if (! [self canSetBookmark]) {
+	NSBeep();
+	return;
+    }
+    NSArray *ranges = [controller selectedContentsRanges];
+    if ([ranges count] > 0) {
+	HFRange range = [[ranges objectAtIndex:0] HFRange];
+	/* We always set a bookmark on at least one byte */
+	range.length = MAX(range.length, 1);
 	NSIndexSet *usedBookmarks = [controller bookmarksInRange:HFRangeMake(0, [controller contentsLength])];
 	
 	/* Find the first index that bookmarks does not contain, excepting 0 */

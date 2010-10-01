@@ -285,12 +285,12 @@ static BOOL returnFTruncateError(NSError **error) {
 @implementation HFPrivilegedFileReference
 
 - (size_t)readAlignment {
-    /* Returns the required alignment and block multiple for reads, or 0 if there is no required alignment */
+    /* Returns the required alignment and block multiple for reads, or 1 if there is no required alignment.  This is mostly just a guess. */
     if (S_ISBLK(fileMode) || S_ISCHR(fileMode)) {
 	return 512;
     }
     else {
-	return 0;
+	return 1;
     }
 }
 

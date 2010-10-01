@@ -265,6 +265,7 @@
 
 @end
 
+/* Our ATree node class for storing an attribute. */
 @interface HFByteRangeAttributeArrayNode : HFAnnotatedTreeNode {
 @public
     NSString *attribute;
@@ -326,142 +327,43 @@ static unsigned long long node_max_range(id left, id right) {
     return result;
 }
 
-static void collectNodes(HFByteRangeAttributeArrayNode *node, HFRange intersectionRange, NSString *attribute, NSMutableArray *output, BOOL isRoot) {
-    if (! isRoot) {
-	/* The root node is the base node class, but if we're not root we should have a HFByteRangeAttributeArrayNode */
-	EXPECT_CLASS(node, HFByteRangeAttributeArrayNode);
-	/* See if this node matches */
-	if (HFIntersectsRange(intersectionRange, node->range)) {
-	    if (attribute == nil || [attribute isEqualToString:node->attribute]) {
-		/* It's a match */
-		[output addObject:node];
-	    }
-	}
-    }
+static BOOL applyFunctionForNodesInRange(HFByteRangeAttributeArrayNode *node, HFRange rangeOfInterest, BOOL (*func)(HFByteRangeAttributeArrayNode *, HFRange, void *), void *userInfo, BOOL isRoot) {
+    BOOL shouldContinue = YES;
     
-    if (intersectionRange.location >= node->annotation) {
-	/* The range is to the right of the max range in this subtree, so we don't recurse to any children */
+    /* Figure out whether to recurse left and/or right */
+    BOOL recurseLeft = NO, recurseRight = NO;
+    if (!isRoot && rangeOfInterest.location >= node->annotation) {
+	/* The location is to the right of everything beneath us, so don't recurse left or right */
     }
     else {
 	/* Always search our left node if we have one */
-	BOOL recurseLeft = !! node->left;
+	recurseLeft = !! node->left;
 	
-	/* We don't need to search our right node if our range is entirely to the right of the given range, because our right children must be at least as far to the right. */
-	BOOL recurseRight = node->right && (isRoot || node->range.location < HFMaxRange(intersectionRange));
-	
-	if (recurseLeft) {
-	    collectNodes((HFByteRangeAttributeArrayNode *)node->left, intersectionRange, attribute, output, NO /* not isRoot */);
-	}
-	if (recurseRight) {
-	    collectNodes((HFByteRangeAttributeArrayNode *)node->right, intersectionRange, attribute, output, NO /* not isRoot */);
-	}
-    }
-}
-
-/* Because our tree types left and right as HFAnnotatedTreeNode, but we want HFByteRangeAttributeArrayNode, use this function to avoid having to cast everywhere. */
-static inline HFByteRangeAttributeArrayNode * leftChild(HFByteRangeAttributeArrayNode *node) { return (HFByteRangeAttributeArrayNode *)(node->left); }
-static inline HFByteRangeAttributeArrayNode * rightChild(HFByteRangeAttributeArrayNode *node) { return (HFByteRangeAttributeArrayNode *)(node->right); }
-
-static void collectAttributes(HFByteRangeAttributeArrayNode *node, unsigned long long location, NSMutableSet *attributes, unsigned long long *outLength, BOOL isRoot) {
-    /* Add all attributes whose range intersects the given index.  Store in outLength the largest length over which all those attributes are valid. */
-    if (! isRoot) {
-	/* The root node is the base node class, but if we're not root we should have a HFByteRangeAttributeArrayNode */
-	EXPECT_CLASS(node, HFByteRangeAttributeArrayNode);
-	/* See if this node matches */
-	if (HFLocationInRange(location, node->range)) {
-	    /* It's a match - add the attribute and calculate our new max length */
-	    [attributes addObject:node->attribute];
-	    if (outLength) *outLength = MIN(*outLength, HFMaxRange(node->range) - location);
-	}
-	else if (location < node->range.location) {
-	    /* If this node starts after location, then clamp outLength to it */
-	    if (outLength) *outLength = MIN(*outLength, node->range.location - location);
-	}
-    }
-        
-    
-    if (0 && location >= node->annotation) {
-	/* The location is to the right of everything beneath us, so don't recurse */
-    }
-    else {
-	/* Always search our left node if we have one */
-	BOOL recurseLeft = !! node->left;
-	
-	/* Search our right node if our range starts at or left of the location.  If it's to the right, then everything else is further to the right. */
-	BOOL recurseRight = node->right && 1;//(isRoot || node->range.location <= location);
-	
-	if (recurseLeft) {
-	    collectAttributes(leftChild(node), location, attributes, outLength, NO /* not isRoot */);
-	}
-	if (recurseRight) {
-	    collectAttributes(rightChild(node), location, attributes, outLength, NO /* not isRoot */);
-	}
-    }
-}
-
-static BOOL findAttribute(HFByteRangeAttributeArrayNode *node, NSString *attribute, HFRange *outResult, BOOL isRoot) {
-    BOOL result = NO;
-    
-    /* Search left first */
-    if (! result && node->left) {
-	result = findAttribute(leftChild(node), attribute, outResult, NO);
+	/* Search our right node if our range starts left of the end of the range of interest.  If it's to the right, then all right children are at least as far to the right, so none of them can intersect the ROI. */
+	recurseRight = node->right && (isRoot || node->range.location < HFMaxRange(rangeOfInterest));	
     }
     
-    /* Try us */
-    if (! result && ! isRoot) {
-	EXPECT_CLASS(node, HFByteRangeAttributeArrayNode);
-	if (attribute == node->attribute || [attribute isEqualToString:node->attribute]) {
-	    *outResult = node->range;
-	    result = YES;
-	}
+    /* Recurse left first, so we go in-order */
+    if (shouldContinue && recurseLeft) {
+	shouldContinue = applyFunctionForNodesInRange((HFByteRangeAttributeArrayNode *)(node->left), rangeOfInterest, func, userInfo, NO /* not isRoot */);
     }
     
-    /* Search right */
-    if (! result && node->right) {
-	result = findAttribute(rightChild(node), attribute, outResult, NO);
-    }
-    
-    return result;
-}
-
-struct TransferAttributes_t {
-    HFByteRangeAttributeArray *target;
-    unsigned long long baseOffset;
-};
-static void transferAttributes(HFByteRangeAttributeArrayNode *node, HFRange intersection, void *userInfoP) {
-    struct TransferAttributes_t *userInfo = userInfoP;
-    intersection.location = HFSum(intersection.location, userInfo->baseOffset);
-    [userInfo->target addAttribute:node->attribute range:intersection];
-}
-
-static BOOL applyFunctionForNodesInRange(HFByteRangeAttributeArrayNode *node, HFRange rangeOfInterest, void (*func)(HFByteRangeAttributeArrayNode *, HFRange, void *), void *userInfo, BOOL isRoot) {
-    if (! isRoot) {
+    /* Now try this node, unless it's root */
+    if (shouldContinue && ! isRoot) {
 	/* The root node is the base node class, but if we're not root we should have a HFByteRangeAttributeArrayNode */
 	EXPECT_CLASS(node, HFByteRangeAttributeArrayNode);
 	HFRange intersection = HFIntersectionRange(rangeOfInterest, node->range);
 	if (intersection.length > 0) {
-	    func(node, intersection, userInfo);
-	}
+	    shouldContinue = func(node, intersection, userInfo);
+	}	
     }
     
-    if (rangeOfInterest.location >= node->annotation) {
-	/* The location is to the right of everything beneath us, so don't recurse */
+    /* Now recurse right */
+    if (shouldContinue && recurseRight) {
+	shouldContinue = applyFunctionForNodesInRange((HFByteRangeAttributeArrayNode *)(node->right), rangeOfInterest, func, userInfo, NO /* not isRoot */);
     }
-    else {
-	/* Always search our left node if we have one */
-	BOOL recurseLeft = !! node->left;
-	
-	/* Search our right node if our range starts at or left of the location.  If it's to the right, then everything else is further to the right. */
-	BOOL recurseRight = node->right && (isRoot || node->range.location <= rangeOfInterest.location);
-	
-	if (recurseLeft) {
-	    applyFunctionForNodesInRange(leftChild(node), rangeOfInterest, func, userInfo, NO /* not isRoot */);
-	}
-	if (recurseRight) {
-	    applyFunctionForNodesInRange(rightChild(node), rangeOfInterest, func, userInfo, NO /* not isRoot */);
-	}
-    }
-    
+
+    return shouldContinue;
 }
 
 @end
@@ -476,10 +378,21 @@ static BOOL applyFunctionForNodesInRange(HFByteRangeAttributeArrayNode *node, HF
 
 @implementation HFAnnotatedTreeByteRangeAttributeArray
 
+- (BOOL)walkNodesInRange:(HFRange)range withFunction:(BOOL (*)(HFByteRangeAttributeArrayNode *, HFRange, void *))func userInfo:(void *)userInfoP {
+    return applyFunctionForNodesInRange([self->atree rootNode], range, func, userInfoP, YES /* isRoot */);
+}
+
 - (id)init {
     [super init];
     atree = [[HFAnnotatedTree alloc] initWithAnnotater:node_max_range];
+    attributesToNodes = [[NSMutableDictionary alloc] init];
     return self;
+}
+
+- (void)dealloc {
+    [atree release];
+    [attributesToNodes release];
+    [super dealloc];
 }
 
 - (NSString *)description {
@@ -492,19 +405,43 @@ static BOOL applyFunctionForNodesInRange(HFByteRangeAttributeArrayNode *node, HF
     return result;
 }
 
+/* Helper function to insert a value into a set under the given key, creating it if necessary.  This could be more efficient as a CFSet because we want object identity semantics. */
+static void insertIntoDictionaryOfSets(NSMutableDictionary *dictionary, NSString *key, id value) {
+    NSMutableSet *set = [dictionary objectForKey:key];
+    if (! set) {
+	set = [[NSMutableSet alloc] init];
+	[dictionary setObject:set forKey:key];
+	[set release];
+    }
+    [set addObject:value];
+}
 
 - (void)addAttribute:(NSString *)attributeName range:(HFRange)range {
     HFByteRangeAttributeArrayNode *node = [[HFByteRangeAttributeArrayNode alloc] initWithAttribute:attributeName range:range];
     [atree insertNode:node];
+    insertIntoDictionaryOfSets(attributesToNodes, attributeName, node);
     [node release];
 }
 
+static BOOL collectNodesWithAttribute(HFByteRangeAttributeArrayNode *node, HFRange intersection, void *userInfoP) {
+    [(id)userInfoP addObject:node];
+    return YES; //continue
+}
+
 - (void)removeAttribute:(NSString *)attributeName range:(HFRange)range {
+    /* Get the nodes that we will delete */
     NSMutableArray *nodesToDelete = [[NSMutableArray alloc] init];
-    collectNodes([atree rootNode], range, attributeName, nodesToDelete, YES);
+    [self walkNodesInRange:range withFunction:collectNodesWithAttribute userInfo:nodesToDelete];
+    
+    /* We're going to remove these from the attributesToNodes set */
+    NSMutableSet *allNodesWithAttribute = [attributesToNodes objectForKey:attributeName];
+    
     for (HFByteRangeAttributeArrayNode *node in nodesToDelete) {
 	
-	/* Definitely remove this node.  It's retained by virtue of being in the nodesToDelete array. */
+	/* Remove from the corresponding attributesToNodes set */
+	[allNodesWithAttribute removeObject:node];
+	
+	/* Remove this node from the tree too.  It's retained by virtue of being in the nodesToDelete array. */
 	[atree removeNode:node];
 	
 	/* We may have to split node into zero, one, or two pieces.  We could be more efficient and re-use the node if we wanted. */
@@ -512,6 +449,7 @@ static BOOL applyFunctionForNodesInRange(HFByteRangeAttributeArrayNode *node, HF
 	    HFRange leftRemainder = HFRangeMake(node->range.location, range.location - node->range.location);
 	    HFByteRangeAttributeArrayNode *newNode = [[HFByteRangeAttributeArrayNode alloc] initWithAttribute:attributeName range:leftRemainder];
 	    [atree insertNode:newNode];
+	    [allNodesWithAttribute addObject:newNode];
 	    [newNode release];
 	    
 	}
@@ -520,43 +458,122 @@ static BOOL applyFunctionForNodesInRange(HFByteRangeAttributeArrayNode *node, HF
 	    HFASSERT(rightRemainder.length > 0);
 	    HFByteRangeAttributeArrayNode *newNode = [[HFByteRangeAttributeArrayNode alloc] initWithAttribute:attributeName range:rightRemainder];
 	    [atree insertNode:newNode];
+	    [allNodesWithAttribute addObject:newNode];
 	    [newNode release];
 	}
     }
     [nodesToDelete release];
+    
+    /* Maybe allNodesWithAttribute is now empty */
+    if (! [allNodesWithAttribute count]) {
+	[attributesToNodes removeObjectForKey:attributeName];
+    }
 }
 
 - (void)removeAttribute:(NSString *)attributeName {
-    [self removeAttribute:attributeName range:HFRangeMake(0, ULLONG_MAX)];
+    /* We can just remove everything in attributesToNodes */
+    NSMutableSet *matchingNodes = [attributesToNodes objectForKey:attributeName];
+    if (matchingNodes) {
+	for (HFByteRangeAttributeArrayNode *node in matchingNodes) {
+	    [atree removeNode:node];
+	}
+	/* We can just remove the entire set */
+	[attributesToNodes removeObjectForKey:attributeName];
+    }
+}
+
+- (void)removeAttributes:(NSSet *)attributeNames {
+    /* This may be more efficient by walking the tree */
+    for (NSString *name in attributeNames) {
+	[self removeAttribute:name];
+    }
+}
+
+struct CollectAttributes_t {
+    NSMutableSet *attributes;
+    unsigned long long locationOfInterest;
+    unsigned long long validLength;
+};
+static BOOL collectAttributes(HFByteRangeAttributeArrayNode *node, HFRange intersection, void *userInfoP) {
+    struct CollectAttributes_t *userInfo = userInfoP;
+    BOOL shouldContinue;
+    /* Store in validLength the maximum length over which all attributes are valid. */
+    if (HFLocationInRange(userInfo->locationOfInterest, intersection)) {
+	/* We want this node's attribute */
+	[userInfo->attributes addObject:node->attribute];
+	/* This node contains the location we're interested in, so we are valid to the end of the intersection. */
+	userInfo->validLength = MIN(userInfo->validLength, HFSubtract(HFMaxRange(intersection), userInfo->locationOfInterest));
+	/* Maybe there's more nodes */
+	shouldContinue = YES;
+    }
+    else {
+	/* This node does not contain the location we're interested in (it must start beyond it), so we are valid to the beginning of its range */
+	userInfo->validLength = MIN(userInfo->validLength, HFSubtract(intersection.location, userInfo->locationOfInterest));
+	/* Since the nodes are walked left-to-right according to the node's start location, no subsequent node can contain our locationOfInterest, and all subsequent nodes must have a start location at or after this one.  So we're done. */
+	shouldContinue = NO;
+    }
+    return shouldContinue;
 }
 
 - (NSSet *)attributesAtIndex:(unsigned long long)index length:(unsigned long long *)length {
-    NSMutableSet *attributes = [[NSMutableSet alloc] init];
-    if (length) *length = ULLONG_MAX - index;
-    collectAttributes([atree rootNode], index, attributes, length, YES);
-    return [attributes autorelease];
+    struct CollectAttributes_t userInfo = {
+	.attributes = [[NSMutableSet alloc] init],
+	.locationOfInterest = index,
+	.validLength = ULLONG_MAX
+    };
+    /* length will contain the length over which the given set of attributes applies.  In case no attributes apply, we need to return that length; so we need to walk the entire tree.. */
+    [self walkNodesInRange:HFRangeMake(index, ULLONG_MAX - index) withFunction:collectAttributes userInfo:&userInfo];
+    if (length) *length = userInfo.validLength;
+    return [userInfo.attributes autorelease];
+}
+
+struct FindAttribute_t {
+    NSString *attribute;
+    HFRange resultRange;
+};
+static BOOL findAttribute(HFByteRangeAttributeArrayNode *node, HFRange intersection, void *userInfoP) {
+    BOOL result = YES; /* assume continue */
+    struct FindAttribute_t *userInfo = userInfoP;
+    if ([userInfo->attribute isEqualToString:node->attribute]) {
+	userInfo->resultRange = node->range;
+	result = NO; /* all done */
+    }
+    return result;
 }
 
 - (HFRange)rangeOfAttribute:(NSString *)attribute {
-    HFRange result = {ULLONG_MAX, ULLONG_MAX};
-    findAttribute([atree rootNode], attribute, &result, YES);
-    return result;
+    struct FindAttribute_t userInfo = {
+	.attribute = attribute,
+	.resultRange = {ULLONG_MAX, ULLONG_MAX}
+    };
+    [self walkNodesInRange:HFRangeMake(0, ULLONG_MAX) withFunction:findAttribute userInfo:&userInfo];
+    return userInfo.resultRange;
 }
 
-static void attributesInRange(HFByteRangeAttributeArrayNode *node, HFRange range, void *userInfo) {
+static BOOL fetchAttributes(HFByteRangeAttributeArrayNode *node, HFRange range, void *userInfo) {
     [(NSMutableSet *)userInfo addObject:[node attribute]];
+    return YES; /* continue fetching */
 }
-
 - (NSSet *)attributesInRange:(HFRange)range {
     NSMutableSet *result = [NSMutableSet set];
-    applyFunctionForNodesInRange([atree rootNode], range, attributesInRange, result, YES/* isRoot */);
+    [self walkNodesInRange:range withFunction:fetchAttributes userInfo:result];
     return result;
 }
 
+struct TransferAttributes_t {
+    HFByteRangeAttributeArray *target;
+    unsigned long long baseOffset;
+};
+static BOOL transferAttributes(HFByteRangeAttributeArrayNode *node, HFRange intersection, void *userInfoP) {
+    struct TransferAttributes_t *userInfo = userInfoP;
+    intersection.location = HFSum(intersection.location, userInfo->baseOffset);
+    [userInfo->target addAttribute:node->attribute range:intersection];
+    return YES; /* continue transferring */
+}
 - (void)transferAttributesFromAttributeArray:(HFAnnotatedTreeByteRangeAttributeArray *)array range:(HFRange)range baseOffset:(unsigned long long)baseOffset {
     EXPECT_CLASS(array, HFAnnotatedTreeByteRangeAttributeArray);
     struct TransferAttributes_t info = {self, baseOffset};
-    applyFunctionForNodesInRange([array->atree rootNode], range, transferAttributes, &info, YES /* isRoot */);
+    [array walkNodesInRange:range withFunction:transferAttributes userInfo:&info];
 }
 
 - (BOOL)isEmpty {
@@ -572,7 +589,9 @@ static void attributesInRange(HFByteRangeAttributeArrayNode *node, HFRange range
 @implementation HFAnnotatedTreeByteRangeAttributeArrayEnumerator
 
 - (id)initWithNode:(HFByteRangeAttributeArrayNode *)val {
+    [super init];
     node = val;
+    return self;
 }
 
 - (id)nextObject {
