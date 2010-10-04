@@ -667,7 +667,16 @@ static inline Class preferredByteArrayClass(void) {
 	return range.location != ULLONG_MAX || range.length != ULLONG_MAX;
     }
     else if (action == @selector(deleteBookmark:)) {
-	return [self selectedBookmark] != NSNotFound;
+	NSInteger selectedBookmark = [self selectedBookmark];
+	NSString *newTitle;
+	if (selectedBookmark == NSNotFound) {
+	    newTitle = NSLocalizedString(@"Remove Bookmark", @"Menu item title for remove bookmark");
+	}
+	else {
+	    newTitle = [NSString stringWithFormat:NSLocalizedString(@"Remove Bookmark %ld", @"Menu item title for removing a particular bookmark"), selectedBookmark];
+	}
+	[item setTitle:newTitle];
+	return selectedBookmark != NSNotFound;
     }
     else return [super validateMenuItem:item];
 }
