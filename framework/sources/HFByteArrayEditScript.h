@@ -34,6 +34,11 @@ struct HFEditInstruction_t {
     HFRange sourceCacheRange;
     HFRange destCacheRange;
     
+    long *forwardsVector;
+    long *backwardsVector;
+    
+    NSMutableData *altInsns;
+    
     __strong struct HFEditInstruction_t *insns;
     size_t insnCount;
 }
