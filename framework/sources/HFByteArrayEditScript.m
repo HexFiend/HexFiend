@@ -58,43 +58,32 @@ static inline enum HFEditInstructionType HFByteArrayInstructionType(struct HFEdi
 
 static inline const unsigned char *getCachedBytes(HFByteArray *array, unsigned long arrayLen, HFRange range, NSMutableData *data, HFRange *cacheRange) {
     HFASSERT(range.length <= READ_AMOUNT);
-    HFRange newCacheRange = *cacheRange;
     if (! HFRangeIsSubrangeOfRange(range, *cacheRange)) {
+	
+	/* Compute how to extend the cached range around the given range */
+	unsigned long remainingCacheAmount = CACHE_AMOUNT, rightExtension, leftExtension;
+	rightExtension = MIN(remainingCacheAmount, arrayLen - range.location);
+	remainingCacheAmount -= rightExtension;
+	leftExtension = MIN(remainingCacheAmount, range.location);
+	remainingCacheAmount -= leftExtension;
+	
+	cacheRange->location = range.location - leftExtension;
+	cacheRange->length = leftExtension + rightExtension;
+	
 	NSLog(@"Blown cache: %@ / %@", HFRangeToString(range), HFRangeToString(*cacheRange));
-        newCacheRange.location = range.location - MIN(range.location, READ_AMOUNT);
-        newCacheRange.length = MIN(CACHE_AMOUNT, arrayLen - newCacheRange.location);
-        [array copyBytes:[data mutableBytes] range:newCacheRange];
-        *cacheRange = newCacheRange;
+        [array copyBytes:[data mutableBytes] range:*cacheRange];
         HFASSERT(HFRangeIsSubrangeOfRange(range, *cacheRange));
     }
     return range.location - cacheRange->location + (const unsigned char *)[data bytes];
 }
 
-static unsigned long compute_forwards_snake_length_old(HFByteArrayEditScript *self, HFByteArray *a, unsigned long a_offset, unsigned long a_len, HFByteArray *b, unsigned long b_offset, unsigned long b_len) {
-    if (a_offset >= a_len || b_offset >= b_len) return 0;
-    unsigned long i, alreadyRead = 0, remainingToRead = MIN(a_len - a_offset, b_len - b_offset);
-    while (remainingToRead > 0) {
-        unsigned long amountToRead = MIN(READ_AMOUNT, remainingToRead);
-        const unsigned char *a_buff = getCachedBytes(a, a_len, HFRangeMake(a_offset + alreadyRead, amountToRead), self->sourceCache, &self->sourceCacheRange);
-        const unsigned char *b_buff = getCachedBytes(b, b_len, HFRangeMake(b_offset + alreadyRead, amountToRead), self->destCache, &self->destCacheRange);
-        for (i=0; i < amountToRead; i++) {
-            if (a_buff[i] != b_buff[i]) break;
-        }
-        alreadyRead += i;
-        remainingToRead -= i;
-        if (i < amountToRead) break;
-    }
-    return alreadyRead;
-}
-
 static unsigned long compute_forwards_snake_length(HFByteArrayEditScript *self, HFByteArray *a, unsigned long a_offset, unsigned long a_len, HFByteArray *b, unsigned long b_offset, unsigned long b_len) {
     if (a_len == 0 || b_len == 0) return 0;
-    if (a_offset >= a_len || b_offset >= b_len) return 0;
-    unsigned long i, alreadyRead = 0, remainingToRead = MIN(a_len - a_offset, b_len - b_offset);
+    unsigned long i, alreadyRead = 0, remainingToRead = MIN(a_len, b_len);
     while (remainingToRead > 0) {
         unsigned long amountToRead = MIN(READ_AMOUNT, remainingToRead);
-        const unsigned char *a_buff = getCachedBytes(a, a_len, HFRangeMake(a_offset + alreadyRead, amountToRead), self->sourceCache, &self->sourceCacheRange);
-        const unsigned char *b_buff = getCachedBytes(b, b_len, HFRangeMake(b_offset + alreadyRead, amountToRead), self->destCache, &self->destCacheRange);
+        const unsigned char *a_buff = getCachedBytes(a, [a length], HFRangeMake(a_offset + alreadyRead, amountToRead), self->sourceCache, &self->sourceCacheRange);
+        const unsigned char *b_buff = getCachedBytes(b, [b length], HFRangeMake(b_offset + alreadyRead, amountToRead), self->destCache, &self->destCacheRange);
         for (i=0; i < amountToRead; i++) {
             if (a_buff[i] != b_buff[i]) break;
         }
@@ -152,7 +141,6 @@ struct Snake_t {
     HFASSERT(HFMaxRange(rangeInA) <= [source length]);
     HFASSERT(HFMaxRange(rangeInB) <= [destination length]);
     
-    
     HFByteArray * const a = source, * const b = destination;    
     long aLen = ll2l(rangeInA.length), bLen = ll2l(rangeInB.length);
     long aStart = ll2l(rangeInA.location), bStart = ll2l(rangeInB.location);
@@ -170,8 +158,6 @@ struct Snake_t {
     long maxSnakeLength = 0;
     
     for (long D=0; D <= maxD; D++) {
-	//printf("D: %ld / %ld\n", D, maxD);
-//	for (long k = downK - D; k <= downK + D; k += 2) {
 	for (long k = -D; k <= D; k += 2) {
 	    /* Forward path */
 	    long x, y;
@@ -183,7 +169,7 @@ struct Snake_t {
 		x = forwardsVector[k - 1] + 1; // right
 	    }
 	    y = x - k;
-	    
+	    	    
 	    // find the end of the furthest reaching forward D-path in diagonal k.
 	    long snakeLength = 0;
 	    if (x < aLen && y < bLen) {
@@ -211,19 +197,7 @@ struct Snake_t {
 		    }
 		}
 	    }
-		
-#if 0
-	    if (oddDelta && k >= (delta - (D - 1)) && k <= delta + (D - 1)) {
-		if (backwardsVector[k] <= forwardsVector[k]) {
-		    struct Snake_t result;
-		    result.startX = rangeInA.location + forwardsVector[k] - snakeLength;
-		    result.startY = rangeInB.location + forwardsVector[k] - k - snakeLength;
-		    result.middleSnakeLength = snakeLength;
-		    result.maxSnakeLength = maxSnakeLength;
-		    return result;
-		}
-	    }
-#endif
+
 	    
 	    /* Reverse path.  Here k = 0 corresponds to the lower right corner. */
 	    for (long k = -D; k <= D; k += 2) {
@@ -260,7 +234,7 @@ struct Snake_t {
 			    /* Success.  Here, x is the "negative delta" from the max of rangeInA */
 			    struct Snake_t result;
 			    result.startX = HFMaxRange(rangeInA) - backwardsVector[k];
-			    result.startY = HFMaxRange(rangeInB) - (backwardsVector[k] - kInForwards);
+			    result.startY = HFMaxRange(rangeInB) - (backwardsVector[k] - k);
 			    result.middleSnakeLength = snakeLength;
 			    result.maxSnakeLength = maxSnakeLength;
 			    return result;			    
@@ -268,20 +242,6 @@ struct Snake_t {
 		    }
 		    
 		}
-		
-#if 0
-		if (! oddDelta && k + delta >= -D && k + delta <= D ) {
-		    if (backwardsVector[k] <= forwardsVector[k]) {
-			struct Snake_t result;
-			result.startX = backwardsVector[k];
-			result.startY = backwardsVector[k] - k;
-			result.middleSnakeLength = snakeLength;
-			result.maxSnakeLength = maxSnakeLength;
-			return result;
-		    }
-		}
-#endif
-		
 	    }
 	}
     }
@@ -301,6 +261,8 @@ static void appendInstruction(HFByteArrayEditScript *self, HFRange rangeInA, HFR
 }
 
 - (void)computeLongestCommonSubsequenceFromRangeInA:(HFRange)rangeInA toRangeInB:(HFRange)rangeInB {
+    HFASSERT(HFRangeIsSubrangeOfRange(rangeInA, HFRangeMake(0, [source length])));
+    HFASSERT(HFRangeIsSubrangeOfRange(rangeInB, HFRangeMake(0, [destination length])));
     if (rangeInA.length == 0 || rangeInB.length == 0) {
 	appendInstruction(self, rangeInA, rangeInB);
 	return;
@@ -326,15 +288,17 @@ static void appendInstruction(HFByteArrayEditScript *self, HFRange rangeInA, HFR
 	return;
     }
     
-    
     NSLog(@"Compute snake from %@ to %@", HFRangeToString(rangeInA), HFRangeToString(rangeInB));
     struct Snake_t middleSnake = [self computeMiddleSnakeFromRangeInA:rangeInA toRangeInB:rangeInB];
     
-    /* Snakes must move the same horizontal and vertical distance */
     HFASSERT(middleSnake.middleSnakeLength >= 0);
+    HFASSERT(middleSnake.startX >= rangeInA.location);
+    HFASSERT(middleSnake.startY >= rangeInB.location);
+    HFASSERT(HFSum(middleSnake.startX, middleSnake.middleSnakeLength) <= HFMaxRange(rangeInA));
+    HFASSERT(HFSum(middleSnake.startY, middleSnake.middleSnakeLength) <= HFMaxRange(rangeInB));
     NSLog(@"Middle snake: %lu -> %lu, %lu -> %lu", middleSnake.startX, middleSnake.startX + middleSnake.middleSnakeLength, middleSnake.startY, middleSnake.startY + middleSnake.middleSnakeLength);
     
-    if (middleSnake.maxSnakeLength == 0) {
+    if (0 && middleSnake.maxSnakeLength == 0) {
 	/* There were no non-empty snakes at all, so the entire range must be a diff */
 	appendInstruction(self, rangeInA, rangeInB);
 	return;
@@ -342,13 +306,13 @@ static void appendInstruction(HFByteArrayEditScript *self, HFRange rangeInA, HFR
     
     HFRange prefixRangeA, prefixRangeB, suffixRangeA, suffixRangeB;
 
-    prefixRangeA = HFRangeMake(rangeInA.location, middleSnake.startX);
-    prefixRangeB = HFRangeMake(rangeInB.location, middleSnake.startY);
+    prefixRangeA = HFRangeMake(rangeInA.location, middleSnake.startX - rangeInA.location);
+    prefixRangeB = HFRangeMake(rangeInB.location, middleSnake.startY - rangeInB.location);
     
-    suffixRangeA.location = middleSnake.startX + middleSnake.middleSnakeLength;
+    suffixRangeA.location = HFSum(middleSnake.startX, middleSnake.middleSnakeLength);
     suffixRangeA.length = HFMaxRange(rangeInA) - suffixRangeA.location;
     
-    suffixRangeB.location = middleSnake.startY + middleSnake.middleSnakeLength;
+    suffixRangeB.location = HFSum(middleSnake.startY, middleSnake.middleSnakeLength);
     suffixRangeB.length = HFMaxRange(rangeInB) - suffixRangeB.location;
     
     if (prefixRangeA.length > 0 || prefixRangeB.length > 0) {
@@ -548,7 +512,6 @@ static BOOL merge_instruction_old(struct HFEditInstruction_t *left, const struct
     size_t numIsns = [self computeGraph:&paths];
     [self generateInstructions:paths count:numIsns diagonal:(long)[source length] - (long)[destination length]];
     free_paths(paths);
-    [self mergeInstructions];
 #else
     altInsns = [[NSMutableData alloc] init];
     [self computeLongestCommonSubsequenceFromRangeInA:HFRangeMake(0, a_len) toRangeInB:HFRangeMake(0, b_len)];
@@ -558,6 +521,7 @@ static BOOL merge_instruction_old(struct HFEditInstruction_t *left, const struct
     [altInsns release];
     altInsns = nil;
 #endif
+    [self mergeInstructions];
     
     forwardsVector = NULL;
     backwardsVector = NULL;
