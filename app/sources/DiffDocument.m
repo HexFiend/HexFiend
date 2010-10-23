@@ -306,7 +306,7 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
 	/* Scroll our table view to show the instruction.  If our focused instruction is visible, scroll to that; otherwise scroll to the first visible one. */
 	NSRange visibleInstructions = [self visibleInstructionRangeInController:changedController];
 	
-	NSLog(@"visible instructions: %@", NSStringFromRange(visibleInstructions));
+//	NSLog(@"visible instructions: %@", NSStringFromRange(visibleInstructions));
 	if (visibleInstructions.location != NSNotFound) {
 	    [diffTable scrollRowToVisible:NSMaxRange(visibleInstructions)];
 	    [diffTable scrollRowToVisible:visibleInstructions.location];

@@ -1186,7 +1186,14 @@
 			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "HexFiend_2" */;
 			compatibilityVersion = "Xcode 3.0";
+			developmentRegion = English;
 			hasScannedForEncodings = 1;
+			knownRegions = (
+				English,
+				Japanese,
+				French,
+				German,
+			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* HexFiend_2 */;
 			projectDirPath = "";
 			projectRoot = ../..;
@@ -1575,6 +1582,7 @@
 				"MACOSX_DEPLOYMENT_TARGET[arch=x86_64]" = 10.5;
 				PREBINDING = NO;
 				"SDKROOT[arch=ppc64]" = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
+				VALID_ARCHS = "armv6 armv7 i386 x86_64";
 			};
 			name = Release;
 		};
@@ -1858,6 +1866,7 @@
 				ONLY_ACTIVE_ARCH_PRE_XCODE_3_1 = "$(NATIVE_ARCH_ACTUAL)";
 				PREBINDING = NO;
 				"SDKROOT[arch=ppc64]" = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
+				VALID_ARCHS = "armv6 armv7 i386 x86_64";
 			};
 			name = "Debug-NoUnitTests-NoAnalyze";
 		};
@@ -2170,6 +2179,7 @@
 				"MACOSX_DEPLOYMENT_TARGET[arch=x86_64]" = 10.5;
 				PREBINDING = NO;
 				"SDKROOT[arch=ppc64]" = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
+				VALID_ARCHS = "armv6 armv7 i386 x86_64";
 			};
 			name = "Release-GC";
 		};
@@ -2282,6 +2292,7 @@
 				PREBINDING = NO;
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				"SDKROOT[arch=ppc64]" = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
+				VALID_ARCHS = "armv6 armv7 i386 x86_64";
 			};
 			name = "Debug-NoUnitTests";
 		};
@@ -2403,6 +2414,7 @@
 				PREBINDING = NO;
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				"SDKROOT[arch=ppc64]" = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
+				VALID_ARCHS = "armv6 armv7 i386 x86_64";
 			};
 			name = "Debug-UnitTests";
 		};
@@ -2524,6 +2536,7 @@
 				PREBINDING = NO;
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				"SDKROOT[arch=ppc64]" = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
+				VALID_ARCHS = "armv6 armv7 i386 x86_64";
 			};
 			name = "Debug-UnitTests-Optimized";
 		};

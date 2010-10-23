@@ -99,10 +99,10 @@
 	remaining.length -= applied1;
 	remaining.location += applied1;
 	amt++;
-	[pool release];
+	[pool drain];
 	pool = [[NSAutoreleasePool alloc] init];
     }
-    [pool release];
+    [pool drain];
     return result;
 }
 
