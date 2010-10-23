@@ -126,20 +126,11 @@ static inline unsigned long long HFMaxRange(HFRange a) {
 
 /*! Returns YES if needle is fully contained within haystack.  Equal ranges are always considered to be subranges of each other (even if they are empty).  Furthermore, a zero length needle at the end of haystack is considered a subrange - for example, {6, 0} is a subrange of {3, 3}. */
 static inline BOOL HFRangeIsSubrangeOfRange(HFRange needle, HFRange haystack) {
-    // handle the case where our needle starts before haystack, or is longer than haystack.  These conditions are important to prevent overflow in future checks.
+    // If needle starts before haystack, or if needle is longer than haystack, it is not a subrange of haystack
     if (needle.location < haystack.location || needle.length > haystack.length) return NO;
     
-    // Equal ranges are considered to be subranges.  This is an important check, because two equal ranges of zero length are considered to be subranges.
-    if (HFRangeEqualsRange(needle, haystack)) return YES;
-    
-    // handle the case where needle is a zero-length range at the very end of haystack.  We consider this a subrange - that is, (6, 0) is a subrange of (3, 3)
-    // rearrange the expression needle.location > haystack.location + haystack.length in a way that cannot overflow
-    if (needle.location - haystack.location > haystack.length) return NO;
-    
-    // rearrange expression: (needle.location + needle.length > haystack.location + haystack.length) in a way that cannot produce overflow
-    if (needle.location - haystack.location > haystack.length - needle.length) return NO;
-    
-    return YES;
+    // Their difference in lengths determines the maximum difference in their start locations.  We know that these expressions cannot overflow because of the above checks.
+    return haystack.length - needle.length >= needle.location - haystack.location;
 }
 
 /*! Returns YES if the given ranges intersect. Two ranges are considered to intersect if they share at least one index in common.  Thus, zero-length ranges do not intersect anything. */

@@ -431,7 +431,15 @@ static inline Class preferredByteArrayClass(void) {
 
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    [[self representers] makeObjectsPerformSelector:@selector(release)];
+    [lineCountingRepresenter release];
+    
+    [hexRepresenter release];
+    [asciiRepresenter release];
+    [scrollRepresenter release];
+    [layoutRepresenter release];
+    [statusBarRepresenter release];
+    [dataInspectorRepresenter release];
+    
     [controller release];
     [bannerView release];
     [saveError release];

@@ -9,6 +9,7 @@
 #import "DiffDocument.h"
 #import "DiffOverlayView.h"
 #import "DataInspectorRepresenter.h"
+#import "HFDocumentOperationView.h"
 #import <HexFiend/HexFiend.h>
 
 @implementation DiffDocument
@@ -225,6 +226,7 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
     [rightBytes release];
     [leftFileName release];
     [rightFileName release];
+    [diffComputationView release];
     [super dealloc];
 }
 
@@ -361,6 +363,41 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
     }
 }
 
+- (id)threadedStartComputeDiff:(HFProgressTracker *)tracker {
+    NSDictionary *userInfo = [tracker userInfo];
+    HFByteArray *left = [userInfo objectForKey:@"left"];
+    HFByteArray *right = [userInfo objectForKey:@"right"];
+    return [HFByteArrayEditScript editScriptFromSource:left toDestination:right trackingProgress:tracker];
+}
+
+- (void)computeDiffEnded:(HFByteArrayEditScript *)script {
+    //script may be nil if we cancelled
+    if (! script) {
+	[self close];
+    } else {
+	editScript = [script retain];
+	[self showInstructionsFromEditScript];	
+    }
+}
+
+- (void)kickOffComputeDiff {
+    HFASSERT(! [diffComputationView operationIsRunning]);
+    
+    NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+			      leftBytes, @"left",
+			      rightBytes, @"right",
+			      nil];
+    
+    struct HFDocumentOperationCallbacks callbacks = {
+	.target = self,
+	.userInfo = userInfo,
+	.startSelector = @selector(threadedStartComputeDiff:),
+	.endSelector = @selector(computeDiffEnded:)
+    };
+    
+    [diffComputationView startOperationWithCallbacks:callbacks];
+}
+
 - (void)windowControllerDidLoadNib:(NSWindowController *)windowController {
     [super windowControllerDidLoadNib:windowController];
     NSWindow *window = [self window];
@@ -393,9 +430,12 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
     [scroller setAutoresizingMask:NSViewHeightSizable | NSViewMinXMargin];
     [contentView addSubview:scroller];
     
-    editScript = [[HFByteArrayEditScript alloc] initWithDifferenceFromSource:leftBytes toDestination:rightBytes];
-    [self showInstructionsFromEditScript];
-    
+    if (! diffComputationView) {
+	diffComputationView = [self newOperationViewForNibName:@"DiffComputationBanner" displayName:@"Diffing"];
+    }
+    [self prepareBannerWithView:diffComputationView withTargetFirstResponder:nil];
+    [self kickOffComputeDiff];
+      
     [self synchronizeController:[leftTextView controller] properties:(HFControllerPropertyBits)-1];
     [self synchronizeController:[rightTextView controller] properties:(HFControllerPropertyBits)-1];
     

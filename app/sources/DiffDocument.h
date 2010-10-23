@@ -15,6 +15,8 @@
     DiffOverlayView *overlayView;
     NSUInteger focusedInstructionIndex;
     NSString *title;
+    
+    HFDocumentOperationView *diffComputationView;
 }
 
 - (id)initWithLeftByteArray:(HFByteArray *)left rightByteArray:(HFByteArray *)right;

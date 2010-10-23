@@ -166,6 +166,7 @@
 		D0B426EA0FF8D15C00DF27E5 /* HFTextViewInspector.nib in Resources */ = {isa = PBXBuildFile; fileRef = D0B426E90FF8D15C00DF27E5 /* HFTextViewInspector.nib */; };
 		D0B429410FF8F01B00DF27E5 /* HexFiend.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = D01E7BB80CDC530C00943F9E /* HexFiend.framework */; };
 		D0B429DE0FF8F1F500DF27E5 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
+		D0B47FEF1272427B0095120E /* DiffComputationBanner.xib in Resources */ = {isa = PBXBuildFile; fileRef = D0B47FED1272427B0095120E /* DiffComputationBanner.xib */; };
 		D0B7E2580D5AEEBB007874ED /* HFTextFieldInspector.nib in Resources */ = {isa = PBXBuildFile; fileRef = D0B7E2570D5AEEBB007874ED /* HFTextFieldInspector.nib */; };
 		D0B7E28A0D5AF0DF007874ED /* InterfaceBuilderKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0B7E2890D5AF0DF007874ED /* InterfaceBuilderKit.framework */; };
 		D0B7E3750D5C5B3A007874ED /* HFByteArray_FindReplace.m in Sources */ = {isa = PBXBuildFile; fileRef = D0B7E3380D5C50EA007874ED /* HFByteArray_FindReplace.m */; };
@@ -450,6 +451,7 @@
 		D0B426C20FF8CFFC00DF27E5 /* HFTextViewInspector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFTextViewInspector.h; path = ib_plugin/sources/HFTextViewInspector.h; sourceTree = "<group>"; };
 		D0B426C30FF8CFFC00DF27E5 /* HFTextViewInspector.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFTextViewInspector.m; path = ib_plugin/sources/HFTextViewInspector.m; sourceTree = "<group>"; };
 		D0B426E90FF8D15C00DF27E5 /* HFTextViewInspector.nib */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = HFTextViewInspector.nib; path = ib_plugin/resources/HFTextViewInspector.nib; sourceTree = "<group>"; };
+		D0B47FEE1272427B0095120E /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/DiffComputationBanner.xib; sourceTree = "<group>"; };
 		D0B7E2570D5AEEBB007874ED /* HFTextFieldInspector.nib */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = HFTextFieldInspector.nib; path = ib_plugin/resources/HFTextFieldInspector.nib; sourceTree = "<group>"; };
 		D0B7E2890D5AF0DF007874ED /* InterfaceBuilderKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = InterfaceBuilderKit.framework; path = Library/Frameworks/InterfaceBuilderKit.framework; sourceTree = DEVELOPER_DIR; };
 		D0B7E3380D5C50EA007874ED /* HFByteArray_FindReplace.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFByteArray_FindReplace.m; path = framework/sources/HFByteArray_FindReplace.m; sourceTree = "<group>"; };
@@ -595,6 +597,7 @@
 				D04A6B95100EA73800704963 /* JumpToOffsetBanner.xib */,
 				D04A6B78100EA4BC00704963 /* FindReplaceBanner.xib */,
 				D04A6B69100EA47C00704963 /* SaveBanner.xib */,
+				D0B47FED1272427B0095120E /* DiffComputationBanner.xib */,
 				D018F137107AB64900AE805F /* DiffDocument.xib */,
 			);
 			name = Resources;
@@ -1216,6 +1219,7 @@
 				D04A6BAB100EA7B800704963 /* MainMenu.xib in Resources */,
 				D018F139107AB64900AE805F /* DiffDocument.xib in Resources */,
 				D09163CA123857BB009D7D47 /* OpenPathDialog.xib in Resources */,
+				D0B47FEF1272427B0095120E /* DiffComputationBanner.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1513,6 +1517,14 @@
 			);
 			name = MainMenu.nib;
 			path = ../..;
+			sourceTree = "<group>";
+		};
+		D0B47FED1272427B0095120E /* DiffComputationBanner.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D0B47FEE1272427B0095120E /* English */,
+			);
+			name = DiffComputationBanner.xib;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */

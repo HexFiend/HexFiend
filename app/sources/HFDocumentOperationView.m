@@ -41,10 +41,13 @@ static NSString *sNibName;
             if (! otherObjects) otherObjects = [NSMutableArray array];
             [otherObjects addObject:obj];
         }
-        [obj autorelease]; //balance the retain from loading the nib
+	/* Balance the retain acquired by virtue of being a top level object in a nib.  Call objc_msgSend directly so that the static analyzer can't see it, because the static analyzer doesn't know about top level objects from nibs. */
+	objc_msgSend(obj, @selector(autorelease));
     }
     HFASSERT(resultObject != nil);
     if (otherObjects != nil) [resultObject setOtherTopLevelObjects:otherObjects];
+    
+    /* This object is NOT sent autorelease too many times, no matter what the analyzer says, because it has an extra retain by virtue of being a nib top level object. */
     return resultObject;
 }
 

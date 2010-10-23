@@ -14,7 +14,7 @@
 
   HFProgressTracker is a class that helps handle progress indication and cancellation for long running threaded operations, while imposing minimal overhead.  Operations such as Find/Replace or Save take an HFProgressTracker to provide cancellation and progress reporting.
 
-  The thread is expected to write directly into the public currentProgress field (with atomic functions) as it makes progress.  Once beginTrackingProgress is called, the HFProgressTracker will poll currentProgress until endTrackingProgress is called.
+  The thread is expected to write directly into the public currentProgress field (perhaps with atomic functions) as it makes progress.  Once beginTrackingProgress is called, the HFProgressTracker will poll currentProgress until endTrackingProgress is called.
 
   The thread is also expected to read directly from cancelRequested, which is set by the requestCancel method.  If requestCancel is set, it should end the operation.
   
@@ -23,10 +23,7 @@
   On the client side, you can set a delegate. progressTracker: didChangeProgressTo: is called on your delegate at regular intervals in the main thread, as the progress changes.  Likewise, progressTrackerDidFinish: is called on the main thread after noteFinished: is called.
   
   There is also a progressIndicator property, which if set to an NSProgressIndicator will cause it to be updated regularly.
-  
-  To use HFProgressTracker as a client:
-  
-  
+    
 */
 
 @interface HFProgressTracker : NSObject {

@@ -436,7 +436,7 @@ static BOOL collectNodesWithAttribute(HFByteRangeAttributeArrayNode *node, HFRan
     /* We're going to remove these from the attributesToNodes set */
     NSMutableSet *allNodesWithAttribute = [attributesToNodes objectForKey:attributeName];
     
-    for (HFByteRangeAttributeArrayNode *node in nodesToDelete) {
+    FOREACH(HFByteRangeAttributeArrayNode *, node, nodesToDelete) {
 	
 	/* Remove from the corresponding attributesToNodes set */
 	[allNodesWithAttribute removeObject:node];
