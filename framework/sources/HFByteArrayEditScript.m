@@ -185,8 +185,8 @@ static inline const unsigned char *getCachedBytes(HFByteArrayEditScript *self, H
 
 static inline unsigned long compute_forwards_snake_length(HFByteArrayEditScript *self, HFByteArray *a, unsigned long a_offset, unsigned long a_len, HFByteArray *b, unsigned long b_offset, unsigned long b_len) {
     if (a_len == 0 || b_len == 0) return 0;
-    HFASSERT(a_len + a_offset <= sourceLength);
-    HFASSERT(b_len + b_offset <= destLength);
+    HFASSERT(a_len + a_offset <= self->sourceLength);
+    HFASSERT(b_len + b_offset <= self->destLength);
     unsigned long i, alreadyRead = 0, remainingToRead = MIN(a_len, b_len);
     const unsigned long long byteArrayLengthA = [a length], byteArrayLengthB = [b length];
     while (remainingToRead > 0) {
@@ -205,8 +205,8 @@ static inline unsigned long compute_forwards_snake_length(HFByteArrayEditScript 
 
 /* returns the backwards snake of length no more than MIN(a_len, b_len), starting at a_offset, b_offset (exclusive) */
 static inline unsigned long compute_backwards_snake_length(HFByteArrayEditScript *self, HFByteArray *a, unsigned long a_offset, unsigned long a_len, HFByteArray *b, unsigned long b_offset, unsigned long b_len) {
-    HFASSERT(a_offset <= sourceLength);
-    HFASSERT(b_offset <= destLength);
+    HFASSERT(a_offset <= self->sourceLength);
+    HFASSERT(b_offset <= self->destLength);
     HFASSERT(a_len <= a_offset);
     HFASSERT(b_len <= b_offset);
     unsigned long i, alreadyRead = 0, remainingToRead = MIN(a_len, b_len);

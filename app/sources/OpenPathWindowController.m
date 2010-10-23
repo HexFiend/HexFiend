@@ -8,6 +8,7 @@
 
 #import "OpenPathWindowController.h"
 #include <sys/stat.h>
+#include <objc/message.h>
 
 static inline BOOL isRunningOnLeopardOrLater(void) {
     return NSAppKitVersionNumber >= 949;
