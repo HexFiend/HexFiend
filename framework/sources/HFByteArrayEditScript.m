@@ -396,14 +396,14 @@ static struct Snake_t computeMiddleSnake_MaybeDirect(HFByteArrayEditScript *self
     GraphIndex_t *restrict forwardsVector = forwardsArray->ptr;
     GraphIndex_t *restrict backwardsVector = backwardsArray->ptr;
     
-    /* The length of the array is always big enough to write at index 1. */
-    forwardsVector[1] = 0;
-    backwardsVector[1] = 0;    
+    /* Initialize the vector.  Unlike the standard algorithm, we precompute and traverse the snake from the upper left (0, 0) and the lower right (aLen, bLen), so we know there's nothing to do there.  Thus we know that vector[0] is 0, so we initialize that and start at D = 1. */
+    forwardsVector[0] = 0;
+    backwardsVector[0] = 0;    
     
     /* Our result */
     struct Snake_t result;
     
-    for (long D=0; D <= maxD; D++) {
+    for (long D=1; D <= maxD; D++) {
 	//if (0 == (D % 256)) printf("%ld / %ld\n", D, maxD);
 	/* We will be indexing from -D to D, so reallocate if necessary.  It's a little sketchy that we check both forwardsArray->length and backwardsArray->length, which are usually the same size: this is just in case malloc_good_size returns something different for them. */
 	if ((size_t)D > forwardsArray->length || (size_t)D > backwardsArray->length) {
@@ -442,7 +442,6 @@ static struct Snake_t computeMiddleSnake_MaybeDirect(HFByteArrayEditScript *self
 	    }
 	}
     }
-    NSLog(@"Aw nuts");
     [NSException raise:NSInternalInconsistencyException format:@"Diff algorithm terminated unexpectedly"];
     return (struct Snake_t){0, 0, 0, 0};
 }

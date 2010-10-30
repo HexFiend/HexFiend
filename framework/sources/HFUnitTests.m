@@ -752,13 +752,13 @@ static void exception_thrown(const char *methodName, NSException *exception) {
     printf("done in %.02f seconds.\n", end - start);
 }
 
-+ (void)_runAllTests {
++ (void)runAllTests {
     CFAbsoluteTime start = CFAbsoluteTimeGetCurrent();
-    BOOL enableTest = YES;
+    BOOL enableTest = NO;
     if (enableTest) [self _runTest:"_testFastMemchr"];
     if (enableTest) [self _runTest:"_testRangeFunctions"];
     if (enableTest) [self _runTest:"_testByteArray"];
-    if (enableTest) [self _runTest:"_testByteArrayEditScripts"];
+    if (enableTest || 1) [self _runTest:"_testByteArrayEditScripts"];
     if (enableTest) [self _runTest:"_testTextInsertion"];
     if (enableTest) [self _runTest:"_testTextInsertion"];
     if (enableTest) [self _runTest:"_testObjectGraph"];
