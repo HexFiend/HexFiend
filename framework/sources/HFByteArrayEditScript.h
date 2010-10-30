@@ -51,7 +51,7 @@ struct HFEditInstruction_t {
 }
 
 /*! Computes the edit script (differences) from src to dst.  This retains both src and dst, and if they are modified then the receiver will likely no longer function. You may optionally pass an HFProgressTracker for progress reporting and cancellation.  This returns nil if it was cancelled. */
-+ (HFByteArrayEditScript *)editScriptFromSource:(HFByteArray *)src toDestination:(HFByteArray *)dst trackingProgress:(HFProgressTracker *)progressTracker;
+- (id)initWithDifferenceFromSource:(HFByteArray *)src toDestination:(HFByteArray *)dst trackingProgress:(HFProgressTracker *)progressTracker;
 
 /*! Applies the receiver to an HFByteArray. */
 - (void)applyToByteArray:(HFByteArray *)byteArray;

@@ -6,7 +6,7 @@
 //  Copyright 2008 ridiculous_fish. All rights reserved.
 //
 
-#if ! NDEBUG
+#if HFUNIT_TESTS
 
 #import <HexFiend/HFTestHashing.h>
 #import <HexFiend/HFByteArray.h>

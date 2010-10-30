@@ -18,6 +18,10 @@
     return view;
 }
 
+- (BOOL)isViewLoaded {
+    return !! view;
+}
+
 - (void)initializeView {
     
 }

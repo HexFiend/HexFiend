@@ -27,6 +27,9 @@
 }
 
 - (void)dealloc {
+    if ([self isViewLoaded]) {
+	[[self view] clearRepresenter];
+    }
     [rowBackgroundColors release];
     [super dealloc];
 }

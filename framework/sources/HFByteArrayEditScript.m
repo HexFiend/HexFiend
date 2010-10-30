@@ -27,10 +27,21 @@ struct GrowableArray_t {
     GraphIndex_t * restrict ptr;
 };
 
-static void GrowableArray_reallocate(struct GrowableArray_t *array, size_t newLength) {
-    /* Don't shrink us.  In practice we shouldn't try to. */
-    if (newLength <= array->length) return;
+static void GrowableArray_reallocate(struct GrowableArray_t *array, size_t minLength, size_t maxLength) {
+    /* Since 'length' indicates that we can index in the range [-length, length], we require that (length * 2 - 1) <= MAX(size_t).  Since that's a little tricky to calculate, we require instead that length <= MAX(size_t) / 2, which is slightly more strict  */
+    const size_t ultimateMaxLength = ((size_t)(-1)) / 2;
+    HFASSERT(minLength <= ultimateMaxLength);
+    maxLength = MIN(maxLength, ultimateMaxLength);
     
+    /* Don't shrink us.  In practice we shouldn't try to. */
+    if (minLength <= array->length) return;
+    
+    /* The new length is twice the min length */
+    size_t newLength = HFSumIntSaturate(minLength, minLength);
+        
+    /* But don't exceed the maxLength */
+    newLength = MIN(newLength, maxLength);
+        
     /* We support indexing in the range [-newLength, newLength], which means we need space for 2 * newLength + 1 elements.  And maybe malloc can give us more for free! */
     size_t bufferLength = malloc_good_size((newLength * 2 + 1) * sizeof *array->ptr);
     
@@ -40,8 +51,10 @@ static void GrowableArray_reallocate(struct GrowableArray_t *array, size_t newLe
     /* Allocate our memory */
     GraphIndex_t *newPtr = check_malloc(bufferLength);
     
+//    NSLog(@"Allocation: %lu / %lu", minLength, newLength);
+    
 #if ! NDEBUG
-    /* When not debugging, set it all to -1 to catch bad reads */
+    /* When not optimizing, set it all to -1 to catch bad reads */
     memset(newPtr, -1, bufferLength);
 #endif
     
@@ -51,9 +64,9 @@ static void GrowableArray_reallocate(struct GrowableArray_t *array, size_t newLe
     if (array->length > 0) {
 	/* Copy the data over the center.  For the source, imagine array->length is 3.  Then the buffer looks like -3, -2, -1, 0, 1, 2, 3 with array->ptr pointing at 0.  Thus we subtract 3 to get to the start of the buffer, and the length is 2 * array->length + 1.  For the destination, backtrack the same amount. */
 
-	memcpy(newPtr - array->length, array->ptr - array->length, 2 * array->length + 1);
+	memcpy(newPtr - array->length, array->ptr - array->length, (2 * array->length + 1) * sizeof *array->ptr);
 	
-	/* Free the old pointer.  Maybe this frees NUL, which is fine. */
+	/* Free the old pointer.  Maybe this frees NULL, which is fine. */
 	free(array->ptr - array->length);
     }
     
@@ -120,12 +133,67 @@ static inline BOOL smallRangeIsSubrangeOfSmallRange(unsigned long long needleLoc
     return haystackLength - needleLength >= needleLocation - haystackLocation;
 }
 
-#define READ_AMOUNT 1024
-#define CACHE_AMOUNT (64 * READ_AMOUNT)
+/* SSE optimized versions of difference matching */
+#if (defined(__i386__) || defined(__x86_64__))
+#include <xmmintrin.h>
+
+static inline size_t match_forwards(const unsigned char * restrict a, const unsigned char * restrict b, size_t length) {
+    size_t i;
+    for (i=0; i < length; i+=16) {
+	__m128i aVec = _mm_loadu_si128((const __m128i *)a);
+	__m128i bVec = _mm_loadu_si128((const __m128i *)b);
+	__m128i cmpVec = _mm_cmpeq_epi8(aVec, bVec);
+	/* cmpVec now has -1 anywhere aVec and bVec differ */
+	
+	short cmpRes = _mm_movemask_epi8(cmpVec);
+	/* cmpRes's low 16 bits correspond to the upper bit of each byte in cmpVec */
+	
+	if (cmpRes != (short)0xFFFF) {
+	    /* Some bit is zero, so we have a non-match.  Find the index of the lowest zero bit.  If it's past the end, then return length.*/
+	    int lowBitIdx = __builtin_ffs(~cmpRes);
+	    return MIN(i + lowBitIdx - 1, length);
+	}
+	a += 16;
+	b += 16;
+    }
+    return length;
+}
+
+static inline size_t match_backwards(const unsigned char * restrict a, const unsigned char * restrict b, size_t length) {
+    size_t i = length;
+    while (i > 0 && a[i-1] == b[i-1]) {
+	i--;
+    }
+    return length - i;
+}
+
+#else
+
+/* Non-optimized reference versions of the difference matching */
+static inline size_t match_forwards(const unsigned char * restrict a, const unsigned char * restrict b, size_t length) {
+    size_t i = 0;
+    while (i < length && a[i] == b[i]) {
+	i++;
+    }
+    return i;
+}
+
+static inline size_t match_backwards(const unsigned char * restrict a, const unsigned char * restrict b, size_t length) {
+    size_t i = length;
+    while (i > 0 && a[i-1] == b[i-1]) {
+	i--;
+    }
+    return length - i;
+}
+
+#endif
+
+#define READ_AMOUNT (1024 * 32)
+#define CACHE_AMOUNT (4 * READ_AMOUNT)
+
 
 /* Returns a pointer to bytes in the given range in the given array, whose length is arrayLen.  Here we avoid using HFRange because compilers are not good at optimizing structs. */
 static inline const unsigned char *getCachedBytes(HFByteArrayEditScript *self, HFByteArray *array, unsigned long long arrayLen, unsigned long long rangeLocation, unsigned long rangeLength, unsigned int cacheIndex) {
-    HFASSERT(rangeLength <= READ_AMOUNT);
     HFASSERT(rangeLength <= CACHE_AMOUNT);
     HFASSERT(HFSum(rangeLocation, rangeLength) <= arrayLen);
     HFASSERT(cacheIndex < 4);
@@ -189,21 +257,18 @@ static inline const unsigned char *getCachedBytes(HFByteArrayEditScript *self, H
 }
 
 static inline unsigned long compute_forwards_snake_length(HFByteArrayEditScript *self, HFByteArray *a, unsigned long a_offset, unsigned long a_len, HFByteArray *b, unsigned long b_offset, unsigned long b_len) {
-    if (a_len == 0 || b_len == 0) return 0;
+    HFASSERT(a_len > 0 && b_len > 0);
     HFASSERT(a_len + a_offset <= self->sourceLength);
     HFASSERT(b_len + b_offset <= self->destLength);
-    unsigned long i, alreadyRead = 0, remainingToRead = MIN(a_len, b_len);
-    const unsigned long long byteArrayLengthA = [a length], byteArrayLengthB = [b length];
+    unsigned long alreadyRead = 0, remainingToRead = MIN(a_len, b_len);
     while (remainingToRead > 0) {
         unsigned long amountToRead = MIN(READ_AMOUNT, remainingToRead);
-        const unsigned char *a_buff = getCachedBytes(self, a, byteArrayLengthA, a_offset + alreadyRead, amountToRead, SourceForwards);
-        const unsigned char *b_buff = getCachedBytes(self, b, byteArrayLengthB, b_offset + alreadyRead, amountToRead, DestForwards);
-        for (i=0; i < amountToRead; i++) {
-            if (a_buff[i] != b_buff[i]) break;
-        }
-        alreadyRead += i;
-        remainingToRead -= i;
-        if (i < amountToRead) break;
+        const unsigned char *a_buff = getCachedBytes(self, a, self->sourceLength, a_offset + alreadyRead, amountToRead, SourceForwards);
+        const unsigned char *b_buff = getCachedBytes(self, b, self->destLength, b_offset + alreadyRead, amountToRead, DestForwards);
+	unsigned long matchLen = match_forwards(a_buff, b_buff, amountToRead);
+        alreadyRead += matchLen;
+        remainingToRead -= matchLen;
+        if (matchLen < amountToRead) break;
     }
     return alreadyRead;
 }
@@ -214,18 +279,15 @@ static inline unsigned long compute_backwards_snake_length(HFByteArrayEditScript
     HFASSERT(b_offset <= self->destLength);
     HFASSERT(a_len <= a_offset);
     HFASSERT(b_len <= b_offset);
-    unsigned long i, alreadyRead = 0, remainingToRead = MIN(a_len, b_len);
+    unsigned long alreadyRead = 0, remainingToRead = MIN(a_len, b_len);
     while (remainingToRead > 0) {
         unsigned long amountToRead = MIN(READ_AMOUNT, remainingToRead);
 	const unsigned char *a_buff = getCachedBytes(self, a, self->sourceLength, a_offset - alreadyRead - amountToRead, amountToRead, SourceBackwards);
 	const unsigned char *b_buff = getCachedBytes(self, b, self->destLength, b_offset - alreadyRead - amountToRead, amountToRead, DestBackwards);
-        i = amountToRead;
-        while (i > 0 && a_buff[i-1] == b_buff[i-1]) {
-            i--;
-        }
-        remainingToRead -= amountToRead - i;
-        alreadyRead += amountToRead - i;
-        if (i != 0) break; //found some non-matching byte
+	size_t matchLen = match_backwards(a_buff, b_buff, amountToRead);
+        remainingToRead -= matchLen;
+        alreadyRead += matchLen;
+        if (matchLen < amountToRead) break; //found some non-matching byte
     }
     return alreadyRead;
 }
@@ -248,10 +310,10 @@ struct Snake_t {
     long maxSnakeLength;
 };
 
-#if ! NDEBUG
-static void computeMiddleSnakeTraversal_NoOverlapCheck(HFByteArrayEditScript *self, BOOL forwards, long k, long D, GraphIndex_t *restrict vector, long aLen, long bLen, unsigned long long xOffset, unsigned long long yOffset) __attribute__((always_inline));
+#if NDEBUG
+static long computeMiddleSnakeTraversal(HFByteArrayEditScript *self, const unsigned char * restrict aBuff, const unsigned char * restrict bBuff, BOOL direct, BOOL forwards, long k, long D, GraphIndex_t *restrict vector, long aLen, long bLen, unsigned long long xOffset, unsigned long long yOffset, struct Snake_t * restrict outSnake) __attribute__((always_inline));
 #endif
-static void computeMiddleSnakeTraversal_NoOverlapCheck(HFByteArrayEditScript *self, BOOL forwards, long k, long D, GraphIndex_t *restrict vector, long aLen, long bLen, unsigned long long xOffset, unsigned long long yOffset) {
+static long computeMiddleSnakeTraversal(HFByteArrayEditScript *self, const unsigned char * restrict aBuff, const unsigned char * restrict bBuff, BOOL direct, BOOL forwards, long k, long D, GraphIndex_t *restrict vector, long aLen, long bLen, unsigned long long xOffset, unsigned long long yOffset, struct Snake_t * restrict outSnake) {
     long x, y;
     
     /* k-1 represents considering a movement from the left, while k + 1 represents considering a movement from above */
@@ -266,46 +328,39 @@ static void computeMiddleSnakeTraversal_NoOverlapCheck(HFByteArrayEditScript *se
     long snakeLength = 0;
     HFASSERT(x >= 0);
     if (y >= 0 && x < aLen && y < bLen) {
-        /* The intent is that the 'forwards' var is a known constant, so with the forced inlining above, this branch can be evaluated at compile time */
-        if (forwards) {
-            snakeLength = compute_forwards_snake_length(self, self->source, (unsigned long)xOffset + x, aLen - x, self->destination, (unsigned long)yOffset + y, bLen - y);
-        } else {
-            snakeLength = compute_backwards_snake_length(self, self->source, (unsigned long)xOffset + aLen - x, aLen - x, self->destination, (unsigned long)yOffset + bLen - y, bLen - y);
-        }
+        /* The intent is that both "direct" and "forwards" are known constants, so with the forced inlining above, these branches can be evaluated at compile time */
+	if (direct) {
+	    /* Direct buffer access */
+	    const long maxSnakeLength = MIN(aLen - x, bLen - y);
+	    if (forwards) {
+		snakeLength = match_forwards(aBuff + x, bBuff + y, maxSnakeLength);
+	    } else {
+		snakeLength = match_backwards(aBuff + aLen - x - maxSnakeLength, bBuff + bLen - y - maxSnakeLength, maxSnakeLength);
+	    }
+	} else {
+	    /* Indirect buffer access */
+	    if (forwards) {
+		snakeLength = compute_forwards_snake_length(self, self->source, (unsigned long)xOffset + x, aLen - x, self->destination, (unsigned long)yOffset + y, bLen - y);
+	    } else {
+		snakeLength = compute_backwards_snake_length(self, self->source, (unsigned long)xOffset + aLen - x, aLen - x, self->destination, (unsigned long)yOffset + bLen - y, bLen - y);
+	    }
+	}
     }
+    outSnake->maxSnakeLength = MAX(outSnake->maxSnakeLength, snakeLength);
     x += snakeLength;
-    y += snakeLength;
     vector[k] = x;
+    return snakeLength;   
 }
 
-#if ! NDEBUG
-static BOOL computeMiddleSnakeTraversal_WithOverlapCheck(HFByteArrayEditScript *self, BOOL forwards, long k, long D, GraphIndex_t *restrict vector, long aLen, long bLen, unsigned long long xOffset, unsigned long long yOffset, const GraphIndex_t *restrict overlapVector, struct Snake_t *restrict result) __attribute__((always_inline));
+#if NDEBUG
+static BOOL computeMiddleSnakeTraversal_OverlapCheck(HFByteArrayEditScript *self, const unsigned char * restrict aBuff, const unsigned char * restrict bBuff, BOOL direct, BOOL forwards, long k, long D, GraphIndex_t *restrict vector, long aLen, long bLen, unsigned long long xOffset, unsigned long long yOffset, const GraphIndex_t *restrict overlapVector, struct Snake_t *restrict result) __attribute__((always_inline));
 #endif
-static BOOL computeMiddleSnakeTraversal_WithOverlapCheck(HFByteArrayEditScript *self, BOOL forwards, long k, long D, GraphIndex_t *restrict vector, long aLen, long bLen, unsigned long long xOffset, unsigned long long yOffset, const GraphIndex_t *restrict overlapVector, struct Snake_t *restrict result) {
-    long x, y;
-    /* k-1 represents considering a movement from the left, while k + 1 represents considering a movement from above */
-    if (k == -D || (k != D && vector[k-1] < vector[k+1])) {
-        x = vector[k + 1]; // down
-    } else {
-        x = vector[k - 1] + 1; // right
-    }
-    y = x - k;
+static BOOL computeMiddleSnakeTraversal_OverlapCheck(HFByteArrayEditScript *self, const unsigned char * restrict aBuff, const unsigned char * restrict bBuff, BOOL direct, BOOL forwards, long k, long D, GraphIndex_t *restrict vector, long aLen, long bLen, unsigned long long xOffset, unsigned long long yOffset, const GraphIndex_t *restrict overlapVector, struct Snake_t *restrict result) {
     
-    // find the end of the furthest reaching forward D-path in diagonal k.  We require x >= 0, but we don't need to check for it since it's guaranteed by the algorithm.
-    long snakeLength = 0;
-    HFASSERT(x >= 0);
-    if (y >= 0 && x < aLen && y < bLen) {
-        /* The intent is that the 'forwards' var is a known constant, so with the forced inlining above, this branch can be evaluated at compile time */
-        if (forwards) {
-            snakeLength = compute_forwards_snake_length(self, self->source, (unsigned long)xOffset + x, aLen - x, self->destination, (unsigned long)yOffset + y, bLen - y);
-        } else {
-            snakeLength = compute_backwards_snake_length(self, self->source, (unsigned long)xOffset + aLen - x, aLen - x, self->destination, (unsigned long)yOffset + bLen - y, bLen - y);
-        }
-    }
-    x += snakeLength;
-    y += snakeLength;
-    vector[k] = x;
-    
+    /* Traverse the snake */
+    long snakeLength = computeMiddleSnakeTraversal(self, aBuff, bBuff, direct, forwards, k, D, vector, aLen, bLen, xOffset, yOffset, result);
+        
+    /* Check for overlap */
     long delta = bLen - aLen;
     long flippedK = -(k + delta);
     if (vector[k] + overlapVector[flippedK] >= aLen) {
@@ -323,12 +378,10 @@ static BOOL computeMiddleSnakeTraversal_WithOverlapCheck(HFByteArrayEditScript *
     }
 }
 
-static struct Snake_t computeMiddleSnake_new(HFByteArrayEditScript *self, HFRange rangeInA, HFRange rangeInB, struct GrowableArray_t * restrict forwardsArray, struct GrowableArray_t * restrict backwardsArray) {
-    HFASSERT(rangeInA.length > 0);
-    HFASSERT(rangeInB.length > 0);
-    
-    HFASSERT(HFMaxRange(rangeInA) <= [self->source length]);
-    HFASSERT(HFMaxRange(rangeInB) <= [self->destination length]);
+#if NDEBUG
+static struct Snake_t computeMiddleSnake_MaybeDirect(HFByteArrayEditScript *self, BOOL direct, const unsigned char * restrict directABuff, const unsigned char * restrict directBBuff, HFRange rangeInA, HFRange rangeInB, struct GrowableArray_t * restrict forwardsArray, struct GrowableArray_t * restrict backwardsArray) __attribute__((always_inline));
+#endif
+static struct Snake_t computeMiddleSnake_MaybeDirect(HFByteArrayEditScript *self, BOOL direct, const unsigned char * restrict directABuff, const unsigned char * restrict directBBuff, HFRange rangeInA, HFRange rangeInB, struct GrowableArray_t * restrict forwardsArray, struct GrowableArray_t * restrict backwardsArray) {
     
     long aLen = ll2l(rangeInA.length), bLen = ll2l(rangeInB.length);
     long aStart = ll2l(rangeInA.location), bStart = ll2l(rangeInB.location);
@@ -338,208 +391,80 @@ static struct Snake_t computeMiddleSnake_new(HFByteArrayEditScript *self, HFRang
     
     /* Adding delta to k in the forwards direction gives you k in the backwards direction */
     const long delta = bLen - aLen;
-    const BOOL oddDelta = (delta & 1);
+    const BOOL oddDelta = (delta & 1);    
     
     GraphIndex_t *restrict forwardsVector = forwardsArray->ptr;
     GraphIndex_t *restrict backwardsVector = backwardsArray->ptr;
     
     /* The length of the array is always big enough to write at index 1. */
     forwardsVector[1] = 0;
-    backwardsVector[1] = 0;
+    backwardsVector[1] = 0;    
     
-    /* Keep track of the maximum snake length */
-    long maxSnakeLength = 0;
-    
-    for (long D=0; D <= maxD; D++) {
-        if (0 == (D % 256)) printf("%ld / %ld\n", D, maxD);
-	/* We will be indexing from -D to D, so reallocate if necessary.  It's a little sketchy that we check both forwardsArray->length and backwardsArray->length, which are usually the same size: this is just in case malloc_good_size returns something different for them. */
-	if ((size_t)D > forwardsArray->length || (size_t)D > backwardsArray->length) {
-	    GrowableArray_reallocate(forwardsArray, D);
-	    forwardsVector = forwardsArray->ptr;
-	    
-	    GrowableArray_reallocate(backwardsArray, D);
-	    backwardsVector = backwardsArray->ptr;
-	}
-        
-        if (oddDelta) {
-            /* Check for overlap on the forwards path */
-            for (long k = -D; k <= D; k += 2) {
-                long flippedK = -(k + delta);
-                /* At this point, the reverse path has only had time to explore diagonals -(D-1) through (D-1) */
-                if (flippedK >= -(D-1) && flippedK <= (D-1)) {
-                    struct Snake_t result;
-                    if (computeMiddleSnakeTraversal_WithOverlapCheck(self, YES /* forwards */, k, D, forwardsVector, aLen, bLen, aStart, bStart, backwardsVector, &result)) {
-                        return result;
-                    }
-                } else {
-                    computeMiddleSnakeTraversal_NoOverlapCheck(self, YES /* forwards */, k, D, forwardsVector, aLen, bLen, aStart, bStart);
-                }
-            }
-            
-            /* Reverse path.  No possiblity of overlap */
-            for (long k = -D; k <= D; k += 2) {
-                computeMiddleSnakeTraversal_NoOverlapCheck(self, NO /* backwards*/, k, D, backwardsVector, aLen, bLen, aStart, bStart);
-            }
-        } else {
-            /* Even delta: check for overlap on the backwards path */
-            for (long k = -D; k <= D; k += 2) {
-                computeMiddleSnakeTraversal_NoOverlapCheck(self, YES /* forwards */, k, D, forwardsVector, aLen, bLen, aStart, bStart);
-            }
-            
-            /* Backwards path */
-            for (long k = -D; k <= D; k += 2) {
-                long flippedK = -(k + delta);
-                /* At this point, the forwards path has had time to explore diagonals -D through D */
-                if (flippedK >= -D && flippedK <= D) {
-                    struct Snake_t result;
-                    if (computeMiddleSnakeTraversal_WithOverlapCheck(self, NO /* backwards */, k, D, backwardsVector, aLen, bLen, aStart, bStart, forwardsVector, &result)) {
-                        return result;
-                    }
-                } else {
-                    computeMiddleSnakeTraversal_NoOverlapCheck(self, NO /* backwards */, k, D, backwardsVector, aLen, bLen, aStart, bStart);
-                }
-            }
-        }
-    }
-    NSLog(@"Aw nuts");
-    [NSException raise:NSInternalInconsistencyException format:@"Diff algorithm terminated unexpectedly"];
-    return (struct Snake_t){0, 0, 0, 0};
-}
-
-
-static struct Snake_t computeMiddleSnake(HFByteArrayEditScript *self, HFRange rangeInA, HFRange rangeInB, struct GrowableArray_t * restrict forwardsArray, struct GrowableArray_t * restrict backwardsArray) {
-    HFASSERT(rangeInA.length > 0);
-    HFASSERT(rangeInB.length > 0);
-    
-    HFASSERT(HFMaxRange(rangeInA) <= [self->source length]);
-    HFASSERT(HFMaxRange(rangeInB) <= [self->destination length]);
-    
-    long aLen = ll2l(rangeInA.length), bLen = ll2l(rangeInB.length);
-    long aStart = ll2l(rangeInA.location), bStart = ll2l(rangeInB.location);
-    
-    //maxD = ceil((M + N) / 2)
-    long maxD = ll2l((HFSum(rangeInA.length, rangeInB.length) + 1) / 2);
-    
-    /* Adding delta to k in the forwards direction gives you k in the backwards direction */
-    const long delta = bLen - aLen;
-    const BOOL oddDelta = (delta & 1);
-    
-    GraphIndex_t *restrict forwardsVector = forwardsArray->ptr;
-    GraphIndex_t *restrict backwardsVector = backwardsArray->ptr;
-    
-    /* The length of the array is always big enough to write at index 1. */
-    forwardsVector[1] = 0;
-    backwardsVector[1] = 0;
-    
-    /* Keep track of the maximum snake length */
-    long maxSnakeLength = 0;
+    /* Our result */
+    struct Snake_t result;
     
     for (long D=0; D <= maxD; D++) {
-        if (0 == (D % 256)) printf("%ld / %ld\n", D, maxD);
+	//if (0 == (D % 256)) printf("%ld / %ld\n", D, maxD);
 	/* We will be indexing from -D to D, so reallocate if necessary.  It's a little sketchy that we check both forwardsArray->length and backwardsArray->length, which are usually the same size: this is just in case malloc_good_size returns something different for them. */
 	if ((size_t)D > forwardsArray->length || (size_t)D > backwardsArray->length) {
-	    GrowableArray_reallocate(forwardsArray, D);
+	    GrowableArray_reallocate(forwardsArray, D, maxD);
 	    forwardsVector = forwardsArray->ptr;
 	    
-	    GrowableArray_reallocate(backwardsArray, D);
+	    GrowableArray_reallocate(backwardsArray, D, maxD);
 	    backwardsVector = backwardsArray->ptr;
 	}
-
-	for (long k = -D; k <= D; k += 2) {
-	    /* Forward path */
-	    long x, y;
+	
+	for (int direction = 1; direction >= 0; direction--) {
+	    const BOOL forwards = (direction == 1);
 	    
-	    /* k-1 represents considering a movement from the left, while k + 1 represents considering a movement from above */
-	    if (k == -D || (k != D && forwardsVector[k-1] < forwardsVector[k+1])) {
-		x = forwardsVector[k + 1]; // down
-	    } else {
-		x = forwardsVector[k - 1] + 1; // right
-	    }
-            HFASSERT(x >= 0);
-	    y = x - k;
-	    	    
-	    // find the end of the furthest reaching forward D-path in diagonal k.  We require x >= 0, but we don't need to check for it since it's guaranteed by the algorithm.
-	    long snakeLength = 0;
-	    HFASSERT(x >= 0);
-	    if (y >= 0 && x < aLen && y < bLen) {
-		snakeLength = compute_forwards_snake_length(self, self->source, aStart + x, aLen - x, self->destination, bStart + y, bLen - y);
-	    }
-	    maxSnakeLength = MAX(maxSnakeLength, snakeLength);
-	    x += snakeLength;
-            y += snakeLength;
-            forwardsVector[k] = x;
+	    /* we check for overlap on the forwards path if oddDelta is YES and direction is forwards, or oddDelta is NO and direction is backwards */
+	    BOOL checkForOverlap = (direction == oddDelta);
 	    
-	    // check for overlap
-	    if (oddDelta) {
-		/* The forward diagonals increase in the up / right direction, and the reverse diagonals increase in the down/left direction. Compute the reverse diagonal corresponding to the forward diagonal k. */
-		long kInReverse = -(k + delta);
-		
-		/* At this point, the reverse path has only had time to explore diagonals -(D-1) through (D-1) */
-		if (kInReverse >= -(D-1) && kInReverse <= (D-1)) {
-		    if (forwardsVector[k] + backwardsVector[kInReverse] >= aLen) {
-			struct Snake_t result;
-			result.startX = aStart + forwardsVector[k] - snakeLength;
-			result.startY = bStart + forwardsVector[k] - snakeLength - k;
-			result.middleSnakeLength = snakeLength;
-			result.maxSnakeLength = maxSnakeLength;
-			return result;			
+	    if (checkForOverlap) {
+		/* Check for overlap, but only when the diagonal is within the right range */
+		for (long k = -D; k <= D; k += 2) {
+		    long flippedK = -(k + delta);
+		    /* If we're forwards, the reverse path has only had time to explore diagonals -(D-1) through (D-1).  If we're backwards, it's had time to explore diagonals -D through D. */
+		    const long reverseExploredDiagonal = D - direction;
+		    if (flippedK >= -reverseExploredDiagonal && flippedK <= reverseExploredDiagonal) {
+			if (computeMiddleSnakeTraversal_OverlapCheck(self, directABuff, directBBuff, direct, forwards, k, D, (forwards ? forwardsVector : backwardsVector), aLen, bLen, aStart, bStart, (forwards ? backwardsVector : forwardsVector), &result)) {
+			    return result;
+			}			    
+		    } else {
+			computeMiddleSnakeTraversal(self, directABuff, directBBuff, direct, forwards, k, D, (forwards ? forwardsVector : backwardsVector), aLen, bLen, aStart, bStart, &result);
 		    }
 		}
+	    } else {
+		/* Don't check for overlap */
+		for (long k = -D; k <= D; k += 2) {
+		    computeMiddleSnakeTraversal(self, directABuff, directBBuff, direct, forwards, k, D, (forwards ? forwardsVector : backwardsVector), aLen, bLen, aStart, bStart, &result);
+		}  
 	    }
-        }
-
-        
-        /* Reverse path.  Here k = 0 corresponds to the lower right corner. */
-        for (long k = -D; k <= D; k += 2) {
-            long x, y;
-            
-            /* k - 1 represents considering a movement from the right, while k+1 represents a movement from below */
-            if (k == -D || (k != D && backwardsVector[k-1] < backwardsVector[k+1])) {
-                x = backwardsVector[k + 1]; // up
-            }
-            else {
-                x = backwardsVector[k - 1] + 1; // left
-            }
-            HFASSERT(x >= 0);
-            y = x - k;
-            
-            long snakeLength = 0;
-            /* We want to compute the backwards snake.  x = 0 corresponds to the lower right. We require that x >= 0, but don't need to check for that since that's required by the algorithm. */
-            HFASSERT(x >= 0);
-            if (y >= 0 && x < aLen && y < bLen) {
-                snakeLength = compute_backwards_snake_length(self, self->source, aStart + aLen - x, aLen - x, self->destination, bStart + bLen - y, bLen - y);
-            }
-            HFASSERT(snakeLength == 0 || (snakeLength <= aLen - x && snakeLength <= bLen - y));
-            maxSnakeLength = MAX(maxSnakeLength, snakeLength);
-            x += snakeLength;
-            y += snakeLength;
-            backwardsVector[k] = x;
-            
-            // check for overlap
-            if (! oddDelta) {
-                /* At this point, the forward path has explored values [D, D], in its own coordinate space.  If our k is 0, then it corresponds to diagonal k - delta in the forward direction. */
-                long kInForwards = -(k + delta);
-                if (kInForwards >= -D && kInForwards <= D) {
-                    /* It's OK to check kInForwards */
-                    if (backwardsVector[k] + forwardsVector[kInForwards] >= aLen) {
-                        /* Success.  Here, x is the "negative delta" from the max of rangeInA */
-                        struct Snake_t result;
-                        result.startX = HFMaxRange(rangeInA) - backwardsVector[k];
-                        result.startY = HFMaxRange(rangeInB) - (backwardsVector[k] - k);
-                        result.middleSnakeLength = snakeLength;
-                        result.maxSnakeLength = maxSnakeLength;
-                        return result;			    
-                    }
-                }
-                
-            }
-        }
+	}
     }
     NSLog(@"Aw nuts");
-    abort();
     [NSException raise:NSInternalInconsistencyException format:@"Diff algorithm terminated unexpectedly"];
     return (struct Snake_t){0, 0, 0, 0};
 }
+
+#if NDEBUG
+static struct Snake_t computeMiddleSnake(HFByteArrayEditScript *self, HFRange rangeInA, HFRange rangeInB, struct GrowableArray_t * restrict forwardsArray, struct GrowableArray_t * restrict backwardsArray) __attribute__ ((noinline));
+#endif
+static struct Snake_t computeMiddleSnake(HFByteArrayEditScript *self, HFRange rangeInA, HFRange rangeInB, struct GrowableArray_t * restrict forwardsArray, struct GrowableArray_t * restrict backwardsArray) {
+    /* If both our ranges are small enough that they fit in our cache, then we can just read them all in and avoid all the range checking we would otherwise have to do. */
+    BOOL direct = (rangeInA.length <= CACHE_AMOUNT && rangeInB.length <= CACHE_AMOUNT);
+    if (direct) {
+	/* Cache everything */
+	const unsigned char * const directABuff = getCachedBytes(self, self->source, self->sourceLength, rangeInA.location, rangeInA.length, SourceForwards);
+	const unsigned char * const directBBuff = getCachedBytes(self, self->destination, self->destLength, rangeInB.location, rangeInB.length, DestForwards);
+	return computeMiddleSnake_MaybeDirect(self, YES, directABuff, directBBuff, rangeInA, rangeInB, forwardsArray, backwardsArray);
+    } else {
+	/* We can't cache everything */
+	return computeMiddleSnake_MaybeDirect(self, NO, NULL, NULL, rangeInA, rangeInB, forwardsArray, backwardsArray);
+    }
+}
+
+
 
 static void appendInstruction(HFByteArrayEditScript *self, HFRange rangeInA, HFRange rangeInB) {
     HFASSERT(HFRangeIsSubrangeOfRange(rangeInA, HFRangeMake(0, [self->source length])));
@@ -598,9 +523,9 @@ static void computeLongestCommonSubsequence(HFByteArrayEditScript *self, HFRange
 	return;
     }
     
-    NSLog(@"Prefix: %lu Suffix: %lu\n", prefix, suffix);
+//    NSLog(@"Prefix: %lu Suffix: %lu\n", prefix, suffix);
     
-    NSLog(@"Compute snake from %@ to %@", HFRangeToString(rangeInA), HFRangeToString(rangeInB));    
+//    NSLog(@"Compute snake from %@ to %@", HFRangeToString(rangeInA), HFRangeToString(rangeInB));    
     struct Snake_t middleSnake = computeMiddleSnake(self, rangeInA, rangeInB, forwardsArray, backwardsArray);
     
     HFAtomicAdd64(rangeInA.length + rangeInB.length, self->currentProgress);
@@ -610,9 +535,9 @@ static void computeLongestCommonSubsequence(HFByteArrayEditScript *self, HFRange
     HFASSERT(middleSnake.startY >= rangeInB.location);
     HFASSERT(HFSum(middleSnake.startX, middleSnake.middleSnakeLength) <= HFMaxRange(rangeInA));
     HFASSERT(HFSum(middleSnake.startY, middleSnake.middleSnakeLength) <= HFMaxRange(rangeInB));
-    NSLog(@"Middle snake: %lu -> %lu, %lu -> %lu, max: %lu", middleSnake.startX, middleSnake.startX + middleSnake.middleSnakeLength, middleSnake.startY, middleSnake.startY + middleSnake.middleSnakeLength, middleSnake.maxSnakeLength);
+//    NSLog(@"Middle snake: %lu -> %lu, %lu -> %lu, max: %lu, dPath: %lu", middleSnake.startX, middleSnake.startX + middleSnake.middleSnakeLength, middleSnake.startY, middleSnake.startY + middleSnake.middleSnakeLength, middleSnake.maxSnakeLength, middleSnake.dPathLength);
     
-    if (0 && middleSnake.maxSnakeLength == 0) {
+    if (middleSnake.maxSnakeLength == 0) {
 	/* There were no non-empty snakes at all, so the entire range must be a diff */
 	appendInstruction(self, rangeInA, rangeInB);
 	return;
@@ -822,12 +747,12 @@ static BOOL merge_instruction_noreplaces(struct HFEditInstruction_t *left, const
 - (BOOL)computeDifferenceViaMiddleSnakes {
     /* Create our growable arrays, and give them a healthy amount of space.  We could reduce this if source or destination were smaller. */
     struct GrowableArray_t forwardsArray = {0, 0}, backwardsArray = {0, 0};
-    GrowableArray_reallocate(&forwardsArray, 1024);
-    GrowableArray_reallocate(&backwardsArray, 1024);
+    GrowableArray_reallocate(&forwardsArray, 1024, 1024);
+    GrowableArray_reallocate(&backwardsArray, 1024, 1024);
     
     /* Compute the longest common subsequence. */
     altInsns = [[NSMutableData alloc] init];
-    computeLongestCommonSubsequence(self, HFRangeMake(0, [source length]), HFRangeMake(0, [destination length]), &forwardsArray, &backwardsArray);
+    computeLongestCommonSubsequence(self, HFRangeMake(0, sourceLength), HFRangeMake(0, destLength), &forwardsArray, &backwardsArray);
     
     /* Copy out the data */
     HFASSERT([altInsns length] % sizeof *insns == 0);
@@ -867,11 +792,14 @@ static BOOL merge_instruction_noreplaces(struct HFEditInstruction_t *left, const
 
 - (BOOL)computeDifferencesTrackingProgress:(HFProgressTracker *)tracker {
     /* Allocate memory for our caches.  Do it in one big chunk. */
+    CFAbsoluteTime start = CFAbsoluteTimeGetCurrent();
     const NSUInteger numCaches = sizeof caches / sizeof *caches;
-    unsigned char *basePtr = malloc(CACHE_AMOUNT * numCaches);
+    /* Allow 15 bytes of padding on each side, so that we can always do a 16 byte vector read.  Note that each cache can be the padding for its adjacent caches, so we only have to allocate it on the end. */
+    const NSUInteger endPadding = 15;
+    unsigned char *basePtr = malloc(CACHE_AMOUNT * numCaches + 2 * endPadding);
     for (NSUInteger i=0; i < numCaches; i++) {
 	HFASSERT(caches[i].buffer == NULL);
-	caches[i].buffer = basePtr + CACHE_AMOUNT * i;
+	caches[i].buffer = basePtr + endPadding + CACHE_AMOUNT * i;
     }
     
     const int localCancelRequested = 0;
@@ -910,25 +838,21 @@ static BOOL merge_instruction_noreplaces(struct HFEditInstruction_t *left, const
     currentProgress = NULL;
     [tracker release];
     
+    CFAbsoluteTime end = CFAbsoluteTimeGetCurrent();
+    printf("Diffs computed in %.2f seconds\n", end - start);
+    
     return result;
 }
 
-- (id)initWithDifferenceFromSource:(HFByteArray *)src toDestination:(HFByteArray *)dst {
+- (id)initWithDifferenceFromSource:(HFByteArray *)src toDestination:(HFByteArray *)dst trackingProgress:(HFProgressTracker *)progressTracker {
     [self initWithSource:src toDestination:dst];
-    [self computeDifferencesTrackingProgress:nil];
-    return self;
-}
-
-+ (HFByteArrayEditScript *)editScriptFromSource:(HFByteArray *)src toDestination:(HFByteArray *)dst trackingProgress:(HFProgressTracker *)progressTracker {
-    HFByteArrayEditScript *result = [[self alloc] initWithDifferenceFromSource:src toDestination:dst];
-    BOOL success = [result computeDifferencesTrackingProgress:progressTracker];
+    BOOL success = [self computeDifferencesTrackingProgress:progressTracker];
     if (! success) {
 	/* Cancelled */
-	[result release];
-	result = nil;
-    }
-    return [result autorelease];
-    
+	[self release];
+	self = nil;
+    }    
+    return self;
 }
 
 - (void)dealloc {

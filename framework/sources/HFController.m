@@ -66,7 +66,6 @@ static inline Class preferredByteArrayClass(void) {
     return [HFBTreeByteArray class];
 }
 
-
 @implementation HFController
 
 - (void)_sharedInit {
@@ -1934,13 +1933,9 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
 
 #if HFUNIT_TESTS
 
-@interface HFUnitTests : NSObject
-+ (void)_runAllTests;
-@end
-
 + (void)initialize {
     if (self == [HFController class]) {
-        [objc_getClass("HFUnitTests") _runAllTests];
+        objc_msgSend(objc_getClass("HFUnitTests"), @selector(_runAllTests));
     }
 }
 #endif

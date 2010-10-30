@@ -42,6 +42,10 @@
 */
 - (id)view;
 
+/*! Returns YES if the view has been created, NO if it has not.  To create the view, call the view method.
+ */
+- (BOOL)isViewLoaded;
+
 /*! Override point for creating the view displaying this representation.  This is called on your behalf the first time the \c -view method is called, so you would not want to call this explicitly; however this method must be overridden.  This follows the "create" rule, and so it should return a retained view.
 */
 - (NSView *)createView NS_RETURNS_RETAINED;

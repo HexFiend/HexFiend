@@ -74,6 +74,14 @@ static inline NSUInteger HFSumInt(NSUInteger a, NSUInteger b) {
 }
 
 /*!
+ Returns a + b as an NSUInteger, saturating an NSUIntegerMax
+ */
+static inline NSUInteger HFSumIntSaturate(NSUInteger a, NSUInteger b) {
+    NSUInteger result = a + b;
+    return (result < a) ? NSUIntegerMax : result;
+}
+
+/*!
   Returns a * b as an unsigned long long.  This asserts on overflow, unless NDEBUG is defined.
 */
 static inline unsigned long long HFProductULL(unsigned long long a, unsigned long long b) {

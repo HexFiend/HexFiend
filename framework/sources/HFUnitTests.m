@@ -329,29 +329,11 @@ static NSUInteger random_upto(unsigned long long val) {
 }
 
 static HFByteArray *byteArrayForFile(NSString *path) {
-    HFFileReference *ref = [[[HFFileReference alloc] initWithPath:path] autorelease];
+    HFFileReference *ref = [[[HFFileReference alloc] initWithPath:path error:NULL] autorelease];
     HFFileByteSlice *slice = [[[HFFileByteSlice alloc] initWithFile:ref] autorelease];
     HFByteArray *array = [[[HFBTreeByteArray alloc] init] autorelease];
     [array insertByteSlice:slice inRange:HFRangeMake(0, 0)];
     return array;
-}
-
-+ (void)_testByteArrayEditScripts1 {
-    NSString *leftPath = @"/Users/peter/Desktop/left.data", *rightPath = @"/Users/peter/Desktop/right.data";
-    HFByteArray *src = byteArrayForFile(leftPath), *dst = byteArrayForFile(rightPath);
-    HFByteArrayEditScript *script = [[HFByteArrayEditScript alloc] initWithDifferenceFromSource:src toDestination:dst];
-    HFByteArray *guineaPig = [src mutableCopy];
-    [script applyToByteArray:guineaPig];
-    if ([dst _debugIsEqual:guineaPig]) {
-        printf("Edit script success with length %llu\n", [dst length]);
-        exit(0);
-    }
-    else {
-        printf("Error! Edit script failure with length %llu\n", [dst length]);
-        exit(EXIT_FAILURE);
-    }
-    [script release];
-    [guineaPig release];
 }
 
 + (void)_testByteArrayEditScripts {
@@ -362,7 +344,7 @@ static HFByteArray *byteArrayForFile(NSString *path) {
     HFByteArray *base = [[HFBTreeByteArray alloc] init];
     [byteArrays addObject:base];
     [base release];
-    NSData *data = randomDataOfLength(5000);
+    NSData *data = randomDataOfLength(15000);
     HFByteSlice *slice = [[HFFullMemoryByteSlice alloc] initWithData:data];
     [base insertByteSlice:slice inRange:HFRangeMake(0, 0)];
     [slice release];
@@ -383,7 +365,7 @@ static HFByteArray *byteArrayForFile(NSString *path) {
                     NSData *data = randomDataOfLength(1 + random()%64);
                     offset = random() % (1 + length);
                     HFByteSlice* slice = [[HFFullMemoryByteSlice alloc] initWithData:data];
-                    DEBUG printf("%u)\tInserting %llu bytes at %llu...", i, [slice length], offset);
+                    DEBUG printf("%lu)\tInserting %llu bytes at %llu...", i, [slice length], offset);
                     [modified insertByteSlice:slice inRange:HFRangeMake(offset, 0)];
                     [slice release];
                     length += [data length];
@@ -414,7 +396,7 @@ static HFByteArray *byteArrayForFile(NSString *path) {
         NSUInteger j;
         for (j=0; j < arrayCount; j++) {
             HFByteArray *dst = [byteArrays objectAtIndex:j];
-            HFByteArrayEditScript *script = [[HFByteArrayEditScript alloc] initWithDifferenceFromSource:src toDestination:dst];
+            HFByteArrayEditScript *script = [[HFByteArrayEditScript alloc] initWithDifferenceFromSource:src toDestination:dst trackingProgress:nil];
             HFByteArray *guineaPig = [src mutableCopy];
             [script applyToByteArray:guineaPig];
             [script release];
@@ -759,7 +741,9 @@ static void exception_thrown(const char *methodName, NSException *exception) {
     fflush(0);
     CFAbsoluteTime start = CFAbsoluteTimeGetCurrent();
     @try {
+	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 	[self performSelector:sel_registerName(test)];
+	[pool drain];
     }
     @catch (NSException *localException) {
 	exception_thrown(test, localException);

@@ -1,4 +1,4 @@
-#if ! NDEBUG
+#if HFUNIT_TESTS
 
 @class HFByteArray, NSData, NSURL;
 

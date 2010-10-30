@@ -568,6 +568,10 @@ enum LineCoverage_t {
     return self;
 }
 
+- (void)clearRepresenter {
+    representer = nil;
+}
+
 - (void)encodeWithCoder:(NSCoder *)coder {
     HFASSERT([coder allowsKeyedCoding]);
     [super encodeWithCoder:coder];

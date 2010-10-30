@@ -367,7 +367,7 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
     NSDictionary *userInfo = [tracker userInfo];
     HFByteArray *left = [userInfo objectForKey:@"left"];
     HFByteArray *right = [userInfo objectForKey:@"right"];
-    return [HFByteArrayEditScript editScriptFromSource:left toDestination:right trackingProgress:tracker];
+    return [[[HFByteArrayEditScript alloc] initWithDifferenceFromSource:left toDestination:right trackingProgress:tracker] autorelease];
 }
 
 - (void)computeDiffEnded:(HFByteArrayEditScript *)script {
