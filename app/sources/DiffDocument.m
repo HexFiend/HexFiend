@@ -226,6 +226,7 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
     [rightBytes release];
     [leftFileName release];
     [rightFileName release];
+    [diffComputationView removeObserver:self forKeyPath:@"progress"];
     [diffComputationView release];
     [super dealloc];
 }
@@ -378,6 +379,9 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
 	editScript = [script retain];
 	[self showInstructionsFromEditScript];	
     }
+    
+    /* Hide the script banner */
+    if (operationView != nil && operationView == saveView) [self hideBannerFirstThenDo:NULL];
 }
 
 - (void)kickOffComputeDiff {

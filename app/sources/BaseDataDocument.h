@@ -84,6 +84,7 @@
 
 - (HFDocumentOperationView *)newOperationViewForNibName:(NSString *)name displayName:(NSString *)displayName;
 - (void)prepareBannerWithView:(HFDocumentOperationView *)newSubview withTargetFirstResponder:(id)targetFirstResponder;
+- (void)hideBannerFirstThenDo:(SEL)command;
 
 /* Returns a string identifier used as an NSUserDefault prefix for storing the layout for documents of this type.  If you return nil, the layout will not be stored.  The default is to return the class name. */
 + (NSString *)layoutUserDefaultIdentifier;

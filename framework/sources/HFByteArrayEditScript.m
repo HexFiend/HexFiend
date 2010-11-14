@@ -256,11 +256,12 @@ static inline const unsigned char *getCachedBytes(HFByteArrayEditScript *self, H
     }
 }
 
-static inline unsigned long compute_forwards_snake_length(HFByteArrayEditScript *self, HFByteArray *a, unsigned long a_offset, unsigned long a_len, HFByteArray *b, unsigned long b_offset, unsigned long b_len) {
+static inline unsigned long compute_forwards_snake_length(HFByteArrayEditScript *self, HFByteArray *a, unsigned long a_offset, unsigned long a_len, HFByteArray *b, unsigned long b_offset, unsigned long b_len, volatile int64_t * restrict outProgress) {
     HFASSERT(a_len > 0 && b_len > 0);
     HFASSERT(a_len + a_offset <= self->sourceLength);
     HFASSERT(b_len + b_offset <= self->destLength);
     unsigned long alreadyRead = 0, remainingToRead = MIN(a_len, b_len);
+    unsigned long long progressConsumed = 0;
     while (remainingToRead > 0) {
         unsigned long amountToRead = MIN(READ_AMOUNT, remainingToRead);
         const unsigned char *a_buff = getCachedBytes(self, a, self->sourceLength, a_offset + alreadyRead, amountToRead, SourceForwards);
@@ -268,18 +269,25 @@ static inline unsigned long compute_forwards_snake_length(HFByteArrayEditScript 
 	unsigned long matchLen = match_forwards(a_buff, b_buff, amountToRead);
         alreadyRead += matchLen;
         remainingToRead -= matchLen;
+	
+	/* We've consumed progress equal to (A+B - x) * x, where x = alreadyRead */
+	unsigned long long newProgressConsumed = (a_len + b_len - alreadyRead) * (unsigned long long)alreadyRead;
+	HFAtomicAdd64(newProgressConsumed - progressConsumed, outProgress);
+	progressConsumed = newProgressConsumed;
+	
         if (matchLen < amountToRead) break;
     }
     return alreadyRead;
 }
 
 /* returns the backwards snake of length no more than MIN(a_len, b_len), starting at a_offset, b_offset (exclusive) */
-static inline unsigned long compute_backwards_snake_length(HFByteArrayEditScript *self, HFByteArray *a, unsigned long a_offset, unsigned long a_len, HFByteArray *b, unsigned long b_offset, unsigned long b_len) {
+static inline unsigned long compute_backwards_snake_length(HFByteArrayEditScript *self, HFByteArray *a, unsigned long a_offset, unsigned long a_len, HFByteArray *b, unsigned long b_offset, unsigned long b_len, volatile int64_t * restrict outProgress) {
     HFASSERT(a_offset <= self->sourceLength);
     HFASSERT(b_offset <= self->destLength);
     HFASSERT(a_len <= a_offset);
     HFASSERT(b_len <= b_offset);
     unsigned long alreadyRead = 0, remainingToRead = MIN(a_len, b_len);
+    unsigned long long progressConsumed = 0;
     while (remainingToRead > 0) {
         unsigned long amountToRead = MIN(READ_AMOUNT, remainingToRead);
 	const unsigned char *a_buff = getCachedBytes(self, a, self->sourceLength, a_offset - alreadyRead - amountToRead, amountToRead, SourceBackwards);
@@ -287,6 +295,12 @@ static inline unsigned long compute_backwards_snake_length(HFByteArrayEditScript
 	size_t matchLen = match_backwards(a_buff, b_buff, amountToRead);
         remainingToRead -= matchLen;
         alreadyRead += matchLen;
+	
+	/* We've consumed progress equal to (A+B - x) * x, where x = alreadyRead */
+	unsigned long long newProgressConsumed = (a_len + b_len - alreadyRead) * (unsigned long long)alreadyRead;
+	HFAtomicAdd64(newProgressConsumed - progressConsumed, outProgress);
+	progressConsumed = newProgressConsumed;	
+	
         if (matchLen < amountToRead) break; //found some non-matching byte
     }
     return alreadyRead;
@@ -308,6 +322,7 @@ struct Snake_t {
     long startY;
     long middleSnakeLength;
     long maxSnakeLength;
+    unsigned long long progressConsumed;
 };
 
 #if NDEBUG
@@ -326,6 +341,7 @@ static long computeMiddleSnakeTraversal(HFByteArrayEditScript *self, const unsig
     
     // find the end of the furthest reaching forward D-path in diagonal k.  We require x >= 0, but we don't need to check for it since it's guaranteed by the algorithm.
     long snakeLength = 0;
+    int64_t unused = 0;
     HFASSERT(x >= 0);
     if (y >= 0 && x < aLen && y < bLen) {
         /* The intent is that both "direct" and "forwards" are known constants, so with the forced inlining above, these branches can be evaluated at compile time */
@@ -340,9 +356,9 @@ static long computeMiddleSnakeTraversal(HFByteArrayEditScript *self, const unsig
 	} else {
 	    /* Indirect buffer access */
 	    if (forwards) {
-		snakeLength = compute_forwards_snake_length(self, self->source, (unsigned long)xOffset + x, aLen - x, self->destination, (unsigned long)yOffset + y, bLen - y);
+		snakeLength = compute_forwards_snake_length(self, self->source, (unsigned long)xOffset + x, aLen - x, self->destination, (unsigned long)yOffset + y, bLen - y, &unused);
 	    } else {
-		snakeLength = compute_backwards_snake_length(self, self->source, (unsigned long)xOffset + aLen - x, aLen - x, self->destination, (unsigned long)yOffset + bLen - y, bLen - y);
+		snakeLength = compute_backwards_snake_length(self, self->source, (unsigned long)xOffset + aLen - x, aLen - x, self->destination, (unsigned long)yOffset + bLen - y, bLen - y, &unused);
 	    }
 	}
     }
@@ -383,11 +399,14 @@ static struct Snake_t computeMiddleSnake_MaybeDirect(HFByteArrayEditScript *self
 #endif
 static struct Snake_t computeMiddleSnake_MaybeDirect(HFByteArrayEditScript *self, BOOL direct, const unsigned char * restrict directABuff, const unsigned char * restrict directBBuff, HFRange rangeInA, HFRange rangeInB, struct GrowableArray_t * restrict forwardsArray, struct GrowableArray_t * restrict backwardsArray) {
     
+    /* This function has to "consume" progress equal to rangeInA.length * rangeInB.length. */
+    unsigned long long progressAllocated = rangeInA.length * rangeInB.length;
+    
     long aLen = ll2l(rangeInA.length), bLen = ll2l(rangeInB.length);
     long aStart = ll2l(rangeInA.location), bStart = ll2l(rangeInB.location);
     
     //maxD = ceil((M + N) / 2)
-    long maxD = ll2l((HFSum(rangeInA.length, rangeInB.length) + 1) / 2);
+    const long maxD = ll2l((HFSum(rangeInA.length, rangeInB.length) + 1) / 2);
     
     /* Adding delta to k in the forwards direction gives you k in the backwards direction */
     const long delta = bLen - aLen;
@@ -402,9 +421,35 @@ static struct Snake_t computeMiddleSnake_MaybeDirect(HFByteArrayEditScript *self
     
     /* Our result */
     struct Snake_t result;
+    result.maxSnakeLength = 0;
+    result.progressConsumed = 0;
     
     for (long D=1; D <= maxD; D++) {
 	//if (0 == (D % 256)) printf("%ld / %ld\n", D, maxD);
+	
+	/* We haven't yet found the middle snake.  The "worst case" would be a 0-length snake on some diagonal.  Which diagonal maximizes the "badness?"  I wrote out the equations and took the derivative and found it had a max at (d/2) + (N-M)/4, which is sort of intuitive...I guess. (N is the width, M is the height).
+	 
+	 Rounding is a concern.  While the continuous equation has a max at that point, it's not clear which integer on either side of it produces a worse-r case.  (That is, we don't know which way to round). Rather than try to get that right, we let our progress get a little sloppy: in fact the progress bar may move back very slightly if we pick the wrong worst case, and then we discover the other one.  Tough noogies. 
+	 
+	 Rewriting (D/2) + (N-M)/4 as (D + (N-M)/2)/2 produces slightly less error.  Writing it as (2D + (N-M)) / 4 might be a bit more efficient, but also is more likely to overflow and does not produce less error.
+	 
+	 Note that delta = M - N, so -delta is the same as N + M.
+	 */
+	long worstX = (D - delta/2) / 2;
+	if (worstX >= 0) {
+	    long worstY = D - worstX;
+	    long revWorstX = aLen - worstX;
+	    long revWorstY = bLen - worstY;
+	    if (worstY >= 0 && revWorstX >= 0 && revWorstY >= 0 && worstX <= revWorstX && worstY <= revWorstY) {
+		unsigned long long maxBadnessForThatX = worstX * worstY + revWorstX * revWorstY;
+		unsigned long long newProgress = rangeInA.length * rangeInB.length - maxBadnessForThatX;
+		//HFASSERT(newProgress >= result.progressConsumed);
+		// due to the aforementioned round off error, the above assertion may not be true.
+		HFAtomicAdd64(newProgress - result.progressConsumed, self->currentProgress);
+		result.progressConsumed = newProgress;
+	    }
+	}
+	
 	/* We will be indexing from -D to D, so reallocate if necessary.  It's a little sketchy that we check both forwardsArray->length and backwardsArray->length, which are usually the same size: this is just in case malloc_good_size returns something different for them. */
 	if ((size_t)D > forwardsArray->length || (size_t)D > backwardsArray->length) {
 	    GrowableArray_reallocate(forwardsArray, D, maxD);
@@ -442,8 +487,9 @@ static struct Snake_t computeMiddleSnake_MaybeDirect(HFByteArrayEditScript *self
 	    }
 	}
     }
+    /* We don't expect to ever exit this loop */
     [NSException raise:NSInternalInconsistencyException format:@"Diff algorithm terminated unexpectedly"];
-    return (struct Snake_t){0, 0, 0, 0};
+    return result;
 }
 
 #if NDEBUG
@@ -489,6 +535,9 @@ static void computeLongestCommonSubsequence(HFByteArrayEditScript *self, HFRange
     HFByteArray *source = self->source;
     HFByteArray *destination = self->destination;
     
+    /* Compute how much progress we are responsible for "consuming" */
+    unsigned long long remainingProgress = rangeInA.length * rangeInB.length;
+    
     HFASSERT(HFRangeIsSubrangeOfRange(rangeInA, HFRangeMake(0, [source length])));
     HFASSERT(HFRangeIsSubrangeOfRange(rangeInB, HFRangeMake(0, [destination length])));
     if (rangeInA.length == 0 || rangeInB.length == 0) {
@@ -496,38 +545,39 @@ static void computeLongestCommonSubsequence(HFByteArrayEditScript *self, HFRange
 	return;
     }
     
-    unsigned long prefix = compute_forwards_snake_length(self, source, rangeInA.location, rangeInA.length, destination, rangeInB.location, rangeInB.length);
+    unsigned long prefix = compute_forwards_snake_length(self, source, rangeInA.location, rangeInA.length, destination, rangeInB.location, rangeInB.length, self->currentProgress);
     HFASSERT(prefix <= rangeInA.length && prefix <= rangeInB.length);
-    rangeInA.location += prefix;
-    rangeInA.length -= prefix;
-    rangeInB.location += prefix;
-    rangeInB.length -= prefix;
-    HFAtomicAdd64(prefix, self->currentProgress);
-    if (rangeInA.length == 0 || rangeInB.length == 0) {
-	appendInstruction(self, rangeInA, rangeInB);
-	/* We consumed these instructions, so update our progress */
-	HFAtomicAdd64(rangeInA.length + rangeInB.length, self->currentProgress);
-	return;
+    
+    if (prefix > 0) {	
+	rangeInA.location += prefix;
+	rangeInA.length -= prefix;
+	rangeInB.location += prefix;
+	rangeInB.length -= prefix;
+	
+	/* Recompute the remaining progress. */
+	remainingProgress = rangeInA.length * rangeInB.length;
+	
+	if (rangeInA.length == 0 || rangeInB.length == 0) {
+	    /* All done */
+	    appendInstruction(self, rangeInA, rangeInB);
+	    return;
+	}
     }
     
-    unsigned long suffix = compute_backwards_snake_length(self, source, HFMaxRange(rangeInA), rangeInA.length, destination, HFMaxRange(rangeInB), rangeInB.length);
+    unsigned long suffix = compute_backwards_snake_length(self, source, HFMaxRange(rangeInA), rangeInA.length, destination, HFMaxRange(rangeInB), rangeInB.length, self->currentProgress);
     HFASSERT(suffix <= rangeInA.length && suffix <= rangeInB.length);
-    rangeInA.length -= suffix;
-    rangeInB.length -= suffix;
-    HFAtomicAdd64(suffix, self->currentProgress);
-    if (rangeInA.length == 0 || rangeInB.length == 0) {
-	appendInstruction(self, rangeInA, rangeInB);
-	/* We consumed these instructions, so update our progress */
-	HFAtomicAdd64(rangeInA.length + rangeInB.length, self->currentProgress);
-	return;
+    /* The suffix can't have consumed the whole thing though, because the prefix would have caught that */
+    HFASSERT(suffix <= rangeInA.length && suffix <= rangeInB.length);
+    if (suffix > 0) {
+	rangeInA.length -= suffix;
+	rangeInB.length -= suffix;
+	
+	/* Recompute the remaining progress. */
+	remainingProgress = rangeInA.length * rangeInB.length;
+	
+	/* Note that we don't have to check to see if the snake consumed the entire thing on the reverse path, because we would have caught that with the prefix check up above */
     }
-    
-//    NSLog(@"Prefix: %lu Suffix: %lu\n", prefix, suffix);
-    
-//    NSLog(@"Compute snake from %@ to %@", HFRangeToString(rangeInA), HFRangeToString(rangeInB));    
     struct Snake_t middleSnake = computeMiddleSnake(self, rangeInA, rangeInB, forwardsArray, backwardsArray);
-    
-    HFAtomicAdd64(rangeInA.length + rangeInB.length, self->currentProgress);
     
     HFASSERT(middleSnake.middleSnakeLength >= 0);
     HFASSERT(middleSnake.startX >= rangeInA.location);
@@ -536,17 +586,17 @@ static void computeLongestCommonSubsequence(HFByteArrayEditScript *self, HFRange
     HFASSERT(HFSum(middleSnake.startY, middleSnake.middleSnakeLength) <= HFMaxRange(rangeInB));
 //    NSLog(@"Middle snake: %lu -> %lu, %lu -> %lu, max: %lu, dPath: %lu", middleSnake.startX, middleSnake.startX + middleSnake.middleSnakeLength, middleSnake.startY, middleSnake.startY + middleSnake.middleSnakeLength, middleSnake.maxSnakeLength, middleSnake.dPathLength);
     
+    /* Subtract off how much progress the middle snake consumed.  Note that this may make remainingProgress negative. */
+    remainingProgress -= middleSnake.progressConsumed;
+    
     if (middleSnake.maxSnakeLength == 0) {
 	/* There were no non-empty snakes at all, so the entire range must be a diff */
 	appendInstruction(self, rangeInA, rangeInB);
+	HFAtomicAdd64(remainingProgress, self->currentProgress);
 	return;
     }
     
-    /* Since we "consumed" the middle snake, add it to our progress */
-    HFAtomicAdd64(middleSnake.middleSnakeLength, self->currentProgress);
-    
     HFRange prefixRangeA, prefixRangeB, suffixRangeA, suffixRangeB;
-
     prefixRangeA = HFRangeMake(rangeInA.location, middleSnake.startX - rangeInA.location);
     prefixRangeB = HFRangeMake(rangeInB.location, middleSnake.startY - rangeInB.location);
     
@@ -555,6 +605,12 @@ static void computeLongestCommonSubsequence(HFByteArrayEditScript *self, HFRange
     
     suffixRangeB.location = HFSum(middleSnake.startY, middleSnake.middleSnakeLength);
     suffixRangeB.length = HFMaxRange(rangeInB) - suffixRangeB.location;
+    
+    /* Figure out how much we allocate to each of our subranges, and consume the remainder. */
+    unsigned long long newRemainingProgress = prefixRangeA.length * prefixRangeB.length + suffixRangeA.length * suffixRangeB.length;
+    
+    HFAtomicAdd64(remainingProgress - newRemainingProgress, self->currentProgress);
+    remainingProgress = newRemainingProgress;
     
     if (prefixRangeA.length > 0 || prefixRangeB.length > 0) {
 	computeLongestCommonSubsequence(self, prefixRangeA, prefixRangeB, forwardsArray, backwardsArray);
@@ -581,6 +637,7 @@ static void computeLongestCommonSubsequence(HFByteArrayEditScript *self, HFRange
     
     V[1] = 0;
     long D;
+    int64_t unusedProgress = 0;
     for (D=0; D <= max && ! finished; D++) {
         for (long K = -D; K <= D; K += 2) {
             long X, Y;
@@ -593,7 +650,7 @@ static void computeLongestCommonSubsequence(HFByteArrayEditScript *self, HFRange
             Y = X - K;
 	    unsigned long snakeLength = 0;
 	    if (X < a_len && Y < b_len) {
-		snakeLength = compute_forwards_snake_length(self, a, X, a_len - X, b, Y, b_len - Y);
+		snakeLength = compute_forwards_snake_length(self, a, X, a_len - X, b, Y, b_len - Y, &unusedProgress);
 	    }
             X += snakeLength;
             Y += snakeLength;
@@ -789,6 +846,11 @@ static BOOL merge_instruction_noreplaces(struct HFEditInstruction_t *left, const
     return self;
 }
 
+
+/* Theory of progress reporting: at each step, we attempt to compute the remaining worst case (in time) and show that as the progress.  The Myers diff worst case for diffing two arrays of length M and N is M*N.  Initially we "allocate" that much progress.  In the  linear-space divide-and-conquer variation, we compute the middle snake and then recursively apply the algorithm to two "halves" of the data.  At that point, we "give" some of our allocated progress to the recursive calls, and "consume" the rest by incrementing the progress count. 
+ 
+    Our implementation of the Longest Common Subsequence traverses any leading/trailing snakes.  We can be certain that these snakes are part of the LCS, so they can contribute to our progress.  Imagine that the arrays are of length M and N, for allocated progress M*N.  If we traverse a leading/trailing snake of length x, then the new arrays are of length M-x and N-x, so the new progress is (M-x)*(N-x).  Since we initially allocated M*N, this means we "progressed" by M*N - (M-x)*(N-x), which reduces to (M+N-x)*x.
+ */
 - (BOOL)computeDifferencesTrackingProgress:(HFProgressTracker *)tracker {
     /* Allocate memory for our caches.  Do it in one big chunk. */
     CFAbsoluteTime start = CFAbsoluteTimeGetCurrent();
@@ -809,11 +871,12 @@ static BOOL merge_instruction_noreplaces(struct HFEditInstruction_t *left, const
 	[tracker retain];
 	
 	/* Tell our progress tracker how much work to expect.  Here we treat the amount of work as the sum of the horizontal and vertical.  Note: this sum may overflow!  Ugh! */
-	[tracker setMaxProgress:[source length] + [destination length]];
+	[tracker setMaxProgress: sourceLength * destLength];
 	
 	/* Stash away pointers to its direct-write variables */
 	cancelRequested = &tracker->cancelRequested;
 	currentProgress = (int64_t *)&tracker->currentProgress;
+	*currentProgress = 0;
     } else {
 	/* No progress tracker, so use our local variables so we don't have to keep checking for nil */
 	cancelRequested = &localCancelRequested;

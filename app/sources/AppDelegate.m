@@ -315,7 +315,7 @@ static int GetBSDProcessList(struct kinfo_proc **procList, size_t *procCount)
 
 - (IBAction)openProcessByProcessMenuItem:(id)sender {
     USE(sender);
-    pid_t pid = (long)[[sender representedObject] longValue];
+    pid_t pid = (long)[[sender representedObject] intValue];
     HFASSERT(pid > 0);
     [self openProcessByPID:pid];
 }
