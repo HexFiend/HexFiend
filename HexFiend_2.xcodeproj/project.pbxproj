@@ -99,7 +99,6 @@
 		D061A28F10042D6A0049B8B8 /* HFTextRepresenter_Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = D061A28E10042D6A0049B8B8 /* HFTextRepresenter_Internal.h */; };
 		D0621CAD102ED50D00DAEB4D /* FortunateSonServerImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D0621CAC102ED50D00DAEB4D /* FortunateSonServerImpl.cpp */; };
 		D0621CF0102ED78900DAEB4D /* FortunateSon.defs in Sources */ = {isa = PBXBuildFile; fileRef = D047E33F1022CFA800EF307B /* FortunateSon.defs */; };
-		D068D961123C3C9500DFBEEC /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D068D960123C3C9500DFBEEC /* IOKit.framework */; };
 		D06D60070FA69AFA002376EE /* HFBTree.h in Headers */ = {isa = PBXBuildFile; fileRef = D06D60050FA69AFA002376EE /* HFBTree.h */; };
 		D06D60080FA69AFA002376EE /* HFBTree.m in Sources */ = {isa = PBXBuildFile; fileRef = D06D60060FA69AFA002376EE /* HFBTree.m */; };
 		D06D60190FA69B3E002376EE /* HFBTree.m in Sources */ = {isa = PBXBuildFile; fileRef = D06D60060FA69AFA002376EE /* HFBTree.m */; };
@@ -172,6 +171,8 @@
 		D0B7E3750D5C5B3A007874ED /* HFByteArray_FindReplace.m in Sources */ = {isa = PBXBuildFile; fileRef = D0B7E3380D5C50EA007874ED /* HFByteArray_FindReplace.m */; };
 		D0BAA835120A7DE800D8FB51 /* HFIndexSet.h in Headers */ = {isa = PBXBuildFile; fileRef = D0BAA833120A7DE800D8FB51 /* HFIndexSet.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D0BAA836120A7DE800D8FB51 /* HFIndexSet.m in Sources */ = {isa = PBXBuildFile; fileRef = D0BAA834120A7DE800D8FB51 /* HFIndexSet.m */; };
+		D0CBB240128F78C200989C15 /* StretchableProgressIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = D0CBB23F128F78C200989C15 /* StretchableProgressIndicator.m */; };
+		D0CBB32A128F906000989C15 /* DiffTextViewContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = D0CBB329128F906000989C15 /* DiffTextViewContainer.m */; };
 		D0CD51F60DA2B928006E8D1B /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D0CD51F50DA2B928006E8D1B /* AppDelegate.m */; };
 		D0CDB7330CE7338E0084926B /* HFRepresenterTextView_Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = D0CDB7320CE7338E0084926B /* HFRepresenterTextView_Internal.h */; };
 		D0CDB7540CE735590084926B /* HFRepresenterStringEncodingTextView.h in Headers */ = {isa = PBXBuildFile; fileRef = D0CDB7520CE735590084926B /* HFRepresenterStringEncodingTextView.h */; settings = {ATTRIBUTES = (); }; };
@@ -378,7 +379,6 @@
 		D05B77DE0E00883B008C45EB /* HFCancelButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFCancelButton.m; path = sources/HFCancelButton.m; sourceTree = "<group>"; };
 		D061A28E10042D6A0049B8B8 /* HFTextRepresenter_Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFTextRepresenter_Internal.h; path = sources/HFTextRepresenter_Internal.h; sourceTree = "<group>"; };
 		D0621CAC102ED50D00DAEB4D /* FortunateSonServerImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FortunateSonServerImpl.cpp; path = helper_subprocess/FortunateSonServerImpl.cpp; sourceTree = "<group>"; };
-		D068D960123C3C9500DFBEEC /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = /System/Library/Frameworks/IOKit.framework; sourceTree = "<absolute>"; };
 		D06D60050FA69AFA002376EE /* HFBTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFBTree.h; path = sources/BTree/HFBTree.h; sourceTree = "<group>"; };
 		D06D60060FA69AFA002376EE /* HFBTree.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFBTree.m; path = sources/BTree/HFBTree.m; sourceTree = "<group>"; };
 		D06D60100FA69B26002376EE /* Test_BTree */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Test_BTree; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -457,6 +457,10 @@
 		D0B7E3380D5C50EA007874ED /* HFByteArray_FindReplace.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFByteArray_FindReplace.m; path = sources/HFByteArray_FindReplace.m; sourceTree = "<group>"; };
 		D0BAA833120A7DE800D8FB51 /* HFIndexSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFIndexSet.h; path = sources/HFIndexSet.h; sourceTree = "<group>"; };
 		D0BAA834120A7DE800D8FB51 /* HFIndexSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFIndexSet.m; path = sources/HFIndexSet.m; sourceTree = "<group>"; };
+		D0CBB23E128F78C200989C15 /* StretchableProgressIndicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StretchableProgressIndicator.h; path = app/sources/StretchableProgressIndicator.h; sourceTree = "<group>"; };
+		D0CBB23F128F78C200989C15 /* StretchableProgressIndicator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = StretchableProgressIndicator.m; path = app/sources/StretchableProgressIndicator.m; sourceTree = "<group>"; };
+		D0CBB328128F906000989C15 /* DiffTextViewContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DiffTextViewContainer.h; path = app/sources/DiffTextViewContainer.h; sourceTree = "<group>"; };
+		D0CBB329128F906000989C15 /* DiffTextViewContainer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DiffTextViewContainer.m; path = app/sources/DiffTextViewContainer.m; sourceTree = "<group>"; };
 		D0CD51F40DA2B928006E8D1B /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = app/sources/AppDelegate.h; sourceTree = "<group>"; };
 		D0CD51F50DA2B928006E8D1B /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = app/sources/AppDelegate.m; sourceTree = "<group>"; };
 		D0CDB7320CE7338E0084926B /* HFRepresenterTextView_Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFRepresenterTextView_Internal.h; path = sources/HFRepresenterTextView_Internal.h; sourceTree = "<group>"; };
@@ -483,7 +487,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */,
-				D068D961123C3C9500DFBEEC /* IOKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -735,7 +738,6 @@
 			children = (
 				D0AFA784123C2BDF00CFC513 /* MyDocumentController.h */,
 				D0AFA785123C2BDF00CFC513 /* MyDocumentController.m */,
-				D068D960123C3C9500DFBEEC /* IOKit.framework */,
 				D01E7C140CDC58AA00943F9E /* BaseDataDocument.h */,
 				D01E7C150CDC58AA00943F9E /* BaseDataDocument.m */,
 				D02BD6DE10545E9000535EDE /* FileDataDocument.h */,
@@ -852,6 +854,8 @@
 				D01772F40D751DB1002E03DE /* HFDocumentOperationView.m */,
 				D01773900D7A2F32002E03DE /* HFResizingView.h */,
 				D01773910D7A2F32002E03DE /* HFResizingView.m */,
+				D0CBB23E128F78C200989C15 /* StretchableProgressIndicator.h */,
+				D0CBB23F128F78C200989C15 /* StretchableProgressIndicator.m */,
 				D078CF530D50491100492F46 /* HFBannerDividerThumb.h */,
 				D078CF540D50491100492F46 /* HFBannerDividerThumb.m */,
 				D00122DC0D48A89F00540B10 /* Find_Replace */,
@@ -904,6 +908,8 @@
 				D074B0D4115B2075002D5FA8 /* DiffDocumentWindow.m */,
 				D084E761115DAEAC004DC181 /* DiffOverlayView.h */,
 				D084E762115DAEAC004DC181 /* DiffOverlayView.m */,
+				D0CBB328128F906000989C15 /* DiffTextViewContainer.h */,
+				D0CBB329128F906000989C15 /* DiffTextViewContainer.m */,
 			);
 			name = DiffDocument;
 			sourceTree = "<group>";
@@ -1298,6 +1304,8 @@
 				D084E763115DAEAC004DC181 /* DiffOverlayView.m in Sources */,
 				D09163D4123857E5009D7D47 /* OpenPathWindowController.m in Sources */,
 				D0AFA786123C2BDF00CFC513 /* MyDocumentController.m in Sources */,
+				D0CBB240128F78C200989C15 /* StretchableProgressIndicator.m in Sources */,
+				D0CBB32A128F906000989C15 /* DiffTextViewContainer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

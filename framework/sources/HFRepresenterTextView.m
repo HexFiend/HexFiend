@@ -1312,7 +1312,6 @@ static size_t unionAndCleanLists(NSRect *rectList, id *valueList, size_t count) 
     [[font screenFont] set];
     
     [self _drawDefaultLineBackgrounds:clip withLineHeight:[self lineHeight] maxLines:ll2l(HFRoundUpToNextMultipleSaturate(byteCount, bytesPerLine) / bytesPerLine)];
-//    [self _drawStyledLineBackgrounds:clip];
     [self drawSelectionIfNecessaryWithClip:clip];
     
     NSColor *textColor = [NSColor blackColor];

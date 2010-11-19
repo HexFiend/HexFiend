@@ -321,6 +321,14 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
     }
 }
 
+- (NSArray *)runningOperationViews {
+    NSArray *result = [super runningOperationViews];
+    if ([diffComputationView operationIsRunning]) {
+	result = [result arrayByAddingObject:diffComputationView];
+    }
+    return result;
+}
+
 - (void)updateOverlayViewForChangedLeftScroller:(NSNotification *)note {
     NSNumber *propertyNumber = [[note userInfo] objectForKey:HFControllerChangedPropertiesKey];
 #if __LP64__
@@ -334,7 +342,7 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
 }
 
 - (void)fixupTextView:(HFTextView *)textView {
-    [textView setBordered:YES];
+    [textView setBordered:NO];
     BOOL foundLineCountingRep = NO;
     
     /* Install our undo manager */
@@ -372,16 +380,16 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
 }
 
 - (void)computeDiffEnded:(HFByteArrayEditScript *)script {
-    //script may be nil if we cancelled
+    /* Hide the script banner */
+    if (operationView != nil && operationView == diffComputationView) [self hideBannerFirstThenDo:NULL];
+
+    /* script may be nil if we cancelled */
     if (! script) {
 	[self close];
     } else {
 	editScript = [script retain];
 	[self showInstructionsFromEditScript];	
     }
-    
-    /* Hide the script banner */
-    if (operationView != nil && operationView == saveView) [self hideBannerFirstThenDo:NULL];
 }
 
 - (void)kickOffComputeDiff {
@@ -435,7 +443,7 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
     [contentView addSubview:scroller];
     
     if (! diffComputationView) {
-	diffComputationView = [self newOperationViewForNibName:@"DiffComputationBanner" displayName:@"Diffing"];
+	diffComputationView = [self newOperationViewForNibName:@"DiffComputationBanner" displayName:@"Diffing" fixedHeight:YES];
     }
     [self prepareBannerWithView:diffComputationView withTargetFirstResponder:nil];
     [self kickOffComputeDiff];

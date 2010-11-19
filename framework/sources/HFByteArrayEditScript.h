@@ -30,21 +30,9 @@ struct HFEditInstruction_t {
     
     unsigned long long sourceLength;
     unsigned long long destLength;
-  
-    struct {
-	/* buffer is malloc'd and free'd deterministically, so it should not be marked __strong */
-	unsigned char * restrict buffer;
-	unsigned long long rangeLocation;
-	unsigned long rangeLength;
-    } caches[4];
     
     volatile const int *cancelRequested;
     volatile int64_t *currentProgress;
-        
-    HFRange sourceCacheRange;
-    HFRange destCacheRange;
-    
-    NSMutableData *altInsns;
     
     __strong struct HFEditInstruction_t *insns;
     size_t insnCount;

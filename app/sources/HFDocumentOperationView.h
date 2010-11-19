@@ -30,6 +30,7 @@ struct HFDocumentOperationCallbacks {
     SEL endSelector;
     NSArray *otherTopLevelObjects;
     double progress;
+    BOOL isFixedHeight;
 }
 
 - (void)setOtherTopLevelObjects:(NSArray *)objects;
@@ -37,6 +38,9 @@ struct HFDocumentOperationCallbacks {
 + viewWithNibNamed:(NSString *)name owner:(id)owner;
 - viewNamed:(NSString *)name;
 - (CGFloat)defaultHeight;
+
+- (BOOL)isFixedHeight;
+- (void)setIsFixedHeight:(BOOL)val;
 
 - (NSString *)displayName;
 - (void)setDisplayName:(NSString *)name;

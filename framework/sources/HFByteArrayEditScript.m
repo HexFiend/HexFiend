@@ -10,14 +10,21 @@
 #import <HexFiend/HFByteArray.h>
 #import <HexFiend/HFProgressTracker.h>
 #include <malloc/malloc.h>
+#include <libkern/OSAtomic.h>
+#import <HexFiend/HFByteArray_Internal.h>
 
-/* indexes into the caches array */
+/* indexes into a caches */
 enum {
     SourceForwards,
     SourceBackwards,
     DestForwards,
-    DestBackwards
+    DestBackwards,
+    
+    NUM_CACHES
 };
+
+#define READ_AMOUNT (1024 * 32)
+#define CACHE_AMOUNT (4 * READ_AMOUNT)
 
 typedef long GraphIndex_t;
 
@@ -38,10 +45,10 @@ static void GrowableArray_reallocate(struct GrowableArray_t *array, size_t minLe
     
     /* The new length is twice the min length */
     size_t newLength = HFSumIntSaturate(minLength, minLength);
-        
+    
     /* But don't exceed the maxLength */
     newLength = MIN(newLength, maxLength);
-        
+    
     /* We support indexing in the range [-newLength, newLength], which means we need space for 2 * newLength + 1 elements.  And maybe malloc can give us more for free! */
     size_t bufferLength = malloc_good_size((newLength * 2 + 1) * sizeof *array->ptr);
     
@@ -51,7 +58,7 @@ static void GrowableArray_reallocate(struct GrowableArray_t *array, size_t minLe
     /* Allocate our memory */
     GraphIndex_t *newPtr = check_malloc(bufferLength);
     
-//    NSLog(@"Allocation: %lu / %lu", minLength, newLength);
+    //    NSLog(@"Allocation: %lu / %lu", minLength, newLength);
     
 #if ! NDEBUG
     /* When not optimizing, set it all to -1 to catch bad reads */
@@ -63,7 +70,7 @@ static void GrowableArray_reallocate(struct GrowableArray_t *array, size_t minLe
     
     if (array->length > 0) {
 	/* Copy the data over the center.  For the source, imagine array->length is 3.  Then the buffer looks like -3, -2, -1, 0, 1, 2, 3 with array->ptr pointing at 0.  Thus we subtract 3 to get to the start of the buffer, and the length is 2 * array->length + 1.  For the destination, backtrack the same amount. */
-
+	
 	memcpy(newPtr - array->length, array->ptr - array->length, (2 * array->length + 1) * sizeof *array->ptr);
 	
 	/* Free the old pointer.  Maybe this frees NULL, which is fine. */
@@ -80,36 +87,70 @@ static void GrowableArray_free(struct GrowableArray_t *array) {
     free(array->ptr - array->length);
 }
 
+/* A struct that stores thread local data */
+struct TLCacheGroup_t {
+    
+    /* Next in the queue */
+    struct TLCacheGroup_t *next;
+
+    /* The cached data */
+    struct {
+	unsigned char * restrict buffer;
+	HFRange range;
+    } caches[4];
+    
+    /* The growable arrays for storing the furthest reaching D-paths */
+    struct GrowableArray_t forwardsArray, backwardsArray;
+    
+    /* The list of instructions */
+    struct HFEditInstruction_t *insns;
+    size_t insnCount;
+};
+
+/* Create a cache. */
+static void initializeCacheGroup(struct TLCacheGroup_t *group) {
+    /* Initialize the next pointer to NULL */
+    group->next = NULL;
+    
+    /* Create the buffer caches in one big chunk. Allow 15 bytes of padding on each side, so that we can always do a 16 byte vector read.  Note that each cache can be the padding for its adjacent caches, so we only have to allocate it on the end. */
+    const NSUInteger endPadding = 15;
+    unsigned char *basePtr = malloc(CACHE_AMOUNT * NUM_CACHES + 2 * endPadding);
+    for (NSUInteger i=0; i < NUM_CACHES; i++) {
+	group->caches[i].buffer = basePtr + endPadding + CACHE_AMOUNT * i;
+	group->caches[i].range = HFRangeMake(0, 0);
+    }
+    
+    /* Initialize and allocate our growable arrays.  */
+    group->forwardsArray = group->backwardsArray = (struct GrowableArray_t){0, 0};
+    GrowableArray_reallocate(&group->forwardsArray, 1024, 1024);
+    GrowableArray_reallocate(&group->backwardsArray, 1024, 1024);
+}
+
+static void freeCacheGroup(struct TLCacheGroup_t *cache) {
+    const NSUInteger endPadding = 15;
+    unsigned char *basePtr = cache->caches[0].buffer - endPadding;
+    free(basePtr);
+    
+    GrowableArray_free(&cache->forwardsArray);
+    GrowableArray_free(&cache->backwardsArray);
+}
+
+/* A linked list for holding some instructions */
+
+//255 allows the total size of the struct to be < 8192
+#define INSTRUCTION_LIST_CHUNK 255
+struct InstructionList_t {
+    struct InstructionList_t *next;    
+    uint32_t count;
+    struct HFEditInstruction_t insns[INSTRUCTION_LIST_CHUNK]; 
+};
+
 
 @implementation HFByteArrayEditScript
 
-struct DPath_t {
-    struct DPath_t *next;
-    long D;
-    long *V;
-    long array_base[];
-};
-
-static struct DPath_t *new_path(const long *V, long D) {
-    // valid indexes in V are from -D to D, so we need to allocate 2*D + 1
-    size_t array_size = (2*D+1) * sizeof(long);
-    struct DPath_t *result = malloc(sizeof(struct DPath_t) + array_size);
-    result->next = NULL;
-    result->D = D;
-    result->V = result->array_base + D;
-    memcpy(result->array_base, V - D, array_size);
-    return result;
-}
-
-static void free_paths(struct DPath_t *path) {
-    while (path) {
-        struct DPath_t *next = path->next;
-        free(path);
-        path = next;
-    }
-}
-
+static BOOL can_merge_instruction(const struct HFEditInstruction_t *left, const struct HFEditInstruction_t *right);
 static BOOL merge_instruction(struct HFEditInstruction_t *left, const struct HFEditInstruction_t *right);
+static void merge_instructions(CFMutableDataRef left, CFDataRef right);
 
 enum HFEditInstructionType {
     HFEditInstructionTypeDelete,
@@ -137,6 +178,7 @@ static inline BOOL smallRangeIsSubrangeOfSmallRange(unsigned long long needleLoc
 #if (defined(__i386__) || defined(__x86_64__))
 #include <xmmintrin.h>
 
+/* match_forwards and match_backwards are assumed to be fast enough and to operate on small enough buffers that they don't have to check for cancellation. */
 static inline size_t match_forwards(const unsigned char * restrict a, const unsigned char * restrict b, size_t length) {
     size_t i;
     for (i=0; i < length; i+=16) {
@@ -188,38 +230,33 @@ static inline size_t match_backwards(const unsigned char * restrict a, const uns
 
 #endif
 
-#define READ_AMOUNT (1024 * 32)
-#define CACHE_AMOUNT (4 * READ_AMOUNT)
-
-
 /* Returns a pointer to bytes in the given range in the given array, whose length is arrayLen.  Here we avoid using HFRange because compilers are not good at optimizing structs. */
-static inline const unsigned char *getCachedBytes(HFByteArrayEditScript *self, HFByteArray *array, unsigned long long arrayLen, unsigned long long rangeLocation, unsigned long rangeLength, unsigned int cacheIndex) {
-    HFASSERT(rangeLength <= CACHE_AMOUNT);
-    HFASSERT(HFSum(rangeLocation, rangeLength) <= arrayLen);
+static inline const unsigned char *getCachedBytes(HFByteArrayEditScript *self, struct TLCacheGroup_t * restrict cacheList, HFByteArray *array, unsigned long long arrayLen, unsigned long long desiredLocation, unsigned long desiredLength, unsigned int cacheIndex) {
+    const HFRange desiredRange = HFRangeMake(desiredLocation, desiredLength);
+    HFASSERT(desiredRange.length <= CACHE_AMOUNT);
+    HFASSERT(HFMaxRange(desiredRange) <= arrayLen);
     HFASSERT(cacheIndex < 4);
-    unsigned long long cacheRangeLocation = self->caches[cacheIndex].rangeLocation;
-    unsigned long cacheRangeLength = self->caches[cacheIndex].rangeLength;
-    if (smallRangeIsSubrangeOfSmallRange(rangeLocation, rangeLength, cacheRangeLocation, cacheRangeLength)) {
+    HFRange cachedRange = cacheList->caches[cacheIndex].range;
+    if (HFRangeIsSubrangeOfRange(desiredRange, cachedRange)) {
 	/* Our cache range is valid */
-	return rangeLocation - cacheRangeLocation + self->caches[cacheIndex].buffer;
+	return desiredRange.location - cachedRange.location + cacheList->caches[cacheIndex].buffer;
     } else {
 	/* We need to recache.  Compute the new cache range */
-	unsigned long long newCacheRangeLocation;
-	unsigned long newCacheRangeLength;
+	HFRange newCacheRange;
 	
 	if (CACHE_AMOUNT >= arrayLen) {
 	    /* We can cache the entire array */
-	    newCacheRangeLocation = 0;
-	    newCacheRangeLength = ll2l(arrayLen);
+	    newCacheRange.location = 0;
+	    newCacheRange.length = arrayLen;
 	} else {
 	    /* The array is bigger than our cache amount, so we will cache our full amount. */
-	    newCacheRangeLength = CACHE_AMOUNT;
+	    newCacheRange.length = CACHE_AMOUNT;
 	    
 	    /* We will only cache part of the array.  Our cache will certainly cover the requested range.  Compute how to extend the cache around that range. */
-	    const unsigned long long maxLeftExtension = rangeLocation, maxRightExtension = arrayLen - rangeLocation - rangeLength;
+	    const unsigned long long maxLeftExtension = desiredRange.location, maxRightExtension = arrayLen - desiredRange.location - desiredRange.length;
 	    
 	    /* Give each side up to half, biasing towards the right */
-	    unsigned long remainingExtension = CACHE_AMOUNT - rangeLength;
+	    unsigned long remainingExtension = CACHE_AMOUNT - desiredRange.length;
 	    unsigned long leftExtension = remainingExtension / 2;
 	    unsigned long rightExtension = remainingExtension - leftExtension;
 
@@ -228,35 +265,34 @@ static inline const unsigned char *getCachedBytes(HFByteArrayEditScript *self, H
 	    
 	    if (leftExtension >= maxLeftExtension) {
 		/* Pin to the left side */
-		newCacheRangeLocation = 0;
+		newCacheRange.location = 0;
 	    } else if (rightExtension >= maxRightExtension) {
 		/* Pin to the right side */
-		newCacheRangeLocation = arrayLen - CACHE_AMOUNT;
+		newCacheRange.location = arrayLen - CACHE_AMOUNT;
 	    } else {
 		/* No pinning necessary */
-		newCacheRangeLocation = rangeLocation - leftExtension;
+		newCacheRange.location = desiredRange.location - leftExtension;
 	    }
 	}
 	
-	self->caches[cacheIndex].rangeLocation = newCacheRangeLocation;
-	self->caches[cacheIndex].rangeLength = newCacheRangeLength;        
-        [array copyBytes:self->caches[cacheIndex].buffer range:HFRangeMake(newCacheRangeLocation, newCacheRangeLength)];
+	cacheList->caches[cacheIndex].range = newCacheRange;
+        [array copyBytes:cacheList->caches[cacheIndex].buffer range:newCacheRange];
 	
-#if 1
+#if 0
 	const char * const kNames[] = {
 	    "forwards source",
 	    "backwards source ",
 	    "forwards dest",
 	    "backwards dest",
 	};
-//	NSLog(@"Blown %s cache: desired: {%llu, %lu} current: {%llu, %lu} new: {%llu, %lu}", kNames[cacheIndex], rangeLocation, rangeLength, cacheRangeLocation, cacheRangeLength, newCacheRangeLocation, newCacheRangeLength);
+	NSLog(@"Blown %s cache: desired: {%llu, %lu} current: {%llu, %lu} new: {%llu, %lu}", kNames[cacheIndex], rangeLocation, rangeLength, cacheRangeLocation, cacheRangeLength, newCacheRangeLocation, newCacheRangeLength);
 	
 #endif
-	return rangeLocation - newCacheRangeLocation + self->caches[cacheIndex].buffer;
+	return desiredRange.location - newCacheRange.location + cacheList->caches[cacheIndex].buffer;
     }
 }
 
-static inline unsigned long compute_forwards_snake_length(HFByteArrayEditScript *self, HFByteArray *a, unsigned long a_offset, unsigned long a_len, HFByteArray *b, unsigned long b_offset, unsigned long b_len, volatile int64_t * restrict outProgress) {
+static inline unsigned long compute_forwards_snake_length(HFByteArrayEditScript *self, struct TLCacheGroup_t * restrict cacheGroup, HFByteArray *a, unsigned long a_offset, unsigned long a_len, HFByteArray *b, unsigned long b_offset, unsigned long b_len, volatile int64_t * restrict outProgress, const volatile int *cancelRequested) {
     HFASSERT(a_len > 0 && b_len > 0);
     HFASSERT(a_len + a_offset <= self->sourceLength);
     HFASSERT(b_len + b_offset <= self->destLength);
@@ -264,8 +300,8 @@ static inline unsigned long compute_forwards_snake_length(HFByteArrayEditScript 
     unsigned long long progressConsumed = 0;
     while (remainingToRead > 0) {
         unsigned long amountToRead = MIN(READ_AMOUNT, remainingToRead);
-        const unsigned char *a_buff = getCachedBytes(self, a, self->sourceLength, a_offset + alreadyRead, amountToRead, SourceForwards);
-        const unsigned char *b_buff = getCachedBytes(self, b, self->destLength, b_offset + alreadyRead, amountToRead, DestForwards);
+        const unsigned char *a_buff = getCachedBytes(self, cacheGroup, a, self->sourceLength, a_offset + alreadyRead, amountToRead, SourceForwards);
+        const unsigned char *b_buff = getCachedBytes(self, cacheGroup, b, self->destLength, b_offset + alreadyRead, amountToRead, DestForwards);
 	unsigned long matchLen = match_forwards(a_buff, b_buff, amountToRead);
         alreadyRead += matchLen;
         remainingToRead -= matchLen;
@@ -276,12 +312,13 @@ static inline unsigned long compute_forwards_snake_length(HFByteArrayEditScript 
 	progressConsumed = newProgressConsumed;
 	
         if (matchLen < amountToRead) break;
+	if (*cancelRequested) break;
     }
     return alreadyRead;
 }
 
 /* returns the backwards snake of length no more than MIN(a_len, b_len), starting at a_offset, b_offset (exclusive) */
-static inline unsigned long compute_backwards_snake_length(HFByteArrayEditScript *self, HFByteArray *a, unsigned long a_offset, unsigned long a_len, HFByteArray *b, unsigned long b_offset, unsigned long b_len, volatile int64_t * restrict outProgress) {
+static inline unsigned long compute_backwards_snake_length(HFByteArrayEditScript *self, struct TLCacheGroup_t * restrict cacheGroup, HFByteArray *a, unsigned long a_offset, unsigned long a_len, HFByteArray *b, unsigned long b_offset, unsigned long b_len, volatile int64_t * restrict outProgress, const volatile int *cancelRequested) {
     HFASSERT(a_offset <= self->sourceLength);
     HFASSERT(b_offset <= self->destLength);
     HFASSERT(a_len <= a_offset);
@@ -290,8 +327,8 @@ static inline unsigned long compute_backwards_snake_length(HFByteArrayEditScript
     unsigned long long progressConsumed = 0;
     while (remainingToRead > 0) {
         unsigned long amountToRead = MIN(READ_AMOUNT, remainingToRead);
-	const unsigned char *a_buff = getCachedBytes(self, a, self->sourceLength, a_offset - alreadyRead - amountToRead, amountToRead, SourceBackwards);
-	const unsigned char *b_buff = getCachedBytes(self, b, self->destLength, b_offset - alreadyRead - amountToRead, amountToRead, DestBackwards);
+	const unsigned char *a_buff = getCachedBytes(self, cacheGroup, a, self->sourceLength, a_offset - alreadyRead - amountToRead, amountToRead, SourceBackwards);
+	const unsigned char *b_buff = getCachedBytes(self, cacheGroup, b, self->destLength, b_offset - alreadyRead - amountToRead, amountToRead, DestBackwards);
 	size_t matchLen = match_backwards(a_buff, b_buff, amountToRead);
         remainingToRead -= matchLen;
         alreadyRead += matchLen;
@@ -302,19 +339,9 @@ static inline unsigned long compute_backwards_snake_length(HFByteArrayEditScript
 	progressConsumed = newProgressConsumed;	
 	
         if (matchLen < amountToRead) break; //found some non-matching byte
+	if (*cancelRequested) break;
     }
     return alreadyRead;
-}
-
-static BOOL can_compute_diff(unsigned long long a_len, unsigned long long b_len) {
-    BOOL result = NO;
-    // we require (2 * max + 1) * sizeof(long) < LONG_MAX
-    // which implies that max < (LONG_MAX / sizeof(long) - 1) / 2
-    if (HFSumDoesNotOverflow(a_len, b_len)) {
-        unsigned long long max = a_len + b_len;
-        result = (max < ((LONG_MAX / sizeof(long)) - 1) / 2);
-    }
-    return result;
 }
 
 struct Snake_t {
@@ -326,9 +353,9 @@ struct Snake_t {
 };
 
 #if NDEBUG
-static long computeMiddleSnakeTraversal(HFByteArrayEditScript *self, const unsigned char * restrict aBuff, const unsigned char * restrict bBuff, BOOL direct, BOOL forwards, long k, long D, GraphIndex_t *restrict vector, long aLen, long bLen, unsigned long long xOffset, unsigned long long yOffset, struct Snake_t * restrict outSnake) __attribute__((always_inline));
+static long computeMiddleSnakeTraversal(HFByteArrayEditScript *self, struct TLCacheGroup_t * restrict cacheGroup, const unsigned char * restrict aBuff, const unsigned char * restrict bBuff, BOOL direct, BOOL forwards, long k, long D, GraphIndex_t *restrict vector, long aLen, long bLen, unsigned long long xOffset, unsigned long long yOffset, struct Snake_t * restrict outSnake) __attribute__((always_inline));
 #endif
-static long computeMiddleSnakeTraversal(HFByteArrayEditScript *self, const unsigned char * restrict aBuff, const unsigned char * restrict bBuff, BOOL direct, BOOL forwards, long k, long D, GraphIndex_t *restrict vector, long aLen, long bLen, unsigned long long xOffset, unsigned long long yOffset, struct Snake_t * restrict outSnake) {
+static long computeMiddleSnakeTraversal(HFByteArrayEditScript *self, struct TLCacheGroup_t * restrict cacheGroup, const unsigned char * restrict aBuff, const unsigned char * restrict bBuff, BOOL direct, BOOL forwards, long k, long D, GraphIndex_t *restrict vector, long aLen, long bLen, unsigned long long xOffset, unsigned long long yOffset, struct Snake_t * restrict outSnake) {
     long x, y;
     
     /* k-1 represents considering a movement from the left, while k + 1 represents considering a movement from above */
@@ -356,9 +383,9 @@ static long computeMiddleSnakeTraversal(HFByteArrayEditScript *self, const unsig
 	} else {
 	    /* Indirect buffer access */
 	    if (forwards) {
-		snakeLength = compute_forwards_snake_length(self, self->source, (unsigned long)xOffset + x, aLen - x, self->destination, (unsigned long)yOffset + y, bLen - y, &unused);
+		snakeLength = compute_forwards_snake_length(self, cacheGroup, self->source, (unsigned long)xOffset + x, aLen - x, self->destination, (unsigned long)yOffset + y, bLen - y, &unused, self->cancelRequested);
 	    } else {
-		snakeLength = compute_backwards_snake_length(self, self->source, (unsigned long)xOffset + aLen - x, aLen - x, self->destination, (unsigned long)yOffset + bLen - y, bLen - y, &unused);
+		snakeLength = compute_backwards_snake_length(self, cacheGroup, self->source, (unsigned long)xOffset + aLen - x, aLen - x, self->destination, (unsigned long)yOffset + bLen - y, bLen - y, &unused, self->cancelRequested);
 	    }
 	}
     }
@@ -369,12 +396,12 @@ static long computeMiddleSnakeTraversal(HFByteArrayEditScript *self, const unsig
 }
 
 #if NDEBUG
-static BOOL computeMiddleSnakeTraversal_OverlapCheck(HFByteArrayEditScript *self, const unsigned char * restrict aBuff, const unsigned char * restrict bBuff, BOOL direct, BOOL forwards, long k, long D, GraphIndex_t *restrict vector, long aLen, long bLen, unsigned long long xOffset, unsigned long long yOffset, const GraphIndex_t *restrict overlapVector, struct Snake_t *restrict result) __attribute__((always_inline));
+static BOOL computeMiddleSnakeTraversal_OverlapCheck(HFByteArrayEditScript *self, struct TLCacheGroup_t * restrict cacheGroup, const unsigned char * restrict aBuff, const unsigned char * restrict bBuff, BOOL direct, BOOL forwards, long k, long D, GraphIndex_t *restrict vector, long aLen, long bLen, unsigned long long xOffset, unsigned long long yOffset, const GraphIndex_t *restrict overlapVector, struct Snake_t *restrict result) __attribute__((always_inline));
 #endif
-static BOOL computeMiddleSnakeTraversal_OverlapCheck(HFByteArrayEditScript *self, const unsigned char * restrict aBuff, const unsigned char * restrict bBuff, BOOL direct, BOOL forwards, long k, long D, GraphIndex_t *restrict vector, long aLen, long bLen, unsigned long long xOffset, unsigned long long yOffset, const GraphIndex_t *restrict overlapVector, struct Snake_t *restrict result) {
+static BOOL computeMiddleSnakeTraversal_OverlapCheck(HFByteArrayEditScript *self, struct TLCacheGroup_t * restrict cacheGroup, const unsigned char * restrict aBuff, const unsigned char * restrict bBuff, BOOL direct, BOOL forwards, long k, long D, GraphIndex_t *restrict vector, long aLen, long bLen, unsigned long long xOffset, unsigned long long yOffset, const GraphIndex_t *restrict overlapVector, struct Snake_t *restrict result) {
     
     /* Traverse the snake */
-    long snakeLength = computeMiddleSnakeTraversal(self, aBuff, bBuff, direct, forwards, k, D, vector, aLen, bLen, xOffset, yOffset, result);
+    long snakeLength = computeMiddleSnakeTraversal(self, cacheGroup, aBuff, bBuff, direct, forwards, k, D, vector, aLen, bLen, xOffset, yOffset, result);
         
     /* Check for overlap */
     long delta = bLen - aLen;
@@ -395,9 +422,9 @@ static BOOL computeMiddleSnakeTraversal_OverlapCheck(HFByteArrayEditScript *self
 }
 
 #if NDEBUG
-static struct Snake_t computeMiddleSnake_MaybeDirect(HFByteArrayEditScript *self, BOOL direct, const unsigned char * restrict directABuff, const unsigned char * restrict directBBuff, HFRange rangeInA, HFRange rangeInB, struct GrowableArray_t * restrict forwardsArray, struct GrowableArray_t * restrict backwardsArray) __attribute__((always_inline));
+static struct Snake_t computeMiddleSnake_MaybeDirect(HFByteArrayEditScript *self, struct TLCacheGroup_t * restrict cacheGroup, BOOL direct, const unsigned char * restrict directABuff, const unsigned char * restrict directBBuff, HFRange rangeInA, HFRange rangeInB) __attribute__((always_inline));
 #endif
-static struct Snake_t computeMiddleSnake_MaybeDirect(HFByteArrayEditScript *self, BOOL direct, const unsigned char * restrict directABuff, const unsigned char * restrict directBBuff, HFRange rangeInA, HFRange rangeInB, struct GrowableArray_t * restrict forwardsArray, struct GrowableArray_t * restrict backwardsArray) {
+static struct Snake_t computeMiddleSnake_MaybeDirect(HFByteArrayEditScript *self, struct TLCacheGroup_t * restrict cacheGroup, BOOL direct, const unsigned char * restrict directABuff, const unsigned char * restrict directBBuff, HFRange rangeInA, HFRange rangeInB) {
     
     /* This function has to "consume" progress equal to rangeInA.length * rangeInB.length. */
     unsigned long long progressAllocated = rangeInA.length * rangeInB.length;
@@ -410,10 +437,12 @@ static struct Snake_t computeMiddleSnake_MaybeDirect(HFByteArrayEditScript *self
     
     /* Adding delta to k in the forwards direction gives you k in the backwards direction */
     const long delta = bLen - aLen;
-    const BOOL oddDelta = (delta & 1);    
+    const BOOL oddDelta = (delta & 1); 
+    BOOL parallelMe = (rangeInA.length == self->sourceLength && rangeInB.length == self->destLength);
     
-    GraphIndex_t *restrict forwardsVector = forwardsArray->ptr;
-    GraphIndex_t *restrict backwardsVector = backwardsArray->ptr;
+    GraphIndex_t *restrict forwardsVector = cacheGroup->forwardsArray.ptr;
+    GraphIndex_t *restrict backwardsVector = cacheGroup->backwardsArray.ptr;
+    size_t forwardsBackwardsVectorLength = MIN(cacheGroup->forwardsArray.length, cacheGroup->backwardsArray.length);
     
     /* Initialize the vector.  Unlike the standard algorithm, we precompute and traverse the snake from the upper left (0, 0) and the lower right (aLen, bLen), so we know there's nothing to do there.  Thus we know that vector[0] is 0, so we initialize that and start at D = 1. */
     forwardsVector[0] = 0;
@@ -424,8 +453,13 @@ static struct Snake_t computeMiddleSnake_MaybeDirect(HFByteArrayEditScript *self
     result.maxSnakeLength = 0;
     result.progressConsumed = 0;
     
+    volatile const int * const cancelRequested = self->cancelRequested;
+    
     for (long D=1; D <= maxD; D++) {
 	//if (0 == (D % 256)) printf("%ld / %ld\n", D, maxD);
+	
+	/* Check for cancellation */
+	if (*cancelRequested) break;
 	
 	/* We haven't yet found the middle snake.  The "worst case" would be a 0-length snake on some diagonal.  Which diagonal maximizes the "badness?"  I wrote out the equations and took the derivative and found it had a max at (d/2) + (N-M)/4, which is sort of intuitive...I guess. (N is the width, M is the height).
 	 
@@ -451,12 +485,14 @@ static struct Snake_t computeMiddleSnake_MaybeDirect(HFByteArrayEditScript *self
 	}
 	
 	/* We will be indexing from -D to D, so reallocate if necessary.  It's a little sketchy that we check both forwardsArray->length and backwardsArray->length, which are usually the same size: this is just in case malloc_good_size returns something different for them. */
-	if ((size_t)D > forwardsArray->length || (size_t)D > backwardsArray->length) {
-	    GrowableArray_reallocate(forwardsArray, D, maxD);
-	    forwardsVector = forwardsArray->ptr;
+	if ((size_t)D > forwardsBackwardsVectorLength) {
+	    GrowableArray_reallocate(&cacheGroup->forwardsArray, D, maxD);
+	    forwardsVector = cacheGroup->forwardsArray.ptr;
 	    
-	    GrowableArray_reallocate(backwardsArray, D, maxD);
-	    backwardsVector = backwardsArray->ptr;
+	    GrowableArray_reallocate(&cacheGroup->backwardsArray, D, maxD);
+	    backwardsVector = cacheGroup->backwardsArray.ptr;
+	    
+	    forwardsBackwardsVectorLength = MIN(cacheGroup->forwardsArray.length, cacheGroup->backwardsArray.length);
 	}
 	
 	for (int direction = 1; direction >= 0; direction--) {
@@ -468,72 +504,135 @@ static struct Snake_t computeMiddleSnake_MaybeDirect(HFByteArrayEditScript *self
 	    if (checkForOverlap) {
 		/* Check for overlap, but only when the diagonal is within the right range */
 		for (long k = -D; k <= D; k += 2) {
+		    if (*cancelRequested) break;
+		    
 		    long flippedK = -(k + delta);
 		    /* If we're forwards, the reverse path has only had time to explore diagonals -(D-1) through (D-1).  If we're backwards, it's had time to explore diagonals -D through D. */
 		    const long reverseExploredDiagonal = D - direction;
 		    if (flippedK >= -reverseExploredDiagonal && flippedK <= reverseExploredDiagonal) {
-			if (computeMiddleSnakeTraversal_OverlapCheck(self, directABuff, directBBuff, direct, forwards, k, D, (forwards ? forwardsVector : backwardsVector), aLen, bLen, aStart, bStart, (forwards ? backwardsVector : forwardsVector), &result)) {
+			if (computeMiddleSnakeTraversal_OverlapCheck(self, cacheGroup, directABuff, directBBuff, direct, forwards, k, D, (forwards ? forwardsVector : backwardsVector), aLen, bLen, aStart, bStart, (forwards ? backwardsVector : forwardsVector), &result)) {
 			    return result;
 			}			    
 		    } else {
-			computeMiddleSnakeTraversal(self, directABuff, directBBuff, direct, forwards, k, D, (forwards ? forwardsVector : backwardsVector), aLen, bLen, aStart, bStart, &result);
+			computeMiddleSnakeTraversal(self, cacheGroup, directABuff, directBBuff, direct, forwards, k, D, (forwards ? forwardsVector : backwardsVector), aLen, bLen, aStart, bStart, &result);
 		    }
 		}
 	    } else {
-		/* Don't check for overlap */
-		for (long k = -D; k <= D; k += 2) {
-		    computeMiddleSnakeTraversal(self, directABuff, directBBuff, direct, forwards, k, D, (forwards ? forwardsVector : backwardsVector), aLen, bLen, aStart, bStart, &result);
-		}  
+		/* Since this can't return, we can do it in parallel pretty well. */
+		long minDForParallel = 2048;
+		if (direct && parallelMe && D >= minDForParallel) {
+		    GraphIndex_t * directionalVector = (forwards ? forwardsVector : backwardsVector);
+		    struct Snake_t * const resultPtr = &result;
+		    dispatch_apply(2, dispatch_get_global_queue(0, 0), ^(size_t arg) {
+			if (arg == 0) {
+			    /* [-D, 0) */
+			    for (long k = -D; k < 0; k += 2) {
+				if (*cancelRequested) break;
+				computeMiddleSnakeTraversal(self, cacheGroup, directABuff, directBBuff, direct, forwards, k, D, directionalVector, aLen, bLen, aStart, bStart, resultPtr);
+			    }
+			} else {
+			    /* [0, D].  Note that if D is odd, we don't start at 0. */
+			    for (long k = (D & 1); k <= D; k += 2) {
+				if (*cancelRequested) break;
+				computeMiddleSnakeTraversal(self, cacheGroup, directABuff, directBBuff, direct, forwards, k, D, directionalVector, aLen, bLen, aStart, bStart, resultPtr);
+			    }
+			}
+		    });
+		} else {
+		    /* Don't check for overlap */
+		    for (long k = -D; k <= D; k += 2) {
+			if (*cancelRequested) break;
+			
+			computeMiddleSnakeTraversal(self, cacheGroup, directABuff, directBBuff, direct, forwards, k, D, (forwards ? forwardsVector : backwardsVector), aLen, bLen, aStart, bStart, &result);
+		    }
+		}
 	    }
 	}
     }
-    /* We don't expect to ever exit this loop */
-    [NSException raise:NSInternalInconsistencyException format:@"Diff algorithm terminated unexpectedly"];
+    /* We don't expect to ever exit this loop, unless we cancel */
+    HFASSERT(*self->cancelRequested);
     return result;
 }
 
 #if NDEBUG
-static struct Snake_t computeMiddleSnake(HFByteArrayEditScript *self, HFRange rangeInA, HFRange rangeInB, struct GrowableArray_t * restrict forwardsArray, struct GrowableArray_t * restrict backwardsArray) __attribute__ ((noinline));
+static struct Snake_t computeMiddleSnake(HFByteArrayEditScript *self, struct TLCacheGroup_t * restrict cacheGroup, HFRange rangeInA, HFRange rangeInB) __attribute__ ((noinline));
 #endif
-static struct Snake_t computeMiddleSnake(HFByteArrayEditScript *self, HFRange rangeInA, HFRange rangeInB, struct GrowableArray_t * restrict forwardsArray, struct GrowableArray_t * restrict backwardsArray) {
+static struct Snake_t computeMiddleSnake(HFByteArrayEditScript *self, struct TLCacheGroup_t * restrict cacheGroup, HFRange rangeInA, HFRange rangeInB) {
     /* If both our ranges are small enough that they fit in our cache, then we can just read them all in and avoid all the range checking we would otherwise have to do. */
     BOOL direct = (rangeInA.length <= CACHE_AMOUNT && rangeInB.length <= CACHE_AMOUNT);
     if (direct) {
 	/* Cache everything */
-	const unsigned char * const directABuff = getCachedBytes(self, self->source, self->sourceLength, rangeInA.location, rangeInA.length, SourceForwards);
-	const unsigned char * const directBBuff = getCachedBytes(self, self->destination, self->destLength, rangeInB.location, rangeInB.length, DestForwards);
-	return computeMiddleSnake_MaybeDirect(self, YES, directABuff, directBBuff, rangeInA, rangeInB, forwardsArray, backwardsArray);
+	const unsigned char * const directABuff = getCachedBytes(self, cacheGroup, self->source, self->sourceLength, rangeInA.location, rangeInA.length, SourceForwards);
+	const unsigned char * const directBBuff = getCachedBytes(self, cacheGroup, self->destination, self->destLength, rangeInB.location, rangeInB.length, DestForwards);
+	return computeMiddleSnake_MaybeDirect(self, cacheGroup, YES, directABuff, directBBuff, rangeInA, rangeInB);
     } else {
 	/* We can't cache everything */
-	return computeMiddleSnake_MaybeDirect(self, NO, NULL, NULL, rangeInA, rangeInB, forwardsArray, backwardsArray);
+	return computeMiddleSnake_MaybeDirect(self, cacheGroup, NO, NULL, NULL, rangeInA, rangeInB);
     }
 }
 
 
 
-static void appendInstruction(HFByteArrayEditScript *self, HFRange rangeInA, HFRange rangeInB) {
+static inline void appendInstruction(HFByteArrayEditScript *self, CFMutableDataRef insns, HFRange rangeInA, HFRange rangeInB) {
+    const size_t insnSize = sizeof(struct HFEditInstruction_t);
     HFASSERT(HFRangeIsSubrangeOfRange(rangeInA, HFRangeMake(0, [self->source length])));
     HFASSERT(HFRangeIsSubrangeOfRange(rangeInB, HFRangeMake(0, [self->destination length])));
+    HFASSERT(CFDataGetLength(insns) % insnSize == 0); //data must be a multiple of insnSize
     if (rangeInA.length || rangeInB.length) {
 	/* Make the new instruction */
 	const struct HFEditInstruction_t insn = {.src = rangeInA, .dst = rangeInB};
 	
 	/* Try to merge them */
 	BOOL merged = NO;
-	NSUInteger insnCount = [self->altInsns length] / sizeof(struct HFEditInstruction_t);
+	NSUInteger insnCount = CFDataGetLength(insns) / insnSize;
 	if (insnCount > 0) {
-	    struct HFEditInstruction_t *existingInsns = [self->altInsns mutableBytes];
+	    struct HFEditInstruction_t *existingInsns = (struct HFEditInstruction_t *)CFDataGetMutableBytePtr(insns);
 	    merged = merge_instruction(existingInsns + insnCount - 1, &insn);
 	}
 	if (! merged) {
-	    [self->altInsns appendBytes:&insn length:sizeof insn];
+	    CFDataAppendBytes(insns, (const unsigned char *)&insn, insnSize);
 	}
     }
 }
 
-static void computeLongestCommonSubsequence(HFByteArrayEditScript *self, HFRange rangeInA, HFRange rangeInB, struct GrowableArray_t * restrict forwardsArray, struct GrowableArray_t * restrict backwardsArray) {
+static inline struct InstructionList_t *append_instruction_to_list(HFByteArrayEditScript *self, struct InstructionList_t *list, HFRange rangeInA, HFRange rangeInB) {
+    /* This should only ever be called with the end of a list */
+    HFASSERT(list != NULL && list->next == NULL);
+    if (rangeInA.length || rangeInB.length) {
+	/* Make the new instruction */
+	const struct HFEditInstruction_t insn = {.src = rangeInA, .dst = rangeInB};
+	
+	if (list->count == 0) {
+	    /* Just append */
+	    list->insns[0] = insn;
+	    list->count = 1;
+	} else if (merge_instruction(list->insns + list->count - 1, &insn)) {
+	    /* Merged, nothing to do */
+	} else if (list->count < INSTRUCTION_LIST_CHUNK) {
+	    /* We can append without overflow */
+	    list->insns[list->count++] = insn;
+	} else {
+	    /* We must make a new list chunk. */
+	    struct InstructionList_t *newList = malloc(sizeof *newList);
+	    newList->count = 1;
+	    newList->insns[0] = insn;
+	    newList->next = NULL;
+	    
+	    /* Append to the tail.  Now we are the tail. */
+	    list->next = newList;
+	    list = newList;
+	}
+    }
+    return list;
+}
+
+static struct InstructionList_t *computeLongestCommonSubsequence(HFByteArrayEditScript *self, struct TLCacheGroup_t *restrict cacheGroup, OSQueueHead * restrict cacheQueueHead, struct InstructionList_t *insns, HFRange rangeInA, HFRange rangeInB) {
     HFByteArray *source = self->source;
     HFByteArray *destination = self->destination;
+    
+    /* At various points we check for cancellation requests */
+    volatile const int * const cancelRequested = self->cancelRequested;
+    if (*cancelRequested) return insns;
     
     /* Compute how much progress we are responsible for "consuming" */
     unsigned long long remainingProgress = rangeInA.length * rangeInB.length;
@@ -541,11 +640,10 @@ static void computeLongestCommonSubsequence(HFByteArrayEditScript *self, HFRange
     HFASSERT(HFRangeIsSubrangeOfRange(rangeInA, HFRangeMake(0, [source length])));
     HFASSERT(HFRangeIsSubrangeOfRange(rangeInB, HFRangeMake(0, [destination length])));
     if (rangeInA.length == 0 || rangeInB.length == 0) {
-	appendInstruction(self, rangeInA, rangeInB);
-	return;
+	return append_instruction_to_list(self, insns, rangeInA, rangeInB);
     }
     
-    unsigned long prefix = compute_forwards_snake_length(self, source, rangeInA.location, rangeInA.length, destination, rangeInB.location, rangeInB.length, self->currentProgress);
+    unsigned long prefix = compute_forwards_snake_length(self, cacheGroup, source, rangeInA.location, rangeInA.length, destination, rangeInB.location, rangeInB.length, self->currentProgress, cancelRequested);
     HFASSERT(prefix <= rangeInA.length && prefix <= rangeInB.length);
     
     if (prefix > 0) {	
@@ -559,12 +657,11 @@ static void computeLongestCommonSubsequence(HFByteArrayEditScript *self, HFRange
 	
 	if (rangeInA.length == 0 || rangeInB.length == 0) {
 	    /* All done */
-	    appendInstruction(self, rangeInA, rangeInB);
-	    return;
+	    return append_instruction_to_list(self, insns, rangeInA, rangeInB);
 	}
     }
     
-    unsigned long suffix = compute_backwards_snake_length(self, source, HFMaxRange(rangeInA), rangeInA.length, destination, HFMaxRange(rangeInB), rangeInB.length, self->currentProgress);
+    unsigned long suffix = compute_backwards_snake_length(self, cacheGroup, source, HFMaxRange(rangeInA), rangeInA.length, destination, HFMaxRange(rangeInB), rangeInB.length, self->currentProgress, cancelRequested);
     HFASSERT(suffix <= rangeInA.length && suffix <= rangeInB.length);
     /* The suffix can't have consumed the whole thing though, because the prefix would have caught that */
     HFASSERT(suffix <= rangeInA.length && suffix <= rangeInB.length);
@@ -577,7 +674,9 @@ static void computeLongestCommonSubsequence(HFByteArrayEditScript *self, HFRange
 	
 	/* Note that we don't have to check to see if the snake consumed the entire thing on the reverse path, because we would have caught that with the prefix check up above */
     }
-    struct Snake_t middleSnake = computeMiddleSnake(self, rangeInA, rangeInB, forwardsArray, backwardsArray);
+    
+    struct Snake_t middleSnake = computeMiddleSnake(self, cacheGroup, rangeInA, rangeInB);
+    if (*cancelRequested) return insns;
     
     HFASSERT(middleSnake.middleSnakeLength >= 0);
     HFASSERT(middleSnake.startX >= rangeInA.location);
@@ -591,9 +690,8 @@ static void computeLongestCommonSubsequence(HFByteArrayEditScript *self, HFRange
     
     if (middleSnake.maxSnakeLength == 0) {
 	/* There were no non-empty snakes at all, so the entire range must be a diff */
-	appendInstruction(self, rangeInA, rangeInB);
 	HFAtomicAdd64(remainingProgress, self->currentProgress);
-	return;
+	return append_instruction_to_list(self, insns, rangeInA, rangeInB);
     }
     
     HFRange prefixRangeA, prefixRangeB, suffixRangeA, suffixRangeB;
@@ -612,127 +710,81 @@ static void computeLongestCommonSubsequence(HFByteArrayEditScript *self, HFRange
     HFAtomicAdd64(remainingProgress - newRemainingProgress, self->currentProgress);
     remainingProgress = newRemainingProgress;
     
-    if (prefixRangeA.length > 0 || prefixRangeB.length > 0) {
-	computeLongestCommonSubsequence(self, prefixRangeA, prefixRangeB, forwardsArray, backwardsArray);
-    }
-    if (suffixRangeA.length > 0 || suffixRangeB.length > 0) {
-	computeLongestCommonSubsequence(self, suffixRangeA, suffixRangeB, forwardsArray, backwardsArray);
-    }
-}
-
-- (size_t)computeGraph:(struct DPath_t **)outPaths {
-    HFByteArray * const a = source, * const b = destination;
-    if (! can_compute_diff([a length], [b length])) {
-        [NSException raise:NSInvalidArgumentException format:@"Cannot compute diff between %@ and %@: it would require too much memory!", a, b];
-    }
+    /* We check for *cancelRequested at the beginning of these functions, so we don't gain by checking for it again here */
+    const unsigned long long minAsyncLength = 1024;
+    BOOL asyncA = prefixRangeA.length > minAsyncLength || prefixRangeB.length > minAsyncLength;
+    BOOL asyncB = suffixRangeA.length > minAsyncLength || suffixRangeB.length > minAsyncLength;
     
-    const long a_len = (long)[a length], b_len = (long)[b length];
-    const long max = a_len + b_len;
-    long * const array_base = malloc((2 * max + 1) * sizeof *array_base);
-    long * const V = array_base + max;
-    int finished = 0;
-    size_t numInsns = 0;
-    
-    struct DPath_t *path_list = NULL;
-    
-    V[1] = 0;
-    long D;
-    int64_t unusedProgress = 0;
-    for (D=0; D <= max && ! finished; D++) {
-        for (long K = -D; K <= D; K += 2) {
-            long X, Y;
-            if (K == -D || (K != D && V[K-1] < V[K+1])) {
-                X = V[K+1]; //horizontal movement
-            }
-            else {
-                X = V[K-1]+1; //vertical movement
-            }
-            Y = X - K;
-	    unsigned long snakeLength = 0;
-	    if (X < a_len && Y < b_len) {
-		snakeLength = compute_forwards_snake_length(self, a, X, a_len - X, b, Y, b_len - Y, &unusedProgress);
+    if (asyncA && asyncB) {
+	/* We'll be running two blocks in parallel.  The left one will append to insns, while the right one will create a new list.  We need to link the end of insns to the new right list, so use a double pointer so that we can set the end of the list. */
+	struct InstructionList_t *rightList = malloc(sizeof *rightList);
+	struct InstructionList_t *endOfRightList = rightList, *endOfLeftList = insns;
+	struct InstructionList_t **endOfLeftListPtr = &endOfLeftList, **endOfRightListPtr = &endOfRightList;
+	rightList->count = 0;
+	rightList->next = NULL;
+	
+	dispatch_apply(2, dispatch_get_global_queue(0, 0), ^(size_t idx) {
+	    if (idx == 0) {
+		*endOfLeftListPtr = computeLongestCommonSubsequence(self, cacheGroup, cacheQueueHead, *endOfLeftListPtr, prefixRangeA, prefixRangeB);
+	    } else {
+		/* Attempt to dequeue a group.  If we can't, we'll have to make one */
+		struct TLCacheGroup_t *newGroup = OSAtomicDequeue(cacheQueueHead, offsetof(struct TLCacheGroup_t, next));
+		if (! newGroup) {
+		    newGroup = malloc(sizeof *newGroup);
+		    initializeCacheGroup(newGroup);
+		}
+		*endOfRightListPtr = computeLongestCommonSubsequence(self, newGroup, cacheQueueHead, *endOfRightListPtr, suffixRangeA, suffixRangeB);
+		/* Put it on the queue (either back or fresh) so others can use it */
+		OSAtomicEnqueue(cacheQueueHead, newGroup, offsetof(struct TLCacheGroup_t, next));
 	    }
-            X += snakeLength;
-            Y += snakeLength;
-            V[K] = X;
-            if (X >= a_len && Y >= b_len) {
-                finished = YES;
-                break;
-            }
-        }
-        if (outPaths) {
-            struct DPath_t *next_path = new_path(V, D);
-            next_path->next = path_list;
-            path_list = next_path;
-            numInsns++;
-        }
+	});
+
+	/* Link up our lists */
+	HFASSERT((*endOfLeftListPtr)->next == NULL);
+	(*endOfLeftListPtr)->next = rightList;
+	insns = *endOfRightListPtr;
+    } else {
+	if (prefixRangeA.length > 0 || prefixRangeB.length > 0) {
+	    insns = computeLongestCommonSubsequence(self, cacheGroup, cacheQueueHead, insns, prefixRangeA, prefixRangeB);
+	}
+	if (suffixRangeA.length > 0 || suffixRangeB.length > 0) {
+	    insns = computeLongestCommonSubsequence(self, cacheGroup, cacheQueueHead, insns, suffixRangeA, suffixRangeB);
+	}
     }
-    free(array_base);
-    if (outPaths) {
-        *outPaths = path_list;
-    }
-    numInsns -= 1; //ignore the first "fake" instruction
-    printf("******** D: %lu\n", D);
-    return numInsns;
+    return insns;
 }
 
-- (void)generateInstructions:(const struct DPath_t *)pathsHead count:(size_t)numInsns diagonal:(long)diagonal {
-    if (pathsHead == NULL || pathsHead->D == 0) return;
-    insnCount = numInsns;
-    insns = NSAllocateCollectable(insnCount * sizeof *insns, 0); //not scanned, collectable
-    const struct DPath_t *paths = pathsHead;
-    size_t insnTop = insnCount;
-    long currentDiagonal = diagonal;
-    while (paths->next) {
-        assert((currentDiagonal >= -paths->D) && (currentDiagonal <= paths->D));
-        long X = paths->V[currentDiagonal];
-        long Y = X - currentDiagonal;
-
-        assert(X >= 0);
-        assert(Y >= 0);
-
-        /* We are either the result of a horizontal movement followed by a snake, or a vertical movement followed by a snake (or possibly both).  To figure out which, look at the X coordinate of the end of the farthest reaching path in the diagonal above us and below us, and pick the larger; this is because if the smaller is also just one away from the snake, the larger must be too. */
-        
-        const struct DPath_t * const next = paths->next;
-        long xCoordForVertical = (currentDiagonal + 1 <= next->D ? next->V[currentDiagonal + 1] : -2);
-        long xCoordForHorizontal = (currentDiagonal - 1 >= - next->D ? next->V[currentDiagonal - 1] : -2);
-        
-        assert(xCoordForVertical >= 0 || xCoordForHorizontal >= 0);
-        BOOL wasVertical = (xCoordForVertical > xCoordForHorizontal);
-        if (wasVertical) {
-            /* It was vertical */
-            currentDiagonal += 1;
-            X = xCoordForVertical;
-            Y = X - currentDiagonal;
-	    //insertion
-            insns[--insnTop] = (struct HFEditInstruction_t){.src = HFRangeMake(X, 0), .dst = HFRangeMake(Y, 1)};
-
-        }
-        else {
-            /* It was horizontal */
-            X = xCoordForHorizontal;
-            Y = X - currentDiagonal;
-                       
-	    //deletion
-            currentDiagonal -= 1;
-            insns[--insnTop] = (struct HFEditInstruction_t){.src = HFRangeMake(X, 1), .dst = HFRangeMake(-1, 0)};
-        }
-        paths = next;
-    }
-    assert(insnTop == 0);
+static BOOL can_merge_instruction(const struct HFEditInstruction_t *left, const struct HFEditInstruction_t *right) {
+    /* We can merge these if one (or both) of the dest ranges are empty, or if they are abutting.  Note that if a destination is empty, we have to copy the location from the other one, because we like to give nonsense locations (-1) to zero length ranges.  src never has a nonsense location. */
+    return HFMaxRange(left->src) == right->src.location && (left->dst.length == 0 || right->dst.length == 0 || HFMaxRange(left->dst) == right->dst.location);
 }
 
 static BOOL merge_instruction(struct HFEditInstruction_t *left, const struct HFEditInstruction_t *right) {
-    if (HFMaxRange(left->src) == right->src.location) {
-	/* We can merge these if one (or both) of the dest ranges are empty, or if they are abutting.  Note that if a destination is empty, we have to copy the location from the other one, because we like to give nonsense locations (-1) to zero length ranges.  src never has a nonsense location. */
-	if (left->dst.length == 0 || right->dst.length == 0 || HFMaxRange(left->dst) == right->dst.location) {
-	    left->src.length = HFSum(left->src.length, right->src.length);
-	    if (left->dst.length == 0) left->dst.location = right->dst.location;
-	    left->dst.length = HFSum(left->dst.length, right->dst.length);
-	    return YES;
-	}
+    BOOL result = NO;
+    if (can_merge_instruction(left, right)) {
+	left->src.length = HFSum(left->src.length, right->src.length);
+	if (left->dst.length == 0) left->dst.location = right->dst.location;
+	left->dst.length = HFSum(left->dst.length, right->dst.length);
+	result = YES;
     }
-    return NO;
+    return result;
+}
+
+static void merge_instructions(CFMutableDataRef left, CFDataRef right) {
+    const size_t insnSize = sizeof(struct HFEditInstruction_t);
+    size_t leftSize = CFDataGetLength(left), rightSize = CFDataGetLength(right);
+    struct HFEditInstruction_t *leftInsns = (struct HFEditInstruction_t *)CFDataGetMutableBytePtr(left);
+    const struct HFEditInstruction_t *rightInsns = (const struct HFEditInstruction_t *)CFDataGetBytePtr(right);
+    HFASSERT(leftSize % insnSize == 0 && rightSize % insnSize == 0);
+    /* Try to merge the last left with the first right */
+    size_t leftInsnCount = leftSize / insnSize;
+    if (leftSize > 0 && rightSize > 0 && merge_instruction(leftInsns + leftInsnCount - 1, rightInsns)) {
+	/* Successfully merged one instruction */
+	rightInsns++;
+	rightSize -= insnSize;
+    }
+    /* Now append whatever's left */
+    CFDataAppendBytes(left, (const unsigned char *)rightInsns, rightSize);
 }
 
 #if 0
@@ -755,22 +807,6 @@ static BOOL merge_instruction_noreplaces(struct HFEditInstruction_t *left, const
     }
 }
 #endif
-
-- (void)mergeInstructions {
-    if (! insnCount) return;
-    size_t leading = 1, trailing = 0;
-    for (; leading < insnCount; leading++) {
-        if (! merge_instruction(insns + trailing, insns + leading)) {
-            trailing++;
-            insns[trailing] = insns[leading];
-        }
-    }
-    NSUInteger beforeInsnCount = insnCount;
-    size_t beforeSize = malloc_size(insns);
-    insnCount = trailing + 1;
-    insns = NSReallocateCollectable(insns, insnCount * sizeof *insns, 0);
-    printf("Merge: %lu -> %lu, size from %lu to %lu (could be as small as %lu)\n", beforeInsnCount, insnCount, malloc_size(insns), beforeSize, insnCount * sizeof *insns);
-}
 
 - (void)convertInstructionsToIncrementalForm {
     long long accumulatedLengthChange = 0;
@@ -801,38 +837,77 @@ static BOOL merge_instruction_noreplaces(struct HFEditInstruction_t *left, const
 }
 
 - (BOOL)computeDifferenceViaMiddleSnakes {
-    /* Create our growable arrays, and give them a healthy amount of space.  We could reduce this if source or destination were smaller. */
-    struct GrowableArray_t forwardsArray = {0, 0}, backwardsArray = {0, 0};
-    GrowableArray_reallocate(&forwardsArray, 1024, 1024);
-    GrowableArray_reallocate(&backwardsArray, 1024, 1024);
+    /* We succeed unless we are cancelled */
+    BOOL success = NO;
+    
+    /* Create one cache */
+    struct TLCacheGroup_t cacheGroup;
+    initializeCacheGroup(&cacheGroup);
+    
+    /* Create our queue for additional caches */
+    OSQueueHead queueHead = OS_ATOMIC_QUEUE_INIT;
     
     /* Compute the longest common subsequence. */
-    altInsns = [[NSMutableData alloc] init];
-    computeLongestCommonSubsequence(self, HFRangeMake(0, sourceLength), HFRangeMake(0, destLength), &forwardsArray, &backwardsArray);
+    struct InstructionList_t stackList;
+    stackList.next = NULL;
+    stackList.count = 0;
+    computeLongestCommonSubsequence(self, &cacheGroup, &queueHead, &stackList, HFRangeMake(0, sourceLength), HFRangeMake(0, destLength));
     
     /* Copy out the data */
-    HFASSERT([altInsns length] % sizeof *insns == 0);
-    insnCount = [altInsns length] / sizeof *insns;
-    insns = NSAllocateCollectable(insnCount * sizeof *insns, 0);//not scanned, collectable
-    [altInsns getBytes:insns];
-    [altInsns release];
-    altInsns = nil;
+    if (! *cancelRequested) {
+	size_t numInsns = 0;
+	struct InstructionList_t *cursor, *prevNonEmptyLink = NULL;
+	
+	/* Collapse the linked list into an array.  Do two passes: in the first we count, and in the second we copy. */
+	for (cursor = &stackList; cursor != NULL; cursor = cursor->next) {
+	    if (! cursor->count) continue;
+	    
+	    numInsns += cursor->count;
+	    if (prevNonEmptyLink && can_merge_instruction(prevNonEmptyLink->insns + prevNonEmptyLink->count - 1, cursor->insns)) {
+		/* We can merge the last instruction in the previous link with our first one, so we'll have one fewer instruction */
+		numInsns--;
+	    }
+	    prevNonEmptyLink = cursor;
+	}
+	
+	/* We calculated the number of instructions, so allocate space for that many */
+	self->insnCount = numInsns;
+	self->insns = NSAllocateCollectable(numInsns * sizeof *insns, 0);//not scanned, collectable
+	
+	/* Do it again, while copying and freeing */
+	cursor = &stackList;
+	struct HFEditInstruction_t *nextInstructionPtr = self->insns;
+	while (cursor) {
+	    if (cursor->count > 0) {
+		/* Maybe merge with the previous instruction */
+		size_t numMerged = (nextInstructionPtr > self->insns && merge_instruction(nextInstructionPtr - 1, cursor->insns + 0)) ? 1 : 0;
+		memcpy(nextInstructionPtr, cursor->insns + numMerged, (cursor->count - numMerged) * sizeof *insns);
+		nextInstructionPtr += cursor->count - numMerged;
+	    }
+	    
+	    /* Free this and go to the next */
+	    struct InstructionList_t *next = cursor->next;
+	    if (cursor != &stackList) free(cursor);
+	    cursor = next;
+	}
+	
+	/* We succeed unless we were cancelled */
+	success = YES;
+    }
+        
+    /* Free our cache */
+    freeCacheGroup(&cacheGroup);
     
-    /* We're done with our vectors */
-    GrowableArray_free(&forwardsArray);
-    GrowableArray_free(&backwardsArray);
+    /* Dequeue and free all the other caches, which were allocated with malloc() */
+    struct TLCacheGroup_t *additionalCache;
+    while ((additionalCache = OSAtomicDequeue(&queueHead, offsetof(struct TLCacheGroup_t, next)))) {
+	freeCacheGroup(additionalCache);
+	free(additionalCache);
+    }
     
-    return YES;
-}
-
-- (BOOL)computeDifferenceViaDPaths {
-    printf("Computing %llu + %llu = %llu\n", [source length], [destination length], [source length] + [destination length]);
-    struct DPath_t *paths;
-    size_t numIsns = [self computeGraph:&paths];
-    [self generateInstructions:paths count:numIsns diagonal:(long)[source length] - (long)[destination length]];
-    free_paths(paths);
-    [self mergeInstructions];
-    return YES;
+    //if (success) [self _dumpDebug];
+    
+    return success;
 }
 
 - (id)initWithSource:(HFByteArray *)src toDestination:(HFByteArray *)dst { 
@@ -852,25 +927,16 @@ static BOOL merge_instruction_noreplaces(struct HFEditInstruction_t *left, const
     Our implementation of the Longest Common Subsequence traverses any leading/trailing snakes.  We can be certain that these snakes are part of the LCS, so they can contribute to our progress.  Imagine that the arrays are of length M and N, for allocated progress M*N.  If we traverse a leading/trailing snake of length x, then the new arrays are of length M-x and N-x, so the new progress is (M-x)*(N-x).  Since we initially allocated M*N, this means we "progressed" by M*N - (M-x)*(N-x), which reduces to (M+N-x)*x.
  */
 - (BOOL)computeDifferencesTrackingProgress:(HFProgressTracker *)tracker {
-    /* Allocate memory for our caches.  Do it in one big chunk. */
-    CFAbsoluteTime start = CFAbsoluteTimeGetCurrent();
-    const NSUInteger numCaches = sizeof caches / sizeof *caches;
-    /* Allow 15 bytes of padding on each side, so that we can always do a 16 byte vector read.  Note that each cache can be the padding for its adjacent caches, so we only have to allocate it on the end. */
-    const NSUInteger endPadding = 15;
-    unsigned char *basePtr = malloc(CACHE_AMOUNT * numCaches + 2 * endPadding);
-    for (NSUInteger i=0; i < numCaches; i++) {
-	HFASSERT(caches[i].buffer == NULL);
-	caches[i].buffer = basePtr + endPadding + CACHE_AMOUNT * i;
-    }
-    
     const int localCancelRequested = 0;
     unsigned long long localCurrentProgress = 0;
+    
+    CFAbsoluteTime start = CFAbsoluteTimeGetCurrent();
     
     /* Remember our progress tracker (if any) */
     if (tracker) {
 	[tracker retain];
 	
-	/* Tell our progress tracker how much work to expect.  Here we treat the amount of work as the sum of the horizontal and vertical.  Note: this sum may overflow!  Ugh! */
+	/* Tell our progress tracker how much work to expect.  Here we treat the amount of work as the sum of the horizontal and vertical.  Note: this product may overflow!  Ugh! */
 	[tracker setMaxProgress: sourceLength * destLength];
 	
 	/* Stash away pointers to its direct-write variables */
@@ -883,18 +949,7 @@ static BOOL merge_instruction_noreplaces(struct HFEditInstruction_t *left, const
 	currentProgress = (int64_t *)&localCurrentProgress;
     }
     
-    BOOL result;
-    if (0) {
-	result = [self computeDifferenceViaDPaths];
-    } else {
-	result = [self computeDifferenceViaMiddleSnakes];
-    }
-    
-    /* All done */
-    free(basePtr);
-    for (NSUInteger i=0; i < numCaches; i++) {
-	caches[i].buffer = NULL;
-    }
+    BOOL result = [self computeDifferenceViaMiddleSnakes];
     
     cancelRequested = NULL;
     currentProgress = NULL;

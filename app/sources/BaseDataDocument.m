@@ -217,6 +217,16 @@ static inline Class preferredByteArrayClass(void) {
     [self saveOrApplyDefaultRepresentersToDisplay:YES];
 }
 
+- (NSArray *)runningOperationViews {
+    NSView *views[16];
+    NSUInteger idx = 0;
+    if ([findReplaceView operationIsRunning]) views[idx++] = findReplaceView;
+    if ([moveSelectionByView operationIsRunning]) views[idx++] = moveSelectionByView;
+    if ([jumpToOffsetView operationIsRunning]) views[idx++] = jumpToOffsetView;
+    if ([saveView operationIsRunning]) views[idx++] = saveView;
+    return [NSArray arrayWithObjects:views count:idx];
+}
+
 /* Return a format string that can take one argument which is the document name. */
 - (NSString *)documentWindowTitleFormatString {
     NSMutableString *result = [NSMutableString stringWithString:@"%@"]; //format specifier that is replaced with document name
@@ -225,30 +235,30 @@ static inline Class preferredByteArrayClass(void) {
         [result appendString:@" **OVERWRITE MODE**"];
     }
     
-    HFDocumentOperationView * const views[] = {findReplaceView, moveSelectionByView, saveView};
-    NSUInteger i;
     BOOL hasAppendedProgressMarker = NO;
-    for (i=0; i < sizeof views / sizeof *views; i++) {
-        HFDocumentOperationView *view = views[i];
-        if (view != nil && view != operationView && [view operationIsRunning]) {
-            /* If we're gonna show our save view after a delay, then don't include the save view in the title */
-            if (view == saveView && showSaveViewAfterDelayTimer != nil) continue;
-            NSString *displayName = [view displayName];
-            double progress = [view progress];
-            if (displayName != nil && progress != -1) {
-                if (! hasAppendedProgressMarker) {
-                    [result appendString:@" ("];
-                    hasAppendedProgressMarker = YES;
-                }
-                else {
-                    [result appendString:@", "];
-                }
-                if (displayName) {
-                    /* %%%% is the right way to get a single % after applying this appendFormat: and then applying this return value as a format string as well */
-                    [result appendFormat:@"%@: %d%%%%", displayName, (int)(100. * progress)];
-                }
-            }
-        }
+    NSArray *runningViews = [self runningOperationViews];
+    FOREACH(HFDocumentOperationView *, view, runningViews) {
+	/* Skip the currently visible view */
+	if (view == operationView) continue;
+	
+	/* If we're gonna show our save view after a delay, then don't include the save view in the title */
+	if (view == saveView && showSaveViewAfterDelayTimer != nil) continue;
+
+	NSString *displayName = [view displayName];
+	double progress = [view progress];
+	if (displayName != nil && progress != -1) {
+	    if (! hasAppendedProgressMarker) {
+		[result appendString:@" ("];
+		hasAppendedProgressMarker = YES;
+	    }
+	    else {
+		[result appendString:@", "];
+	    }
+	    if (displayName) {
+		/* %%%% is the right way to get a single % after applying this appendFormat: and then applying this return value as a format string as well */
+		[result appendFormat:@"%@: %d%%%%", displayName, (int)(100. * progress)];
+	    }
+	}
     }
     if (hasAppendedProgressMarker) [result appendString:@")"];
     return result;
@@ -297,6 +307,13 @@ static inline Class preferredByteArrayClass(void) {
     CGFloat minWindowWidth = [layoutView convertSize:NSMakeSize(minViewWidth, 1) toView:nil].width;
     windowFrame.size.width = minWindowWidth;
     [window setFrame:windowFrame display:YES];
+}
+
+- (void)setContainerView:(NSSplitView *)view {
+    /* Called when the nib is loaded.  We retain it. */
+    [view retain];
+    [containerView release];
+    containerView = view;
 }
 
 - (void)windowControllerDidLoadNib:(NSWindowController *)windowController {
@@ -450,6 +467,7 @@ static inline Class preferredByteArrayClass(void) {
 	[views[i] removeObserver:self forKeyPath:@"progress"];
 	[views[i] release];
     }
+    [containerView release];
     [bannerDividerThumb release];
     [super dealloc];
 }
@@ -467,10 +485,11 @@ static inline Class preferredByteArrayClass(void) {
 }
 
 
-- (HFDocumentOperationView *)newOperationViewForNibName:(NSString *)name displayName:(NSString *)displayName {
+- (HFDocumentOperationView *)newOperationViewForNibName:(NSString *)name displayName:(NSString *)displayName fixedHeight:(BOOL)fixedHeight {
     HFASSERT(name);
     HFDocumentOperationView *result = [[HFDocumentOperationView viewWithNibNamed:name owner:self] retain];
     [result setDisplayName:displayName];
+    [result setIsFixedHeight:fixedHeight];
     [result setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
     [result setFrameSize:NSMakeSize(NSWidth([containerView frame]), 0)];
     [result setFrameOrigin:NSZeroPoint];
@@ -832,7 +851,7 @@ static inline Class preferredByteArrayClass(void) {
     
     showSaveViewAfterDelayTimer = [[NSTimer scheduledTimerWithTimeInterval:.5 target:self selector:@selector(showSaveBannerHavingDelayed:) userInfo:nil repeats:NO] retain];
     
-    if (! saveView) saveView = [self newOperationViewForNibName:@"SaveBanner" displayName:@"Saving"];
+    if (! saveView) saveView = [self newOperationViewForNibName:@"SaveBanner" displayName:@"Saving" fixedHeight:YES];
     saveResult = 0;
     
     struct HFDocumentOperationCallbacks callbacks = {
@@ -943,7 +962,7 @@ static inline Class preferredByteArrayClass(void) {
     }
     
     if (! findReplaceView) {
-        findReplaceView = [self newOperationViewForNibName:@"FindReplaceBanner" displayName:@"Finding"];
+        findReplaceView = [self newOperationViewForNibName:@"FindReplaceBanner" displayName:@"Finding" fixedHeight:NO];
         [[findReplaceView viewNamed:@"searchField"] setTarget:self];
         [[findReplaceView viewNamed:@"searchField"] setAction:@selector(findNext:)];
         [[findReplaceView viewNamed:@"replaceField"] setTarget:self];
@@ -972,6 +991,22 @@ static inline Class preferredByteArrayClass(void) {
         [self hideBannerFirstThenDo:NULL];
     }
     return NO;
+}
+
+- (CGFloat)splitView:(NSSplitView *)splitView constrainMaxCoordinate:(CGFloat)proposedMaximumPosition ofSubviewAt:(NSInteger)dividerIndex {
+    HFASSERT(splitView == containerView);
+    CGFloat result = proposedMaximumPosition;
+    /* If our operation view is fixed height, then don't allow it to grow beyond its initial height */
+    if (operationView != nil && [operationView isFixedHeight]) {
+	/* Make sure it's actually our view */
+	if (dividerIndex == 0 && [[splitView subviews] objectAtIndex:0] == bannerView) {
+	    CGFloat maxHeight = [operationView defaultHeight];
+	    if (maxHeight > 0 && maxHeight < proposedMaximumPosition) {
+		result = maxHeight;
+	    }
+	}
+    }
+    return result;
 }
 
 - (void)removeBannerIfSufficientlyShort:unused {
@@ -1253,7 +1288,7 @@ cancelled:;
 	[self saveFirstResponderIfNotInBannerAndThenSetItTo:[moveSelectionByView viewNamed:@"moveSelectionByTextField"]];
         return;
     }
-    if (! moveSelectionByView) moveSelectionByView = [self newOperationViewForNibName:@"MoveSelectionByBanner" displayName:@"Moving Selection"];
+    if (! moveSelectionByView) moveSelectionByView = [self newOperationViewForNibName:@"MoveSelectionByBanner" displayName:@"Moving Selection" fixedHeight:YES];
     [[moveSelectionByView viewNamed:@"extendSelectionByCheckbox"] setIntValue:extend];
     [self prepareBannerWithView:moveSelectionByView withTargetFirstResponder:[moveSelectionByView viewNamed:@"moveSelectionByTextField"]];
     
@@ -1295,7 +1330,7 @@ cancelled:;
         [self hideBannerFirstThenDo:_cmd];
         return;
     }
-    if (! jumpToOffsetView) jumpToOffsetView = [self newOperationViewForNibName:@"JumpToOffsetBanner" displayName:@"Jumping to Offset"];
+    if (! jumpToOffsetView) jumpToOffsetView = [self newOperationViewForNibName:@"JumpToOffsetBanner" displayName:@"Jumping to Offset" fixedHeight:YES];
     [self prepareBannerWithView:jumpToOffsetView withTargetFirstResponder:[jumpToOffsetView viewNamed:@"moveSelectionByTextField"]];
 }
 

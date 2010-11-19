@@ -13,8 +13,13 @@
 
 - initWithCoder:(NSCoder *)coder {
     if ((self = [super initWithCoder:coder])) {
-	[self setImage:HFImageNamed(@"HFCancelOff")];
-	[self setAlternateImage:HFImageNamed(@"HFCancelOn")];
+	NSImage *stopImage = [NSImage imageNamed:@"NSStopProgressTemplate"];
+	if (stopImage) {
+	    [self setImage:stopImage];
+	} else {   
+	    [self setImage:HFImageNamed(@"HFCancelOff")];
+	    [self setAlternateImage:HFImageNamed(@"HFCancelOn")];
+	}
     }
     return self;
 }
