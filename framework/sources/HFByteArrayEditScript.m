@@ -52,11 +52,18 @@ static void GrowableArray_reallocate(struct GrowableArray_t *array, size_t minLe
     /* We support indexing in the range [-newLength, newLength], which means we need space for 2 * newLength + 1 elements.  And maybe malloc can give us more for free! */
     size_t bufferLength = malloc_good_size((newLength * 2 + 1) * sizeof *array->ptr);
     
+    /* Arrange it so that 0 falls on a page boundary.  That is, bufferLength must be a multiple of 4096. */
+    size_t aligner = 4096 * 2;
+    bufferLength = ((bufferLength + aligner - 1) & ~(aligner - 1)) + 8;
+//    printf("Whoa: %lu\n", bufferLength % aligner);
+    
     /* Compute the array length backwards from the buffer length: it may be larger if malloc_good_size gave us more. */
     newLength = ((bufferLength / sizeof *array->ptr) - 1) / 2;
+//    printf("new length: %lu (%lu)\n", newLength, (newLength * 8) % aligner);
     
     /* Allocate our memory */
-    GraphIndex_t *newPtr = check_malloc(bufferLength);
+    //GraphIndex_t *newPtr = check_malloc(bufferLength);
+    GraphIndex_t *newPtr = valloc(bufferLength);
     
     //    NSLog(@"Allocation: %lu / %lu", minLength, newLength);
     
@@ -67,6 +74,8 @@ static void GrowableArray_reallocate(struct GrowableArray_t *array, size_t minLe
     
     /* Offset it so it points at the center */
     newPtr += newLength;
+    
+    //printf("Newptr: %lu\n", ((unsigned long)newPtr) & 4095);
     
     if (array->length > 0) {
 	/* Copy the data over the center.  For the source, imagine array->length is 3.  Then the buffer looks like -3, -2, -1, 0, 1, 2, 3 with array->ptr pointing at 0.  Thus we subtract 3 to get to the start of the buffer, and the length is 2 * array->length + 1.  For the destination, backtrack the same amount. */
@@ -519,25 +528,43 @@ static struct Snake_t computeMiddleSnake_MaybeDirect(HFByteArrayEditScript *self
 		}
 	    } else {
 		/* Since this can't return, we can do it in parallel pretty well. */
-		long minDForParallel = 2048;
+		long minDForParallel = 1024;
 		if (direct && parallelMe && D >= minDForParallel) {
 		    GraphIndex_t * directionalVector = (forwards ? forwardsVector : backwardsVector);
 		    struct Snake_t * const resultPtr = &result;
-		    dispatch_apply(2, dispatch_get_global_queue(0, 0), ^(size_t arg) {
-			if (arg == 0) {
-			    /* [-D, 0) */
-			    for (long k = -D; k < 0; k += 2) {
-				if (*cancelRequested) break;
-				computeMiddleSnakeTraversal(self, cacheGroup, directABuff, directBBuff, direct, forwards, k, D, directionalVector, aLen, bLen, aStart, bStart, resultPtr);
+		    if (forwards) {
+			dispatch_apply(2, dispatch_get_global_queue(0, 0), ^(size_t arg) {
+			    if (arg == 0) {
+				/* [-D, 0) */
+				for (long k = -D; k < 0; k += 2) {
+				    if (*cancelRequested) break;
+				    computeMiddleSnakeTraversal(self, cacheGroup, directABuff, directBBuff, YES, YES, k, D, directionalVector, aLen, bLen, aStart, bStart, resultPtr);
+				}
+			    } else {
+				/* [0, D].  Note that if D is odd, we don't start at 0. */
+				for (long k = (D & 1); k <= D; k += 2) {
+				    if (*cancelRequested) break;
+				    computeMiddleSnakeTraversal(self, cacheGroup, directABuff, directBBuff, YES, YES, k, D, directionalVector, aLen, bLen, aStart, bStart, resultPtr);
+				}
 			    }
-			} else {
-			    /* [0, D].  Note that if D is odd, we don't start at 0. */
-			    for (long k = (D & 1); k <= D; k += 2) {
-				if (*cancelRequested) break;
-				computeMiddleSnakeTraversal(self, cacheGroup, directABuff, directBBuff, direct, forwards, k, D, directionalVector, aLen, bLen, aStart, bStart, resultPtr);
+			});
+		    } else {
+			dispatch_apply(2, dispatch_get_global_queue(0, 0), ^(size_t arg) {
+			    if (arg == 0) {
+				/* [-D, 0) */
+				for (long k = -D; k < 0; k += 2) {
+				    if (*cancelRequested) break;
+				    computeMiddleSnakeTraversal(self, cacheGroup, directABuff, directBBuff, YES, NO, k, D, directionalVector, aLen, bLen, aStart, bStart, resultPtr);
+				}
+			    } else {
+				/* [0, D].  Note that if D is odd, we don't start at 0. */
+				for (long k = (D & 1); k <= D; k += 2) {
+				    if (*cancelRequested) break;
+				    computeMiddleSnakeTraversal(self, cacheGroup, directABuff, directBBuff, YES, NO, k, D, directionalVector, aLen, bLen, aStart, bStart, resultPtr);
+				}
 			    }
-			}
-		    });
+			});
+		    }
 		} else {
 		    /* Don't check for overlap */
 		    for (long k = -D; k <= D; k += 2) {
