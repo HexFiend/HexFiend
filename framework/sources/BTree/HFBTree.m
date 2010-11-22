@@ -688,7 +688,8 @@ FORCE_STATIC_INLINE BOOL remove_value_from_node_with_possible_rebalance(HFBTreeN
 FORCE_STATIC_INLINE void update_node_having_changed_size_of_child(HFBTreeNode *node, BOOL isLeaf) {
     HFBTreeIndex newLength = sum_child_lengths(node->children, isLeaf);
     /* This should only be called if the length actually changes - so assert as such */
-    HFASSERT(node->subtreeLength != newLength);
+    /* I no longer think the above line is true.  It's possible that we can delete a node, and then after a rebalance, we can become the same size we were before. */
+    //HFASSERT(node->subtreeLength != newLength);
     node->subtreeLength = newLength;
 }
 

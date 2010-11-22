@@ -19,6 +19,7 @@
 #import <HexFiend/HFFileReference.h>
 #import <HexFiend/HFByteRangeAttributeArray.h>
 #import <objc/runtime.h>
+#import <objc/objc-auto.h>
 
 /* Used for the anchor range and location */
 #define NO_SELECTION ULLONG_MAX
@@ -44,6 +45,7 @@ NSString * const HFPrepareForChangeInFileNotification = @"HFPrepareForChangeInFi
 NSString * const HFChangeInFileByteArrayKey = @"HFChangeInFileByteArrayKey";
 NSString * const HFChangeInFileModifiedRangesKey = @"HFChangeInFileModifiedRangesKey";
 NSString * const HFChangeInFileShouldCancelKey = @"HFChangeInFileShouldCancelKey";
+NSString * const HFChangeInFileHintKey = @"HFChangeInFileHintKey";
 
 NSString * const HFControllerDidChangePropertiesNotification = @"HFControllerDidChangePropertiesNotification";
 NSString * const HFControllerChangedPropertiesKey = @"HFControllerChangedPropertiesKey";
@@ -60,6 +62,8 @@ typedef enum {
 - (void)_commandInsertByteArrays:(NSArray *)byteArrays inRanges:(NSArray *)ranges withSelectionAction:(SelectionAction_t)selectionAction;
 - (void)_endTypingUndoCoalescingIfActive;
 - (void)_removeUndoManagerNotifications;
+- (void)_removeAllUndoOperations;
+- (void)_registerUndoOperationForInsertingByteArrays:(NSArray *)byteArrays inRanges:(NSArray *)ranges withSelectionAction:(SelectionAction_t)selectionAction;
 @end
 
 static inline Class preferredByteArrayClass(void) {
@@ -72,7 +76,8 @@ static inline Class preferredByteArrayClass(void) {
     selectedContentsRanges = [[NSMutableArray alloc] initWithObjects:[HFRangeWrapper withRange:HFRangeMake(0, 0)], nil];
     byteArray = [[preferredByteArrayClass() alloc] init];
     [byteArray addObserver:self forKeyPath:@"changesAreLocked" options:0 context:KVOContextChangesAreLocked];
-    selectionAnchor = NO_SELECTION;    
+    selectionAnchor = NO_SELECTION;
+    undoOperations = [[NSMutableSet alloc] init];
 }
 
 - (id)init {
@@ -94,6 +99,8 @@ static inline Class preferredByteArrayClass(void) {
     [representers release];
     [selectedContentsRanges release];
     [self _removeUndoManagerNotifications];
+    [self _removeAllUndoOperations];
+    [undoOperations release];
     [undoManager release];
     [undoCoalescer release];
     [byteRangeAttributeArray release];
@@ -711,6 +718,27 @@ static inline Class preferredByteArrayClass(void) {
     return byteArray;
 }
 
+- (void)_performMultiRangeUndo:(HFControllerMultiRangeUndo *)undoer {
+    /* We expect to only be called with an undo operation we know about (i.e. is in our set) */
+    HFASSERT(undoOperations != nil);
+    HFASSERT([undoOperations containsObject:undoer]);
+    [undoer retain];
+    [undoOperations removeObject:undoer];
+    [self _commandInsertByteArrays:[undoer byteArrays] inRanges:[undoer replacementRanges] withSelectionAction:[undoer selectionAction]];
+    [undoer invalidate];
+    [undoer release];
+}
+
+- (void)_registerUndoOperationForInsertingByteArrays:(NSArray *)byteArrays inRanges:(NSArray *)ranges withSelectionAction:(SelectionAction_t)selectionAction {
+    if (undoManager) {
+        HFControllerMultiRangeUndo *undoer = [[HFControllerMultiRangeUndo alloc] initForInsertingByteArrays:byteArrays inRanges:ranges withSelectionAction:selectionAction];
+        HFASSERT(undoOperations != nil);
+        [undoOperations addObject:undoer];
+        [undoManager registerUndoWithTarget:self selector:@selector(_performMultiRangeUndo:) object:undoer];
+        [undoer release];
+    }
+}
+
 - (void)_undoNotification:note {
     USE(note);
     [self _endTypingUndoCoalescingIfActive];
@@ -730,8 +758,16 @@ static inline Class preferredByteArrayClass(void) {
     }
 }
 
+- (void)_removeAllUndoOperations {
+    /* Remove all the undo operations, because some undo operation is unsupported. Note that if we were smarter we would keep a stack of undo operations and only remove ones "up to" a certain point. */
+    [undoManager removeAllActionsWithTarget:self];
+    [undoOperations makeObjectsPerformSelector:@selector(invalidate)];
+    [undoOperations removeAllObjects];
+}
+
 - (void)setUndoManager:(NSUndoManager *)manager {
     [self _removeUndoManagerNotifications];
+    [self _removeAllUndoOperations];
     [manager retain];
     [undoManager release];
     undoManager = manager;
@@ -1283,8 +1319,7 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
         }
     }
     
-    if (result) [[manager prepareWithInvocationTarget:self] _commandInsertByteArrays:correspondingByteArrays inRanges:rangesToRestore withSelectionAction:(selectAfterUndo ? eSelectResult : eSelectAfterResult)];
-    
+    if (result) [self _registerUndoOperationForInsertingByteArrays:correspondingByteArrays inRanges:rangesToRestore withSelectionAction:(selectAfterUndo ? eSelectResult : eSelectAfterResult)];    
     return result;
 }
 
@@ -1372,7 +1407,7 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
     
     VALIDATE_SELECTION();
     HFASSERT([byteArraysToInsertOnUndo count] == [rangesToInsertOnUndo count]);
-    [[[self undoManager] prepareWithInvocationTarget:self] _commandInsertByteArrays:byteArraysToInsertOnUndo inRanges:rangesToInsertOnUndo withSelectionAction:(selectionAction == ePreserveSelection ? ePreserveSelection : eSelectAfterResult)];
+    [self _registerUndoOperationForInsertingByteArrays:byteArraysToInsertOnUndo inRanges:rangesToInsertOnUndo withSelectionAction:(selectionAction == ePreserveSelection ? ePreserveSelection : eSelectAfterResult)];
     [self _updateDisplayedRange];
     [self maximizeVisibilityOfContentsRange:[[selectedContentsRanges objectAtIndex:0] HFRange]];
     [self _addPropertyChangeBits:HFControllerContentValue | HFControllerContentLength | HFControllerSelectedRanges];
@@ -1417,6 +1452,13 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
 
 - (void)_performTypingUndo:(HFControllerCoalescedUndo *)undoer {
     REQUIRE_NOT_NULL(undoer);
+    
+    /* We expect to only be called with an undo operation we know about (i.e. is in our set).  Remove it from the set. */
+    HFASSERT(undoOperations != nil);
+    HFASSERT([undoOperations containsObject:undoer]);
+    [undoer retain];
+    [undoOperations removeObject:undoer];    
+    
     BEGIN_TRANSACTION();
     
     HFByteArray *bytes = [self byteArray];
@@ -1443,6 +1485,26 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
     [[self undoManager] registerUndoWithTarget:self selector:@selector(_performTypingUndo:) object:redoer];
     
     END_TRANSACTION();
+    
+    [undoer invalidate];
+    [undoer release];
+}
+
+- (void)_beginNewUndoCoalescingWithData:(HFByteArray *)data isOverwriting:(BOOL)overwrite atAnchorLocation:(unsigned long long)anchorLocation {
+    /* Replace our current undo coalescer */
+    [undoCoalescer release];
+    if (overwrite) {
+        undoCoalescer = [[HFControllerCoalescedUndo alloc] initWithOverwrittenData:data atAnchorLocation:anchorLocation];
+    } else {
+        undoCoalescer = [[HFControllerCoalescedUndo alloc] initWithReplacedData:data atAnchorLocation:anchorLocation];
+    }
+    
+    /* Add it as an undo operation */
+    [[self undoManager] registerUndoWithTarget:self selector:@selector(_performTypingUndo:) object:undoCoalescer];
+    
+    /* Add it to our undo operations so that we can fix it up later in case its byte array will need to react to a file being changed out from under it. */
+    HFASSERT(undoOperations != nil);
+    [undoOperations addObject:undoCoalescer];
 }
 
 - (void)_activateTypingUndoCoalescingForOverwritingRange:(HFRange)rangeToReplace {
@@ -1454,10 +1516,7 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
     BOOL replaceUndoCoalescer = ! [undoCoalescer canCoalesceOverwriteAtLocation:rangeToReplace.location];
     
     if (replaceUndoCoalescer) {
-        [undoCoalescer release];
-        HFByteArray *replacedData = [bytes subarrayWithRange:rangeToReplace];
-        undoCoalescer = [[HFControllerCoalescedUndo alloc] initWithOverwrittenData:replacedData atAnchorLocation:rangeToReplace.location];
-        [[self undoManager] registerUndoWithTarget:self selector:@selector(_performTypingUndo:) object:undoCoalescer];
+        [self _beginNewUndoCoalescingWithData:[bytes subarrayWithRange:rangeToReplace] isOverwriting:YES atAnchorLocation:rangeToReplace.location];
     }
     else {
         [undoCoalescer overwriteDataInRange:rangeToReplace withByteArray:bytes];
@@ -1480,11 +1539,9 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
     }
     
     if (replaceUndoCoalescer) {
-        [undoCoalescer release];
         HFByteArray *replacedData = (rangeToReplace.length == 0 ? nil : [bytes subarrayWithRange:rangeToReplace]);
-        undoCoalescer = [[HFControllerCoalescedUndo alloc] initWithReplacedData:replacedData atAnchorLocation:rangeToReplace.location];
+        [self _beginNewUndoCoalescingWithData:replacedData isOverwriting:NO atAnchorLocation:rangeToReplace.location];
         if (dataLength > 0) [undoCoalescer appendDataOfLength:dataLength];
-        [[self undoManager] registerUndoWithTarget:self selector:@selector(_performTypingUndo:) object:undoCoalescer];
     }
     else {
         HFASSERT(!canCoalesceAppend || !canCoalesceDelete);
@@ -1641,7 +1698,7 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
     unsigned long long amountDeleted = 0, amountAdded = [bytesToInsert length];
     HFByteArray *bytes = [self byteArray];
 
-    /* Delete all the selection - in reverse order - except the last one, which we will overwrite.  TODO - make this undoable. */
+    /* Delete all the selection - in reverse order - except the last (really first) one, which we will overwrite. */
     NSArray *allRangesToRemove = [HFRangeWrapper organizeAndMergeRanges:[self selectedContentsRanges]];
     HFRange rangeToReplace = [[allRangesToRemove objectAtIndex:0] HFRange];
     HFASSERT(rangeToReplace.location == [self _minimumSelectionLocation]);
@@ -1817,18 +1874,37 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
     REQUIRE_NOT_NULL(array);
     HFFileReference *fileReference = [[HFFileReference alloc] initWithPath:[targetFile path] error:NULL];
     if (! fileReference) return YES; //good luck writing that sucker
+    // note: that check will need to be updated to create a privileged file reference, if we ever support writing to root-owned files
     
     BOOL shouldCancel = NO;
     NSValue *shouldCancelPointer = [NSValue valueWithPointer:&shouldCancel];
     
     NSArray *changedRanges = [array rangesOfFileModifiedIfSavedToFile:fileReference];
     if ([changedRanges count] > 0) { //don't bother if nothing is changing
-	NSDictionary *userInfo = [[NSDictionary alloc] initWithObjectsAndKeys:array, HFChangeInFileByteArrayKey, changedRanges, HFChangeInFileModifiedRangesKey, shouldCancelPointer, HFChangeInFileShouldCancelKey, nil];
+        NSMutableDictionary *hint = [[NSMutableDictionary alloc] init];
+	NSDictionary *userInfo = [[NSDictionary alloc] initWithObjectsAndKeys:array, HFChangeInFileByteArrayKey, changedRanges, HFChangeInFileModifiedRangesKey, shouldCancelPointer, HFChangeInFileShouldCancelKey, hint, HFChangeInFileHintKey, nil];
 	[[NSNotificationCenter defaultCenter] postNotificationName:HFPrepareForChangeInFileNotification object:fileReference userInfo:userInfo];
+        [hint release];
 	[userInfo release];
     }
     [fileReference release];
     return ! shouldCancel;
+}
+
+- (BOOL)clearUndoManagerDependenciesOnRanges:(NSArray *)ranges inFile:(HFFileReference *)reference hint:(NSMutableDictionary *)hint {
+    REQUIRE_NOT_NULL(ranges);
+    REQUIRE_NOT_NULL(reference);
+    /* Try to clear the dependencies that undoOperations has.  If we can't, we'll have to remove them all. */
+    BOOL success = YES;
+    /* undoer is either a HFControllerMultiRangeUndo or a HFControllerCoalescedUndo */
+    FOREACH(id, undoer, undoOperations) {
+        if (! [undoer clearDependenciesOnRanges:ranges inFile:reference hint:hint]) {
+            success = NO;
+            break;
+        }
+    }
+    if (! success) [self _removeAllUndoOperations];
+    return success;
 }
 
 #if BENCHMARK_BYTEARRAYS

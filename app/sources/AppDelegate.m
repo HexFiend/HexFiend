@@ -21,6 +21,7 @@
 @implementation AppDelegate
 
 - (void)applicationWillFinishLaunching:(NSNotification *)note {
+    USE(note);
     /* Make sure our NSDocumentController subclass gets installed */
     [MyDocumentController sharedDocumentController];
 }
@@ -96,7 +97,7 @@ static NSComparisonResult compareFontDisplayNames(NSFont *a, NSFont *b, void *un
     BaseDataDocument *document = [[NSDocumentController sharedDocumentController] currentDocument];
     NSFont *documentFont = [document font];
     font = [[NSFontManager sharedFontManager] convertFont: font toSize: [documentFont pointSize]];
-    [document setFont:font];
+    [document setFont:font registeringUndo:YES];
 }
 
 /* Returns either nil, or an array of two documents that would be compared in the "Compare Front Documents" menu item. */
@@ -291,15 +292,8 @@ static int GetBSDProcessList(struct kinfo_proc **procList, size_t *procCount)
     [doc release];
 }
 
-- (void)openDiffFromFile:(NSString *)leftPath toFile:(NSString *)rightPath {
-    DiffDocument *doc = [[DiffDocument alloc] init];
-    [[NSDocumentController sharedDocumentController] addDocument:doc];
-    [doc makeWindowControllers];
-    [doc showWindows];
-    [doc release];
-}
-
 - (IBAction)diffFrontDocuments:(id)sender {
+    USE(sender);
     NSArray *docs = [self documentsForDiffing];
     if (! docs) return; //the menu item would be disabled in this case
     HFByteArray *left = [[docs objectAtIndex:0] byteArray];
@@ -315,7 +309,7 @@ static int GetBSDProcessList(struct kinfo_proc **procList, size_t *procCount)
 
 - (IBAction)openProcessByProcessMenuItem:(id)sender {
     USE(sender);
-    pid_t pid = (long)[[sender representedObject] intValue];
+    pid_t pid = [[sender representedObject] intValue];
     HFASSERT(pid > 0);
     [self openProcessByPID:pid];
 }

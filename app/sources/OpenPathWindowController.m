@@ -82,7 +82,7 @@ static NSURL *copyCharacterDevicePathForPossibleBlockDevice(NSURL *url) {
 	}
 	break;
 	default:
-	    NSLog(@"Unknown error recovery option %ld", recoveryOptionIndex);
+	    NSLog(@"Unknown error recovery option %ld", (long)recoveryOptionIndex);
 	    break;
     }
     return success;

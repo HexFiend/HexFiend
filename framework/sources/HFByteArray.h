@@ -150,9 +150,10 @@ typedef NSUInteger HFByteArrayDataStringType;
 /*! Attempts to modify the receiver so that it no longer depends on any of the HFRanges in the array within the given file.  It is not necessary to perform this operation on the byte array that is being written to the file.
    @param ranges An array of HFRangeWrappers, representing ranges in the given file that the receiver should no longer depend on.
    @param reference The HFFileReference that the receiver should no longer depend on.
+   @param hint A dictionary that can be used to improve the efficiency of the operation, by allowing multiple byte arrays to share the same state.  If you plan to call this method on multiple byte arrays, pass the first one an empty NSMutableDictionary, and pass the same dictionary to subsequent calls.
    @return A YES return indicates the operation was successful, and the receiver no longer contains byte slices that source data from any of the ranges of the given file (or never did).  A NO return indicates that breaking the dependencies would require too much memory, and so the receiver still depends on some of those ranges.
 */
-- (BOOL)clearDependenciesOnRanges:(NSArray *)ranges inFile:(HFFileReference *)reference;
+- (BOOL)clearDependenciesOnRanges:(NSArray *)ranges inFile:(HFFileReference *)reference hint:(NSMutableDictionary *)hint;
 
 @end
 

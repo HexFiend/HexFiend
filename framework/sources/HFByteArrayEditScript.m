@@ -24,7 +24,8 @@ enum {
 };
 
 #define READ_AMOUNT (1024 * 32)
-#define CACHE_AMOUNT (4 * READ_AMOUNT)
+//#define CACHE_AMOUNT (4 * READ_AMOUNT)
+#define CACHE_AMOUNT (16 * 1024 * 1024)
 
 typedef long GraphIndex_t;
 

@@ -40,6 +40,16 @@ static inline Class preferredByteArrayClass(void) {
 
 @end
 
+@interface UndoRedoByteArrayReference : NSObject {
+@public
+    HFByteArray *byteArray;
+}
+@end
+
+@implementation UndoRedoByteArrayReference
+
+@end
+
 @implementation MyDocumentWindowController
 
 - (NSString *)windowTitleForDocumentDisplayName:(NSString *)displayName {
@@ -847,7 +857,13 @@ static inline Class preferredByteArrayClass(void) {
     HFASSERT(! saveInProgress);
     saveInProgress = YES;
     
-    [HFController prepareForChangeInFile:inAbsoluteURL fromWritingByteArray:[controller byteArray]];
+    BOOL shouldProceed = [HFController prepareForChangeInFile:inAbsoluteURL fromWritingByteArray:[controller byteArray]];
+    if (! shouldProceed) {
+        /* Some other document has data that will be affected by this, and it doesn't want us to write it. */
+        saveInProgress = NO;
+        if (outError) *outError = [NSError errorWithDomain:NSCocoaErrorDomain code:NSUserCancelledError userInfo:nil];
+        return NO;
+    }
     
     showSaveViewAfterDelayTimer = [[NSTimer scheduledTimerWithTimeInterval:.5 target:self selector:@selector(showSaveBannerHavingDelayed:) userInfo:nil repeats:NO] retain];
     
@@ -894,7 +910,6 @@ static inline Class preferredByteArrayClass(void) {
     What we really need to know is "has a backing file been touched by this operation."  But we don't have access to that information yet.
     */
     if ((saveResult != HFSaveError) && (saveOperation == NSSaveOperation || saveOperation == NSSaveAsOperation)) {
-        [[self undoManager] removeAllActions];	
         HFFileReference *fileReference = [[[HFFileReference alloc] initWithPath:[inAbsoluteURL path] error:NULL] autorelease];
         if (fileReference) {
             HFFileByteSlice *byteSlice = [[[HFFileByteSlice alloc] initWithFile:fileReference] autorelease];
@@ -1645,11 +1660,12 @@ invalidString:;
     if (*cancellationPointer) return; //don't do anything if someone requested cancellation
     
     HFByteArray *byteArray = [userInfo objectForKey:HFChangeInFileByteArrayKey];
+    NSMutableDictionary *hint = [userInfo objectForKey:HFChangeInFileHintKey];
     NSArray *modifiedRanges = [userInfo objectForKey:HFChangeInFileModifiedRangesKey];
     NSArray *allDocuments = [[[NSDocumentController sharedDocumentController] documents] copy]; //we copy this because we may need to close them
     
     /* Determine which document contains this byte array so we can make a nice dialog */
-    NSDocument *documentForThisByteArray = nil;
+    BaseDataDocument *documentForThisByteArray = nil;
     FOREACH(BaseDataDocument *, testDocument, allDocuments) {
         if ([testDocument->controller byteArray] == byteArray) {
             documentForThisByteArray = testDocument;
@@ -1663,27 +1679,43 @@ invalidString:;
 	    /* Paranoia in case other NSDocument classes slip in */
 	    continue;
 	}
-        if (document == documentForThisByteArray) continue; //this is the document being saved
         
-	HFByteArray *itsArray = [document->controller byteArray];
-	if (! [itsArray clearDependenciesOnRanges:modifiedRanges inFile:fileReference]) {
-	    /* We aren't able to remove our dependency on this file in this document, so ask permission to close it.  We don't try to save the document first, because if saving the document would require breaking dependencies in another document, we could get into an infinite loop! */
-	    NSAlert *alert = [[NSAlert alloc] init];
-	    [alert setMessageText:[NSString stringWithFormat:@"This document contains data that will be overwritten if you save the document \"%@.\"", [documentForThisByteArray displayName]]];
-	    [alert setInformativeText:@"To save that document, you must close this one."];
-	    [alert addButtonWithTitle:@"Cancel Save"];
-	    [alert addButtonWithTitle:@"Close, Discarding Any Changes"];
-	    [alert beginSheetModalForWindow:[document windowForSheet] modalDelegate:self didEndSelector:@selector(didEndBreakFileDependencySheet:returnCode:contextInfo:) contextInfo:nil];
-	    NSInteger modalResult = [NSApp runModalForWindow:[alert window]];
-	    [alert release];
-	    
-	    BOOL didCancel = (modalResult == NSAlertFirstButtonReturn);
-	    if (didCancel) *cancellationPointer = YES;
-	    
-	    if (! didCancel) [document close];
-	}
-	
+        if (document == documentForThisByteArray) {
+            /* Skip the document being saved.  We'll come back to it.  We want to process it last (and all we need to do with it is clean up its undo stack) */
+            continue;
+        }
+        
+        HFByteArray *itsArray = [document->controller byteArray];
+        if (! [itsArray clearDependenciesOnRanges:modifiedRanges inFile:fileReference hint:hint]) {
+            /* We aren't able to remove our dependency on this file in this document, so ask permission to close it.  We don't try to save the document first, because if saving the document would require breaking dependencies in another document, we could get into an infinite loop! */
+            NSAlert *alert = [[NSAlert alloc] init];
+            [alert setMessageText:[NSString stringWithFormat:@"This document contains data that will be overwritten if you save the document \"%@.\"", [documentForThisByteArray displayName]]];
+            [alert setInformativeText:@"To save that document, you must close this one."];
+            [alert addButtonWithTitle:@"Cancel Save"];
+            [alert addButtonWithTitle:@"Close, Discarding Any Changes"];
+            [alert beginSheetModalForWindow:[document windowForSheet] modalDelegate:self didEndSelector:@selector(didEndBreakFileDependencySheet:returnCode:contextInfo:) contextInfo:nil];
+            NSInteger modalResult = [NSApp runModalForWindow:[alert window]];
+            [alert release];
+            
+            BOOL didCancel = (modalResult == NSAlertFirstButtonReturn);
+            if (didCancel) *cancellationPointer = YES;
+            
+            if (! didCancel) [document close];
+        }
+        
+        /* If we cancelled, we're done */
+        if (*cancellationPointer) {
+            NSLog(@"Cancelled!");
+            break;
+        } else {
+            /* If we didn't cancel, clean up the undo stack as best we can */
+            [document->controller clearUndoManagerDependenciesOnRanges:modifiedRanges inFile:fileReference hint:hint];
+        }
     }
+    
+    /* Clean up the undo stack of the document being saved,unless we cancelled */
+    if (! *cancellationPointer) [documentForThisByteArray->controller clearUndoManagerDependenciesOnRanges:modifiedRanges inFile:fileReference hint:hint];
+    
     [allDocuments release];
 }
 

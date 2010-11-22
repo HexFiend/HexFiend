@@ -9,13 +9,14 @@
 #import <Cocoa/Cocoa.h>
 #import <HexFiend/HFTypes.h>
 
-@class HFByteArray;
+@class HFByteArray, HFFileReference;
 
 /* A class to track the following operation - replace the data within rangeToReplace with the replacementByteArray */
 @interface HFControllerCoalescedUndo : NSObject {
     unsigned long long anchorPoint;
     unsigned long long actionPoint;
     HFByteArray *deletedData;
+    uint32_t hashOrRC;
     BOOL byteArrayWasCopied;
 }
 
@@ -36,5 +37,27 @@
 - (HFByteArray *)deletedData;
 
 - (HFControllerCoalescedUndo *)invertWithByteArray:(HFByteArray *)byteArray;
+
+- (BOOL)clearDependenciesOnRanges:(NSArray *)ranges inFile:(HFFileReference *)reference hint:(NSMutableDictionary *)hint;
+- (void)invalidate;
+
+@end
+
+/* A class to track the following operation - replace the data within replacementRanges with byteArrays and perform the given selectionAction */
+@interface HFControllerMultiRangeUndo : NSObject {
+    NSArray *byteArrays; //retained
+    NSArray *replacementRanges; //retained
+    int selectionAction;
+    uint32_t hashOrRC;    
+}
+
+- (id)initForInsertingByteArrays:(NSArray *)arrays inRanges:(NSArray *)ranges withSelectionAction:(int)selectionAction;
+
+- (NSArray *)byteArrays;
+- (NSArray *)replacementRanges;
+- (int)selectionAction;
+
+- (BOOL)clearDependenciesOnRanges:(NSArray *)ranges inFile:(HFFileReference *)reference hint:(NSMutableDictionary *)hint;
+- (void)invalidate;
 
 @end

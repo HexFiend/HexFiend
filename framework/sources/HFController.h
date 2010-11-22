@@ -14,7 +14,7 @@
     @abstract The HFController.h header contains the HFController class, which is a central class in Hex Fiend. 
 */
 
-@class HFRepresenter, HFByteArray, HFControllerCoalescedUndo, HFByteRangeAttributeArray;
+@class HFRepresenter, HFByteArray, HFFileReference, HFControllerCoalescedUndo, HFByteRangeAttributeArray;
 
 /*! @enum HFControllerPropertyBits
     The HFControllerPropertyBits bitmask is used to inform the HFRepresenters of a change in the current state that they may need to react to.  A bitmask of the changed properties is passed to representerChangedProperties:.  It is common for multiple properties to be included in such a bitmask.        
@@ -105,13 +105,13 @@ You create an HFController via <tt>[[HFController alloc] init]</tt>.  After that
     HFControllerPropertyBits propertiesToUpdateInCurrentTransaction;
     
     NSUndoManager *undoManager;
+    NSMutableSet *undoOperations;
+    HFControllerCoalescedUndo *undoCoalescer;
     
     unsigned long long selectionAnchor;
     HFRange selectionAnchorRange;
     
     HFByteRangeAttributeArray *byteRangeAttributeArray;
-    
-    HFControllerCoalescedUndo *undoCoalescer;
     
     CFAbsoluteTime pulseSelectionStartTime, pulseSelectionCurrentTime;
     NSTimer *pulseSelectionTimer;
@@ -421,8 +421,11 @@ You create an HFController via <tt>[[HFController alloc] init]</tt>.  After that
 /*! @name File writing dependency handling
 */
 //@{
-/*! Attempts to clear all dependencies on the given file (clipboard, undo, etc.) that could not be preserved if the file were written.  Returns YES if we successfully prepared, NO if someone objected. */
+/*! Attempts to clear all dependencies on the given file (clipboard, undo, etc.) that could not be preserved if the file were written.  Returns YES if we successfully prepared, NO if someone objected.  This works by posting a HFPrepareForChangeInFileNotification.  HFController does not register for this notification: instead the owners of the HFController are expected to register for HFPrepareForChangeInFileNotification and react appropriately.  */
 + (BOOL)prepareForChangeInFile:(NSURL *)targetFile fromWritingByteArray:(HFByteArray *)array;
+
+/*! Attempts to break undo stack dependencies for writing the given file.  If it is unable to do so, it will clear the controller's contributions to the stack. Returns YES if it successfully broke the dependencies, and NO if the stack had to be cleared. */
+- (BOOL)clearUndoManagerDependenciesOnRanges:(NSArray *)ranges inFile:(HFFileReference *)reference hint:(NSMutableDictionary *)hint;
 //@}
 
 @end
@@ -448,4 +451,5 @@ extern NSString * const HFPrepareForChangeInFileNotification;
 extern NSString * const HFChangeInFileByteArrayKey; //!< A key in the HFPrepareForChangeInFileNotification specifying the byte array that will be written
 extern NSString * const HFChangeInFileModifiedRangesKey; //!< A key in the HFPrepareForChangeInFileNotification specifying the array of HFRangeWrappers indicating which parts of the file will be modified
 extern NSString * const HFChangeInFileShouldCancelKey; //!< A key in the HFPrepareForChangeInFileNotification specifying an NSValue containing a pointer to a BOOL.  If set to YES, then someone was unable to prepare and the file should not be saved.  It's a good idea to check if this value points to YES; if so your notification handler does not have to do anything.
+extern NSString * const HFChangeInFileHintKey; //!< The hint parameter that you may pass to clearDependenciesOnRanges:inFile:hint:
 //@}

@@ -75,15 +75,17 @@ NSString *const HFPrivateByteArrayPboardType = @"HFPrivateByteArrayPboardType";
     const BOOL *cancellationPointer = [[[notification userInfo] objectForKey:HFChangeInFileShouldCancelKey] pointerValue];
     if (*cancellationPointer) return; //don't do anything if someone requested cancellation
     
-    NSArray *changedRanges = [[notification userInfo] objectForKey:HFChangeInFileModifiedRangesKey];
+    NSDictionary *userInfo = [notification userInfo];
+    NSArray *changedRanges = [userInfo objectForKey:HFChangeInFileModifiedRangesKey];
     HFFileReference *fileReference = [notification object];
+    NSMutableDictionary *hint = [userInfo objectForKey:HFChangeInFileHintKey];
 
     NSString * const names[] = {NSGeneralPboard, NSFindPboard, NSDragPboard};
     NSUInteger i;
     for (i=0; i < sizeof names / sizeof *names; i++) {
         NSPasteboard *pboard = [NSPasteboard pasteboardWithName:names[i]];
         HFByteArray *byteArray = [self unpackByteArrayFromPasteboard:pboard];
-        if (byteArray && ! [byteArray clearDependenciesOnRanges:changedRanges inFile:fileReference]) {
+        if (byteArray && ! [byteArray clearDependenciesOnRanges:changedRanges inFile:fileReference hint:hint]) {
             /* This pasteboard no longer works */
             [pboard declareTypes:[NSArray array] owner:nil];
         }
@@ -93,12 +95,14 @@ NSString *const HFPrivateByteArrayPboardType = @"HFPrivateByteArrayPboardType";
 - (void)changeInFileNotification:(NSNotification *)notification {
     HFASSERT(pasteboard != nil);
     HFASSERT(byteArray != nil);
-    const BOOL *cancellationPointer = [[[notification userInfo] objectForKey:HFChangeInFileShouldCancelKey] pointerValue];
+    NSDictionary *userInfo = [notification userInfo];
+    const BOOL *cancellationPointer = [[userInfo objectForKey:HFChangeInFileShouldCancelKey] pointerValue];
     if (*cancellationPointer) return; //don't do anything if someone requested cancellation
+    NSMutableDictionary *hint = [userInfo objectForKey:HFChangeInFileHintKey];
     
     NSArray *changedRanges = [[notification userInfo] objectForKey:HFChangeInFileModifiedRangesKey];
     HFFileReference *fileReference = [notification object];
-    if (! [byteArray clearDependenciesOnRanges:changedRanges inFile:fileReference]) {
+    if (! [byteArray clearDependenciesOnRanges:changedRanges inFile:fileReference hint:hint]) {
 	/* We can't do it */
 	[self tearDownPasteboardReferenceIfExists];
     }

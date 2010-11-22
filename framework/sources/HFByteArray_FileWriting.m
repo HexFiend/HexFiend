@@ -506,16 +506,28 @@ static HFByteArray *constructNewSlices(HFByteSlice *slice, HFRange rangeInFile, 
     HFASSERT([resultByteArray length] == rangeInFile.length);
     
 #undef TO_SLICE_RANGE
-    return resultByteArray;    
+    return resultByteArray;
 }
 
-- (BOOL)clearDependenciesOnRanges:(NSArray *)ranges inFile:(HFFileReference *)reference {
+- (BOOL)clearDependenciesOnRanges:(NSArray *)ranges inFile:(HFFileReference *)reference hint:(NSMutableDictionary *)hint {
     REQUIRE_NOT_NULL(reference);
     REQUIRE_NOT_NULL(ranges);
     BOOL success = YES;
-    CFMutableDictionaryRef sliceToNewSlicesDictionary = CFDictionaryCreateMutable(NULL, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
-    NSMutableDictionary *rangesToOldSlices = [[NSMutableDictionary alloc] init];
+    // sliceToNewSlicesDictionary maps the old slices to the replacements.  It is a CFDictionary so that it won't try to copy the keys.
+    // Try to fetch them from the dictionary so that we can share
+    CFMutableDictionaryRef sliceToNewSlicesDictionary = (CFMutableDictionaryRef)[hint objectForKey:@"sliceToNewSlicesDictionary"];
+    BOOL releaseObjects = NO;
     
+    // If we couldn't fetch it, we'll have to create it
+    if (! sliceToNewSlicesDictionary) {
+        sliceToNewSlicesDictionary = CFDictionaryCreateMutable(NULL, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+        
+        // Put the slice dictionary in the hint dictionary for everyone else.  Note that we may have a nil dictionary, so we can't count on this retaining it.
+        [hint setObject:(id)sliceToNewSlicesDictionary forKey:@"sliceToNewSlicesDictionary"];
+        releaseObjects = YES;
+    }
+    
+    NSMutableDictionary *rangesToOldSlices = [[NSMutableDictionary alloc] init];
     NSEnumerator *enumer = [self byteSliceEnumerator];
     HFByteSlice *slice;
     
@@ -559,7 +571,9 @@ static HFByteArray *constructNewSlices(HFByteSlice *slice, HFRange rangeInFile, 
     }
     
     [rangesToOldSlices release];
-    CFRelease(sliceToNewSlicesDictionary);
+    if (releaseObjects) {
+        CFRelease(sliceToNewSlicesDictionary);
+    }
     
 #if ! NDEBUG
     if (success) {

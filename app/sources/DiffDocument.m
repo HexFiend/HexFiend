@@ -12,6 +12,10 @@
 #import "HFDocumentOperationView.h"
 #import <HexFiend/HexFiend.h>
 
+@interface DiffDocument (ForwardDeclarations)
+- (void)setFocusedInstructionIndex:(NSUInteger)index;
+@end
+
 @implementation DiffDocument
 
 - (NSString *)displayName {
@@ -32,6 +36,9 @@
     [[rightTextView controller] representer:nil changedProperties:HFControllerByteRangeAttributes];
     [[leftTextView controller] representer:nil changedProperties:HFControllerByteRangeAttributes];
     [diffTable reloadData];
+    if ([editScript numberOfInstructions] > 0) {
+        [self setFocusedInstructionIndex:0];
+    }
 }
 
 - (HFTextRepresenter *)textRepresenterFromTextView:(HFTextView *)textView {

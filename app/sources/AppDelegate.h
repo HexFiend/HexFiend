@@ -20,9 +20,6 @@
 - (IBAction)openProcess:(id)sender; //queries the user for a process and opens it
 - (IBAction)openProcessByProcessMenuItem:(id)sender; //opens a process from a menu item that directly represents that process
 
-- (IBAction)openPathMenuItem:(id)sender;
-
-- (void)openDiffFromFile:(NSString *)leftPath toFile:(NSString *)rightPath;
 - (IBAction)diffFrontDocuments:(id)sender;
 
 @end

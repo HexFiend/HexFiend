@@ -8,6 +8,7 @@
 
 #import <HexFiend/HFControllerCoalescedUndo.h>
 #import <HexFiend/HFFullMemoryByteArray.h>
+#import <objc/objc-auto.h>
 
 /* Invariant for this class: actionPoint >= anchorPoint
  
@@ -23,6 +24,10 @@
     byteArrayWasCopied = NO;
     anchorPoint = anchor;
     actionPoint = anchor;
+    
+    //under GC, hashOrRC is the hash value, and we're an identity hash.  Under retain/release, it's the retain count (minus one).
+    if (objc_collectingEnabled()) self->hashOrRC = (uint32_t)((intptr_t)self >> 2);
+    
     return self;
 }
 
@@ -33,12 +38,11 @@
     byteArrayWasCopied = NO;
     anchorPoint = anchor;
     actionPoint = HFSum(anchor, [overwrittenData length]);
+    
+    //under GC, hashOrRC is the hash value, and we're an identity hash.  Under retain/release, it's the retain count (minus one).
+    if (objc_collectingEnabled()) self->hashOrRC = (uint32_t)((intptr_t)self >> 2);
+    
     return self;
-}
-
-- (void)dealloc {
-    [deletedData release];
-    [super dealloc];
 }
 
 - (BOOL)canCoalesceAppendInRange:(HFRange)range {
@@ -160,6 +164,114 @@
     HFControllerCoalescedUndo *result = [[[self class] alloc] initWithReplacedData:invertedDeletedData atAnchorLocation:anchorPoint];
     if (deletedData) [result appendDataOfLength:[deletedData length]];
     return [result autorelease];
+}
+
+- (BOOL)clearDependenciesOnRanges:(NSArray *)ranges inFile:(HFFileReference *)reference hint:(NSMutableDictionary *)hint {
+    if (! deletedData) return YES; //nothing to clear...
+    else return [deletedData clearDependenciesOnRanges:ranges inFile:reference hint:hint];
+}
+
+- (NSUInteger)hash {
+    return objc_collectingEnabled() ? hashOrRC : ((intptr_t)self >> 2);
+}
+
+- (id)retain {
+    OSAtomicIncrement32((int32_t *)&hashOrRC);
+    return self;
+}
+
+- (void)release {
+    if (OSAtomicDecrement32((int32_t *)&hashOrRC) == -1) {
+        [self dealloc];
+    }
+}
+
+- (NSUInteger)retainCount {
+    return 1 + hashOrRC;
+}
+
+- (void)invalidate {
+    [deletedData release];
+    deletedData = nil;
+}
+
+
+- (void)dealloc {
+    [deletedData release];
+    [super dealloc];
+}
+
+@end
+
+
+@implementation HFControllerMultiRangeUndo
+
+- (id)initForInsertingByteArrays:(NSArray *)arrays inRanges:(NSArray *)ranges withSelectionAction:(int)action {
+    REQUIRE_NOT_NULL(arrays);
+    REQUIRE_NOT_NULL(ranges);
+    [super init];
+    self->byteArrays = [arrays retain];
+    self->replacementRanges = [ranges retain];
+    self->selectionAction = action;
+    //under GC, hashOrRC is the hash value, and we're an identity hash.  Under retain/release, it's the retain count (minus one).
+    if (objc_collectingEnabled()) self->hashOrRC = (uint32_t)((intptr_t)self >> 2);
+    return self;
+
+}
+
+- (NSArray *)byteArrays {
+    return byteArrays;
+}
+
+- (NSArray *)replacementRanges {
+    return replacementRanges;
+}
+
+- (int)selectionAction {
+    return selectionAction;
+}
+
+- (BOOL)clearDependenciesOnRanges:(NSArray *)ranges inFile:(HFFileReference *)reference hint:(NSMutableDictionary *)hint {
+    BOOL result = YES;
+    FOREACH(HFByteArray *, array, byteArrays) {
+        if (! [array clearDependenciesOnRanges:ranges inFile:reference hint:hint]) {
+            result = NO;
+            break;
+        }
+    }
+    return result;
+}
+
+- (NSUInteger)hash {
+    return objc_collectingEnabled() ? hashOrRC : ((intptr_t)self >> 2);
+}
+
+- (id)retain {
+    OSAtomicIncrement32((int32_t *)&hashOrRC);
+    return self;
+}
+
+- (void)release {
+    if (OSAtomicDecrement32((int32_t *)&hashOrRC) == -1) {
+        [self dealloc];
+    }
+}
+
+- (NSUInteger)retainCount {
+    return 1 + hashOrRC;
+}
+
+- (void)invalidate {
+    [byteArrays release];
+    byteArrays = nil;
+    [replacementRanges release];
+    replacementRanges = nil;
+}
+
+- (void)dealloc {
+    [byteArrays release];
+    [replacementRanges release];
+    [super dealloc];
 }
 
 @end
