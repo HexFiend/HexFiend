@@ -377,6 +377,9 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
 	[[leftTextView layoutRepresenter] addRepresenter:lineCounter];
 	[lineCounter release];	
     }
+    
+    /* It's not editable */
+    [[textView controller] setEditable:NO];
 }
 
 - (id)threadedStartComputeDiff:(HFProgressTracker *)tracker {

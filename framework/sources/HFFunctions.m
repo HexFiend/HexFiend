@@ -124,7 +124,7 @@ static int hfrange_compare(const void *ap, const void *bp) {
 @end
 
 BOOL HFStringEncodingIsSupersetOfASCII(NSStringEncoding encoding) {
-    switch (encoding) {
+    switch (CFStringConvertNSStringEncodingToEncoding(encoding)) {
 	case kCFStringEncodingMacRoman: return YES;
 	case kCFStringEncodingWindowsLatin1: return YES;
 	case kCFStringEncodingISOLatin1: return YES;

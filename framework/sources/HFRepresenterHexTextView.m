@@ -157,7 +157,7 @@
     *resultGlyphCount = glyphIndex;
 }
 
-- (CGFloat)advancePerByte {
+- (CGFloat)advancePerCharacter {
     return 2 * glyphAdvancement;
 }
 

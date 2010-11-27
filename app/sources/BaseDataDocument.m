@@ -95,6 +95,7 @@ static inline Class preferredByteArrayClass(void) {
                               @"Monaco", @"DefaultFontName",
                               [NSNumber numberWithDouble:10.], @"DefaultFontSize",
                               [NSNumber numberWithInteger:4], @"BytesPerColumn",
+                              [NSNumber numberWithInteger:[NSString defaultCStringEncoding]], @"DefaultStringEncoding",
 			      nil];
 	[[NSUserDefaults standardUserDefaults] registerDefaults:defs];
 	[defs release];
@@ -436,6 +437,8 @@ static inline Class preferredByteArrayClass(void) {
         [controller setFont: font];
     }
     
+    [self setStringEncoding:[[NSUserDefaults standardUserDefaults] integerForKey:@"DefaultStringEncoding"]];
+    
 #if ! NDEBUG
     static BOOL hasAddedMenu = NO;
     if (! hasAddedMenu) {
@@ -628,6 +631,22 @@ static inline Class preferredByteArrayClass(void) {
     NSFont *font = [self font];
     [self setFont:[NSFont fontWithName:[font fontName] size:[font pointSize] - 1] registeringUndo:YES];
 }
+
+- (NSStringEncoding)stringEncoding {
+    return [(HFStringEncodingTextRepresenter *)asciiRepresenter encoding];
+}
+
+- (void)setStringEncoding:(NSStringEncoding)encoding {
+    [(HFStringEncodingTextRepresenter *)asciiRepresenter setEncoding:encoding];
+}
+
+- (void)setStringEncodingFromMenuItem:(NSMenuItem *)item {
+    [self setStringEncoding:[item tag]];
+    
+    /* Call to the delegate so it sets the default */
+    [[NSApp delegate] setStringEncodingFromMenuItem:item];
+}
+
 
 - (IBAction)setAntialiasFromMenuItem:(id)sender {
     USE(sender);

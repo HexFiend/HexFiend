@@ -4,6 +4,7 @@
 
 @interface HFRepresenterTextView (HFInternal)
 
+- (NSUInteger)_glyphsForString:(NSString *)string withGeneratingLayoutManager:(NSLayoutManager *)textView glyphs:(CGGlyph *)glyphs;
 - (NSUInteger)_glyphsForString:(NSString *)string withGeneratingTextView:(NSTextView *)textView glyphs:(CGGlyph *)glyphs;
 
 @end

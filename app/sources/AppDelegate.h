@@ -14,6 +14,7 @@
     IBOutlet NSMenuItem *fontMenuItem;
     IBOutlet NSMenuItem *processListMenuItem;
     IBOutlet NSMenu *bookmarksMenu;
+    IBOutlet NSMenu *stringEncodingMenu;
 }
 
 
@@ -21,5 +22,7 @@
 - (IBAction)openProcessByProcessMenuItem:(id)sender; //opens a process from a menu item that directly represents that process
 
 - (IBAction)diffFrontDocuments:(id)sender;
+
+- (IBAction)setStringEncodingFromMenuItem:(NSMenuItem *)item;
 
 @end

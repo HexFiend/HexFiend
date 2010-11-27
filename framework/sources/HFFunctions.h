@@ -117,6 +117,17 @@ static inline unsigned long long HFRoundUpToMultiple(unsigned long long a, unsig
 }
 
 /*!
+ Returns the smallest multiple of B that is equal to or larger than A, and asserts on overflow.
+ */
+static inline NSUInteger HFRoundUpToMultipleInt(NSUInteger a, NSUInteger b) {
+    // The usual approach of ((a + (b - 1)) / b) * b doesn't handle overflow correctly
+    NSUInteger remainder = a % b;
+    if (remainder == 0) return a;
+    else return HFSum(a, b - remainder);
+}
+
+
+/*!
  Returns the smallest multiple of B strictly larger than A, or ULLONG_MAX if it would overflow
 */
 static inline unsigned long long HFRoundUpToNextMultipleSaturate(unsigned long long a, unsigned long long b) {

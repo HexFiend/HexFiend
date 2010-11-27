@@ -124,6 +124,9 @@
 - (NSColor *)backgroundColorForLine:(NSUInteger)line;
 - (NSColor *)backgroundColorForEmptySpace;
 
+/* Defaults to 1, may override */
+- (NSUInteger)bytesPerCharacter;
+
 /* Cover method for [[self representer] bytesPerLine] and [[self representer] bytesPerColumn] */
 - (NSUInteger)bytesPerLine;
 - (NSUInteger)bytesPerColumn;
@@ -131,8 +134,9 @@
 - (CGFloat)lineHeight;
 
 /* Following two must be overridden */
-- (CGFloat)advancePerByte;
 - (CGFloat)advanceBetweenColumns;
+- (CGFloat)advancePerCharacter;
+- (NSUInteger)bytesPerCharacter;
 
 - (CGFloat)advancePerColumn;
 - (CGFloat)totalAdvanceForBytesInRange:(NSRange)range;

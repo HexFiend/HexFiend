@@ -10,7 +10,12 @@
 
 
 @interface HFRepresenterStringEncodingTextView : HFRepresenterTextView {
-    CGGlyph glyphTable[256];
+    union {
+        CGGlyph glyphTable8Bit[256];
+        CGGlyph *glyphBuckets16Bit[256];
+    } glyphTable;
+    BOOL usingBuckets;
+    unsigned char bytesPerChar;
     CGGlyph replacementGlyph;
     CGFloat glyphAdvancement;
     NSStringEncoding encoding;

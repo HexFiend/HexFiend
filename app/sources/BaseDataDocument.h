@@ -87,6 +87,10 @@
 - (void)hideBannerFirstThenDo:(SEL)command;
 - (NSArray *)runningOperationViews;
 
+- (NSStringEncoding)stringEncoding;
+- (void)setStringEncoding:(NSStringEncoding)encoding;
+- (IBAction)setStringEncodingFromMenuItem:(NSMenuItem *)item;
+
 /* Returns a string identifier used as an NSUserDefault prefix for storing the layout for documents of this type.  If you return nil, the layout will not be stored.  The default is to return the class name. */
 + (NSString *)layoutUserDefaultIdentifier;
 

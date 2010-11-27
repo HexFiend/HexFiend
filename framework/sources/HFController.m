@@ -64,6 +64,8 @@ typedef enum {
 - (void)_removeUndoManagerNotifications;
 - (void)_removeAllUndoOperations;
 - (void)_registerUndoOperationForInsertingByteArrays:(NSArray *)byteArrays inRanges:(NSArray *)ranges withSelectionAction:(SelectionAction_t)selectionAction;
+
+- (void)_updateDisplayedRange;
 @end
 
 static inline Class preferredByteArrayClass(void) {
@@ -306,6 +308,7 @@ static inline Class preferredByteArrayClass(void) {
         [self _addPropertyChangeBits:bits];
         [self _insertPropertyChangeFence];
         [self _addPropertyChangeBits:HFControllerViewSizeRatios];
+        [self _updateDisplayedRange];
     }
 }
 

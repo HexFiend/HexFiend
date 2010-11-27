@@ -16,6 +16,7 @@
 */
 @interface HFStringEncodingTextRepresenter : HFTextRepresenter {
     NSStringEncoding stringEncoding;
+    
 }
 
 /*! Get the string encoding for this representer.  The default encoding is <tt>[NSString defaultCStringEncoding]</tt>. */

@@ -11,6 +11,44 @@
 
 NSString *const HFLineCountingRepresenterMinimumViewWidthChanged = @"HFLineCountingRepresenterMinimumViewWidthChanged";
 
+/* Returns the maximum advance in points for a hexadecimal digit for the given font (interpreted as a screen font) */
+static CGFloat maximumDigitAdvanceForFont(NSFont *font) {
+    REQUIRE_NOT_NULL(font);
+    font = [font screenFont];
+    CGFloat maxDigitAdvance = 0;
+    NSDictionary *attributesDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:font, NSFontAttributeName, nil];
+    NSTextStorage *storage = [[NSTextStorage alloc] init];
+    NSLayoutManager *manager = [[NSLayoutManager alloc] init];
+    [storage setFont:font];
+    [storage addLayoutManager:manager];
+    
+    NSSize advancements[16] = {};
+    NSGlyph glyphs[16];
+    
+    /* Generate a glyph for every hex digit */
+    for (NSUInteger i=0; i < 16; i++) {
+        char c = "0123456789ABCDEF"[i];
+        NSString *string = [[NSString alloc] initWithBytes:&c length:1 encoding:NSASCIIStringEncoding];
+        [storage replaceCharactersInRange:NSMakeRange(0, (i ? 1 : 0)) withString:string];
+        [string release];
+        glyphs[i] = [manager glyphAtIndex:0 isValidIndex:NULL];
+        HFASSERT(glyphs[i] != NSNullGlyph);
+    }
+    
+    /* Get the advancements of each of those glyphs */
+    [font getAdvancements:advancements forGlyphs:glyphs count:sizeof glyphs / sizeof *glyphs];
+    
+    [manager release];
+    [attributesDictionary release];
+    [storage release];
+    
+    /* Find the widest digit */
+    for (NSUInteger i=0; i < sizeof glyphs / sizeof *glyphs; i++) {
+        maxDigitAdvance = HFMax(maxDigitAdvance, advancements[i].width);
+    }
+    return maxDigitAdvance;
+}
+
 @implementation HFLineCountingRepresenter
 
 - (id)init {
@@ -50,39 +88,9 @@ NSString *const HFLineCountingRepresenterMinimumViewWidthChanged = @"HFLineCount
 }
 
 - (void)updateDigitAdvanceWithFont:(NSFont *)font {
-    REQUIRE_NOT_NULL(font);
-    font = [font screenFont];
-    CGFloat maxDigitAdvance = 0;
-    NSDictionary *attributesDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:font, NSFontAttributeName, nil];
-    NSTextStorage *storage = [[NSTextStorage alloc] init];
-    NSLayoutManager *manager = [[NSLayoutManager alloc] init];
-    [storage setFont:font];
-    [storage addLayoutManager:manager];
-    
-    NSSize advancements[16] = {};
-    NSGlyph glyphs[16];
-    
-    for (NSUInteger i=0; i < 16; i++) {
-        char c = "0123456789ABCDEF"[i];
-        NSString *string = [[NSString alloc] initWithBytes:&c length:1 encoding:NSASCIIStringEncoding];
-        [storage replaceCharactersInRange:NSMakeRange(0, (i ? 1 : 0)) withString:string];
-        [string release];
-        glyphs[i] = [manager glyphAtIndex:0 isValidIndex:NULL];
-        HFASSERT(glyphs[i] != NSNullGlyph);
-    }
-    
-    [font getAdvancements:advancements forGlyphs:glyphs count:sizeof glyphs / sizeof *glyphs];
-    
-    [manager release];
-    [attributesDictionary release];
-    [storage release];
-    
-    for (NSUInteger i=0; i < sizeof glyphs / sizeof *glyphs; i++) {
-        maxDigitAdvance = HFMax(maxDigitAdvance, advancements[i].width);
-    }
-    
-    if (digitAdvance != maxDigitAdvance) {
-        digitAdvance = maxDigitAdvance;
+    CGFloat newDigitAdvance = maximumDigitAdvanceForFont(font);
+    if (digitAdvance != newDigitAdvance) {
+        digitAdvance = newDigitAdvance;
         [self postMinimumViewWidthChangedNotification];
     }
 }
@@ -114,6 +122,10 @@ NSString *const HFLineCountingRepresenterMinimumViewWidthChanged = @"HFLineCount
 }
 
 - (CGFloat)preferredWidth {
+    if (digitAdvance == 0) {
+        /* This may happen if we were loaded from a nib.  We are lazy about fetching the controller's font to avoid ordering issues with nib unarchival. */
+        [self updateFontAndLineHeight];
+    }
     return (CGFloat)10. + digitsToRepresentContentsLength * digitAdvance;
 }
 

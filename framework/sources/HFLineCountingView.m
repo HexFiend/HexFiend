@@ -570,6 +570,10 @@ static inline int common_prefix_length(const char *a, const char *b) {
     [representer cycleLineNumberFormat];
 }
 
+- (void)scrollWheel:(NSEvent *)scrollEvent {
+    [[representer controller] scrollWithScrollEvent:scrollEvent];
+}
+
 - (void)setRepresenter:(HFLineCountingRepresenter *)rep {
     representer = rep;
 }

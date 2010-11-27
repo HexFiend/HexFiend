@@ -317,7 +317,7 @@
     HFController *controller = [self controller];
     HFFPRange lineRange = [controller displayedLineRange];
     unsigned long long scrollAmount = HFFPToUL(floorl(lineRange.location));
-    unsigned long long byteIndex = HFProductULL(scrollAmount, [controller bytesPerLine]) + characterIndex;
+    unsigned long long byteIndex = HFProductULL(scrollAmount, [controller bytesPerLine]) + characterIndex * [[self view] bytesPerCharacter];
     return byteIndex;
 }
 

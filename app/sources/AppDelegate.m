@@ -376,9 +376,30 @@ static NSInteger compareMenuItems(id item1, id item2, void *unused) {
     else if (menu == [fontMenuItem submenu]) {
         /* Nothing to do */
     }
+    else if (menu == stringEncodingMenu) {
+        /* Check the menu item whose string encoding corresponds to the key document, or if none do, select the default. */
+        NSInteger selectedEncoding;
+	BaseDataDocument *currentDocument = [[NSDocumentController sharedDocumentController] currentDocument];
+	if (currentDocument && [currentDocument isKindOfClass:[BaseDataDocument class]]) {
+	    selectedEncoding = [currentDocument stringEncoding];
+	} else {
+            selectedEncoding = [[NSUserDefaults standardUserDefaults] integerForKey:@"DefaultStringEncoding"];
+        }
+        
+        /* Now select that item */
+        NSUInteger i, max = [menu numberOfItems];
+        for (i=0; i < max; i++) {
+            NSMenuItem *item = [menu itemAtIndex:i];
+            [item setState:[item tag] == selectedEncoding];
+        }
+    }
     else {
         NSLog(@"Unknown menu in menuNeedsUpdate: %@", menu);
     }
+}
+
+- (IBAction)setStringEncodingFromMenuItem:(NSMenuItem *)item {
+    [[NSUserDefaults standardUserDefaults] setInteger:[item tag] forKey:@"DefaultStringEncoding"];
 }
 
 - (IBAction)openProcess:(id)sender {
