@@ -16,6 +16,18 @@ static const NSTimeInterval HFCaretBlinkFrequency = 0.56;
 
 @implementation HFRepresenterTextView
 
+- (NSUInteger)_glyphsForString:(NSString *)string glyphs:(CGGlyph *)glyphs {
+    NSUInteger length = [string length];
+    UniChar chars[256];
+    HFASSERT(length <= sizeof chars / sizeof *chars);
+    HFASSERT(font != nil);
+    [string getCharacters:chars range:NSMakeRange(0, length)];
+    if (! CTFontGetGlyphsForCharacters((CTFontRef)font, chars, glyphs, length)) {
+        /* Some or all characters were not mapped.  This is OK.  We'll use the replacement glyph. */
+    }
+    return length;
+}
+
 - (NSUInteger)_glyphsForString:(NSString *)string withGeneratingLayoutManager:(NSLayoutManager *)layoutManager glyphs:(CGGlyph *)glyphs {
     HFASSERT(layoutManager != NULL);
     HFASSERT(string != NULL);

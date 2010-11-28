@@ -275,7 +275,8 @@
 
 - (NSUInteger)byteGranularity {
     HFRepresenterTextView *view = [self view];
-    return HFLeastCommonMultiple([view bytesPerColumn], [view bytesPerCharacter]);
+    NSUInteger bytesPerColumn = MAX([view bytesPerColumn], 1), bytesPerCharacter = [view bytesPerCharacter];
+    return HFLeastCommonMultiple(bytesPerColumn, bytesPerCharacter);
 }
 
 - (NSArray *)displayedSelectedContentsRanges {
