@@ -100,6 +100,9 @@
 - (double)maximumAvailableLinesForViewHeight:(CGFloat)viewHeight;
 //@}
 
+/*! Returns the required byte granularity.  HFLayoutRepresenter will constrain the bytes per line to a multiple of the granularity, e.g. so that UTF-16 characters are not split across lines.  If different representers have different granularities, then it will constrain it to a multiple of all granularities, which may be very large. The default implementation returns 1. */
+- (NSUInteger)byteGranularity;
+
 /*! @name Auto-layout methods
    Methods for simple auto-layout by HFLayoutRepresenter.  See the HFLayoutRepresenter class for discussion of how it lays out representer views.
 */

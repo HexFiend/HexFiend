@@ -12,6 +12,53 @@
 
 @implementation HFRepresenterStringEncodingTextView
 
+- (void)generateGlyphsForBucketAtIndex:(NSUInteger)idx {
+    /* Fill in a bucket */
+    HFASSERT(idx < 256);
+    HFASSERT(glyphTable.glyphBuckets16Bit[idx] == NULL);
+    glyphTable.glyphBuckets16Bit[idx] = check_malloc(256 * sizeof(CGGlyph));
+    
+    NSFont *font = [[self font] screenFont];
+    NSCharacterSet *coveredSet = [font coveredCharacterSet];
+    
+    NSTextStorage *textStorage = [[NSTextStorage alloc] initWithString:@""];
+    NSLayoutManager *layoutManager = [[NSLayoutManager alloc] init];
+    NSTextContainer *textContainer = [[NSTextContainer alloc] init];
+    [layoutManager addTextContainer:textContainer];
+    [textContainer release];
+    [textStorage addLayoutManager:layoutManager];
+    
+    NSUInteger lowBits;
+    for (lowBits = 0; lowBits < 256; lowBits++) {
+        CGGlyph glyph = 0;
+        unichar c = (idx << 8) | lowBits;
+        NSString *string = [[NSString alloc] initWithBytes:&c length:sizeof c encoding:encoding];
+        if (string != NULL && [string length] == 1 && [coveredSet characterIsMember:[string characterAtIndex:0]]) {
+            CGGlyph glyphs[GLYPH_BUFFER_SIZE];
+            NSUInteger glyphCount = [self _glyphsForString:string withGeneratingLayoutManager:layoutManager glyphs:glyphs];
+            if (glyphCount == 1) {
+                glyph = glyphs[0];
+            }
+        }
+        glyphTable.glyphBuckets16Bit[idx][lowBits] = glyph;
+        [string release];
+    }
+    [layoutManager release];
+    [textStorage release];
+}
+
+/* Helper function for looking up a 16 bit glyph, perhaps generating the bucket */
+static CGGlyph get16BitGlyph(HFRepresenterStringEncodingTextView *self, uint16_t character) {
+    unsigned char bucketIndex = character >> 8, indexInBucket = character & 0xFF;
+    
+    /* Generate glyphs if necessary */
+    if (! self->glyphTable.glyphBuckets16Bit[bucketIndex]) {
+        [self generateGlyphsForBucketAtIndex:bucketIndex];
+    }
+    
+    return self->glyphTable.glyphBuckets16Bit[bucketIndex][indexInBucket];
+}
+
 /* Ligatures generally look not-so-hot with fixed pitch fonts.  Don't use them. */
 - (void)generateGlyphTable {
     
@@ -68,43 +115,18 @@
         replacementGlyph = glyphs[0];
         [textView release];        
     } else {
-        /* Just use the max glyph advancement in this case */
-        glyphAdvancement = [font maximumAdvancement].width;
-    }
-}
+        /* Just use the max glyph advancement in this case, rounded (if we don't round we get fractional advances, which screws up our width calculations) */
+        glyphAdvancement = HFRound([font maximumAdvancement].width);
+        
+        /* Generate the glyphs for the bucket containing '.'.  Do this by taking the string containing a period, and getting bytes in the encoding we want. */
+        unsigned char replacementBuff[16];
+        NSUInteger usedBuff = 0;
+        NSString *replacementChar = @".";
+        [replacementChar getBytes:replacementBuff maxLength:sizeof replacementBuff usedLength:&usedBuff encoding:encoding options:NSStringEncodingConversionAllowLossy range:NSMakeRange(0, [replacementChar length]) remainingRange:NULL];
 
-- (void)generateGlyphsForBucketAtIndex:(NSUInteger)idx {
-    /* Fill in a bucket */
-    HFASSERT(idx < 256);
-    HFASSERT(glyphTable.glyphBuckets16Bit[idx] == NULL);
-    glyphTable.glyphBuckets16Bit[idx] = check_malloc(256 * sizeof(CGGlyph));
-    
-    NSFont *font = [[self font] screenFont];
-    NSCharacterSet *coveredSet = [font coveredCharacterSet];
-    
-    NSTextStorage *textStorage = [[NSTextStorage alloc] initWithString:@""];
-    NSLayoutManager *layoutManager = [[NSLayoutManager alloc] init];
-    NSTextContainer *textContainer = [[NSTextContainer alloc] init];
-    [layoutManager addTextContainer:textContainer];
-    [textContainer release];
-    [textStorage addLayoutManager:layoutManager];
-    
-    NSUInteger lowBits;
-    for (lowBits = 0; lowBits < 256; lowBits++) {
-        CGGlyph glyph = 0;
-        unichar c = (idx << 8) | lowBits;
-        NSString *string = [[NSString alloc] initWithBytes:&c length:sizeof c encoding:encoding];
-        if (string != NULL && [string length] == 1 && [coveredSet characterIsMember:[string characterAtIndex:0]]) {
-            CGGlyph glyphs[GLYPH_BUFFER_SIZE];
-            NSUInteger glyphCount = [self _glyphsForString:string withGeneratingLayoutManager:layoutManager glyphs:glyphs];
-            if (glyphCount == 1) {
-                glyph = glyphs[0];
-            }            
-        }
-        glyphTable.glyphBuckets16Bit[idx][lowBits] = glyph;
+        HFASSERT(usedBuff == 2); //not able to handle other values yet
+        replacementGlyph = get16BitGlyph(self, *(uint16_t *)replacementBuff);
     }
-    [layoutManager release];
-    [textStorage release];
 }
 
 - (void)finalize {
@@ -153,11 +175,14 @@
         }
 	encoding = val;
 	[self generateGlyphTable];
+        
+        /* Redraw ourselves with our new glyphs */
+        [self setNeedsDisplay:YES];
     }
 }
 
 /* Override of base class method in case we are 16 bit */
-- (NSUInteger)_bytesPerCharacter {
+- (NSUInteger)bytesPerCharacter {
     return bytesPerChar;
 }
 
@@ -167,36 +192,30 @@
     HFASSERT(resultGlyphCount != NULL);
     HFASSERT(advances != NULL);
     USE(offsetIntoLine);
-    HFASSERT(numBytes % bytesPerChar == 0);
     CGSize advance = CGSizeMake(glyphAdvancement, 0);
-    NSUInteger byteIndex;
+    NSUInteger charIndex, numChars = numBytes / bytesPerChar;
     if (bytesPerChar == 1) {
         HFASSERT(! usingBuckets);
-        for (byteIndex = 0; byteIndex < numBytes; byteIndex++) {
+        for (charIndex = 0; charIndex < numChars; charIndex++) {
+            NSUInteger byteIndex = charIndex * bytesPerChar;
             unsigned char byte = bytes[byteIndex];
             CGGlyph glyph = glyphTable.glyphTable8Bit[byte];
-            advances[byteIndex] = advance;
-            glyphs[byteIndex] = glyph ? glyph : replacementGlyph;
+            advances[charIndex] = advance;
+            glyphs[charIndex] = glyph ? glyph : replacementGlyph;
         }
     } else if (bytesPerChar == 2) {
         HFASSERT(usingBuckets);
-        for (byteIndex = 0; byteIndex < numBytes; byteIndex += 2) {
+        for (charIndex = 0; charIndex < numChars; charIndex++) {
+            NSUInteger byteIndex = charIndex * bytesPerChar;
             uint16_t hword = *(const uint16_t *)(bytes + byteIndex);
-            unsigned char bucketIndex = hword >> 8, indexInBucket = hword & 0xFF;
-            
-            /* Generate glyphs for this bucket if necessary */
-            if (! glyphTable.glyphBuckets16Bit[bucketIndex]) {
-                [self generateGlyphsForBucketAtIndex:bucketIndex];
-            }
-            
-            CGGlyph glyph = glyphTable.glyphBuckets16Bit[bucketIndex][indexInBucket];
-            advances[byteIndex] = advance;
-            glyphs[byteIndex] = glyph ? glyph : replacementGlyph;
+            CGGlyph glyph = get16BitGlyph(self, hword);            
+            advances[charIndex] = advance;
+            glyphs[charIndex] = glyph ? glyph : replacementGlyph;
         }        
     } else {
         [NSException raise:NSInvalidArgumentException format:@"Unsupported bytes per char %lu", (unsigned long)bytesPerChar];
     }
-    *resultGlyphCount = byteIndex / bytesPerChar;
+    *resultGlyphCount = numChars;
 }
 
 - (CGFloat)advancePerCharacter {
@@ -208,7 +227,7 @@
 }
 
 - (NSUInteger)maximumGlyphCountForByteCount:(NSUInteger)byteCount {
-    return byteCount;
+    return byteCount / [self bytesPerCharacter];
 }
 
 @end

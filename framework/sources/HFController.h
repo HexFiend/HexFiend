@@ -33,7 +33,8 @@ enum
     HFControllerAntialias = 1 << 9,		/*!< Indicates that the shouldAntialias property has changed. */
     HFControllerLineHeight = 1 << 10,		/*!< Indicates that the lineHeight property has changed. */
     HFControllerViewSizeRatios = 1 << 11,	/*!< Indicates that the optimum size for each view may have changed; used by HFLayoutController after font changes. */
-    HFControllerByteRangeAttributes = 1 << 12     /*!< Indicates that some attributes of the ByteArray has changed within the document.  There is no indication as to what the change is. */
+    HFControllerByteRangeAttributes = 1 << 12,  /*!< Indicates that some attributes of the ByteArray has changed within the document.  There is no indication as to what the change is. */
+    HFControllerByteGranularity = 1 << 13       /*!< Indicates that the byte granularity has changed.  For example, when moving from ASCII to UTF-16, the byte granularity increases from 1 to 2. */
 };
 typedef NSUInteger HFControllerPropertyBits;
 

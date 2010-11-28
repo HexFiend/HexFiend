@@ -66,7 +66,7 @@ static const NSTimeInterval HFCaretBlinkFrequency = 0.56;
 - (NSUInteger)_effectiveBytesPerColumn {
     /* returns the bytesPerColumn, unless it's larger than the bytes per character, in which case it returns 0 */
     NSUInteger bytesPerColumn = [self bytesPerColumn], bytesPerCharacter = [self bytesPerCharacter];
-    return bytesPerColumn < bytesPerCharacter ? bytesPerColumn : 0;
+    return bytesPerColumn >= bytesPerCharacter ? bytesPerColumn : 0;
 }
 
 - (NSPoint)originForCharacterAtByteIndex:(NSUInteger)index {
@@ -681,11 +681,12 @@ enum LineCoverage_t {
         const unsigned char *oldBytes = (const unsigned char *)[data bytes];
         const unsigned char *newBytes = (const unsigned char *)[val bytes];
         NSUInteger firstDifferingIndex = HFIndexOfFirstByteThatDiffers(oldBytes, oldLength, newBytes, newLength);
-        if (firstDifferingIndex == NSNotFound) {
+        if (firstDifferingIndex == NSUIntegerMax) {
             /* Nothing to do!  Data is identical! */
         }
         else {
             NSUInteger lastDifferingIndex = HFIndexOfLastByteThatDiffers(oldBytes, oldLength, newBytes, newLength);
+            HFASSERT(lastDifferingIndex != NSUIntegerMax); //if we have a first different byte, we must have a last different byte
             /* Expand to encompass characters that they touch */
             NSUInteger bytesPerCharacter = [self bytesPerCharacter];
             firstDifferingIndex -= firstDifferingIndex % bytesPerCharacter;
@@ -1239,6 +1240,7 @@ static size_t unionAndCleanLists(NSRect *rectList, id *valueList, size_t count) 
     NSUInteger lineStartIndex, bytesPerLine = [self bytesPerLine];
     NSData *dataObject = [self data];
     NSFont *fontObject = [[self font] screenFont];
+    const NSUInteger bytesPerChar = [self bytesPerCharacter];
     const NSUInteger byteCount = [dataObject length];
     
     const unsigned char * const bytePtr = [dataObject bytes];
@@ -1454,7 +1456,7 @@ static size_t unionAndCleanLists(NSRect *rectList, id *valueList, size_t count) 
     UNIMPLEMENTED();
 }
 
-- (CGFloat)advancePerColumn {
+- (CGFloat)advancePerColumn  {
     NSUInteger bytesPerColumn = [self _effectiveBytesPerColumn];
     if (bytesPerColumn == 0) {
         return 0;
@@ -1504,13 +1506,15 @@ static size_t unionAndCleanLists(NSRect *rectList, id *valueList, size_t count) 
 - (CGFloat)minimumViewWidthForBytesPerLine:(NSUInteger)bytesPerLine {
     HFASSERT(bytesPerLine > 0);
     NSUInteger bytesPerColumn = [self _effectiveBytesPerColumn];
+    CGFloat result;
     if (bytesPerColumn == 0) {
-        return (CGFloat)((2. * [self horizontalContainerInset]) + [self advancePerCharacter] * (bytesPerLine / [self bytesPerCharacter]));
+        result = (CGFloat)((2. * [self horizontalContainerInset]) + [self advancePerCharacter] * (bytesPerLine / [self bytesPerCharacter]));
     }
     else {
         HFASSERT(bytesPerLine % bytesPerColumn == 0);
-        return (CGFloat)((2. * [self horizontalContainerInset]) + [self advancePerColumn] * (bytesPerLine / bytesPerColumn) - [self advanceBetweenColumns]);
+        result = (CGFloat)((2. * [self horizontalContainerInset]) + [self advancePerColumn] * (bytesPerLine / bytesPerColumn) - [self advanceBetweenColumns]);
     }
+    return result;
 }
 
 - (BOOL)isEditable {
@@ -1659,7 +1663,7 @@ static size_t unionAndCleanLists(NSRect *rectList, id *valueList, size_t count) 
     if (! _hftvflags.withinMouseDown) return;
     NSPoint location = [self convertPoint:[event locationInWindow] fromView:nil];
     NSUInteger characterIndex = [self characterAtPointForSelection:location];
-    characterIndex = MIN(characterIndex, [[self data] length]);
+    characterIndex = MIN(characterIndex, [self maximumCharacterIndex]);
     [[self representer] continueSelectionWithEvent:event forCharacterIndex:characterIndex];    
 }
 
@@ -1667,7 +1671,7 @@ static size_t unionAndCleanLists(NSRect *rectList, id *valueList, size_t count) 
     if (! _hftvflags.withinMouseDown) return;
     NSPoint location = [self convertPoint:[event locationInWindow] fromView:nil];
     NSUInteger characterIndex = [self characterAtPointForSelection:location];
-    characterIndex = MIN(characterIndex, [[self data] length]);
+    characterIndex = MIN(characterIndex, [self maximumCharacterIndex]);
     [[self representer] endSelectionWithEvent:event forCharacterIndex:characterIndex];
     _hftvflags.receivedMouseUp = YES;
 }

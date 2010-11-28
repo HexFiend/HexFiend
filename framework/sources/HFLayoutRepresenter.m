@@ -136,25 +136,30 @@ static NSInteger sortByLayoutPosition(id a, id b, void *self) {
 }
 
 - (NSUInteger)_computeBytesPerLineForArraysOfLayoutInfos:(NSArray *)arraysOfLayoutInfos forLayoutInRect:(NSRect)layoutRect {
-    const NSUInteger bytesPerColumn = [self bytesPerColumn];
-    const NSUInteger applicableBytesPerColumn = MAX(bytesPerColumn, 1); //for bytesPerColumn == 0, treat it as 1
-    NSUInteger newNumColumns = (NSUIntegerMax - 1) / applicableBytesPerColumn;
+    /* The granularity is our own granularity (probably 1), LCMed with the granularities of all other representers */
+    NSUInteger granularity = [self byteGranularity];
+    FOREACH(HFRepresenter *, representer, representers) {
+        granularity = HFLeastCommonMultiple(granularity, [representer byteGranularity]);
+    }
+    HFASSERT(granularity >= 1);
+    
+    NSUInteger newNumGranules = (NSUIntegerMax - 1) / granularity;
     FOREACH(NSArray *, layoutInfos, arraysOfLayoutInfos) {
-        NSUInteger maxKnownGood = 0, minKnownBad = newNumColumns + 1;
+        NSUInteger maxKnownGood = 0, minKnownBad = newNumGranules + 1;
         while (maxKnownGood + 1 < minKnownBad) {
             CGFloat requiredSpace = 0;
-            NSUInteger proposedNumColumns = maxKnownGood + (minKnownBad - maxKnownGood)/2;
-            NSUInteger proposedBytesPerLine = proposedNumColumns * applicableBytesPerColumn;
+            NSUInteger proposedNumGranules = maxKnownGood + (minKnownBad - maxKnownGood)/2;
+            NSUInteger proposedBytesPerLine = proposedNumGranules * granularity;
             FOREACH(HFRepresenterLayoutViewInfo *, info, layoutInfos) {
                 requiredSpace += [info->rep minimumViewWidthForBytesPerLine:proposedBytesPerLine];
                 if (requiredSpace > NSWidth(layoutRect)) break;
             }
-            if (requiredSpace > NSWidth(layoutRect)) minKnownBad = proposedNumColumns;
-            else maxKnownGood = proposedNumColumns;
+            if (requiredSpace > NSWidth(layoutRect)) minKnownBad = proposedNumGranules;
+            else maxKnownGood = proposedNumGranules;
         }
-        newNumColumns = maxKnownGood;
+        newNumGranules = maxKnownGood;
     }
-    return MAX(1, newNumColumns) * applicableBytesPerColumn;
+    return MAX(1, newNumGranules) * granularity;
 }
 
 - (BOOL)_anyLayoutInfoIsVerticallyResizable:(NSArray *)vals {
@@ -339,7 +344,7 @@ static NSInteger sortByLayoutPosition(id a, id b, void *self) {
 
 - (void)controllerDidChange:(HFControllerPropertyBits)bits {
     [super controllerDidChange:bits];
-    if (bits & (HFControllerViewSizeRatios | HFControllerBytesPerColumn)) {
+    if (bits & (HFControllerViewSizeRatios | HFControllerBytesPerColumn | HFControllerByteGranularity)) {
         [self performLayout];
     }
 }

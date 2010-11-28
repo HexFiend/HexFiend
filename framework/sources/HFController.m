@@ -966,10 +966,10 @@ static inline Class preferredByteArrayClass(void) {
     }
 }
 
-- (void)continueSelectionWithEvent:(NSEvent *)event forByteIndex:(unsigned long long)characterIndex {
+- (void)continueSelectionWithEvent:(NSEvent *)event forByteIndex:(unsigned long long)byteIndex {
     USE(event);
     HFASSERT(_hfflags.selectionInProgress);
-    HFASSERT(characterIndex <= [self contentsLength]);
+    HFASSERT(byteIndex <= [self contentsLength]);
     if (_hfflags.commandExtendSelection) {
 #if 0
         /* Clear any zero-length ranges */
@@ -978,33 +978,33 @@ static inline Class preferredByteArrayClass(void) {
             if ([[selectedContentsRanges objectAtIndex:rangeIndex] HFRange].length == 0) [selectedContentsRanges removeObjectAtIndex:rangeIndex];
         }
 #endif
-        selectionAnchorRange.location = MIN(characterIndex, selectionAnchor);
-        selectionAnchorRange.length = MAX(characterIndex, selectionAnchor) - selectionAnchorRange.location;
+        selectionAnchorRange.location = MIN(byteIndex, selectionAnchor);
+        selectionAnchorRange.length = MAX(byteIndex, selectionAnchor) - selectionAnchorRange.location;
         [self _addPropertyChangeBits:HFControllerSelectedRanges];
     }
     else if (_hfflags.shiftExtendSelection) {
         HFASSERT(selectionAnchorRange.location != NO_SELECTION);
         HFASSERT(selectionAnchor != NO_SELECTION);
         HFRange range;
-        if (! HFLocationInRange(characterIndex, selectionAnchorRange)) {
+        if (! HFLocationInRange(byteIndex, selectionAnchorRange)) {
             /* The character index is outside of the selection anchor range.  The new range is just the selected anchor range combined with the character index. */
-            range.location = MIN(characterIndex, selectionAnchorRange.location);
-            unsigned long long rangeEnd = MAX(characterIndex, HFSum(selectionAnchorRange.location, selectionAnchorRange.length));
+            range.location = MIN(byteIndex, selectionAnchorRange.location);
+            unsigned long long rangeEnd = MAX(byteIndex, HFSum(selectionAnchorRange.location, selectionAnchorRange.length));
             HFASSERT(rangeEnd >= range.location);
             range.length = rangeEnd - range.location;
         }
         else {
             /* The character is within the selection anchor range.  We use the selection anchor index to determine which "side" of the range is selected. */
-            range.location = MIN(selectionAnchor, characterIndex);
-            range.length = HFAbsoluteDifference(selectionAnchor, characterIndex);
+            range.location = MIN(selectionAnchor, byteIndex);
+            range.length = HFAbsoluteDifference(selectionAnchor, byteIndex);
         }
         [self _setSingleSelectedContentsRange:range];
     }
     else {
         /* No modifier key selection */
         HFRange range;
-        range.location = MIN(characterIndex, selectionAnchor);
-        range.length = MAX(characterIndex, selectionAnchor) - range.location;
+        range.location = MIN(byteIndex, selectionAnchor);
+        range.length = MAX(byteIndex, selectionAnchor) - range.location;
         [self _setSingleSelectedContentsRange:range];
     }
 }

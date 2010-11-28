@@ -273,6 +273,11 @@
     return [[self view] minimumViewWidthForBytesPerLine:bytesPerLine];
 }
 
+- (NSUInteger)byteGranularity {
+    HFRepresenterTextView *view = [self view];
+    return HFLeastCommonMultiple([view bytesPerColumn], [view bytesPerCharacter]);
+}
+
 - (NSArray *)displayedSelectedContentsRanges {
     HFController *controller = [self controller];
     NSArray *result;

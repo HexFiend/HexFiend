@@ -126,6 +126,25 @@ static inline NSUInteger HFRoundUpToMultipleInt(NSUInteger a, NSUInteger b) {
     else return HFSum(a, b - remainder);
 }
 
+/*!
+ Returns the least common multiple of A and B, and asserts on overflow or if A or B is zero.
+ */
+static inline NSUInteger HFLeastCommonMultiple(NSUInteger a, NSUInteger b) {
+    assert(a > 0);
+    assert(b > 0);
+    
+    /* Compute GCD.  It ends up in U. */
+    NSUInteger t, u = a, v = b;
+    while (v > 0) {
+        t = v;
+        v = u % v;
+        u = t;
+    }
+    
+    /* Return the product divided by the GCD, in an overflow safe manner */
+    return HFProductInt(a/u, b);
+}
+
 
 /*!
  Returns the smallest multiple of B strictly larger than A, or ULLONG_MAX if it would overflow

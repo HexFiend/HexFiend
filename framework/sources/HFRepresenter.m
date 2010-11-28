@@ -89,6 +89,10 @@
     return 0;
 }
 
+- (NSUInteger)byteGranularity {
+    return 1;
+}
+
 - (double)maximumAvailableLinesForViewHeight:(CGFloat)viewHeight {
     USE(viewHeight);
     return DBL_MAX;

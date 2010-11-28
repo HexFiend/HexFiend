@@ -42,7 +42,6 @@
 @interface HFLayoutRepresenter : HFRepresenter {
     NSMutableArray *representers;
     BOOL maximizesBytesPerLine;
-    
 }
 
 /*! @name Managed representers
