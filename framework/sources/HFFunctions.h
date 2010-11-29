@@ -198,8 +198,8 @@ static inline HFRange HFUnionRange(HFRange a, HFRange b) {
 /*! Returns whether a+b > c+d, as if there were no overflow (so ULLONG_MAX + 1 > 10 + 20) */
 static inline BOOL HFSumIsLargerThanSum(unsigned long long a, unsigned long long b, unsigned long long c, unsigned long long d) {
     // Theory: compare a/2 + b/2 to c/2 + d/2, and if they're equal, compare a%2 + b%2 to c%2 + d%2.  We may get into trouble if a and b are both even and c and d are both odd: e.g. a = 2, b = 2, c = 1, d = 3.  We would compare 1 + 1 vs 0 + 1, and therefore that 2 + 2 > 1 + 3.  To address this, if both remainders are 1, we add this to the sum.  We know this cannot overflow because ULLONG_MAX is odd, so (ULLONG_MAX/2) + (ULLONG_MAX/2) + 1 does not overflow.
-    unsigned int rem1 = a%2 + b%2;
-    unsigned int rem2 = c%2 + d%2;
+    unsigned int rem1 = (unsigned)(a%2 + b%2);
+    unsigned int rem2 = (unsigned)(c%2 + d%2);
     unsigned long long sum1 = a/2 + b/2 + rem1/2;
     unsigned long long sum2 = c/2 + d/2 + rem2/2;
     if (sum1 > sum2) return YES;
@@ -346,6 +346,9 @@ static inline NSUInteger HFCountDigitsBase16(unsigned long long val) {
 
 /*! Returns YES if the given string encoding is a superset of ASCII. */
 BOOL HFStringEncodingIsSupersetOfASCII(NSStringEncoding encoding);
+
+/*! Returns the "granularity" of an encoding, in bytes.  ASCII is 1, UTF-16 is 2, etc.  Variable width encodings return the smallest (e.g. Shift-JIS returns 1). */
+uint8_t HFStringEncodingCharacterLength(NSStringEncoding encoding);
 
 /*! Converts an unsigned long long to NSUInteger.  The unsigned long long should be no more than ULLONG_MAX. */
 static inline unsigned long ll2l(unsigned long long val) { assert(val <= NSUIntegerMax); return (unsigned long)val; }

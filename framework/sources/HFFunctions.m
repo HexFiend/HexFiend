@@ -271,6 +271,154 @@ BOOL HFStringEncodingIsSupersetOfASCII(NSStringEncoding encoding) {
     }
 }
 
+uint8_t HFStringEncodingCharacterLength(NSStringEncoding encoding) {
+    switch (CFStringConvertNSStringEncodingToEncoding(encoding)) {
+	case kCFStringEncodingMacRoman: return 1;
+	case kCFStringEncodingWindowsLatin1: return 1;
+	case kCFStringEncodingISOLatin1: return 1;
+	case kCFStringEncodingNextStepLatin: return 1;
+	case kCFStringEncodingASCII: return 1;
+	case kCFStringEncodingUnicode: return 2;
+	case kCFStringEncodingUTF8: return 1;
+	case kCFStringEncodingNonLossyASCII: return 1;
+            //	case kCFStringEncodingUTF16: return 2;
+	case kCFStringEncodingUTF16BE: return 2;
+	case kCFStringEncodingUTF16LE: return 2;
+	case kCFStringEncodingUTF32: return 4;
+	case kCFStringEncodingUTF32BE: return 4;
+	case kCFStringEncodingUTF32LE: return 4;
+	case kCFStringEncodingMacJapanese: return 1;
+	case kCFStringEncodingMacChineseTrad: return 1; // ??
+	case kCFStringEncodingMacKorean: return 1;
+	case kCFStringEncodingMacArabic: return 1;
+	case kCFStringEncodingMacHebrew: return 1;
+	case kCFStringEncodingMacGreek: return 1;
+	case kCFStringEncodingMacCyrillic: return 1;
+	case kCFStringEncodingMacDevanagari: return 1;
+	case kCFStringEncodingMacGurmukhi: return 1;
+	case kCFStringEncodingMacGujarati: return 1;
+	case kCFStringEncodingMacOriya: return 1;
+	case kCFStringEncodingMacBengali: return 1;
+	case kCFStringEncodingMacTamil: return 1;
+	case kCFStringEncodingMacTelugu: return 1;
+	case kCFStringEncodingMacKannada: return 1;
+	case kCFStringEncodingMacMalayalam: return 1;
+	case kCFStringEncodingMacSinhalese: return 1;
+	case kCFStringEncodingMacBurmese: return 1;
+	case kCFStringEncodingMacKhmer: return 1;
+	case kCFStringEncodingMacThai: return 1;
+	case kCFStringEncodingMacLaotian: return 1;
+	case kCFStringEncodingMacGeorgian: return 1;
+	case kCFStringEncodingMacArmenian: return 1;
+	case kCFStringEncodingMacChineseSimp: return 1;
+	case kCFStringEncodingMacTibetan: return 1;
+	case kCFStringEncodingMacMongolian: return 1;
+	case kCFStringEncodingMacEthiopic: return 1;
+	case kCFStringEncodingMacCentralEurRoman: return 1;
+	case kCFStringEncodingMacVietnamese: return 1;
+	case kCFStringEncodingMacExtArabic: return 1;
+	case kCFStringEncodingMacSymbol: return 1;
+	case kCFStringEncodingMacDingbats: return 1;
+	case kCFStringEncodingMacTurkish: return 1;
+	case kCFStringEncodingMacCroatian: return 1;
+	case kCFStringEncodingMacIcelandic: return 1;
+	case kCFStringEncodingMacRomanian: return 1;
+	case kCFStringEncodingMacCeltic: return 1;
+	case kCFStringEncodingMacGaelic: return 1;
+	case kCFStringEncodingMacFarsi: return 1;
+	case kCFStringEncodingMacUkrainian: return 1;
+	case kCFStringEncodingMacInuit: return 1;
+	case kCFStringEncodingMacVT100: return 1;
+	case kCFStringEncodingMacHFS: return 1;
+	case kCFStringEncodingISOLatin2: return 1;
+	case kCFStringEncodingISOLatin3: return 1;
+	case kCFStringEncodingISOLatin4: return 1;
+	case kCFStringEncodingISOLatinCyrillic: return 1;
+	case kCFStringEncodingISOLatinArabic: return 1;
+	case kCFStringEncodingISOLatinGreek: return 1;
+	case kCFStringEncodingISOLatinHebrew: return 1;
+	case kCFStringEncodingISOLatin5: return 1;
+	case kCFStringEncodingISOLatin6: return 1;
+	case kCFStringEncodingISOLatinThai: return 1;
+	case kCFStringEncodingISOLatin7: return 1;
+	case kCFStringEncodingISOLatin8: return 1;
+	case kCFStringEncodingISOLatin9: return 1;
+	case kCFStringEncodingISOLatin10: return 1;
+	case kCFStringEncodingDOSLatinUS: return 1;
+	case kCFStringEncodingDOSGreek: return 1;
+	case kCFStringEncodingDOSBalticRim: return 1;
+	case kCFStringEncodingDOSLatin1: return 1;
+	case kCFStringEncodingDOSGreek1: return 1;
+	case kCFStringEncodingDOSLatin2: return 1;
+	case kCFStringEncodingDOSCyrillic: return 1;
+	case kCFStringEncodingDOSTurkish: return 1;
+	case kCFStringEncodingDOSPortuguese: return 1;
+	case kCFStringEncodingDOSIcelandic: return 1;
+	case kCFStringEncodingDOSHebrew: return 1;
+	case kCFStringEncodingDOSCanadianFrench: return 1;
+	case kCFStringEncodingDOSArabic: return 1;
+	case kCFStringEncodingDOSNordic: return 1;
+	case kCFStringEncodingDOSRussian: return 1;
+	case kCFStringEncodingDOSGreek2: return 1;
+	case kCFStringEncodingDOSThai: return 1;
+	case kCFStringEncodingDOSJapanese: return 1;
+	case kCFStringEncodingDOSChineseSimplif: return 1;
+	case kCFStringEncodingDOSKorean: return 1;
+	case kCFStringEncodingDOSChineseTrad: return 1;
+	case kCFStringEncodingWindowsLatin2: return 1;
+	case kCFStringEncodingWindowsCyrillic: return 1;
+	case kCFStringEncodingWindowsGreek: return 1;
+	case kCFStringEncodingWindowsLatin5: return 1;
+	case kCFStringEncodingWindowsHebrew: return 1;
+	case kCFStringEncodingWindowsArabic: return 1;
+	case kCFStringEncodingWindowsBalticRim: return 1;
+	case kCFStringEncodingWindowsVietnamese: return 1;
+	case kCFStringEncodingWindowsKoreanJohab: return 1;
+	case kCFStringEncodingANSEL: return 1;
+	case kCFStringEncodingJIS_X0201_76: return 1;
+	case kCFStringEncodingJIS_X0208_83: return 1;
+	case kCFStringEncodingJIS_X0208_90: return 1;
+	case kCFStringEncodingJIS_X0212_90: return 1;
+	case kCFStringEncodingJIS_C6226_78: return 1;
+	case 0x0628/*kCFStringEncodingShiftJIS_X0213*/: return 1;
+	case kCFStringEncodingShiftJIS_X0213_MenKuTen: return 1;
+	case kCFStringEncodingGB_2312_80: return 1;
+	case kCFStringEncodingGBK_95: return 1;
+	case kCFStringEncodingGB_18030_2000: return 1;
+	case kCFStringEncodingKSC_5601_87: return 1;
+	case kCFStringEncodingKSC_5601_92_Johab: return 1;
+	case kCFStringEncodingCNS_11643_92_P1: return 1;
+	case kCFStringEncodingCNS_11643_92_P2: return 1;
+	case kCFStringEncodingCNS_11643_92_P3: return 1;
+	case kCFStringEncodingISO_2022_JP: return 1;
+	case kCFStringEncodingISO_2022_JP_2: return 1;
+	case kCFStringEncodingISO_2022_JP_1: return 1;
+	case kCFStringEncodingISO_2022_JP_3: return 1;
+	case kCFStringEncodingISO_2022_CN: return 1;
+	case kCFStringEncodingISO_2022_CN_EXT: return 1;
+	case kCFStringEncodingISO_2022_KR: return 1;
+	case kCFStringEncodingEUC_JP: return 1;
+	case kCFStringEncodingEUC_CN: return 1;
+	case kCFStringEncodingEUC_TW: return 1;
+	case kCFStringEncodingEUC_KR: return 1;
+	case kCFStringEncodingShiftJIS: return 1;
+	case kCFStringEncodingKOI8_R: return 1;
+	case kCFStringEncodingBig5: return 2; //yay, a 2
+	case kCFStringEncodingMacRomanLatin1: return 1;
+	case kCFStringEncodingHZ_GB_2312: return 2;
+	case kCFStringEncodingBig5_HKSCS_1999: return 1;
+	case kCFStringEncodingVISCII: return 1;
+	case kCFStringEncodingKOI8_U: return 1;
+	case kCFStringEncodingBig5_E: return 2;
+	case kCFStringEncodingNextStepJapanese: return YES; // ??
+	case kCFStringEncodingEBCDIC_US: return 1; //lol
+	case kCFStringEncodingEBCDIC_CP037: return 1;
+        default:
+            NSLog(@"Unknown string encoding %lu in %s", encoding, __FUNCTION__);
+            return NO;
+    }    
+}
+
 /* Converts a hexadecimal digit into a corresponding 4 bit unsigned int; returns -1 on failure.  The ... is a gcc extension. */
 static NSInteger char2hex(unichar c) {
     switch (c) {

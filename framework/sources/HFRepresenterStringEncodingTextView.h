@@ -8,15 +8,15 @@
 
 #import <HexFiend/HFRepresenterTextView.h>
 
-
 @interface HFRepresenterStringEncodingTextView : HFRepresenterTextView {
     union {
-        CGGlyph glyphTable8Bit[256];
-        CGGlyph *glyphBuckets16Bit[256];
+        struct HFGlyph_t glyphTable8Bit[256];
+        struct HFGlyph_t *glyphBuckets16Bit[256];
     } glyphTable;
+    NSMutableArray *fonts;
     BOOL usingBuckets;
     unsigned char bytesPerChar;
-    CGGlyph replacementGlyph;
+    struct HFGlyph_t replacementGlyph;
     CGFloat glyphAdvancement;
     NSStringEncoding encoding;
 }

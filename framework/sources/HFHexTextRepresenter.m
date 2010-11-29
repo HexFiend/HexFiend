@@ -115,7 +115,6 @@ static unsigned char hex2char(NSUInteger c) {
 
 - (void)insertText:(NSString *)text {
     REQUIRE_NOT_NULL(text);
-    HFASSERT([text length] > 0);
     if (! [self _canInsertText:text]) {
         /* The user typed invalid data, and we can ignore it */
         return;

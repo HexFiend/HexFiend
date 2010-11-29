@@ -398,8 +398,12 @@ static NSInteger compareMenuItems(id item1, id item2, void *unused) {
     }
 }
 
+- (void)setStringEncoding:(NSStringEncoding)encoding {
+    [[NSUserDefaults standardUserDefaults] setInteger:encoding forKey:@"DefaultStringEncoding"];    
+}
+
 - (IBAction)setStringEncodingFromMenuItem:(NSMenuItem *)item {
-    [[NSUserDefaults standardUserDefaults] setInteger:[item tag] forKey:@"DefaultStringEncoding"];
+    [self setStringEncoding:[item tag]];
 }
 
 - (IBAction)openProcess:(id)sender {

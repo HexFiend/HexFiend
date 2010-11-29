@@ -18,25 +18,25 @@
 - (void)moveLeft:unused { USE(unused); [[self controller] moveInDirection:HFControllerDirectionLeft withGranularity:HFControllerMovementByte andModifySelection:NO]; }
 - (void)moveUp:unused { USE(unused); [[self controller] moveInDirection:HFControllerDirectionLeft withGranularity:HFControllerMovementLine andModifySelection:NO]; }
 - (void)moveDown:unused { USE(unused); [[self controller] moveInDirection:HFControllerDirectionRight withGranularity:HFControllerMovementLine andModifySelection:NO]; }	
+- (void)moveWordRight:unused { USE(unused); [[self controller] moveInDirection:HFControllerDirectionRight withGranularity:HFControllerMovementColumn andModifySelection:NO]; }
+- (void)moveWordLeft:unused { USE(unused); [[self controller] moveInDirection:HFControllerDirectionLeft withGranularity:HFControllerMovementColumn andModifySelection:NO]; }
+
 - (void)moveRightAndModifySelection:unused { USE(unused); [[self controller] moveInDirection:HFControllerDirectionRight withGranularity:HFControllerMovementByte andModifySelection:YES]; }
 - (void)moveLeftAndModifySelection:unused { USE(unused); [[self controller] moveInDirection:HFControllerDirectionLeft withGranularity:HFControllerMovementByte andModifySelection:YES]; }
 - (void)moveUpAndModifySelection:unused { USE(unused); [[self controller] moveInDirection:HFControllerDirectionLeft withGranularity:HFControllerMovementLine andModifySelection:YES]; }
 - (void)moveDownAndModifySelection:unused { USE(unused); [[self controller] moveInDirection:HFControllerDirectionRight withGranularity:HFControllerMovementLine andModifySelection:YES]; }
+- (void)moveWordRightAndModifySelection:unused { USE(unused); [[self controller] moveInDirection:HFControllerDirectionRight withGranularity:HFControllerMovementColumn andModifySelection:YES]; }
+- (void)moveWordLeftAndModifySelection:unused { USE(unused); [[self controller] moveInDirection:HFControllerDirectionLeft withGranularity:HFControllerMovementColumn andModifySelection:YES]; }
 
 - (void)moveForward:unused { USE(unused); [self moveRight:unused]; }
 - (void)moveBackward:unused { USE(unused); [self moveLeft:unused]; }
 
-- (void)moveWordForward:unused { USE(unused); [self moveForward:unused]; }
-- (void)moveWordBackward:unused { USE(unused); [self moveBackward:unused]; }
-
-- (void)moveBackwardAndModifySelection:unused { USE(unused); [self moveLeftAndModifySelection:unused]; }
+- (void)moveWordForward:unused { USE(unused); [self moveWordRight:unused]; }
+- (void)moveWordBackward:unused { USE(unused); [self moveWordLeft:unused]; }
 - (void)moveForwardAndModifySelection:unused { USE(unused); [self moveRightAndModifySelection:unused]; }
+- (void)moveBackwardAndModifySelection:unused { USE(unused); [self moveLeftAndModifySelection:unused]; }
 - (void)moveWordForwardAndModifySelection:unused { USE(unused); [self moveForwardAndModifySelection:unused]; }
 - (void)moveWordBackwardAndModifySelection:unused { USE(unused); [self moveBackwardAndModifySelection:unused]; }
-- (void)moveWordRight:unused { USE(unused); [self moveRight:unused]; }
-- (void)moveWordLeft:unused { USE(unused); [self moveLeft:unused];  }
-- (void)moveWordRightAndModifySelection:unused { USE(unused); [self moveRightAndModifySelection:unused]; }
-- (void)moveWordLeftAndModifySelection:unused { USE(unused); [self moveLeftAndModifySelection:unused]; }
 
 - (void)deleteBackward:unused { USE(unused); [[self controller] deleteDirection:HFControllerDirectionLeft]; }
 - (void)deleteForward:unused { USE(unused); [[self controller] deleteDirection:HFControllerDirectionRight]; }

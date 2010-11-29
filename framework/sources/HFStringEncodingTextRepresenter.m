@@ -89,6 +89,7 @@
 - (void)setEncoding:(NSStringEncoding)encoding {
     stringEncoding = encoding;
     [[self view] setEncoding:encoding];
+    [[self controller] representer:self changedProperties:HFControllerViewSizeRatios];
 }
 
 - (void)initializeView {
@@ -102,7 +103,7 @@
     if (! data) {
         NSBeep();
     }
-    else {
+    else if ([data length]) { // a 0 length text can come about via e.g. option-e
         [[self controller] insertData:data replacingPreviousBytes:0 allowUndoCoalescing:YES];
     }
 }

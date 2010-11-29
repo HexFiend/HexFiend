@@ -16,13 +16,13 @@ static const NSTimeInterval HFCaretBlinkFrequency = 0.56;
 
 @implementation HFRepresenterTextView
 
-- (NSUInteger)_glyphsForString:(NSString *)string glyphs:(CGGlyph *)glyphs {
+- (NSUInteger)_getGlyphs:(CGGlyph *)glyphs forString:(NSString *)string font:(NSFont *)inputFont {
     NSUInteger length = [string length];
     UniChar chars[256];
     HFASSERT(length <= sizeof chars / sizeof *chars);
-    HFASSERT(font != nil);
+    HFASSERT(inputFont != nil);
     [string getCharacters:chars range:NSMakeRange(0, length)];
-    if (! CTFontGetGlyphsForCharacters((CTFontRef)font, chars, glyphs, length)) {
+    if (! CTFontGetGlyphsForCharacters((CTFontRef)inputFont, chars, glyphs, length)) {
         /* Some or all characters were not mapped.  This is OK.  We'll use the replacement glyph. */
     }
     return length;
@@ -669,6 +669,12 @@ enum LineCoverage_t {
     return font;
 }
 
+/* The base implementation does not support font substitution, so we require that it be the base font. */
+- (NSFont *)fontAtSubstitutionIndex:(uint16_t)idx {
+    HFASSERT(idx == 0);
+    return font;
+}
+
 - (NSData *)data {
     return data;
 }
@@ -1176,19 +1182,69 @@ static size_t unionAndCleanLists(NSRect *rectList, id *valueList, size_t count) 
     }    
 }
 
-- (void)drawGlyphs:(const CGGlyph *)glyphs withAdvances:(const CGSize *)advances withStyleRun:(HFTextVisualStyleRun *)styleRun count:(NSUInteger)glyphCount {
+- (void)drawGlyphs:(const struct HFGlyph_t *)glyphs atPoint:(NSPoint)point withAdvances:(const CGSize *)advances withStyleRun:(HFTextVisualStyleRun *)styleRun count:(NSUInteger)glyphCount {
     HFASSERT(glyphs != NULL);
     HFASSERT(advances != NULL);
     HFASSERT(glyphCount > 0);
     if ([styleRun shouldDraw]) {
         [styleRun set];
-        CGContextRef ctx = [[NSGraphicsContext currentContext] graphicsPort];
-        CGContextShowGlyphsWithAdvances(ctx, glyphs, advances, glyphCount);
+        CGContextRef ctx =  [[NSGraphicsContext currentContext] graphicsPort];
+                
+        /* Get all the CGGlyphs together */
+        NEW_ARRAY(CGGlyph, cgglyphs, glyphCount);
+        for (NSUInteger j=0; j < glyphCount; j++) {
+            cgglyphs[j] = glyphs[j].glyph;
+        }
+        
+        NSUInteger runStart = 0;
+        uint16_t runFontIndex = glyphs[0].fontIndex;
+        CGFloat runAdvance = 0;
+        for (NSUInteger i=1; i <= glyphCount; i++) {
+            /* Check if this run is finished, or if we are using a substitution font */
+            if (i == glyphCount || glyphs[i].fontIndex != runFontIndex || runFontIndex > 0) {
+                /* Draw this run */
+                NSFont *fontToUse = [self fontAtSubstitutionIndex:runFontIndex];
+                [[fontToUse screenFont] set];
+                CGContextSetTextPosition(ctx, point.x + runAdvance, point.y);
+                
+                if (runFontIndex > 0) {
+                    /* A substitution font.  Here we should only have one glyph */
+                    HFASSERT(i - runStart == 1);
+                    /* Get the advance for this glyph. */
+                    NSSize nativeAdvance;
+                    NSGlyph nativeGlyph = cgglyphs[runStart];
+                    [fontToUse getAdvancements:&nativeAdvance forGlyphs:&nativeGlyph count:1];
+                    if (nativeAdvance.width > advances[runStart].width) {
+                        /* This glyph is too wide!  We'll have to scale it.  Here we only scale horizontally. */
+                        CGFloat horizontalScale = advances[runStart].width / nativeAdvance.width;
+                        CGAffineTransform textCTM = CGContextGetTextMatrix(ctx);
+                        textCTM.a *= horizontalScale;
+                        CGContextSetTextMatrix(ctx, textCTM);
+                        /* Note that we don't have to restore the text matrix, because the next call to set the font will overwrite it. */
+                    }
+                }
+                
+                /* Draw the glyphs */
+                CGContextShowGlyphsWithAdvances(ctx, cgglyphs + runStart, advances + runStart, i - runStart);
+                
+                /* Record the new run */
+                if (i < glyphCount) {                    
+                    /* Sum the advances */
+                    for (NSUInteger j = runStart; j < i; j++) {
+                        runAdvance += advances[j].width;
+                    }
+                    
+                    /* Record the new run start and index */
+                    runStart = i;
+                    runFontIndex = glyphs[i].fontIndex;
+                }
+            }
+        }
     }
 }
 
 
-- (void)extractGlyphsForBytes:(const unsigned char *)bytes count:(NSUInteger)numBytes offsetIntoLine:(NSUInteger)offsetIntoLine intoArray:(CGGlyph *)glyphs advances:(CGSize *)advances resultingGlyphCount:(NSUInteger *)resultGlyphCount {
+- (void)extractGlyphsForBytes:(const unsigned char *)bytes count:(NSUInteger)numBytes offsetIntoLine:(NSUInteger)offsetIntoLine intoArray:(struct HFGlyph_t *)glyphs advances:(CGSize *)advances resultingGlyphCount:(NSUInteger *)resultGlyphCount {
     USE(bytes);
     USE(numBytes);
     USE(offsetIntoLine);
@@ -1198,7 +1254,7 @@ static size_t unionAndCleanLists(NSRect *rectList, id *valueList, size_t count) 
     UNIMPLEMENTED_VOID();
 }
 
-- (void)extractGlyphsForBytes:(const unsigned char *)bytePtr range:(NSRange)byteRange intoArray:(CGGlyph *)glyphs advances:(CGSize *)advances withInclusionRanges:(NSArray *)restrictingToRanges initialTextOffset:(CGFloat *)initialTextOffset resultingGlyphCount:(NSUInteger *)resultingGlyphCount {
+- (void)extractGlyphsForBytes:(const unsigned char *)bytePtr range:(NSRange)byteRange intoArray:(struct HFGlyph_t *)glyphs advances:(CGSize *)advances withInclusionRanges:(NSArray *)restrictingToRanges initialTextOffset:(CGFloat *)initialTextOffset resultingGlyphCount:(NSUInteger *)resultingGlyphCount {
 #warning None of this is right if bytesPerCharacter > 0
     NSParameterAssert(glyphs != NULL && advances != NULL && restrictingToRanges != nil && bytePtr != NULL);
     NSRange priorIntersectionRange = {NSUIntegerMax, NSUIntegerMax};
@@ -1265,7 +1321,7 @@ static size_t unionAndCleanLists(NSRect *rectList, id *valueList, size_t count) 
     textTransform.ty += [fontObject ascender] - lineHeight * [self verticalOffset];
     NSUInteger lineIndex = 0;
     const NSUInteger maxGlyphCount = [self maximumGlyphCountForByteCount:bytesPerLine];
-    NEW_ARRAY(CGGlyph, glyphs, maxGlyphCount);
+    NEW_ARRAY(struct HFGlyph_t, glyphs, maxGlyphCount);
     NEW_ARRAY(CGSize, advances, maxGlyphCount);
     for (lineStartIndex = 0; lineStartIndex < byteCount; lineStartIndex += bytesPerLine) {
         if (lineStartIndex > 0) {
@@ -1300,9 +1356,8 @@ static size_t unionAndCleanLists(NSRect *rectList, id *valueList, size_t count) 
                 if (resultGlyphCount > 0) {
                     textTransform.tx += initialTextOffset + advanceIntoLine;
                     CGContextSetTextMatrix(ctx, textTransform);
-                    
                     /* Draw them */
-                    [self drawGlyphs:glyphs withAdvances:advances withStyleRun:styleRun count:resultGlyphCount];
+                    [self drawGlyphs:glyphs atPoint:NSMakePoint(textTransform.tx, textTransform.ty) withAdvances:advances withStyleRun:styleRun count:resultGlyphCount];
 
                     /* Undo the work we did before so as not to screw up the next run */
                     textTransform.tx -= initialTextOffset + advanceIntoLine;
@@ -1341,6 +1396,8 @@ static size_t unionAndCleanLists(NSRect *rectList, id *valueList, size_t count) 
     BOOL antialias = [self shouldAntialias];
     CGContextRef ctx = [[NSGraphicsContext currentContext] graphicsPort];
     
+    [[font screenFont] set];
+    
     if ([self showsFocusRing]) {
         NSWindow *window = [self window];
         if (self == [window firstResponder] && [window isKeyWindow]) {
@@ -1351,7 +1408,6 @@ static size_t unionAndCleanLists(NSRect *rectList, id *valueList, size_t count) 
     NSUInteger bytesPerLine = [self bytesPerLine];
     if (bytesPerLine == 0) return;
     NSUInteger byteCount = [data length];
-    [[font screenFont] set];
     
     [self _drawDefaultLineBackgrounds:clip withLineHeight:[self lineHeight] maxLines:ll2l(HFRoundUpToNextMultipleSaturate(byteCount, bytesPerLine) / bytesPerLine)];
     [self drawSelectionIfNecessaryWithClip:clip];

@@ -11,7 +11,6 @@
 
 @interface HFRepresenterHexTextView : HFRepresenterTextView {
     CGGlyph glyphTable[16];
-    CGGlyph ligatureTable[256];
     CGFloat glyphAdvancement;
     CGFloat spaceAdvancement;
 }

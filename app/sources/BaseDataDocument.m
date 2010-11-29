@@ -637,7 +637,11 @@ static inline Class preferredByteArrayClass(void) {
 }
 
 - (void)setStringEncoding:(NSStringEncoding)encoding {
+    NSUInteger bytesPerLine = [controller bytesPerLine];
     [(HFStringEncodingTextRepresenter *)asciiRepresenter setEncoding:encoding];
+    if ([[self windowControllers] count] > 0) {
+        [self relayoutAndResizeWindowForBytesPerLine:bytesPerLine];
+    }
 }
 
 - (void)setStringEncodingFromMenuItem:(NSMenuItem *)item {

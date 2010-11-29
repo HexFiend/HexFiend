@@ -6,6 +6,6 @@
 
 - (NSUInteger)_glyphsForString:(NSString *)string withGeneratingLayoutManager:(NSLayoutManager *)textView glyphs:(CGGlyph *)glyphs;
 - (NSUInteger)_glyphsForString:(NSString *)string withGeneratingTextView:(NSTextView *)textView glyphs:(CGGlyph *)glyphs;
-- (NSUInteger)_glyphsForString:(NSString *)string glyphs:(CGGlyph *)glyphs; //uses CoreText.  Here glyphs must have space for [string length] glyphs.
+- (NSUInteger)_getGlyphs:(CGGlyph *)glyphs forString:(NSString *)string font:(NSFont *)font; //uses CoreText.  Here glyphs must have space for [string length] glyphs.
 
 @end

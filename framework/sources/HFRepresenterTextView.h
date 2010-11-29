@@ -21,6 +21,11 @@
 
 @class HFTextRepresenter;
 
+struct HFGlyph_t {
+    uint16_t fontIndex;
+    CGGlyph glyph;
+};
+
 /* The base class for HFTextRepresenter views - such as the hex or ASCII text view */
 @interface HFRepresenterTextView : NSView {
 @private;
@@ -103,12 +108,15 @@
 - (void)drawCaretIfNecessaryWithClip:(NSRect)clipRect;
 - (void)drawSelectionIfNecessaryWithClip:(NSRect)clipRect;
 
+/* For font substitution.  An index of 0 means the default (base) font. */
+- (NSFont *)fontAtSubstitutionIndex:(uint16_t)idx;
+
 /* Must be overridden */
 - (void)drawTextWithClip:(NSRect)clipRect restrictingToTextInRanges:(NSArray *)restrictingToRanges;
-- (void)extractGlyphsForBytes:(const unsigned char *)bytes count:(NSUInteger)numBytes offsetIntoLine:(NSUInteger)offsetIntoLine intoArray:(CGGlyph *)glyphs advances:(CGSize *)advances resultingGlyphCount:(NSUInteger *)resultGlyphCount;
+- (void)extractGlyphsForBytes:(const unsigned char *)bytes count:(NSUInteger)numBytes offsetIntoLine:(NSUInteger)offsetIntoLine intoArray:(struct HFGlyph_t *)glyphs advances:(CGSize *)advances resultingGlyphCount:(NSUInteger *)resultGlyphCount;
 
 
-- (void)extractGlyphsForBytes:(const unsigned char *)bytePtr range:(NSRange)byteRange intoArray:(CGGlyph *)glyphs advances:(CGSize *)advances withInclusionRanges:(NSArray *)restrictingToRanges initialTextOffset:(CGFloat *)initialTextOffset resultingGlyphCount:(NSUInteger *)resultingGlyphCount;
+- (void)extractGlyphsForBytes:(const unsigned char *)bytePtr range:(NSRange)byteRange intoArray:(struct HFGlyph_t *)glyphs advances:(CGSize *)advances withInclusionRanges:(NSArray *)restrictingToRanges initialTextOffset:(CGFloat *)initialTextOffset resultingGlyphCount:(NSUInteger *)resultingGlyphCount;
 
 /* Must be overridden - returns the max number of glyphs for a given number of bytes */
 - (NSUInteger)maximumGlyphCountForByteCount:(NSUInteger)byteCount;

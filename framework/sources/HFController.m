@@ -829,6 +829,10 @@ static inline Class preferredByteArrayClass(void) {
         [self _addPropertyChangeBits:HFControllerByteRangeAttributes];
         remainingProperties &= ~HFControllerByteRangeAttributes;
     }
+    if (remainingProperties & HFControllerViewSizeRatios) {
+        [self _addPropertyChangeBits:HFControllerViewSizeRatios];
+        remainingProperties &= ~HFControllerViewSizeRatios;
+    }
     if (remainingProperties) {
         NSLog(@"Unknown properties: %lx", remainingProperties);
     }
@@ -970,6 +974,7 @@ static inline Class preferredByteArrayClass(void) {
     USE(event);
     HFASSERT(_hfflags.selectionInProgress);
     HFASSERT(byteIndex <= [self contentsLength]);
+    BEGIN_TRANSACTION();
     if (_hfflags.commandExtendSelection) {
 #if 0
         /* Clear any zero-length ranges */
@@ -1007,6 +1012,7 @@ static inline Class preferredByteArrayClass(void) {
         range.length = MAX(byteIndex, selectionAnchor) - range.location;
         [self _setSingleSelectedContentsRange:range];
     }
+    END_TRANSACTION();
 }
 
 - (void)endSelectionWithEvent:(NSEvent *)event forByteIndex:(unsigned long long)characterIndex {
@@ -1236,6 +1242,31 @@ static inline Class preferredByteArrayClass(void) {
         if (locationToMakeVisible != NO_SELECTION) [self _ensureVisibilityOfLocation:locationToMakeVisible];
         END_TRANSACTION();
     }
+}
+
+/* Returns the distance to the next "word" (at least 1, unless we are empty).  Here a word is identified as a column.  If there are no columns, a word is a line.  This is used for word movement (e.g. option + right arrow) */
+- (unsigned long long)_distanceToWordBoundaryForDirection:(HFControllerMovementDirection)direction {
+    unsigned long long result = 0, locationToConsider;
+    
+    /* Figure out how big a word is.  By default, it's the column width, unless we have no columns, in which case it's the bytes per line. */
+    NSUInteger wordGranularity = [self bytesPerColumn];
+    if (wordGranularity == 0) wordGranularity = MAX(1, [self bytesPerLine]);
+    if (selectionAnchor == NO_SELECTION) {
+        /* Pick the anchor inline with the choice of direction */
+        if (direction == HFControllerDirectionLeft) locationToConsider = [self _minimumSelectionLocation];
+        else locationToConsider = [self _maximumSelectionLocation];
+    } else {
+        /* Just use the anchor */
+        locationToConsider = selectionAnchor;
+    }
+    if (direction == HFControllerDirectionRight) {
+        result = HFRoundUpToNextMultipleSaturate(locationToConsider, wordGranularity) - locationToConsider;
+    } else {
+        result = locationToConsider % wordGranularity;
+        if (result == 0) result = wordGranularity;
+    }
+    return result;
+    
 }
 
 /* Anchored selection is not allowed; neither is up/down movement */
@@ -1487,6 +1518,10 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
     
     [[self undoManager] registerUndoWithTarget:self selector:@selector(_performTypingUndo:) object:redoer];
     
+    /* Add it as an undo operation */
+    HFASSERT(undoOperations != nil);
+    [undoOperations addObject:redoer];
+    
     END_TRANSACTION();
     
     [undoer invalidate];
@@ -1585,7 +1620,7 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
 	    break;
 	case HFControllerMovementColumn:
 	    /* This is a tricky case because the amount we have to move depends on our position in the column. */
-	    NSLog(@"Move by column");
+            bytesToMove = [self _distanceToWordBoundaryForDirection:direction];
 	    break;
 	case HFControllerMovementLine:
 	    bytesToMove = [self bytesPerLine];
