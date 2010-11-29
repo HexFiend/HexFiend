@@ -17,10 +17,6 @@
     IBOutlet NSMenu *stringEncodingMenu;
 }
 
-
-- (IBAction)openProcess:(id)sender; //queries the user for a process and opens it
-- (IBAction)openProcessByProcessMenuItem:(id)sender; //opens a process from a menu item that directly represents that process
-
 - (IBAction)diffFrontDocuments:(id)sender;
 
 - (IBAction)setStringEncodingFromMenuItem:(NSMenuItem *)item;

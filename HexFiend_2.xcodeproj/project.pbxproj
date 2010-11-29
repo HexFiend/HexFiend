@@ -188,6 +188,7 @@
 		D0D829110CDE969F00C2AB82 /* HFByteArray.h in Headers */ = {isa = PBXBuildFile; fileRef = D08F5DEF0CDE8223007EFFE8 /* HFByteArray.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D0D8C2B012A3BE4300960FC4 /* ChooseStringEncodingDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = D0D8C2AF12A3BE4300960FC4 /* ChooseStringEncodingDialog.xib */; };
 		D0D8C2BC12A3C10100960FC4 /* ChooseStringEncodingWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D8C2BB12A3C10100960FC4 /* ChooseStringEncodingWindowController.m */; };
+		D0D8C45812A3EF3900960FC4 /* ProcessList.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D8C45712A3EF3900960FC4 /* ProcessList.m */; };
 		D0DEC2BF102F9C6C00F90467 /* launcher.c in Sources */ = {isa = PBXBuildFile; fileRef = D0DEC2BE102F9C6C00F90467 /* launcher.c */; };
 		D0DEC3DE103001C700F90467 /* FortunateSonCopier in CopyFiles */ = {isa = PBXBuildFile; fileRef = D0DEC2AB102F9B4C00F90467 /* FortunateSonCopier */; };
 		D0F2157D0DA61CF000ED1AA7 /* HFFieldTypeController.m in Sources */ = {isa = PBXBuildFile; fileRef = D0F2157C0DA61CF000ED1AA7 /* HFFieldTypeController.m */; };
@@ -480,6 +481,8 @@
 		D0D8C2AF12A3BE4300960FC4 /* ChooseStringEncodingDialog.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = ChooseStringEncodingDialog.xib; path = app/resources/ChooseStringEncodingDialog.xib; sourceTree = "<group>"; };
 		D0D8C2BA12A3C10100960FC4 /* ChooseStringEncodingWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ChooseStringEncodingWindowController.h; path = app/sources/ChooseStringEncodingWindowController.h; sourceTree = "<group>"; };
 		D0D8C2BB12A3C10100960FC4 /* ChooseStringEncodingWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ChooseStringEncodingWindowController.m; path = app/sources/ChooseStringEncodingWindowController.m; sourceTree = "<group>"; };
+		D0D8C45612A3EF3900960FC4 /* ProcessList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProcessList.h; path = app/sources/ProcessList.h; sourceTree = "<group>"; };
+		D0D8C45712A3EF3900960FC4 /* ProcessList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ProcessList.m; path = app/sources/ProcessList.m; sourceTree = "<group>"; };
 		D0DEC2AB102F9B4C00F90467 /* FortunateSonCopier */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = FortunateSonCopier; sourceTree = BUILT_PRODUCTS_DIR; };
 		D0DEC2BE102F9C6C00F90467 /* launcher.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = launcher.c; path = helper_subprocess/launcher/launcher.c; sourceTree = "<group>"; };
 		D0F2157B0DA61CF000ED1AA7 /* HFFieldTypeController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFFieldTypeController.h; path = app/sources/HFFieldTypeController.h; sourceTree = "<group>"; };
@@ -850,12 +853,11 @@
 				32CA4F630368D1EE00C91783 /* HexFiend_2_Prefix.pch */,
 				29B97316FDCFA39411CA2CEA /* main.m */,
 				D02BD6D910545E7B00535EDE /* DocumentTypes */,
+				D0D8C45C12A3EF3F00960FC4 /* Dialogs */,
 				D0CD51F40DA2B928006E8D1B /* AppDelegate.h */,
 				D0CD51F50DA2B928006E8D1B /* AppDelegate.m */,
-				D09163D2123857E5009D7D47 /* OpenPathWindowController.h */,
-				D09163D3123857E5009D7D47 /* OpenPathWindowController.m */,
-				D0D8C2BA12A3C10100960FC4 /* ChooseStringEncodingWindowController.h */,
-				D0D8C2BB12A3C10100960FC4 /* ChooseStringEncodingWindowController.m */,
+				D0D8C45612A3EF3900960FC4 /* ProcessList.h */,
+				D0D8C45712A3EF3900960FC4 /* ProcessList.m */,
 				D03CFA880FC78BCD00EE79E4 /* DataInspectorRepresenter.h */,
 				D03CFA890FC78BCD00EE79E4 /* DataInspectorRepresenter.m */,
 				D01772F30D751DB1002E03DE /* HFDocumentOperationView.h */,
@@ -984,6 +986,17 @@
 				D0B422A00FF845F800DF27E5 /* HFTextView.m */,
 			);
 			name = "High Level Views";
+			sourceTree = "<group>";
+		};
+		D0D8C45C12A3EF3F00960FC4 /* Dialogs */ = {
+			isa = PBXGroup;
+			children = (
+				D09163D2123857E5009D7D47 /* OpenPathWindowController.h */,
+				D09163D3123857E5009D7D47 /* OpenPathWindowController.m */,
+				D0D8C2BA12A3C10100960FC4 /* ChooseStringEncodingWindowController.h */,
+				D0D8C2BB12A3C10100960FC4 /* ChooseStringEncodingWindowController.m */,
+			);
+			name = Dialogs;
 			sourceTree = "<group>";
 		};
 		D0F6FE1D0FFF67C700C609F0 /* Global Headers */ = {
@@ -1317,6 +1330,7 @@
 				D0CBB240128F78C200989C15 /* StretchableProgressIndicator.m in Sources */,
 				D0CBB32A128F906000989C15 /* DiffTextViewContainer.m in Sources */,
 				D0D8C2BC12A3C10100960FC4 /* ChooseStringEncodingWindowController.m in Sources */,
+				D0D8C45812A3EF3900960FC4 /* ProcessList.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
