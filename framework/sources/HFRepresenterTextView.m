@@ -672,7 +672,23 @@ enum LineCoverage_t {
 /* The base implementation does not support font substitution, so we require that it be the base font. */
 - (NSFont *)fontAtSubstitutionIndex:(uint16_t)idx {
     HFASSERT(idx == 0);
+    USE(idx);
     return font;
+}
+
+- (NSRange)roundPartialByteRange:(NSRange)byteRange {
+    NSUInteger bytesPerCharacter = [self bytesPerCharacter];
+    /* Get the left and right edges of the range */
+    NSUInteger left = byteRange.location, right = NSMaxRange(byteRange);
+    
+    /* Round both to the left.  This may make the range bigger or smaller, or empty! */
+    left -= left % bytesPerCharacter;
+    right -= right % bytesPerCharacter;
+    
+    /* Done */
+    HFASSERT(right >= left);
+    return NSMakeRange(left, right - left);
+    
 }
 
 - (NSData *)data {
@@ -1071,6 +1087,7 @@ static size_t unionAndCleanLists(NSRect *rectList, id *valueList, size_t count) 
 }
 
 - (void)drawStyledBackgroundsForByteRange:(NSRange)range inRect:(NSRect)rect {
+    return;
     NSRect remainingRunRect = rect;
     NSRange remainingRange = range;
     
@@ -1255,7 +1272,6 @@ static size_t unionAndCleanLists(NSRect *rectList, id *valueList, size_t count) 
 }
 
 - (void)extractGlyphsForBytes:(const unsigned char *)bytePtr range:(NSRange)byteRange intoArray:(struct HFGlyph_t *)glyphs advances:(CGSize *)advances withInclusionRanges:(NSArray *)restrictingToRanges initialTextOffset:(CGFloat *)initialTextOffset resultingGlyphCount:(NSUInteger *)resultingGlyphCount {
-#warning None of this is right if bytesPerCharacter > 0
     NSParameterAssert(glyphs != NULL && advances != NULL && restrictingToRanges != nil && bytePtr != NULL);
     NSRange priorIntersectionRange = {NSUIntegerMax, NSUIntegerMax};
     NSUInteger glyphBufferIndex = 0;
@@ -1342,30 +1358,32 @@ static size_t unionAndCleanLists(NSRect *rectList, id *valueList, size_t count) 
                 HFASSERT(styleRun != nil);
                 HFASSERT(byteIndex >= [styleRun range].location);
                 const NSUInteger bytesInThisRun = MIN(NSMaxRange([styleRun range]) - byteIndex, bytesInThisLine - byteIndexInLine);
-                
-                NSUInteger resultGlyphCount = 0;
-                CGFloat initialTextOffset = 0;
-                if (restrictingToRanges == nil) {
-                    [self extractGlyphsForBytes:bytePtr + byteIndex count:bytesInThisRun offsetIntoLine:byteIndexInLine intoArray:glyphs advances:advances resultingGlyphCount:&resultGlyphCount];
-                }
-                else {
-                    [self extractGlyphsForBytes:bytePtr range:NSMakeRange(byteIndex, bytesInThisRun) intoArray:glyphs advances:advances withInclusionRanges:restrictingToRanges initialTextOffset:&initialTextOffset resultingGlyphCount:&resultGlyphCount];
-                }
-                HFASSERT(resultGlyphCount <= maxGlyphCount);
-                
-                if (resultGlyphCount > 0) {
-                    textTransform.tx += initialTextOffset + advanceIntoLine;
-                    CGContextSetTextMatrix(ctx, textTransform);
-                    /* Draw them */
-                    [self drawGlyphs:glyphs atPoint:NSMakePoint(textTransform.tx, textTransform.ty) withAdvances:advances withStyleRun:styleRun count:resultGlyphCount];
-
-                    /* Undo the work we did before so as not to screw up the next run */
-                    textTransform.tx -= initialTextOffset + advanceIntoLine;
+                const NSRange characterRange = [self roundPartialByteRange:NSMakeRange(byteIndex, bytesInThisRun)];
+                if (characterRange.length > 0) {
+                    NSUInteger resultGlyphCount = 0;
+                    CGFloat initialTextOffset = 0;
+                    if (restrictingToRanges == nil) {
+                        [self extractGlyphsForBytes:bytePtr + characterRange.location count:characterRange.length offsetIntoLine:byteIndexInLine intoArray:glyphs advances:advances resultingGlyphCount:&resultGlyphCount];
+                    }
+                    else {
+                        [self extractGlyphsForBytes:bytePtr range:NSMakeRange(byteIndex, bytesInThisRun) intoArray:glyphs advances:advances withInclusionRanges:restrictingToRanges initialTextOffset:&initialTextOffset resultingGlyphCount:&resultGlyphCount];
+                    }
+                    HFASSERT(resultGlyphCount <= maxGlyphCount);
                     
-                    /* Record how far into our line this made us move */
-		    NSUInteger glyphIndex;
-                    for (glyphIndex = 0; glyphIndex < resultGlyphCount; glyphIndex++) {
-                        advanceIntoLine += advances[glyphIndex].width;
+                    if (resultGlyphCount > 0) {
+                        textTransform.tx += initialTextOffset + advanceIntoLine;
+                        CGContextSetTextMatrix(ctx, textTransform);
+                        /* Draw them */
+                        [self drawGlyphs:glyphs atPoint:NSMakePoint(textTransform.tx, textTransform.ty) withAdvances:advances withStyleRun:styleRun count:resultGlyphCount];
+
+                        /* Undo the work we did before so as not to screw up the next run */
+                        textTransform.tx -= initialTextOffset + advanceIntoLine;
+                        
+                        /* Record how far into our line this made us move */
+                        NSUInteger glyphIndex;
+                        for (glyphIndex = 0; glyphIndex < resultGlyphCount; glyphIndex++) {
+                            advanceIntoLine += advances[glyphIndex].width;
+                        }
                     }
                 }
                 byteIndexInLine += bytesInThisRun;
