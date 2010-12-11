@@ -7,6 +7,7 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import <HexFiend/HFGlyphTrie.h>
 
 /*  Bytes per column philosophy
 
@@ -21,10 +22,6 @@
 
 @class HFTextRepresenter;
 
-struct HFGlyph_t {
-    uint16_t fontIndex;
-    CGGlyph glyph;
-};
 
 /* The base class for HFTextRepresenter views - such as the hex or ASCII text view */
 @interface HFRepresenterTextView : NSView {

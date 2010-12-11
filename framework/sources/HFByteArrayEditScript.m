@@ -448,7 +448,6 @@ static struct Snake_t computeMiddleSnake_MaybeDirect(HFByteArrayEditScript *self
     /* Adding delta to k in the forwards direction gives you k in the backwards direction */
     const long delta = bLen - aLen;
     const BOOL oddDelta = (delta & 1); 
-    BOOL parallelMe = (rangeInA.length == self->sourceLength && rangeInB.length == self->destLength);
     
     GraphIndex_t *restrict forwardsVector = cacheGroup->forwardsArray.ptr;
     GraphIndex_t *restrict backwardsVector = cacheGroup->backwardsArray.ptr;
@@ -528,51 +527,11 @@ static struct Snake_t computeMiddleSnake_MaybeDirect(HFByteArrayEditScript *self
 		    }
 		}
 	    } else {
-		/* Since this can't return, we can do it in parallel pretty well. */
-		long minDForParallel = 1024;
-		if (direct && parallelMe && D >= minDForParallel) {
-		    GraphIndex_t * directionalVector = (forwards ? forwardsVector : backwardsVector);
-		    struct Snake_t * const resultPtr = &result;
-		    if (forwards) {
-			dispatch_apply(2, dispatch_get_global_queue(0, 0), ^(size_t arg) {
-			    if (arg == 0) {
-				/* [-D, 0) */
-				for (long k = -D; k < 0; k += 2) {
-				    if (*cancelRequested) break;
-				    computeMiddleSnakeTraversal(self, cacheGroup, directABuff, directBBuff, YES, YES, k, D, directionalVector, aLen, bLen, aStart, bStart, resultPtr);
-				}
-			    } else {
-				/* [0, D].  Note that if D is odd, we don't start at 0. */
-				for (long k = (D & 1); k <= D; k += 2) {
-				    if (*cancelRequested) break;
-				    computeMiddleSnakeTraversal(self, cacheGroup, directABuff, directBBuff, YES, YES, k, D, directionalVector, aLen, bLen, aStart, bStart, resultPtr);
-				}
-			    }
-			});
-		    } else {
-			dispatch_apply(2, dispatch_get_global_queue(0, 0), ^(size_t arg) {
-			    if (arg == 0) {
-				/* [-D, 0) */
-				for (long k = -D; k < 0; k += 2) {
-				    if (*cancelRequested) break;
-				    computeMiddleSnakeTraversal(self, cacheGroup, directABuff, directBBuff, YES, NO, k, D, directionalVector, aLen, bLen, aStart, bStart, resultPtr);
-				}
-			    } else {
-				/* [0, D].  Note that if D is odd, we don't start at 0. */
-				for (long k = (D & 1); k <= D; k += 2) {
-				    if (*cancelRequested) break;
-				    computeMiddleSnakeTraversal(self, cacheGroup, directABuff, directBBuff, YES, NO, k, D, directionalVector, aLen, bLen, aStart, bStart, resultPtr);
-				}
-			    }
-			});
-		    }
-		} else {
-		    /* Don't check for overlap */
-		    for (long k = -D; k <= D; k += 2) {
-			if (*cancelRequested) break;
-			
-			computeMiddleSnakeTraversal(self, cacheGroup, directABuff, directBBuff, direct, forwards, k, D, (forwards ? forwardsVector : backwardsVector), aLen, bLen, aStart, bStart, &result);
-		    }
+		/* Don't check for overlap */
+		for (long k = -D; k <= D; k += 2) {
+		    if (*cancelRequested) break;
+		    
+		    computeMiddleSnakeTraversal(self, cacheGroup, directABuff, directBBuff, direct, forwards, k, D, (forwards ? forwardsVector : backwardsVector), aLen, bLen, aStart, bStart, &result);
 		}
 	    }
 	}

@@ -132,6 +132,8 @@
 		D08943F91042B57800AB9141 /* HFByteRangeAttribute.m in Sources */ = {isa = PBXBuildFile; fileRef = D08943F71042B57800AB9141 /* HFByteRangeAttribute.m */; };
 		D089443C1042BA7100AB9141 /* HFByteRangeAttributeArray.h in Headers */ = {isa = PBXBuildFile; fileRef = D089443A1042BA7100AB9141 /* HFByteRangeAttributeArray.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D089443D1042BA7100AB9141 /* HFByteRangeAttributeArray.m in Sources */ = {isa = PBXBuildFile; fileRef = D089443B1042BA7100AB9141 /* HFByteRangeAttributeArray.m */; };
+		D08B2B2B12B0547E004995A2 /* HFGlyphTrie.h in Headers */ = {isa = PBXBuildFile; fileRef = D08B2AC912B03C86004995A2 /* HFGlyphTrie.h */; };
+		D08B2B9B12B06835004995A2 /* HFGlyphTrie.m in Sources */ = {isa = PBXBuildFile; fileRef = D08B2ACA12B03C86004995A2 /* HFGlyphTrie.m */; };
 		D08F5E4F0CDE872C007EFFE8 /* HFByteArray.m in Sources */ = {isa = PBXBuildFile; fileRef = D08F5DF00CDE8223007EFFE8 /* HFByteArray.m */; };
 		D08F5E500CDE872C007EFFE8 /* HFByteSlice.m in Sources */ = {isa = PBXBuildFile; fileRef = D08F5E230CDE843E007EFFE8 /* HFByteSlice.m */; };
 		D08F5E510CDE872C007EFFE8 /* HFFullMemoryByteSlice.m in Sources */ = {isa = PBXBuildFile; fileRef = D08F5E380CDE84F4007EFFE8 /* HFFullMemoryByteSlice.m */; };
@@ -417,6 +419,8 @@
 		D08943F71042B57800AB9141 /* HFByteRangeAttribute.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFByteRangeAttribute.m; path = sources/HFByteRangeAttribute.m; sourceTree = "<group>"; };
 		D089443A1042BA7100AB9141 /* HFByteRangeAttributeArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFByteRangeAttributeArray.h; path = sources/HFByteRangeAttributeArray.h; sourceTree = "<group>"; };
 		D089443B1042BA7100AB9141 /* HFByteRangeAttributeArray.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFByteRangeAttributeArray.m; path = sources/HFByteRangeAttributeArray.m; sourceTree = "<group>"; };
+		D08B2AC912B03C86004995A2 /* HFGlyphTrie.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFGlyphTrie.h; path = sources/HFGlyphTrie.h; sourceTree = "<group>"; };
+		D08B2ACA12B03C86004995A2 /* HFGlyphTrie.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFGlyphTrie.m; path = sources/HFGlyphTrie.m; sourceTree = "<group>"; };
 		D08F5DEF0CDE8223007EFFE8 /* HFByteArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFByteArray.h; path = sources/HFByteArray.h; sourceTree = "<group>"; };
 		D08F5DF00CDE8223007EFFE8 /* HFByteArray.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFByteArray.m; path = sources/HFByteArray.m; sourceTree = "<group>"; };
 		D08F5E220CDE843E007EFFE8 /* HFByteSlice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFByteSlice.h; path = sources/HFByteSlice.h; sourceTree = "<group>"; };
@@ -820,6 +824,8 @@
 				D0BAA834120A7DE800D8FB51 /* HFIndexSet.m */,
 				D0315BEA1225C553008C9EAB /* HFAnnotatedTree.h */,
 				D0315BEB1225C553008C9EAB /* HFAnnotatedTree.m */,
+				D08B2AC912B03C86004995A2 /* HFGlyphTrie.h */,
+				D08B2ACA12B03C86004995A2 /* HFGlyphTrie.m */,
 			);
 			name = Utilities;
 			sourceTree = "<group>";
@@ -1018,6 +1024,7 @@
 			files = (
 				D01E7BF00CDC564B00943F9E /* HexFiend.h in Headers */,
 				D0A1F30E11439DFE008BB3BA /* HFByteArrayEditScript.h in Headers */,
+				D08B2B2B12B0547E004995A2 /* HFGlyphTrie.h in Headers */,
 				D082ABD40CDEB40F00554EB7 /* HFFullMemoryByteArray.h in Headers */,
 				D082ABCF0CDEB3F800554EB7 /* HFRepresenter_Internal.h in Headers */,
 				D0D828E60CDE89E800C2AB82 /* HFFullMemoryByteSlice.h in Headers */,
@@ -1213,7 +1220,6 @@
 			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "HexFiend_2" */;
 			compatibilityVersion = "Xcode 3.0";
-			developmentRegion = English;
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -1366,6 +1372,7 @@
 				D026C7B10CDD50ED0082279E /* HFRepresenterTextView.m in Sources */,
 				D026C7BC0CDD546C0082279E /* HFRepresenterHexTextView.m in Sources */,
 				D026C7C10CDD54D00082279E /* HFHexTextRepresenter.m in Sources */,
+				D08B2B9B12B06835004995A2 /* HFGlyphTrie.m in Sources */,
 				D08F5E4F0CDE872C007EFFE8 /* HFByteArray.m in Sources */,
 				D08F5E500CDE872C007EFFE8 /* HFByteSlice.m in Sources */,
 				D08F5E510CDE872C007EFFE8 /* HFFullMemoryByteSlice.m in Sources */,
