@@ -93,8 +93,8 @@
 }
 
 - (void)initializeView {
-    [super initializeView];
     [[self view] setEncoding:stringEncoding];
+    [super initializeView];
 }
 
 - (void)insertText:(NSString *)text {

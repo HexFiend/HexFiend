@@ -1087,7 +1087,6 @@ static size_t unionAndCleanLists(NSRect *rectList, id *valueList, size_t count) 
 }
 
 - (void)drawStyledBackgroundsForByteRange:(NSRange)range inRect:(NSRect)rect {
-    return;
     NSRect remainingRunRect = rect;
     NSRange remainingRange = range;
     
