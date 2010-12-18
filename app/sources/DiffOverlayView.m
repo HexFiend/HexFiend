@@ -16,10 +16,10 @@
 
 
 - (void)drawRect:(NSRect)rect {
+    USE(rect);
     if (! leftView || ! rightView) return;    
     CGFloat x, y, bottom, top;
     CGFloat lineHeight = 14;
-    const NSRect bounds = [self bounds];
     const NSRect leftViewBounds = [self convertRect:[leftView bounds] fromView:leftView];
     const NSRect rightViewBounds = [self convertRect:[rightView bounds] fromView:rightView];
     const CGFloat xMiddle = (NSMaxX(leftViewBounds) + NSMinX(rightViewBounds)) / 2;
