@@ -65,6 +65,7 @@ typedef enum {
 - (void)_removeAllUndoOperations;
 - (void)_registerUndoOperationForInsertingByteArrays:(NSArray *)byteArrays inRanges:(NSArray *)ranges withSelectionAction:(SelectionAction_t)selectionAction;
 
+- (void)_updateBytesPerLine;
 - (void)_updateDisplayedRange;
 @end
 
@@ -802,6 +803,7 @@ static inline Class preferredByteArrayClass(void) {
         NSView *view = [rep view];
         CGFloat width = [view frame].size.width;
         NSUInteger repMaxBytesPerLine = [rep maximumBytesPerLineForViewWidth:width];
+	HFASSERT(repMaxBytesPerLine > 0);
         newBytesPerLine = MIN(repMaxBytesPerLine, newBytesPerLine);
     }
     if (newBytesPerLine != bytesPerLine) {

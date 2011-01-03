@@ -16,12 +16,12 @@ extern NSString *const HFPrivateByteArrayPboardType;
     @private
     HFByteArray *byteArray;
     NSPasteboard *pasteboard; //not retained
-    NSUInteger bytesPerLine;
     IBOutlet NSWindow *progressTrackingWindow;
     IBOutlet NSProgressIndicator *progressTrackingIndicator;
     IBOutlet NSTextField *progressTrackingDescriptionTextField;
     HFProgressTracker *progressTracker;
     unsigned long long dataAmountToCopy;
+    NSUInteger bytesPerLine;
     BOOL retainedSelfOnBehalfOfPboard;
     BOOL backgroundCopyOperationFinished;
     BOOL didStartModalSessionForBackgroundCopyOperation;

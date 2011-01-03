@@ -8,11 +8,14 @@
 
 #import <Cocoa/Cocoa.h>
 
+@class HFTextView;
 
 @interface DiffTextViewContainer : NSView {
-    IBOutlet NSView *leftView;
-    IBOutlet NSView *rightView;
+    IBOutlet HFTextView *leftView;
+    IBOutlet HFTextView *rightView;
     CGFloat interviewDistance;
 }
+
+- (NSSize)minimumFrameSizeForProposedSize:(NSSize)frameSize;
 
 @end

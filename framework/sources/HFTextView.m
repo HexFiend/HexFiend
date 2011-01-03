@@ -196,7 +196,6 @@
     return delegate;
 }
 
-
 - (void)drawRect:(NSRect)clipRect {
     USE(clipRect);
     if (bordered) {
@@ -261,7 +260,6 @@
     if (self == [HFTextView class]) {
         [self exposeBinding:@"data"];
     }
-    
 }
 
 @end

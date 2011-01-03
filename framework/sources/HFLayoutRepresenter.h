@@ -75,6 +75,9 @@
 /*! Returns the smallest width that produces the same layout (and, if maximizes bytesPerLine, the same bytes per line) as the proposed width. */
 - (CGFloat)minimumViewWidthForLayoutInProposedWidth:(CGFloat)proposedWidth;
 
+/*! Returns the maximum bytes per line that can fit in the proposed width (ignoring maximizesBytesPerLine).  This is always a multiple of the bytesPerColumn, and always at least bytesPerColumn. */
+- (NSUInteger)maximumBytesPerLineForLayoutInProposedWidth:(CGFloat)proposedWidth;
+
 /*! Relayouts are triggered when representers are added and removed, or when the view is resized.  You may call this explicitly to trigger a relayout. */
 - (void)performLayout;
 //@}

@@ -151,7 +151,7 @@
 	[run setForegroundColor:[NSColor whiteColor]];
     }
     else if ([attributes containsObject:kHFAttributeDiffInsertion]) {
-	CGFloat white = 220.;
+	CGFloat white = 180;
         [run setBackgroundColor:[NSColor colorWithCalibratedRed:(CGFloat)255./255. green:(CGFloat)white/255. blue:white/255. alpha:1.]];
     }
     

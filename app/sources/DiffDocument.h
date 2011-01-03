@@ -2,7 +2,7 @@
 
 #import "BaseDataDocument.h"
 
-@class DiffOverlayView;
+@class DiffOverlayView, DiffTextViewContainer;
 
 @interface DiffDocument : BaseDataDocument {
     HFByteArray *leftBytes, *rightBytes;
@@ -12,11 +12,17 @@
     IBOutlet HFTextView *leftTextView;
     IBOutlet HFTextView *rightTextView;
     IBOutlet NSTableView *diffTable;
+    IBOutlet DiffTextViewContainer *textViewContainer;
     DiffOverlayView *overlayView;
     NSUInteger focusedInstructionIndex;
     NSString *title;
     
     HFDocumentOperationView *diffComputationView;
+    
+    // abstract scroll space support
+    IBOutlet NSScroller *scroller;
+    unsigned long long totalAbstractLength;
+    long double currentScrollPosition;
 }
 
 - (id)initWithLeftByteArray:(HFByteArray *)left rightByteArray:(HFByteArray *)right;
@@ -28,5 +34,6 @@
 - (void)setRightFileName:(NSString *)rightName;
 - (NSString *)rightFileName;
 
+- (IBAction)scrollerDidChangeValue:(NSScroller *)scroller;
 
 @end

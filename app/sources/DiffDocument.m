@@ -10,10 +10,17 @@
 #import "DiffOverlayView.h"
 #import "DataInspectorRepresenter.h"
 #import "HFDocumentOperationView.h"
+#import "DiffTextViewContainer.h"
 #import <HexFiend/HexFiend.h>
 
 @interface DiffDocument (ForwardDeclarations)
 - (void)setFocusedInstructionIndex:(NSUInteger)index;
+- (void)updateScrollerValue;
+- (void)scrollWithScrollEvent:(NSEvent *)event;
+- (void)scrollByLines:(long double)lines;
+- (void)scrollByKnobToValue:(double)newValue;
+- (NSUInteger)visibleLines;
+- (NSSize)minimumWindowFrameSizeForProposedSize:(NSSize)frameSize;
 @end
 
 @implementation DiffDocument
@@ -33,6 +40,25 @@
 	    [[[leftTextView controller] byteRangeAttributeArray] addAttribute:kHFAttributeDiffInsertion range:insn.src];        	    
 	}
     }
+    
+    /* Compute the totalAbstractLength */
+    unsigned long long abstractLength = 0;
+    unsigned long long leftMatchedLength = [[leftTextView controller] contentsLength], rightMatchedLength = [[rightTextView controller] contentsLength];
+    for (i=0; i < insnCount; i++) {
+	struct HFEditInstruction_t insn = [editScript instructionAtIndex:i];
+	unsigned long long insnLength = MAX(insn.src.length, insn.dst.length) - MIN(insn.src.length, insn.dst.length);
+	abstractLength = HFSum(abstractLength, insnLength);
+	leftMatchedLength = HFSubtract(leftMatchedLength, insn.src.length);
+	rightMatchedLength = HFSubtract(rightMatchedLength, insn.dst.length);
+    }
+    
+    /* If the diff is correct, then the matched text must be equal in length */
+    HFASSERT(leftMatchedLength == rightMatchedLength);
+    abstractLength = HFSum(abstractLength, leftMatchedLength);
+    
+    /* Save it */
+    self->totalAbstractLength = abstractLength;
+    
     [[rightTextView controller] representer:nil changedProperties:HFControllerByteRangeAttributes];
     [[leftTextView controller] representer:nil changedProperties:HFControllerByteRangeAttributes];
     [diffTable reloadData];
@@ -189,9 +215,9 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
 - (BOOL)handleEvent:(NSEvent *)event {
     BOOL handled = NO;
     BOOL frInLeftView = [self firstResponderIsInView:leftTextView], frInRightView = [self firstResponderIsInView:rightTextView];
-    if (frInLeftView || frInRightView) {
-        NSUInteger prohibitedFlags = (NSShiftKeyMask | NSControlKeyMask | NSAlternateKeyMask | NSCommandKeyMask);
-        if ([event type] == NSKeyDown && ! (prohibitedFlags & [event modifierFlags])) {
+    NSUInteger prohibitedFlags = (NSShiftKeyMask | NSControlKeyMask | NSAlternateKeyMask | NSCommandKeyMask);
+    if ([event type] == NSKeyDown && ! (prohibitedFlags & [event modifierFlags])) {
+	if (frInLeftView || frInRightView) {
 	    /* Handle arrow keys */
             NSString *chars = [event characters];
             if ([chars length] == 1) {
@@ -206,11 +232,11 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
                 }
             }
         }
-	else if ([event type] == NSScrollWheel) {
-	    /* Redirect scroll wheel events to our main view */
-	    [controller scrollWithScrollEvent:event];
-	    handled = YES;
-	}
+    } else if ([event type] == NSScrollWheel) {
+	
+	/* Redirect scroll wheel events to ourselves */
+	[self scrollWithScrollEvent:event];
+	handled = YES;
     }
     return handled;
 }
@@ -219,8 +245,10 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
     if ((self = [super init])) {
         leftBytes = [left retain];
         rightBytes = [right retain];
-        [controller setByteArray:rightBytes];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(synchronizeControllers:) name:HFControllerDidChangePropertiesNotification object:controller];
+	
+	/* Initially, the scrolling is just synchronized */
+	totalAbstractLength = HFMax([leftBytes length], [rightBytes length]);
 
     }
     return self;
@@ -257,6 +285,20 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
         [client setFont:[controller font]];
     }    
 }
+
+
+- (void)scrollerDidChangeValue:(NSScroller *)control {
+    HFASSERT(control == scroller);
+    switch ([scroller hitPart]) {
+	case NSScrollerDecrementPage: [self scrollByLines: -(long long)[self visibleLines]]; break;
+	case NSScrollerIncrementPage: [self scrollByLines: (long long)[self visibleLines]]; break;
+	case NSScrollerDecrementLine: [self scrollByLines: -1LL]; break;
+	case NSScrollerIncrementLine: [self scrollByLines: 1LL]; break;
+	case NSScrollerKnob: [self scrollByKnobToValue:[scroller doubleValue]]; break;
+	default: break;
+    }
+}
+
 
 /* Return the property bits that our overlay view cares about */
 - (HFControllerPropertyBits)propertiesAffectingOverlayView {
@@ -303,6 +345,13 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
 #else
     HFControllerPropertyBits propertyMask = [propertyNumber unsignedIntValue];
 #endif
+    
+    /* Update the overlay view to react to things like the bytes per line changing. */
+    if (propertyMask & [self propertiesAffectingOverlayView]) {
+	[self updateInstructionOverlayView];
+    }
+    
+    return;
     if (changedController != [leftTextView controller]) {
 	[self synchronizeController:[leftTextView controller] properties:propertyMask];
     }
@@ -310,7 +359,7 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
 	[self synchronizeController:[rightTextView controller] properties:propertyMask];
     }
     
-    if (changedController == [rightTextView controller] && (propertyMask & HFControllerDisplayedLineRange)) {
+    if (0 && changedController == [rightTextView controller] && (propertyMask & HFControllerDisplayedLineRange)) {
 	/* Scroll our table view to show the instruction.  If our focused instruction is visible, scroll to that; otherwise scroll to the first visible one. */
 	NSRange visibleInstructions = [self visibleInstructionRangeInController:changedController];
 	
@@ -320,11 +369,6 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
 	    [diffTable scrollRowToVisible:visibleInstructions.location];
 	}
 	
-    }
-    
-    /* Update the overlay view to react to things like the bytes per line changing. */
-    if (propertyMask & [self propertiesAffectingOverlayView]) {
-	[self updateInstructionOverlayView];
     }
 }
 
@@ -354,6 +398,12 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
     
     /* Install our undo manager */
     [[textView controller] setUndoManager:[self undoManager]]; 
+    
+    /* Set the bytes per column */
+    [[textView controller] setBytesPerColumn:[controller bytesPerColumn]];
+    
+    /* It maximizes BPL.  We enforce the same BPL between the text views by adjusting their widths. */
+    [[textView layoutRepresenter] setMaximizesBytesPerLine:YES];
     
     /* Remove the representers we don't want */
     FOREACH(HFRepresenter *, rep, [[textView layoutRepresenter] representers]) {
@@ -423,11 +473,6 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
 - (void)windowControllerDidLoadNib:(NSWindowController *)windowController {
     [super windowControllerDidLoadNib:windowController];
     NSWindow *window = [self window];
-    
-    /* Remove the vertical scroller representer.  We want to install that elsewhere. */
-    if ([[layoutRepresenter representers] containsObject:scrollRepresenter]) {
-	[layoutRepresenter removeRepresenter:scrollRepresenter];
-    }
         
     /* Replace the right text view's controller and layout representer with our own */
     [rightTextView setController:controller];
@@ -443,21 +488,21 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
     
     /* Get told when our left one scrolls */
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateOverlayViewForChangedLeftScroller:) name:HFControllerDidChangePropertiesNotification object:[leftTextView controller]];
+        
+    /* Fix up the scroller.  It wants to move northwards because of the resize corner.  Update its size. */
+    [self updateScrollerValue];
+    NSView *superview = [scroller superview];
+    NSRect scrollerFrame = [scroller frame];
+    scrollerFrame.size.height = NSMaxY([superview bounds]) - scrollerFrame.origin.y;
+    [scroller setFrame:scrollerFrame];
     
-    NSScroller *scroller = [scrollRepresenter view];
-    NSRect scrollerRect = [scroller frame];
-    NSView *contentView = [window contentView];
-    NSRect contentBounds = [contentView bounds];
-    [scroller setFrame:NSMakeRect(NSMaxX(contentBounds) - NSWidth(scrollerRect), NSMinY(contentBounds), NSWidth(scrollerRect), NSHeight(contentBounds))];
-    [scroller setAutoresizingMask:NSViewHeightSizable | NSViewMinXMargin];
-    [contentView addSubview:scroller];
-    
+    /* Create the diff computation view */
     if (! diffComputationView) {
 	diffComputationView = [self newOperationViewForNibName:@"DiffComputationBanner" displayName:@"Diffing" fixedHeight:YES];
     }
     [self prepareBannerWithView:diffComputationView withTargetFirstResponder:nil];
     [self kickOffComputeDiff];
-      
+    
     [self synchronizeController:[leftTextView controller] properties:(HFControllerPropertyBits)-1];
     [self synchronizeController:[rightTextView controller] properties:(HFControllerPropertyBits)-1];
     
@@ -468,6 +513,11 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
     [overlayView setRightView:rightTextView];
     [[window contentView] addSubview:overlayView];
     [overlayView release];
+    
+    /* Update our window size so it's the right size for our data */
+    NSRect windowFrame = [window frame];
+    windowFrame.size = [self minimumWindowFrameSizeForProposedSize:windowFrame.size];
+    [window setFrame:windowFrame display:YES];
     
     /* Start at instruction zero */
     [self setFocusedInstructionIndex:0];
@@ -545,6 +595,226 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
     USE(notification);
     NSInteger row = [diffTable selectedRow];
     [self setFocusedInstructionIndex:row];
+}
+
+@end
+
+/* This code looks a lot like the code in HFController.m.  Can it be factored so it's shared? */
+@implementation DiffDocument (ScrollHandling)
+
+static const CGFloat kScrollMultiplier = (CGFloat)1.5;
+
+- (unsigned long long)totalLineCount {
+    NSUInteger bytesPerLine = [[leftTextView controller] bytesPerLine];
+    return HFDivideULLRoundingUp(HFRoundUpToNextMultipleSaturate(totalAbstractLength, bytesPerLine), bytesPerLine);
+}
+
+- (HFFPRange)displayedLineRange {
+    HFController *controller1 = [leftTextView controller], *controller2 = [rightTextView controller];
+    HFFPRange lineRange;
+    lineRange.location = currentScrollPosition;
+    lineRange.length = MAX([controller1 displayedLineRange].length, [controller2 displayedLineRange].length);
+    return lineRange;
+}
+
+- (unsigned long long)abstractToConcreteCollapseBeforeAbstractLocation:(unsigned long long)abstractEndpoint onLeft:(BOOL)left {
+    NSUInteger i, max = [editScript numberOfInstructions];
+    unsigned long long concreteLocation = 0, abstractLocation = 0;
+    unsigned long long remainingAbstractDistance = abstractEndpoint;
+    for (i=0; i < max; i++) {
+	struct HFEditInstruction_t insn = [editScript instructionAtIndex:i];
+	
+	HFRange leftRange = insn.src, rightRange = insn.dst;
+	
+	/* If we are deleting, then the rightRange is empty and has a nonsense location.  Point it at the beginning of the range we're deleting */
+	if (! rightRange.length) {
+	    rightRange.location = leftRange.location + [self changeInLengthBeforeByte:leftRange.location onLeft:YES];
+	}
+	
+	/* Figure out the location of this instruction */
+	unsigned long long insnLocation = (left ? leftRange.location : rightRange.location);
+	
+	/* This is our new concrete location */
+	unsigned long long locationIncrease = HFSubtract(insnLocation, concreteLocation);
+	/* But don't let it increase past the abstract location */
+	locationIncrease = MIN(locationIncrease, remainingAbstractDistance);
+
+	/* Add it */
+	concreteLocation = HFSum(concreteLocation, locationIncrease);
+	abstractLocation = HFSum(abstractLocation, locationIncrease);
+	remainingAbstractDistance = HFSubtract(remainingAbstractDistance, locationIncrease);
+	
+	/* Maybe we're done */
+	HFASSERT(abstractLocation <= abstractEndpoint);
+	if (abstractLocation == abstractEndpoint) break;
+	
+	/* Figure out how many bytes are in the "from" and "to" part of this instruction */
+	const unsigned long long fromLength = (left ? insn.src.length : insn.dst.length);
+	const unsigned long long toLength = (left ? insn.dst.length : insn.src.length);
+	
+	unsigned long long abstractExpansion = MAX(fromLength, toLength);
+	unsigned long long concreteExpansion = toLength;
+	
+	/* But don't let it expand more than remainingAbstractDistance */
+	abstractExpansion = MIN(abstractExpansion, remainingAbstractDistance);
+	concreteExpansion = MIN(concreteExpansion, remainingAbstractDistance);
+	
+	/* Add them */
+	concreteLocation = HFSum(concreteLocation, concreteExpansion);
+	abstractLocation = HFSum(abstractLocation, abstractExpansion);
+	remainingAbstractDistance = HFSubtract(remainingAbstractDistance, abstractExpansion);
+	
+	/* Maybe we're done */
+	HFASSERT(abstractLocation <= abstractEndpoint);
+	if (abstractLocation == abstractEndpoint) break;
+    }
+    
+    /* There may be more left */
+    abstractLocation = HFSum(abstractLocation, remainingAbstractDistance);
+    concreteLocation = HFSum(concreteLocation, remainingAbstractDistance);
+    
+    return HFSubtract(abstractLocation, concreteLocation);
+}
+
+- (unsigned long long)abstractLocationToConcreteLocation:(unsigned long long)abstractLocation onLeft:(BOOL)left {
+    unsigned long long collapse = [self abstractToConcreteCollapseBeforeAbstractLocation:abstractLocation onLeft:left];
+    NSLog(@"left: %d abstract %llu collapse %llu", left, abstractLocation, collapse);
+    HFASSERT(collapse <= abstractLocation);
+    return HFSubtract(abstractLocation, collapse);
+}
+
+- (HFFPRange)concreteLineRangeForController:(HFController *)testController forAbstractLineRange:(HFFPRange)abstractRange {
+    /* Compute the line range for the controller corresponding to the given range in our abstract scroll space. */
+    HFASSERT(testController == [leftTextView controller] || testController == [rightTextView controller]);
+    BOOL left = (testController == [leftTextView controller]);
+        
+    /* Now figure out the change in line length before the start line */
+    unsigned long long firstDisplayedAbstractCharacterIndex = HFProductULL(HFFPToUL(floorl(abstractRange.location)), [testController bytesPerLine]);
+    unsigned long long firstDisplayedConcreteCharacterIndex = [self abstractLocationToConcreteLocation:firstDisplayedAbstractCharacterIndex onLeft:left];
+    
+    /* Don't let it go past the max */
+    firstDisplayedConcreteCharacterIndex = MIN(firstDisplayedConcreteCharacterIndex, [testController contentsLength]);
+    
+    /* Subtract that many lines from the range, rounding up */
+    long double startLine = firstDisplayedConcreteCharacterIndex  / [testController bytesPerLine];
+
+    /* We, uh, can't have more lines than we can have. */
+    const long double maxLineCount = HFULToFP([testController totalLineCount]);
+    long double lineCount = MIN(abstractRange.length, maxLineCount);
+    long double maxStartLine = maxLineCount - abstractRange.length;
+    startLine = MIN(startLine, maxStartLine);
+    
+    /* Done */
+    HFFPRange clippedRange = (HFFPRange){startLine, lineCount};
+    return clippedRange;
+}
+
+- (void)setDisplayedLineRange:(HFFPRange)lineRange {
+    currentScrollPosition = lineRange.location;
+    [self updateScrollerValue];
+    
+    [[leftTextView controller] setDisplayedLineRange:[self concreteLineRangeForController:[leftTextView controller] forAbstractLineRange:lineRange]];
+    [[rightTextView controller] setDisplayedLineRange:[self concreteLineRangeForController:[rightTextView controller] forAbstractLineRange:lineRange]];
+}
+
+- (void)updateScrollerValue {
+    /* Most of this code is copied from HFVerticalScrollerRepresenter.m. */
+    CGFloat value, proportion;
+    BOOL enable = YES;
+    unsigned long long length = totalAbstractLength;
+    HFFPRange lineRange = [self displayedLineRange];
+    
+    HFASSERT(lineRange.location >= 0 && lineRange.length >= 0);
+    if (length == 0) {
+	value = 0;
+	proportion = 1;
+	enable = NO;
+    }
+    else {
+	long double availableLines = HFULToFP([self totalLineCount]);
+	long double consumedLines = MAX(1., lineRange.length);
+	proportion = ld2f(lineRange.length / HFULToFP(availableLines));
+	
+	long double maxScroll = availableLines - consumedLines;
+	HFASSERT(maxScroll >= lineRange.location);
+	if (maxScroll == 0.) {
+	    enable = NO;
+	    value = 0;
+	}
+	else {
+	    value = ld2f(lineRange.location / maxScroll);
+	}
+    }
+#if __LP64__
+    // must be >= 10_5
+    [scroller setDoubleValue:value];
+    [scroller setKnobProportion:proportion];
+#else
+    [scroller setFloatValue:value knobProportion:proportion];
+#endif
+    [scroller setEnabled:enable];
+}
+
+- (void)scrollByLines:(long double)lines {
+    HFFPRange lineRange = [self displayedLineRange];
+    HFASSERT(HFULToFP([self totalLineCount]) >= lineRange.length);
+    long double maxScroll = HFULToFP([self totalLineCount]) - lineRange.length;
+    if (lines < 0) {
+	lineRange.location -= MIN(lineRange.location, -lines);
+    }
+    else {
+	lineRange.location = MIN(maxScroll, lineRange.location + lines);
+    }
+    [self setDisplayedLineRange:lineRange];
+}
+
+- (void)scrollWithScrollEvent:(NSEvent *)scrollEvent {
+    HFASSERT(scrollEvent != NULL);
+    HFASSERT([scrollEvent type] == NSScrollWheel);
+    long double scrollY = - kScrollMultiplier * [scrollEvent deltaY];
+    [self scrollByLines:scrollY];
+}
+
+- (void)scrollByKnobToValue:(double)newValue {
+    HFASSERT(newValue >= 0. && newValue <= 1.);
+    unsigned long long contentsLength = totalAbstractLength;
+    NSUInteger bytesPerLine = [[leftTextView controller] bytesPerLine];
+    HFASSERT(bytesPerLine > 0);
+    unsigned long long totalLineCountTimesBytesPerLine = HFRoundUpToNextMultipleSaturate(contentsLength, bytesPerLine);
+    HFASSERT(totalLineCountTimesBytesPerLine == ULLONG_MAX || totalLineCountTimesBytesPerLine % bytesPerLine == 0);
+    unsigned long long totalLineCount = HFDivideULLRoundingUp(totalLineCountTimesBytesPerLine, bytesPerLine);
+    HFFPRange currentLineRange = [self displayedLineRange];
+    HFASSERT(currentLineRange.length < HFULToFP(totalLineCount));
+    long double maxScroll = totalLineCount - currentLineRange.length;
+    long double newScroll = maxScroll * (long double)newValue;
+    [self setDisplayedLineRange:(HFFPRange){newScroll, currentLineRange.length}];
+}
+
+- (NSUInteger)visibleLines {
+    return ll2l(HFFPToUL(ceill([self displayedLineRange].length)));
+}
+
+
+/* Override of BaseDataDocument methods */
+- (NSSize)minimumWindowFrameSizeForProposedSize:(NSSize)frameSize {
+    NSSize resultSize;
+    
+    /* Compute the fixed space, occupied by our scroller.  This doesn't do the right thing under HiDPI. */
+    NSWindow *window = [self window];
+    NSRect containerWindowRect = [textViewContainer convertRect:[textViewContainer bounds] toView:nil];
+    CGFloat fixedWidth = [window frame].size.width - NSWidth(containerWindowRect);
+    
+    /* Figure out what this frameSize implies for the container */
+    NSSize proposedContainerWindowSize = NSMakeSize(frameSize.width - fixedWidth, frameSize.height);
+    NSSize proposedContainerSize = [textViewContainer convertSize:proposedContainerWindowSize fromView:nil];
+    
+    /* Find the min container frame size */
+    NSSize containerSize = [textViewContainer minimumFrameSizeForProposedSize:proposedContainerSize];
+    
+    /* Convert back and we're done */
+    resultSize.width = [textViewContainer convertSize:containerSize toView:nil].width + fixedWidth;
+    resultSize.height = frameSize.height;
+    return resultSize;
 }
 
 @end

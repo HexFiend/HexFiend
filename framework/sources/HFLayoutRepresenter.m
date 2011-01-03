@@ -330,14 +330,24 @@ static NSInteger sortByLayoutPosition(id a, id b, void *self) {
     return maximizesBytesPerLine;
 }
 
-- (CGFloat)minimumViewWidthForLayoutInProposedWidth:(CGFloat)proposedWidth {    
+- (NSUInteger)maximumBytesPerLineForLayoutInProposedWidth:(CGFloat)proposedWidth {
     NSArray *arraysOfLayoutInfos = [self arraysOfLayoutInfos];
     if (! [arraysOfLayoutInfos count]) return 0;
-
+    
     NSRect layoutRect = [self boundsRectForLayout];
     layoutRect.size.width = proposedWidth;
     
-    NSUInteger bytesPerLine = [self _computeBytesPerLineForArraysOfLayoutInfos:arraysOfLayoutInfos forLayoutInRect:layoutRect];
+    NSUInteger bytesPerLine = [self _computeBytesPerLineForArraysOfLayoutInfos:arraysOfLayoutInfos forLayoutInRect:layoutRect];    
+    return bytesPerLine;
+}
+
+- (CGFloat)minimumViewWidthForLayoutInProposedWidth:(CGFloat)proposedWidth {
+    NSUInteger bytesPerLine;
+    if ([self maximizesBytesPerLine]) {
+	bytesPerLine = [self maximumBytesPerLineForLayoutInProposedWidth:proposedWidth];
+    } else {
+	bytesPerLine = [[self controller] bytesPerLine];
+    }
     CGFloat newWidth = [self minimumViewWidthForBytesPerLine:bytesPerLine];
     return newWidth;
 }
