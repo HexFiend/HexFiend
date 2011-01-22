@@ -115,10 +115,18 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
 	
 	/* If we've gone past the byte we care about, we're done */
 	unsigned long long insnStartByte = (isLeft ? insn.src.location : insn.dst.location);
+	unsigned long long insnLength = (isLeft ? insn.src.length : insn.dst.length);
 	if (byte <= insnStartByte) break;
 	
+	/* If the byte is midway through the instruction, then limit the length change to its offset in the instruction */
+	unsigned long long maxLengthChange = ULLONG_MAX;
+	if (byte - insnStartByte < insnLength) {
+	    maxLengthChange = byte - insnStartByte;
+	}
+	
 	/* Compute how the length changed according to this instruction, by adding the left amount and deleting the right amount (or vice-versa if isLeft is NO) */
-	long long lengthChange = (long long)(insn.src.length - insn.dst.length);
+	unsigned long long srcLength = MIN(maxLengthChange, insn.src.length), dstLength = MIN(maxLengthChange, insn.dst.length);
+	long long lengthChange = (long long)(srcLength - dstLength);
 	if (isLeft) lengthChange = - lengthChange;
 	diff += lengthChange;
     }
@@ -144,12 +152,7 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
 	}
 	[[rightTextView controller] representer:nil changedProperties:HFControllerByteRangeAttributes];
 	[[leftTextView controller] representer:nil changedProperties:HFControllerByteRangeAttributes];
-	
-	// if we are deleting, then the rightRange is empty and has a nonsense location.  Point it at the beginning of the range we're deleting
-	if (! rightRange.length) {
-	    rightRange.location = leftRange.location + [self changeInLengthBeforeByte:leftRange.location onLeft:YES];
-	}
-	
+		
 	[self updateOverlayViewForLeftRange:leftRange rightRange:rightRange];
 	[overlayView setHidden:NO];
     }    
@@ -168,7 +171,7 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
 - (void)scrollToFocusedInstruction {
     if (focusedInstructionIndex < [editScript numberOfInstructions]) {
 	struct HFEditInstruction_t instruction = [editScript instructionAtIndex:focusedInstructionIndex];
-	
+
 	HFRange leftRange = instruction.src, rightRange = instruction.dst;
 	if (! rightRange.length) {
 	    rightRange.location = leftRange.location + [self changeInLengthBeforeByte:leftRange.location onLeft:YES];
@@ -245,7 +248,7 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
     if ((self = [super init])) {
         leftBytes = [left retain];
         rightBytes = [right retain];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(synchronizeControllers:) name:HFControllerDidChangePropertiesNotification object:controller];
+        //[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(synchronizeControllers:) name:HFControllerDidChangePropertiesNotification object:controller];
 	
 	/* Initially, the scrolling is just synchronized */
 	totalAbstractLength = HFMax([leftBytes length], [rightBytes length]);
@@ -255,7 +258,7 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
 }
 
 - (void)dealloc {
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:HFControllerDidChangePropertiesNotification object:controller];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:HFControllerDidChangePropertiesNotification object:[rightTextView controller]];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:HFControllerDidChangePropertiesNotification object:[leftTextView controller]];
     [leftBytes release];
     [rightBytes release];
@@ -283,7 +286,7 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
     }
     if (propertyMask & HFControllerFont) {
         [client setFont:[controller font]];
-    }    
+    }
 }
 
 
@@ -317,10 +320,6 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
 	struct HFEditInstruction_t insn = [editScript instructionAtIndex:i];
 	
 	HFRange rightRange  = insn.dst;
-	// if we are deleting, then the rightRange is empty and has a nonsense location.  Point it at the beginning of the range we're deleting
-	if (! rightRange.length) {
-	    rightRange.location = insn.src.location + [self changeInLengthBeforeByte:insn.src.location onLeft:YES];
-	}
 	
 	if (firstVisibleInstruction == NSNotFound) {
 	    if (rightRange.location >= firstVisibleByte) {
@@ -337,9 +336,100 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
     return NSMakeRange(firstVisibleInstruction, lastVisibleInstruction - firstVisibleInstruction);
 }
 
+- (unsigned long long)lastCorrespondingByteBeforeByte:(unsigned long long)targetIndex onLeft:(BOOL)leftToRight {
+    /* Given a byte in one of the controllers (left or right according to the parameter), return the corresponding byte in the other controller.  If the byte falls into an inserted range, returns the last byte before that range. */
+    unsigned long long lastToIndex = 0, lastFromIndex = 0;
+    NSUInteger i, max = [editScript numberOfInstructions];
+    for (i=0; i < max; i++) {
+	struct HFEditInstruction_t insn = [editScript instructionAtIndex:i];
+	HFRange fromRange = (leftToRight ? insn.src : insn.dst);
+	HFRange toRange = (leftToRight ? insn.dst : insn.src);
+    
+	/* We expect our instructions to always be increasing. */
+	HFASSERT(fromRange.location >= lastFromIndex);
+		 
+	if (fromRange.location > targetIndex) {
+	    /* This instruction is past the index we care about, so we're done. Add in the amount of matching space. */
+	    unsigned long long matchingSpace = HFSubtract(targetIndex, lastFromIndex);
+	    lastToIndex = HFSum(lastToIndex, matchingSpace);
+	    lastFromIndex = targetIndex;
+	    break;
+	} 
+	
+	/* We know that fromRange.location <= targetIndex.  Space up to this instruction is matching space.  Advance to that point. */
+	unsigned long long matchingSpace = HFSubtract(fromRange.location, lastFromIndex);
+	lastToIndex = HFSum(lastToIndex, matchingSpace);
+	lastFromIndex = fromRange.location;
+	
+	if (HFLocationInRange(targetIndex, fromRange)) {
+	    /* The index we care about is midway through the instruction, so we're done.  Consider bytes that replace each other to correspond. If From.length is larger than To.length, we'll consider the correspondence to be the last byte of To. */
+	    unsigned long long distanceIntoFrom = HFSubtract(targetIndex, fromRange.location);
+	    unsigned long long distanceIntoTo = MIN(distanceIntoFrom, toRange.length);
+	    lastToIndex = HFSum(lastToIndex, distanceIntoTo);
+	    lastFromIndex = targetIndex;
+	    break;
+	}
+	
+	/* If we're here, it means that targetIndex is still after this instruction, so add the differences in the instruction lengths. */
+	HFASSERT(HFMaxRange(fromRange) <= targetIndex);
+	lastFromIndex = HFSum(lastFromIndex, fromRange.length);
+	lastToIndex = HFSum(lastToIndex, toRange.length);
+    }
+    
+    /* Any leftover space is matching */
+    unsigned long long endMatch = HFSubtract(targetIndex, lastFromIndex);
+    lastFromIndex = HFSum(lastFromIndex, endMatch);
+    lastToIndex = HFSum(lastToIndex, endMatch);
+    
+    /* Done */
+    return lastToIndex;
+}
+
+- (void)propagateSelectedRangesFromLeftToRight:(BOOL)leftToRight {
+    HFController *srcController = leftToRight ? [leftTextView controller] : [rightTextView controller];
+    HFController *dstController = leftToRight ? [rightTextView controller] : [leftTextView controller];
+    NSArray *selectedRanges = [srcController selectedContentsRanges];
+    NSUInteger count = [selectedRanges count];
+    NSMutableArray *correspondingRanges = [[NSMutableArray alloc] initWithCapacity:count];
+    BOOL hasZeroLengthRange = NO, hasNonzeroLengthRange = NO;
+    FOREACH(HFRangeWrapper *, rangeWrapper, selectedRanges) {
+	HFRange range = [rangeWrapper HFRange];
+	unsigned long long correspondingStartByte = [self lastCorrespondingByteBeforeByte:range.location onLeft:leftToRight];
+	unsigned long long correspondingEndByte = [self lastCorrespondingByteBeforeByte:HFMaxRange(range) onLeft:leftToRight];
+	HFRange correspondingRange = HFRangeMake(correspondingStartByte, HFSubtract(correspondingEndByte, correspondingStartByte));
+	[correspondingRanges addObject:[HFRangeWrapper withRange:correspondingRange]];
+	hasZeroLengthRange = hasZeroLengthRange || (correspondingRange.length == 0);
+	hasNonzeroLengthRange = hasNonzeroLengthRange || (correspondingRange.length > 0);
+    }
+    
+    /* Clean up the ranges to ensure that if we have a zero length range, it's all we have. */
+    if (hasZeroLengthRange && hasNonzeroLengthRange) {
+	/* Remove all zero length ranges */
+	NSUInteger i = count;
+	while (i--) {
+	    HFRange testRange = [[correspondingRanges objectAtIndex:i] HFRange];
+	    if (testRange.length == 0) [correspondingRanges removeObjectAtIndex:i];
+	}
+    } else if (hasZeroLengthRange && count > 1) {
+	/* We have only zero length ranges.  Keep only the first one. */
+	[correspondingRanges removeObjectsInRange:NSMakeRange(1, count - 1)];
+    } else {
+	/* We have only non-zero length ranges (or none at all).  Keep it that way. */
+    }
+    
+    /* Now apply them */
+    if ([correspondingRanges count] > 0) [dstController setSelectedContentsRanges:correspondingRanges];
+    [correspondingRanges release];
+}
+
 - (void)synchronizeControllers:(NSNotification *)note {
+    /* Set and chec synchronizingControllers to avoid recursive invocations */
+    if (synchronizingControllers) return;
+    synchronizingControllers = YES;
     NSNumber *propertyNumber = [[note userInfo] objectForKey:HFControllerChangedPropertiesKey];
     HFController *changedController = [note object];
+    HFASSERT(changedController == [leftTextView controller] || changedController == [rightTextView controller]);
+    BOOL controllerIsLeft = (changedController == [leftTextView controller]);
 #if __LP64__
     HFControllerPropertyBits propertyMask = [propertyNumber unsignedIntegerValue];
 #else
@@ -351,7 +441,12 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
 	[self updateInstructionOverlayView];
     }
     
-    return;
+    /* Synchronize the selection */
+    if (propertyMask & HFControllerSelectedRanges) {
+	[self propagateSelectedRangesFromLeftToRight:controllerIsLeft];
+    }
+    
+#if 0
     if (changedController != [leftTextView controller]) {
 	[self synchronizeController:[leftTextView controller] properties:propertyMask];
     }
@@ -370,6 +465,8 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
 	}
 	
     }
+#endif
+    synchronizingControllers = NO;
 }
 
 - (NSArray *)runningOperationViews {
@@ -488,7 +585,11 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
     
     /* Get told when our left one scrolls */
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateOverlayViewForChangedLeftScroller:) name:HFControllerDidChangePropertiesNotification object:[leftTextView controller]];
-        
+    
+    /* Get notified when our controllers change */
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(synchronizeControllers:) name:HFControllerDidChangePropertiesNotification object:[leftTextView controller]];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(synchronizeControllers:) name:HFControllerDidChangePropertiesNotification object:[rightTextView controller]];
+    
     /* Fix up the scroller.  It wants to move northwards because of the resize corner.  Update its size. */
     [self updateScrollerValue];
     NSView *superview = [scroller superview];
@@ -625,12 +726,7 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
 	struct HFEditInstruction_t insn = [editScript instructionAtIndex:i];
 	
 	HFRange leftRange = insn.src, rightRange = insn.dst;
-	
-	/* If we are deleting, then the rightRange is empty and has a nonsense location.  Point it at the beginning of the range we're deleting */
-	if (! rightRange.length) {
-	    rightRange.location = leftRange.location + [self changeInLengthBeforeByte:leftRange.location onLeft:YES];
-	}
-	
+		
 	/* Figure out the location of this instruction */
 	unsigned long long insnLocation = (left ? leftRange.location : rightRange.location);
 	
@@ -653,7 +749,7 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
 	const unsigned long long toLength = (left ? insn.dst.length : insn.src.length);
 	
 	unsigned long long abstractExpansion = MAX(fromLength, toLength);
-	unsigned long long concreteExpansion = toLength;
+	unsigned long long concreteExpansion = fromLength;
 	
 	/* But don't let it expand more than remainingAbstractDistance */
 	abstractExpansion = MIN(abstractExpansion, remainingAbstractDistance);
@@ -669,34 +765,35 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
 	if (abstractLocation == abstractEndpoint) break;
     }
     
-    /* There may be more left */
+    /* There may be more remaining */
     abstractLocation = HFSum(abstractLocation, remainingAbstractDistance);
     concreteLocation = HFSum(concreteLocation, remainingAbstractDistance);
     
     return HFSubtract(abstractLocation, concreteLocation);
 }
 
-- (unsigned long long)abstractLocationToConcreteLocation:(unsigned long long)abstractLocation onLeft:(BOOL)left {
-    unsigned long long collapse = [self abstractToConcreteCollapseBeforeAbstractLocation:abstractLocation onLeft:left];
-    NSLog(@"left: %d abstract %llu collapse %llu", left, abstractLocation, collapse);
-    HFASSERT(collapse <= abstractLocation);
-    return HFSubtract(abstractLocation, collapse);
-}
-
 - (HFFPRange)concreteLineRangeForController:(HFController *)testController forAbstractLineRange:(HFFPRange)abstractRange {
     /* Compute the line range for the controller corresponding to the given range in our abstract scroll space. */
     HFASSERT(testController == [leftTextView controller] || testController == [rightTextView controller]);
     BOOL left = (testController == [leftTextView controller]);
+    const NSUInteger bytesPerLine = [testController bytesPerLine];
         
     /* Now figure out the change in line length before the start line */
-    unsigned long long firstDisplayedAbstractCharacterIndex = HFProductULL(HFFPToUL(floorl(abstractRange.location)), [testController bytesPerLine]);
-    unsigned long long firstDisplayedConcreteCharacterIndex = [self abstractLocationToConcreteLocation:firstDisplayedAbstractCharacterIndex onLeft:left];
+    unsigned long long firstDisplayedAbstractCharacterIndex = HFProductULL(HFFPToUL(floorl(abstractRange.location)), bytesPerLine);
+    unsigned long long collapse = [self abstractToConcreteCollapseBeforeAbstractLocation:firstDisplayedAbstractCharacterIndex onLeft:left];
+    HFASSERT(collapse <= firstDisplayedAbstractCharacterIndex);
+    
+    /* We collapse by an integer number of lines (rounded down) */
+    collapse -= collapse % bytesPerLine;
+    
+    /* Now get the concrete character index */
+    unsigned long long firstDisplayedConcreteCharacterIndex = firstDisplayedAbstractCharacterIndex - collapse;
     
     /* Don't let it go past the max */
     firstDisplayedConcreteCharacterIndex = MIN(firstDisplayedConcreteCharacterIndex, [testController contentsLength]);
     
-    /* Subtract that many lines from the range, rounding up */
-    long double startLine = firstDisplayedConcreteCharacterIndex  / [testController bytesPerLine];
+    /* Figure out the new start line */
+    long double startLine = firstDisplayedConcreteCharacterIndex / bytesPerLine;
 
     /* We, uh, can't have more lines than we can have. */
     const long double maxLineCount = HFULToFP([testController totalLineCount]);

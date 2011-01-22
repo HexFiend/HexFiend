@@ -16,6 +16,7 @@
     DiffOverlayView *overlayView;
     NSUInteger focusedInstructionIndex;
     NSString *title;
+    BOOL synchronizingControllers;
     
     HFDocumentOperationView *diffComputationView;
     

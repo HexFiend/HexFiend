@@ -1498,9 +1498,9 @@ static size_t unionAndCleanLists(NSRect *rectList, id *valueList, size_t count) 
                 /* Right edge, include the last line only if it starts at the beginning of the line or there's only one line */
                 includeFirstLine = YES;
                 includeLastLine = (NSMaxRange(byteRange) % bytesPerLine == 0);
-#warning Vet uses of bytesPerColumn: should they be _effectiveBytesPerColumn?
                 NSUInteger bytesPerColumn = [self _effectiveBytesPerColumn];
-                NSUInteger numColumns = (bytesPerColumn ? bytesPerLine / bytesPerColumn : 0);
+		/* Don't add in space for the advance after the last column, hence subtract 1. */
+                NSUInteger numColumns = (bytesPerColumn ? (bytesPerLine / bytesPerColumn - 1) : 0);
                 xCoord = [self horizontalContainerInset] + ([self advancePerCharacter] * bytesPerLine / [self bytesPerCharacter]) + [self advanceBetweenColumns] * numColumns;
             }
             NSUInteger firstLineToInclude = (includeFirstLine ? firstLine : firstLine + 1), lastLineToInclude = (includeLastLine ? lastLine : lastLine - 1);
