@@ -510,19 +510,34 @@ enum LineCoverage_t {
     if (NSIsEmptyRect(caretRectToDraw)) lastDrawnCaretRect = NSZeroRect;
 }
 
-- (BOOL)shouldHaveForegroundHighlightColor {
+
+/* This is the color when we are the first responder in the key window */
+- (NSColor *)primaryTextSelectionColor {
+    return [NSColor selectedTextBackgroundColor];
+}
+
+/* This is the color when we are not in the key window */
+- (NSColor *)inactiveTextSelectionColor {
+    return [NSColor colorWithCalibratedWhite: (CGFloat)(212./255.) alpha:1];
+}
+
+/* This is the color when we are not the first responder, but we are in the key window */
+- (NSColor *)secondaryTextSelectionColor {
+    return [[self primaryTextSelectionColor] blendedColorWithFraction:.66 ofColor:[NSColor colorWithCalibratedWhite:.8f alpha:1]];
+}
+
+- (NSColor *)textSelectionColor {
     NSWindow *window = [self window];
-    if (window == nil) return YES;
-    if (! [window isKeyWindow]) return NO;
-    if (self != [window firstResponder]) return NO;
-    return YES;
+    if (window == nil) return [self primaryTextSelectionColor];
+    else if (! [window isKeyWindow]) return [self inactiveTextSelectionColor];
+    else if (self != [window firstResponder]) return [self secondaryTextSelectionColor];
+    else return [self primaryTextSelectionColor];
 }
 
 - (void)drawSelectionIfNecessaryWithClip:(NSRect)clipRect {
     NSArray *ranges = [self displayedSelectedContentsRanges];
     NSUInteger bytesPerLine = [self bytesPerLine];
-    NSColor *textHighlightColor = ([self shouldHaveForegroundHighlightColor] ? [NSColor selectedTextBackgroundColor] : [NSColor colorWithCalibratedWhite: (CGFloat)(212./255.) alpha:1]);
-    [textHighlightColor set];
+    [[self textSelectionColor] set];
     CGFloat lineHeight = [self lineHeight];
     FOREACH(NSValue *, rangeValue, ranges) {
         NSRange range = [rangeValue rangeValue];

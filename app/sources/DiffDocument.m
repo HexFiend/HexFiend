@@ -21,6 +21,9 @@
 - (void)scrollByKnobToValue:(double)newValue;
 - (NSUInteger)visibleLines;
 - (NSSize)minimumWindowFrameSizeForProposedSize:(NSSize)frameSize;
+- (unsigned long long)concreteToAbstractExpansionBeforeConcreteLocation:(unsigned long long)concreteEndpoint onLeft:(BOOL)left;
+- (unsigned long long)abstractToConcreteCollapseBeforeAbstractLocation:(unsigned long long)abstractEndpoint onLeft:(BOOL)left;
+- (void)scrollToFocusedInstruction;
 @end
 
 @implementation DiffDocument
@@ -165,21 +168,6 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
     else {
 	[diffTable selectRowIndexes:[NSIndexSet indexSetWithIndex:focusedInstructionIndex] byExtendingSelection:NO];
 	[diffTable scrollRowToVisible:focusedInstructionIndex];
-    }
-}
-
-- (void)scrollToFocusedInstruction {
-    if (focusedInstructionIndex < [editScript numberOfInstructions]) {
-	struct HFEditInstruction_t instruction = [editScript instructionAtIndex:focusedInstructionIndex];
-
-	HFRange leftRange = instruction.src, rightRange = instruction.dst;
-	if (! rightRange.length) {
-	    rightRange.location = leftRange.location + [self changeInLengthBeforeByte:leftRange.location onLeft:YES];
-	}
-	
-	[controller centerContentsRange:rightRange];
-	[[leftTextView controller] centerContentsRange:leftRange];
-	[[rightTextView controller] centerContentsRange:rightRange];
     }
 }
 
@@ -718,6 +706,60 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
     return lineRange;
 }
 
+- (unsigned long long)concreteToAbstractExpansionBeforeConcreteLocation:(unsigned long long)concreteEndpoint onLeft:(BOOL)left {
+    NSUInteger i, max = [editScript numberOfInstructions];
+    unsigned long long concreteLocation = 0, abstractLocation = 0;
+    unsigned long long remainingConcreteDistance = concreteEndpoint;
+    for (i=0; i < max; i++) {
+	struct HFEditInstruction_t insn = [editScript instructionAtIndex:i];
+	
+	HFRange leftRange = insn.src, rightRange = insn.dst;
+	
+	/* Figure out the location of this instruction */
+	unsigned long long insnLocation = (left ? leftRange.location : rightRange.location);
+	
+	/* This is our new concrete location */
+	unsigned long long locationIncrease = HFSubtract(insnLocation, concreteLocation);
+	/* But don't let it increase past the abstract location */
+	locationIncrease = MIN(locationIncrease, remainingConcreteDistance);
+	
+	/* Add it */
+	concreteLocation = HFSum(concreteLocation, locationIncrease);
+	abstractLocation = HFSum(abstractLocation, locationIncrease);
+	remainingConcreteDistance = HFSubtract(remainingConcreteDistance, locationIncrease);
+	
+	/* Maybe we're done */
+	HFASSERT(concreteLocation <= concreteEndpoint);
+	if (concreteLocation == concreteEndpoint) break;
+	
+	/* Figure out how many bytes are in the "from" and "to" part of this instruction */
+	const unsigned long long fromLength = (left ? insn.src.length : insn.dst.length);
+	const unsigned long long toLength = (left ? insn.dst.length : insn.src.length);
+	
+	unsigned long long abstractExpansion = MAX(fromLength, toLength);
+	unsigned long long concreteExpansion = fromLength;
+	
+	/* But don't let it expand more than remainingAbstractDistance */
+	abstractExpansion = MIN(abstractExpansion, remainingConcreteDistance);
+	concreteExpansion = MIN(concreteExpansion, remainingConcreteDistance);
+	
+	/* Add them */
+	concreteLocation = HFSum(concreteLocation, concreteExpansion);
+	abstractLocation = HFSum(abstractLocation, abstractExpansion);
+	remainingConcreteDistance = HFSubtract(remainingConcreteDistance, concreteExpansion);
+	
+	/* Maybe we're done */
+	HFASSERT(concreteLocation <= concreteEndpoint);
+	if (concreteLocation == concreteEndpoint) break;
+    }
+    
+    /* There may be more remaining after the last instruction */
+    abstractLocation = HFSum(abstractLocation, remainingConcreteDistance);
+    concreteLocation = HFSum(concreteLocation, remainingConcreteDistance);
+    
+    return HFSubtract(abstractLocation, concreteLocation);    
+}
+
 - (unsigned long long)abstractToConcreteCollapseBeforeAbstractLocation:(unsigned long long)abstractEndpoint onLeft:(BOOL)left {
     NSUInteger i, max = [editScript numberOfInstructions];
     unsigned long long concreteLocation = 0, abstractLocation = 0;
@@ -765,7 +807,7 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
 	if (abstractLocation == abstractEndpoint) break;
     }
     
-    /* There may be more remaining */
+    /* There may be more remaining after the last instruction */
     abstractLocation = HFSum(abstractLocation, remainingAbstractDistance);
     concreteLocation = HFSum(concreteLocation, remainingAbstractDistance);
     
@@ -886,6 +928,64 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
     long double newScroll = maxScroll * (long double)newValue;
     [self setDisplayedLineRange:(HFFPRange){newScroll, currentLineRange.length}];
 }
+
+- (HFFPRange)abstractLineRangeForConcreteContentsRange:(HFRange)range onLeft:(BOOL)left {
+    HFTextView *textView = left ? leftTextView : rightTextView;
+    NSUInteger bytesPerLine = [[textView controller] bytesPerLine];
+    unsigned long long concreteRangeStart = range.location, concreteRangeEnd = HFMaxRange(range), abstractRangeStart, abstractRangeEnd;
+    abstractRangeStart = HFSum(range.location, [self concreteToAbstractExpansionBeforeConcreteLocation:concreteRangeStart onLeft:left]);
+    abstractRangeEnd = HFSum(concreteRangeEnd, [self concreteToAbstractExpansionBeforeConcreteLocation:concreteRangeEnd onLeft:left]);
+    HFASSERT(abstractRangeEnd >= abstractRangeStart);
+    
+    long double startLine = HFULToFP(abstractRangeStart / bytesPerLine), endLine = HFULToFP(abstractRangeEnd / bytesPerLine);
+    HFASSERT(endLine >= startLine);
+    return (HFFPRange){startLine, endLine - startLine};
+}
+
+- (void)scrollToFocusedInstruction {
+    if (focusedInstructionIndex < [editScript numberOfInstructions]) {
+	struct HFEditInstruction_t instruction = [editScript instructionAtIndex:focusedInstructionIndex];
+	HFRange leftRange = instruction.src, rightRange = instruction.dst;
+	HFFPRange currentLineRange = [self displayedLineRange];
+	unsigned long long contentsLength = totalAbstractLength;
+	NSUInteger bytesPerLine = [[leftTextView controller] bytesPerLine];
+	HFASSERT(bytesPerLine > 0);
+	unsigned long long totalLineCountTimesBytesPerLine = HFRoundUpToNextMultipleSaturate(contentsLength, bytesPerLine);
+	HFASSERT(totalLineCountTimesBytesPerLine == ULLONG_MAX || totalLineCountTimesBytesPerLine % bytesPerLine == 0);
+	unsigned long long totalLineCount = HFDivideULLRoundingUp(totalLineCountTimesBytesPerLine, bytesPerLine);
+	
+	
+	/* Figure out the line ranges */
+	HFFPRange leftLines = [self abstractLineRangeForConcreteContentsRange:leftRange onLeft:YES];
+	HFFPRange rightLines = [self abstractLineRangeForConcreteContentsRange:rightRange onLeft:NO];
+	
+	/* Construct a line range that encompasses both ranges.  Computing the length is done in a way that tries to preserve precision. */
+	HFFPRange desiredLineRange;
+	desiredLineRange.location = fminl(leftLines.location, rightLines.location);
+	if (leftLines.location + leftLines.length > rightLines.location + rightLines.length) {
+	    desiredLineRange.length = leftLines.length + (leftLines.location - desiredLineRange.location);
+	} else {
+	    desiredLineRange.length = rightLines.length + (rightLines.location - desiredLineRange.location);
+	}
+	
+	/* Try centering this line range */
+	long double proposedScrollLocation;
+	if (desiredLineRange.length <= currentLineRange.length) {
+	    /* Both line ranges fit, so center it */
+	    proposedScrollLocation = desiredLineRange.location - (currentLineRange.length - desiredLineRange.length)/2;
+	} else {
+	    /* The line range doesn't fit, so pin us to the top */
+	    proposedScrollLocation = desiredLineRange.location;
+	}
+	
+	/* Ensure we aren't too big or too little */
+	long double maxScroll = totalLineCount - currentLineRange.length;
+	long double actualScroll = MAX(0, MIN(maxScroll, proposedScrollLocation));
+	
+	[self setDisplayedLineRange:(HFFPRange){actualScroll, currentLineRange.length}];	
+    }
+}
+
 
 - (NSUInteger)visibleLines {
     return ll2l(HFFPToUL(ceill([self displayedLineRange].length)));
