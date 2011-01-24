@@ -1573,6 +1573,8 @@ invalidString:;
     }
     
     [pool drain];
+    
+    HFASSERT([bookmarksMenu numberOfItems] >= 2); //we never delete the first two items
 }
 
 - (IBAction)showFontPanel:(id)sender {

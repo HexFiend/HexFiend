@@ -167,9 +167,9 @@ static NSComparisonResult compareFontDisplayNames(NSFont *a, NSFont *b, void *un
 	    [(BaseDataDocument *)currentDocument populateBookmarksMenu:menu];
 	}
 	else {
-	    /* Nil document, or unknown type.  Remove all menu items except the first one. */
+	    /* Unknown document, so remove all menu items except the first two. */
 	    NSUInteger itemCount = [bookmarksMenu numberOfItems];
-	    while (itemCount > 1) {
+	    while (itemCount > 2) {
 		[bookmarksMenu removeItemAtIndex:--itemCount];
 	    }
 	}
