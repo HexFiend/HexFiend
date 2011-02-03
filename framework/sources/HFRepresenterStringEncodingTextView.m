@@ -385,7 +385,7 @@ static int compareGlyphFontIndexes(const void *p1, const void *p2) {
     NSFont *font = [self font];
     
     /* Use the max advance as the glyph advance */
-    glyphAdvancement = [font maximumAdvancement].width;
+    glyphAdvancement = HFCeil([font maximumAdvancement].width);
     
     /* Generate replacementGlyph */
     CGGlyph glyph[1];
