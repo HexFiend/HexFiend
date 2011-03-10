@@ -89,6 +89,8 @@
 		D04D8FDF10239BB20013A2A1 /* HFPrivilegedHelperConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = D04D8FCB102396FC0013A2A1 /* HFPrivilegedHelperConnection.m */; };
 		D04D90531023AAEE0013A2A1 /* HFHelperProcessSharedCode.h in Headers */ = {isa = PBXBuildFile; fileRef = D04D90521023AAEE0013A2A1 /* HFHelperProcessSharedCode.h */; };
 		D05984CC1032C6D900059E72 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D05984CB1032C6D900059E72 /* Security.framework */; };
+		D059E1291311C676001493B8 /* AppDebugging.m in Sources */ = {isa = PBXBuildFile; fileRef = D059E1281311C676001493B8 /* AppDebugging.m */; };
+		D059E1421311CA71001493B8 /* GenericPrompt.xib in Resources */ = {isa = PBXBuildFile; fileRef = D059E1411311CA71001493B8 /* GenericPrompt.xib */; };
 		D059FCCF101D729100B3787D /* MainMenu.nib in Resources */ = {isa = PBXBuildFile; fileRef = D059FCCD101D729100B3787D /* MainMenu.nib */; };
 		D05B77BA0E00856D008C45EB /* HFCancelOn.tiff in Resources */ = {isa = PBXBuildFile; fileRef = D01772B70D72E024002E03DE /* HFCancelOn.tiff */; };
 		D05B77BB0E00856D008C45EB /* HFCancelOff.tiff in Resources */ = {isa = PBXBuildFile; fileRef = D01772B80D72E024002E03DE /* HFCancelOff.tiff */; };
@@ -379,6 +381,9 @@
 		D04D8FCB102396FC0013A2A1 /* HFPrivilegedHelperConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFPrivilegedHelperConnection.m; path = sources/HFPrivilegedHelperConnection.m; sourceTree = "<group>"; };
 		D04D90521023AAEE0013A2A1 /* HFHelperProcessSharedCode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFHelperProcessSharedCode.h; path = sources/HFHelperProcessSharedCode.h; sourceTree = "<group>"; };
 		D05984CB1032C6D900059E72 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = /System/Library/Frameworks/Security.framework; sourceTree = "<absolute>"; };
+		D059E1271311C675001493B8 /* AppDebugging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDebugging.h; path = app/sources/AppDebugging.h; sourceTree = "<group>"; };
+		D059E1281311C676001493B8 /* AppDebugging.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDebugging.m; path = app/sources/AppDebugging.m; sourceTree = "<group>"; };
+		D059E1411311CA71001493B8 /* GenericPrompt.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = GenericPrompt.xib; path = app/resources/GenericPrompt.xib; sourceTree = "<group>"; };
 		D059FCCE101D729100B3787D /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = sample_code/HexFiendling/English.lproj/MainMenu.nib; sourceTree = "<group>"; };
 		D05B77DD0E00883B008C45EB /* HFCancelButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFCancelButton.h; path = sources/HFCancelButton.h; sourceTree = "<group>"; };
 		D05B77DE0E00883B008C45EB /* HFCancelButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFCancelButton.m; path = sources/HFCancelButton.m; sourceTree = "<group>"; };
@@ -606,6 +611,7 @@
 				089C165CFE840E0CC02AAC07 /* InfoPlist.strings */,
 				D03CFA810FC7857B00EE79E4 /* DataInspectorView.xib */,
 				D0D8C2AF12A3BE4300960FC4 /* ChooseStringEncodingDialog.xib */,
+				D059E1411311CA71001493B8 /* GenericPrompt.xib */,
 				D09163C9123857BB009D7D47 /* OpenPathDialog.xib */,
 				D04A6BA9100EA7B800704963 /* MainMenu.xib */,
 				D04A6BA3100EA78700704963 /* MyDocument.xib */,
@@ -862,6 +868,8 @@
 				D0D8C45C12A3EF3F00960FC4 /* Dialogs */,
 				D0CD51F40DA2B928006E8D1B /* AppDelegate.h */,
 				D0CD51F50DA2B928006E8D1B /* AppDelegate.m */,
+				D059E1271311C675001493B8 /* AppDebugging.h */,
+				D059E1281311C676001493B8 /* AppDebugging.m */,
 				D0D8C45612A3EF3900960FC4 /* ProcessList.h */,
 				D0D8C45712A3EF3900960FC4 /* ProcessList.m */,
 				D03CFA880FC78BCD00EE79E4 /* DataInspectorRepresenter.h */,
@@ -1220,6 +1228,7 @@
 			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "HexFiend_2" */;
 			compatibilityVersion = "Xcode 3.0";
+			developmentRegion = English;
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -1261,6 +1270,7 @@
 				D09163CA123857BB009D7D47 /* OpenPathDialog.xib in Resources */,
 				D0B47FEF1272427B0095120E /* DiffComputationBanner.xib in Resources */,
 				D0D8C2B012A3BE4300960FC4 /* ChooseStringEncodingDialog.xib in Resources */,
+				D059E1421311CA71001493B8 /* GenericPrompt.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1337,6 +1347,7 @@
 				D0CBB32A128F906000989C15 /* DiffTextViewContainer.m in Sources */,
 				D0D8C2BC12A3C10100960FC4 /* ChooseStringEncodingWindowController.m in Sources */,
 				D0D8C45812A3EF3900960FC4 /* ProcessList.m in Sources */,
+				D059E1291311C676001493B8 /* AppDebugging.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

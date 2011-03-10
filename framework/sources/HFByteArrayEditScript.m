@@ -53,11 +53,6 @@ static void GrowableArray_reallocate(struct GrowableArray_t *array, size_t minLe
     /* We support indexing in the range [-newLength, newLength], which means we need space for 2 * newLength + 1 elements.  And maybe malloc can give us more for free! */
     size_t bufferLength = malloc_good_size((newLength * 2 + 1) * sizeof *array->ptr);
     
-    /* Arrange it so that 0 falls on a page boundary.  That is, bufferLength must be a multiple of 4096. */
-    size_t aligner = 4096 * 2;
-    bufferLength = ((bufferLength + aligner - 1) & ~(aligner - 1)) + 8;
-//    printf("Whoa: %lu\n", bufferLength % aligner);
-    
     /* Compute the array length backwards from the buffer length: it may be larger if malloc_good_size gave us more. */
     newLength = ((bufferLength / sizeof *array->ptr) - 1) / 2;
 //    printf("new length: %lu (%lu)\n", newLength, (newLength * 8) % aligner);
@@ -432,9 +427,9 @@ static BOOL computeMiddleSnakeTraversal_OverlapCheck(HFByteArrayEditScript *self
 }
 
 #if NDEBUG
-static struct Snake_t computeMiddleSnake_MaybeDirect(HFByteArrayEditScript *self, struct TLCacheGroup_t * restrict cacheGroup, BOOL direct, const unsigned char * restrict directABuff, const unsigned char * restrict directBBuff, HFRange rangeInA, HFRange rangeInB) __attribute__((always_inline));
+static struct Snake_t computeMiddleSnake_MaybeDirect(HFByteArrayEditScript *self, struct TLCacheGroup_t * restrict cacheGroup, BOOL direct, long giveUpD, const unsigned char * restrict directABuff, const unsigned char * restrict directBBuff, HFRange rangeInA, HFRange rangeInB) __attribute__((always_inline));
 #endif
-static struct Snake_t computeMiddleSnake_MaybeDirect(HFByteArrayEditScript *self, struct TLCacheGroup_t * restrict cacheGroup, BOOL direct, const unsigned char * restrict directABuff, const unsigned char * restrict directBBuff, HFRange rangeInA, HFRange rangeInB) {
+static struct Snake_t computeMiddleSnake_MaybeDirect(HFByteArrayEditScript *self, struct TLCacheGroup_t * restrict cacheGroup, BOOL direct, long giveUpD, const unsigned char * restrict directABuff, const unsigned char * restrict directBBuff, HFRange rangeInA, HFRange rangeInB) {
     
     /* This function has to "consume" progress equal to rangeInA.length * rangeInB.length. */
     unsigned long long progressAllocated = rangeInA.length * rangeInB.length;
@@ -443,7 +438,7 @@ static struct Snake_t computeMiddleSnake_MaybeDirect(HFByteArrayEditScript *self
     long aStart = ll2l(rangeInA.location), bStart = ll2l(rangeInB.location);
     
     //maxD = ceil((M + N) / 2)
-    const long maxD = ll2l((HFSum(rangeInA.length, rangeInB.length) + 1) / 2);
+    const long maxD = MIN(giveUpD, ll2l((HFSum(rangeInA.length, rangeInB.length) + 1) / 2));
     
     /* Adding delta to k in the forwards direction gives you k in the backwards direction */
     const long delta = bLen - aLen;
@@ -464,8 +459,9 @@ static struct Snake_t computeMiddleSnake_MaybeDirect(HFByteArrayEditScript *self
     
     volatile const int * const cancelRequested = self->cancelRequested;
     
-    for (long D=1; D <= maxD; D++) {
-	//if (0 == (D % 256)) printf("%ld / %ld\n", D, maxD);
+    long D;
+    for (D=1; D <= maxD; D++) {
+	if (0 == (D % 256)) printf("%ld / %ld\n", D, maxD);
 	
 	/* Check for cancellation */
 	if (*cancelRequested) break;
@@ -536,8 +532,42 @@ static struct Snake_t computeMiddleSnake_MaybeDirect(HFByteArrayEditScript *self
 	    }
 	}
     }
-    /* We don't expect to ever exit this loop, unless we cancel */
-    HFASSERT(*self->cancelRequested);
+    
+    /* We don't expect to exit this loop unless we cancel or reach giveUpD */
+    HFASSERT(*self->cancelRequested || D > giveUpD);
+    
+    if (D > giveUpD) {
+        D = giveUpD;
+        /* Find the best diagonals going forwards and backwards */
+        long x, y, bestForwardsX = 0, bestForwardsY = 0, bestBackwardsX = 0, bestBackwardsY = 0;
+        for (long k = -D; k <= D; k+=2) {
+            x = forwardsVector[k];
+            y = x - k;
+            if (x + y >= bestForwardsX + bestForwardsY) {
+                bestForwardsX = x;
+                bestForwardsY = y;
+            }
+            
+            x = backwardsVector[k];
+            y = x - k;
+            if (x + y >= bestBackwardsX + bestBackwardsY) {
+                bestBackwardsX = x;
+                bestBackwardsY = y;
+            }
+        }
+        
+        /* Now return a snake about the best diagonal */
+        if (bestForwardsX + bestForwardsY >= bestBackwardsX + bestBackwardsY) {
+            /* Forwards is better, or at least no worse */
+            result.startX = aStart + bestForwardsX;
+            result.startY = bStart + bestForwardsY;
+        } else {
+            result.startX = aStart + aLen - bestBackwardsX;
+            result.startY = bStart + bLen - bestBackwardsY;
+        }
+        result.middleSnakeLength = 0;
+    }
+    
     return result;
 }
 
@@ -547,14 +577,15 @@ static struct Snake_t computeMiddleSnake(HFByteArrayEditScript *self, struct TLC
 static struct Snake_t computeMiddleSnake(HFByteArrayEditScript *self, struct TLCacheGroup_t * restrict cacheGroup, HFRange rangeInA, HFRange rangeInB) {
     /* If both our ranges are small enough that they fit in our cache, then we can just read them all in and avoid all the range checking we would otherwise have to do. */
     BOOL direct = (rangeInA.length <= CACHE_AMOUNT && rangeInB.length <= CACHE_AMOUNT);
+    long giveUpD = LONG_MAX;//100 * 100;
     if (direct) {
 	/* Cache everything */
 	const unsigned char * const directABuff = getCachedBytes(self, cacheGroup, self->source, self->sourceLength, rangeInA.location, rangeInA.length, SourceForwards);
 	const unsigned char * const directBBuff = getCachedBytes(self, cacheGroup, self->destination, self->destLength, rangeInB.location, rangeInB.length, DestForwards);
-	return computeMiddleSnake_MaybeDirect(self, cacheGroup, YES, directABuff, directBBuff, rangeInA, rangeInB);
+	return computeMiddleSnake_MaybeDirect(self, cacheGroup, YES, giveUpD, directABuff, directBBuff, rangeInA, rangeInB);
     } else {
 	/* We can't cache everything */
-	return computeMiddleSnake_MaybeDirect(self, cacheGroup, NO, NULL, NULL, rangeInA, rangeInB);
+	return computeMiddleSnake_MaybeDirect(self, cacheGroup, NO, giveUpD, NULL, NULL, rangeInA, rangeInB);
     }
 }
 
@@ -943,6 +974,7 @@ static BOOL merge_instruction_noreplaces(struct HFEditInstruction_t *left, const
     [tracker release];
     
     CFAbsoluteTime end = CFAbsoluteTimeGetCurrent();
+    
     printf("Diffs computed in %.2f seconds\n", end - start);
     
     return result;

@@ -20,6 +20,7 @@
 	    [self setImage:HFImageNamed(@"HFCancelOff")];
 	    [self setAlternateImage:HFImageNamed(@"HFCancelOn")];
 	}
+        [[self cell] setButtonType:NSMomentaryChangeButton];
     }
     return self;
 }

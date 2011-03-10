@@ -85,8 +85,6 @@
     verticalLine.origin.x = NSMaxX(bounds) - verticalLine.size.width;
     lines[4] = verticalLine;
     
-    [[NSColor purpleColor] set];
-    NSRectFill([self bounds]);
     NSRectFillListWithColors(lines, colors, 5);
 }
 

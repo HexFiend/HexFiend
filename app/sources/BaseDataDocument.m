@@ -10,6 +10,7 @@
 #import "HFBannerDividerThumb.h"
 #import "HFDocumentOperationView.h"
 #import "DataInspectorRepresenter.h"
+#import "AppDebugging.h"
 #import <HexFiend/HexFiend.h>
 #include <pthread.h>
 #include <objc/runtime.h>
@@ -439,25 +440,17 @@ static inline Class preferredByteArrayClass(void) {
     
     [self setStringEncoding:[[NSUserDefaults standardUserDefaults] integerForKey:@"DefaultStringEncoding"]];
     
-#if ! NDEBUG
     static BOOL hasAddedMenu = NO;
     if (! hasAddedMenu) {
         hasAddedMenu = YES;
-        NSMenu *menu = [[[NSApp mainMenu] itemWithTitle:@"Debug"] submenu];
-        [menu addItem:[NSMenuItem separatorItem]];
-        [menu addItemWithTitle:@"Show ByteArray" action:@selector(_showByteArray:) keyEquivalent:@"k"];
-        [[[menu itemArray] lastObject] setKeyEquivalentModifierMask:NSCommandKeyMask];
+        if ([[NSUserDefaults standardUserDefaults] boolForKey:@"HFDebugMenu"]) {
+            NSMenu *menu = [[[NSApp mainMenu] itemWithTitle:@"Debug"] submenu];
+            [self installDebuggingMenuItems:menu];
+        }
     }
-#endif
     return self;
 }
 
-#if ! NDEBUG
-- (void)_showByteArray:sender {
-    USE(sender);
-    NSLog(@"%@", [controller byteArray]);
-}
-#endif
 
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];

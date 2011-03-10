@@ -19,6 +19,7 @@
 }
 
 - (id)initWithRandomDataLength:(unsigned long long)length;
+- (id)initWithLength:(unsigned long long)length;
 
 @end
 

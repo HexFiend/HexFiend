@@ -12,6 +12,8 @@ static CGFloat norm(unsigned char x) {
     return x / (CGFloat)255.;
 }
 
+#define EDGE_WIDTH 1
+
 @implementation StretchableProgressIndicator
 
 - (BOOL)isFlipped {
@@ -22,18 +24,29 @@ static CGFloat norm(unsigned char x) {
     USE(rect);
     NSRect bounds = [self bounds];
     
-    double percent = [self doubleValue]     ;
+    double percent = [self doubleValue];
     NSRect rectToFill = bounds;
     rectToFill.size.width *= percent;
+    NSRect baseRectToFill = [self convertRectToBase:rectToFill];
+    baseRectToFill.size.width = round(baseRectToFill.size.width);
+    rectToFill = [self convertRectFromBase:baseRectToFill];
+    
+    
     [NSBezierPath clipRect:rectToFill];
     
     [gradient drawFromPoint:(NSPoint){NSMinX(bounds), NSMinY(bounds)} toPoint:(NSPoint){NSMinX(bounds), NSMaxY(bounds)} options:0];
-    
+        
     /* Draw dark top and bottom lines */
     CGFloat lineHeight = 1;
     NSRect edgeRect = NSMakeRect(NSMinX(bounds), 0, NSWidth(bounds), lineHeight);
     [[NSColor colorWithCalibratedWhite:.5 alpha:.5] set];
     NSRectFillUsingOperation(edgeRect, NSCompositeSourceOver);
+    
+    /* Draw right edge line */
+    [[NSColor colorWithCalibratedRed:0. green:0. blue:1. alpha:.15] set];
+    NSRect baseRightEdge = NSMakeRect(ceil(NSMaxX(baseRectToFill) - EDGE_WIDTH), NSMinY(baseRectToFill), EDGE_WIDTH, NSHeight(baseRectToFill));
+    NSRect localRightEdge = [self convertRectFromBase:baseRightEdge];
+    NSRectFillUsingOperation(localRightEdge, NSCompositeSourceOver);
 }
 
 - (void)setDoubleValue:(double)newValue {
@@ -41,8 +54,8 @@ static CGFloat norm(unsigned char x) {
     double currentValue = [self doubleValue];
     NSRect bounds = [self bounds];
     NSRect redisplayRect = bounds;
-    redisplayRect.origin.x = fmin(newValue, currentValue) * bounds.size.width;
-    redisplayRect.size.width *= fabs(newValue - currentValue);
+    redisplayRect.origin.x = fmin(newValue, currentValue) * bounds.size.width - EDGE_WIDTH - 1;
+    redisplayRect.size.width *= fabs(newValue - currentValue) + EDGE_WIDTH + 1;
     [self setNeedsDisplayInRect:redisplayRect];
     [super setDoubleValue:newValue];
 }

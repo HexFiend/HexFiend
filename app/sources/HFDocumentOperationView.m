@@ -169,6 +169,20 @@ static NSString *sNibName;
     return [super respondsToSelector:sel];
 }
 
+#if 1
+- (void)drawRect:(NSRect)dirtyRect {
+    NSColor *startColor = [NSColor colorWithCalibratedWhite:237./255. alpha:1.];
+    NSColor *endColor = [NSColor colorWithCalibratedWhite:218./255. alpha:1.];
+    NSGradient *grad = [[NSGradient alloc] initWithColors:[NSArray arrayWithObjects:startColor, endColor, nil]];
+    [grad drawInRect:[self bounds] angle:90];
+    [grad release];
+}
+
+- (BOOL)isOpaque {
+    return YES;
+}
+#endif
+
 - (void)spinUntilFinished {
     HFASSERT([self operationIsRunning]);
     [tracker endTrackingProgress];
