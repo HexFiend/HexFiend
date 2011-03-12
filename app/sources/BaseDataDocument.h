@@ -71,6 +71,7 @@
 - (IBAction)replaceAndFind:sender;
 - (IBAction)replace:sender;
 - (IBAction)replaceAll:sender;
+- (IBAction)performFindReplaceActionFromSelectedSegment:(id)sender;
 
 - (IBAction)toggleOverwriteMode:sender;
 - (IBAction)modifyByteGrouping:sender;

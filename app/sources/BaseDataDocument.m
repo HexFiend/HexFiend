@@ -1313,6 +1313,17 @@ cancelled:;
     }
 }
 
+/* This is called from the segmented control in the Find/Replace view */
+- (IBAction)performFindReplaceActionFromSelectedSegment:(id)sender {
+    const SEL actions[] = {@selector(replaceAll:), @selector(replace:), @selector(replaceAndFind:), @selector(findPrevious:), @selector(findNext:)};
+    NSUInteger selection = [sender selectedSegment];
+    if (selection < sizeof actions / sizeof *actions) {
+        [self performSelector:actions[selection] withObject:sender];
+    } else {
+        NSBeep();
+    }
+}
+
 - (void)showNavigationBannerSettingExtendSelectionCheckboxTo:(BOOL)extend {
     if (moveSelectionByView == operationView && moveSelectionByView != nil) {
         [[moveSelectionByView viewNamed:@"extendSelectionByCheckbox"] setIntValue:extend];
