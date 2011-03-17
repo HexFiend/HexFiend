@@ -216,10 +216,6 @@ static int compareGlyphFontIndexes(const void *p1, const void *p2) {
     FREE_ARRAY(cgglyphs);
 }
 
-- (void)threadedLoadedGlyphs:(const CGGlyph *)glyphs count:(NSUInteger)count forFont:(NSFont *)font forCharacters:(NSIndexSet *)characters {
-    
-}
-
 - (void)threadedLoadGlyphs:(id)unused {
     /* Note that this is running on a background thread */
     USE(unused);

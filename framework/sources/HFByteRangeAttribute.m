@@ -33,15 +33,15 @@ static NSString * const sStaticBookmarkStrings[][3] = {
 
 NSArray *HFBookmarkAttributesFromBookmark(NSInteger bookmark) {
     HFASSERT(bookmark != NSNotFound);
-    if (bookmark >= 0 && bookmark < sizeof sStaticBookmarkStrings / sizeof *sStaticBookmarkStrings) {
-	return [NSArray arrayWithObjects:sStaticBookmarkStrings[bookmark] count:3];
+    if (bookmark >= 0 && (NSUInteger)bookmark < sizeof sStaticBookmarkStrings / sizeof *sStaticBookmarkStrings) {
+        return [NSArray arrayWithObjects:sStaticBookmarkStrings[bookmark] count:3];
     }
     else {
-	NSString *strings[3];
-	strings[0] = [NSString stringWithFormat:@"HFAttributeBookmarkStart:%ld", (long)bookmark];
-	strings[1] = [NSString stringWithFormat:@"HFAttributeBookmarkMiddle:%ld", (long)bookmark];
-	strings[2] = [NSString stringWithFormat:@"HFAttributeBookmarkEnd:%ld", (long)bookmark];
-	return [NSArray arrayWithObjects:strings count:3];
+        NSString *strings[3];
+        strings[0] = [NSString stringWithFormat:@"HFAttributeBookmarkStart:%ld", (long)bookmark];
+        strings[1] = [NSString stringWithFormat:@"HFAttributeBookmarkMiddle:%ld", (long)bookmark];
+        strings[2] = [NSString stringWithFormat:@"HFAttributeBookmarkEnd:%ld", (long)bookmark];
+        return [NSArray arrayWithObjects:strings count:3];
     }
 }
 

@@ -169,35 +169,21 @@ static NSString *sNibName;
     return [super respondsToSelector:sel];
 }
 
-#if 0
 - (void)drawRect:(NSRect)dirtyRect {
-    NSColor *startColor = [NSColor colorWithCalibratedWhite:237./255. alpha:1.];
-    NSColor *endColor = [NSColor colorWithCalibratedWhite:218./255. alpha:1.];
-    NSGradient *grad = [[NSGradient alloc] initWithColors:[NSArray arrayWithObjects:startColor, endColor, nil]];
-    [grad drawInRect:[self bounds] angle:90];
-    [grad release];
+    USE(dirtyRect);
+    static NSGradient *sGradient = nil;
+    if (! sGradient) {
+        NSColor *startColor = [NSColor colorWithCalibratedWhite:1. alpha:1.];
+        NSColor *midColor = [NSColor colorWithCalibratedWhite:.85 alpha:1.];
+        NSColor *endColor = [NSColor colorWithCalibratedWhite:.9 alpha:1.];
+        sGradient = [[NSGradient alloc] initWithColors:[NSArray arrayWithObjects:startColor, midColor, endColor, nil]];
+    }
+    [sGradient drawInRect:[self bounds] angle:-90];
 }
 
 - (BOOL)isOpaque {
     return YES;
 }
-#else
-
-- (void)drawRect:(NSRect)dirtyRect {
-    NSColor *startColor = [NSColor colorWithCalibratedWhite:1. alpha:1.];
-    NSColor *midColor = [NSColor colorWithCalibratedWhite:.85 alpha:1.];
-    NSColor *endColor = [NSColor colorWithCalibratedWhite:.9 alpha:1.];
-    NSGradient *grad = [[NSGradient alloc] initWithColors:[NSArray arrayWithObjects:startColor, midColor, endColor, nil]];
-    [grad drawInRect:[self bounds] angle:-90];
-    [grad release];
-}
-
-- (BOOL)isOpaque {
-    return YES;
-}
-
-
-#endif
 
 - (void)spinUntilFinished {
     HFASSERT([self operationIsRunning]);

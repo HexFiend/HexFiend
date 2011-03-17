@@ -366,7 +366,7 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
     
     /* Any leftover space is matching */
     unsigned long long endMatch = HFSubtract(targetIndex, lastFromIndex);
-    lastFromIndex = HFSum(lastFromIndex, endMatch);
+    //lastFromIndex = HFSum(lastFromIndex, endMatch);
     lastToIndex = HFSum(lastToIndex, endMatch);
     
     /* Done */

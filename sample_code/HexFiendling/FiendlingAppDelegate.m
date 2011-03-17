@@ -104,7 +104,7 @@
     [layoutRep addRepresenter:scrollRep];
     [layoutRep addRepresenter:asciiRep];
     
-    [[hexRep view] setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
+    [(NSView *)[hexRep view] setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
 
     /* Grab the layout rep's view and stick it into our container. */
     NSView *layoutView = [layoutRep view];

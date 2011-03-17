@@ -7,6 +7,7 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import <HexFiend/HFTYpes.h>
 
 /*! @class HFByteArrayEditScript
  @brief A class that represents an sequence of instructions for editing an @link HFByteArray @endlink.  

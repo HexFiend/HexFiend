@@ -24,7 +24,7 @@ static struct inheriting_fork_return_t fork_with_inherit(const char *path);
 
 + (HFPrivilegedHelperConnection *)sharedConnection {
     if (! sSharedConnection) {
-	sSharedConnection = [[self alloc] init];
+        sSharedConnection = [[self alloc] init];
     }
     return sSharedConnection;
 }
@@ -64,13 +64,14 @@ static NSString *read_line(FILE *file) {
     
     kern_return_t kr = _GratefulFatherReadProcess(childReceivePort, process, range.location, range.length, (unsigned char **)&resultData, &resultCnt);
     if (kr != KERN_SUCCESS) {
-	fprintf(stdout, "_GratefulFatherReadProcess failed with mach error: %s\n", (char*) mach_error_string(kr));
-	return NO;
+        fprintf(stdout, "_GratefulFatherReadProcess failed with mach error: %s\n", (char*) mach_error_string(kr));
+        if (error) *error = nil;
+        return NO;
     }
     memcpy(bytes, resultData, (size_t)range.length);
     kr = vm_deallocate(mach_task_self(), (vm_address_t)resultData, resultCnt);
     if (kr != KERN_SUCCESS) {
-	fprintf(stdout, "failed to vm_deallocate(%p) for pid %d\nmach error: %s\n", resultData, process, (char*) mach_error_string(kr));
+        fprintf(stdout, "failed to vm_deallocate(%p) for pid %d\nmach error: %s\n", resultData, process, (char*) mach_error_string(kr));
     }
     return YES;
 }
@@ -81,8 +82,9 @@ static NSString *read_line(FILE *file) {
     mach_vm_size_t length = 0;
     kern_return_t kr = _GratefulFatherAttributesForAddress(childReceivePort, process, offset, &atts, &length);
     if (kr != KERN_SUCCESS) {
-	fprintf(stdout, "_GratefulFatherAttributesForAddress failed with mach error: %s\n", (char*) mach_error_string(kr));
-	return NO;
+        fprintf(stdout, "_GratefulFatherAttributesForAddress failed with mach error: %s\n", (char*) mach_error_string(kr));
+        if (error) *error = nil;
+        return NO;
     }
     if (outAttributes) *outAttributes = atts;
     if (outLength) *outLength = length;
@@ -94,8 +96,8 @@ static NSString *read_line(FILE *file) {
     HFASSERT(outFD && outErrno && outFileSize && outFileType && outInode && outDevice);
     kern_return_t kr = _GratefulFatherOpenFile(childReceivePort, path, writable, outFD, outErrno, outFileSize, outFileType, outInode, outDevice);
     if (kr != KERN_SUCCESS) {
-	fprintf(stdout, "_GratefulFatherOpenFile failed with mach error: %s\n", (char*) mach_error_string(kr));
-	return NO;
+        fprintf(stdout, "_GratefulFatherOpenFile failed with mach error: %s\n", (char*) mach_error_string(kr));
+        return NO;
     }
     return YES;
 }
@@ -105,8 +107,8 @@ static NSString *read_line(FILE *file) {
     if (! [self connectIfNecessary]) return NO;
     kern_return_t kr = _GratefulFatherCloseFile(childReceivePort, fd);
     if (kr != KERN_SUCCESS) {
-	fprintf(stdout, "_GratefulFatherCloseFile failed with mach error: %s\n", (char*) mach_error_string(kr));
-	return NO;
+        fprintf(stdout, "_GratefulFatherCloseFile failed with mach error: %s\n", (char*) mach_error_string(kr));
+        return NO;
     }    
     return YES;
 }
@@ -132,8 +134,8 @@ static NSString *read_line(FILE *file) {
     NSLog(@"Issuing read %llu / %u", alignedRange.location, alignedLength);
     kern_return_t kr = _GratefulFatherReadFile(childReceivePort, fd, alignedRange.location, &alignedLength, &buffer, &bufferAllocatedSize, outErr);
     if (kr != KERN_SUCCESS) {
-	fprintf(stdout, "_GratefulFatherReadFile failed with mach error: %s\n", (char*) mach_error_string(kr));
-	return NO;
+        fprintf(stdout, "_GratefulFatherReadFile failed with mach error: %s\n", (char*) mach_error_string(kr));
+        return NO;
     }
     if (! buffer) return NO; // paranoia
     
@@ -143,20 +145,20 @@ static NSString *read_line(FILE *file) {
     NSUInteger prefix = ll2l(requestedOffset - alignedRange.location);
     unsigned long long realBufferEnd = HFSum(alignedRange.location, realAmountCopied);
     if (realBufferEnd <= requestedOffset) {
-	/* The only stuff that got copied was in the prefix */
-	*inoutLength = 0;
+        /* The only stuff that got copied was in the prefix */
+        *inoutLength = 0;
     }
     else {
-	/* Add alignedRange.location to amountCopied to get the true end of the buffer, and subtract pos to get the range from position to the end of the buffer, then take the smaller of that with the amount desired to get the amount to copy to the buffer. */
-	*inoutLength = MIN(realBufferEnd - requestedOffset, requestedLength);
-	memcpy(result, buffer + prefix, *inoutLength);
+        /* Add alignedRange.location to amountCopied to get the true end of the buffer, and subtract pos to get the range from position to the end of the buffer, then take the smaller of that with the amount desired to get the amount to copy to the buffer. */
+        *inoutLength = (uint32_t)MIN(realBufferEnd - requestedOffset, requestedLength);
+        memcpy(result, buffer + prefix, *inoutLength);
     }
     
     if (buffer) {
-	kr = vm_deallocate(mach_task_self(), (vm_address_t)buffer, bufferAllocatedSize);
-	if (kr != KERN_SUCCESS) {
-	    fprintf(stdout, "failed to vm_deallocate(%p)\nmach error: %s\n", buffer, (char *)mach_error_string(kr));
-	}
+        kr = vm_deallocate(mach_task_self(), (vm_address_t)buffer, bufferAllocatedSize);
+        if (kr != KERN_SUCCESS) {
+            fprintf(stdout, "failed to vm_deallocate(%p)\nmach error: %s\n", buffer, (char *)mach_error_string(kr));
+        }
     }
     
     return YES;
@@ -175,11 +177,11 @@ static NSString *read_line(FILE *file) {
     NSString *helperPath = [bund pathForResource:@"FortunateSon" ofType:@""];
     NSString *privilegedHelperPath = nil;
     if (! helperPath) {
-	[NSException raise:NSInternalInconsistencyException format:@"Couldn't find FortunateSon helper tool in bundle %@", bund];
+        [NSException raise:NSInternalInconsistencyException format:@"Couldn't find FortunateSon helper tool in bundle %@", bund];
     }
     NSString *launcherPath = [bund pathForResource:@"FortunateSonCopier" ofType:@""];
     if (! launcherPath) {
-	[NSException raise:NSInternalInconsistencyException format:@"Couldn't find FortunateSonCopier helper tool in bundle %@", bund];
+        [NSException raise:NSInternalInconsistencyException format:@"Couldn't find FortunateSonCopier helper tool in bundle %@", bund];
     }
     
     OSStatus status;
@@ -191,9 +193,9 @@ static NSString *read_line(FILE *file) {
     if (result) {
         AuthorizationItem authItems = { kAuthorizationRightExecute, 0, NULL, 0};
         AuthorizationRights authRights = {1, &authItems};
-
+        
         AuthorizationFlags authFlags = kAuthorizationFlagDefaults | kAuthorizationFlagInteractionAllowed | kAuthorizationFlagPreAuthorize | kAuthorizationFlagExtendRights;
-                    
+        
         status = AuthorizationCopyRights(authorizationRef, &authRights, NULL, authFlags, NULL);
         if (status != errAuthorizationSuccess) {
             result = NO;
@@ -239,7 +241,7 @@ static NSString *read_line(FILE *file) {
     
     /* Tell our launcher, OK, so it deletes it for us */
     if (pipe) fputs("OK\n", pipe);
-
+    
     return result;
 }
 
@@ -278,34 +280,34 @@ static struct inheriting_fork_return_t fork_with_inherit(const char *path) {
     kern_return_t       err;
     mach_port_t         parent_recv_port = MACH_PORT_NULL;
     mach_port_t         child_recv_port = MACH_PORT_NULL;
-
+    
     if (setup_recv_port(&parent_recv_port) != 0)
         return errorReturn;
     CHECK_MACH_ERROR(task_set_bootstrap_port(mach_task_self(), parent_recv_port));
-
+    
     /* TODO: use posix_spawnattr_setspecialport_np here instead of fiddling with the bootstrap port */
     char * argv[] = {(char *)path, NULL};
     int posixErr = posix_spawn(&result.child_pid, path, NULL/*file actions*/, NULL/*spawn attr*/, argv, *_NSGetEnviron());
     if (posixErr != 0) {
-	printf("posix_spawn failed: %d %s\n", posixErr, strerror(posixErr));
-	return errorReturn;
+        printf("posix_spawn failed: %d %s\n", posixErr, strerror(posixErr));
+        return errorReturn;
     }
-
+    
     /* talk to the child */
     err = task_set_bootstrap_port (mach_task_self (), bootstrap_port);
     CHECK_MACH_ERROR (err);
     if (recv_port (parent_recv_port, &result.child_task) != 0)
-	return errorReturn;
+        return errorReturn;
     if (recv_port (parent_recv_port, &child_recv_port) != 0)
-	return errorReturn;
+        return errorReturn;
     if (send_port (child_recv_port, bootstrap_port, MACH_MSG_TYPE_COPY_SEND) != 0)
-	return errorReturn;
+        return errorReturn;
     err = mach_port_deallocate (mach_task_self(), parent_recv_port);
     CHECK_MACH_ERROR (err);
     int val;
     _GratefulFatherSayHey(child_recv_port, "From Daddy", &val);
     printf("Daddy got back Val: %d\n", val);
-
+    
     result.child_recv_port = child_recv_port;
     return result;
 }

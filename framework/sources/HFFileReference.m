@@ -109,16 +109,16 @@ static BOOL returnFTruncateError(NSError **error) {
 @implementation HFFileReference
 
 - (void)close { UNIMPLEMENTED_VOID(); }
-- (void)readBytes:(unsigned char *)buff length:(NSUInteger)length from:(unsigned long long)offset { UNIMPLEMENTED_VOID(); }
-- (int)writeBytes:(const unsigned char *)buff length:(NSUInteger)length to:(unsigned long long)offset { UNIMPLEMENTED(); }
-- (BOOL)setLength:(unsigned long long)length error:(NSError **)error { UNIMPLEMENTED(); }
+- (void)readBytes:(unsigned char *)buff length:(NSUInteger)length from:(unsigned long long)offset {USE(buff); USE(length); USE(offset); UNIMPLEMENTED_VOID(); }
+- (int)writeBytes:(const unsigned char *)buff length:(NSUInteger)length to:(unsigned long long)offset {USE(buff); USE(length); USE(offset);  UNIMPLEMENTED(); }
+- (BOOL)setLength:(unsigned long long)length error:(NSError **)error { USE(length); USE(error); UNIMPLEMENTED(); }
 
 - (unsigned long long)length {
     return fileLength;
 }
 
 /* Must be overridden - do not call super */
-- (BOOL)initSharedWithPath:(NSString *)path error:(NSError **)error { UNIMPLEMENTED_VOID(); }
+- (BOOL)initSharedWithPath:(NSString *)path error:(NSError **)error { UNIMPLEMENTED(); }
 
 - (NSUInteger)hash {
     return (NSUInteger)inode;
@@ -340,7 +340,7 @@ static BOOL returnFTruncateError(NSError **error) {
 	uint32_t amountToRead = (uint32_t)MIN(remainingToRead, (UINT32_MAX / alignment) * alignment);
 	uint32_t amountRead = amountToRead;
 	int err = 0;
-	[[self connection] readFile:fileDescriptor offset:pos alignment:alignment length:&amountRead result:buff error:&err];
+	[[self connection] readFile:fileDescriptor offset:pos alignment:(unsigned int)alignment length:&amountRead result:buff error:&err];
 	if (amountRead != amountToRead) {
 	    [NSException raise:NSGenericException format:@"Read result: %u expected: %u error: %s", amountRead, amountToRead, strerror(err)];
 	}

@@ -1338,7 +1338,7 @@ static size_t unionAndCleanLists(NSRect *rectList, id *valueList, size_t count) 
     NSUInteger lineStartIndex, bytesPerLine = [self bytesPerLine];
     NSData *dataObject = [self data];
     NSFont *fontObject = [[self font] screenFont];
-    const NSUInteger bytesPerChar = [self bytesPerCharacter];
+    //const NSUInteger bytesPerChar = [self bytesPerCharacter];
     const NSUInteger byteCount = [dataObject length];
     
     const unsigned char * const bytePtr = [dataObject bytes];
