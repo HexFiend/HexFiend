@@ -36,23 +36,23 @@
     NSUInteger i, insnCount = [editScript numberOfInstructions];
     for (i=0; i < insnCount; i++) {
         struct HFEditInstruction_t insn = [editScript instructionAtIndex:i];
-	if (insn.dst.length > 0) {
-	    [[[rightTextView controller] byteRangeAttributeArray] addAttribute:kHFAttributeDiffInsertion range:insn.dst];
-	}
-	if (insn.src.length > 0) {
-	    [[[leftTextView controller] byteRangeAttributeArray] addAttribute:kHFAttributeDiffInsertion range:insn.src];        	    
-	}
+        if (insn.dst.length > 0) {
+            [[[rightTextView controller] byteRangeAttributeArray] addAttribute:kHFAttributeDiffInsertion range:insn.dst];
+        }
+        if (insn.src.length > 0) {
+            [[[leftTextView controller] byteRangeAttributeArray] addAttribute:kHFAttributeDiffInsertion range:insn.src];        	    
+        }
     }
     
     /* Compute the totalAbstractLength */
     unsigned long long abstractLength = 0;
     unsigned long long leftMatchedLength = [[leftTextView controller] contentsLength], rightMatchedLength = [[rightTextView controller] contentsLength];
     for (i=0; i < insnCount; i++) {
-	struct HFEditInstruction_t insn = [editScript instructionAtIndex:i];
-	unsigned long long insnLength = MAX(insn.src.length, insn.dst.length) - MIN(insn.src.length, insn.dst.length);
-	abstractLength = HFSum(abstractLength, insnLength);
-	leftMatchedLength = HFSubtract(leftMatchedLength, insn.src.length);
-	rightMatchedLength = HFSubtract(rightMatchedLength, insn.dst.length);
+        struct HFEditInstruction_t insn = [editScript instructionAtIndex:i];
+        unsigned long long insnLength = MAX(insn.src.length, insn.dst.length) - MIN(insn.src.length, insn.dst.length);
+        abstractLength = HFSum(abstractLength, insnLength);
+        leftMatchedLength = HFSubtract(leftMatchedLength, insn.src.length);
+        rightMatchedLength = HFSubtract(rightMatchedLength, insn.dst.length);
     }
     
     /* If the diff is correct, then the matched text must be equal in length */
@@ -103,8 +103,8 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
         else {
             rightRect = [right furthestRectOnEdge:NSMinXEdge forByteRange:rightRange];
         }
-	 //leftRect and rightRect may have origins of CGFLOAT_MAX and -CGFLOAT_MAX.  Converting them is a sketchy thing to do.  But in that case, the range type will be RangeIsAbove or RangeIsBelow, in which case the rect is ignored
-	
+        //leftRect and rightRect may have origins of CGFLOAT_MAX and -CGFLOAT_MAX.  Converting them is a sketchy thing to do.  But in that case, the range type will be RangeIsAbove or RangeIsBelow, in which case the rect is ignored
+        
         [overlayView setLeftRangeType:rangeTypeForValue(leftRect.origin.x) rect:[overlayView convertRect:leftRect fromView:[left view]]];
         [overlayView setRightRangeType:rangeTypeForValue(rightRect.origin.x) rect:[overlayView convertRect:rightRect fromView:[right view]]];
     }
@@ -114,24 +114,24 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
     long long diff = 0;
     NSUInteger insnIndex, insnCount = [editScript numberOfInstructions];
     for (insnIndex = 0; insnIndex < insnCount; insnIndex++) {
-	struct HFEditInstruction_t insn = [editScript instructionAtIndex:insnIndex];
-	
-	/* If we've gone past the byte we care about, we're done */
-	unsigned long long insnStartByte = (isLeft ? insn.src.location : insn.dst.location);
-	unsigned long long insnLength = (isLeft ? insn.src.length : insn.dst.length);
-	if (byte <= insnStartByte) break;
-	
-	/* If the byte is midway through the instruction, then limit the length change to its offset in the instruction */
-	unsigned long long maxLengthChange = ULLONG_MAX;
-	if (byte - insnStartByte < insnLength) {
-	    maxLengthChange = byte - insnStartByte;
-	}
-	
-	/* Compute how the length changed according to this instruction, by adding the left amount and deleting the right amount (or vice-versa if isLeft is NO) */
-	unsigned long long srcLength = MIN(maxLengthChange, insn.src.length), dstLength = MIN(maxLengthChange, insn.dst.length);
-	long long lengthChange = (long long)(srcLength - dstLength);
-	if (isLeft) lengthChange = - lengthChange;
-	diff += lengthChange;
+        struct HFEditInstruction_t insn = [editScript instructionAtIndex:insnIndex];
+        
+        /* If we've gone past the byte we care about, we're done */
+        unsigned long long insnStartByte = (isLeft ? insn.src.location : insn.dst.location);
+        unsigned long long insnLength = (isLeft ? insn.src.length : insn.dst.length);
+        if (byte <= insnStartByte) break;
+        
+        /* If the byte is midway through the instruction, then limit the length change to its offset in the instruction */
+        unsigned long long maxLengthChange = ULLONG_MAX;
+        if (byte - insnStartByte < insnLength) {
+            maxLengthChange = byte - insnStartByte;
+        }
+        
+        /* Compute how the length changed according to this instruction, by adding the left amount and deleting the right amount (or vice-versa if isLeft is NO) */
+        unsigned long long srcLength = MIN(maxLengthChange, insn.src.length), dstLength = MIN(maxLengthChange, insn.dst.length);
+        long long lengthChange = (long long)(srcLength - dstLength);
+        if (isLeft) lengthChange = - lengthChange;
+        diff += lengthChange;
     }
     
     return diff;
@@ -139,35 +139,35 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
 
 - (void)updateInstructionOverlayView {
     if (focusedInstructionIndex >= [editScript numberOfInstructions]) {
-	[overlayView setHidden:YES];
+        [overlayView setHidden:YES];
     }
     else {
-	struct HFEditInstruction_t instruction = [editScript instructionAtIndex:focusedInstructionIndex];
-	[[[leftTextView controller] byteRangeAttributeArray] removeAttribute:kHFAttributeFocused];
-	[[[rightTextView controller] byteRangeAttributeArray] removeAttribute:kHFAttributeFocused];
-	HFRange leftRange = instruction.src, rightRange = instruction.dst;
-	
-	if (leftRange.length > 0) {
-	    [[[leftTextView controller] byteRangeAttributeArray] addAttribute:kHFAttributeFocused range:leftRange];
-	}
-	if (rightRange.length > 0) {
-	    [[[rightTextView controller] byteRangeAttributeArray] addAttribute:kHFAttributeFocused range:rightRange];
-	}
-	[[rightTextView controller] representer:nil changedProperties:HFControllerByteRangeAttributes];
-	[[leftTextView controller] representer:nil changedProperties:HFControllerByteRangeAttributes];
+        struct HFEditInstruction_t instruction = [editScript instructionAtIndex:focusedInstructionIndex];
+        [[[leftTextView controller] byteRangeAttributeArray] removeAttribute:kHFAttributeFocused];
+        [[[rightTextView controller] byteRangeAttributeArray] removeAttribute:kHFAttributeFocused];
+        HFRange leftRange = instruction.src, rightRange = instruction.dst;
+        
+        if (leftRange.length > 0) {
+            [[[leftTextView controller] byteRangeAttributeArray] addAttribute:kHFAttributeFocused range:leftRange];
+        }
+        if (rightRange.length > 0) {
+            [[[rightTextView controller] byteRangeAttributeArray] addAttribute:kHFAttributeFocused range:rightRange];
+        }
+        [[rightTextView controller] representer:nil changedProperties:HFControllerByteRangeAttributes];
+        [[leftTextView controller] representer:nil changedProperties:HFControllerByteRangeAttributes];
 		
-	[self updateOverlayViewForLeftRange:leftRange rightRange:rightRange];
-	[overlayView setHidden:NO];
+        [self updateOverlayViewForLeftRange:leftRange rightRange:rightRange];
+        [overlayView setHidden:NO];
     }    
 }
 
 - (void)updateTableViewSelection {
     if (focusedInstructionIndex >= [editScript numberOfInstructions]) {
-	[diffTable selectRowIndexes:[NSIndexSet indexSet] byExtendingSelection:NO];
+        [diffTable selectRowIndexes:[NSIndexSet indexSet] byExtendingSelection:NO];
     }
     else {
-	[diffTable selectRowIndexes:[NSIndexSet indexSetWithIndex:focusedInstructionIndex] byExtendingSelection:NO];
-	[diffTable scrollRowToVisible:focusedInstructionIndex];
+        [diffTable selectRowIndexes:[NSIndexSet indexSetWithIndex:focusedInstructionIndex] byExtendingSelection:NO];
+        [diffTable scrollRowToVisible:focusedInstructionIndex];
     }
 }
 
@@ -208,8 +208,8 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
     BOOL frInLeftView = [self firstResponderIsInView:leftTextView], frInRightView = [self firstResponderIsInView:rightTextView];
     NSUInteger prohibitedFlags = (NSShiftKeyMask | NSControlKeyMask | NSAlternateKeyMask | NSCommandKeyMask);
     if ([event type] == NSKeyDown && ! (prohibitedFlags & [event modifierFlags])) {
-	if (frInLeftView || frInRightView) {
-	    /* Handle arrow keys */
+        if (frInLeftView || frInRightView) {
+            /* Handle arrow keys */
             NSString *chars = [event characters];
             if ([chars length] == 1) {
                 unichar c = [chars characterAtIndex:0];
@@ -224,10 +224,10 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
             }
         }
     } else if ([event type] == NSScrollWheel) {
-	
-	/* Redirect scroll wheel events to ourselves */
-	[self scrollWithScrollEvent:event];
-	handled = YES;
+        
+        /* Redirect scroll wheel events to ourselves */
+        [self scrollWithScrollEvent:event];
+        handled = YES;
     }
     return handled;
 }
@@ -237,10 +237,10 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
         leftBytes = [left retain];
         rightBytes = [right retain];
         //[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(synchronizeControllers:) name:HFControllerDidChangePropertiesNotification object:controller];
-	
-	/* Initially, the scrolling is just synchronized */
-	totalAbstractLength = HFMax([leftBytes length], [rightBytes length]);
-
+        
+        /* Initially, the scrolling is just synchronized */
+        totalAbstractLength = HFMax([leftBytes length], [rightBytes length]);
+        
     }
     return self;
 }
@@ -264,10 +264,10 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
         unsigned long long lineStart = HFFPToUL(floorl(displayedLineRange.location));
         unsigned long long firstByteShown = HFProductULL(bytesPerLine, lineStart);
         unsigned long long leftByteToShow = firstByteShown + [self changeInLengthBeforeByte:firstByteShown onLeft:YES];
-	
-	if ([client contentsLength] > leftByteToShow) {
-	    [client centerContentsRange:HFRangeMake(leftByteToShow, 1)];
-	}
+        
+        if ([client contentsLength] > leftByteToShow) {
+            [client centerContentsRange:HFRangeMake(leftByteToShow, 1)];
+        }
     }
     if (propertyMask & HFControllerBytesPerColumn) {
         [client setBytesPerColumn:[controller bytesPerColumn]];
@@ -281,12 +281,12 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
 - (void)scrollerDidChangeValue:(NSScroller *)control {
     HFASSERT(control == scroller);
     switch ([scroller hitPart]) {
-	case NSScrollerDecrementPage: [self scrollByLines: -(long long)[self visibleLines]]; break;
-	case NSScrollerIncrementPage: [self scrollByLines: (long long)[self visibleLines]]; break;
-	case NSScrollerDecrementLine: [self scrollByLines: -1LL]; break;
-	case NSScrollerIncrementLine: [self scrollByLines: 1LL]; break;
-	case NSScrollerKnob: [self scrollByKnobToValue:[scroller doubleValue]]; break;
-	default: break;
+        case NSScrollerDecrementPage: [self scrollByLines: -(long long)[self visibleLines]]; break;
+        case NSScrollerIncrementPage: [self scrollByLines: (long long)[self visibleLines]]; break;
+        case NSScrollerDecrementLine: [self scrollByLines: -1LL]; break;
+        case NSScrollerIncrementLine: [self scrollByLines: 1LL]; break;
+        case NSScrollerKnob: [self scrollByKnobToValue:[scroller doubleValue]]; break;
+        default: break;
     }
 }
 
@@ -305,21 +305,21 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
     const unsigned long long lastVisibleByte = bpl * HFFPToUL(ceill(displayedLineRange.location + displayedLineRange.length));
     NSUInteger firstVisibleInstruction = NSNotFound, lastVisibleInstruction = NSNotFound;
     for (i=0; i < insnCount; i++) {
-	struct HFEditInstruction_t insn = [editScript instructionAtIndex:i];
-	
-	HFRange rightRange  = insn.dst;
-	
-	if (firstVisibleInstruction == NSNotFound) {
-	    if (rightRange.location >= firstVisibleByte) {
-		firstVisibleInstruction = i;
-		lastVisibleInstruction = i;
-	    }
-	}
-	
-	if (firstVisibleInstruction != NSNotFound) {
-	    if (rightRange.location >= lastVisibleByte) break;
-	    lastVisibleInstruction = i;
-	}
+        struct HFEditInstruction_t insn = [editScript instructionAtIndex:i];
+        
+        HFRange rightRange  = insn.dst;
+        
+        if (firstVisibleInstruction == NSNotFound) {
+            if (rightRange.location >= firstVisibleByte) {
+                firstVisibleInstruction = i;
+                lastVisibleInstruction = i;
+            }
+        }
+        
+        if (firstVisibleInstruction != NSNotFound) {
+            if (rightRange.location >= lastVisibleByte) break;
+            lastVisibleInstruction = i;
+        }
     }
     return NSMakeRange(firstVisibleInstruction, lastVisibleInstruction - firstVisibleInstruction);
 }
@@ -329,39 +329,39 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
     unsigned long long lastToIndex = 0, lastFromIndex = 0;
     NSUInteger i, max = [editScript numberOfInstructions];
     for (i=0; i < max; i++) {
-	struct HFEditInstruction_t insn = [editScript instructionAtIndex:i];
-	HFRange fromRange = (leftToRight ? insn.src : insn.dst);
-	HFRange toRange = (leftToRight ? insn.dst : insn.src);
-    
-	/* We expect our instructions to always be increasing. */
-	HFASSERT(fromRange.location >= lastFromIndex);
-		 
-	if (fromRange.location > targetIndex) {
-	    /* This instruction is past the index we care about, so we're done. Add in the amount of matching space. */
-	    unsigned long long matchingSpace = HFSubtract(targetIndex, lastFromIndex);
-	    lastToIndex = HFSum(lastToIndex, matchingSpace);
-	    lastFromIndex = targetIndex;
-	    break;
-	} 
-	
-	/* We know that fromRange.location <= targetIndex.  Space up to this instruction is matching space.  Advance to that point. */
-	unsigned long long matchingSpace = HFSubtract(fromRange.location, lastFromIndex);
-	lastToIndex = HFSum(lastToIndex, matchingSpace);
-	lastFromIndex = fromRange.location;
-	
-	if (HFLocationInRange(targetIndex, fromRange)) {
-	    /* The index we care about is midway through the instruction, so we're done.  Consider bytes that replace each other to correspond. If From.length is larger than To.length, we'll consider the correspondence to be the last byte of To. */
-	    unsigned long long distanceIntoFrom = HFSubtract(targetIndex, fromRange.location);
-	    unsigned long long distanceIntoTo = MIN(distanceIntoFrom, toRange.length);
-	    lastToIndex = HFSum(lastToIndex, distanceIntoTo);
-	    lastFromIndex = targetIndex;
-	    break;
-	}
-	
-	/* If we're here, it means that targetIndex is still after this instruction, so add the differences in the instruction lengths. */
-	HFASSERT(HFMaxRange(fromRange) <= targetIndex);
-	lastFromIndex = HFSum(lastFromIndex, fromRange.length);
-	lastToIndex = HFSum(lastToIndex, toRange.length);
+        struct HFEditInstruction_t insn = [editScript instructionAtIndex:i];
+        HFRange fromRange = (leftToRight ? insn.src : insn.dst);
+        HFRange toRange = (leftToRight ? insn.dst : insn.src);
+        
+        /* We expect our instructions to always be increasing. */
+        HFASSERT(fromRange.location >= lastFromIndex);
+        
+        if (fromRange.location > targetIndex) {
+            /* This instruction is past the index we care about, so we're done. Add in the amount of matching space. */
+            unsigned long long matchingSpace = HFSubtract(targetIndex, lastFromIndex);
+            lastToIndex = HFSum(lastToIndex, matchingSpace);
+            lastFromIndex = targetIndex;
+            break;
+        } 
+        
+        /* We know that fromRange.location <= targetIndex.  Space up to this instruction is matching space.  Advance to that point. */
+        unsigned long long matchingSpace = HFSubtract(fromRange.location, lastFromIndex);
+        lastToIndex = HFSum(lastToIndex, matchingSpace);
+        lastFromIndex = fromRange.location;
+        
+        if (HFLocationInRange(targetIndex, fromRange)) {
+            /* The index we care about is midway through the instruction, so we're done.  Consider bytes that replace each other to correspond. If From.length is larger than To.length, we'll consider the correspondence to be the last byte of To. */
+            unsigned long long distanceIntoFrom = HFSubtract(targetIndex, fromRange.location);
+            unsigned long long distanceIntoTo = MIN(distanceIntoFrom, toRange.length);
+            lastToIndex = HFSum(lastToIndex, distanceIntoTo);
+            lastFromIndex = targetIndex;
+            break;
+        }
+        
+        /* If we're here, it means that targetIndex is still after this instruction, so add the differences in the instruction lengths. */
+        HFASSERT(HFMaxRange(fromRange) <= targetIndex);
+        lastFromIndex = HFSum(lastFromIndex, fromRange.length);
+        lastToIndex = HFSum(lastToIndex, toRange.length);
     }
     
     /* Any leftover space is matching */
@@ -381,28 +381,28 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
     NSMutableArray *correspondingRanges = [[NSMutableArray alloc] initWithCapacity:count];
     BOOL hasZeroLengthRange = NO, hasNonzeroLengthRange = NO;
     FOREACH(HFRangeWrapper *, rangeWrapper, selectedRanges) {
-	HFRange range = [rangeWrapper HFRange];
-	unsigned long long correspondingStartByte = [self lastCorrespondingByteBeforeByte:range.location onLeft:leftToRight];
-	unsigned long long correspondingEndByte = [self lastCorrespondingByteBeforeByte:HFMaxRange(range) onLeft:leftToRight];
-	HFRange correspondingRange = HFRangeMake(correspondingStartByte, HFSubtract(correspondingEndByte, correspondingStartByte));
-	[correspondingRanges addObject:[HFRangeWrapper withRange:correspondingRange]];
-	hasZeroLengthRange = hasZeroLengthRange || (correspondingRange.length == 0);
-	hasNonzeroLengthRange = hasNonzeroLengthRange || (correspondingRange.length > 0);
+        HFRange range = [rangeWrapper HFRange];
+        unsigned long long correspondingStartByte = [self lastCorrespondingByteBeforeByte:range.location onLeft:leftToRight];
+        unsigned long long correspondingEndByte = [self lastCorrespondingByteBeforeByte:HFMaxRange(range) onLeft:leftToRight];
+        HFRange correspondingRange = HFRangeMake(correspondingStartByte, HFSubtract(correspondingEndByte, correspondingStartByte));
+        [correspondingRanges addObject:[HFRangeWrapper withRange:correspondingRange]];
+        hasZeroLengthRange = hasZeroLengthRange || (correspondingRange.length == 0);
+        hasNonzeroLengthRange = hasNonzeroLengthRange || (correspondingRange.length > 0);
     }
     
     /* Clean up the ranges to ensure that if we have a zero length range, it's all we have. */
     if (hasZeroLengthRange && hasNonzeroLengthRange) {
-	/* Remove all zero length ranges */
-	NSUInteger i = count;
-	while (i--) {
-	    HFRange testRange = [[correspondingRanges objectAtIndex:i] HFRange];
-	    if (testRange.length == 0) [correspondingRanges removeObjectAtIndex:i];
-	}
+        /* Remove all zero length ranges */
+        NSUInteger i = count;
+        while (i--) {
+            HFRange testRange = [[correspondingRanges objectAtIndex:i] HFRange];
+            if (testRange.length == 0) [correspondingRanges removeObjectAtIndex:i];
+        }
     } else if (hasZeroLengthRange && count > 1) {
-	/* We have only zero length ranges.  Keep only the first one. */
-	[correspondingRanges removeObjectsInRange:NSMakeRange(1, count - 1)];
+        /* We have only zero length ranges.  Keep only the first one. */
+        [correspondingRanges removeObjectsInRange:NSMakeRange(1, count - 1)];
     } else {
-	/* We have only non-zero length ranges (or none at all).  Keep it that way. */
+        /* We have only non-zero length ranges (or none at all).  Keep it that way. */
     }
     
     /* Now apply them */
@@ -426,32 +426,32 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
     
     /* Update the overlay view to react to things like the bytes per line changing. */
     if (propertyMask & [self propertiesAffectingOverlayView]) {
-	[self updateInstructionOverlayView];
+        [self updateInstructionOverlayView];
     }
     
     /* Synchronize the selection */
     if (propertyMask & HFControllerSelectedRanges) {
-	[self propagateSelectedRangesFromLeftToRight:controllerIsLeft];
+        [self propagateSelectedRangesFromLeftToRight:controllerIsLeft];
     }
     
 #if 0
     if (changedController != [leftTextView controller]) {
-	[self synchronizeController:[leftTextView controller] properties:propertyMask];
+        [self synchronizeController:[leftTextView controller] properties:propertyMask];
     }
     if (changedController != [rightTextView controller]) {
-	[self synchronizeController:[rightTextView controller] properties:propertyMask];
+        [self synchronizeController:[rightTextView controller] properties:propertyMask];
     }
     
     if (0 && changedController == [rightTextView controller] && (propertyMask & HFControllerDisplayedLineRange)) {
-	/* Scroll our table view to show the instruction.  If our focused instruction is visible, scroll to that; otherwise scroll to the first visible one. */
-	NSRange visibleInstructions = [self visibleInstructionRangeInController:changedController];
-	
-//	NSLog(@"visible instructions: %@", NSStringFromRange(visibleInstructions));
-	if (visibleInstructions.location != NSNotFound) {
-	    [diffTable scrollRowToVisible:NSMaxRange(visibleInstructions)];
-	    [diffTable scrollRowToVisible:visibleInstructions.location];
-	}
-	
+        /* Scroll our table view to show the instruction.  If our focused instruction is visible, scroll to that; otherwise scroll to the first visible one. */
+        NSRange visibleInstructions = [self visibleInstructionRangeInController:changedController];
+        
+        //	NSLog(@"visible instructions: %@", NSStringFromRange(visibleInstructions));
+        if (visibleInstructions.location != NSNotFound) {
+            [diffTable scrollRowToVisible:NSMaxRange(visibleInstructions)];
+            [diffTable scrollRowToVisible:visibleInstructions.location];
+        }
+        
     }
 #endif
     synchronizingControllers = NO;
@@ -460,7 +460,7 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
 - (NSArray *)runningOperationViews {
     NSArray *result = [super runningOperationViews];
     if ([diffComputationView operationIsRunning]) {
-	result = [result arrayByAddingObject:diffComputationView];
+        result = [result arrayByAddingObject:diffComputationView];
     }
     return result;
 }
@@ -473,7 +473,7 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
     HFControllerPropertyBits propertyMask = [propertyNumber unsignedIntValue];
 #endif
     if (propertyMask & [self propertiesAffectingOverlayView]) {
-	[self updateInstructionOverlayView];
+        [self updateInstructionOverlayView];
     }
 }
 
@@ -496,21 +496,21 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
             [[textView layoutRepresenter] removeRepresenter:rep];
             [[textView controller] removeRepresenter:rep];
         }
-	else if ([rep isKindOfClass:[HFTextRepresenter class]]) {
-	    /* Ensure our hex representer is horizontally resizable */
-	    [(NSView *)[hexRepresenter view] setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
-	}
-	else if ([rep isKindOfClass:[HFLineCountingRepresenter class]]) {
-	    foundLineCountingRep = YES;
-	}
+        else if ([rep isKindOfClass:[HFTextRepresenter class]]) {
+            /* Ensure our hex representer is horizontally resizable */
+            [(NSView *)[hexRepresenter view] setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
+        }
+        else if ([rep isKindOfClass:[HFLineCountingRepresenter class]]) {
+            foundLineCountingRep = YES;
+        }
     }
     /* Install a line counting rep if it doesn't already have one */
     if (! foundLineCountingRep) {
-	/* Ensure our left text view has a line counting representer. */
-	HFLineCountingRepresenter *lineCounter = [[HFLineCountingRepresenter alloc] init];
-	[[leftTextView controller] addRepresenter:lineCounter];
-	[[leftTextView layoutRepresenter] addRepresenter:lineCounter];
-	[lineCounter release];	
+        /* Ensure our left text view has a line counting representer. */
+        HFLineCountingRepresenter *lineCounter = [[HFLineCountingRepresenter alloc] init];
+        [[leftTextView controller] addRepresenter:lineCounter];
+        [[leftTextView layoutRepresenter] addRepresenter:lineCounter];
+        [lineCounter release];	
     }
     
     /* It's not editable */
@@ -527,13 +527,13 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
 - (void)computeDiffEnded:(HFByteArrayEditScript *)script {
     /* Hide the script banner */
     if (operationView != nil && operationView == diffComputationView) [self hideBannerFirstThenDo:NULL];
-
+    
     /* script may be nil if we cancelled */
     if (! script) {
-	[self close];
+        [self close];
     } else {
-	editScript = [script retain];
-	[self showInstructionsFromEditScript];	
+        editScript = [script retain];
+        [self showInstructionsFromEditScript];	
     }
 }
 
@@ -541,15 +541,15 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
     HFASSERT(! [diffComputationView operationIsRunning]);
     
     NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-			      leftBytes, @"left",
-			      rightBytes, @"right",
-			      nil];
+                              leftBytes, @"left",
+                              rightBytes, @"right",
+                              nil];
     
     struct HFDocumentOperationCallbacks callbacks = {
-	.target = self,
-	.userInfo = userInfo,
-	.startSelector = @selector(threadedStartComputeDiff:),
-	.endSelector = @selector(computeDiffEnded:)
+        .target = self,
+        .userInfo = userInfo,
+        .startSelector = @selector(threadedStartComputeDiff:),
+        .endSelector = @selector(computeDiffEnded:)
     };
     
     [diffComputationView startOperationWithCallbacks:callbacks];
@@ -558,7 +558,7 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
 - (void)windowControllerDidLoadNib:(NSWindowController *)windowController {
     [super windowControllerDidLoadNib:windowController];
     NSWindow *window = [self window];
-        
+    
     /* Replace the right text view's controller and layout representer with our own */
     [rightTextView setController:controller];
     [rightTextView setLayoutRepresenter:layoutRepresenter];
@@ -587,7 +587,7 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
     
     /* Create the diff computation view */
     if (! diffComputationView) {
-	diffComputationView = [self newOperationViewForNibName:@"DiffComputationBanner" displayName:@"Diffing" fixedHeight:YES];
+        diffComputationView = [self newOperationViewForNibName:@"DiffComputationBanner" displayName:@"Diffing" fixedHeight:YES];
     }
     [self prepareBannerWithView:diffComputationView withTargetFirstResponder:nil];
     [self kickOffComputeDiff];
@@ -626,8 +626,8 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
 
 - (void)setLeftFileName:(NSString *)val {
     if (val != leftFileName) {
-	[leftFileName release];
-	leftFileName = [val copy];
+        [leftFileName release];
+        leftFileName = [val copy];
     }
 }
 
@@ -637,8 +637,8 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
 
 - (void)setRightFileName:(NSString *)val {
     if (val != rightFileName) {
-	[rightFileName release];
-	rightFileName = [val copy];
+        [rightFileName release];
+        rightFileName = [val copy];
     }    
 }
 
@@ -660,23 +660,23 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
     char offsetBuffer[64];
     HFLineNumberFormat format = [lineCountingRepresenter lineNumberFormat];
     switch (format) {
-	default:
-	case HFLineNumberFormatHexadecimal:
-	    snprintf(offsetBuffer, sizeof offsetBuffer, "0x%llx", insn.dst.location);
-	    break;
-	case HFLineNumberFormatDecimal:
-	    snprintf(offsetBuffer, sizeof offsetBuffer, "%llx", insn.dst.location);
-	    break;
+        default:
+        case HFLineNumberFormatHexadecimal:
+            snprintf(offsetBuffer, sizeof offsetBuffer, "0x%llx", insn.dst.location);
+            break;
+        case HFLineNumberFormatDecimal:
+            snprintf(offsetBuffer, sizeof offsetBuffer, "%llx", insn.dst.location);
+            break;
     }
     
     if (insn.src.length == 0) {
-	return [NSString stringWithFormat:@"%lu: Insert %@ at offset 0x%llx", row + 1, HFDescribeByteCount(insn.dst.length), insn.dst.location];
+        return [NSString stringWithFormat:@"%lu: Insert %@ at offset 0x%llx", row + 1, HFDescribeByteCount(insn.dst.length), insn.dst.location];
     }
     else if (insn.dst.length == 0) {
-	return [NSString stringWithFormat:@"%lu: Delete %@ at offset 0x%llx", row + 1, HFDescribeByteCount(insn.src.length), insn.src.location];
+        return [NSString stringWithFormat:@"%lu: Delete %@ at offset 0x%llx", row + 1, HFDescribeByteCount(insn.src.length), insn.src.location];
     }
     else {
-	return [NSString stringWithFormat:@"%lu: Replace %@ at offset 0x%llx with %@", row + 1, HFDescribeByteCount(insn.src.length), insn.src.location, HFDescribeByteCount(insn.dst.length)];
+        return [NSString stringWithFormat:@"%lu: Replace %@ at offset 0x%llx with %@", row + 1, HFDescribeByteCount(insn.src.length), insn.src.location, HFDescribeByteCount(insn.dst.length)];
     }
 }
 
@@ -711,46 +711,46 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
     unsigned long long concreteLocation = 0, abstractLocation = 0;
     unsigned long long remainingConcreteDistance = concreteEndpoint;
     for (i=0; i < max; i++) {
-	struct HFEditInstruction_t insn = [editScript instructionAtIndex:i];
-	
-	HFRange leftRange = insn.src, rightRange = insn.dst;
-	
-	/* Figure out the location of this instruction */
-	unsigned long long insnLocation = (left ? leftRange.location : rightRange.location);
-	
-	/* This is our new concrete location */
-	unsigned long long locationIncrease = HFSubtract(insnLocation, concreteLocation);
-	/* But don't let it increase past the abstract location */
-	locationIncrease = MIN(locationIncrease, remainingConcreteDistance);
-	
-	/* Add it */
-	concreteLocation = HFSum(concreteLocation, locationIncrease);
-	abstractLocation = HFSum(abstractLocation, locationIncrease);
-	remainingConcreteDistance = HFSubtract(remainingConcreteDistance, locationIncrease);
-	
-	/* Maybe we're done */
-	HFASSERT(concreteLocation <= concreteEndpoint);
-	if (concreteLocation == concreteEndpoint) break;
-	
-	/* Figure out how many bytes are in the "from" and "to" part of this instruction */
-	const unsigned long long fromLength = (left ? insn.src.length : insn.dst.length);
-	const unsigned long long toLength = (left ? insn.dst.length : insn.src.length);
-	
-	unsigned long long abstractExpansion = MAX(fromLength, toLength);
-	unsigned long long concreteExpansion = fromLength;
-	
-	/* But don't let it expand more than remainingAbstractDistance */
-	abstractExpansion = MIN(abstractExpansion, remainingConcreteDistance);
-	concreteExpansion = MIN(concreteExpansion, remainingConcreteDistance);
-	
-	/* Add them */
-	concreteLocation = HFSum(concreteLocation, concreteExpansion);
-	abstractLocation = HFSum(abstractLocation, abstractExpansion);
-	remainingConcreteDistance = HFSubtract(remainingConcreteDistance, concreteExpansion);
-	
-	/* Maybe we're done */
-	HFASSERT(concreteLocation <= concreteEndpoint);
-	if (concreteLocation == concreteEndpoint) break;
+        struct HFEditInstruction_t insn = [editScript instructionAtIndex:i];
+        
+        HFRange leftRange = insn.src, rightRange = insn.dst;
+        
+        /* Figure out the location of this instruction */
+        unsigned long long insnLocation = (left ? leftRange.location : rightRange.location);
+        
+        /* This is our new concrete location */
+        unsigned long long locationIncrease = HFSubtract(insnLocation, concreteLocation);
+        /* But don't let it increase past the abstract location */
+        locationIncrease = MIN(locationIncrease, remainingConcreteDistance);
+        
+        /* Add it */
+        concreteLocation = HFSum(concreteLocation, locationIncrease);
+        abstractLocation = HFSum(abstractLocation, locationIncrease);
+        remainingConcreteDistance = HFSubtract(remainingConcreteDistance, locationIncrease);
+        
+        /* Maybe we're done */
+        HFASSERT(concreteLocation <= concreteEndpoint);
+        if (concreteLocation == concreteEndpoint) break;
+        
+        /* Figure out how many bytes are in the "from" and "to" part of this instruction */
+        const unsigned long long fromLength = (left ? insn.src.length : insn.dst.length);
+        const unsigned long long toLength = (left ? insn.dst.length : insn.src.length);
+        
+        unsigned long long abstractExpansion = MAX(fromLength, toLength);
+        unsigned long long concreteExpansion = fromLength;
+        
+        /* But don't let it expand more than remainingAbstractDistance */
+        abstractExpansion = MIN(abstractExpansion, remainingConcreteDistance);
+        concreteExpansion = MIN(concreteExpansion, remainingConcreteDistance);
+        
+        /* Add them */
+        concreteLocation = HFSum(concreteLocation, concreteExpansion);
+        abstractLocation = HFSum(abstractLocation, abstractExpansion);
+        remainingConcreteDistance = HFSubtract(remainingConcreteDistance, concreteExpansion);
+        
+        /* Maybe we're done */
+        HFASSERT(concreteLocation <= concreteEndpoint);
+        if (concreteLocation == concreteEndpoint) break;
     }
     
     /* There may be more remaining after the last instruction */
@@ -765,46 +765,46 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
     unsigned long long concreteLocation = 0, abstractLocation = 0;
     unsigned long long remainingAbstractDistance = abstractEndpoint;
     for (i=0; i < max; i++) {
-	struct HFEditInstruction_t insn = [editScript instructionAtIndex:i];
-	
-	HFRange leftRange = insn.src, rightRange = insn.dst;
+        struct HFEditInstruction_t insn = [editScript instructionAtIndex:i];
+        
+        HFRange leftRange = insn.src, rightRange = insn.dst;
 		
-	/* Figure out the location of this instruction */
-	unsigned long long insnLocation = (left ? leftRange.location : rightRange.location);
-	
-	/* This is our new concrete location */
-	unsigned long long locationIncrease = HFSubtract(insnLocation, concreteLocation);
-	/* But don't let it increase past the abstract location */
-	locationIncrease = MIN(locationIncrease, remainingAbstractDistance);
-
-	/* Add it */
-	concreteLocation = HFSum(concreteLocation, locationIncrease);
-	abstractLocation = HFSum(abstractLocation, locationIncrease);
-	remainingAbstractDistance = HFSubtract(remainingAbstractDistance, locationIncrease);
-	
-	/* Maybe we're done */
-	HFASSERT(abstractLocation <= abstractEndpoint);
-	if (abstractLocation == abstractEndpoint) break;
-	
-	/* Figure out how many bytes are in the "from" and "to" part of this instruction */
-	const unsigned long long fromLength = (left ? insn.src.length : insn.dst.length);
-	const unsigned long long toLength = (left ? insn.dst.length : insn.src.length);
-	
-	unsigned long long abstractExpansion = MAX(fromLength, toLength);
-	unsigned long long concreteExpansion = fromLength;
-	
-	/* But don't let it expand more than remainingAbstractDistance */
-	abstractExpansion = MIN(abstractExpansion, remainingAbstractDistance);
-	concreteExpansion = MIN(concreteExpansion, remainingAbstractDistance);
-	
-	/* Add them */
-	concreteLocation = HFSum(concreteLocation, concreteExpansion);
-	abstractLocation = HFSum(abstractLocation, abstractExpansion);
-	remainingAbstractDistance = HFSubtract(remainingAbstractDistance, abstractExpansion);
-	
-	/* Maybe we're done */
-	HFASSERT(abstractLocation <= abstractEndpoint);
-	if (abstractLocation == abstractEndpoint) break;
+        /* Figure out the location of this instruction */
+        unsigned long long insnLocation = (left ? leftRange.location : rightRange.location);
+        
+        /* This is our new concrete location */
+        unsigned long long locationIncrease = HFSubtract(insnLocation, concreteLocation);
+        /* But don't let it increase past the abstract location */
+        locationIncrease = MIN(locationIncrease, remainingAbstractDistance);
+        
+        /* Add it */
+        concreteLocation = HFSum(concreteLocation, locationIncrease);
+        abstractLocation = HFSum(abstractLocation, locationIncrease);
+        remainingAbstractDistance = HFSubtract(remainingAbstractDistance, locationIncrease);
+        
+        /* Maybe we're done */
+        HFASSERT(abstractLocation <= abstractEndpoint);
+        if (abstractLocation == abstractEndpoint) break;
+        
+        /* Figure out how many bytes are in the "from" and "to" part of this instruction */
+        const unsigned long long fromLength = (left ? insn.src.length : insn.dst.length);
+        const unsigned long long toLength = (left ? insn.dst.length : insn.src.length);
+        
+        unsigned long long abstractExpansion = MAX(fromLength, toLength);
+        unsigned long long concreteExpansion = fromLength;
+        
+        /* But don't let it expand more than remainingAbstractDistance */
+        abstractExpansion = MIN(abstractExpansion, remainingAbstractDistance);
+        concreteExpansion = MIN(concreteExpansion, remainingAbstractDistance);
+        
+        /* Add them */
+        concreteLocation = HFSum(concreteLocation, concreteExpansion);
+        abstractLocation = HFSum(abstractLocation, abstractExpansion);
+        remainingAbstractDistance = HFSubtract(remainingAbstractDistance, abstractExpansion);
+        
+        /* Maybe we're done */
+        HFASSERT(abstractLocation <= abstractEndpoint);
+        if (abstractLocation == abstractEndpoint) break;
     }
     
     /* There may be more remaining after the last instruction */
@@ -819,7 +819,7 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
     HFASSERT(testController == [leftTextView controller] || testController == [rightTextView controller]);
     BOOL left = (testController == [leftTextView controller]);
     const NSUInteger bytesPerLine = [testController bytesPerLine];
-        
+    
     /* Now figure out the change in line length before the start line */
     unsigned long long firstDisplayedAbstractCharacterIndex = HFProductULL(HFFPToUL(floorl(abstractRange.location)), bytesPerLine);
     unsigned long long collapse = [self abstractToConcreteCollapseBeforeAbstractLocation:firstDisplayedAbstractCharacterIndex onLeft:left];
@@ -836,7 +836,7 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
     
     /* Figure out the new start line */
     long double startLine = firstDisplayedConcreteCharacterIndex / bytesPerLine;
-
+    
     /* We, uh, can't have more lines than we can have. */
     const long double maxLineCount = HFULToFP([testController totalLineCount]);
     long double lineCount = MIN(abstractRange.length, maxLineCount);
@@ -865,24 +865,24 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
     
     HFASSERT(lineRange.location >= 0 && lineRange.length >= 0);
     if (length == 0) {
-	value = 0;
-	proportion = 1;
-	enable = NO;
+        value = 0;
+        proportion = 1;
+        enable = NO;
     }
     else {
-	long double availableLines = HFULToFP([self totalLineCount]);
-	long double consumedLines = MAX(1., lineRange.length);
-	proportion = ld2f(lineRange.length / HFULToFP(availableLines));
-	
-	long double maxScroll = availableLines - consumedLines;
-	HFASSERT(maxScroll >= lineRange.location);
-	if (maxScroll == 0.) {
-	    enable = NO;
-	    value = 0;
-	}
-	else {
-	    value = ld2f(lineRange.location / maxScroll);
-	}
+        long double availableLines = HFULToFP([self totalLineCount]);
+        long double consumedLines = MAX(1., lineRange.length);
+        proportion = ld2f(lineRange.length / HFULToFP(availableLines));
+        
+        long double maxScroll = availableLines - consumedLines;
+        HFASSERT(maxScroll >= lineRange.location);
+        if (maxScroll == 0.) {
+            enable = NO;
+            value = 0;
+        }
+        else {
+            value = ld2f(lineRange.location / maxScroll);
+        }
     }
 #if __LP64__
     // must be >= 10_5
@@ -899,10 +899,10 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
     HFASSERT(HFULToFP([self totalLineCount]) >= lineRange.length);
     long double maxScroll = HFULToFP([self totalLineCount]) - lineRange.length;
     if (lines < 0) {
-	lineRange.location -= MIN(lineRange.location, -lines);
+        lineRange.location -= MIN(lineRange.location, -lines);
     }
     else {
-	lineRange.location = MIN(maxScroll, lineRange.location + lines);
+        lineRange.location = MIN(maxScroll, lineRange.location + lines);
     }
     [self setDisplayedLineRange:lineRange];
 }
@@ -944,45 +944,45 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
 
 - (void)scrollToFocusedInstruction {
     if (focusedInstructionIndex < [editScript numberOfInstructions]) {
-	struct HFEditInstruction_t instruction = [editScript instructionAtIndex:focusedInstructionIndex];
-	HFRange leftRange = instruction.src, rightRange = instruction.dst;
-	HFFPRange currentLineRange = [self displayedLineRange];
-	unsigned long long contentsLength = totalAbstractLength;
-	NSUInteger bytesPerLine = [[leftTextView controller] bytesPerLine];
-	HFASSERT(bytesPerLine > 0);
-	unsigned long long totalLineCountTimesBytesPerLine = HFRoundUpToNextMultipleSaturate(contentsLength, bytesPerLine);
-	HFASSERT(totalLineCountTimesBytesPerLine == ULLONG_MAX || totalLineCountTimesBytesPerLine % bytesPerLine == 0);
-	unsigned long long totalLineCount = HFDivideULLRoundingUp(totalLineCountTimesBytesPerLine, bytesPerLine);
-	
-	
-	/* Figure out the line ranges */
-	HFFPRange leftLines = [self abstractLineRangeForConcreteContentsRange:leftRange onLeft:YES];
-	HFFPRange rightLines = [self abstractLineRangeForConcreteContentsRange:rightRange onLeft:NO];
-	
-	/* Construct a line range that encompasses both ranges.  Computing the length is done in a way that tries to preserve precision. */
-	HFFPRange desiredLineRange;
-	desiredLineRange.location = fminl(leftLines.location, rightLines.location);
-	if (leftLines.location + leftLines.length > rightLines.location + rightLines.length) {
-	    desiredLineRange.length = leftLines.length + (leftLines.location - desiredLineRange.location);
-	} else {
-	    desiredLineRange.length = rightLines.length + (rightLines.location - desiredLineRange.location);
-	}
-	
-	/* Try centering this line range */
-	long double proposedScrollLocation;
-	if (desiredLineRange.length <= currentLineRange.length) {
-	    /* Both line ranges fit, so center it */
-	    proposedScrollLocation = desiredLineRange.location - (currentLineRange.length - desiredLineRange.length)/2;
-	} else {
-	    /* The line range doesn't fit, so pin us to the top */
-	    proposedScrollLocation = desiredLineRange.location;
-	}
-	
-	/* Ensure we aren't too big or too little */
-	long double maxScroll = totalLineCount - currentLineRange.length;
-	long double actualScroll = MAX(0, MIN(maxScroll, proposedScrollLocation));
-	
-	[self setDisplayedLineRange:(HFFPRange){actualScroll, currentLineRange.length}];	
+        struct HFEditInstruction_t instruction = [editScript instructionAtIndex:focusedInstructionIndex];
+        HFRange leftRange = instruction.src, rightRange = instruction.dst;
+        HFFPRange currentLineRange = [self displayedLineRange];
+        unsigned long long contentsLength = totalAbstractLength;
+        NSUInteger bytesPerLine = [[leftTextView controller] bytesPerLine];
+        HFASSERT(bytesPerLine > 0);
+        unsigned long long totalLineCountTimesBytesPerLine = HFRoundUpToNextMultipleSaturate(contentsLength, bytesPerLine);
+        HFASSERT(totalLineCountTimesBytesPerLine == ULLONG_MAX || totalLineCountTimesBytesPerLine % bytesPerLine == 0);
+        unsigned long long totalLineCount = HFDivideULLRoundingUp(totalLineCountTimesBytesPerLine, bytesPerLine);
+        
+        
+        /* Figure out the line ranges */
+        HFFPRange leftLines = [self abstractLineRangeForConcreteContentsRange:leftRange onLeft:YES];
+        HFFPRange rightLines = [self abstractLineRangeForConcreteContentsRange:rightRange onLeft:NO];
+        
+        /* Construct a line range that encompasses both ranges.  Computing the length is done in a way that tries to preserve precision. */
+        HFFPRange desiredLineRange;
+        desiredLineRange.location = fminl(leftLines.location, rightLines.location);
+        if (leftLines.location + leftLines.length > rightLines.location + rightLines.length) {
+            desiredLineRange.length = leftLines.length + (leftLines.location - desiredLineRange.location);
+        } else {
+            desiredLineRange.length = rightLines.length + (rightLines.location - desiredLineRange.location);
+        }
+        
+        /* Try centering this line range */
+        long double proposedScrollLocation;
+        if (desiredLineRange.length <= currentLineRange.length) {
+            /* Both line ranges fit, so center it */
+            proposedScrollLocation = desiredLineRange.location - (currentLineRange.length - desiredLineRange.length)/2;
+        } else {
+            /* The line range doesn't fit, so pin us to the top */
+            proposedScrollLocation = desiredLineRange.location;
+        }
+        
+        /* Ensure we aren't too big or too little */
+        long double maxScroll = totalLineCount - currentLineRange.length;
+        long double actualScroll = MAX(0, MIN(maxScroll, proposedScrollLocation));
+        
+        [self setDisplayedLineRange:(HFFPRange){actualScroll, currentLineRange.length}];	
     }
 }
 

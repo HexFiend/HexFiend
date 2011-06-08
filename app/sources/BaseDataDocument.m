@@ -172,8 +172,7 @@ static inline Class preferredByteArrayClass(void) {
 }
 
 - (void)showViewForRepresenter:(HFRepresenter *)rep {
-    NSView *repView = [rep view];
-    HFASSERT([repView superview] == nil && [repView window] == nil);
+    HFASSERT([[rep view] superview] == nil && [[rep view] window] == nil);
     [controller addRepresenter:rep];
     [layoutRepresenter addRepresenter:rep];
 }

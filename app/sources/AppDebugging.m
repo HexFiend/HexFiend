@@ -40,13 +40,11 @@
     NSString *textResult = nil;
     GenericPrompt *pmpt = [[self alloc] initWithPromptText:text];
     NSInteger modalResult = [NSApp runModalForWindow:[pmpt window]];
-    NSLog(@"%ld", modalResult);
     if (modalResult == NSRunStoppedResponse) {
         textResult = [[[pmpt->valueField stringValue] copy] autorelease];
     }
     [pmpt close];
     [pmpt release];
-    NSLog(@"%@", textResult);
     return textResult;
     
 }
@@ -56,6 +54,10 @@
 static unsigned long long unsignedLongLongValue(NSString *s) {
     return strtoull([s UTF8String], NULL, 0);
 }
+
+@interface HFRandomDataByteSlice : HFByteSlice
+- (HFRandomDataByteSlice *)initWithRandomDataLength:(unsigned long long)length;
+@end
 
 
 @implementation BaseDataDocument (AppDebugging)
@@ -82,7 +84,7 @@ static NSString *promptForValue(NSString *promptText) {
     USE(sender);
     unsigned long long length = unsignedLongLongValue(promptForValue(@"How long?"));
     Class clsHFRandomDataByteSlice = NSClassFromString(@"HFRandomDataByteSlice");
-    HFByteSlice *slice = [[clsHFRandomDataByteSlice alloc] initWithLength:length];
+    HFByteSlice *slice = [[clsHFRandomDataByteSlice alloc] initWithRandomDataLength:length];
     HFByteArray *array = [[HFBTreeByteArray alloc] init];
     [array insertByteSlice:slice inRange:HFRangeMake(0, 0)];
     [slice release];
@@ -107,7 +109,7 @@ static NSString *promptForValue(NSString *promptText) {
 	switch ((op = (random()%2))) {
 	    case 0: { //insert
 		offset = random() % (1 + length);
-		HFByteSlice* slice = [[clsHFRandomDataByteSlice alloc] initWithLength: 1 + random() % 1000];
+		HFByteSlice* slice = [[clsHFRandomDataByteSlice alloc] initWithRandomDataLength: 1 + random() % 1000];
 		[byteArray insertByteSlice:slice inRange:HFRangeMake(offset, 0)];
 		[slice release];
 		break;

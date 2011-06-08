@@ -187,9 +187,6 @@
 		D0D149310D8A37580018296B /* HFTestHashing.h in Headers */ = {isa = PBXBuildFile; fileRef = D0D1492F0D8A37580018296B /* HFTestHashing.h */; };
 		D0D149320D8A37580018296B /* HFTestHashing.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D149300D8A37580018296B /* HFTestHashing.m */; };
 		D0D179460D46F20E00684270 /* HFByteSlice_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = D0D179450D46F20E00684270 /* HFByteSlice_Private.h */; };
-		D0D4C09F132CC41000714510 /* HexFiendDifLib.mm in Sources */ = {isa = PBXBuildFile; fileRef = D0D4C09D132CC40F00714510 /* HexFiendDifLib.mm */; };
-		D0D4C0A0132CC41000714510 /* HexFiendDifLib.h in Headers */ = {isa = PBXBuildFile; fileRef = D0D4C09E132CC40F00714510 /* HexFiendDifLib.h */; };
-		D0D4C0A5132D907B00714510 /* HFByteArrayEditScript_Shared.h in Headers */ = {isa = PBXBuildFile; fileRef = D0D4C0A4132D8F7900714510 /* HFByteArrayEditScript_Shared.h */; };
 		D0D828E50CDE89E500C2AB82 /* HFByteSlice.h in Headers */ = {isa = PBXBuildFile; fileRef = D08F5E220CDE843E007EFFE8 /* HFByteSlice.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D0D828E60CDE89E800C2AB82 /* HFFullMemoryByteSlice.h in Headers */ = {isa = PBXBuildFile; fileRef = D08F5E370CDE84F4007EFFE8 /* HFFullMemoryByteSlice.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D0D829110CDE969F00C2AB82 /* HFByteArray.h in Headers */ = {isa = PBXBuildFile; fileRef = D08F5DEF0CDE8223007EFFE8 /* HFByteArray.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -488,10 +485,6 @@
 		D0D1492F0D8A37580018296B /* HFTestHashing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFTestHashing.h; path = sources/HFTestHashing.h; sourceTree = "<group>"; };
 		D0D149300D8A37580018296B /* HFTestHashing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFTestHashing.m; path = sources/HFTestHashing.m; sourceTree = "<group>"; };
 		D0D179450D46F20E00684270 /* HFByteSlice_Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFByteSlice_Private.h; path = sources/HFByteSlice_Private.h; sourceTree = "<group>"; };
-		D0D4C092132CC37E00714510 /* libHexFiendDiffLib.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libHexFiendDiffLib.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		D0D4C09D132CC40F00714510 /* HexFiendDifLib.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = HexFiendDifLib.mm; path = HexFiend_2.xcodeproj/HexFiendDifLib.mm; sourceTree = "<group>"; };
-		D0D4C09E132CC40F00714510 /* HexFiendDifLib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HexFiendDifLib.h; path = HexFiend_2.xcodeproj/HexFiendDifLib.h; sourceTree = "<group>"; };
-		D0D4C0A4132D8F7900714510 /* HFByteArrayEditScript_Shared.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HFByteArrayEditScript_Shared.h; sourceTree = "<group>"; };
 		D0D828FE0CDE8ABE00C2AB82 /* HFFullMemoryByteArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFFullMemoryByteArray.h; path = sources/HFFullMemoryByteArray.h; sourceTree = "<group>"; };
 		D0D828FF0CDE8ABE00C2AB82 /* HFFullMemoryByteArray.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFFullMemoryByteArray.m; path = sources/HFFullMemoryByteArray.m; sourceTree = "<group>"; };
 		D0D8C2AF12A3BE4300960FC4 /* ChooseStringEncodingDialog.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = ChooseStringEncodingDialog.xib; path = app/resources/ChooseStringEncodingDialog.xib; sourceTree = "<group>"; };
@@ -554,13 +547,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		D0D4C08F132CC37E00714510 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		D0DEC2A9102F9B4C00F90467 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -599,7 +585,6 @@
 				D00C15E50FF091FF006D021F /* HexFiendling.app */,
 				D047E3151022CEFE00EF307B /* FortunateSon */,
 				D0DEC2AB102F9B4C00F90467 /* FortunateSonCopier */,
-				D0D4C092132CC37E00714510 /* libHexFiendDiffLib.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -610,7 +595,6 @@
 				D0560B350CDC4248009D2484 /* Framework */,
 				D0560B380CDC4253009D2484 /* App */,
 				D047E33B1022CF2B00EF307B /* PrivilegedHelper */,
-				D0D4C0A1132CC41F00714510 /* DiffLib */,
 				D00C166E0FF4925A006D021F /* HexFiendling */,
 				D019310E0D5AE97A0019B3F7 /* IB Plugin */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
@@ -980,7 +964,6 @@
 				D0114CA81006D1DF00DAF4CE /* HFByteArrayProxiedData.m */,
 				D0A1F2EB11439B9D008BB3BA /* HFByteArrayEditScript.h */,
 				D0A1F2EC11439B9D008BB3BA /* HFByteArrayEditScript.m */,
-				D0D4C0A4132D8F7900714510 /* HFByteArrayEditScript_Shared.h */,
 				D06D5FE70FA699B8002376EE /* BTree */,
 			);
 			name = ByteArray;
@@ -1017,15 +1000,6 @@
 				D0B422A00FF845F800DF27E5 /* HFTextView.m */,
 			);
 			name = "High Level Views";
-			sourceTree = "<group>";
-		};
-		D0D4C0A1132CC41F00714510 /* DiffLib */ = {
-			isa = PBXGroup;
-			children = (
-				D0D4C09E132CC40F00714510 /* HexFiendDifLib.h */,
-				D0D4C09D132CC40F00714510 /* HexFiendDifLib.mm */,
-			);
-			name = DiffLib;
 			sourceTree = "<group>";
 		};
 		D0D8C45C12A3EF3F00960FC4 /* Dialogs */ = {
@@ -1110,15 +1084,6 @@
 				D010173610491BB200536FBC /* HFTextVisualStyleRun.h in Headers */,
 				D0BAA835120A7DE800D8FB51 /* HFIndexSet.h in Headers */,
 				D0315BEC1225C553008C9EAB /* HFAnnotatedTree.h in Headers */,
-				D0D4C0A5132D907B00714510 /* HFByteArrayEditScript_Shared.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		D0D4C090132CC37E00714510 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				D0D4C0A0132CC41000714510 /* HexFiendDifLib.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1236,23 +1201,6 @@
 			productReference = D06D60100FA69B26002376EE /* Test_BTree */;
 			productType = "com.apple.product-type.tool";
 		};
-		D0D4C091132CC37E00714510 /* HexFiendDiffLib */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = D0D4C093132CC37E00714510 /* Build configuration list for PBXNativeTarget "HexFiendDiffLib" */;
-			buildPhases = (
-				D0D4C08E132CC37E00714510 /* Sources */,
-				D0D4C08F132CC37E00714510 /* Frameworks */,
-				D0D4C090132CC37E00714510 /* Headers */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = HexFiendDiffLib;
-			productName = HexFiendDiffLib;
-			productReference = D0D4C092132CC37E00714510 /* libHexFiendDiffLib.a */;
-			productType = "com.apple.product-type.library.static";
-		};
 		D0DEC2AA102F9B4C00F90467 /* FortunateSonCopier */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = D0DEC2B6102F9B6600F90467 /* Build configuration list for PBXNativeTarget "FortunateSonCopier" */;
@@ -1294,7 +1242,6 @@
 			targets = (
 				8D1107260486CEB800E47090 /* HexFiend_2 */,
 				D01E7BB70CDC530C00943F9E /* HexFiend_Framework */,
-				D0D4C091132CC37E00714510 /* HexFiendDiffLib */,
 				D01930990D5AE3B40019B3F7 /* HexFiend_IBPlugin */,
 				D0DEC2AA102F9B4C00F90467 /* FortunateSonCopier */,
 				D047E3141022CEFE00EF307B /* FortunateSon */,
@@ -1504,14 +1451,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		D0D4C08E132CC37E00714510 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				D0D4C09F132CC41000714510 /* HexFiendDifLib.mm in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		D0DEC2A8102F9B4C00F90467 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1684,7 +1623,9 @@
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "x86_64 i386 ppc";
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_PREPROCESSOR_DEFINITIONS = "NDEBUG=1";
+				GCC_STRICT_ALIASING = YES;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
@@ -1969,6 +1910,7 @@
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_STRICT_ALIASING = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.4;
@@ -2283,6 +2225,7 @@
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_PREPROCESSOR_DEFINITIONS = "NDEBUG=1";
+				GCC_STRICT_ALIASING = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.4;
@@ -2394,6 +2337,7 @@
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_STRICT_ALIASING = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.4;
@@ -2516,6 +2460,7 @@
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = "HFUNIT_TESTS=1";
+				GCC_STRICT_ALIASING = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.4;
@@ -2641,6 +2586,7 @@
 					"HFUNIT_TESTS=1",
 					"NDEBUG=1",
 				);
+				GCC_STRICT_ALIASING = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.4;
@@ -2754,134 +2700,6 @@
 				ZERO_LINK = YES;
 			};
 			name = "Debug-UnitTests-Optimized";
-		};
-		D0D4C094132CC37E00714510 /* Debug-NoUnitTests */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ONLY_ACTIVE_ARCH_PRE_XCODE_3_1)";
-				COPY_PHASE_STRIP = NO;
-				EXECUTABLE_PREFIX = lib;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = DEBUG;
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.6;
-				ONLY_ACTIVE_ARCH_PRE_XCODE_3_1 = "$(NATIVE_ARCH_ACTUAL)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
-			};
-			name = "Debug-NoUnitTests";
-		};
-		D0D4C095132CC37E00714510 /* Debug-NoUnitTests-NoAnalyze */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ONLY_ACTIVE_ARCH_PRE_XCODE_3_1)";
-				COPY_PHASE_STRIP = NO;
-				EXECUTABLE_PREFIX = lib;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = DEBUG;
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.6;
-				ONLY_ACTIVE_ARCH_PRE_XCODE_3_1 = "$(NATIVE_ARCH_ACTUAL)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
-			};
-			name = "Debug-NoUnitTests-NoAnalyze";
-		};
-		D0D4C096132CC37E00714510 /* Debug-UnitTests */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ONLY_ACTIVE_ARCH_PRE_XCODE_3_1)";
-				COPY_PHASE_STRIP = NO;
-				EXECUTABLE_PREFIX = lib;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = DEBUG;
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.6;
-				ONLY_ACTIVE_ARCH_PRE_XCODE_3_1 = "$(NATIVE_ARCH_ACTUAL)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
-			};
-			name = "Debug-UnitTests";
-		};
-		D0D4C097132CC37E00714510 /* Debug-UnitTests-Optimized */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ONLY_ACTIVE_ARCH_PRE_XCODE_3_1)";
-				COPY_PHASE_STRIP = NO;
-				EXECUTABLE_PREFIX = lib;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = DEBUG;
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.6;
-				ONLY_ACTIVE_ARCH_PRE_XCODE_3_1 = "$(NATIVE_ARCH_ACTUAL)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
-			};
-			name = "Debug-UnitTests-Optimized";
-		};
-		D0D4C098132CC37E00714510 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				EXECUTABLE_PREFIX = lib;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.6;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
-			};
-			name = Release;
-		};
-		D0D4C099132CC37E00714510 /* Release-GC */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				EXECUTABLE_PREFIX = lib;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.6;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
-			};
-			name = "Release-GC";
 		};
 		D0DEC2AD102F9B4D00F90467 /* Debug-NoUnitTests */ = {
 			isa = XCBuildConfiguration;
@@ -3078,18 +2896,6 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = "Debug-NoUnitTests";
-		};
-		D0D4C093132CC37E00714510 /* Build configuration list for PBXNativeTarget "HexFiendDiffLib" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				D0D4C094132CC37E00714510 /* Debug-NoUnitTests */,
-				D0D4C095132CC37E00714510 /* Debug-NoUnitTests-NoAnalyze */,
-				D0D4C096132CC37E00714510 /* Debug-UnitTests */,
-				D0D4C097132CC37E00714510 /* Debug-UnitTests-Optimized */,
-				D0D4C098132CC37E00714510 /* Release */,
-				D0D4C099132CC37E00714510 /* Release-GC */,
-			);
-			defaultConfigurationIsVisible = 0;
 		};
 		D0DEC2B6102F9B6600F90467 /* Build configuration list for PBXNativeTarget "FortunateSonCopier" */ = {
 			isa = XCConfigurationList;

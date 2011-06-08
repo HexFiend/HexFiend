@@ -67,8 +67,15 @@ static CGFloat norm(unsigned char x) {
 - (id)initWithFrame:(NSRect)frame {
     [super initWithFrame:frame];
     NSColor *colors[3];
+#if 1
+    // Aqua gradient */
     colors[0] = [NSColor colorWithCalibratedRed:norm(163) green:norm(207) blue:norm(246) alpha:1];
     colors[1] = [NSColor colorWithCalibratedRed:norm(119) green:norm(196) blue:norm(248) alpha:1];
+#else
+    // Gray gradient
+    colors[0] = [NSColor colorWithCalibratedRed:norm(207) green:norm(207) blue:norm(207) alpha:1];
+    colors[1] = [NSColor colorWithCalibratedRed:norm(155) green:norm(155) blue:norm(155) alpha:1];
+#endif
     colors[2] = colors[0];
     gradient = [[NSGradient alloc] initWithColors:[NSArray arrayWithObjects:colors count:sizeof colors / sizeof *colors]];
     
