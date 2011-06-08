@@ -56,17 +56,22 @@
     return [super init];
 }
 
-- (id)mutableCopyWithZone:(NSZone *)zone { UNIMPLEMENTED(); }
-- (NSSet *)attributesAtIndex:(unsigned long long)index length:(unsigned long long *)length { UNIMPLEMENTED(); }
-- (NSSet *)attributesInRange:(HFRange)range { UNIMPLEMENTED(); }
-- (HFRange)rangeOfAttribute:(NSString *)attribute { UNIMPLEMENTED_VOID(); return HFRangeMake(0, 0); }
-- (void)addAttribute:(NSString *)attributeName range:(HFRange)range { UNIMPLEMENTED_VOID(); }
-- (void)removeAttribute:(NSString *)attributeName range:(HFRange)range { UNIMPLEMENTED_VOID(); }
-- (void)removeAttribute:(NSString *)attributeName { UNIMPLEMENTED_VOID(); }
-- (void)removeAttributes:(NSSet *)attributeName { UNIMPLEMENTED_VOID(); }
+- (id)mutableCopyWithZone:(NSZone *)zone { USE(zone); UNIMPLEMENTED(); }
+- (NSSet *)attributesAtIndex:(unsigned long long)index length:(unsigned long long *)length { USE(index); USE(length); UNIMPLEMENTED(); }
+- (NSSet *)attributesInRange:(HFRange)range { USE(range); UNIMPLEMENTED(); }
+- (HFRange)rangeOfAttribute:(NSString *)attribute { USE(attribute); UNIMPLEMENTED_VOID(); return HFRangeMake(0, 0); }
+- (void)addAttribute:(NSString *)attributeName range:(HFRange)range { USE(attributeName); USE(range); UNIMPLEMENTED_VOID(); }
+- (void)removeAttribute:(NSString *)attributeName range:(HFRange)range { USE(attributeName); USE(range); UNIMPLEMENTED_VOID(); }
+- (void)removeAttribute:(NSString *)attributeName { USE(attributeName); UNIMPLEMENTED_VOID(); }
+- (void)removeAttributes:(NSSet *)attributeName { USE(attributeName); UNIMPLEMENTED_VOID(); }
 - (BOOL)isEmpty { UNIMPLEMENTED(); }
 - (NSEnumerator *)attributeEnumerator { UNIMPLEMENTED(); }
-- (void)transferAttributesFromAttributeArray:(HFByteRangeAttributeArray *)array range:(HFRange)range baseOffset:(unsigned long long)baseOffset { UNIMPLEMENTED_VOID(); }
+- (void)transferAttributesFromAttributeArray:(HFByteRangeAttributeArray *)array range:(HFRange)range baseOffset:(unsigned long long)baseOffset {
+    USE(array);
+    USE(range);
+    USE(baseOffset);
+    UNIMPLEMENTED_VOID();
+}
 
 - (BOOL)isEqual:(HFByteRangeAttributeArray *)array {
     if (! [array isKindOfClass:[HFByteRangeAttributeArray class]]) return NO;
@@ -424,6 +429,7 @@ static void insertIntoDictionaryOfSets(NSMutableDictionary *dictionary, NSString
 }
 
 static BOOL collectNodesWithAttribute(HFByteRangeAttributeArrayNode *node, HFRange intersection, void *userInfoP) {
+    USE(intersection);
     [(id)userInfoP addObject:node];
     return YES; //continue
 }
@@ -532,6 +538,7 @@ struct FindAttribute_t {
     HFRange resultRange;
 };
 static BOOL findAttribute(HFByteRangeAttributeArrayNode *node, HFRange intersection, void *userInfoP) {
+    USE(intersection);
     BOOL result = YES; /* assume continue */
     struct FindAttribute_t *userInfo = userInfoP;
     if ([userInfo->attribute isEqualToString:node->attribute]) {
@@ -551,6 +558,7 @@ static BOOL findAttribute(HFByteRangeAttributeArrayNode *node, HFRange intersect
 }
 
 static BOOL fetchAttributes(HFByteRangeAttributeArrayNode *node, HFRange range, void *userInfo) {
+    USE(range);
     [(NSMutableSet *)userInfo addObject:[node attribute]];
     return YES; /* continue fetching */
 }

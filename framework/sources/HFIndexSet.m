@@ -161,11 +161,13 @@ static BOOL nsindexset_containsIndexesInRange(NSIndexSet *indexSet, NSRange rang
 
 - (id)copyWithZone:(NSZone *)zone {
     /* Usual Cocoa thing */
+    USE(zone);
     return [self retain];
 }
 
 - (id)mutableCopyWithZone:(NSZone *)zone {
     /* Usual Cocoa thing */
+    USE(zone);
     return [(HFMutableIndexSet *)[HFMutableIndexSet alloc] initWithIndexSet:self];
 }
 
@@ -299,6 +301,7 @@ static BOOL nsindexset_containsIndexesInRange(NSIndexSet *indexSet, NSRange rang
 
 - (id)copyWithZone:(NSZone *)zone {
     /* Usual Cocoa thing */
+    USE(zone);
     return [(HFIndexSet *)[HFIndexSet alloc] initWithIndexSet:self];
 }
 

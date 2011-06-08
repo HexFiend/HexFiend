@@ -37,6 +37,9 @@ enum {
 
 #define HEURISTIC_THRESHOLD 1024 * 64
 
+// This is the type of an abstract index in some local LCS problem
+typedef int32_t LocalIndex_t;
+
 //GraphIndex_t must be big enough to hold a value in the range [0, HEURISTIC_THRESHOLD)
 typedef int32_t GraphIndex_t;
 
@@ -118,10 +121,7 @@ struct TLCacheGroup_t {
     
     /* The growable arrays for storing the furthest reaching D-paths */
     struct GrowableArray_t forwardsArray, backwardsArray;
-    
-    /* The list of instructions */
-    struct HFEditInstruction_t *insns;
-    size_t insnCount;
+
 } __attribute__ ((aligned (16)));
 
 /* Create a cache. */
@@ -162,30 +162,6 @@ struct Snake_t {
     bool hasNonEmptySnake;
 };
 
-/* A linked list for holding some instructions */
-
-//255 allows the total size of the struct to be < 8192
-#define INSTRUCTION_LIST_CHUNK 255
-struct InstructionList_t {
-    struct InstructionList_t *next;    
-    uint32_t count;
-    struct HFEditInstruction_t insns[INSTRUCTION_LIST_CHUNK]; 
-};
-
-
-enum HFEditInstructionType {
-    HFEditInstructionTypeDelete,
-    HFEditInstructionTypeInsert,
-    HFEditInstructionTypeReplace
-};
-
-static inline enum HFEditInstructionType HFByteArrayInstructionType(struct HFEditInstruction_t insn) {
-    HFASSERT(insn.src.length > 0 || insn.dst.length > 0);
-    if (insn.src.length == 0) return HFEditInstructionTypeInsert;
-    else if (insn.dst.length == 0) return HFEditInstructionTypeDelete;
-    else return HFEditInstructionTypeReplace;
-}
-
 
 static BOOL can_merge_instruction(const struct HFEditInstruction_t *left, const struct HFEditInstruction_t *right) {
     /* We can merge these if one (or both) of the dest ranges are empty, or if they are abutting.  Note that if a destination is empty, we have to copy the location from the other one, because we like to give nonsense locations (-1) to zero length ranges.  src never has a nonsense location. */
@@ -209,14 +185,15 @@ static BOOL merge_instruction(struct HFEditInstruction_t *left, const struct HFE
 #include <xmmintrin.h>
 
 /* match_forwards and match_backwards are assumed to be fast enough and to operate on small enough buffers that they don't have to check for cancellation. */
-static inline size_t match_forwards(const unsigned char * restrict a, const unsigned char * restrict b, size_t length) {
+BYTEARRAY_RELEASE_INLINE
+static LocalIndex_t match_forwards(const unsigned char * restrict a, const unsigned char * restrict b, LocalIndex_t length) {
     /* Quick check for first few bytes in the likely event that we have no snake */
     if (length >= 2) {
         if (a[0] != b[0]) return 0;
         if (a[1] != b[1]) return 1;
     }
     
-    for (size_t i = 0; i < length; i+=16) {
+    for (LocalIndex_t i = 0; i < length; i+=16) {
         __m128i aVec = _mm_loadu_si128((const __m128i *)a);
         __m128i bVec = _mm_loadu_si128((const __m128i *)b);
         __m128i cmpVec = _mm_cmpeq_epi8(aVec, bVec);
@@ -237,8 +214,9 @@ static inline size_t match_forwards(const unsigned char * restrict a, const unsi
 }
 
 /* I haven't written this guy yet */
-static inline size_t match_backwards(const unsigned char * restrict a, const unsigned char * restrict b, size_t length) {
-    size_t i = length;
+BYTEARRAY_RELEASE_INLINE
+static LocalIndex_t match_backwards(const unsigned char * restrict a, const unsigned char * restrict b, LocalIndex_t length) {
+    LocalIndex_t i = length;
     while (i > 0 && a[i-1] == b[i-1]) {
         i--;
     }
@@ -248,16 +226,18 @@ static inline size_t match_backwards(const unsigned char * restrict a, const uns
 #else
 
 /* Non-optimized reference versions of the difference matching */
-static inline size_t match_forwards(const unsigned char * restrict a, const unsigned char * restrict b, size_t length) {
-    size_t i = 0;
+BYTEARRAY_RELEASE_INLINE
+static LocalIndex_t match_forwards(const unsigned char * restrict a, const unsigned char * restrict b, LocalIndex_t length) {
+    LocalIndex_t i = 0;
     while (i < length && a[i] == b[i]) {
         i++;
     }
     return i;
 }
 
-static inline size_t match_backwards(const unsigned char * restrict a, const unsigned char * restrict b, size_t length) {
-    size_t i = length;
+BYTEARRAY_RELEASE_INLINE
+static LocalIndex_t match_backwards(const unsigned char * restrict a, const unsigned char * restrict b, LocalIndex_t length) {
+    LocalIndex_t i = length;
     while (i > 0 && a[i-1] == b[i-1]) {
         i--;
     }
@@ -322,7 +302,7 @@ static void append_instruction(HFByteArrayEditScript *self, HFRange rangeInA, HF
 
 
 /* Returns a pointer to bytes in the given range in the given array, whose length is arrayLen.  Here we avoid using HFRange because compilers are not good at optimizing structs. */
-static inline const unsigned char *get_cached_bytes(HFByteArrayEditScript *self, struct TLCacheGroup_t * restrict cacheList, HFByteArray *array, unsigned long long arrayLen, unsigned long long desiredLocation, unsigned long desiredLength, unsigned int cacheIndex) {
+static inline const unsigned char *get_cached_bytes(HFByteArrayEditScript *self, struct TLCacheGroup_t * restrict cacheList, HFByteArray *array, unsigned long long arrayLen, unsigned long long desiredLocation, size_t desiredLength, unsigned int cacheIndex) {
     USE(self);
     const HFRange desiredRange = HFRangeMake(desiredLocation, desiredLength);
     HFASSERT(desiredRange.length <= CACHE_AMOUNT);
@@ -384,17 +364,18 @@ static inline const unsigned char *get_cached_bytes(HFByteArrayEditScript *self,
     }
 }
 
-static inline unsigned long long compute_forwards_snake_length(HFByteArrayEditScript *self, struct TLCacheGroup_t * restrict cacheGroup, HFByteArray *a, unsigned long long a_offset, unsigned long long a_len, HFByteArray *b, unsigned long long b_offset, unsigned long long b_len, volatile int64_t * restrict outProgress, const volatile int *cancelRequested) {
+BYTEARRAY_RELEASE_INLINE
+static unsigned long long compute_forwards_snake_length(HFByteArrayEditScript *self, struct TLCacheGroup_t * restrict cacheGroup, HFByteArray *a, unsigned long long a_offset, unsigned long long a_len, HFByteArray *b, unsigned long long b_offset, unsigned long long b_len, volatile int64_t * restrict outProgress, const volatile int *cancelRequested) {
     HFASSERT(a_len > 0 && b_len > 0);
     HFASSERT(a_len + a_offset <= self->sourceLength);
     HFASSERT(b_len + b_offset <= self->destLength);
     unsigned long long alreadyRead = 0, remainingToRead = MIN(a_len, b_len);
     unsigned long long progressConsumed = 0;
     while (remainingToRead > 0) {
-        unsigned long amountToRead = MIN(READ_AMOUNT, remainingToRead);
+        LocalIndex_t amountToRead = MIN(READ_AMOUNT, remainingToRead);
         const unsigned char *a_buff = get_cached_bytes(self, cacheGroup, a, self->sourceLength, a_offset + alreadyRead, amountToRead, SourceForwards);
         const unsigned char *b_buff = get_cached_bytes(self, cacheGroup, b, self->destLength, b_offset + alreadyRead, amountToRead, DestForwards);
-        unsigned long matchLen = match_forwards(a_buff, b_buff, amountToRead);
+        LocalIndex_t matchLen = match_forwards(a_buff, b_buff, amountToRead);
         alreadyRead += matchLen;
         remainingToRead -= matchLen;
         
@@ -410,7 +391,8 @@ static inline unsigned long long compute_forwards_snake_length(HFByteArrayEditSc
 }
 
 /* returns the backwards snake of length no more than MIN(a_len, b_len), starting at a_offset, b_offset (exclusive) */
-static inline unsigned long long compute_backwards_snake_length(HFByteArrayEditScript *self, struct TLCacheGroup_t * restrict cacheGroup, HFByteArray *a, unsigned long long a_offset, unsigned long long a_len, HFByteArray *b, unsigned long long b_offset, unsigned long long b_len, volatile int64_t * restrict outProgress, const volatile int *cancelRequested) {
+BYTEARRAY_RELEASE_INLINE
+static unsigned long long compute_backwards_snake_length(HFByteArrayEditScript *self, struct TLCacheGroup_t * restrict cacheGroup, HFByteArray *a, unsigned long long a_offset, unsigned long long a_len, HFByteArray *b, unsigned long long b_offset, unsigned long long b_len, volatile int64_t * restrict outProgress, const volatile int *cancelRequested) {
     HFASSERT(a_offset <= self->sourceLength);
     HFASSERT(b_offset <= self->destLength);
     HFASSERT(a_len <= a_offset);
@@ -418,10 +400,10 @@ static inline unsigned long long compute_backwards_snake_length(HFByteArrayEditS
     unsigned long long alreadyRead = 0, remainingToRead = MIN(a_len, b_len);
     unsigned long long progressConsumed = 0;
     while (remainingToRead > 0) {
-        unsigned long amountToRead = MIN(READ_AMOUNT, remainingToRead);
+        LocalIndex_t amountToRead = MIN(READ_AMOUNT, remainingToRead);
         const unsigned char *a_buff = get_cached_bytes(self, cacheGroup, a, self->sourceLength, a_offset - alreadyRead - amountToRead, amountToRead, SourceBackwards);
         const unsigned char *b_buff = get_cached_bytes(self, cacheGroup, b, self->destLength, b_offset - alreadyRead - amountToRead, amountToRead, DestBackwards);
-        size_t matchLen = match_backwards(a_buff, b_buff, amountToRead);
+        LocalIndex_t matchLen = match_backwards(a_buff, b_buff, amountToRead);
         remainingToRead -= matchLen;
         alreadyRead += matchLen;
         
@@ -437,14 +419,11 @@ static inline unsigned long long compute_backwards_snake_length(HFByteArrayEditS
 }
 
 BYTEARRAY_RELEASE_INLINE
-static BOOL prettyGoodSnakeTraversal(HFByteArrayEditScript *self, const unsigned char * restrict aBuff, const unsigned char * restrict bBuff, BOOL forwards, long k, long D, GraphIndex_t *restrict vector, long aLen, long bLen, struct Snake_t * restrict result) {
+static BOOL prettyGoodSnakeTraversal(HFByteArrayEditScript *self, const unsigned char * restrict aBuff, const unsigned char * restrict bBuff, BOOL forwards, LocalIndex_t k, LocalIndex_t D, GraphIndex_t *restrict vector, LocalIndex_t aLen, LocalIndex_t bLen, struct Snake_t * restrict result) {
     USE(self);
     /* It would be nice if this could be combined with computeMiddleSnakeTraversal */
     
-    // We like to use GraphIndex_t instead of long long here, so make sure k fits in one
-    HFASSERT(k == (GraphIndex_t)k);
-    
-    GraphIndex_t x, y;
+    LocalIndex_t x, y;
     
     /* k-1 represents considering a movement from the left, while k + 1 represents considering a movement from above */
     if (k == -D || (k != D && vector[k-1] < vector[k+1])) {
@@ -452,7 +431,7 @@ static BOOL prettyGoodSnakeTraversal(HFByteArrayEditScript *self, const unsigned
     } else {
         x = vector[k - 1] + 1; // right
     }
-    y = x - (GraphIndex_t)k;
+    y = x - k;
 
     // In this variant of the algorithm we require that we always be inside the rectangle
     HFASSERT(x >= 0);
@@ -460,13 +439,11 @@ static BOOL prettyGoodSnakeTraversal(HFByteArrayEditScript *self, const unsigned
     HFASSERT(x < aLen);
     HFASSERT(y < bLen);
     
-    // find the end of the furthest reaching forward D-path in diagonal k
-    long snakeLength = 0;
+    /* Find the end of the furthest reaching forward D-path in diagonal k */
+    LocalIndex_t snakeLength = 0;
 
-    long maxSnakeLength = 0;
-    
     /* The intent is that "forwards" is a known constant, so with the forced inlining above, this branch can be evaluated at compile time */
-    maxSnakeLength = MIN(aLen - x - 1, bLen - y - 1);
+    LocalIndex_t maxSnakeLength = MIN(aLen - x - 1, bLen - y - 1);
     if (forwards) {
         snakeLength = match_forwards(aBuff + x, bBuff + y, maxSnakeLength);
     } else {
@@ -499,7 +476,7 @@ static BOOL prettyGoodSnakeTraversal(HFByteArrayEditScript *self, const unsigned
 }
 
 BYTEARRAY_RELEASE_INLINE
-static unsigned long long computeMiddleSnakeTraversal(HFByteArrayEditScript *self, const unsigned char * restrict aBuff, const unsigned char * restrict bBuff, BOOL forwards, long k, long D, GraphIndex_t *restrict vector, long aLen, long bLen, struct Snake_t * restrict outSnake) {
+static LocalIndex_t computeMiddleSnakeTraversal(HFByteArrayEditScript *self, const unsigned char * restrict aBuff, const unsigned char * restrict bBuff, BOOL forwards, LocalIndex_t k, LocalIndex_t D, GraphIndex_t *restrict vector, LocalIndex_t aLen, LocalIndex_t bLen, struct Snake_t * restrict outSnake) {
     USE(self);
     GraphIndex_t x, y;
     
@@ -512,13 +489,13 @@ static unsigned long long computeMiddleSnakeTraversal(HFByteArrayEditScript *sel
     } else {
         x = vector[k - 1] + 1; // right
     }
-    y = x - (GraphIndex_t)k;
+    y = x - k;
     
     // find the end of the furthest reaching forward D-path in diagonal k.  We require x >= 0, but we don't need to check for it since it's guaranteed by the algorithm.
-    size_t snakeLength = 0;
+    LocalIndex_t snakeLength = 0;
     HFASSERT(x >= 0);
     HFASSERT(y >= 0); //I think this is right
-    long maxSnakeLength = MIN(aLen - x, bLen - y);
+    LocalIndex_t maxSnakeLength = MIN(aLen - x, bLen - y);
     
     if (maxSnakeLength > 0) {
         /* The intent is that both "forwards" is a known constant, so with the forced inlining above, these branches can be evaluated at compile time */
@@ -535,26 +512,30 @@ static unsigned long long computeMiddleSnakeTraversal(HFByteArrayEditScript *sel
 }
 
 BYTEARRAY_RELEASE_INLINE
-static BOOL computeMiddleSnakeTraversal_OverlapCheck(HFByteArrayEditScript *self, const unsigned char * restrict aBuff, const unsigned char * restrict bBuff, BOOL forwards, long k, long D, GraphIndex_t *restrict vector, long aLen, long bLen, unsigned long long xOffset, unsigned long long yOffset, const GraphIndex_t *restrict overlapVector, struct Snake_t *restrict result) {
+static BOOL computeMiddleSnakeTraversal_OverlapCheck(HFByteArrayEditScript *self, const unsigned char * restrict aBuff, const unsigned char * restrict bBuff, BOOL forwards, LocalIndex_t k, LocalIndex_t D, GraphIndex_t *restrict vector, LocalIndex_t aLen, LocalIndex_t bLen, const GraphIndex_t *restrict overlapVector, struct Snake_t *restrict result) {
     
     /* Traverse the snake */
-    unsigned long long snakeLength = computeMiddleSnakeTraversal(self, aBuff, bBuff, forwards, k, D, vector, aLen, bLen, result);
+    LocalIndex_t snakeLength = computeMiddleSnakeTraversal(self, aBuff, bBuff, forwards, k, D, vector, aLen, bLen, result);
+    HFASSERT(snakeLength >= 0);
     
     /* Check for overlap */
     long delta = bLen - aLen;
     long flippedK = -(k + delta);
     if (vector[k] + overlapVector[flippedK] >= aLen) {
+        LocalIndex_t startX, startY;
         if (forwards) {
-            result->startX = xOffset + vector[k] - snakeLength;
-            result->startY = yOffset + vector[k] - snakeLength - k;
+            startX = vector[k] - snakeLength;
+            startY = vector[k] - snakeLength - k;
         } else {
-            result->startX = xOffset + aLen - vector[k];
-            result->startY = yOffset + bLen - (vector[k] - k);
+            startX = aLen - vector[k];
+            startY = bLen - (vector[k] - k);
         }
-        result->middleSnakeLength = snakeLength;
+        HFASSERT(snakeLength + startX <= aLen);
+        HFASSERT(snakeLength + startY <= bLen);
         
-        HFASSERT(result->middleSnakeLength + result->startX <= xOffset + aLen);
-        HFASSERT(result->middleSnakeLength + result->startY <= yOffset + bLen);
+        result->startX = startX;
+        result->startY = startX;
+        result->middleSnakeLength = snakeLength;
         
         return YES;
     } else {
@@ -563,19 +544,25 @@ static BOOL computeMiddleSnakeTraversal_OverlapCheck(HFByteArrayEditScript *self
 }
 
 BYTEARRAY_RELEASE_INLINE
+static LocalIndex_t ull_to_index(unsigned long long x) {
+    LocalIndex_t result = (LocalIndex_t)x;
+    HFASSERT((unsigned long long)result == x);
+    return result;
+}
+
+BYTEARRAY_RELEASE_INLINE
 static struct Snake_t computeActualMiddleSnake(HFByteArrayEditScript *self, struct TLCacheGroup_t * restrict cacheGroup, const unsigned char * restrict directABuff, const unsigned char * restrict directBBuff, HFRange rangeInA, HFRange rangeInB) {
     
-    long aLen = ll2l(rangeInA.length), bLen = ll2l(rangeInB.length);
-    long aStart = ll2l(rangeInA.location), bStart = ll2l(rangeInB.location);
+    LocalIndex_t aLen = ull_to_index(rangeInA.length), bLen = ull_to_index(rangeInB.length);
     
     /* This function wants to "consume" progress equal to aLen * bLen. */
     const unsigned long long progressAllocated = aLen * bLen;
     
     //maxD = ceil((M + N) / 2)
-    const long maxD = ll2l((HFSum(rangeInA.length, rangeInB.length) + 1) / 2);
+    const LocalIndex_t maxD = ull_to_index(HFSum(rangeInA.length, rangeInB.length) + 1) / 2;
     
     /* Adding delta to k in the forwards direction gives you k in the backwards direction */
-    const long delta = bLen - aLen;
+    const LocalIndex_t delta = bLen - aLen;
     const BOOL oddDelta = (delta & 1); 
     
     GraphIndex_t *restrict forwardsVector = cacheGroup->forwardsArray.ptr;
@@ -593,7 +580,7 @@ static struct Snake_t computeActualMiddleSnake(HFByteArrayEditScript *self, stru
     
     volatile const int * const cancelRequested = self->cancelRequested;
     
-    long D;
+    LocalIndex_t D;
     for (D=1; D <= maxD; D++) {
         //if (0 == (D % 256)) printf("Full %ld / %ld\n", D, maxD);
         
@@ -610,16 +597,16 @@ static struct Snake_t computeActualMiddleSnake(HFByteArrayEditScript *self, stru
          
          We clamp X in the range [0, D] too.
          */
-        long worstX = (D - delta/2) / 2;
+        LocalIndex_t worstX = (D - delta/2) / 2;
         worstX = MIN(D, MAX(worstX, 0));
         worstX = MIN(worstX, aLen);
         
-        long worstY = D - worstX;
+        LocalIndex_t worstY = D - worstX;
         worstY = MIN(D, MAX(worstY, 0));
         worstY = MIN(worstY, bLen);
         
-        unsigned long long upperLeftRectangle = worstX * worstY;
-        unsigned long long lowerRightRectangle = (aLen - worstX) * (bLen - worstY);
+        unsigned long long upperLeftRectangle = (unsigned long long)worstX * (unsigned long long)worstY;
+        unsigned long long lowerRightRectangle = (unsigned long long)(aLen - worstX) * (unsigned long long)(bLen - worstY);
         unsigned long long progressRemainingForThatXY = upperLeftRectangle + lowerRightRectangle;
         HFASSERT(progressRemainingForThatXY <= progressAllocated);
         unsigned long long progressConsumed = progressAllocated - progressRemainingForThatXY;
@@ -648,15 +635,16 @@ static struct Snake_t computeActualMiddleSnake(HFByteArrayEditScript *self, stru
             
             if (checkForOverlap) {
                 /* Check for overlap, but only when the diagonal is within the right range */
-                for (long k = -D; k <= D; k += 2) {
+                for (LocalIndex_t k = -D; k <= D; k += 2) {
                     if (*cancelRequested) break;
                     
-                    long flippedK = -(k + delta);
+                    LocalIndex_t flippedK = -(k + delta);
                     /* If we're forwards, the reverse path has only had time to explore diagonals -(D-1) through (D-1).  If we're backwards, it's had time to explore diagonals -D through D. */
-                    const long reverseExploredDiagonal = D - direction;
+                    const LocalIndex_t reverseExploredDiagonal = D - direction;
                     if (flippedK >= -reverseExploredDiagonal && flippedK <= reverseExploredDiagonal) {
-                        if (computeMiddleSnakeTraversal_OverlapCheck(self, directABuff, directBBuff, forwards, k, D, (forwards ? forwardsVector : backwardsVector), aLen, bLen, aStart, bStart, (forwards ? backwardsVector : forwardsVector), &result)) {
-                            return result;
+                        if (computeMiddleSnakeTraversal_OverlapCheck(self, directABuff, directBBuff, forwards, k, D, (forwards ? forwardsVector : backwardsVector), aLen, bLen, (forwards ? backwardsVector : forwardsVector), &result)) {
+                            result.startX += rangeInA.location;
+                            result.startY += rangeInB.location;
                         }			    
                     } else {
                         computeMiddleSnakeTraversal(self, directABuff, directBBuff, forwards, k, D, (forwards ? forwardsVector : backwardsVector), aLen, bLen, &result);
@@ -664,7 +652,7 @@ static struct Snake_t computeActualMiddleSnake(HFByteArrayEditScript *self, stru
                 }
             } else {
                 /* Don't check for overlap */
-                for (long k = -D; k <= D; k += 2) {
+                for (LocalIndex_t k = -D; k <= D; k += 2) {
                     if (*cancelRequested) break;
                     
                     computeMiddleSnakeTraversal(self, directABuff, directBBuff, forwards, k, D, (forwards ? forwardsVector : backwardsVector), aLen, bLen, &result);
@@ -677,14 +665,16 @@ static struct Snake_t computeActualMiddleSnake(HFByteArrayEditScript *self, stru
         /* FORWARDS */
         if (oddDelta) {
             /* Check for overlap, but only when the diagonal is within the right range */
-            for (long k = -D; k <= D; k += 2) {
+            for (LocalIndex_t k = -D; k <= D; k += 2) {
                 if (*cancelRequested) break;
                 
-                long flippedK = -(k + delta);
+                LocalIndex_t flippedK = -(k + delta);
                 /* If we're forwards, the reverse path has only had time to explore diagonals -(D-1) through (D-1).  If we're backwards, it's had time to explore diagonals -D through D. */
-                const long reverseExploredDiagonal = D - 1 /* direction */;
+                const LocalIndex_t reverseExploredDiagonal = D - 1 /* direction */;
                 if (flippedK >= -reverseExploredDiagonal && flippedK <= reverseExploredDiagonal) {
-                    if (computeMiddleSnakeTraversal_OverlapCheck(self, directABuff, directBBuff, YES /* forwards */, k, D, forwardsVector, aLen, bLen, aStart, bStart, backwardsVector, &result)) {
+                    if (computeMiddleSnakeTraversal_OverlapCheck(self, directABuff, directBBuff, YES /* forwards */, k, D, forwardsVector, aLen, bLen, backwardsVector, &result)) {
+                        result.startX = HFSum(result.startX, rangeInA.location);
+                        result.startY = HFSum(result.startY, rangeInB.location);
                         return result;
                     }			    
                 } else {
@@ -693,7 +683,7 @@ static struct Snake_t computeActualMiddleSnake(HFByteArrayEditScript *self, stru
             }
         } else {
             /* Don't check for overlap */
-            for (long k = -D; k <= D; k += 2) {
+            for (LocalIndex_t k = -D; k <= D; k += 2) {
                 if (*cancelRequested) break;
                 
                 computeMiddleSnakeTraversal(self, directABuff, directBBuff, YES /* forwards */, k, D, forwardsVector, aLen, bLen, &result);
@@ -703,14 +693,14 @@ static struct Snake_t computeActualMiddleSnake(HFByteArrayEditScript *self, stru
         /* BACKWARDS */
         if (! oddDelta) {
             /* Check for overlap, but only when the diagonal is within the right range */
-            for (long k = -D; k <= D; k += 2) {
+            for (LocalIndex_t k = -D; k <= D; k += 2) {
                 if (*cancelRequested) break;
                 
-                long flippedK = -(k + delta);
+                LocalIndex_t flippedK = -(k + delta);
                 /* If we're forwards, the reverse path has only had time to explore diagonals -(D-1) through (D-1).  If we're backwards, it's had time to explore diagonals -D through D. */
-                const long reverseExploredDiagonal = D - 0 /* direction */;
+                const LocalIndex_t reverseExploredDiagonal = D - 0 /* direction */;
                 if (flippedK >= -reverseExploredDiagonal && flippedK <= reverseExploredDiagonal) {
-                    if (computeMiddleSnakeTraversal_OverlapCheck(self, directABuff, directBBuff, NO /* forwards */, k, D, backwardsVector, aLen, bLen, aStart, bStart, forwardsVector, &result)) {
+                    if (computeMiddleSnakeTraversal_OverlapCheck(self, directABuff, directBBuff, NO /* forwards */, k, D, backwardsVector, aLen, bLen, forwardsVector, &result)) {
                         return result;
                     }			    
                 } else {
@@ -719,7 +709,7 @@ static struct Snake_t computeActualMiddleSnake(HFByteArrayEditScript *self, stru
             }
         } else {
             /* Don't check for overlap */
-            for (long k = -D; k <= D; k += 2) {
+            for (LocalIndex_t k = -D; k <= D; k += 2) {
                 if (*cancelRequested) break;
                 
                 computeMiddleSnakeTraversal(self, directABuff, directBBuff, NO, k, D, backwardsVector, aLen, bLen, &result);
@@ -736,17 +726,13 @@ static struct Snake_t computeActualMiddleSnake(HFByteArrayEditScript *self, stru
 BYTEARRAY_RELEASE_INLINE
 static struct Snake_t computePrettyGoodSnake(HFByteArrayEditScript *self, struct TLCacheGroup_t * restrict cacheGroup, const unsigned char * restrict directABuff, const unsigned char * restrict directBBuff, HFRange rangeInA, HFRange rangeInB, unsigned long long fullLengthA, unsigned long long fullLengthB, BOOL forwards) {
     
-    NSLog(@"%s", __FUNCTION__);
-    
     
     /* Run one-direction Myers diff until we exit the rectangle.  The diagonal that's made the most progress by the time any exit is the split point. */
-    long aLen = ll2l(rangeInA.length), bLen = ll2l(rangeInB.length);
-    long aStart = ll2l(rangeInA.location), bStart = ll2l(rangeInB.location);
-    const long delta = bLen - aLen;
+    LocalIndex_t aLen = ull_to_index(rangeInA.length), bLen = ull_to_index(rangeInB.length);
     unsigned long long allocatedProgress = fullLengthA * fullLengthB;
     
     /* We stop as soon as we reach an edge, so our max D is the smaller of our two edge lengths */
-    const long maxD = MIN(aLen, bLen);
+    const LocalIndex_t maxD = MIN(aLen, bLen);
     
     /* Make our vector big enough. Just do this at the beginning since this function is called with a size not exceeding HEURISTIC_THRESHOLD */
     GrowableArray_reallocate((forwards ? &cacheGroup->forwardsArray : &cacheGroup->backwardsArray), maxD, maxD);
@@ -766,11 +752,9 @@ static struct Snake_t computePrettyGoodSnake(HFByteArrayEditScript *self, struct
     result.startX = 0;
     result.startY = 0;
     
-    const unsigned long long fullRectangle = fullLengthA * fullLengthB;
-    
     volatile const int * const cancelRequested = self->cancelRequested;
     
-    long D;
+    LocalIndex_t D;
     for (D=1; D <= maxD; D++) {
         //if (0 == (D % 256)) printf("Heuristic %ld / %ld\n", D, maxD);
         
@@ -790,7 +774,7 @@ static struct Snake_t computePrettyGoodSnake(HFByteArrayEditScript *self, struct
         if (*cancelRequested) break;
         
         BOOL reachedLimit = NO;
-        for (long k = -D; k <= D; k += 2) {
+        for (LocalIndex_t k = -D; k <= D; k += 2) {
             if (*cancelRequested) break;            
             if (prettyGoodSnakeTraversal(self, directABuff, directBBuff, forwards, k, D, vector, aLen, bLen, &result)) {
                 reachedLimit = YES;
@@ -869,8 +853,6 @@ static void computeLongestCommonSubsequence(HFByteArrayEditScript *self, struct 
         return;
     }
     
-    HFRange originalA = rangeInA, originalB = rangeInB;
-    
     HFByteArray *source = self->source;
     HFByteArray *destination = self->destination;
     
@@ -928,8 +910,8 @@ static void computeLongestCommonSubsequence(HFByteArrayEditScript *self, struct 
     if (*cancelRequested) return;
     
     HFASSERT(middleSnake.middleSnakeLength >= 0);
-    HFASSERT(middleSnake.startX >= (long)rangeInA.location);
-    HFASSERT(middleSnake.startY >= (long)rangeInB.location);
+    HFASSERT(middleSnake.startX >= rangeInA.location);
+    HFASSERT(middleSnake.startY >= rangeInB.location);
     HFASSERT(HFSum(middleSnake.startX, middleSnake.middleSnakeLength) <= HFMaxRange(rangeInA));
     HFASSERT(HFSum(middleSnake.startY, middleSnake.middleSnakeLength) <= HFMaxRange(rangeInB));
     //    NSLog(@"Middle snake: %lu -> %lu, %lu -> %lu, max: %lu, dPath: %lu", middleSnake.startX, middleSnake.startX + middleSnake.middleSnakeLength, middleSnake.startY, middleSnake.startY + middleSnake.middleSnakeLength, middleSnake.maxSnakeLength, middleSnake.dPathLength);
@@ -968,6 +950,7 @@ static void computeLongestCommonSubsequence(HFByteArrayEditScript *self, struct 
     }
 #endif
     remainingProgress = change_progress(self, remainingProgress, newRemainingProgress);
+    USE(remainingProgress);
         
     /* We check for *cancelRequested at the beginning of these functions, so we don't gain by checking for it again here */
     const unsigned long long minAsyncLength = 1024;
@@ -1021,6 +1004,19 @@ static void computeLongestCommonSubsequence(HFByteArrayEditScript *self, struct 
         accumulatedLengthChange -= insns[idx].src.length;
         accumulatedLengthChange += insns[idx].dst.length;
     }
+}
+
+enum HFEditInstructionType {
+    HFEditInstructionTypeDelete,
+    HFEditInstructionTypeInsert,
+    HFEditInstructionTypeReplace
+};
+
+static inline enum HFEditInstructionType HFByteArrayInstructionType(struct HFEditInstruction_t insn) {
+    HFASSERT(insn.src.length > 0 || insn.dst.length > 0);
+    if (insn.src.length == 0) return HFEditInstructionTypeInsert;
+    else if (insn.dst.length == 0) return HFEditInstructionTypeDelete;
+    else return HFEditInstructionTypeReplace;
 }
 
 - (void)_dumpDebug {

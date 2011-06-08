@@ -118,7 +118,7 @@ static BOOL returnFTruncateError(NSError **error) {
 }
 
 /* Must be overridden - do not call super */
-- (BOOL)initSharedWithPath:(NSString *)path error:(NSError **)error { UNIMPLEMENTED(); }
+- (BOOL)initSharedWithPath:(NSString *)path error:(NSError **)error { USE(path); USE(error); UNIMPLEMENTED(); }
 
 - (NSUInteger)hash {
     return (NSUInteger)inode;

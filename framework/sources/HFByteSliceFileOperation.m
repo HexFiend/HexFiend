@@ -365,7 +365,7 @@ bail:;
     REQUIRE_NOT_NULL(entry);
     REQUIRE_NOT_NULL(file);
     int err;
-    LOG_IO NSLog(@"Applying {%llu, %u} -> {%llu, %u}", entry->source, entry->length, entry->offset, entry->length);
+    LOG_IO NSLog(@"Applying {%llu, %lu} -> {%llu, %lu}", entry->source, entry->length, entry->offset, entry->length);
     err = [file writeBytes:entry->bytes length:entry->length to:entry->offset];
     if (progressTracker) HFAtomicAdd64(entry->length, (volatile int64_t *)(&progressTracker->currentProgress));
     return err;

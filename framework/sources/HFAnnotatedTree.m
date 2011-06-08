@@ -16,7 +16,7 @@
 
 /* HFAnnotatedTree is an AA tree.  */
 
-static unsigned long long null_annotater(id left, id right) { return 0; }
+static unsigned long long null_annotater(id left, id right) { USE(left); USE(right); return 0; }
 static void skew(HFAnnotatedTreeNode *node, HFAnnotatedTree *tree);
 static BOOL split(HFAnnotatedTreeNode *oldparent, HFAnnotatedTree *tree);
 static void rebalanceAfterLeafAdd(HFAnnotatedTreeNode *n, HFAnnotatedTree *tree);
@@ -110,6 +110,7 @@ static HFAnnotatedTreeAnnotaterFunction_t get_annotater(HFAnnotatedTree *tree) {
 }
 
 - (NSComparisonResult)compare:(HFAnnotatedTreeNode *)node {
+    USE(node);
     UNIMPLEMENTED();
 }
 

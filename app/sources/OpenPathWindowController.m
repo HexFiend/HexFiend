@@ -32,9 +32,9 @@ enum {
     return @"OpenPathDialog";
 }
 
-static NSURL *copyCharacterDevicePathForPossibleBlockDevice(NSURL *url) {
-    if (! url) return nil;
-    NSURL *result = nil;
+static CFURLRef copyCharacterDevicePathForPossibleBlockDevice(NSURL *url) {
+    if (! url) return NULL;
+    CFURLRef result = nil;
     CFStringRef path = CFURLCopyFileSystemPath((CFURLRef)url, kCFURLPOSIXPathStyle);
     if (path) {
 	char cpath[PATH_MAX + 1];
@@ -51,7 +51,7 @@ static NSURL *copyCharacterDevicePathForPossibleBlockDevice(NSURL *url) {
 		    char characterDevicePath[PATH_MAX + 1] = "/dev/";
 		    size_t slen = strlcat(characterDevicePath, deviceName, sizeof characterDevicePath);
 		    if (slen < sizeof characterDevicePath) {
-			result = NSMakeCollectable(CFURLCreateFromFileSystemRepresentation(NULL, (unsigned char *)characterDevicePath, slen, NO /* not a directory */));
+			result = CFURLCreateFromFileSystemRepresentation(NULL, (unsigned char *)characterDevicePath, slen, NO /* not a directory */);
 		    }
 		}
 	    }
@@ -146,10 +146,10 @@ static NSURL *copyCharacterDevicePathForPossibleBlockDevice(NSURL *url) {
 	if (! document && error) {
 	    if ([[error domain] isEqual:NSPOSIXErrorDomain] && [error code] == EBUSY) {
 		/* If this is a block device, try getting the corresponding character device, and offer to open that. */
-		NSURL *newURL = copyCharacterDevicePathForPossibleBlockDevice(url);
+		CFURLRef newURL = copyCharacterDevicePathForPossibleBlockDevice(url);
 		if (newURL) {
-		    error = [self makeBlockToCharacterDeviceErrorForOriginalURL:url newURL:newURL underlyingError:error];
-		    [newURL release];
+		    error = [self makeBlockToCharacterDeviceErrorForOriginalURL:url newURL:(NSURL *)newURL underlyingError:error];
+		    CFRelease(newURL);
 		}
 	    }	    
 	    [NSApp presentError:error];

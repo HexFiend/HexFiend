@@ -175,7 +175,7 @@ stage2:
     unsigned long char_jump[UCHAR_MAX + 1] = {0};
     match_jump = malloc(2 * (needle_length + 1) * sizeof *match_jump);
     if (! match_jump) {
-	NSLog(@"Out of memory allocating %u bytes", (2 * (needle_length + 1) * sizeof *match_jump));
+	NSLog(@"Out of memory allocating %lu bytes", (2 * (needle_length + 1) * sizeof *match_jump));
 	free(haystack);
 	free(needle);
         return ULLONG_MAX;

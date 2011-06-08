@@ -9,6 +9,7 @@
 #import "HFDocumentOperationView.h"
 #import <HexFiend/HFProgressTracker.h>
 #include <pthread.h>
+#include <objc/message.h>
 
 static NSString *sNibName;
 
