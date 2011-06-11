@@ -31,6 +31,7 @@ struct HFDocumentOperationCallbacks {
     NSArray *otherTopLevelObjects;
     double progress;
     BOOL isFixedHeight;
+    BOOL operationIsCancelling;
 }
 
 - (void)setOtherTopLevelObjects:(NSArray *)objects;

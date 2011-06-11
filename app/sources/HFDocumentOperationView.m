@@ -232,9 +232,11 @@ static NSString *sNibName;
 
 - (IBAction)cancelViewOperation:sender {
     USE(sender);
-    if ([self operationIsRunning]) {
+    if ([self operationIsRunning] && ! operationIsCancelling) {
+        operationIsCancelling = YES;
         [tracker requestCancel:self];
         [self spinUntilFinished];
+        operationIsCancelling = NO;
     }
 }
 

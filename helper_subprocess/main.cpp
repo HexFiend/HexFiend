@@ -122,7 +122,9 @@ static void run_server(mach_port_t portset, mach_port_t notification_port) {
 
 int main(void) {
    // close_all_open_files();
+    puts("get_parent_receive_port");
     mach_port_t parent_recv_port = get_parent_receive_port();
+    puts("Done");
     
     mach_port_t my_task = mach_task_self();
     

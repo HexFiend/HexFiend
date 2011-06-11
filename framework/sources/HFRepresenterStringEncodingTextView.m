@@ -45,12 +45,13 @@ static NSString *copy1CharStringForByteValue(unsigned long long byteValue, NSUIn
 
 static BOOL getGlyphs(CGGlyph *glyphs, NSString *string, NSFont *inputFont) {
     NSUInteger length = [string length];
-    UniChar chars[256];
-    HFASSERT(length <= sizeof chars / sizeof *chars);
     HFASSERT(inputFont != nil);
+    NEW_ARRAY(UniChar, chars, length);
     [string getCharacters:chars range:NSMakeRange(0, length)];
-    return CTFontGetGlyphsForCharacters((CTFontRef)inputFont, chars, glyphs, length);
+    bool result = CTFontGetGlyphsForCharacters((CTFontRef)inputFont, chars, glyphs, length);
     /* A NO return means some or all characters were not mapped.  This is OK.  We'll use the replacement glyph.  Unless we're calculating the replacement glyph!  Hmm...maybe we should have a series of replacement glyphs that we try? */
+    FREE_ARRAY(chars);
+    return result;
 }
 
 static void generateGlyphs(NSFont *baseFont, NSMutableArray *fonts, struct HFGlyph_t *outGlyphs, NSInteger bytesPerChar, NSStringEncoding encoding, const NSUInteger *charactersToLoad, NSUInteger charactersToLoadCount, CGFloat *outMaxAdvance) {

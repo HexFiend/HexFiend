@@ -524,14 +524,21 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
     return [[[HFByteArrayEditScript alloc] initWithDifferenceFromSource:left toDestination:right trackingProgress:tracker] autorelease];
 }
 
-- (void)computeDiffEnded:(HFByteArrayEditScript *)script {
-    /* Hide the script banner */
-    if (operationView != nil && operationView == diffComputationView) [self hideBannerFirstThenDo:NULL];
-    
+- (void)close {
+    /* Make sure we cancel if we close */
+    [diffComputationView cancelViewOperation:self];
+    [super close];
+}
+
+- (void)computeDiffEnded:(HFByteArrayEditScript *)script {    
     /* script may be nil if we cancelled */
     if (! script) {
         [self close];
     } else {
+        
+        /* Hide the script banner */
+        if (operationView != nil && operationView == diffComputationView) [self hideBannerFirstThenDo:NULL];
+        
         editScript = [script retain];
         [self showInstructionsFromEditScript];	
     }
