@@ -13,6 +13,30 @@
 
 @implementation HFProcessMemoryByteSlice
 
+- (HFPrivilegedHelperConnection *)connection {
+    return [HFPrivilegedHelperConnection sharedConnection];
+}
+
+- (id)initWithAddressSpaceOfPID:(pid_t)pid {
+    [super init];
+    struct HFProcessInfo_t info = {0};
+    BOOL success = [[self connection] getInfo:&info forProcess:pid];
+    if (! success || ! info.bits) {
+        [self release];
+        return nil;
+    }
+    unsigned long long length;
+    if (info.bits == 32) {
+        length = 1ULL << 32;
+    } else if (info.bits == 64) {
+        length = ULLONG_MAX; //d'oh!
+    } else {
+        NSLog(@"Unknown process bit size %lu", (unsigned long)info.bits);
+        length = 0;
+    }
+    return [self initWithPID:pid range:HFRangeMake(0, length)];
+}
+
 - (id)initWithPID:(pid_t)pid range:(HFRange)range {
     [super init];
     processIdentifier = pid;
@@ -22,10 +46,6 @@
 
 - (unsigned long long)length {
     return memoryRange.length;
-}
-
-- (HFPrivilegedHelperConnection *)connection {
-    return [HFPrivilegedHelperConnection sharedConnection];
 }
 
 - (void)copyBytes:(unsigned char *)dst range:(HFRange)range {

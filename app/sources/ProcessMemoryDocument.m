@@ -27,7 +27,7 @@ static inline Class preferredByteArrayClass(void) {
 	}
     }
     
-    HFByteSlice *byteSlice = [[[HFProcessMemoryByteSlice alloc] initWithPID:pid range:HFRangeMake(0, amountOfMemoryToView)] autorelease];
+    HFByteSlice *byteSlice = [[[HFProcessMemoryByteSlice alloc] initWithAddressSpaceOfPID:pid] autorelease];
     if (byteSlice) {
         HFByteArray *byteArray = [[[preferredByteArrayClass() alloc] init] autorelease];
         [byteArray insertByteSlice:byteSlice inRange:HFRangeMake(0, 0)];

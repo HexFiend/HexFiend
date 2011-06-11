@@ -14,12 +14,14 @@ extern "C" INDENT_HIDDEN_FROM_XCODE
 #include <stdlib.h>
 #include <sys/disk.h>
 #include <sys/stat.h>
+#include <sys/sysctl.h>
 #include <mach/mach_vm.h>
 #include <mach/mach_init.h>
 #include <mach/vm_map.h>
 #include <mach/task.h>
 #include <mach/mach_traps.h>
 #include <mach/mach_error.h>
+#include <mach/machine.h>
 
 #define MAX_FD_VALUE 1024
 
@@ -309,6 +311,46 @@ kern_return_t _FortunateSonAttributesForAddress(mach_port_t server, int pid, mac
     }
     *result = resultingAttributes;
     *applicableLength = resultingLength;
+    return KERN_SUCCESS;
+}
+
+kern_return_t _FortunateSonProcessInfo(mach_port_t server, int pid, uint8_t *outBitSize) {
+
+    cpu_type_t  cpuType;
+    size_t      cpuTypeSize;
+    int         mib[CTL_MAXNAME];
+    size_t      mibLen;
+    mibLen  = CTL_MAXNAME;
+    int err;
+    uint8_t bitSize = 0;
+    
+    err = sysctlnametomib("sysctl.proc_cputype", mib, &mibLen);
+    if (err == 0) {
+        assert(mibLen < CTL_MAXNAME);
+        mib[mibLen] = pid;
+        mibLen += 1;
+        
+        cpuTypeSize = sizeof(cpuType);
+        err = sysctl(mib, mibLen, &cpuType, &cpuTypeSize, 0, 0);
+        if (err == 0) {
+            switch (cpuType) {
+                case CPU_TYPE_X86:
+                case CPU_TYPE_POWERPC:
+                case CPU_TYPE_ARM:
+                    bitSize = 32;
+                    break;
+                case CPU_TYPE_X86_64:
+                case CPU_TYPE_POWERPC64:
+                    bitSize = 64;
+                    break;
+                default:
+                    bitSize = 0;
+                    break;
+            }
+        }
+    }
+    
+    *outBitSize = bitSize;
     return KERN_SUCCESS;
 }
 

@@ -18,18 +18,31 @@ static void close_all_open_files(void) {
 
 static mach_port_t get_parent_receive_port(void) {
     const mach_port_t errorReturn = MACH_PORT_NULL;
-    mach_port_t parent_recv_port = MACH_PORT_NULL;
-    mach_port_t child_recv_port = MACH_PORT_NULL;
+    mach_port_t parent_recv_port = MACH_PORT_NULL; //the port on which the parent receives data from us
+    mach_port_t child_recv_port = MACH_PORT_NULL; //the poirt on which we receive data to the parent
+#if MESS_WITH_BOOTSTRAP_PORT
     CHECK_MACH_ERROR(task_get_bootstrap_port (mach_task_self (), &parent_recv_port));
+#else
+    // figure out what name our parent used
+    char ipc_name[256];
+    derive_ipc_name(ipc_name, getppid());
+    mach_port_t bp = MACH_PORT_NULL;
+    task_get_bootstrap_port(mach_task_self(), &bp);
+    CHECK_MACH_ERROR(bootstrap_look_up(bp, ipc_name, &parent_recv_port));
+#endif
+                     
+    // create a port on which we will receive data
     if (setup_recv_port (&child_recv_port) != 0)
 	return errorReturn;
-    if (send_port (parent_recv_port, mach_task_self(), MACH_MSG_TYPE_COPY_SEND) != 0)
-	return errorReturn;
+    
     if (send_port (parent_recv_port, child_recv_port, MACH_MSG_TYPE_MOVE_SEND) != 0) //Move our send right over.  That way we can get a No Senders notification when Daddy dies, because we can't send to our own port!
 	return errorReturn;
+    
+#if MESS_WITH_BOOTSTRAP_PORT
     if (recv_port (child_recv_port, &bootstrap_port) != 0)
 	return errorReturn;
     CHECK_MACH_ERROR(task_set_bootstrap_port (mach_task_self (), bootstrap_port));
+#endif
     return child_recv_port;
 }
 

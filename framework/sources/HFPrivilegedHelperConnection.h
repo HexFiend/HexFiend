@@ -9,8 +9,12 @@
 #import <Cocoa/Cocoa.h>
 #import "FortunateSonIPCTypes.h"
 
+
+struct HFProcessInfo_t {
+    unsigned char bits; //either 32 or 64
+};
+
 @interface HFPrivilegedHelperConnection : NSObject {
-    task_t childTask;
     mach_port_t childReceivePort;
 }
 
@@ -20,6 +24,8 @@
 
 - (BOOL)readBytes:(void *)bytes range:(HFRange)range process:(pid_t)process error:(NSError **)error;
 - (BOOL)getAttributes:(VMRegionAttributes *)outAttributes length:(unsigned long long *)outLength offset:(unsigned long long)offset process:(pid_t)process error:(NSError **)error;
+
+- (BOOL)getInfo:(struct HFProcessInfo_t *)outInfo forProcess:(pid_t)process;
 
 - (BOOL)openFileAtPath:(const char *)path writable:(BOOL)writable result:(int *)outFD resultError:(int *)outErrno fileSize:(unsigned long long *)outFileSize fileType:(uint16_t *)outFileType inode:(unsigned long long *)outInode device:(int *)outDevice;
 

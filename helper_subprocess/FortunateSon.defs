@@ -46,6 +46,11 @@ routine ReadFile(
     out result: VarData_t;
     out result_error: int);
 
+routine ProcessInfo(
+    server: mach_port_t;
+    in pid: int;
+    out bitSize: uint8_t);
+
 routine ReadProcess(
     server: mach_port_t;
     in pid: int;
