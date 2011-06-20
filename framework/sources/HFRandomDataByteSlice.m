@@ -23,7 +23,12 @@ static inline unsigned char munge(unsigned long long val64, unsigned char random
     result = kPearsonTable[result ^ (remainingToHash & 0xFF)]; remainingToHash >>= 8;
     result = kPearsonTable[result ^ (remainingToHash & 0xFF)]; remainingToHash >>= 8;
     result = kPearsonTable[result ^ (remainingToHash & 0xFF)]; remainingToHash >>= 8;
-    result = kPearsonTable[result ^ (remainingToHash)];
+    result = kPearsonTable[result ^ (remainingToHash & 0xFF)]; remainingToHash >>= 8;
+    result = kPearsonTable[result ^ (remainingToHash & 0xFF)]; remainingToHash >>= 8;
+    result = kPearsonTable[result ^ (remainingToHash & 0xFF)]; remainingToHash >>= 8;
+    result = kPearsonTable[result ^ (remainingToHash & 0xFF)]; remainingToHash >>= 8;
+    result = kPearsonTable[result ^ (remainingToHash & 0xFF)]; //remainingToHash >>= 8;
+
     return result;
 }
 
