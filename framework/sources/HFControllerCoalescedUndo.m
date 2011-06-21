@@ -172,7 +172,7 @@
 }
 
 - (NSUInteger)hash {
-    return objc_collectingEnabled() ? hashOrRC : ((intptr_t)self >> 2);
+    return objc_collectingEnabled() ? (NSUInteger)hashOrRC : (NSUInteger)((intptr_t)self >> 2);
 }
 
 - (id)retain {
@@ -243,7 +243,7 @@
 }
 
 - (NSUInteger)hash {
-    return objc_collectingEnabled() ? hashOrRC : ((intptr_t)self >> 2);
+    return objc_collectingEnabled() ? (NSUInteger)hashOrRC : (NSUInteger)((intptr_t)self >> 2);
 }
 
 - (id)retain {

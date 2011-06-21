@@ -123,7 +123,7 @@ static inline NSUInteger HFRoundUpToMultipleInt(NSUInteger a, NSUInteger b) {
     // The usual approach of ((a + (b - 1)) / b) * b doesn't handle overflow correctly
     NSUInteger remainder = a % b;
     if (remainder == 0) return a;
-    else return HFSum(a, b - remainder);
+    else return (NSUInteger)HFSum(a, b - remainder);
 }
 
 /*!

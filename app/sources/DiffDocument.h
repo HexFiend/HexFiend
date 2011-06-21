@@ -24,6 +24,10 @@
     IBOutlet NSScroller *scroller;
     unsigned long long totalAbstractLength;
     long double currentScrollPosition;
+    
+    // momentum scroll hackery
+    BOOL handledLastScrollEvent;
+    CFAbsoluteTime timeOfLastScrollEvent;
 }
 
 - (id)initWithLeftByteArray:(HFByteArray *)left rightByteArray:(HFByteArray *)right;

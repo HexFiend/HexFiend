@@ -101,6 +101,7 @@
 }
 
 - (void)drawGradientWithClip:(NSRect)clip {
+//    [[NSColor colorWithCalibratedWhite:(CGFloat).91 alpha:1] set];
     [[NSColor colorWithCalibratedWhite:(CGFloat).91 alpha:1] set];
     NSRectFill(clip);
 }

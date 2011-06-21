@@ -16,7 +16,7 @@ static NSString *copy1CharStringForByteValue(unsigned long long byteValue, NSUIn
     char bytes[sizeof byteValue];
     /* If we are little endian, then the bytesPerChar doesn't matter, because it will all come out the same.  If we are big endian, then it does matter. */
 #if ! __BIG_ENDIAN__
-    *(unsigned long *)bytes = byteValue;
+    *(unsigned long long *)bytes = byteValue;
 #else
     if (bytesPerChar == sizeof(uint8_t)) {
         *(uint8_t *)bytes = (uint8_t)byteValue;
@@ -25,7 +25,7 @@ static NSString *copy1CharStringForByteValue(unsigned long long byteValue, NSUIn
     } else if (bytesPerChar == sizeof(uint32_t)) {
         *(uint32_t *)bytes = (uint32_t)byteValue;
     } else if (bytesPerChar == sizeof(uint64_t)) {
-        *(uint64_t *)bytes = (uint32_t)byteValue;
+        *(uint64_t *)bytes = (uint64_t)byteValue;
     } else {
         [NSException raise:NSInvalidArgumentException format:@"Unsupported bytesPerChar of %u", bytesPerChar];
     }
@@ -199,7 +199,7 @@ static int compareGlyphFontIndexes(const void *p1, const void *p2) {
 		CGContextSetTextPosition(ctx, 0, 50);
 		CGContextShowGlyphsWithAdvances(ctx, cgglyphs, advances, runLength);
 	    }
-	    NSLog(@"Drew a run of length %lu", runLength);
+	    NSLog(@"Drew a run of length %lu", (unsigned long)runLength);
 	    runLength = 0;
 	    if (i < validGlyphCount) runFontIndex = validGlyphs[i].fontIndex;
 	}

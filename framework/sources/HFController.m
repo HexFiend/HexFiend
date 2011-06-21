@@ -564,10 +564,10 @@ static inline Class preferredByteArrayClass(void) {
         proposedNewDisplayRange.location -= proposedNewDisplayRange.location % bytesPerLine;
         proposedNewDisplayRange.length = MIN(HFMaxRange(maxRangeSet) - proposedNewDisplayRange.location, maxBytesForViewSize);
         if (maxBytesForViewSize % bytesPerLine != 0) {
-            NSLog(@"Bad max bytes: %lu (%lu)", maxBytesForViewSize, bytesPerLine);
+            NSLog(@"Bad max bytes: %lu (%lu)", (unsigned long)maxBytesForViewSize, (unsigned long)bytesPerLine);
         }
         if (HFMaxRange(maxRangeSet) != ULLONG_MAX && (HFMaxRange(maxRangeSet) - proposedNewDisplayRange.location) % bytesPerLine != 0) {
-            NSLog(@"Bad max range minus: %llu (%lu)", HFMaxRange(maxRangeSet) - proposedNewDisplayRange.location, bytesPerLine);
+            NSLog(@"Bad max range minus: %llu (%lu)", HFMaxRange(maxRangeSet) - proposedNewDisplayRange.location, (unsigned long)bytesPerLine);
         }
         
         long double lastLine = HFULToFP([self totalLineCount]);
@@ -836,7 +836,7 @@ static inline Class preferredByteArrayClass(void) {
         remainingProperties &= ~HFControllerViewSizeRatios;
     }
     if (remainingProperties) {
-        NSLog(@"Unknown properties: %lx", remainingProperties);
+        NSLog(@"Unknown properties: %lx", (long)remainingProperties);
     }
     END_TRANSACTION();
 }
@@ -1318,7 +1318,7 @@ static inline Class preferredByteArrayClass(void) {
     [self _addPropertyChangeBits:HFControllerSelectedRanges];
 }
 
-#if ! NDEBUG
+__attribute__((unused))
 static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
     unsigned long long index = 0;
     HFRangeWrapper *rangeWrapper;
@@ -1329,7 +1329,6 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
     }
     return YES;
 }
-#endif
 
 - (BOOL)_registerCondemnedRangesForUndo:(NSArray *)ranges selectingRangesAfterUndo:(BOOL)selectAfterUndo {
     HFASSERT(ranges != NULL);

@@ -47,13 +47,22 @@
     /* Compute the totalAbstractLength */
     unsigned long long abstractLength = 0;
     unsigned long long leftMatchedLength = [[leftTextView controller] contentsLength], rightMatchedLength = [[rightTextView controller] contentsLength];
+    unsigned long long lastLeftLocation = 0;
     for (i=0; i < insnCount; i++) {
         struct HFEditInstruction_t insn = [editScript instructionAtIndex:i];
-        unsigned long long insnLength = MAX(insn.src.length, insn.dst.length) - MIN(insn.src.length, insn.dst.length);
+        
+        /* Add in the length of any matching bytes */
+        abstractLength = HFSum(abstractLength, HFSubtract(insn.src.location, lastLeftLocation));
+        
+        unsigned long long insnLength = MAX(insn.src.length, insn.dst.length);
         abstractLength = HFSum(abstractLength, insnLength);
         leftMatchedLength = HFSubtract(leftMatchedLength, insn.src.length);
         rightMatchedLength = HFSubtract(rightMatchedLength, insn.dst.length);
+        lastLeftLocation = HFSum(insn.src.location, insn.src.length);
     }
+    
+    /* Add in any matching suffix */
+    abstractLength = HFSum(abstractLength, HFSubtract([[leftTextView controller] contentsLength], lastLeftLocation));
     
     /* If the diff is correct, then the matched text must be equal in length */
     HFASSERT(leftMatchedLength == rightMatchedLength);
@@ -225,9 +234,26 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
         }
     } else if ([event type] == NSScrollWheel) {
         
-        /* Redirect scroll wheel events to ourselves */
-        [self scrollWithScrollEvent:event];
-        handled = YES;
+        /* Redirect scroll wheel events to ourselves, except for those in the table (or, rather, its scroll view). If this scroll event comes very soon after the last one, then we consider it to be a momentum scroll event and direct it at the last target. */
+        NSPoint location = [event locationInWindow];
+        NSScrollView *scrollView = [diffTable enclosingScrollView];
+        CFAbsoluteTime timeOfThisEvent = [event timestamp];
+        CFTimeInterval timeBetweenScrollEvents = timeOfThisEvent - timeOfLastScrollEvent;
+        if (timeBetweenScrollEvents >= 0 && timeBetweenScrollEvents <= .05) {
+            /* Probably a momentum scroll event, so do whatever we did last time */
+            handled = handledLastScrollEvent;
+        } else {
+            /* Don't handle it if it's in our scroll view */
+            handled = ! NSMouseInRect(location, [scrollView convertRect:[scrollView bounds] toView:nil], NO /* flipped */);
+        }
+        
+        /* Record info about our events */
+        handledLastScrollEvent = handled;
+        timeOfLastScrollEvent = timeOfThisEvent;
+        
+        if (handled) {
+            [self scrollWithScrollEvent:event];
+        }
     }
     return handled;
 }
@@ -240,6 +266,9 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
         
         /* Initially, the scrolling is just synchronized */
         totalAbstractLength = HFMax([leftBytes length], [rightBytes length]);
+        
+        /* We haven't receieved a scroll event */
+        timeOfLastScrollEvent = -DBL_MAX;
         
     }
     return self;
@@ -279,6 +308,7 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
 
 
 - (void)scrollerDidChangeValue:(NSScroller *)control {
+    USE(control);
     HFASSERT(control == scroller);
     switch ([scroller hitPart]) {
         case NSScrollerDecrementPage: [self scrollByLines: -(long long)[self visibleLines]]; break;
@@ -926,13 +956,19 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
     unsigned long long contentsLength = totalAbstractLength;
     NSUInteger bytesPerLine = [[leftTextView controller] bytesPerLine];
     HFASSERT(bytesPerLine > 0);
-    unsigned long long totalLineCountTimesBytesPerLine = HFRoundUpToNextMultipleSaturate(contentsLength, bytesPerLine);
-    HFASSERT(totalLineCountTimesBytesPerLine == ULLONG_MAX || totalLineCountTimesBytesPerLine % bytesPerLine == 0);
-    unsigned long long totalLineCount = HFDivideULLRoundingUp(totalLineCountTimesBytesPerLine, bytesPerLine);
+    unsigned long long totalLineCount = HFDivideULLRoundingUp(contentsLength, bytesPerLine);
     HFFPRange currentLineRange = [self displayedLineRange];
     HFASSERT(currentLineRange.length < HFULToFP(totalLineCount));
     long double maxScroll = totalLineCount - currentLineRange.length;
     long double newScroll = maxScroll * (long double)newValue;
+    
+    {
+        unsigned long long q = (unsigned long long)(newValue * (long double)contentsLength);
+        unsigned long long collapse = [self abstractToConcreteCollapseBeforeAbstractLocation:q onLeft:NO];
+        unsigned long long newVal = q - collapse;
+        NSLog(@"New val: %llu -> %llu", q, newVal);
+    }
+    
     [self setDisplayedLineRange:(HFFPRange){newScroll, currentLineRange.length}];
 }
 

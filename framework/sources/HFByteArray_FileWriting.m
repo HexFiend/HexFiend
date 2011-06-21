@@ -65,7 +65,7 @@ static void computeFileOperations(HFByteArray *self, HFFileReference *reference,
 #endif
 }
 
-#if ! NDEBUG
+__attribute__((unused))
 static NSComparisonResult compareFileOperationTargetRanges(id a, id b, void *self) {
     USE(self);
     REQUIRE_NOT_NULL(a);
@@ -79,7 +79,6 @@ static NSComparisonResult compareFileOperationTargetRanges(id a, id b, void *sel
     if (range1.location < range2.location) return -1;
     else return 1;
 }
-#endif
 
 /* Finds the index of the smallest operation whose min target range is larger than or equal to the given location, or NSUIntegerMax if none */
 static NSUInteger binarySearchRight(unsigned long long loc, NSArray *sortedOperations) {
@@ -128,7 +127,7 @@ static NSUInteger binarySearchLeft(HFRange range, NSArray *sortedOperations) {
     }
 }
 
-#if ! NDEBUG
+__attribute__((unused))
 static NSUInteger naiveSearchRight(unsigned long long loc, NSArray *sortedOperations) {
     NSUInteger i, max = [sortedOperations count];
     for (i=0; i < max; i++) {
@@ -138,6 +137,7 @@ static NSUInteger naiveSearchRight(unsigned long long loc, NSArray *sortedOperat
     return NSUIntegerMax;
 }
 
+__attribute__((unused))
 static NSUInteger naiveSearchLeft(HFRange range, NSArray *sortedOperations) {
     NSUInteger i, max = [sortedOperations count];
     for (i=0; i < max; i++) {
@@ -146,7 +146,6 @@ static NSUInteger naiveSearchLeft(HFRange range, NSArray *sortedOperations) {
     }
     return NSUIntegerMax;
 }
-#endif
 
 static void computeDependencies(HFByteArray *self, HFObjectGraph *graph, NSArray *targetSortedOperations) {
     REQUIRE_NOT_NULL(graph);
@@ -158,9 +157,9 @@ static void computeDependencies(HFByteArray *self, HFObjectGraph *graph, NSArray
         HFRange sourceRange = [sourceOperation sourceRange];
         HFASSERT(sourceRange.length > 0);
         NSUInteger startIndex = binarySearchLeft(sourceRange, targetSortedOperations);
-	HFASSERT(naiveSearchLeft(sourceRange, targetSortedOperations) == startIndex);
+        HFASSERT(naiveSearchLeft(sourceRange, targetSortedOperations) == startIndex);
         NSUInteger endIndex = binarySearchRight(HFMaxRange(sourceRange), targetSortedOperations);
-	HFASSERT(naiveSearchRight(HFMaxRange(sourceRange), targetSortedOperations) == endIndex);
+        HFASSERT(naiveSearchRight(HFMaxRange(sourceRange), targetSortedOperations) == endIndex);
         if (startIndex != NSNotFound) {
             NSUInteger index, end = MIN(targetSortedOperationsCount, endIndex); //endIndex may be NSNotFound
             for (index = startIndex; index < end; index++) {

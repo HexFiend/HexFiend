@@ -888,7 +888,7 @@ static HFBTreeNode *mutable_copy_node(HFBTreeNode *node, TreeDepth_t depth, HFBT
     return result;
 }
 
-#if ! NDEBUG
+__attribute__((unused))
 static BOOL non_nulls_are_grouped_at_start(const id *ptr, NSUInteger count) {
     BOOL hasSeenNull = NO;
     for (NSUInteger i=0; i < count; i++) {
@@ -900,7 +900,7 @@ static BOOL non_nulls_are_grouped_at_start(const id *ptr, NSUInteger count) {
     }
     return YES;
 }
-#endif
+
 
 static void btree_recursive_check_integrity(HFBTree *tree, HFBTreeNode *branchOrLeaf, TreeDepth_t depth, HFBTreeNode **linkHelper) {
     HFASSERT(linkHelper[0] == branchOrLeaf->left);

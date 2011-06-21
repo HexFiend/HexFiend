@@ -14,7 +14,7 @@
 #if ! NDEBUG
 #define HFASSERT(a) assert(a)
 #else
-#define HFASSERT(a)
+#define HFASSERT(a) if (0 && ! (a)) abort() 
 #endif
 
 
@@ -48,8 +48,8 @@
 } while (0)
 
 #else
-#define REQUIRE_NOT_NULL(a)
-#define EXPECT_CLASS(e, c)
+#define REQUIRE_NOT_NULL(a) USE(a)
+#define EXPECT_CLASS(e, c) USE(e)
 #endif
 
 #if __LP64__
