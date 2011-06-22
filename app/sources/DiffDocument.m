@@ -859,6 +859,7 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
     
     /* Now figure out the change in line length before the start line */
     unsigned long long firstDisplayedAbstractCharacterIndex = HFProductULL(HFFPToUL(floorl(abstractRange.location)), bytesPerLine);
+    NSLog(@"firstDisplayedAbstractCharacterIndex: %llu", firstDisplayedAbstractCharacterIndex);
     unsigned long long collapse = [self abstractToConcreteCollapseBeforeAbstractLocation:firstDisplayedAbstractCharacterIndex onLeft:left];
     HFASSERT(collapse <= firstDisplayedAbstractCharacterIndex);
     

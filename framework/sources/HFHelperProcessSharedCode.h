@@ -9,15 +9,9 @@
 
 #define CHECK_MACH_ERROR(a) do {kern_return_t rr = (a); if ((rr) != KERN_SUCCESS) { printf("Mach error %x (%s) on line %d of file %s\n", (rr), mach_error_string((rr)), __LINE__, __FILE__); abort(); } } while (0)
 
-#define MESS_WITH_BOOTSTRAP_PORT 0
-
-#if ! MESS_WITH_BOOTSTRAP_PORT
-
 static inline void derive_ipc_name(char buff[256], pid_t pid) {
     snprintf(buff, sizeof buff, "com.ridiculous_fish.HexFiend.parent_%ld", (long)pid);
 }
-
-#endif
 
 static int setup_recv_port (mach_port_t *recv_port) {
     kern_return_t       err;

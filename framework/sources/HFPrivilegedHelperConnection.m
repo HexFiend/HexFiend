@@ -12,11 +12,8 @@
 
 static HFPrivilegedHelperConnection *sSharedConnection;
 
-struct inheriting_fork_return_t {
-    pid_t child_pid;
-    mach_port_t child_recv_port;
-};
-static struct inheriting_fork_return_t fork_with_inherit(const char *path);
+
+static mach_port_t launch_child_returning_recv_port(const char *path);
 
 @implementation HFPrivilegedHelperConnection
 
@@ -244,9 +241,7 @@ static NSString *read_line(FILE *file) {
     if (result) {
         /* Launch the path */
         const char *pathToLaunch = [privilegedHelperPath fileSystemRepresentation];
-        struct inheriting_fork_return_t fork_return = fork_with_inherit(pathToLaunch);
-        childReceivePort = fork_return.child_recv_port;
-        printf("CHILD PID: %d\n", fork_return.child_pid);
+        childReceivePort = launch_child_returning_recv_port(pathToLaunch);
     }
     
     /* Tell our launcher, OK, so it deletes it for us */
@@ -284,49 +279,54 @@ int posix_spawnattr_setflags(posix_spawnattr_t *, short) WEAK_IMPORT;
 
 extern char ***_NSGetEnviron(void);
 
-static struct inheriting_fork_return_t fork_with_inherit(const char *path) {
-    struct inheriting_fork_return_t result = {-1, -1};
-    const struct inheriting_fork_return_t errorReturn = {-1, -1};
+#define USE_BOOTSTRAP_DIRECTLY 0
+
+
+static mach_port_t launch_child_returning_recv_port(const char *path) {
+    const mach_port_t errorReturn = MACH_PORT_NULL;
     kern_return_t       err;
     mach_port_t         parent_recv_port = MACH_PORT_NULL;
     mach_port_t         child_recv_port = MACH_PORT_NULL;
     
     if (setup_recv_port(&parent_recv_port) != 0)
         return errorReturn;
-#if MESS_WITH_BOOTSTRAP_PORT
-    CHECK_MACH_ERROR(task_set_bootstrap_port(mach_task_self(), parent_recv_port));
-#else
+
     // register a port with launchd
     char ipc_name[256];
     derive_ipc_name(ipc_name, getpid());
+#if USE_BOOTSTRAP_DIRECTLY
     mach_port_t bp = MACH_PORT_NULL;
     task_get_bootstrap_port(mach_task_self(), &bp);
     CHECK_MACH_ERROR(bootstrap_register(bp, ipc_name, parent_recv_port));
+#else
+    NSString *portName = [[NSString alloc] initWithCString:ipc_name encoding:NSASCIIStringEncoding];
+    NSMachPort *machPort = [[NSMachPort alloc] initWithMachPort:parent_recv_port options:NSMachPortDeallocateNone];
+    NSMachBootstrapServer *bootstrapper = [NSMachBootstrapServer sharedInstance];
+    err = ! [bootstrapper registerPort:machPort name:portName];
+    [machPort release];
+    [portName release];
+    if (err) {
+        printf("Failed to register mach port %s", ipc_name);
+        return errorReturn;
+    }
 #endif
     
     char * argv[] = {(char *)path, NULL};
-    int posixErr = posix_spawn(&result.child_pid, path, NULL/*file actions*/, NULL/*spawn attr*/, argv, *_NSGetEnviron());
+    pid_t childPID = -1;
+    int posixErr = posix_spawn(&childPID, path, NULL/*file actions*/, NULL/*spawn attr*/, argv, *_NSGetEnviron());
     if (posixErr != 0) {
         printf("posix_spawn failed: %d %s\n", posixErr, strerror(posixErr));
         return errorReturn;
     }
-    
-#if MESS_WITH_BOOTSTRAP_PORT
-    CHECK_MACH_ERROR(task_set_bootstrap_port(mach_task_self (), bootstrap_port));
-#endif
-    
+        
     /* talk to the child */
     if (recv_port(parent_recv_port, &child_recv_port) != 0)
         return errorReturn;
     
-#if MESS_WITH_BOOTSTRAP_PORT
-    if (send_port(child_recv_port, bootstrap_port, MACH_MSG_TYPE_COPY_SEND) != 0)
-        return errorReturn;
-    CHECK_MACH_ERROR(mach_port_deallocate (mach_task_self(), parent_recv_port));
-
-#else
     /* Note: this is one of those weird cases where we really really do want to destroy the Mach port (not simply decrement its refcount. This is what allows us to unregister it. */
     CHECK_MACH_ERROR(mach_port_destroy (mach_task_self(), parent_recv_port));
+    
+#if USE_BOOTSTRAP_DIRECTLY
     /* since we got the child port, we can unregister our launchd service */
     CHECK_MACH_ERROR(bootstrap_register(bp, ipc_name, MACH_PORT_NULL));
 #endif
@@ -335,6 +335,5 @@ static struct inheriting_fork_return_t fork_with_inherit(const char *path) {
     _GratefulFatherSayHey(child_recv_port, "From Daddy", &val);
     printf("Daddy got back Val: %d\n", val);
     
-    result.child_recv_port = child_recv_port;
-    return result;
+    return child_recv_port;
 }
