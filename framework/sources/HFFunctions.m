@@ -615,6 +615,34 @@ NSString *HFDescribeByteCountWithPrefixAndSuffix(const char *stringPrefix, unsig
     return [[[NSString alloc] initWithBytesNoCopy:resultPointer length:numChars encoding:NSASCIIStringEncoding freeWhenDone:YES] autorelease];
 }
 
+static CGFloat interpolateShadow(CGFloat val) {
+    //A value of 1 means we are at the rightmost, and should return our max value.  By adjusting the scale, we control how quickly the shadow drops off.
+    CGFloat scale = 1.4;
+    return (CGFloat)(expm1(val * scale) / expm1(scale));
+}
+
+void HFDrawShadow(CGContextRef ctx, NSRect rect, CGFloat shadowSize, NSRectEdge rectEdge, BOOL drawActive, NSRect clip) {
+    NSRect remainingRect, unused;
+    NSDivideRect(rect, &remainingRect, &unused, shadowSize, rectEdge);
+    
+    CGFloat maxAlpha = (drawActive ? .25 : .10);
+    BOOL horizontal = (rectEdge == NSMinXEdge || rectEdge == NSMaxXEdge);
+
+    for (CGFloat i=0; i < shadowSize; i++) {
+        NSRect shadowLine;
+        NSDivideRect(remainingRect, &shadowLine, &remainingRect, 1, rectEdge);
+        
+        NSRect clippedLine = NSIntersectionRect(shadowLine, clip);
+        if (! NSIsEmptyRect(clippedLine)) {   
+            CGFloat gray = 0.;
+            CGFloat alpha = maxAlpha * interpolateShadow((shadowSize - i) / shadowSize);
+            CGContextSetGrayFillColor(ctx, gray, alpha);
+            CGContextFillRect(ctx, NSRectToCGRect(clippedLine));
+        }
+    }
+
+}
+
 void HFRegisterViewForWindowAppearanceChanges(NSView *self, SEL notificationSEL, BOOL appToo) {
     NSWindow *window = [self window];
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];

@@ -621,7 +621,7 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
     NSRect scrollerFrame = [scroller frame];
     scrollerFrame.size.height = NSMaxY([superview bounds]) - scrollerFrame.origin.y;
     [scroller setFrame:scrollerFrame];
-    
+
     /* Create the diff computation view */
     if (! diffComputationView) {
         diffComputationView = [self newOperationViewForNibName:@"DiffComputationBanner" displayName:@"Diffing" fixedHeight:YES];
@@ -859,7 +859,6 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
     
     /* Now figure out the change in line length before the start line */
     unsigned long long firstDisplayedAbstractCharacterIndex = HFProductULL(HFFPToUL(floorl(abstractRange.location)), bytesPerLine);
-    NSLog(@"firstDisplayedAbstractCharacterIndex: %llu", firstDisplayedAbstractCharacterIndex);
     unsigned long long collapse = [self abstractToConcreteCollapseBeforeAbstractLocation:firstDisplayedAbstractCharacterIndex onLeft:left];
     HFASSERT(collapse <= firstDisplayedAbstractCharacterIndex);
     
@@ -936,13 +935,17 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
     HFFPRange lineRange = [self displayedLineRange];
     HFASSERT(HFULToFP([self totalLineCount]) >= lineRange.length);
     long double maxScroll = HFULToFP([self totalLineCount]) - lineRange.length;
-    if (lines < 0) {
-        lineRange.location -= MIN(lineRange.location, -lines);
+    long double newLineRangeLocation = lineRange.location + lines;
+
+    // ensure it's in range
+    newLineRangeLocation = fminl(newLineRangeLocation, maxScroll);
+    newLineRangeLocation = fmaxl(newLineRangeLocation, 0);
+    
+    // Note: This comparison is often false, e.g. if we scroll to the end or beginning, especially with momentum scrolling.  It's a worthwhile optimization.
+    if (newLineRangeLocation != lineRange.location) {
+        lineRange.location = newLineRangeLocation;
+        [self setDisplayedLineRange:lineRange];
     }
-    else {
-        lineRange.location = MIN(maxScroll, lineRange.location + lines);
-    }
-    [self setDisplayedLineRange:lineRange];
 }
 
 - (void)scrollWithScrollEvent:(NSEvent *)scrollEvent {
@@ -962,14 +965,6 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
     HFASSERT(currentLineRange.length < HFULToFP(totalLineCount));
     long double maxScroll = totalLineCount - currentLineRange.length;
     long double newScroll = maxScroll * (long double)newValue;
-    
-    {
-        unsigned long long q = (unsigned long long)(newValue * (long double)contentsLength);
-        unsigned long long collapse = [self abstractToConcreteCollapseBeforeAbstractLocation:q onLeft:NO];
-        unsigned long long newVal = q - collapse;
-        NSLog(@"New val: %llu -> %llu", q, newVal);
-    }
-    
     [self setDisplayedLineRange:(HFFPRange){newScroll, currentLineRange.length}];
 }
 

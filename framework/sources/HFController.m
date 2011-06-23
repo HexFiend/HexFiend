@@ -511,12 +511,12 @@ static inline Class preferredByteArrayClass(void) {
     NSArray *bookmarkAttributes = HFBookmarkAttributesFromBookmark(bookmark);
     [attributeArray removeAttributes:[NSSet setWithArray:bookmarkAttributes]];
     if (! (range.location == ULLONG_MAX && range.location == ULLONG_MAX)) {
-	// apply start, middle, and end
-	[attributeArray addAttribute:[bookmarkAttributes objectAtIndex:0] range:HFRangeMake(range.location, 1)];
-	[attributeArray addAttribute:[bookmarkAttributes objectAtIndex:1] range:range];
-	[attributeArray addAttribute:[bookmarkAttributes objectAtIndex:2] range:HFRangeMake(HFMaxRange(range) - 1, 1)];
+        // apply start, middle, and end
+        [attributeArray addAttribute:[bookmarkAttributes objectAtIndex:0] range:HFRangeMake(range.location, 1)];
+        [attributeArray addAttribute:[bookmarkAttributes objectAtIndex:1] range:range];
+        [attributeArray addAttribute:[bookmarkAttributes objectAtIndex:2] range:HFRangeMake(HFMaxRange(range) - 1, 1)];
     }
-    [self _addPropertyChangeBits:HFControllerByteRangeAttributes];
+    [self _addPropertyChangeBits:HFControllerByteRangeAttributes | HFControllerBookmarks];
 }
 
 - (NSIndexSet *)bookmarksInRange:(HFRange)range {
@@ -525,8 +525,8 @@ static inline Class preferredByteArrayClass(void) {
     HFByteRangeAttributeArray *attributeArray = [byteArray byteRangeAttributeArray];
     NSSet *attributes = [attributeArray attributesInRange:range];
     FOREACH(NSString *, attribute, attributes) {
-	NSInteger bookmark = HFBookmarkFromBookmarkMiddleAttribute(attribute);
-	if (bookmark != NSNotFound) [result addIndex:bookmark];
+        NSInteger bookmark = HFBookmarkFromBookmarkMiddleAttribute(attribute);
+        if (bookmark != NSNotFound) [result addIndex:bookmark];
     }
     return result;
 }
@@ -619,7 +619,7 @@ static inline Class preferredByteArrayClass(void) {
         newDisplayRange.location += linesToMoveDownToMakeLastLineVisible;
     }
     else if (linesToMoveUpToMakeFirstLineVisible > 0 && linesToDisplay >= 1) {
-	// the >= 1 check prevents some wacky behavior when we have less than one line's worth of space, that caused bouncing between the top and bottom of the line
+        // the >= 1 check prevents some wacky behavior when we have less than one line's worth of space, that caused bouncing between the top and bottom of the line
         newDisplayRange.location -= linesToMoveUpToMakeFirstLineVisible;
     }
     [self setDisplayedLineRange:newDisplayRange];
@@ -637,12 +637,12 @@ static inline Class preferredByteArrayClass(void) {
     
     /* Handle the case of a line range bigger than we can display by choosing the top lines. */
     if (numDisplayedLines <= linesInRange) {
-	newDisplayRange = (HFFPRange){startLine, numDisplayedLines};
+        newDisplayRange = (HFFPRange){startLine, numDisplayedLines};
     }
     else {
-	/* Construct a newDisplayRange that centers {startLine, endLine} */
-	long double center = startLine + (endLine - startLine) / 2.;
-	newDisplayRange = (HFFPRange){center - numDisplayedLines / 2., numDisplayedLines};
+        /* Construct a newDisplayRange that centers {startLine, endLine} */
+        long double center = startLine + (endLine - startLine) / 2.;
+        newDisplayRange = (HFFPRange){center - numDisplayedLines / 2., numDisplayedLines};
     }
     
     /* Move the newDisplayRange up or down as necessary */
@@ -656,20 +656,20 @@ static inline Class preferredByteArrayClass(void) {
     NSMutableArray *newTempSelection = [selectedContentsRanges mutableCopy];
     NSUInteger i, max = [newTempSelection count];
     for (i=0; i < max; i++) {
-	HFRange range = [[newTempSelection objectAtIndex:i] HFRange];
-	if (HFMaxRange(range) > newLength) {
-	    if (range.location > newLength) {
-		/* The range starts past our new max.  Just remove this range entirely */
-		[newTempSelection removeObjectAtIndex:i];
-		i--;
-		max--;
-	    }
-	    else {
-		/* Need to clip this range */
-		range.length = newLength - range.location;
-		[newTempSelection replaceObjectAtIndex:i withObject:[HFRangeWrapper withRange:range]];
-	    }
-	}
+        HFRange range = [[newTempSelection objectAtIndex:i] HFRange];
+        if (HFMaxRange(range) > newLength) {
+            if (range.location > newLength) {
+                /* The range starts past our new max.  Just remove this range entirely */
+                [newTempSelection removeObjectAtIndex:i];
+                i--;
+                max--;
+            }
+            else {
+                /* Need to clip this range */
+                range.length = newLength - range.location;
+                [newTempSelection replaceObjectAtIndex:i withObject:[HFRangeWrapper withRange:range]];
+            }
+        }
     }
     [newTempSelection setArray:[HFRangeWrapper organizeAndMergeRanges:newTempSelection]];
     
@@ -677,26 +677,26 @@ static inline Class preferredByteArrayClass(void) {
     BOOL foundEmptyRange = NO;
     max = [newTempSelection count];
     for (i=0; i < max; i++) {
-	HFRange range = [[newTempSelection objectAtIndex:i] HFRange];
-	HFASSERT(HFMaxRange(range) <= newLength);
-	if (range.length == 0) {
-	    if (foundEmptyRange) {
-		[newTempSelection removeObjectAtIndex:i];
-		i--;
-		max--;
-	    }
-	    foundEmptyRange = YES;
-	}
+        HFRange range = [[newTempSelection objectAtIndex:i] HFRange];
+        HFASSERT(HFMaxRange(range) <= newLength);
+        if (range.length == 0) {
+            if (foundEmptyRange) {
+                [newTempSelection removeObjectAtIndex:i];
+                i--;
+                max--;
+            }
+            foundEmptyRange = YES;
+        }
     }
     if (max == 0) {
-	/* Removed all ranges - insert one at the end */
-	[newTempSelection addObject:[HFRangeWrapper withRange:HFRangeMake(newLength, 0)]];
+        /* Removed all ranges - insert one at the end */
+        [newTempSelection addObject:[HFRangeWrapper withRange:HFRangeMake(newLength, 0)]];
     }
     
     /* If something changed, set the new selection and post the change bit */
     if (! [selectedContentsRanges isEqualToArray:newTempSelection]) {
-	[selectedContentsRanges setArray:newTempSelection];
-	[self _addPropertyChangeBits:HFControllerSelectedRanges];
+        [selectedContentsRanges setArray:newTempSelection];
+        [self _addPropertyChangeBits:HFControllerSelectedRanges];
     }
     
     [newTempSelection release];
@@ -803,7 +803,7 @@ static inline Class preferredByteArrayClass(void) {
         NSView *view = [rep view];
         CGFloat width = [view frame].size.width;
         NSUInteger repMaxBytesPerLine = [rep maximumBytesPerLineForViewWidth:width];
-	HFASSERT(repMaxBytesPerLine > 0);
+        HFASSERT(repMaxBytesPerLine > 0);
         newBytesPerLine = MIN(repMaxBytesPerLine, newBytesPerLine);
     }
     if (newBytesPerLine != bytesPerLine) {
@@ -944,12 +944,12 @@ static inline Class preferredByteArrayClass(void) {
         HFRange selectedRange = [self _flattenSelectionRange];
         unsigned long long distanceFromRangeStart = HFAbsoluteDifference(selectedRange.location, characterIndex);
         unsigned long long distanceFromRangeEnd = HFAbsoluteDifference(HFMaxRange(selectedRange), characterIndex);
-	if (selectedRange.length == 0) {    
-	    HFASSERT(distanceFromRangeStart == distanceFromRangeEnd);
-	    selectionAnchor = selectedRange.location;
-	    selectedRange.location = MIN(characterIndex, selectedRange.location);
-	    selectedRange.length = distanceFromRangeStart;
-	}
+        if (selectedRange.length == 0) {    
+            HFASSERT(distanceFromRangeStart == distanceFromRangeEnd);
+            selectionAnchor = selectedRange.location;
+            selectedRange.location = MIN(characterIndex, selectedRange.location);
+            selectedRange.length = distanceFromRangeStart;
+        }
         else if (distanceFromRangeStart >= distanceFromRangeEnd) {
             /* Push the "end forwards" */
             selectedRange.length = distanceFromRangeStart;
@@ -1096,10 +1096,10 @@ static inline Class preferredByteArrayClass(void) {
     HFASSERT(HFULToFP([self totalLineCount]) >= lineRange.length);
     long double maxScroll = HFULToFP([self totalLineCount]) - lineRange.length;
     if (lines < 0) {
-	lineRange.location -= MIN(lineRange.location, -lines);
+        lineRange.location -= MIN(lineRange.location, -lines);
     }
     else {
-	lineRange.location = MIN(maxScroll, lineRange.location + lines);
+        lineRange.location = MIN(maxScroll, lineRange.location + lines);
     }
     [self setDisplayedLineRange:lineRange];
 }
@@ -1175,12 +1175,12 @@ static inline Class preferredByteArrayClass(void) {
     HFASSERT([self contentsLength] >= selectedRange.location);
     /* A movement of just 1 with a selection only clears the selection; it does not move the cursor */
     if (selectionWasEmpty || amountToMove > 1) {
-	if (direction == HFControllerDirectionLeft) {
-	    selectedRange.location -= MIN(amountToMove, selectedRange.location);
-	}
-	else {
-	    selectedRange.location += MIN(amountToMove, [self contentsLength] - selectedRange.location);
-	}
+        if (direction == HFControllerDirectionLeft) {
+            selectedRange.location -= MIN(amountToMove, selectedRange.location);
+        }
+        else {
+            selectedRange.location += MIN(amountToMove, [self contentsLength] - selectedRange.location);
+        }
     }
     selectionAnchor = NO_SELECTION;
     [self _setSingleSelectedContentsRange:selectedRange];
@@ -1280,22 +1280,22 @@ static inline Class preferredByteArrayClass(void) {
     NSMutableArray *newRanges = [NSMutableArray arrayWithCapacity:max];
     BOOL hasAddedNonemptyRange = NO;
     for (i=0; i < max; i++) {
-	HFRange range = [[selectedContentsRanges objectAtIndex:i] HFRange];
-	HFASSERT(range.location <= maxLength && HFMaxRange(range) <= maxLength);
-	if (direction == HFControllerDirectionRight) {
-	    unsigned long long offset = MIN(maxLength - range.location, amountToMove);
-	    unsigned long long lengthToSubtract = MIN(range.length, amountToMove - offset);
-	    range.location += offset;
-	    range.length -= lengthToSubtract;
-	}
-	else { /* direction == HFControllerDirectionLeft */
-	    unsigned long long negOffset = MIN(amountToMove, range.location);
-	    unsigned long long lengthToSubtract = MIN(range.length, amountToMove - negOffset);
-	    range.location -= negOffset;
-	    range.length -= lengthToSubtract;
-	}
-	[newRanges addObject:[HFRangeWrapper withRange:range]];
-	hasAddedNonemptyRange = hasAddedNonemptyRange || (range.length > 0);
+        HFRange range = [[selectedContentsRanges objectAtIndex:i] HFRange];
+        HFASSERT(range.location <= maxLength && HFMaxRange(range) <= maxLength);
+        if (direction == HFControllerDirectionRight) {
+            unsigned long long offset = MIN(maxLength - range.location, amountToMove);
+            unsigned long long lengthToSubtract = MIN(range.length, amountToMove - offset);
+            range.location += offset;
+            range.length -= lengthToSubtract;
+        }
+        else { /* direction == HFControllerDirectionLeft */
+            unsigned long long negOffset = MIN(amountToMove, range.location);
+            unsigned long long lengthToSubtract = MIN(range.length, amountToMove - negOffset);
+            range.location -= negOffset;
+            range.length -= lengthToSubtract;
+        }
+        [newRanges addObject:[HFRangeWrapper withRange:range]];
+        hasAddedNonemptyRange = hasAddedNonemptyRange || (range.length > 0);
     }
     
     newRanges = [[[HFRangeWrapper organizeAndMergeRanges:newRanges] mutableCopy] autorelease];
@@ -1303,15 +1303,15 @@ static inline Class preferredByteArrayClass(void) {
     BOOL hasFoundEmptyRange = NO;
     max = [newRanges count];
     for (i=0; i < max; i++) {
-	HFRange range = [[newRanges objectAtIndex:i] HFRange];
-	if (range.length == 0) {
-	    if (hasFoundEmptyRange || hasAddedNonemptyRange) {
-		[newRanges removeObjectAtIndex:i];
-		i--;
-		max--;
-	    }
-	    hasFoundEmptyRange = YES;
-	}
+        HFRange range = [[newRanges objectAtIndex:i] HFRange];
+        if (range.length == 0) {
+            if (hasFoundEmptyRange || hasAddedNonemptyRange) {
+                [newRanges removeObjectAtIndex:i];
+                i--;
+                max--;
+            }
+            hasFoundEmptyRange = YES;
+        }
     }
     [selectedContentsRanges setArray:newRanges];
     VALIDATE_SELECTION();
@@ -1592,21 +1592,21 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
 - (void)moveInDirection:(HFControllerMovementDirection)direction byByteCount:(unsigned long long)amountToMove withSelectionTransformation:(HFControllerSelectionTransformation)transformation usingAnchor:(BOOL)useAnchor {
     if (! useAnchor) selectionAnchor = NO_SELECTION;
     switch (transformation) {
-	case HFControllerDiscardSelection:
-	    [self _moveDirectionDiscardingSelection:direction byAmount:amountToMove];
-	    break;
-	    
-	case HFControllerShiftSelection:
-	    [self _shiftSelectionInDirection:direction byAmount:amountToMove];
-	    break;
-	    
-	case HFControllerExtendSelection:
-	    [self _extendSelectionInDirection:direction byAmount:amountToMove];
-	    break;
-	    
-	default:
-	    [NSException raise:NSInvalidArgumentException format:@"Invalid transformation %ld", (long)transformation];
-	    break;
+        case HFControllerDiscardSelection:
+            [self _moveDirectionDiscardingSelection:direction byAmount:amountToMove];
+            break;
+            
+        case HFControllerShiftSelection:
+            [self _shiftSelectionInDirection:direction byAmount:amountToMove];
+            break;
+            
+        case HFControllerExtendSelection:
+            [self _extendSelectionInDirection:direction byAmount:amountToMove];
+            break;
+            
+        default:
+            [NSException raise:NSInvalidArgumentException format:@"Invalid transformation %ld", (long)transformation];
+            break;
     }
     if (! useAnchor) selectionAnchor = NO_SELECTION;
 }
@@ -1616,22 +1616,22 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
     HFASSERT(direction == HFControllerDirectionLeft || direction == HFControllerDirectionRight);
     unsigned long long bytesToMove = 0;
     switch (granularity) {
-	case HFControllerMovementByte:
-	    bytesToMove = 1;
-	    break;
-	case HFControllerMovementColumn:
-	    /* This is a tricky case because the amount we have to move depends on our position in the column. */
+        case HFControllerMovementByte:
+            bytesToMove = 1;
+            break;
+        case HFControllerMovementColumn:
+            /* This is a tricky case because the amount we have to move depends on our position in the column. */
             bytesToMove = [self _distanceToWordBoundaryForDirection:direction];
-	    break;
-	case HFControllerMovementLine:
-	    bytesToMove = [self bytesPerLine];
-	    break;
-	case HFControllerMovementPage:
-	    bytesToMove = HFProductULL([self bytesPerLine], HFFPToUL(MIN(floorl([self displayedLineRange].length), 1.)));
-	    break;
-	case HFControllerMovementDocument:
-	    bytesToMove = [self contentsLength];
-	    break;
+            break;
+        case HFControllerMovementLine:
+            bytesToMove = [self bytesPerLine];
+            break;
+        case HFControllerMovementPage:
+            bytesToMove = HFProductULL([self bytesPerLine], HFFPToUL(MIN(floorl([self displayedLineRange].length), 1.)));
+            break;
+        case HFControllerMovementDocument:
+            bytesToMove = [self contentsLength];
+            break;
     }
     HFControllerSelectionTransformation transformation = (extendSelection ? HFControllerExtendSelection : HFControllerDiscardSelection);
     [self moveInDirection:direction byByteCount:bytesToMove withSelectionTransformation:transformation usingAnchor:YES];
@@ -1644,30 +1644,30 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
     HFRange additionalSelection = {NO_SELECTION, NO_SELECTION};
     unsigned long long minLocation = NO_SELECTION, newMinLocation = NO_SELECTION, maxLocation = NO_SELECTION, newMaxLocation = NO_SELECTION;
     if (direction == HFControllerDirectionLeft) {
-	/* If we are at the beginning of a line, this should be a no-op */
-	minLocation = [self _minimumSelectionLocation];
-	newMinLocation = (minLocation / bytesPerLine) * bytesPerLine;
-	locationToMakeVisible = newMinLocation;
-	additionalSelection = HFRangeMake(newMinLocation, minLocation - newMinLocation);
+        /* If we are at the beginning of a line, this should be a no-op */
+        minLocation = [self _minimumSelectionLocation];
+        newMinLocation = (minLocation / bytesPerLine) * bytesPerLine;
+        locationToMakeVisible = newMinLocation;
+        additionalSelection = HFRangeMake(newMinLocation, minLocation - newMinLocation);
     }
     else {
-	/* This always advances to the next line */
-	maxLocation = [self _maximumSelectionLocation];
-	unsigned long long proposedNewMaxLocation = HFRoundUpToNextMultipleSaturate(maxLocation, bytesPerLine);
-	newMaxLocation = MIN([self contentsLength], proposedNewMaxLocation);
-	HFASSERT(newMaxLocation >= maxLocation);
-	locationToMakeVisible = newMaxLocation;
-	additionalSelection = HFRangeMake(maxLocation, newMaxLocation - maxLocation);
+        /* This always advances to the next line */
+        maxLocation = [self _maximumSelectionLocation];
+        unsigned long long proposedNewMaxLocation = HFRoundUpToNextMultipleSaturate(maxLocation, bytesPerLine);
+        newMaxLocation = MIN([self contentsLength], proposedNewMaxLocation);
+        HFASSERT(newMaxLocation >= maxLocation);
+        locationToMakeVisible = newMaxLocation;
+        additionalSelection = HFRangeMake(maxLocation, newMaxLocation - maxLocation);
     }
     
     if (modifySelection) {
-	if (additionalSelection.length > 0) {
-	    [self _addRangeToSelection:additionalSelection];
-	    [self _addPropertyChangeBits:HFControllerSelectedRanges];
-	}
+        if (additionalSelection.length > 0) {
+            [self _addRangeToSelection:additionalSelection];
+            [self _addPropertyChangeBits:HFControllerSelectedRanges];
+        }
     }
     else {
-	[self _setSingleSelectedContentsRange:HFRangeMake(locationToMakeVisible, 0)];
+        [self _setSingleSelectedContentsRange:HFRangeMake(locationToMakeVisible, 0)];
     }
     [self _ensureVisibilityOfLocation:locationToMakeVisible];
     END_TRANSACTION();
@@ -1736,7 +1736,7 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
     
     unsigned long long amountDeleted = 0, amountAdded = [bytesToInsert length];
     HFByteArray *bytes = [self byteArray];
-
+    
     /* Delete all the selection - in reverse order - except the last (really first) one, which we will overwrite. */
     NSArray *allRangesToRemove = [HFRangeWrapper organizeAndMergeRanges:[self selectedContentsRanges]];
     HFRange rangeToReplace = [[allRangesToRemove objectAtIndex:0] HFRange];
@@ -1829,7 +1829,7 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
 #endif
     REQUIRE_NOT_NULL(bytesToInsert);
     
-
+    
     BEGIN_TRANSACTION();
     unsigned long long beforeLength = [byteArray length];
     BOOL inOverwriteMode = [self inOverwriteMode];
@@ -1921,10 +1921,10 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
     NSArray *changedRanges = [array rangesOfFileModifiedIfSavedToFile:fileReference];
     if ([changedRanges count] > 0) { //don't bother if nothing is changing
         NSMutableDictionary *hint = [[NSMutableDictionary alloc] init];
-	NSDictionary *userInfo = [[NSDictionary alloc] initWithObjectsAndKeys:array, HFChangeInFileByteArrayKey, changedRanges, HFChangeInFileModifiedRangesKey, shouldCancelPointer, HFChangeInFileShouldCancelKey, hint, HFChangeInFileHintKey, nil];
-	[[NSNotificationCenter defaultCenter] postNotificationName:HFPrepareForChangeInFileNotification object:fileReference userInfo:userInfo];
+        NSDictionary *userInfo = [[NSDictionary alloc] initWithObjectsAndKeys:array, HFChangeInFileByteArrayKey, changedRanges, HFChangeInFileModifiedRangesKey, shouldCancelPointer, HFChangeInFileShouldCancelKey, hint, HFChangeInFileHintKey, nil];
+        [[NSNotificationCenter defaultCenter] postNotificationName:HFPrepareForChangeInFileNotification object:fileReference userInfo:userInfo];
         [hint release];
-	[userInfo release];
+        [userInfo release];
     }
     [fileReference release];
     return ! shouldCancel;
@@ -1952,7 +1952,7 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
     HFByteArray* first = [[[HFFullMemoryByteArray alloc] init] autorelease];
     HFBTreeByteArray* second = [[[HFBTreeByteArray alloc] init] autorelease];    
     first = nil;
-//    second = nil;
+    //    second = nil;
     
     //srandom(time(NULL));
     
@@ -1960,33 +1960,33 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
     unsigned long long expectedLength = 0;
     unsigned i;
     for (i=1; i <= opCount; i++) {
-	NSAutoreleasePool* pool=[[NSAutoreleasePool alloc] init];
-	NSUInteger op;
-	const unsigned long long length = [first length];
-	unsigned long long offset;
-	unsigned long long number;
-	switch ((op = (random()%2))) {
-	    case 0: { //insert
-		offset = random() % (1 + length);
-		HFByteSlice* slice = [[HFRandomDataByteSlice alloc] initWithRandomDataLength: 1 + random() % 1000];
-		[first insertByteSlice:slice inRange:HFRangeMake(offset, 0)];
-		[second insertByteSlice:slice inRange:HFRangeMake(offset, 0)];
-		expectedLength += [slice length];
-		[slice release];
-		break;
-	    }
-	    case 1: { //delete
-		if (length > 0) {
-		    offset = random() % length;
-		    number = 1 + random() % (length - offset);
-		    [first deleteBytesInRange:HFRangeMake(offset, number)];
-		    [second deleteBytesInRange:HFRangeMake(offset, number)];
-		    expectedLength -= number;
-		}
-		break;
-	    }
-	}
-	[pool drain];
+        NSAutoreleasePool* pool=[[NSAutoreleasePool alloc] init];
+        NSUInteger op;
+        const unsigned long long length = [first length];
+        unsigned long long offset;
+        unsigned long long number;
+        switch ((op = (random()%2))) {
+            case 0: { //insert
+                offset = random() % (1 + length);
+                HFByteSlice* slice = [[HFRandomDataByteSlice alloc] initWithRandomDataLength: 1 + random() % 1000];
+                [first insertByteSlice:slice inRange:HFRangeMake(offset, 0)];
+                [second insertByteSlice:slice inRange:HFRangeMake(offset, 0)];
+                expectedLength += [slice length];
+                [slice release];
+                break;
+            }
+            case 1: { //delete
+                if (length > 0) {
+                    offset = random() % length;
+                    number = 1 + random() % (length - offset);
+                    [first deleteBytesInRange:HFRangeMake(offset, number)];
+                    [second deleteBytesInRange:HFRangeMake(offset, number)];
+                    expectedLength -= number;
+                }
+                break;
+            }
+        }
+        [pool drain];
     }
 }
 
@@ -1994,33 +1994,33 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
     HFByteRangeAttributeArray *naiveTree = [[HFNaiveByteRangeAttributeArray alloc] init];
     HFAnnotatedTreeByteRangeAttributeArray *smartTree = [[HFAnnotatedTreeByteRangeAttributeArray alloc] init];
     naiveTree = nil;
-//    smartTree = nil;
+    //    smartTree = nil;
     
     NSString * const attributes[3] = {@"Alpha", @"Beta", @"Gamma"};
     
     const NSUInteger supportedIndexEnd = NSNotFound;
     NSUInteger round;
     for (round = 0; round < 4096 * 256; round++) {
-	NSString *attribute = attributes[random() % (sizeof attributes / sizeof *attributes)];
-	BOOL insert = ([smartTree isEmpty] || [naiveTree isEmpty] || (random() % 2));
-	
-	unsigned long long end = random();
-	unsigned long long start = random();
-	if (end < start) {
-	    unsigned long long temp = end;
-	    end = start;
-	    start = temp;
-	}
-	HFRange range = HFRangeMake(start, end - start);
-	
-	if (insert) {
-	    [naiveTree addAttribute:attribute range:range];
-	    [smartTree addAttribute:attribute range:range];
-	}
-	else {
-	    [naiveTree removeAttribute:attribute range:range];
-	    [smartTree removeAttribute:attribute range:range];
-	}
+        NSString *attribute = attributes[random() % (sizeof attributes / sizeof *attributes)];
+        BOOL insert = ([smartTree isEmpty] || [naiveTree isEmpty] || (random() % 2));
+        
+        unsigned long long end = random();
+        unsigned long long start = random();
+        if (end < start) {
+            unsigned long long temp = end;
+            end = start;
+            start = temp;
+        }
+        HFRange range = HFRangeMake(start, end - start);
+        
+        if (insert) {
+            [naiveTree addAttribute:attribute range:range];
+            [smartTree addAttribute:attribute range:range];
+        }
+        else {
+            [naiveTree removeAttribute:attribute range:range];
+            [smartTree removeAttribute:attribute range:range];
+        }
     }
     
     [naiveTree release];

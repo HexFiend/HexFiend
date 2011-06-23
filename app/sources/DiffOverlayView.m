@@ -38,42 +38,42 @@
     
     /* Left half */
     if (leftRangeType == DiffOverlayViewRangeIsAbove) {
-	/* Come from the top */
-	CGPathMoveToPoint(path, &transform, xMiddle, top);	
+        /* Come from the top */
+        CGPathMoveToPoint(path, &transform, xMiddle, top);	
     }
     else if (leftRangeType == DiffOverlayViewRangeIsBelow) {
-	/* Come from the bottom */
-	CGPathMoveToPoint(path, &transform, xMiddle, bottom);		
+        /* Come from the bottom */
+        CGPathMoveToPoint(path, &transform, xMiddle, bottom);		
     }
     else {
-	/* Left side vertical */
-	CGPathMoveToPoint(path, &transform, x, y + lineHeight / 2);
-	CGPathAddLineToPoint(path, &transform, x, y - lineHeight / 2);
-	
-	/* Go from the center of the left rect to the center */
-	CGPathMoveToPoint(path, &transform, NSMaxX(leftRect), NSMidY(leftRect));
-	CGPathAddLineToPoint(path, &transform, NSMaxX(leftViewBounds), NSMidY(leftRect));
+        /* Left side vertical */
+        CGPathMoveToPoint(path, &transform, x, y + lineHeight / 2);
+        CGPathAddLineToPoint(path, &transform, x, y - lineHeight / 2);
+        
+        /* Go from the center of the left rect to the center */
+        CGPathMoveToPoint(path, &transform, NSMaxX(leftRect), NSMidY(leftRect));
+        CGPathAddLineToPoint(path, &transform, NSMaxX(leftViewBounds), NSMidY(leftRect));
     }    
     
     /* Right half */
     if (rightRangeType == DiffOverlayViewRangeIsAbove) {
-	/* Go off the top */
-	CGPathAddLineToPoint(path, &transform, xMiddle, top);	
+        /* Go off the top */
+        CGPathAddLineToPoint(path, &transform, xMiddle, top);	
     }
     else if (rightRangeType == DiffOverlayViewRangeIsBelow) {
-	/* Go off the bottom */
-	CGPathAddLineToPoint(path, &transform, xMiddle, bottom);
+        /* Go off the bottom */
+        CGPathAddLineToPoint(path, &transform, xMiddle, bottom);
     }
     else {
-	/* Now go to the right */
-	CGPathAddLineToPoint(path, &transform, NSMinX(rightViewBounds), NSMidY(rightRect));
-	
-	x = NSMinX(rightRect), y = NSMidY(rightRect);
-	CGPathAddLineToPoint(path, &transform, x, y);
-	
-	/* Add vertical line to end */
-	CGPathAddLineToPoint(path, &transform, x, y + lineHeight / 2);
-	CGPathAddLineToPoint(path, &transform, x, y - lineHeight / 2);
+        /* Now go to the right */
+        CGPathAddLineToPoint(path, &transform, NSMinX(rightViewBounds), NSMidY(rightRect));
+        
+        x = NSMinX(rightRect), y = NSMidY(rightRect);
+        CGPathAddLineToPoint(path, &transform, x, y);
+        
+        /* Add vertical line to end */
+        CGPathAddLineToPoint(path, &transform, x, y + lineHeight / 2);
+        CGPathAddLineToPoint(path, &transform, x, y - lineHeight / 2);
     }
     
     CGContextAddPath(ctx, path);
@@ -90,17 +90,17 @@
 
 - (void)setLeftRangeType:(enum DiffOverlayViewRangeType_t)type rect:(NSRect)rect {
     if (leftRangeType != type || ! NSEqualRects(rect, leftRect)) {
-	leftRangeType = type;
-	leftRect = rect;
-	[self setNeedsDisplay:YES];
+        leftRangeType = type;
+        leftRect = rect;
+        [self setNeedsDisplay:YES];
     }
 }
 
 - (void)setRightRangeType:(enum DiffOverlayViewRangeType_t)type rect:(NSRect)rect {
     if (rightRangeType != type || ! NSEqualRects(rect, rightRect)) {
-	rightRangeType = type;
-	rightRect = rect;
-	[self setNeedsDisplay:YES];
+        rightRangeType = type;
+        rightRect = rect;
+        [self setNeedsDisplay:YES];
     }
 }
 

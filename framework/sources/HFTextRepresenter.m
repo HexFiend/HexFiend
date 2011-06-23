@@ -319,6 +319,21 @@
     return result;
 }
 
+- (NSIndexSet *)displayedBookmarkLocations {
+    NSMutableIndexSet *result = [NSMutableIndexSet indexSet];
+    HFController *controller = [self controller];
+    HFRange displayedRange = [self entireDisplayedRange];
+    HFASSERT(displayedRange.length <= NSUIntegerMax);
+    NSIndexSet *allBookmarks = [controller bookmarksInRange:displayedRange];
+    for (NSUInteger mark = [allBookmarks firstIndex]; mark != NSNotFound; mark = [allBookmarks indexGreaterThanIndex:mark]) {
+        HFRange bookmarkRange = [controller rangeForBookmark:mark];
+        if (HFLocationInRange(bookmarkRange.location, displayedRange)) {
+            [result addIndex:ll2l(bookmarkRange.location - displayedRange.location)];
+        }
+    }
+    return result;
+}
+
 - (unsigned long long)byteIndexForCharacterIndex:(NSUInteger)characterIndex {
     HFController *controller = [self controller];
     HFFPRange lineRange = [controller displayedLineRange];

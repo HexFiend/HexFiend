@@ -102,12 +102,6 @@
     }
 }
 
-static CGFloat interpolateShadow(CGFloat val) {
-    //A value of 1 means we are at the rightmost, and should return our max value.  By adjusting the scale, we control how quickly the shadow drops off.
-    CGFloat scale = 1.4;
-    return (CGFloat)(expm1(val * scale) / expm1(scale));
-}
-
 - (void)windowDidChangeKeyStatus:(NSNotification *)note {
     USE(note);
     [self setNeedsDisplay:YES];
@@ -130,28 +124,11 @@ static CGFloat interpolateShadow(CGFloat val) {
     
     NSInteger shadowEdge = [representer interiorShadowEdge];
     
-    if (shadowEdge == NSMinXEdge || shadowEdge == NSMaxXEdge) {
-        NSRect bounds = [self bounds];
+    if (shadowEdge >= 0) {
         const CGFloat shadowWidth = 6;
-        BOOL onRight = (shadowEdge == NSMaxXEdge);
-        
-        // Manually drawn shadow
-        CGContextRef ctx = [[NSGraphicsContext currentContext] graphicsPort];
-        NSRect shadowLine = bounds;
-        shadowLine.size.width = 1;
-        shadowLine.origin.x = (onRight ? NSMaxX(bounds) - shadowLine.size.width - 1 : NSMinX(bounds));
-        
         NSWindow *window = [self window];
         BOOL drawActive = (window == nil || [window isKeyWindow] || [window isMainWindow]);
-        CGFloat maxAlpha = (drawActive ? .25 : .10);
-        
-        for (CGFloat i=0; i < shadowWidth; i++) {
-            CGFloat gray = 0.;
-            CGFloat alpha = maxAlpha * interpolateShadow((shadowWidth - i) / shadowWidth);
-            CGContextSetGrayFillColor(ctx, gray, alpha);
-            CGContextFillRect(ctx, shadowLine);
-            shadowLine.origin.x += (onRight ? -1. : 1.) * shadowLine.size.width;
-        }
+        HFDrawShadow([[NSGraphicsContext currentContext] graphicsPort], [self bounds], shadowWidth, shadowEdge, drawActive, clip);
     }
 }
 
@@ -604,7 +581,7 @@ static inline int common_prefix_length(const char *a, const char *b) {
 
 - (BOOL)canUseStringDrawingPathForFont:(NSFont *)testFont {
     NSString *name = [testFont fontName];
-    return [name isEqualToString:@"Monaco"] || [name isEqualToString:@"Courier"];
+    return [name isEqualToString:@"Monaco"] || [name isEqualToString:@"Courier"] || [name isEqualToString:@"Menlo-Regular"];
 }
 
 - (void)setFont:(NSFont *)val {

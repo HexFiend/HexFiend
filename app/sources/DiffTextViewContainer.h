@@ -14,6 +14,8 @@
     IBOutlet HFTextView *leftView;
     IBOutlet HFTextView *rightView;
     CGFloat interviewDistance;
+    BOOL registeredForAppNotifications;
+    
 }
 
 - (NSSize)minimumFrameSizeForProposedSize:(NSSize)frameSize;

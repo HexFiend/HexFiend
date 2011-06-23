@@ -1414,6 +1414,59 @@ static size_t unionAndCleanLists(NSRect *rectList, id *valueList, size_t count) 
     [NSGraphicsContext restoreGraphicsState];
 }
 
+static NSPoint rotatePoint(NSPoint center, NSPoint point, CGFloat percent) {
+    CGFloat radians = percent * M_PI * 2;
+    CGFloat x = point.x - center.x;
+    CGFloat y = point.y - center.y;
+    CGFloat newX = x * cos(radians) + y * sin(radians);
+    CGFloat newY = x * -sin(radians) + y * cos(radians);
+    return NSMakePoint(center.x + newX, center.y + newY);
+}
+
+static NSPoint scalePoint(NSPoint center, NSPoint point, CGFloat percent) {
+    CGFloat x = point.x - center.x;
+    CGFloat y = point.y - center.y;
+    CGFloat newX = x * percent;
+    CGFloat newY = y * percent;
+    return NSMakePoint(center.x + newX, center.y + newY);
+}
+
+
+- (void)drawBookmarksWithClip:(NSRect)clip {
+    CGContextRef ctx = [[NSGraphicsContext currentContext] graphicsPort];
+    
+    // teardrop path
+    NSRect rect = NSMakeRect(50, 50, 100, 100);
+    CGFloat rotation = 1/-8.;
+    CGFloat droppiness = .30;
+    CGFloat radius = 12;
+    NSPoint center = NSMakePoint(NSMidX(rect), NSMidY(rect));
+    
+    NSPoint triangleCenter = rotatePoint(center, NSMakePoint(center.x + radius, center.y), rotation);
+    NSPoint dropCorner1 = rotatePoint(center, triangleCenter, droppiness / 2);
+    NSPoint dropCorner2 = rotatePoint(center, triangleCenter, -droppiness / 2);
+    NSPoint dropTip = scalePoint(center, triangleCenter, 2.5);
+    
+    NSBezierPath *path = [[NSBezierPath alloc] init];
+    [path appendBezierPathWithArcWithCenter:center radius:radius startAngle:-rotation * 360 + droppiness * 180. endAngle:-rotation * 360 - droppiness * 180. clockwise:NO];
+    
+    [path moveToPoint:dropCorner1];
+    [path lineToPoint:dropTip];
+    [path lineToPoint:dropCorner2];
+    
+    
+    [path closePath];
+    [[NSColor colorWithCalibratedRed:0. green:0. blue:1. alpha:.66] set];
+    NSShadow *shadow = [[NSShadow alloc] init];
+    [shadow setShadowBlurRadius:3.];
+    [shadow setShadowOffset:NSMakeSize(-5, -5)];
+    [shadow set];
+    
+    [path fill];
+    [path release];
+    [shadow release];
+}
+
 - (void)drawRect:(NSRect)clip {
     [[self backgroundColorForEmptySpace] set];
     NSRectFillUsingOperation(clip, NSCompositeSourceOver);
@@ -1454,6 +1507,8 @@ static size_t unionAndCleanLists(NSRect *rectList, id *valueList, size_t count) 
     }
     
     [self drawCaretIfNecessaryWithClip:clip];
+    
+    [self drawBookmarksWithClip:clip];
 }
 
 - (NSRect)furthestRectOnEdge:(NSRectEdge)edge forRange:(NSRange)byteRange {

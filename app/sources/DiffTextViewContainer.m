@@ -96,29 +96,69 @@
     [super willRemoveSubview:subview];
 }
 
+- (BOOL)isOpaque {
+    return YES;
+}
+
+- (NSRect)interviewRect {
+    NSRect result = NSZeroRect;
+    if (leftView && rightView) {
+        NSRect leftViewFrame = [leftView frame], rightViewFrame = [rightView frame], bounds = [self bounds];
+        result = NSMakeRect(NSMaxX(leftViewFrame), bounds.origin.y, NSMinX(rightViewFrame) - NSMaxX(leftViewFrame), bounds.size.height);
+    }
+    return result;
+}
+
 - (void)drawRect:(NSRect)dirtyRect {
     /* Paranoia */
     if (! leftView || ! rightView) return;
     
+    [[NSColor colorWithCalibratedWhite:.64 alpha:1.] set];
+    NSRectFill(dirtyRect);
+    
+    CGContextRef ctx = [[NSGraphicsContext currentContext] graphicsPort];
     CGFloat lineWidth = 1;
-    NSRect bounds = [self bounds], lines[2], lineRect = bounds;
-    NSRect leftViewFrame = [leftView frame], rightViewFrame = [rightView frame];
+    NSRect bounds = [self bounds], lineRect = bounds;
+    NSRect middleFrame = [self interviewRect];
+    
+    NSWindow *window = [self window];
+    BOOL drawActive = (window == nil || [window isMainWindow] || [window isKeyWindow]);
+    
+    /* Draw shadows */
+    CGFloat shadowWidth = 6;
+    HFDrawShadow(ctx, middleFrame, shadowWidth, NSMinXEdge, drawActive, dirtyRect);
+    HFDrawShadow(ctx, middleFrame, shadowWidth, NSMaxXEdge, drawActive, dirtyRect);
+    
+    /* Draw the edge line rects */
+    [[NSColor darkGrayColor] set];
     lineRect.size.width = lineWidth;
-    NSUInteger idx = 0;
-    
-    /* Construct the edge line rects */
-    lineRect.origin.x = NSMaxX(leftViewFrame);
-    if (NSIntersectsRect(lineRect, dirtyRect)) lines[idx++] = lineRect;
+    lineRect.origin.x = NSMinX(middleFrame);
+    if (NSIntersectsRect(lineRect, dirtyRect)) NSRectFill(lineRect);
 
-    lineRect.origin.x = NSMinX(rightViewFrame) - lineWidth;
-    if (NSIntersectsRect(lineRect, dirtyRect)) lines[idx++] = lineRect;
-    
-    /* Draw them */
-    if (idx > 0) {
-	const CGFloat edgeColor = (CGFloat).745;
-        const CGFloat grays[2] = {edgeColor, edgeColor};
-        NSRectFillListWithGrays(lines, grays, idx);
-    }
+    lineRect.origin.x = NSMaxX(middleFrame) - lineWidth;
+    if (NSIntersectsRect(lineRect, dirtyRect)) NSRectFill(lineRect);
+}
+
+
+- (void)windowDidChangeKeyStatus:(NSNotification *)note {
+    USE(note);
+    [self setNeedsDisplayInRect:[self interviewRect]];
+}
+
+- (void)viewDidMoveToWindow {
+    HFRegisterViewForWindowAppearanceChanges(self, @selector(windowDidChangeKeyStatus:), !registeredForAppNotifications);
+    registeredForAppNotifications = YES;
+    [super viewDidMoveToWindow];
+}
+
+- (void)viewWillMoveToWindow:(NSWindow *)newWindow {
+    HFUnregisterViewForWindowAppearanceChanges(self, NO);
+    [super viewWillMoveToWindow:newWindow];
+}
+
+- (void)dealloc {
+    HFUnregisterViewForWindowAppearanceChanges(self, registeredForAppNotifications);
+    [super dealloc];
 }
 
 @end

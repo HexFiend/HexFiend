@@ -18,66 +18,21 @@
 }
 @end
 
-static CGFloat interpolateShadow(CGFloat val) {
-    //A value of 1 means we are at the rightmost, and should return our max value.  By adjusting the scale, we control how quickly the shadow drops off.
-    CGFloat scale = 1.4;
-    return (CGFloat)(expm1(val * scale) / expm1(scale));
-}
-
-static void drawShadow(CGContextRef ctx, NSRect startRect, CGFloat xOffset, CGFloat shadowWidth, CGFloat maxAlpha) {
-    NSRect shadowLine = startRect;
-    for (CGFloat i=0; i < shadowWidth; i++) {
-        CGFloat gray = 0.;
-        CGFloat alpha = maxAlpha * interpolateShadow((shadowWidth - i) / shadowWidth);
-        CGContextSetGrayFillColor(ctx, gray, alpha);
-        CGContextFillRect(ctx, shadowLine);
-        shadowLine.origin.x += xOffset;
-    }
-}
-
 @implementation TextDividerRepresenterView : NSView
 
 - (void)drawRect:(NSRect)clip {
-    CGContextRef ctx = [[NSGraphicsContext currentContext] graphicsPort];
     NSWindow *window = [self window];
     BOOL drawActive = (window == nil || [window isKeyWindow] || [window isMainWindow]);
-    CGFloat maxAlpha = (drawActive ? SHADOW_ALPHA : .10);
-
-#if 0
-    
-    [[NSColor whiteColor] set];
-    NSRectFill(clip);
-    
-    [[NSColor colorWithCalibratedWhite:(CGFloat).87 alpha:1] set];
-    NSRect bounds = [self bounds];
-    NSRect grooveLines[2];
-    grooveLines[0] = bounds;
-    grooveLines[0].size.width = 1;
-    
-    grooveLines[1] = bounds;
-    grooveLines[1].size.width = 1;
-    grooveLines[1].origin.x = NSMaxX(bounds) - grooveLines[1].size.width;
-    
-    CGContextFillRects(ctx, grooveLines, 2);
-    
-
-#else
+    CGContextRef ctx = [[NSGraphicsContext currentContext] graphicsPort];
     const CGFloat shadowWidth = SHADOW_WIDTH;
     
     [[NSColor colorWithCalibratedWhite:(CGFloat).87 alpha:1] set];
     NSRectFill(clip);
     NSRect bounds = [self bounds];
     
-    // Manually drawn shadow
-    
-    // Draw left shadow
-    NSRect shadowLine = bounds;
-    shadowLine.size.width = 1;
-    drawShadow(ctx, shadowLine, 1, shadowWidth, maxAlpha);
-    
-    // Draw right shadow
-    shadowLine.origin.x = NSMaxX(bounds) - shadowLine.size.width;
-    drawShadow(ctx, shadowLine, -1, shadowWidth, maxAlpha);
+    // Draw left and right shadow
+    HFDrawShadow(ctx, bounds, shadowWidth, NSMinXEdge, drawActive, clip);
+    HFDrawShadow(ctx, bounds, shadowWidth, NSMaxXEdge, drawActive, clip);
     
     // Draw dividers
     [[NSColor darkGrayColor] set];
@@ -86,7 +41,6 @@ static void drawShadow(CGContextRef ctx, NSRect startRect, CGFloat xOffset, CGFl
     NSRectFill(divider);
     divider.origin.x = NSMaxX(bounds) - 1;
     NSRectFill(divider);
-#endif
 }
 
 - (void)windowDidChangeKeyStatus:(NSNotification *)note {
