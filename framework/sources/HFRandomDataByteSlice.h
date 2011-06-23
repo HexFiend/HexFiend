@@ -15,7 +15,7 @@
 @interface HFRandomDataByteSlice : HFByteSlice {
     unsigned long long start;
     unsigned long long length;
-    unsigned char randomizer;
+    NSData *pearsonTable;
 }
 
 - (id)initWithRandomDataLength:(unsigned long long)length;
