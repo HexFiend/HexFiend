@@ -29,6 +29,7 @@ typedef NSUInteger HFLineNumberFormat;
     NSUInteger digitsToRepresentContentsLength;
     NSUInteger minimumDigitCount;
     HFLineNumberFormat lineNumberFormat;
+    NSInteger interiorShadowEdge;
     CGFloat preferredWidth;
     CGFloat digitAdvance;
 }
@@ -53,6 +54,12 @@ typedef NSUInteger HFLineNumberFormat;
 
 /*! Switches to the next line number format.  This is called from the view. */
 - (void)cycleLineNumberFormat;
+
+/*! Sets on which edge (as an NSRectEdge) the view draws an interior shadow.  Pass -1 to mean no edge. */
+- (void)setInteriorShadowEdge:(NSInteger)interiorShadowEdge;
+
+/*! Returns the edge (as an NSRectEdge) on which the view draws a shadow, or -1 if no edge. */
+- (NSInteger)interiorShadowEdge;
 
 @end
 

@@ -8,6 +8,7 @@
 
 #import <HexFiend/HFLineCountingView.h>
 #import <HexFiend/HFLineCountingRepresenter.h>
+#import <HexFiend/HFFunctions.h>
 
 #define TIME_LINE_NUMBERS 0
 
@@ -49,6 +50,7 @@
 }
 
 - (void)dealloc {
+    HFUnregisterViewForWindowAppearanceChanges(self, registeredForAppNotifications);
     [font release];
     [layoutManager release];
     [textStorage release];
@@ -106,60 +108,88 @@ static CGFloat interpolateShadow(CGFloat val) {
     return (CGFloat)(expm1(val * scale) / expm1(scale));
 }
 
+- (void)windowDidChangeKeyStatus:(NSNotification *)note {
+    USE(note);
+    [self setNeedsDisplay:YES];
+}
+
+- (void)viewDidMoveToWindow {
+    HFRegisterViewForWindowAppearanceChanges(self, @selector(windowDidChangeKeyStatus:), !registeredForAppNotifications);
+    registeredForAppNotifications = YES;
+    [super viewDidMoveToWindow];
+}
+
+- (void)viewWillMoveToWindow:(NSWindow *)newWindow {
+    HFUnregisterViewForWindowAppearanceChanges(self, NO);
+    [super viewWillMoveToWindow:newWindow];
+}
+
 - (void)drawGradientWithClip:(NSRect)clip {
     [[NSColor colorWithCalibratedWhite:(CGFloat).87 alpha:1] set];
     NSRectFill(clip);
-    NSRect bounds = [self bounds];
-    const CGFloat shadowWidth = 6;
-    const CGFloat shadowHeight = 0;
-
-    // Manually drawn shadow
-    CGContextRef ctx = [[NSGraphicsContext currentContext] graphicsPort];
-    NSRect shadowLine = bounds;
-    shadowLine.size.width = 1;
-    shadowLine.origin.x = NSMaxX(bounds) - shadowLine.size.width - 1;
-    CGFloat maxAlpha = .25;
-    for (CGFloat i=0; i < shadowWidth; i++) {
-        CGFloat gray = 0.;
-        CGFloat alpha = maxAlpha * interpolateShadow((shadowWidth - i) / shadowWidth);
-        CGContextSetGrayFillColor(ctx, gray, alpha);
-        CGContextFillRect(ctx, shadowLine);
-        shadowLine.origin.x -= shadowLine.size.width;
-    }
     
-    const BOOL flipped = [self isFlipped];
-    shadowLine = bounds;
-    shadowLine.size.height = 1;
-    shadowLine.origin.y = flipped ? NSMaxY(bounds) - shadowLine.size.height : 0;
-    for (CGFloat i=0; i < shadowHeight; i++) {
-        CGFloat gray = 0.;
-        CGFloat alpha = maxAlpha * interpolateShadow((shadowHeight - i) / shadowHeight);
-        CGContextSetGrayFillColor(ctx, gray, alpha);
-        CGContextFillRect(ctx, shadowLine);
-        shadowLine.origin.y += flipped ? -shadowLine.size.height : shadowLine.size.height;
+    NSInteger shadowEdge = [representer interiorShadowEdge];
+    
+    if (shadowEdge == NSMinXEdge || shadowEdge == NSMaxXEdge) {
+        NSRect bounds = [self bounds];
+        const CGFloat shadowWidth = 6;
+        BOOL onRight = (shadowEdge == NSMaxXEdge);
+        
+        // Manually drawn shadow
+        CGContextRef ctx = [[NSGraphicsContext currentContext] graphicsPort];
+        NSRect shadowLine = bounds;
+        shadowLine.size.width = 1;
+        shadowLine.origin.x = (onRight ? NSMaxX(bounds) - shadowLine.size.width - 1 : NSMinX(bounds));
+        
+        NSWindow *window = [self window];
+        BOOL drawActive = (window == nil || [window isKeyWindow] || [window isMainWindow]);
+        CGFloat maxAlpha = (drawActive ? .25 : .10);
+        
+        for (CGFloat i=0; i < shadowWidth; i++) {
+            CGFloat gray = 0.;
+            CGFloat alpha = maxAlpha * interpolateShadow((shadowWidth - i) / shadowWidth);
+            CGContextSetGrayFillColor(ctx, gray, alpha);
+            CGContextFillRect(ctx, shadowLine);
+            shadowLine.origin.x += (onRight ? -1. : 1.) * shadowLine.size.width;
+        }
     }
 }
 
 - (void)drawDividerWithClip:(NSRect)clipRect {
+    USE(clipRect);
+    NSRect bounds = [self bounds];
+    NSRect lineRect = bounds;
+    lineRect.size.width = 1;
+    NSInteger shadowEdge = [representer interiorShadowEdge];
+    if (shadowEdge == NSMaxXEdge) {
+        lineRect.origin.x = NSMaxX(bounds) - lineRect.size.width;
+    } else if (shadowEdge == NSMinXEdge) {
+        lineRect.origin.x = NSMinX(bounds);
+    } else {
+        lineRect = NSZeroRect;
+    }
+    
+    if (NSIntersectsRect(lineRect, clipRect)) {
 #if 1
-    [[NSColor darkGrayColor] set];
-    NSRect bounds = [self bounds];
-    NSRect lineRect = bounds;
-    lineRect.size.width = 1;
-    lineRect.origin.x = NSMaxX(bounds) - lineRect.size.width;
-    NSRectFill(lineRect);
+        [[NSColor darkGrayColor] set];
+        NSRect bounds = [self bounds];
+        NSRect lineRect = bounds;
+        lineRect.size.width = 1;
+        lineRect.origin.x = NSMaxX(bounds) - lineRect.size.width;
+        NSRectFill(lineRect);
 #else
-    // this looks better when we have no shadow
-    [[NSColor lightGrayColor] set];
-    NSRect bounds = [self bounds];
-    NSRect lineRect = bounds;
-    lineRect.origin.x += lineRect.size.width - 2;
-    lineRect.size.width = 1;
-    NSRectFill(NSIntersectionRect(lineRect, clipRect));
-    [[NSColor whiteColor] set];
-    lineRect.origin.x += 1;
-    NSRectFill(NSIntersectionRect(lineRect, clipRect));	
+        // this looks better when we have no shadow
+        [[NSColor lightGrayColor] set];
+        NSRect bounds = [self bounds];
+        NSRect lineRect = bounds;
+        lineRect.origin.x += lineRect.size.width - 2;
+        lineRect.size.width = 1;
+        NSRectFill(NSIntersectionRect(lineRect, clipRect));
+        [[NSColor whiteColor] set];
+        lineRect.origin.x += 1;
+        NSRectFill(NSIntersectionRect(lineRect, clipRect));	
 #endif
+    }
 }
 
 static inline int common_prefix_length(const char *a, const char *b) {

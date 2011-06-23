@@ -24,6 +24,7 @@
     NSUInteger storedLineCount;
     HFLineNumberFormat lineNumberFormat;
     BOOL useStringDrawingPath;
+    BOOL registeredForAppNotifications;
 }
 
 - (void)setFont:(NSFont *)val;

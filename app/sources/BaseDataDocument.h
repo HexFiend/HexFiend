@@ -18,6 +18,7 @@
     HFRepresenter *hexRepresenter;
     HFRepresenter *asciiRepresenter;
     HFRepresenter *scrollRepresenter;
+    HFRepresenter *textDividerRepresenter;
     HFLayoutRepresenter *layoutRepresenter;
     DataInspectorRepresenter *dataInspectorRepresenter;
     HFStatusBarRepresenter *statusBarRepresenter;

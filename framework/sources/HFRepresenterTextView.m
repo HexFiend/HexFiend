@@ -10,6 +10,7 @@
 #import <HexFiend/HFTextRepresenter_Internal.h>
 #import <HexFiend/HFTextSelectionPulseView.h>
 #import <HexFiend/HFTextVisualStyleRun.h>
+#import <HexFiend/HFFunctions.h>
 #import <objc/message.h>
 
 static const NSTimeInterval HFCaretBlinkFrequency = 0.56;
@@ -835,22 +836,13 @@ enum LineCoverage_t {
 }
 
 - (void)dealloc {
+    HFUnregisterViewForWindowAppearanceChanges(self, _hftvflags.registeredForAppNotifications /* appToo */);
     [caretTimer invalidate];
     [caretTimer release];
     [font release];
     [data release];
     [styles release];
     [cachedSelectedRanges release];
-    NSWindow *window = [self window];
-    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
-    if (window) {
-        [center removeObserver:self name:NSWindowDidBecomeKeyNotification object:window];
-        [center removeObserver:self name:NSWindowDidResignKeyNotification object:window];        
-    }
-    if (_hftvflags.registeredForAppNotifications) {
-        [center removeObserver:self name:NSApplicationDidBecomeActiveNotification object:nil];
-        [center removeObserver:self name:NSApplicationDidResignActiveNotification object:nil];
-    }
     [super dealloc];
 }
 
@@ -1663,28 +1655,14 @@ static size_t unionAndCleanLists(NSRect *rectList, id *valueList, size_t count) 
 
 - (void)viewDidMoveToWindow {
     [self _updateCaretTimer];
-    NSWindow *newWindow = [self window];
-    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
-    if (newWindow) {
-        [center addObserver:self selector:@selector(_windowDidChangeKeyStatus:) name:NSWindowDidBecomeKeyNotification object:newWindow];
-        [center addObserver:self selector:@selector(_windowDidChangeKeyStatus:) name:NSWindowDidResignKeyNotification object:newWindow];
-    }
-    if (! _hftvflags.registeredForAppNotifications) {
-        [center addObserver:self selector:@selector(_windowDidChangeKeyStatus:) name:NSApplicationDidBecomeActiveNotification object:nil];
-        [center addObserver:self selector:@selector(_windowDidChangeKeyStatus:) name:NSApplicationDidResignActiveNotification object:nil];        
-        _hftvflags.registeredForAppNotifications = YES;
-    }
+    HFRegisterViewForWindowAppearanceChanges(self, @selector(_windowDidChangeKeyStatus:), ! _hftvflags.registeredForAppNotifications);
+    _hftvflags.registeredForAppNotifications = YES;
     [super viewDidMoveToWindow];
 }
 
 - (void)viewWillMoveToWindow:(NSWindow *)newWindow {
-    USE(newWindow);
-    NSWindow *oldWindow = [self window];
-    if (oldWindow) {
-        NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
-        [center removeObserver:self name:NSWindowDidBecomeKeyNotification object:oldWindow];
-        [center removeObserver:self name:NSWindowDidResignKeyNotification object:oldWindow];
-    }
+    HFUnregisterViewForWindowAppearanceChanges(self, NO /* appToo */);
+    [super viewWillMoveToWindow:newWindow];
 }
 
 /* Computes the character at the given index for selection, properly handling the case where the point is outside the bounds */

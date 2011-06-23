@@ -379,6 +379,12 @@ static inline NSUInteger HFDivideULRoundingUp(NSUInteger a, NSUInteger b) {
     else return ((a - 1) / b) + 1;
 }
 
+/*! Registers a view to have the given notificationSEL invoked (taking the NSNotification object) when the window becomes or loses key.  If appToo is YES, this also registers with NSApplication for Activate and Deactivate methods. */
+void HFRegisterViewForWindowAppearanceChanges(NSView *view, SEL notificationSEL, BOOL appToo);
+
+/*! Unregisters a view to have the given notificationSEL invoked when the window becomes or loses key.  If appToo is YES, this also unregisters with NSApplication. */
+void HFUnregisterViewForWindowAppearanceChanges(NSView *view, BOOL appToo);
+
 /*! Returns a description of the given byte count (e.g. "24 kilobytes") */
 NSString *HFDescribeByteCount(unsigned long long count);
 

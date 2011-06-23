@@ -615,6 +615,31 @@ NSString *HFDescribeByteCountWithPrefixAndSuffix(const char *stringPrefix, unsig
     return [[[NSString alloc] initWithBytesNoCopy:resultPointer length:numChars encoding:NSASCIIStringEncoding freeWhenDone:YES] autorelease];
 }
 
+void HFRegisterViewForWindowAppearanceChanges(NSView *self, SEL notificationSEL, BOOL appToo) {
+    NSWindow *window = [self window];
+    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+    if (window) {
+        [center addObserver:self selector:notificationSEL name:NSWindowDidBecomeKeyNotification object:window];
+        [center addObserver:self selector:notificationSEL name:NSWindowDidResignKeyNotification object:window];
+    }
+    if (appToo) {
+        [center addObserver:self selector:notificationSEL name:NSApplicationDidBecomeActiveNotification object:nil];
+        [center addObserver:self selector:notificationSEL name:NSApplicationDidResignActiveNotification object:nil];        
+    }
+}
+
+void HFUnregisterViewForWindowAppearanceChanges(NSView *self, BOOL appToo) {
+    NSWindow *window = [self window];
+    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+    if (window) {
+        [center removeObserver:self name:NSWindowDidBecomeKeyNotification object:window];
+        [center removeObserver:self name:NSWindowDidResignKeyNotification object:window];        
+    }
+    if (appToo) {
+        [center removeObserver:self name:NSApplicationDidBecomeActiveNotification object:nil];
+        [center removeObserver:self name:NSApplicationDidResignActiveNotification object:nil];
+    }    
+}
 
 #if USE_CHUD
 void HFStartTiming(const char *name) {

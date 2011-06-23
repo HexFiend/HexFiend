@@ -55,6 +55,7 @@ static CGFloat maximumDigitAdvanceForFont(NSFont *font) {
     if ((self = [super init])) {
         minimumDigitCount = 2;
         digitsToRepresentContentsLength = minimumDigitCount;
+        interiorShadowEdge = NSMaxXEdge;
     }
     return self;
 }
@@ -199,6 +200,17 @@ static CGFloat maximumDigitAdvanceForFont(NSFont *font) {
 
 + (NSPoint)defaultLayoutPosition {
     return NSMakePoint(-1, 0);
+}
+
+- (void)setInteriorShadowEdge:(NSInteger)edge {
+    self->interiorShadowEdge = edge;
+    if ([self isViewLoaded]) {
+        [[self view] setNeedsDisplay:YES];
+    }
+}
+
+- (NSInteger)interiorShadowEdge {
+    return interiorShadowEdge;
 }
 
 @end

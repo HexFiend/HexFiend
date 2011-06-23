@@ -10,6 +10,7 @@
 #import "HFBannerDividerThumb.h"
 #import "HFDocumentOperationView.h"
 #import "DataInspectorRepresenter.h"
+#import "TextDividerRepresenter.h"
 #import "AppDebugging.h"
 #import <HexFiend/HexFiend.h>
 #include <pthread.h>
@@ -159,7 +160,7 @@ static inline Class preferredByteArrayClass(void) {
 }
 
 - (NSArray *)representers {
-    return [NSArray arrayWithObjects:lineCountingRepresenter, hexRepresenter, asciiRepresenter, scrollRepresenter, dataInspectorRepresenter, statusBarRepresenter, nil];
+    return [NSArray arrayWithObjects:lineCountingRepresenter, hexRepresenter, asciiRepresenter, scrollRepresenter, dataInspectorRepresenter, statusBarRepresenter, textDividerRepresenter, nil];
 }
 
 - (HFByteArray *)byteArray {
@@ -182,6 +183,17 @@ static inline Class preferredByteArrayClass(void) {
     HFASSERT([[layoutRepresenter representers] indexOfObjectIdenticalTo:rep] != NSNotFound);
     [controller removeRepresenter:rep];
     [layoutRepresenter removeRepresenter:rep];
+}
+
+/* Called to show or hide the divider representer. This should be shown when both our text representers are visible */
+- (void)showOrHideDividerRepresenter {
+    BOOL dividerRepresenterShouldBeShown = [self representerIsShown:hexRepresenter] && [self representerIsShown:asciiRepresenter];
+    BOOL dividerRepresenterIsShown = [self representerIsShown:textDividerRepresenter];
+    if (dividerRepresenterShouldBeShown && ! dividerRepresenterIsShown) {
+        [self showViewForRepresenter:textDividerRepresenter];
+    } else if (! dividerRepresenterShouldBeShown && dividerRepresenterIsShown) {
+        [self hideViewForRepresenter:textDividerRepresenter];
+    }
 }
 
 /* Code to save to user defs (NO) or apply from user defs (YES) the default representers to show. */
@@ -217,6 +229,9 @@ static inline Class preferredByteArrayClass(void) {
             BOOL isShown = [self representerIsShown:shownRepresentersData[i].rep];
             [defs setBool:isShown forKey:shownRepresentersData[i].name];
         }
+    }
+    if (isApplying) {
+        [self showOrHideDividerRepresenter];
     }
 }
 
@@ -414,6 +429,7 @@ static inline Class preferredByteArrayClass(void) {
     layoutRepresenter = [[HFLayoutRepresenter alloc] init];
     statusBarRepresenter = [[HFStatusBarRepresenter alloc] init];
     dataInspectorRepresenter = [[DataInspectorRepresenter alloc] init];
+    textDividerRepresenter = [[TextDividerRepresenter alloc] init];
     
     [(NSView *)[hexRepresenter view] setAutoresizingMask:NSViewHeightSizable];
     [(NSView *)[asciiRepresenter view] setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
@@ -461,6 +477,7 @@ static inline Class preferredByteArrayClass(void) {
     [layoutRepresenter release];
     [statusBarRepresenter release];
     [dataInspectorRepresenter release];
+    [textDividerRepresenter release];
     
     [controller release];
     [bannerView release];
@@ -568,10 +585,12 @@ static inline Class preferredByteArrayClass(void) {
         HFRepresenter *rep = [representers objectAtIndex:arrayIndex];
         if ([self representerIsShown:rep]) {
             [self hideViewForRepresenter:rep];
+            [self showOrHideDividerRepresenter];
             [self relayoutAndResizeWindowPreservingFrame];
         }
         else {
             [self showViewForRepresenter:rep];
+            [self showOrHideDividerRepresenter];
             [self relayoutAndResizeWindowPreservingFrame];
         }
         [self saveDefaultRepresentersToDisplay];
