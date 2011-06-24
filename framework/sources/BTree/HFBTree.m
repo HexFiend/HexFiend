@@ -96,7 +96,7 @@ static HFBTreeNode *mutable_copy_node(HFBTreeNode *node, TreeDepth_t depth, HFBT
     return self;
 }
 
-- (void)release {
+- (oneway void)release {
     NSUInteger result = HFAtomicDecrement(&rc, NO);
     if (result == (NSUInteger)(-1)) {
         [self dealloc];

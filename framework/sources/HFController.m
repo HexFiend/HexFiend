@@ -372,7 +372,7 @@ static inline Class preferredByteArrayClass(void) {
     
     HFASSERT(HFSumDoesNotOverflow(selectionAnchorRange.location, selectionAnchorRange.length));
     
-    NEW_ARRAY(unsigned long long, partitions, [cleanedRanges count] + 2);
+    NEW_ARRAY(unsigned long long, partitions, 2*[cleanedRanges count] + 2);
     NSUInteger partitionCount, partitionIndex = 0;
     
     partitions[partitionIndex++] = selectionAnchorRange.location;
@@ -383,7 +383,9 @@ static inline Class preferredByteArrayClass(void) {
         partitions[partitionIndex++] = MAX(selectionAnchorRange.location, range.location);
         partitions[partitionIndex++] = MIN(HFMaxRange(selectionAnchorRange), HFMaxRange(range));
     }
-    partitions[partitionIndex++] = HFMaxRange(selectionAnchorRange);
+    
+    // For some reason, using HFMaxRange confuses the static analyzer
+    partitions[partitionIndex++] = HFSum(selectionAnchorRange.location, selectionAnchorRange.length);
     
     partitionCount = partitionIndex;
     HFASSERT((partitionCount % 2) == 0);

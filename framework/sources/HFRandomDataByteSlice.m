@@ -38,7 +38,7 @@ __attribute__((always_inline))
 static inline unsigned char munge(unsigned long long val64, const unsigned char *restrict pearson) {
     unsigned long long remainingToHash = val64;
     unsigned char result = 0;
-    result = pearson[result ^ (remainingToHash & 0xFF)]; remainingToHash >>= 8;
+    result = pearson[/*result*/0 ^ (remainingToHash & 0xFF)]; remainingToHash >>= 8;
     result = pearson[result ^ (remainingToHash & 0xFF)]; remainingToHash >>= 8;
     result = pearson[result ^ (remainingToHash & 0xFF)]; remainingToHash >>= 8;
     result = pearson[result ^ (remainingToHash & 0xFF)]; remainingToHash >>= 8;

@@ -16,17 +16,6 @@ static inline Class preferredByteArrayClass(void) {
 @implementation ProcessMemoryDocument
 
 - (void)openProcessWithPID:(pid_t)pid {
-    unsigned long long amountOfMemoryToView = (1ULL << 32);
-    
-    /* Hacky check to see if we're 64 bit.  If so, we want to view all 64 bits worth of its address space. */
-    id app = [NSClassFromString(@"NSRunningApplication") runningApplicationWithProcessIdentifier:pid];
-    if (app) {
-	NSInteger arch = [app executableArchitecture];
-	if (arch == NSBundleExecutableArchitectureX86_64 || arch == NSBundleExecutableArchitecturePPC64) {
-	    amountOfMemoryToView = ULLONG_MAX;
-	}
-    }
-    
     HFByteSlice *byteSlice = [[[HFProcessMemoryByteSlice alloc] initWithAddressSpaceOfPID:pid] autorelease];
     if (byteSlice) {
         HFByteArray *byteArray = [[[preferredByteArrayClass() alloc] init] autorelease];

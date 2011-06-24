@@ -73,7 +73,7 @@
     return self;
 }
 
-- (void)release {
+- (oneway void)release {
     if (HFAtomicDecrement(&retainCount, NO) == (NSUInteger)(-1)) {
         [self dealloc];
     }

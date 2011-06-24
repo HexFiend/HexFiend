@@ -626,7 +626,6 @@ void HFDrawShadow(CGContextRef ctx, NSRect rect, CGFloat shadowSize, NSRectEdge 
     NSDivideRect(rect, &remainingRect, &unused, shadowSize, rectEdge);
     
     CGFloat maxAlpha = (drawActive ? .25 : .10);
-    BOOL horizontal = (rectEdge == NSMinXEdge || rectEdge == NSMaxXEdge);
 
     for (CGFloat i=0; i < shadowSize; i++) {
         NSRect shadowLine;

@@ -180,7 +180,7 @@
     return self;
 }
 
-- (void)release {
+- (oneway void)release {
     if (OSAtomicDecrement32((int32_t *)&hashOrRC) == -1) {
         [self dealloc];
     }
@@ -251,7 +251,7 @@
     return self;
 }
 
-- (void)release {
+- (oneway void)release {
     if (OSAtomicDecrement32((int32_t *)&hashOrRC) == -1) {
         [self dealloc];
     }
