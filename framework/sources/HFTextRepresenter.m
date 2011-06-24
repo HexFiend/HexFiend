@@ -258,6 +258,9 @@
     if (bits & (HFControllerAntialias)) {
         [[self view] setShouldAntialias:[[self controller] shouldAntialias]];
     }
+    if (bits & (HFControllerBookmarks)) {
+        [[self view] setNeedsDisplay:YES];
+    }
     [super controllerDidChange:bits];
 }
 
@@ -319,16 +322,23 @@
     return result;
 }
 
-- (NSIndexSet *)displayedBookmarkLocations {
-    NSMutableIndexSet *result = [NSMutableIndexSet indexSet];
+//maps bookmark keys as NSString (e.g. @"3") to byte locations as NSNumbers
+- (NSDictionary *)displayedBookmarkLocations {
+    NSMutableDictionary *result = nil;
     HFController *controller = [self controller];
     HFRange displayedRange = [self entireDisplayedRange];
     HFASSERT(displayedRange.length <= NSUIntegerMax);
     NSIndexSet *allBookmarks = [controller bookmarksInRange:displayedRange];
-    for (NSUInteger mark = [allBookmarks firstIndex]; mark != NSNotFound; mark = [allBookmarks indexGreaterThanIndex:mark]) {
+    for (unsigned long mark = [allBookmarks firstIndex]; mark != NSNotFound; mark = [allBookmarks indexGreaterThanIndex:mark]) {
         HFRange bookmarkRange = [controller rangeForBookmark:mark];
         if (HFLocationInRange(bookmarkRange.location, displayedRange)) {
-            [result addIndex:ll2l(bookmarkRange.location - displayedRange.location)];
+            if (! result) result = [NSMutableDictionary dictionary];
+            
+            NSString *key = [[NSString alloc] initWithFormat:@"%lu", mark];
+            NSNumber *value = [[NSNumber alloc] initWithInteger:ll2l(bookmarkRange.location - displayedRange.location)];
+            [result setObject:value forKey:key];
+            [key release];
+            [value release];
         }
     }
     return result;

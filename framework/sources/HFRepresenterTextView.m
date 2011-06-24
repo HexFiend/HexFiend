@@ -1431,16 +1431,11 @@ static NSPoint scalePoint(NSPoint center, NSPoint point, CGFloat percent) {
     return NSMakePoint(center.x + newX, center.y + newY);
 }
 
-
-- (void)drawBookmarksWithClip:(NSRect)clip {
-    CGContextRef ctx = [[NSGraphicsContext currentContext] graphicsPort];
-    
-    // teardrop path
-    NSRect rect = NSMakeRect(50, 50, 100, 100);
-    CGFloat rotation = 1/-8.;
+- (NSBezierPath *)_copyTeardropPath {
+    CGFloat rotation = 0;
     CGFloat droppiness = .30;
     CGFloat radius = 12;
-    NSPoint center = NSMakePoint(NSMidX(rect), NSMidY(rect));
+    NSPoint center = NSZeroPoint;
     
     NSPoint triangleCenter = rotatePoint(center, NSMakePoint(center.x + radius, center.y), rotation);
     NSPoint dropCorner1 = rotatePoint(center, triangleCenter, droppiness / 2);
@@ -1453,9 +1448,25 @@ static NSPoint scalePoint(NSPoint center, NSPoint point, CGFloat percent) {
     [path moveToPoint:dropCorner1];
     [path lineToPoint:dropTip];
     [path lineToPoint:dropCorner2];
-    
-    
     [path closePath];
+    
+    return path;
+}
+
+- (void)drawBookmarksWithClip:(NSRect)clip {
+    
+    NSDictionary *bookmarks = [[self representer] displayedBookmarkLocations];
+    FOREACH(NSNumber *, bookmarkNum, bookmarks) {
+        
+    }
+    
+    CGContextRef ctx = [[NSGraphicsContext currentContext] graphicsPort];
+    
+    NSBezierPath *path = [self _copyTeardropPath];
+    CGContextSaveGState(ctx);
+    CGContextTranslateCTM(ctx, 100, 100);
+    CGContextRotateCTM(ctx, .125 * M_PI * 2);    
+    
     [[NSColor colorWithCalibratedRed:0. green:0. blue:1. alpha:.66] set];
     NSShadow *shadow = [[NSShadow alloc] init];
     [shadow setShadowBlurRadius:3.];
@@ -1465,6 +1476,8 @@ static NSPoint scalePoint(NSPoint center, NSPoint point, CGFloat percent) {
     [path fill];
     [path release];
     [shadow release];
+    
+    CGContextRestoreGState(ctx);
 }
 
 - (void)drawRect:(NSRect)clip {
