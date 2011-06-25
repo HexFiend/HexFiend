@@ -995,28 +995,41 @@ static size_t unionAndCleanLists(NSRect *rectList, id *valueList, size_t count) 
     UNIMPLEMENTED();
 }
 
+static NSUInteger tweakedColorWheelOffsetForBookmark(NSUInteger bookmark) {
+    // Subtract 1 because bookmarks are indexed from 1
+    bookmark--;
+    // Use an initial sequence to get the colors we like
+    const NSUInteger initialSequence[] = {0, 3, 5, 7, 1, 2, 4, 6, 8, 9, 10};
+    if (bookmark < sizeof initialSequence / sizeof *initialSequence) {
+        return initialSequence[bookmark];
+    } else {
+        return bookmark;
+    }
+}
+
+- (NSColor *)colorForBookmark:(NSUInteger)bookmark withAlpha:(CGFloat)alpha {
+    // OMG this is so clever I'm going to die.  Reverse our bits and use that as a hue lookup into the color wheel.
+    NSUInteger v = tweakedColorWheelOffsetForBookmark(bookmark);
+    NSUInteger reverse = v;
+    unsigned int s = (CHAR_BIT * sizeof v) - 1;
+    for (v >>= 1; v; v >>= 1) {
+        reverse <<= 1;
+        reverse |= (v & 1);
+        s--;
+    }
+    reverse <<= s; // shift when v's highest bits are zero
+    
+    double hue = reverse / (1. + NSUIntegerMax);
+    return [NSColor colorWithCalibratedHue:hue saturation:1. brightness:.6 alpha:alpha];
+}
+
 - (NSColor *)colorForBookmark:(NSUInteger)bookmark {
-    /* Two different Ss and Bs, 7 different Hs, for a total of 28 bookmark colors */
-    NSUInteger ns = 2, nb = 2, nh = 7; //number of Saturation, Brightness, Hues
-    NSUInteger si, bi, hi; //index of Saturation, Brightness, Hue
-    hi = (4 + bookmark) % nh; bookmark /= nh; //4 means we start at blue (ROYGBIV)
-    bi = nb - bookmark % nb; bookmark /= nb;
-    si = ns - bookmark % ns;
-    return [NSColor colorWithCalibratedHue:hi / (CGFloat)nh saturation:si / (CGFloat)ns brightness:bi / (CGFloat)nb alpha:(CGFloat).88];
+    return [self colorForBookmark:bookmark withAlpha:(CGFloat).88];
 }
 
 - (void)drawBookmark:(NSUInteger)bookmark inRect:(NSRect)rect {
     [NSGraphicsContext saveGraphicsState];
-    NSColor *color = nil;
-    switch (bookmark) {
-	case 1: color = [NSColor colorWithCalibratedRed:1 green:0 blue:0 alpha:1 ]; break;
-	case 2: color = [NSColor orangeColor]; break;
-	case 3: color = [NSColor yellowColor]; break;
-	case 4: color = [NSColor greenColor]; break;
-	case 5: color = [NSColor blueColor]; break;
-	case 6: color = [NSColor colorWithCalibratedRed:(CGFloat)(0x4B / 255.) green:0 blue:(CGFloat)(0x82 / 255.) alpha:1]; break; //#4B0082
-	case 7: color = [NSColor colorWithCalibratedRed:(CGFloat)(0xEE / 255.) green:(CGFloat)(0x82 / 255.) blue:(CGFloat)(0xEE / 255.) alpha:1]; break; //#EE82EE
-    }
+    NSColor *color = [self colorForBookmark:bookmark withAlpha:1.];
     if (color) {
 	[[color colorWithAlphaComponent:(CGFloat).66] set];
 
@@ -1037,7 +1050,7 @@ static size_t unionAndCleanLists(NSRect *rectList, id *valueList, size_t count) 
     NSGraphicsContext *context = [NSGraphicsContext currentContext];
     for (idx = [bookmarkStarts firstIndex]; idx != NSNotFound; idx = [bookmarkStarts indexGreaterThanIndex:idx]) {
 	NSBezierPath *path = [[NSBezierPath alloc] init];
-	[path appendBezierPathWithOvalInRect:ovalRect];
+	//[path appendBezierPathWithOvalInRect:ovalRect];
 	if (i == 0) [path appendBezierPathWithRect:NSMakeRect(rect.origin.x, rect.origin.y, 2, defaultLineHeight)];
 	[[self colorForBookmark:idx] set];
 	BOOL needsClip = ! NSContainsRect(rect, ovalRect);
@@ -1431,19 +1444,20 @@ static NSPoint scalePoint(NSPoint center, NSPoint point, CGFloat percent) {
     return NSMakePoint(center.x + newX, center.y + newY);
 }
 
-- (NSBezierPath *)_copyTeardropPath {
+- (NSBezierPath *)_copyTeardropPathForRadius:(CGFloat)radius {
     CGFloat rotation = 0;
     CGFloat droppiness = .30;
-    CGFloat radius = 12;
-    NSPoint center = NSZeroPoint;
+    CGFloat tipScale = 2.5;
+    CGFloat tipLengthFromCenter = radius * tipScale;
+    NSPoint bulbCenter = NSMakePoint(-tipLengthFromCenter, 0);
     
-    NSPoint triangleCenter = rotatePoint(center, NSMakePoint(center.x + radius, center.y), rotation);
-    NSPoint dropCorner1 = rotatePoint(center, triangleCenter, droppiness / 2);
-    NSPoint dropCorner2 = rotatePoint(center, triangleCenter, -droppiness / 2);
-    NSPoint dropTip = scalePoint(center, triangleCenter, 2.5);
+    NSPoint triangleCenter = rotatePoint(bulbCenter, NSMakePoint(bulbCenter.x + radius, bulbCenter.y), rotation);
+    NSPoint dropCorner1 = rotatePoint(bulbCenter, triangleCenter, droppiness / 2);
+    NSPoint dropCorner2 = rotatePoint(bulbCenter, triangleCenter, -droppiness / 2);
+    NSPoint dropTip = scalePoint(bulbCenter, triangleCenter, tipScale);
     
     NSBezierPath *path = [[NSBezierPath alloc] init];
-    [path appendBezierPathWithArcWithCenter:center radius:radius startAngle:-rotation * 360 + droppiness * 180. endAngle:-rotation * 360 - droppiness * 180. clockwise:NO];
+    [path appendBezierPathWithArcWithCenter:bulbCenter radius:radius startAngle:-rotation * 360 + droppiness * 180. endAngle:-rotation * 360 - droppiness * 180. clockwise:NO];
     
     [path moveToPoint:dropCorner1];
     [path lineToPoint:dropTip];
@@ -1454,30 +1468,163 @@ static NSPoint scalePoint(NSPoint center, NSPoint point, CGFloat percent) {
 }
 
 - (void)drawBookmarksWithClip:(NSRect)clip {
+    USE(clip);
     
-    NSDictionary *bookmarks = [[self representer] displayedBookmarkLocations];
-    FOREACH(NSNumber *, bookmarkNum, bookmarks) {
-        
-    }
+#define PERSPECTIVE_SHADOW 1
+#define MAX_BOOKMARK_DIGIT_COUNT 2
     
     CGContextRef ctx = [[NSGraphicsContext currentContext] graphicsPort];
-    
-    NSBezierPath *path = [self _copyTeardropPath];
-    CGContextSaveGState(ctx);
-    CGContextTranslateCTM(ctx, 100, 100);
-    CGContextRotateCTM(ctx, .125 * M_PI * 2);    
-    
-    [[NSColor colorWithCalibratedRed:0. green:0. blue:1. alpha:.66] set];
-    NSShadow *shadow = [[NSShadow alloc] init];
-    [shadow setShadowBlurRadius:3.];
-    [shadow setShadowOffset:NSMakeSize(-5, -5)];
-    [shadow set];
-    
-    [path fill];
-    [path release];
-    [shadow release];
-    
-    CGContextRestoreGState(ctx);
+    NSDictionary *bookmarks = [[self representer] displayedBookmarkLocations];
+    if ([bookmarks count] > 0) {
+        
+        const CGFloat radius = 12;
+        NSBezierPath *teardrop = [self _copyTeardropPathForRadius:radius];
+        CGFloat offscreenOffset, shadowXOffset, shadowYOffset;
+        
+#if PERSPECTIVE_SHADOW
+        shadowXOffset = -6;
+        shadowYOffset = 0;
+        offscreenOffset = NSWidth(clip) + 100;
+#else
+        shadowXOffset = -5;
+        shadowYOffset = -5;
+        offscreenOffset = 0;
+#endif
+        
+        NSShadow *shadow = [[NSShadow alloc] init];
+        [shadow setShadowBlurRadius:5.];
+        [shadow setShadowOffset:NSMakeSize(shadowXOffset - offscreenOffset, shadowYOffset)];
+        [shadow setShadowColor:[NSColor colorWithDeviceWhite:0. alpha:.5]];
+        
+        // Figure out how tall our bulb is
+        const NSRect bulbRect = [teardrop bounds];
+        const NSSize bulbSize = bulbRect.size;
+        
+        // Here's how much it will rotate (as a percentage of a full rotation)
+        const CGFloat rotation = .125;
+        
+        // Here's the font we'll use
+        CTFontRef ctfont = CTFontCreateWithName(CFSTR("Helvetica-Bold"), 1., NULL);
+        if (ctfont) {
+            
+            // Set the CG font
+            CGFontRef cgfont = ctfont ? CTFontCopyGraphicsFont(ctfont, NULL) : NULL;
+            CGContextSetFont(ctx, cgfont);
+            CGFontRelease(cgfont);
+            
+#if PERSPECTIVE_SHADOW        
+            // Figure out how much movement the shadow offset produces
+            CGFloat shadowTranslationDistance = hypot(shadowXOffset, shadowYOffset);
+#endif
+            
+            // Draw our bookmarks in order
+            NSArray *sortedBookmarkNames = [[bookmarks allKeys] sortedArrayUsingSelector:@selector(compare:)];
+            FOREACH(NSNumber *, bookmarkNameObj, sortedBookmarkNames) {
+                
+                NSUInteger bookmarkNum = [bookmarkNameObj integerValue];
+                NSUInteger bookmarkLen = HFCountDigitsBase10(bookmarkNum);
+                if (bookmarkLen < 1 || bookmarkLen > MAX_BOOKMARK_DIGIT_COUNT) continue; //erp
+                
+                // Get our base 10 representation as UniChar
+                UniChar bookmarkUniName[MAX_BOOKMARK_DIGIT_COUNT];                
+                NSUInteger tmpMark = bookmarkNum, tmpIdx = bookmarkLen;
+                while (tmpIdx--) {
+                    bookmarkUniName[tmpIdx] = '0' + (tmpMark % 10);
+                    tmpMark /= 10;
+                }
+                
+                // Get our glyphs and advances
+                CGGlyph glyphs[MAX_BOOKMARK_DIGIT_COUNT];
+                CGSize advances[MAX_BOOKMARK_DIGIT_COUNT];
+                CTFontGetGlyphsForCharacters(ctfont, bookmarkUniName, glyphs, bookmarkLen);
+                CTFontGetAdvancesForGlyphs(ctfont, kCTFontHorizontalOrientation, glyphs, advances, bookmarkLen);
+                
+                CGContextSaveGState(ctx);            
+                const NSUInteger byteLoc = [[bookmarks objectForKey:bookmarkNameObj] unsignedLongValue];
+                NSPoint characterOrigin = [self originForCharacterAtByteIndex:byteLoc];
+                
+                CGAffineTransform transform = CGAffineTransformIdentity;
+                
+                // move us slightly towards the character
+                characterOrigin.x += 2;
+                characterOrigin.y += floor([self lineHeight] / 8);
+                
+                CGContextBeginTransparencyLayer(ctx, NULL);            
+                
+                // Set our color
+                [[self colorForBookmark:bookmarkNum] set];
+                
+                // Set the shadow
+                [shadow set];            
+                
+#if PERSPECTIVE_SHADOW
+                
+                // Draw the shadow first and separately
+                transform = CGAffineTransformTranslate(transform, characterOrigin.x + offscreenOffset - shadowXOffset, characterOrigin.y - shadowYOffset);
+                transform = CGAffineTransformRotate(transform, rotation * M_PI * 2 - atan2(shadowTranslationDistance, bulbSize.height));
+                
+                CGContextConcatCTM(ctx, transform);
+                [teardrop fill];
+                
+                // Clear the shadow
+                CGContextSetShadowWithColor(ctx, CGSizeZero, 0, NULL);
+                
+                // Set up the transform so applying it will invert what we've done
+                transform = CGAffineTransformInvert(transform);
+#endif
+                
+                // Rotate and translate in preparation for drawing the teardrop
+                transform = CGAffineTransformTranslate(transform, characterOrigin.x, characterOrigin.y);
+                transform = CGAffineTransformRotate(transform, rotation * M_PI * 2);
+                CGContextConcatCTM(ctx, transform);
+                
+                // Draw the teardrop
+                [teardrop fill];
+                
+                // Draw the text with white and alpha.  Use blend mode copy so that we clip out the shadow, and when the transparency layer is ended we'll composite over the text.
+                CGFloat textScale = (bookmarkLen == 1 ? 24 : 20);
+                
+                CGContextSetTextDrawingMode(ctx, kCGTextClip);
+                CGAffineTransform textMatrix = CGAffineTransformMakeScale(textScale, -textScale); //roughly the font size we want
+                
+                CGPoint positions[MAX_BOOKMARK_DIGIT_COUNT];
+                CGFloat totalAdvance = 0;
+                for (NSUInteger i=0; i < bookmarkLen; i++) {
+                    positions[i].x = totalAdvance;
+                    positions[i].y = 0;
+                    CGFloat advance = advances[i].width;
+                    // Workaround 5834794
+                    advance *= textScale;
+                    // Tighten up the advances a little
+                    advance *= .85;
+                    totalAdvance += advance;
+                }
+                
+                // Apply this text matrix 
+                textMatrix.tx = NSMinX(bulbRect) + radius - totalAdvance/2;
+                textMatrix.ty = NSMaxY(bulbRect) - (bookmarkLen == 1 ? 4 : 5);
+                
+                // LOL
+                if (bookmarkNum == 7) textMatrix.ty += 1;
+                
+                CGContextSetTextMatrix(ctx, textMatrix);
+                                
+                // Draw
+                CGContextShowGlyphsAtPositions(ctx, glyphs, positions, bookmarkLen);
+                
+                CGContextSetBlendMode(ctx, kCGBlendModeCopy);
+                CGContextSetGrayFillColor(ctx, 1., .75); //faint white fill
+                CGContextFillRect(ctx, NSRectToCGRect(NSInsetRect(bulbRect, -20, -20)));
+                
+                // Done drawing, so composite
+                CGContextEndTransparencyLayer(ctx);            
+                CGContextRestoreGState(ctx); // this also restores the clip, which is important
+            }
+            
+            [teardrop release];
+            [shadow release];
+        }
+    }
 }
 
 - (void)drawRect:(NSRect)clip {

@@ -322,7 +322,7 @@
     return result;
 }
 
-//maps bookmark keys as NSString (e.g. @"3") to byte locations as NSNumbers
+//maps bookmark keys as NSNumber to byte locations as NSNumbers
 - (NSDictionary *)displayedBookmarkLocations {
     NSMutableDictionary *result = nil;
     HFController *controller = [self controller];
@@ -334,7 +334,7 @@
         if (HFLocationInRange(bookmarkRange.location, displayedRange)) {
             if (! result) result = [NSMutableDictionary dictionary];
             
-            NSString *key = [[NSString alloc] initWithFormat:@"%lu", mark];
+            NSNumber *key = [[NSNumber alloc] initWithUnsignedInteger:mark];
             NSNumber *value = [[NSNumber alloc] initWithInteger:ll2l(bookmarkRange.location - displayedRange.location)];
             [result setObject:value forKey:key];
             [key release];

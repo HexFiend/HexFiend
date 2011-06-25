@@ -4,7 +4,7 @@
 
 - (NSArray *)displayedSelectedContentsRanges; //returns an array of NSValues representing the selected ranges (as NSRanges) clipped to the displayed range.
 
-- (NSIndexSet *)displayedBookmarkLocations; //returns an NSIndexSet of bookmark locations, clipped to the displayed range
+- (NSDictionary *)displayedBookmarkLocations; //returns an dictionary mapping bookmark names to bookmark locations
 
 - (void)beginSelectionWithEvent:(NSEvent *)event forCharacterIndex:(NSUInteger)characterIndex;
 - (void)continueSelectionWithEvent:(NSEvent *)event forCharacterIndex:(NSUInteger)characterIndex;
