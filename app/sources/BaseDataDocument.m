@@ -671,7 +671,7 @@ static inline Class preferredByteArrayClass(void) {
 }
 
 
-/* Returns the selected bookmark, or NSNotFound */
+/* Returns the selected bookmark, or NSNotFound. If more than one bookmark is selected, returns the largest. */
 - (NSInteger)selectedBookmark {
     NSInteger result = NSNotFound;
     NSArray *ranges = [controller selectedContentsRanges];
@@ -681,9 +681,10 @@ static inline Class preferredByteArrayClass(void) {
 	NSEnumerator *attributeEnumerator = [[controller attributesForBytesInRange:range] attributeEnumerator];
 	NSString *attribute;
 	while ((attribute = [attributeEnumerator nextObject])) {
-	    if ((result = HFBookmarkFromBookmarkMiddleAttribute(attribute)) != NSNotFound) {
-		break;
-	    }
+            NSInteger thisBookmark = HFBookmarkFromBookmarkMiddleAttribute(attribute);
+            if (thisBookmark != NSNotFound && (result == NSNotFound || thisBookmark > result)) {
+                result = thisBookmark;
+            }
 	}
     }
     return result;

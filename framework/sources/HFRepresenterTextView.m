@@ -15,6 +15,8 @@
 
 static const NSTimeInterval HFCaretBlinkFrequency = 0.56;
 
+static const CGFloat HFTeardropRadius = 12;
+
 @implementation HFRepresenterTextView
 
 - (NSUInteger)_getGlyphs:(CGGlyph *)glyphs forString:(NSString *)string font:(NSFont *)inputFont {
@@ -1476,36 +1478,37 @@ static NSPoint scalePoint(NSPoint center, NSPoint point, CGFloat percent) {
     CGContextRef ctx = [[NSGraphicsContext currentContext] graphicsPort];
     NSDictionary *bookmarks = [[self representer] displayedBookmarkLocations];
     if ([bookmarks count] > 0) {
-        
-        const CGFloat radius = 12;
-        NSBezierPath *teardrop = [self _copyTeardropPathForRadius:radius];
-        CGFloat offscreenOffset, shadowXOffset, shadowYOffset;
-        
-#if PERSPECTIVE_SHADOW
-        shadowXOffset = -6;
-        shadowYOffset = 0;
-        offscreenOffset = NSWidth(clip) + 100;
-#else
-        shadowXOffset = -5;
-        shadowYOffset = -5;
-        offscreenOffset = 0;
-#endif
-        
-        NSShadow *shadow = [[NSShadow alloc] init];
-        [shadow setShadowBlurRadius:5.];
-        [shadow setShadowOffset:NSMakeSize(shadowXOffset - offscreenOffset, shadowYOffset)];
-        [shadow setShadowColor:[NSColor colorWithDeviceWhite:0. alpha:.5]];
-        
-        // Figure out how tall our bulb is
-        const NSRect bulbRect = [teardrop bounds];
-        const NSSize bulbSize = bulbRect.size;
-        
-        // Here's how much it will rotate (as a percentage of a full rotation)
-        const CGFloat rotation = .125;
-        
         // Here's the font we'll use
         CTFontRef ctfont = CTFontCreateWithName(CFSTR("Helvetica-Bold"), 1., NULL);
         if (ctfont) {
+            // Here's our teardrop radius
+            const CGFloat radius = HFTeardropRadius;
+                        
+            CGFloat offscreenOffset, shadowXOffset, shadowYOffset;
+#if PERSPECTIVE_SHADOW
+            shadowXOffset = -6;
+            shadowYOffset = 0;
+            offscreenOffset = NSWidth(clip) + 100;
+#else
+            shadowXOffset = -5;
+            shadowYOffset = -5;
+            offscreenOffset = 0;
+#endif
+
+            // Keep track of how many drops are at a given location
+            NSCountedSet *dropsPerByteLoc = [[NSCountedSet alloc] init];
+            
+            NSBezierPath *teardrop = [self _copyTeardropPathForRadius:radius];
+            
+            NSShadow *shadow = [[NSShadow alloc] init];
+            [shadow setShadowBlurRadius:5.];
+            [shadow setShadowOffset:NSMakeSize(shadowXOffset - offscreenOffset, shadowYOffset)];
+            [shadow setShadowColor:[NSColor colorWithDeviceWhite:0. alpha:.5]];
+            
+            // Figure out how tall our bulb is
+            const NSRect bulbRect = [teardrop bounds];
+            const NSSize bulbSize = bulbRect.size;
+            
             
             // Set the CG font
             CGFontRef cgfont = ctfont ? CTFontCopyGraphicsFont(ctfont, NULL) : NULL;
@@ -1532,16 +1535,29 @@ static NSPoint scalePoint(NSPoint center, NSPoint point, CGFloat percent) {
                     bookmarkUniName[tmpIdx] = '0' + (tmpMark % 10);
                     tmpMark /= 10;
                 }
-                
+                                
                 // Get our glyphs and advances
                 CGGlyph glyphs[MAX_BOOKMARK_DIGIT_COUNT];
                 CGSize advances[MAX_BOOKMARK_DIGIT_COUNT];
                 CTFontGetGlyphsForCharacters(ctfont, bookmarkUniName, glyphs, bookmarkLen);
                 CTFontGetAdvancesForGlyphs(ctfont, kCTFontHorizontalOrientation, glyphs, advances, bookmarkLen);
                 
-                CGContextSaveGState(ctx);            
-                const NSUInteger byteLoc = [[bookmarks objectForKey:bookmarkNameObj] unsignedLongValue];
+                CGContextSaveGState(ctx);
+                NSNumber *byteLocObj = [bookmarks objectForKey:bookmarkNameObj];
+                const NSUInteger byteLoc = [byteLocObj unsignedLongValue];
                 NSPoint characterOrigin = [self originForCharacterAtByteIndex:byteLoc];
+
+                // Compute how much to rotate (as a percentage of a full rotation) based on collisions
+                NSUInteger collisions = [dropsPerByteLoc countForObject:byteLocObj];
+                CGFloat rotation = .125;
+                
+                // Change rotation by collision count like so: 0->0, 1->-.125, 2->.125, 3->-.25, 4->.25...
+                CGFloat additionalRotation = ((collisions + 1)/2) * rotation;
+                if (collisions & 1) additionalRotation = -additionalRotation;
+                rotation += additionalRotation;
+                
+                // Remember this byteLocObj for future collisions
+                [dropsPerByteLoc addObject:byteLocObj];
                 
                 CGAffineTransform transform = CGAffineTransformIdentity;
                 
@@ -1584,8 +1600,10 @@ static NSPoint scalePoint(NSPoint center, NSPoint point, CGFloat percent) {
                 // Draw the text with white and alpha.  Use blend mode copy so that we clip out the shadow, and when the transparency layer is ended we'll composite over the text.
                 CGFloat textScale = (bookmarkLen == 1 ? 24 : 20);
                 
+                // we are flipped by default, so invert the rotation's sign to get the text direction
+                const CGFloat textDirection = -copysign(1., rotation);
                 CGContextSetTextDrawingMode(ctx, kCGTextClip);
-                CGAffineTransform textMatrix = CGAffineTransformMakeScale(textScale, -textScale); //roughly the font size we want
+                CGAffineTransform textMatrix = CGAffineTransformMakeScale(textScale, copysign(textScale, textDirection)); //roughly the font size we want
                 
                 CGPoint positions[MAX_BOOKMARK_DIGIT_COUNT];
                 CGFloat totalAdvance = 0;
@@ -1600,15 +1618,17 @@ static NSPoint scalePoint(NSPoint center, NSPoint point, CGFloat percent) {
                     totalAdvance += advance;
                 }
                 
+                // Compute the vertical offset
+                CGFloat textYOffset = (bookmarkLen == 1 ? 4 : 5);                
+                // LOL
+                if (bookmarkNum == 7) textYOffset -= 1;
+               
                 // Apply this text matrix 
                 textMatrix.tx = NSMinX(bulbRect) + radius - totalAdvance/2;
-                textMatrix.ty = NSMaxY(bulbRect) - (bookmarkLen == 1 ? 4 : 5);
-                
-                // LOL
-                if (bookmarkNum == 7) textMatrix.ty += 1;
+                textMatrix.ty = NSMaxY(bulbRect) - textYOffset;
                 
                 CGContextSetTextMatrix(ctx, textMatrix);
-                                
+                
                 // Draw
                 CGContextShowGlyphsAtPositions(ctx, glyphs, positions, bookmarkLen);
                 
@@ -1621,8 +1641,10 @@ static NSPoint scalePoint(NSPoint center, NSPoint point, CGFloat percent) {
                 CGContextRestoreGState(ctx); // this also restores the clip, which is important
             }
             
-            [teardrop release];
             [shadow release];
+            [teardrop release];
+            [dropsPerByteLoc release];
+            CFRelease(ctfont);
         }
     }
 }
