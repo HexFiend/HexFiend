@@ -6,18 +6,18 @@ static void freeTrie(struct HFGlyphTrieBranch_t *branch, uint8_t branchingDepth)
     HFASSERT(branchingDepth >= 1);
     NSUInteger i;
     if (branchingDepth > 2) {
-	/* Recurse */
-	for (i=0; i < kHFGlyphTrieBranchCount; i++) {
-	    if (branch->children[i]) {
-		freeTrie(branch->children[i], branchingDepth - 1);
-	    }
-	}
+        /* Recurse */
+        for (i=0; i < kHFGlyphTrieBranchCount; i++) {
+            if (branch->children[i]) {
+                freeTrie(branch->children[i], branchingDepth - 1);
+            }
+        }
     }
     if (branchingDepth > 1) {
-	/* Free our children */
-	for (i=0; i < kHFGlyphTrieBranchCount; i++) {
-	    free(branch->children[i]);
-	}
+        /* Free our children */
+        for (i=0; i < kHFGlyphTrieBranchCount; i++) {
+            free(branch->children[i]);
+        }
     }
 }
 
@@ -25,27 +25,27 @@ static void insertTrie(void *node, uint8_t branchingDepth, NSUInteger key, struc
     HFASSERT(node != NULL);
     HFASSERT(branchingDepth >= 1);
     if (branchingDepth == 1) {
-	/* Leaf */
-	HFASSERT(key < kHFGlyphTrieBranchCount);
-	((struct HFGlyphTrieLeaf_t *)node)->glyphs[key] = value;
+        /* Leaf */
+        HFASSERT(key < kHFGlyphTrieBranchCount);
+        ((struct HFGlyphTrieLeaf_t *)node)->glyphs[key] = value;
     } else {
-	/* Branch */
-	struct HFGlyphTrieBranch_t *branch = node;
-	NSUInteger keySlice = key & ((1 << kHFGlyphTrieBranchFactor) - 1), keyRemainder = key >> kHFGlyphTrieBranchFactor;
-	__strong void *child = branch->children[keySlice];
-	if (child == NULL) {
-	    /* We have to allocate the child, ad it should be zero-filled.  Allocate a leaf if our depth is 2, a branch otherwise.  Note that NSAllocateCollectable only clears scanned memory: we have to clear unscanned memory ourselves. */
-	    if (branchingDepth == 2) {
-		child = NSAllocateCollectable(sizeof(struct HFGlyphTrieLeaf_t), 0); //collectable but not scanned, since it contains no pointers
-		bzero(child, sizeof(struct HFGlyphTrieLeaf_t));
-	    } else {
-		child = NSAllocateCollectable(sizeof(struct HFGlyphTrieBranch_t), NSScannedOption); //collectable and scanned since it contains pointers
-	    }
-	    /* We just zeroed out a block of memory and we are about to write its address somewhere where another thread could read it, so we need a memory barrier. */
-	    OSMemoryBarrier();
-	    branch->children[keySlice] = child;
-	}
-	insertTrie(child, branchingDepth - 1, keyRemainder, value);
+        /* Branch */
+        struct HFGlyphTrieBranch_t *branch = node;
+        NSUInteger keySlice = key & ((1 << kHFGlyphTrieBranchFactor) - 1), keyRemainder = key >> kHFGlyphTrieBranchFactor;
+        __strong void *child = branch->children[keySlice];
+        if (child == NULL) {
+            /* We have to allocate the child, ad it should be zero-filled.  Allocate a leaf if our depth is 2, a branch otherwise.  Note that NSAllocateCollectable only clears scanned memory: we have to clear unscanned memory ourselves. */
+            if (branchingDepth == 2) {
+                child = NSAllocateCollectable(sizeof(struct HFGlyphTrieLeaf_t), 0); //collectable but not scanned, since it contains no pointers
+                bzero(child, sizeof(struct HFGlyphTrieLeaf_t));
+            } else {
+                child = NSAllocateCollectable(sizeof(struct HFGlyphTrieBranch_t), NSScannedOption); //collectable and scanned since it contains pointers
+            }
+            /* We just zeroed out a block of memory and we are about to write its address somewhere where another thread could read it, so we need a memory barrier. */
+            OSMemoryBarrier();
+            branch->children[keySlice] = child;
+        }
+        insertTrie(child, branchingDepth - 1, keyRemainder, value);
     }    
 }
 
@@ -53,20 +53,20 @@ static struct HFGlyph_t getTrie(const void *node, uint8_t branchingDepth, NSUInt
     HFASSERT(node != NULL);
     HFASSERT(branchingDepth >= 1);
     if (branchingDepth == 1) {
-	/* Leaf */
-	HFASSERT(key < kHFGlyphTrieBranchCount);
-	return ((const struct HFGlyphTrieLeaf_t *)node)->glyphs[key];
+        /* Leaf */
+        HFASSERT(key < kHFGlyphTrieBranchCount);
+        return ((const struct HFGlyphTrieLeaf_t *)node)->glyphs[key];
     } else {
-	/* Branch */
-	const struct HFGlyphTrieBranch_t *branch = node;
-	NSUInteger keySlice = key & ((1 << kHFGlyphTrieBranchFactor) - 1), keyRemainder = key >> kHFGlyphTrieBranchFactor;
-	if (branch->children[keySlice] == NULL) {
-	    /* Not found */
-	    return (struct HFGlyph_t){0, 0};
-	} else {
-	    /* This dereference requires a data dependency barrier */
-	    return getTrie(branch->children[keySlice], branchingDepth - 1, keyRemainder);
-	}
+        /* Branch */
+        const struct HFGlyphTrieBranch_t *branch = node;
+        NSUInteger keySlice = key & ((1 << kHFGlyphTrieBranchFactor) - 1), keyRemainder = key >> kHFGlyphTrieBranchFactor;
+        if (branch->children[keySlice] == NULL) {
+            /* Not found */
+            return (struct HFGlyph_t){0, 0};
+        } else {
+            /* This dereference requires a data dependency barrier */
+            return getTrie(branch->children[keySlice], branchingDepth - 1, keyRemainder);
+        }
     }
 }
 
@@ -87,18 +87,18 @@ void HFGlyphTrieInitialize(struct HFGlyphTrie_t *trie, uint8_t keySize) {
     
     /* The trie is initially empty.  Don't use bzero under GC, so that we get write barriers.  */
     if (objc_collectingEnabled()) {
-	NSUInteger i;
-	for (i=0; i < kHFGlyphTrieBranchCount; i++) {
-	    trie->root.children[i] = NULL;
-	}
+        NSUInteger i;
+        for (i=0; i < kHFGlyphTrieBranchCount; i++) {
+            trie->root.children[i] = NULL;
+        }
     } else {
-	bzero(&trie->root, sizeof trie->root);
+        bzero(&trie->root, sizeof trie->root);
     }
 }
 
 void HFGlyphTreeFree(struct HFGlyphTrie_t * trie) {
     /* Don't try to free under GC.  And don't free if it's never been initialized. */
     if (trie->branchingDepth > 0 && ! objc_collectingEnabled()) {
-	freeTrie(&trie->root, trie->branchingDepth);
+        freeTrie(&trie->root, trie->branchingDepth);
     }
 }

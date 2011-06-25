@@ -37,7 +37,10 @@
 
 /*! Returns an NSEnumerator of the attributes.  The attributes are returned in order, but there is no way to get the range of each attribute. */
 - (NSEnumerator *)attributeEnumerator;
- 
+
+/*! Called from HFByteArray to indicate when the bytes have changed, and the attributes need to be fixed up. */
+- (void)byteRange:(HFRange)srcRange wasReplacedByBytesOfLength:(unsigned long long)replacementLength;
+
 /*! Transfer attributes in the given range from array, adding baseOffset to each attribute range. range is interpreted as a range in array. */
 - (void)transferAttributesFromAttributeArray:(HFByteRangeAttributeArray *)array range:(HFRange)range baseOffset:(unsigned long long)baseOffset;
 

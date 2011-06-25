@@ -1223,7 +1223,7 @@ static size_t unionAndCleanLists(NSRect *rectList, id *valueList, size_t count) 
         }
         
         NSUInteger runStart = 0;
-        uint16_t runFontIndex = glyphs[0].fontIndex;
+        HFGlyphFontIndex runFontIndex = glyphs[0].fontIndex;
         CGFloat runAdvance = 0;
         for (NSUInteger i=1; i <= glyphCount; i++) {
             /* Check if this run is finished, or if we are using a substitution font */
@@ -1263,6 +1263,7 @@ static size_t unionAndCleanLists(NSRect *rectList, id *valueList, size_t count) 
                     /* Record the new run start and index */
                     runStart = i;
                     runFontIndex = glyphs[i].fontIndex;
+                    HFASSERT(runFontIndex != kHFGlyphFontIndexInvalid);
                 }
             }
         }
@@ -1378,6 +1379,12 @@ static size_t unionAndCleanLists(NSRect *rectList, id *valueList, size_t count) 
                         [self extractGlyphsForBytes:bytePtr range:NSMakeRange(byteIndex, bytesInThisRun) intoArray:glyphs advances:advances withInclusionRanges:restrictingToRanges initialTextOffset:&initialTextOffset resultingGlyphCount:&resultGlyphCount];
                     }
                     HFASSERT(resultGlyphCount <= maxGlyphCount);
+
+#if ! NDEBUG
+                    for (NSUInteger q=0; q < resultGlyphCount; q++) {
+                        HFASSERT(glyphs[q].fontIndex != kHFGlyphFontIndexInvalid);
+                    }
+#endif
                     
                     if (resultGlyphCount > 0) {
                         textTransform.tx += initialTextOffset + advanceIntoLine;
@@ -1622,12 +1629,6 @@ static NSPoint scalePoint(NSPoint center, NSPoint point, CGFloat percent) {
                 } else {
                     textMatrix.ty = NSMinY(bulbRect) + textYOffset;
                 }
-                
-                if (rotation <= -.25 || rotation > .25) {
-                    CGContextResetClip(ctx);
-                }
-                
-                CGContextResetClip(ctx);
                 
                 CGContextSetTextMatrix(ctx, textMatrix);
                 

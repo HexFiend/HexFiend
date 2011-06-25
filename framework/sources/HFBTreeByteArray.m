@@ -187,8 +187,6 @@ static inline HFByteSlice *findInitialSlice(HFBTree *btree, HFRange *inoutArrayR
     }
     
     unsigned long long afterLength = [self length];
-    
-    HFASSERT(afterLength - beforeLength == [slice length]);
 }
 
 - (void)deleteBytesInRange:(HFRange)range {

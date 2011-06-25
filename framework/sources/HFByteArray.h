@@ -80,7 +80,7 @@ typedef NSUInteger HFByteArrayDataStringType;
 /*! Delete bytes in the given range.  This is implemented on the base class by creating an empty byte array and inserting it in the range to be deleted, via <tt>insertByteSlice:inRange:</tt>. */
 - (void)deleteBytesInRange:(HFRange)range;
 
-/*! Returns a new HFByteArray containing the given range.  This is an abstract class that concrete subclasses must override. */
+/*! Returns a new HFByteArray containing the given range.  This is an abstract method that concrete subclasses must override. */
 - (HFByteArray *)subarrayWithRange:(HFRange)range;
 //@}
 

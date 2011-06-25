@@ -203,7 +203,7 @@
     
     /* Transfer from arrayAttributes */
     if (! [arrayAttributes isEmpty]) {
-	[result transferAttributesFromAttributeArray:arrayAttributes range:range baseOffset:0];
+        [result transferAttributesFromAttributeArray:arrayAttributes range:range baseOffset:0];
     }
     
     return result;

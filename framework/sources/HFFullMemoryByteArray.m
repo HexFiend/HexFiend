@@ -10,6 +10,7 @@
 #import <HexFiend/HFFullMemoryByteArray.h>
 #import <HexFiend/HFFullMemoryByteSlice.h>
 #import <HexFiend/HFByteSlice.h>
+#import <HexFiend/HFByteRangeAttributeArray.h>
 
 @implementation HFFullMemoryByteArray
 
@@ -65,7 +66,7 @@
     void* buff = check_malloc(length);
     [slice copyBytes:buff range:HFRangeMake(0, length)];
     [data replaceBytesInRange:range withBytes:buff length:length];
-    free(buff);
+    free(buff);    
 }
 
 @end

@@ -48,6 +48,8 @@
 		D019B9020D83FEB3005789AA /* HFByteSliceFileOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = D019B9000D83FEB3005789AA /* HFByteSliceFileOperation.m */; };
 		D019B9550D840FE8005789AA /* HFObjectGraph.h in Headers */ = {isa = PBXBuildFile; fileRef = D019B9530D840FE8005789AA /* HFObjectGraph.h */; };
 		D019B9560D840FE8005789AA /* HFObjectGraph.m in Sources */ = {isa = PBXBuildFile; fileRef = D019B9540D840FE8005789AA /* HFObjectGraph.m */; };
+		D01C1AB813B5F2B700479C9C /* HFAttributedByteArray.m in Sources */ = {isa = PBXBuildFile; fileRef = D01C1AB713B5F2B700479C9C /* HFAttributedByteArray.m */; };
+		D01C1AB913B5F5A700479C9C /* HFAttributedByteArray.h in Headers */ = {isa = PBXBuildFile; fileRef = D01C1AB613B5F2B700479C9C /* HFAttributedByteArray.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D01E7BED0CDC55D000943F9E /* HFController.m in Sources */ = {isa = PBXBuildFile; fileRef = D01E7BEB0CDC55D000943F9E /* HFController.m */; };
 		D01E7BF00CDC564B00943F9E /* HexFiend.h in Headers */ = {isa = PBXBuildFile; fileRef = D01E7BEF0CDC564B00943F9E /* HexFiend.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D01E7C160CDC58AA00943F9E /* BaseDataDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = D01E7C150CDC58AA00943F9E /* BaseDataDocument.m */; };
@@ -331,6 +333,8 @@
 		D019B9000D83FEB3005789AA /* HFByteSliceFileOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFByteSliceFileOperation.m; path = sources/HFByteSliceFileOperation.m; sourceTree = "<group>"; };
 		D019B9530D840FE8005789AA /* HFObjectGraph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFObjectGraph.h; path = sources/HFObjectGraph.h; sourceTree = "<group>"; };
 		D019B9540D840FE8005789AA /* HFObjectGraph.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFObjectGraph.m; path = sources/HFObjectGraph.m; sourceTree = "<group>"; };
+		D01C1AB613B5F2B700479C9C /* HFAttributedByteArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFAttributedByteArray.h; sourceTree = "<group>"; };
+		D01C1AB713B5F2B700479C9C /* HFAttributedByteArray.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFAttributedByteArray.m; sourceTree = "<group>"; };
 		D01E7BB80CDC530C00943F9E /* HexFiend.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = HexFiend.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D01E7BB90CDC530C00943F9E /* HexFiend_Framework-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "HexFiend_Framework-Info.plist"; sourceTree = "<group>"; };
 		D01E7BC60CDC53B300943F9E /* HexFiend_2_Framework_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HexFiend_2_Framework_Prefix.pch; path = sources/HexFiend_2_Framework_Prefix.pch; sourceTree = "<group>"; };
@@ -965,6 +969,8 @@
 				D0D828FF0CDE8ABE00C2AB82 /* HFFullMemoryByteArray.m */,
 				D06D61EC0FA7FA7C002376EE /* HFBTreeByteArray.h */,
 				D06D61ED0FA7FA7C002376EE /* HFBTreeByteArray.m */,
+				D01C1AB613B5F2B700479C9C /* HFAttributedByteArray.h */,
+				D01C1AB713B5F2B700479C9C /* HFAttributedByteArray.m */,
 				D0114CA71006D1DF00DAF4CE /* HFByteArrayProxiedData.h */,
 				D0114CA81006D1DF00DAF4CE /* HFByteArrayProxiedData.m */,
 				D0A1F2EB11439B9D008BB3BA /* HFByteArrayEditScript.h */,
@@ -1064,6 +1070,7 @@
 				D041D1C00D397E1A00C28345 /* HFPasteboardOwner.h in Headers */,
 				D0D179460D46F20E00684270 /* HFByteSlice_Private.h in Headers */,
 				D0826EAB0D4855900006FB7D /* HFFileReference.h in Headers */,
+				D01C1AB913B5F5A700479C9C /* HFAttributedByteArray.h in Headers */,
 				D0826EF10D487A000006FB7D /* HFFileByteSlice.h in Headers */,
 				D078CF550D50491100492F46 /* HFBannerDividerThumb.h in Headers */,
 				D07150670D5510CE00573D7A /* HFTextField.h in Headers */,
@@ -1354,6 +1361,7 @@
 				D0D8C45812A3EF3900960FC4 /* ProcessList.m in Sources */,
 				D059E1291311C676001493B8 /* AppDebugging.m in Sources */,
 				D01EF15413B2A0D300CC9283 /* TextDividerRepresenter.m in Sources */,
+				D01C1AB813B5F2B700479C9C /* HFAttributedByteArray.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -259,7 +259,7 @@ BOOL HFStringEncodingIsSupersetOfASCII(NSStringEncoding encoding) {
 	case kCFStringEncodingMacRomanLatin1: return YES;
 	case kCFStringEncodingHZ_GB_2312: return NO;
 	case kCFStringEncodingBig5_HKSCS_1999: return YES;
-	case kCFStringEncodingVISCII: return YES;
+	case kCFStringEncodingVISCII: return YES; // though not quite
 	case kCFStringEncodingKOI8_U: return YES;
 	case kCFStringEncodingBig5_E: return YES;
 	case kCFStringEncodingNextStepJapanese: return YES;
@@ -413,9 +413,11 @@ uint8_t HFStringEncodingCharacterLength(NSStringEncoding encoding) {
 	case kCFStringEncodingNextStepJapanese: return YES; // ??
 	case kCFStringEncodingEBCDIC_US: return 1; //lol
 	case kCFStringEncodingEBCDIC_CP037: return 1;
+	case kCFStringEncodingUTF7: return 1;
+	case kCFStringEncodingUTF7_IMAP : return 1;
         default:
-            NSLog(@"Unknown string encoding %lu in %s", (unsigned long)encoding, __FUNCTION__);
-            return NO;
+            NSLog(@"Unknown string encoding %lx in %s", (long)encoding, __FUNCTION__);
+            return 1;
     }    
 }
 

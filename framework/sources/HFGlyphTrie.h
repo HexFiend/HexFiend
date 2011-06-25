@@ -12,7 +12,7 @@ typedef uint16_t HFGlyphFontIndex;
 #define kHFGlyphInvalid kCGFontIndexInvalid
 
 struct HFGlyph_t {
-    uint16_t fontIndex;
+    HFGlyphFontIndex fontIndex;
     CGGlyph glyph;
 };
 

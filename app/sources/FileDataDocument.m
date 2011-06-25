@@ -9,7 +9,7 @@
 #import "FileDataDocument.h"
 
 static inline Class preferredByteArrayClass(void) {
-    return [HFBTreeByteArray class];
+    return [HFAttributedByteArray class];
 }
 
 @implementation FileDataDocument
@@ -23,13 +23,13 @@ static inline Class preferredByteArrayClass(void) {
     NSString *path = [absoluteURL path];
     HFFileReference *fileReference = [[[HFFileReference alloc] initWithPath:path error:&localError] autorelease];
     if (localError && [[localError domain] isEqualToString:NSCocoaErrorDomain] && [localError code] == NSFileReadNoPermissionError) {
-	/* Try again with a privileged file reference */
+        /* Try again with a privileged file reference */
 #ifndef HF_NO_PRIVILEGED_FILE_OPERATIONS
-	fileReference = [[[HFPrivilegedFileReference alloc] initWithPath:path error:&localError] autorelease];
+        fileReference = [[[HFPrivilegedFileReference alloc] initWithPath:path error:&localError] autorelease];
 #endif
     }
     if (fileReference == nil) {
-	if (outError) *outError = localError;
+        if (outError) *outError = localError;
     }
     else {
         HFFileByteSlice *byteSlice = [[[HFFileByteSlice alloc] initWithFile:fileReference] autorelease];
