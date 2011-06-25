@@ -997,21 +997,9 @@ static size_t unionAndCleanLists(NSRect *rectList, id *valueList, size_t count) 
     UNIMPLEMENTED();
 }
 
-static NSUInteger tweakedColorWheelOffsetForBookmark(NSUInteger bookmark) {
-    // Subtract 1 because bookmarks are indexed from 1
-    bookmark--;
-    // Use an initial sequence to get the colors we like
-    const NSUInteger initialSequence[] = {0, 3, 5, 7, 1, 2, 4, 6, 8, 9, 10};
-    if (bookmark < sizeof initialSequence / sizeof *initialSequence) {
-        return initialSequence[bookmark];
-    } else {
-        return bookmark;
-    }
-}
-
 - (NSColor *)colorForBookmark:(NSUInteger)bookmark withAlpha:(CGFloat)alpha {
     // OMG this is so clever I'm going to die.  Reverse our bits and use that as a hue lookup into the color wheel.
-    NSUInteger v = tweakedColorWheelOffsetForBookmark(bookmark);
+    NSUInteger v = bookmark - 1; //because bookmarks are indexed from 1
     NSUInteger reverse = v;
     unsigned int s = (CHAR_BIT * sizeof v) - 1;
     for (v >>= 1; v; v >>= 1) {
@@ -1448,7 +1436,7 @@ static NSPoint scalePoint(NSPoint center, NSPoint point, CGFloat percent) {
 
 - (NSBezierPath *)_copyTeardropPathForRadius:(CGFloat)radius {
     CGFloat rotation = 0;
-    CGFloat droppiness = .30;
+    CGFloat droppiness = .15;
     CGFloat tipScale = 2.5;
     CGFloat tipLengthFromCenter = radius * tipScale;
     NSPoint bulbCenter = NSMakePoint(-tipLengthFromCenter, 0);
@@ -1523,6 +1511,13 @@ static NSPoint scalePoint(NSPoint center, NSPoint point, CGFloat percent) {
             // Draw our bookmarks in order
             NSArray *sortedBookmarkNames = [[bookmarks allKeys] sortedArrayUsingSelector:@selector(compare:)];
             FOREACH(NSNumber *, bookmarkNameObj, sortedBookmarkNames) {
+                NSNumber *byteLocObj = [bookmarks objectForKey:bookmarkNameObj];
+                
+                const NSUInteger collisions = [dropsPerByteLoc countForObject:byteLocObj];
+                if (collisions > 8) continue; //don't try to show too much
+                // Remember this byteLocObj for future collisions
+                [dropsPerByteLoc addObject:byteLocObj];
+
                 
                 NSUInteger bookmarkNum = [bookmarkNameObj integerValue];
                 NSUInteger bookmarkLen = HFCountDigitsBase10(bookmarkNum);
@@ -1543,22 +1538,17 @@ static NSPoint scalePoint(NSPoint center, NSPoint point, CGFloat percent) {
                 CTFontGetAdvancesForGlyphs(ctfont, kCTFontHorizontalOrientation, glyphs, advances, bookmarkLen);
                 
                 CGContextSaveGState(ctx);
-                NSNumber *byteLocObj = [bookmarks objectForKey:bookmarkNameObj];
                 const NSUInteger byteLoc = [byteLocObj unsignedLongValue];
                 NSPoint characterOrigin = [self originForCharacterAtByteIndex:byteLoc];
 
                 // Compute how much to rotate (as a percentage of a full rotation) based on collisions
-                NSUInteger collisions = [dropsPerByteLoc countForObject:byteLocObj];
                 CGFloat rotation = .125;
                 
                 // Change rotation by collision count like so: 0->0, 1->-.125, 2->.125, 3->-.25, 4->.25...
                 CGFloat additionalRotation = ((collisions + 1)/2) * rotation;
                 if (collisions & 1) additionalRotation = -additionalRotation;
                 rotation += additionalRotation;
-                
-                // Remember this byteLocObj for future collisions
-                [dropsPerByteLoc addObject:byteLocObj];
-                
+                                
                 CGAffineTransform transform = CGAffineTransformIdentity;
                 
                 // move us slightly towards the character
@@ -1601,9 +1591,9 @@ static NSPoint scalePoint(NSPoint center, NSPoint point, CGFloat percent) {
                 CGFloat textScale = (bookmarkLen == 1 ? 24 : 20);
                 
                 // we are flipped by default, so invert the rotation's sign to get the text direction
-                const CGFloat textDirection = -copysign(1., rotation);
+                const CGFloat textDirection = (rotation >= -.25 && rotation <= .25) ? -1 : 1;
                 CGContextSetTextDrawingMode(ctx, kCGTextClip);
-                CGAffineTransform textMatrix = CGAffineTransformMakeScale(textScale, copysign(textScale, textDirection)); //roughly the font size we want
+                CGAffineTransform textMatrix = CGAffineTransformMakeScale(-copysign(textScale, textDirection), copysign(textScale, textDirection)); //roughly the font size we want
                 
                 CGPoint positions[MAX_BOOKMARK_DIGIT_COUNT];
                 CGFloat totalAdvance = 0;
@@ -1621,11 +1611,23 @@ static NSPoint scalePoint(NSPoint center, NSPoint point, CGFloat percent) {
                 // Compute the vertical offset
                 CGFloat textYOffset = (bookmarkLen == 1 ? 4 : 5);                
                 // LOL
-                if (bookmarkNum == 7) textYOffset -= 1;
+                if (bookmarkNum == 6 || bookmarkNum == 7) textYOffset -= 1;
+                
                
                 // Apply this text matrix 
-                textMatrix.tx = NSMinX(bulbRect) + radius - totalAdvance/2;
-                textMatrix.ty = NSMaxY(bulbRect) - textYOffset;
+                textMatrix.tx = NSMinX(bulbRect) + radius + copysign(totalAdvance/2, textDirection);
+                
+                if (textDirection < 0) {
+                    textMatrix.ty = NSMaxY(bulbRect) - textYOffset;
+                } else {
+                    textMatrix.ty = NSMinY(bulbRect) + textYOffset;
+                }
+                
+                if (rotation <= -.25 || rotation > .25) {
+                    CGContextResetClip(ctx);
+                }
+                
+                CGContextResetClip(ctx);
                 
                 CGContextSetTextMatrix(ctx, textMatrix);
                 
