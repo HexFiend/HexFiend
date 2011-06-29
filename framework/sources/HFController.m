@@ -92,7 +92,6 @@ static inline Class preferredByteArrayClass(void) {
     _hfflags.antialias = YES;
     _hfflags.selectable = YES;
     representers = [[NSMutableArray alloc] init];
-    byteRangeAttributeArray = [[HFByteRangeAttributeArray alloc] init];
     [self setFont:[NSFont fontWithName:@"Monaco" size:10.f]];
     return self;
 }
@@ -106,7 +105,6 @@ static inline Class preferredByteArrayClass(void) {
     [undoOperations release];
     [undoManager release];
     [undoCoalescer release];
-    [byteRangeAttributeArray release];
     [font release];
     [byteArray removeObserver:self forKeyPath:@"changesAreLocked"];
     [byteArray release];
@@ -485,50 +483,52 @@ static inline Class preferredByteArrayClass(void) {
 }
 
 - (HFByteRangeAttributeArray *)byteRangeAttributeArray {
-    return byteRangeAttributeArray;
+    return [byteArray byteRangeAttributeArray];
 }
 
 - (HFByteRangeAttributeArray *)attributesForBytesInRange:(HFRange)range {
-    HFByteRangeAttributeArray *result = [[self byteArray] attributesForBytesInRange:range];
-    if ([result isEmpty]) {
-        return byteRangeAttributeArray;
-    }
-    else if (! [byteRangeAttributeArray isEmpty]) {
-        result = [[result mutableCopy] autorelease];
-        [result transferAttributesFromAttributeArray:byteRangeAttributeArray range:range baseOffset:0];
-    }
-    return result;
+    return [[self byteArray] attributesForBytesInRange:range];
 }
 
 - (HFRange)rangeForBookmark:(NSInteger)bookmark {
-    if (! byteArray) return HFRangeMake(ULLONG_MAX, ULLONG_MAX);
-    NSString *attribute = [HFBookmarkAttributesFromBookmark(bookmark) objectAtIndex:1];
+    HFRange result = HFRangeMake(ULLONG_MAX, ULLONG_MAX);
     HFByteRangeAttributeArray *attributes = [byteArray byteRangeAttributeArray];
-    return [attributes rangeOfAttribute:attribute];
+    if (attributes != nil) {
+        NSString *attribute = [HFBookmarkAttributesFromBookmark(bookmark) objectAtIndex:1];
+        result = [attributes rangeOfAttribute:attribute];
+    }
+    return result;
 }
 
 - (void)setRange:(HFRange)range forBookmark:(NSInteger)bookmark {
     HFASSERT(range.length > 0);
     HFByteRangeAttributeArray *attributeArray = [byteArray byteRangeAttributeArray];
-    NSArray *bookmarkAttributes = HFBookmarkAttributesFromBookmark(bookmark);
-    [attributeArray removeAttributes:[NSSet setWithArray:bookmarkAttributes]];
-    if (! (range.location == ULLONG_MAX && range.location == ULLONG_MAX)) {
-        // apply start, middle, and end
-        [attributeArray addAttribute:[bookmarkAttributes objectAtIndex:0] range:HFRangeMake(range.location, 1)];
-        [attributeArray addAttribute:[bookmarkAttributes objectAtIndex:1] range:range];
-        [attributeArray addAttribute:[bookmarkAttributes objectAtIndex:2] range:HFRangeMake(HFMaxRange(range) - 1, 1)];
+    if (attributeArray) {
+        NSArray *bookmarkAttributes = HFBookmarkAttributesFromBookmark(bookmark);
+        [attributeArray removeAttributes:[NSSet setWithArray:bookmarkAttributes]];
+        if (! (range.location == ULLONG_MAX && range.location == ULLONG_MAX)) {
+            // apply start, middle, and end
+            [attributeArray addAttribute:[bookmarkAttributes objectAtIndex:0] range:HFRangeMake(range.location, 1)];
+            [attributeArray addAttribute:[bookmarkAttributes objectAtIndex:1] range:range];
+            [attributeArray addAttribute:[bookmarkAttributes objectAtIndex:2] range:HFRangeMake(HFMaxRange(range) - 1, 1)];
+        }
+        [self _addPropertyChangeBits:HFControllerByteRangeAttributes | HFControllerBookmarks];
     }
-    [self _addPropertyChangeBits:HFControllerByteRangeAttributes | HFControllerBookmarks];
 }
 
 - (NSIndexSet *)bookmarksInRange:(HFRange)range {
-    NSMutableIndexSet *result = [NSMutableIndexSet indexSet];
+    id result = nil;
     HFASSERT(HFRangeIsSubrangeOfRange(range, HFRangeMake(0, [self contentsLength])));
-    HFByteRangeAttributeArray *attributeArray = [byteArray byteRangeAttributeArray];
+    HFByteRangeAttributeArray *attributeArray = [byteArray byteRangeAttributeArray]; //may be nil
     NSSet *attributes = [attributeArray attributesInRange:range];
-    FOREACH(NSString *, attribute, attributes) {
-        NSInteger bookmark = HFBookmarkFromBookmarkMiddleAttribute(attribute);
-        if (bookmark != NSNotFound) [result addIndex:bookmark];
+    if (! [attributes count]) {
+        result = [NSIndexSet indexSet];
+    } else {
+        result = [NSMutableIndexSet indexSet];
+        FOREACH(NSString *, attribute, attributes) {
+            NSInteger bookmark = HFBookmarkFromBookmarkMiddleAttribute(attribute);
+            if (bookmark != NSNotFound) [result addIndex:bookmark];
+        }
     }
     return result;
 }

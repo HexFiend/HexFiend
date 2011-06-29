@@ -113,3 +113,44 @@
 }
 
 @end
+
+@implementation HFByteArray (HFAttributeExtensions)
+
+- (HFByteRangeAttributeArray *)byteRangeAttributeArray {
+    return nil;
+}
+
+- (HFByteRangeAttributeArray *)attributesForBytesInRange:(HFRange)range {
+    HFByteRangeAttributeArray *result = [[[HFByteRangeAttributeArray alloc] init] autorelease];
+    HFASSERT(range.length < NSUIntegerMax);
+    const unsigned long long rangeEnd = HFMaxRange(range);
+    HFASSERT(rangeEnd <= [self length]);
+    HFRange remainingRange = range;
+    while (remainingRange.length > 0) {
+        unsigned long long beginningOffset;
+        HFByteSlice *slice = [self sliceContainingByteAtIndex:remainingRange.location beginningOffset:&beginningOffset];
+        HFASSERT(beginningOffset <= remainingRange.location);
+        unsigned long long sliceLength = [slice length];
+        HFRange sliceRange = HFRangeMake(beginningOffset, sliceLength);
+        HFRange overlap = HFIntersectionRange(sliceRange, remainingRange);
+        
+        HFByteRangeAttributeArray *sliceAttributes = [slice attributesForBytesInRange:HFRangeMake(overlap.location - beginningOffset, overlap.length)];
+        if (sliceAttributes) {
+            [result transferAttributesFromAttributeArray:sliceAttributes range:HFRangeMake(0, sliceLength) baseOffset:beginningOffset];
+        }
+        
+        HFASSERT(overlap.location == remainingRange.location);
+        remainingRange.location = HFSum(remainingRange.location, overlap.length);
+        remainingRange.length = HFSubtract(remainingRange.length, overlap.length);
+    }
+    
+    /* Transfer from arrayAttributes */
+    HFByteRangeAttributeArray *arrayAttributes = [self byteRangeAttributeArray];
+    if (arrayAttributes && ! [arrayAttributes isEmpty]) {
+        [result transferAttributesFromAttributeArray:arrayAttributes range:range baseOffset:0];
+    }
+    
+    return result;
+}
+
+@end

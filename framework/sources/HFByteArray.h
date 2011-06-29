@@ -39,7 +39,6 @@ typedef NSUInteger HFByteArrayDataStringType;
 @private
     NSUInteger changeLockCounter;
     NSUInteger changeGenerationCount;
-    HFByteRangeAttributeArray *arrayAttributes;
 }
 
 /*! @name Accessing raw data
@@ -162,7 +161,7 @@ typedef NSUInteger HFByteArrayDataStringType;
 /*! Returns a byte range attribute array for the bytes in the given range. */
 - (HFByteRangeAttributeArray *)attributesForBytesInRange:(HFRange)range;
 
-/*! Returns the HFByteArray level byte range attribute array. */
+/*! Returns the HFByteArray level byte range attribute array. Default is to return nil. */
 - (HFByteRangeAttributeArray *)byteRangeAttributeArray;
 
 @end

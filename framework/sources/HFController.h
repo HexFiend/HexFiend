@@ -113,8 +113,6 @@ You create an HFController via <tt>[[HFController alloc] init]</tt>.  After that
     unsigned long long selectionAnchor;
     HFRange selectionAnchorRange;
     
-    HFByteRangeAttributeArray *byteRangeAttributeArray;
-    
     CFAbsoluteTime pulseSelectionStartTime, pulseSelectionCurrentTime;
     NSTimer *pulseSelectionTimer;
     
@@ -402,7 +400,7 @@ You create an HFController via <tt>[[HFController alloc] init]</tt>.  After that
 /*! Copies data within the given HFRange into an in-memory buffer.  This is equivalent to [[controller byteArray] copyBytes:bytes range:range]. */
 - (void)copyBytes:(unsigned char *)bytes range:(HFRange)range;
 
-/* Returns the HFController level byte range attribute array.  You can message it directly to add and remove attributes. */
+/*! Convenience method that returns the attributes of the underlying byte array.  You can message it directly to add and remove attributes.  If you do so, be sure to call representer:changedProperties: with the HFControllerByteRangeAttributes bit */
 - (HFByteRangeAttributeArray *)byteRangeAttributeArray;
 
 /*! Returns the attributes for the given range.  This is a union of the receiver's byteRangeAttributeArray properties and the properties returned by the byte array itself.  range.length must be <= NSUIntegerMax. */
