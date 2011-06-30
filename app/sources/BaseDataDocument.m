@@ -681,7 +681,7 @@ static inline Class preferredByteArrayClass(void) {
 	NSEnumerator *attributeEnumerator = [[controller attributesForBytesInRange:range] attributeEnumerator];
 	NSString *attribute;
 	while ((attribute = [attributeEnumerator nextObject])) {
-            NSInteger thisBookmark = HFBookmarkFromBookmarkMiddleAttribute(attribute);
+            NSInteger thisBookmark = HFBookmarkFromBookmarkAttribute(attribute);
             if (thisBookmark != NSNotFound && (result == NSNotFound || thisBookmark > result)) {
                 result = thisBookmark;
             }

@@ -7,6 +7,7 @@
 //
 
 #import <HexFiend/HFAttributedByteArray.h>
+#import <HexFiend/HFBTreeByteArray.h>
 #import <HexFiend/HFByteRangeAttributeArray.h>
 
 @implementation HFAttributedByteArray
@@ -58,8 +59,13 @@
 }
 
 - (void)insertByteArray:(HFByteArray *)array inRange:(HFRange)lrange {
+    const unsigned long long insertedLength = [array length];
     [impl insertByteArray:array inRange:lrange];
-    [attributes byteRange:lrange wasReplacedByBytesOfLength:[array length]];
+    [attributes byteRange:lrange wasReplacedByBytesOfLength:insertedLength];
+    HFByteRangeAttributeArray *insertedAttributes = [array byteRangeAttributeArray];
+    if (insertedAttributes && ! [insertedAttributes isEmpty]) {
+        [attributes transferAttributesFromAttributeArray:insertedAttributes range:HFRangeMake(0, insertedLength) baseOffset:lrange.location];
+    }
 }
 
 - (void)insertByteSlice:(HFByteSlice *)slice inRange:(HFRange)lrange {
@@ -95,22 +101,10 @@
 - (void)incrementChangeLockCounter { [impl incrementChangeLockCounter]; }
 - (void)decrementChangeLockCounter { [impl decrementChangeLockCounter]; }
 - (BOOL)changesAreLocked { return [impl changesAreLocked]; }
-
-- (NSEnumerator *)byteSliceEnumerator {
-    return [impl byteSliceEnumerator];
-}
-
-- (NSArray *)byteSlices {
-    return [impl byteSlices];
-}
-
-- (void)copyBytes:(unsigned char *)dst range:(HFRange)range {
-    [impl copyBytes:dst range:range];
-}
-
-- (unsigned long long)length {
-    return [impl length];
-}
+- (NSEnumerator *)byteSliceEnumerator { return [impl byteSliceEnumerator]; }
+- (NSArray *)byteSlices { return [impl byteSlices]; }
+- (void)copyBytes:(unsigned char *)dst range:(HFRange)range { [impl copyBytes:dst range:range]; }
+- (unsigned long long)length { return [impl length]; }
 
 @end
 

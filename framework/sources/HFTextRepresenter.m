@@ -156,27 +156,18 @@
     }
     
     /* Process bookmarks */
-    NSMutableIndexSet *bookmarkStarts = nil, *bookmarkExtents = nil, *bookmarkEnds = nil;
-    NSUInteger bookmark;
+    NSMutableIndexSet *bookmarkExtents = nil;
     FOREACH(NSString *, attribute, attributes) {
-#define CHECK(func, set) if ((bookmark = func(attribute)) != NSNotFound) { if ( ! (set) ) set = [[NSMutableIndexSet alloc] init]; [set addIndex:bookmark]; }
-	CHECK(HFBookmarkFromBookmarkStartAttribute, bookmarkStarts)
-	else CHECK(HFBookmarkFromBookmarkMiddleAttribute, bookmarkExtents)
-	else CHECK(HFBookmarkFromBookmarkEndAttribute, bookmarkEnds)
-#undef CHECK
+        NSInteger bookmark = HFBookmarkFromBookmarkAttribute(attribute);
+        if (bookmark != NSNotFound) {
+            if (! bookmarkExtents) bookmarkExtents = [[NSMutableIndexSet alloc] init];
+            [bookmarkExtents addIndex:bookmark];
+        }
     }
     
-    if (bookmarkStarts) {
-	[run setBookmarkStarts:bookmarkStarts];
-	[bookmarkStarts release];
-    }
     if (bookmarkExtents) {
 	[run setBookmarkExtents:bookmarkExtents];
 	[bookmarkExtents release];
-    }
-    if (bookmarkEnds) {
-	[run setBookmarkEnds:bookmarkEnds];
-	[bookmarkEnds release];
     }
     return run;
 }

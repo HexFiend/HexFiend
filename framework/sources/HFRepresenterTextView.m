@@ -1061,11 +1061,46 @@ static size_t unionAndCleanLists(NSRect *rectList, id *valueList, size_t count) 
 }
 
 - (void)drawBookmarkExtents:(NSIndexSet *)bookmarkExtents inRect:(NSRect)rect {
-    NSUInteger idx;
-    for (idx = [bookmarkExtents firstIndex]; idx != NSNotFound; idx = [bookmarkExtents indexGreaterThanIndex:idx]) {
-	[[self colorForBookmark:idx] set];
-	NSRectFill(NSMakeRect(rect.origin.x, NSMaxY(rect) - 1, rect.size.width, (CGFloat).75));
-	break;
+    NSUInteger idx = 0, numBookmarks = [bookmarkExtents count];
+    const CGFloat lineThickness = 1.5;
+    [NSBezierPath setDefaultLineWidth:lineThickness];
+    
+    CGFloat stripeLength;
+    switch (numBookmarks) {
+        case 0:
+        case 1:
+            stripeLength = NSWidth(rect);
+            break;
+        case 2:
+            stripeLength = 16;
+            break;
+        case 3:
+            stripeLength = 10;
+            break;
+        case 4:
+        default:
+            stripeLength = 6;
+            break;
+    }
+    
+    CGFloat initialStripeOffset = rect.origin.x;
+    CGFloat stripeSpace = stripeLength * numBookmarks;
+    for (NSUInteger bookmark = [bookmarkExtents firstIndex]; bookmark != NSNotFound; bookmark = [bookmarkExtents indexGreaterThanIndex:bookmark]) {
+	[[self colorForBookmark:bookmark] set];
+        
+        NSRect stripeRect = NSMakeRect(initialStripeOffset, NSMaxY(rect) - 1.25, stripeLength, lineThickness);
+        CGFloat remainingWidthInRect = NSMaxX(rect) - initialStripeOffset;
+        while (remainingWidthInRect > 0) {
+            // don't draw beyond the end of the rect
+            stripeRect.size.width = fmin(remainingWidthInRect, stripeRect.size.width);
+            
+            NSRectFill(stripeRect);
+            stripeRect.origin.x += stripeSpace;
+            remainingWidthInRect -= stripeSpace;
+        }
+        
+        // start the next stripe offset from the first
+        initialStripeOffset += stripeLength;
     }
 }
 
@@ -1473,6 +1508,7 @@ static NSPoint scalePoint(NSPoint center, NSPoint point, CGFloat percent) {
     CGContextRef ctx = [[NSGraphicsContext currentContext] graphicsPort];
     NSDictionary *bookmarks = [[self representer] displayedBookmarkLocations];
     if ([bookmarks count] > 0) {
+        NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
         // Here's the font we'll use
         CTFontRef ctfont = CTFontCreateWithName(CFSTR("Helvetica-Bold"), 1., NULL);
         if (ctfont) {
@@ -1504,7 +1540,6 @@ static NSPoint scalePoint(NSPoint center, NSPoint point, CGFloat percent) {
             const NSRect bulbRect = [teardrop bounds];
             const NSSize bulbSize = bulbRect.size;
             
-            
             // Set the CG font
             CGFontRef cgfont = ctfont ? CTFontCopyGraphicsFont(ctfont, NULL) : NULL;
             CGContextSetFont(ctx, cgfont);
@@ -1530,6 +1565,9 @@ static NSPoint scalePoint(NSPoint center, NSPoint point, CGFloat percent) {
                 NSUInteger bookmarkLen = HFCountDigitsBase10(bookmarkNum);
                 if (bookmarkLen < 1 || bookmarkLen > MAX_BOOKMARK_DIGIT_COUNT) continue; //erp
                 
+                // Get its color
+                NSColor *bookmarkColor = [self colorForBookmark:bookmarkNum];
+                
                 // Get our base 10 representation as UniChar
                 UniChar bookmarkUniName[MAX_BOOKMARK_DIGIT_COUNT];                
                 NSUInteger tmpMark = bookmarkNum, tmpIdx = bookmarkLen;
@@ -1543,6 +1581,9 @@ static NSPoint scalePoint(NSPoint center, NSPoint point, CGFloat percent) {
                 CGSize advances[MAX_BOOKMARK_DIGIT_COUNT];
                 CTFontGetGlyphsForCharacters(ctfont, bookmarkUniName, glyphs, bookmarkLen);
                 CTFontGetAdvancesForGlyphs(ctfont, kCTFontHorizontalOrientation, glyphs, advances, bookmarkLen);
+                
+                // Set our color. Do this before we save the gstate so it's still set afterwards (so we can draw the pin)
+                [bookmarkColor set];
                 
                 CGContextSaveGState(ctx);
                 const NSUInteger byteLoc = [byteLocObj unsignedLongValue];
@@ -1559,13 +1600,9 @@ static NSPoint scalePoint(NSPoint center, NSPoint point, CGFloat percent) {
                 CGAffineTransform transform = CGAffineTransformIdentity;
                 
                 // move us slightly towards the character
-                characterOrigin.x += 2;
-                characterOrigin.y += floor([self lineHeight] / 8);
+                NSPoint teardropTipOrigin = NSMakePoint(characterOrigin.x + 1, characterOrigin.y + floor([self lineHeight] / 8.));
                 
                 CGContextBeginTransparencyLayer(ctx, NULL);            
-                
-                // Set our color
-                [[self colorForBookmark:bookmarkNum] set];
                 
                 // Set the shadow
                 [shadow set];            
@@ -1573,7 +1610,7 @@ static NSPoint scalePoint(NSPoint center, NSPoint point, CGFloat percent) {
 #if PERSPECTIVE_SHADOW
                 
                 // Draw the shadow first and separately
-                transform = CGAffineTransformTranslate(transform, characterOrigin.x + offscreenOffset - shadowXOffset, characterOrigin.y - shadowYOffset);
+                transform = CGAffineTransformTranslate(transform, teardropTipOrigin.x + offscreenOffset - shadowXOffset, teardropTipOrigin.y - shadowYOffset);
                 transform = CGAffineTransformRotate(transform, rotation * M_PI * 2 - atan2(shadowTranslationDistance, bulbSize.height));
                 
                 CGContextConcatCTM(ctx, transform);
@@ -1587,7 +1624,7 @@ static NSPoint scalePoint(NSPoint center, NSPoint point, CGFloat percent) {
 #endif
                 
                 // Rotate and translate in preparation for drawing the teardrop
-                transform = CGAffineTransformTranslate(transform, characterOrigin.x, characterOrigin.y);
+                transform = CGAffineTransformTranslate(transform, teardropTipOrigin.x, teardropTipOrigin.y);
                 transform = CGAffineTransformRotate(transform, rotation * M_PI * 2);
                 CGContextConcatCTM(ctx, transform);
                 
@@ -1642,6 +1679,12 @@ static NSPoint scalePoint(NSPoint center, NSPoint point, CGFloat percent) {
                 // Done drawing, so composite
                 CGContextEndTransparencyLayer(ctx);            
                 CGContextRestoreGState(ctx); // this also restores the clip, which is important
+                
+                // Lastly, draw the pin
+                NSPoint pinStart = NSMakePoint(characterOrigin.x + .25, characterOrigin.y);
+                NSPoint pinEnd = NSMakePoint(pinStart.x, pinStart.y + [self lineHeight]);
+                [NSBezierPath setDefaultLineWidth:1.25];
+                [NSBezierPath strokeLineFromPoint:pinStart toPoint:pinEnd];                               
             }
             
             [shadow release];
@@ -1649,6 +1692,7 @@ static NSPoint scalePoint(NSPoint center, NSPoint point, CGFloat percent) {
             [dropsPerByteLoc release];
             CFRelease(ctfont);
         }
+        [pool drain];
     }
 }
 

@@ -11,6 +11,7 @@
 #import <HexFiend/HFByteArray_Internal.h>
 #import <HexFiend/HFFullMemoryByteArray.h>
 #import <HexFiend/HFBTreeByteArray.h>
+#import <HexFiend/HFAttributedByteArray.h>
 #import <HexFiend/HFByteRangeAttribute.h>
 #import <HexFiend/HFFullMemoryByteSlice.h>
 #import <HexFiend/HFControllerCoalescedUndo.h>
@@ -70,7 +71,7 @@ typedef enum {
 @end
 
 static inline Class preferredByteArrayClass(void) {
-    return [HFBTreeByteArray class];
+    return [HFAttributedByteArray class];
 }
 
 @implementation HFController
@@ -494,7 +495,7 @@ static inline Class preferredByteArrayClass(void) {
     HFRange result = HFRangeMake(ULLONG_MAX, ULLONG_MAX);
     HFByteRangeAttributeArray *attributes = [byteArray byteRangeAttributeArray];
     if (attributes != nil) {
-        NSString *attribute = [HFBookmarkAttributesFromBookmark(bookmark) objectAtIndex:1];
+        NSString *attribute = HFBookmarkAttributeFromBookmark(bookmark);
         result = [attributes rangeOfAttribute:attribute];
     }
     return result;
@@ -504,13 +505,10 @@ static inline Class preferredByteArrayClass(void) {
     HFASSERT(range.length > 0);
     HFByteRangeAttributeArray *attributeArray = [byteArray byteRangeAttributeArray];
     if (attributeArray) {
-        NSArray *bookmarkAttributes = HFBookmarkAttributesFromBookmark(bookmark);
-        [attributeArray removeAttributes:[NSSet setWithArray:bookmarkAttributes]];
+        NSString *attribute = HFBookmarkAttributeFromBookmark(bookmark);
+        [attributeArray removeAttribute:attribute];
         if (! (range.location == ULLONG_MAX && range.location == ULLONG_MAX)) {
-            // apply start, middle, and end
-            [attributeArray addAttribute:[bookmarkAttributes objectAtIndex:0] range:HFRangeMake(range.location, 1)];
-            [attributeArray addAttribute:[bookmarkAttributes objectAtIndex:1] range:range];
-            [attributeArray addAttribute:[bookmarkAttributes objectAtIndex:2] range:HFRangeMake(HFMaxRange(range) - 1, 1)];
+            [attributeArray addAttribute:attribute range:range];
         }
         [self _addPropertyChangeBits:HFControllerByteRangeAttributes | HFControllerBookmarks];
     }
@@ -526,7 +524,7 @@ static inline Class preferredByteArrayClass(void) {
     } else {
         result = [NSMutableIndexSet indexSet];
         FOREACH(NSString *, attribute, attributes) {
-            NSInteger bookmark = HFBookmarkFromBookmarkMiddleAttribute(attribute);
+            NSInteger bookmark = HFBookmarkFromBookmarkAttribute(attribute);
             if (bookmark != NSNotFound) [result addIndex:bookmark];
         }
     }
