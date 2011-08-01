@@ -73,7 +73,7 @@ static inline Class preferredByteArrayClass(void) {
     NSString *result = nil;
     NSString *layoutIdentifier = [self layoutUserDefaultIdentifier];
     if (layoutIdentifier) {
-	result = [NSString stringWithFormat:@"RepresenterIsShown %@ %s", layoutIdentifier, repName];
+        result = [NSString stringWithFormat:@"RepresenterIsShown %@ %s", layoutIdentifier, repName];
     }
     return result;
 }
@@ -91,28 +91,28 @@ static inline Class preferredByteArrayClass(void) {
     static BOOL sRegisteredGlobalDefaults = NO;
     const id yes = (id)kCFBooleanTrue;
     if (! sRegisteredGlobalDefaults) {
-	/* Defaults common to all subclasses */
+        /* Defaults common to all subclasses */
         NSDictionary *defs = [[NSDictionary alloc] initWithObjectsAndKeys:
                               yes, @"AntialiasText",
                               @"Monaco", @"DefaultFontName",
                               [NSNumber numberWithDouble:10.], @"DefaultFontSize",
                               [NSNumber numberWithInteger:4], @"BytesPerColumn",
                               [NSNumber numberWithInteger:[NSString defaultCStringEncoding]], @"DefaultStringEncoding",
-			      nil];
-	[[NSUserDefaults standardUserDefaults] registerDefaults:defs];
-	[defs release];
-	sRegisteredGlobalDefaults = YES;
+                              nil];
+        [[NSUserDefaults standardUserDefaults] registerDefaults:defs];
+        [defs release];
+        sRegisteredGlobalDefaults = YES;
     }
     
     static NSMutableArray *sRegisteredDefaultsByIdentifier = nil;
     NSString *ident = [self layoutUserDefaultIdentifier];
     if (ident && ! [sRegisteredDefaultsByIdentifier containsObject:ident]) {
-	/* Register defaults for this identifier */
-	if (! sRegisteredDefaultsByIdentifier) sRegisteredDefaultsByIdentifier = [[NSMutableArray alloc] init];
-	[sRegisteredDefaultsByIdentifier addObject:ident];
-	
+        /* Register defaults for this identifier */
+        if (! sRegisteredDefaultsByIdentifier) sRegisteredDefaultsByIdentifier = [[NSMutableArray alloc] init];
+        [sRegisteredDefaultsByIdentifier addObject:ident];
+        
         NSDictionary *defs = [[NSDictionary alloc] initWithObjectsAndKeys:
-			      yes, USERDEFS_KEY_FOR_REP(lineCountingRepresenter),
+                              yes, USERDEFS_KEY_FOR_REP(lineCountingRepresenter),
                               yes, USERDEFS_KEY_FOR_REP(hexRepresenter),
                               yes, USERDEFS_KEY_FOR_REP(asciiRepresenter),
                               yes, USERDEFS_KEY_FOR_REP(dataInspectorRepresenter),
@@ -142,9 +142,9 @@ static inline Class preferredByteArrayClass(void) {
                               nil];
         [[NSUserDefaults standardUserDefaults] registerDefaults:defs];
         [defs release];
-	
-	// Get notified when we are about to save a document, so we can try to break dependencies on the file in other documents
-	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(prepareForChangeInFileByBreakingFileDependencies:) name:HFPrepareForChangeInFileNotification object:nil];
+        
+        // Get notified when we are about to save a document, so we can try to break dependencies on the file in other documents
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(prepareForChangeInFileByBreakingFileDependencies:) name:HFPrepareForChangeInFileNotification object:nil];
     }
 }
 
@@ -264,27 +264,27 @@ static inline Class preferredByteArrayClass(void) {
     BOOL hasAppendedProgressMarker = NO;
     NSArray *runningViews = [self runningOperationViews];
     FOREACH(HFDocumentOperationView *, view, runningViews) {
-	/* Skip the currently visible view */
-	if (view == operationView) continue;
-	
-	/* If we're gonna show our save view after a delay, then don't include the save view in the title */
-	if (view == saveView && showSaveViewAfterDelayTimer != nil) continue;
-
-	NSString *displayName = [view displayName];
-	double progress = [view progress];
-	if (displayName != nil && progress != -1) {
-	    if (! hasAppendedProgressMarker) {
-		[result appendString:@" ("];
-		hasAppendedProgressMarker = YES;
-	    }
-	    else {
-		[result appendString:@", "];
-	    }
-	    if (displayName) {
-		/* %%%% is the right way to get a single % after applying this appendFormat: and then applying this return value as a format string as well */
-		[result appendFormat:@"%@: %d%%%%", displayName, (int)(100. * progress)];
-	    }
-	}
+        /* Skip the currently visible view */
+        if (view == operationView) continue;
+        
+        /* If we're gonna show our save view after a delay, then don't include the save view in the title */
+        if (view == saveView && showSaveViewAfterDelayTimer != nil) continue;
+        
+        NSString *displayName = [view displayName];
+        double progress = [view progress];
+        if (displayName != nil && progress != -1) {
+            if (! hasAppendedProgressMarker) {
+                [result appendString:@" ("];
+                hasAppendedProgressMarker = YES;
+            }
+            else {
+                [result appendString:@", "];
+            }
+            if (displayName) {
+                /* %%%% is the right way to get a single % after applying this appendFormat: and then applying this return value as a format string as well */
+                [result appendFormat:@"%@: %d%%%%", displayName, (int)(100. * progress)];
+            }
+        }
     }
     if (hasAppendedProgressMarker) [result appendString:@")"];
     return result;
@@ -350,13 +350,13 @@ static inline Class preferredByteArrayClass(void) {
     
     NSWindow *window = [windowController window];
     if (containerView) {
-	[containerView setVertical:NO];
-	if ([containerView respondsToSelector:@selector(setDividerStyle:)]) {
-	    [containerView setDividerStyle:2/*NSSplitViewDividerStyleThin*/];
-	}
-	[containerView setDelegate:(id)self];
-	[layoutView setFrame:[containerView bounds]];
-	[containerView addSubview:layoutView];
+        [containerView setVertical:NO];
+        if ([containerView respondsToSelector:@selector(setDividerStyle:)]) {
+            [containerView setDividerStyle:2/*NSSplitViewDividerStyleThin*/];
+        }
+        [containerView setDelegate:(id)self];
+        [layoutView setFrame:[containerView bounds]];
+        [containerView addSubview:layoutView];
     }
     [self applyDefaultRepresentersToDisplay];
     NSRect windowFrame = [window frame];
@@ -392,9 +392,9 @@ static inline Class preferredByteArrayClass(void) {
         
         NSRect windowFrame = [lineCountingViewWindow frame];
         windowFrame.size.width += windowWidthChange;
-	
-	/* If we are not setting the font, we want to grow the window left, so that the content area is preserved.  If we are setting the font, grow the window right. */
-	if (! currentlySettingFont) windowFrame.origin.x -= windowWidthChange;
+        
+        /* If we are not setting the font, we want to grow the window left, so that the content area is preserved.  If we are setting the font, grow the window right. */
+        if (! currentlySettingFont) windowFrame.origin.x -= windowWidthChange;
         [lineCountingViewWindow setFrame:windowFrame display:YES animate:NO];
     }
 }
@@ -486,8 +486,8 @@ static inline Class preferredByteArrayClass(void) {
     /* Release and stop observing our banner views.  Note that any of these may be nil. */
     HFDocumentOperationView *views[] = {findReplaceView, moveSelectionByView, jumpToOffsetView, saveView};
     for (NSUInteger i = 0; i < sizeof views / sizeof *views; i++) {
-	[views[i] removeObserver:self forKeyPath:@"progress"];
-	[views[i] release];
+        [views[i] removeObserver:self forKeyPath:@"progress"];
+        [views[i] release];
     }
     [containerView release];
     [bannerDividerThumb release];
@@ -563,9 +563,9 @@ static inline Class preferredByteArrayClass(void) {
     if (fileReference) {
         
         HFFileByteSlice *byteSlice = [[[HFFileByteSlice alloc] initWithFile:fileReference] autorelease];
-//        HFByteSlice *byteSlice = [[[NSClassFromString(@"HFRandomDataByteSlice") alloc] initWithRandomDataLength:ULLONG_MAX] autorelease];
-//        pid_t pid = [[[NSRunningApplication runningApplicationsWithBundleIdentifier:@"com.apple.TextEdit"] lastObject] processIdentifier];
-//        HFByteSlice *byteSlice = [[[NSClassFromString(@"HFProcessMemoryByteSlice") alloc] initWithPID:pid range:HFRangeMake(0, 1 + (unsigned long long)UINT_MAX)] autorelease];
+        //        HFByteSlice *byteSlice = [[[NSClassFromString(@"HFRandomDataByteSlice") alloc] initWithRandomDataLength:ULLONG_MAX] autorelease];
+        //        pid_t pid = [[[NSRunningApplication runningApplicationsWithBundleIdentifier:@"com.apple.TextEdit"] lastObject] processIdentifier];
+        //        HFByteSlice *byteSlice = [[[NSClassFromString(@"HFProcessMemoryByteSlice") alloc] initWithPID:pid range:HFRangeMake(0, 1 + (unsigned long long)UINT_MAX)] autorelease];
         HFByteArray *byteArray = [[[preferredByteArrayClass() alloc] init] autorelease];
         [byteArray insertByteSlice:byteSlice inRange:HFRangeMake(0, 0)];
         [controller setByteArray:byteArray];
@@ -602,9 +602,9 @@ static inline Class preferredByteArrayClass(void) {
     
     /* If we should register undo, do so, but do it behind NSDocument's back so it doesn't think the document was edited.  I tried temporarily clearing our undo manager, but that resulted in some wacky infinite loop, so do it this way instead. */
     if (undo) {
-	NSFont *existingFont = [self font];
-	NSUndoManager *undoer = [self undoManager];
-	[[undoer prepareWithInvocationTarget:self] setFont:existingFont registeringUndo:YES];
+        NSFont *existingFont = [self font];
+        NSUndoManager *undoer = [self undoManager];
+        [[undoer prepareWithInvocationTarget:self] setFont:existingFont registeringUndo:YES];
     }
     
     NSWindow *window = [self window];
@@ -676,16 +676,16 @@ static inline Class preferredByteArrayClass(void) {
     NSInteger result = NSNotFound;
     NSArray *ranges = [controller selectedContentsRanges];
     if ([ranges count] > 0) {
-	HFRange range = [[ranges objectAtIndex:0] HFRange];
-	if (range.length == 0 && range.location < [controller contentsLength]) range.length = 1;
-	NSEnumerator *attributeEnumerator = [[controller attributesForBytesInRange:range] attributeEnumerator];
-	NSString *attribute;
-	while ((attribute = [attributeEnumerator nextObject])) {
+        HFRange range = [[ranges objectAtIndex:0] HFRange];
+        if (range.length == 0 && range.location < [controller contentsLength]) range.length = 1;
+        NSEnumerator *attributeEnumerator = [[controller attributesForBytesInRange:range] attributeEnumerator];
+        NSString *attribute;
+        while ((attribute = [attributeEnumerator nextObject])) {
             NSInteger thisBookmark = HFBookmarkFromBookmarkAttribute(attribute);
             if (thisBookmark != NSNotFound && (result == NSNotFound || thisBookmark > result)) {
                 result = thisBookmark;
             }
-	}
+        }
     }
     return result;
 }
@@ -719,7 +719,7 @@ static inline Class preferredByteArrayClass(void) {
         return YES;
     }
     else if (action == @selector(decreaseFontSize:)) {
-	return [[self font] pointSize] >= 5.; //5 is our minimum font size
+        return [[self font] pointSize] >= 5.; //5 is our minimum font size
     }    
     else if (action == @selector(setAntialiasFromMenuItem:)) {
         [item setState:[controller shouldAntialias]];
@@ -735,20 +735,20 @@ static inline Class preferredByteArrayClass(void) {
         return YES;
     }
     else if (action == @selector(scrollToBookmark:) || action == @selector(selectBookmark:)) {
-	HFRange range = [controller rangeForBookmark:[item tag]];
-	return range.location != ULLONG_MAX || range.length != ULLONG_MAX;
+        HFRange range = [controller rangeForBookmark:[item tag]];
+        return range.location != ULLONG_MAX || range.length != ULLONG_MAX;
     }
     else if (action == @selector(deleteBookmark:)) {
-	NSInteger selectedBookmark = [self selectedBookmark];
-	NSString *newTitle;
-	if (selectedBookmark == NSNotFound) {
-	    newTitle = NSLocalizedString(@"Remove Bookmark", @"Menu item title for remove bookmark");
-	}
-	else {
-	    newTitle = [NSString stringWithFormat:NSLocalizedString(@"Remove Bookmark %ld", @"Menu item title for removing a particular bookmark"), selectedBookmark];
-	}
-	[item setTitle:newTitle];
-	return selectedBookmark != NSNotFound;
+        NSInteger selectedBookmark = [self selectedBookmark];
+        NSString *newTitle;
+        if (selectedBookmark == NSNotFound) {
+            newTitle = NSLocalizedString(@"Remove Bookmark", @"Menu item title for remove bookmark");
+        }
+        else {
+            newTitle = [NSString stringWithFormat:NSLocalizedString(@"Remove Bookmark %ld", @"Menu item title for removing a particular bookmark"), selectedBookmark];
+        }
+        [item setTitle:newTitle];
+        return selectedBookmark != NSNotFound;
     }
     else return [super validateMenuItem:item];
 }
@@ -796,7 +796,7 @@ static inline Class preferredByteArrayClass(void) {
 - (void)saveFirstResponderIfNotInBannerAndThenSetItTo:(id)newResponder {
     id potentialSavedFirstResponder = [[self window] firstResponder];
     if ([potentialSavedFirstResponder isKindOfClass:[NSView class]] && [potentialSavedFirstResponder ancestorSharedWithView:bannerView] != findReplaceView) {
-	savedFirstResponder = potentialSavedFirstResponder;
+        savedFirstResponder = potentialSavedFirstResponder;
     }
     [[self window] makeFirstResponder:newResponder];
 }
@@ -939,11 +939,11 @@ static inline Class preferredByteArrayClass(void) {
     [[controller byteArray] decrementChangeLockCounter];
     
     /* If we save to a file, then we've probably overwritten some source data, so throw away undo and just reset the document to reference the new file.  Only do this if there was no error.
-    
-    Note that this is actually quite wrong.  It's entirely possible that e.g. there was an error after the file was touched, e.g. when writing to the file.  In that case, we do want to just reference the file again.
-    
-    What we really need to know is "has a backing file been touched by this operation."  But we don't have access to that information yet.
-    */
+     
+     Note that this is actually quite wrong.  It's entirely possible that e.g. there was an error after the file was touched, e.g. when writing to the file.  In that case, we do want to just reference the file again.
+     
+     What we really need to know is "has a backing file been touched by this operation."  But we don't have access to that information yet.
+     */
     if ((saveResult != HFSaveError) && (saveOperation == NSSaveOperation || saveOperation == NSSaveAsOperation)) {
         HFFileReference *fileReference = [[[HFFileReference alloc] initWithPath:[inAbsoluteURL path] error:NULL] autorelease];
         if (fileReference) {
@@ -998,8 +998,8 @@ static inline Class preferredByteArrayClass(void) {
 
 - (void)showFindPanel:(NSMenuItem *)item {
     if (operationView != nil && operationView == findReplaceView) {
-	[self saveFirstResponderIfNotInBannerAndThenSetItTo:[findReplaceView viewNamed:@"searchField"]];
-	return;
+        [self saveFirstResponderIfNotInBannerAndThenSetItTo:[findReplaceView viewNamed:@"searchField"]];
+        return;
     }
     if (! [self canSwitchToNewBanner]) {
         NSBeep();
@@ -1048,13 +1048,13 @@ static inline Class preferredByteArrayClass(void) {
     CGFloat result = proposedMaximumPosition;
     /* If our operation view is fixed height, then don't allow it to grow beyond its initial height */
     if (operationView != nil && [operationView isFixedHeight]) {
-	/* Make sure it's actually our view */
-	if (dividerIndex == 0 && [[splitView subviews] objectAtIndex:0] == bannerView) {
-	    CGFloat maxHeight = [operationView defaultHeight];
-	    if (maxHeight > 0 && maxHeight < proposedMaximumPosition) {
-		result = maxHeight;
-	    }
-	}
+        /* Make sure it's actually our view */
+        if (dividerIndex == 0 && [[splitView subviews] objectAtIndex:0] == bannerView) {
+            CGFloat maxHeight = [operationView defaultHeight];
+            if (maxHeight > 0 && maxHeight < proposedMaximumPosition) {
+                result = maxHeight;
+            }
+        }
     }
     return result;
 }
@@ -1159,8 +1159,8 @@ static inline Class preferredByteArrayClass(void) {
 
 - (void)findNextBySearchingForwards:(BOOL)forwards {
     if ([operationView operationIsRunning]) {
-	NSBeep();
-	return;
+        NSBeep();
+        return;
     }
     HFByteArray *needle = [[findReplaceView viewNamed:@"searchField"] objectValue];
     if ([needle length] > 0) {
@@ -1248,8 +1248,8 @@ cancelled:;
 - (void)findNext:sender {
     USE(sender);
     if ([operationView operationIsRunning]) {
-	NSBeep();
-	return;
+        NSBeep();
+        return;
     }
     [self findNextBySearchingForwards:YES];
 }
@@ -1257,8 +1257,8 @@ cancelled:;
 - (void)findPrevious:sender {
     USE(sender);
     if ([operationView operationIsRunning]) {
-	NSBeep();
-	return;
+        NSBeep();
+        return;
     }
     [self findNextBySearchingForwards:NO];
 }
@@ -1266,8 +1266,8 @@ cancelled:;
 - (IBAction)replace:sender {
     USE(sender);
     if ([operationView operationIsRunning]) {
-	NSBeep();
-	return;
+        NSBeep();
+        return;
     }
     HFByteArray *replaceArray = [[findReplaceView viewNamed:@"replaceField"] objectValue];
     HFASSERT(replaceArray != NULL);
@@ -1277,8 +1277,8 @@ cancelled:;
 
 - (IBAction)replaceAndFind:sender {
     if ([operationView operationIsRunning]) {
-	NSBeep();
-	return;
+        NSBeep();
+        return;
     }
     [self replace:sender];
     [self findNext:sender];
@@ -1286,8 +1286,8 @@ cancelled:;
 
 - (IBAction)replaceAll:sender {
     if ([operationView operationIsRunning]) {
-	NSBeep();
-	return;
+        NSBeep();
+        return;
     }
     USE(sender);
     HFByteArray *replacementValue = [[findReplaceView viewNamed:@"replaceField"] objectValue];
@@ -1299,10 +1299,10 @@ cancelled:;
     }
     HFByteArray *haystack = [controller byteArray];
     NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-			      replacementValue, @"replacementValue",
-			      needle, @"needle",
-			      haystack, @"haystack",
-			      nil];
+                              replacementValue, @"replacementValue",
+                              needle, @"needle",
+                              haystack, @"haystack",
+                              nil];
     
     struct HFDocumentOperationCallbacks callbacks = {
         .target = self,
@@ -1346,7 +1346,7 @@ cancelled:;
 - (void)showNavigationBannerSettingExtendSelectionCheckboxTo:(BOOL)extend {
     if (moveSelectionByView == operationView && moveSelectionByView != nil) {
         [[moveSelectionByView viewNamed:@"extendSelectionByCheckbox"] setIntValue:extend];
-	[self saveFirstResponderIfNotInBannerAndThenSetItTo:[moveSelectionByView viewNamed:@"moveSelectionByTextField"]];
+        [self saveFirstResponderIfNotInBannerAndThenSetItTo:[moveSelectionByView viewNamed:@"moveSelectionByTextField"]];
         return;
     }
     if (! moveSelectionByView) moveSelectionByView = [self newOperationViewForNibName:@"MoveSelectionByBanner" displayName:@"Moving Selection" fixedHeight:YES];
@@ -1517,15 +1517,15 @@ invalidString:;
     unsigned long long value;
     BOOL isNegative;
     if ([self parseMoveString:[[moveSelectionByView viewNamed:@"moveSelectionByTextField"] stringValue] into:&value isNegative:&isNegative]) {
-	if ([self movingRanges:[controller selectedContentsRanges] byAmount:value isNegative:isNegative isValidForLength:[controller contentsLength]]) {
-	    BOOL extendSelection = !![[moveSelectionByView viewNamed:@"extendSelectionByCheckbox"] intValue];
-	    HFControllerMovementDirection direction = (isNegative ? HFControllerDirectionLeft : HFControllerDirectionRight);
-	    HFControllerSelectionTransformation transformation = (extendSelection ? HFControllerExtendSelection : HFControllerShiftSelection);
-	    [controller moveInDirection:direction byByteCount:value withSelectionTransformation:transformation usingAnchor:NO];
-	    [controller maximizeVisibilityOfContentsRange:[[[controller selectedContentsRanges] objectAtIndex:0] HFRange]];
-	    [controller pulseSelection];
-	    success = YES;
-	}
+        if ([self movingRanges:[controller selectedContentsRanges] byAmount:value isNegative:isNegative isValidForLength:[controller contentsLength]]) {
+            BOOL extendSelection = !![[moveSelectionByView viewNamed:@"extendSelectionByCheckbox"] intValue];
+            HFControllerMovementDirection direction = (isNegative ? HFControllerDirectionLeft : HFControllerDirectionRight);
+            HFControllerSelectionTransformation transformation = (extendSelection ? HFControllerExtendSelection : HFControllerShiftSelection);
+            [controller moveInDirection:direction byByteCount:value withSelectionTransformation:transformation usingAnchor:NO];
+            [controller maximizeVisibilityOfContentsRange:[[[controller selectedContentsRanges] objectAtIndex:0] HFRange]];
+            [controller pulseSelection];
+            success = YES;
+        }
     }
     if (! success) NSBeep();
 }
@@ -1548,51 +1548,54 @@ invalidString:;
     
     /* Add items until we get to the new amount */
     while (itemCount < desiredItemCount) {
-	if (itemCount == 2) {
-	    [bookmarksMenu insertItem:[NSMenuItem separatorItem] atIndex:itemCount];
-	}
-	else {
-	    NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:@"" action:@selector(self) keyEquivalent:@""];
-	    [bookmarksMenu insertItem:item atIndex:itemCount];
-	    [item release];
-	}
-	itemCount++;
+        if (itemCount == 2) {
+            [bookmarksMenu insertItem:[NSMenuItem separatorItem] atIndex:itemCount];
+        }
+        else {
+            NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:@"" action:@selector(self) keyEquivalent:@""];
+            [bookmarksMenu insertItem:item atIndex:itemCount];
+            [item release];
+        }
+        itemCount++;
     }
     
     /* Update the items */
     NSUInteger itemIndex = 3, bookmarkIndex = 0; //0 is an invalid bookmark
     while (itemIndex < itemCount) {
-	/* Get this bookmark index */
-	bookmarkIndex = [bookmarks indexGreaterThanIndex:bookmarkIndex];
-	
-	/* Compute our KE */
-	NSString *keString;
-	if (bookmarkIndex <= 10) {
-	    char ke = '0' + (bookmarkIndex % 10);
-	    keString = [[NSString alloc] initWithBytes:&ke length:1 encoding:NSASCIIStringEncoding];	
-	}
-	else {
-	    keString = [@"" retain];
-	}
-	
-	/* The first item is Scroll to Bookmark, the second (alternate) is Select Bookmark */
-	NSMenuItem *item = [bookmarksMenu itemAtIndex:itemIndex++];
-	[item setKeyEquivalent:keString];
-	[item setAction:@selector(scrollToBookmark:)];
-	[item setKeyEquivalentModifierMask:NSCommandKeyMask];
-	[item setAlternate:NO];
-	[item setTitle:[NSString stringWithFormat:@"Scroll to Bookmark %lu", bookmarkIndex]];
-	[item setTag:bookmarkIndex];
-	
-	item = [bookmarksMenu itemAtIndex:itemIndex++];
-	[item setTitle:[NSString stringWithFormat:@"Select Bookmark %lu", bookmarkIndex]];
-	[item setKeyEquivalent:keString];
-	[item setAction:@selector(selectBookmark:)];
-	[item setKeyEquivalentModifierMask:NSCommandKeyMask | NSShiftKeyMask];
-	[item setAlternate:YES];
-	[item setTag:bookmarkIndex];
-	
-	[keString release];
+        /* Get this bookmark index */
+        bookmarkIndex = [bookmarks indexGreaterThanIndex:bookmarkIndex];
+        
+        /* Compute our KE */
+        NSString *keString;
+        if (bookmarkIndex <= 10) {
+            char ke = '0' + (bookmarkIndex % 10);
+            keString = [[NSString alloc] initWithBytes:&ke length:1 encoding:NSASCIIStringEncoding];	
+        }
+        else {
+            keString = [@"" retain];
+        }
+        
+        /* The first item is Select Bookmark, the second (alternate) is Scroll To Bookmark */
+        
+        NSMenuItem *item;
+        
+        item = [bookmarksMenu itemAtIndex:itemIndex++];
+        [item setTitle:[NSString stringWithFormat:@"Select Bookmark %lu", bookmarkIndex]];
+        [item setKeyEquivalent:keString];
+        [item setAction:@selector(selectBookmark:)];
+        [item setKeyEquivalentModifierMask:NSCommandKeyMask];
+        [item setAlternate:NO];
+        [item setTag:bookmarkIndex];
+        
+        item = [bookmarksMenu itemAtIndex:itemIndex++];
+        [item setKeyEquivalent:keString];
+        [item setAction:@selector(scrollToBookmark:)];
+        [item setKeyEquivalentModifierMask:NSCommandKeyMask | NSShiftKeyMask];
+        [item setAlternate:YES];
+        [item setTitle:[NSString stringWithFormat:@"Scroll to Bookmark %lu", bookmarkIndex]];
+        [item setTag:bookmarkIndex];
+        
+        [keString release];
     }
     
     [pool drain];
@@ -1632,11 +1635,11 @@ invalidString:;
 
 - (void)jumpToBookmarkIndex:(NSInteger)bookmark selecting:(BOOL)select {
     if (controller) {
-	HFRange range = [controller rangeForBookmark:bookmark];
-	if (range.location != ULLONG_MAX || range.length != ULLONG_MAX) {
-	    [controller maximizeVisibilityOfContentsRange:range];
-	    if (select) [controller setSelectedContentsRanges:[HFRangeWrapper withRanges:&range count:1]];
-	}
+        HFRange range = [controller rangeForBookmark:bookmark];
+        if (range.location != ULLONG_MAX || range.length != ULLONG_MAX) {
+            [controller maximizeVisibilityOfContentsRange:range];
+            if (select) [controller setSelectedContentsRanges:[HFRangeWrapper withRanges:&range count:1]];
+        }
     }    
 }
 
@@ -1653,8 +1656,8 @@ invalidString:;
     BOOL result = NO;
     NSArray *ranges = [controller selectedContentsRanges];
     if ([ranges count] > 0) {
-	HFRange range = [[ranges objectAtIndex:0] HFRange];
-	result = (range.length != 0 || range.location < [controller contentsLength]);
+        HFRange range = [[ranges objectAtIndex:0] HFRange];
+        result = (range.length != 0 || range.location < [controller contentsLength]);
     }
     return result;
 }
@@ -1662,25 +1665,25 @@ invalidString:;
 - (IBAction)setBookmark:sender {
     USE(sender);
     if (! [self canSetBookmark]) {
-	NSBeep();
-	return;
+        NSBeep();
+        return;
     }
     NSArray *ranges = [controller selectedContentsRanges];
     if ([ranges count] > 0) {
-	HFRange range = [[ranges objectAtIndex:0] HFRange];
-	/* We always set a bookmark on at least one byte */
-	range.length = MAX(range.length, 1);
-	NSIndexSet *usedBookmarks = [controller bookmarksInRange:HFRangeMake(0, [controller contentsLength])];
-	
-	/* Find the first index that bookmarks does not contain, excepting 0 */
-	NSMutableIndexSet *availableBookmarks = [[NSMutableIndexSet alloc] initWithIndexesInRange:NSMakeRange(1, NSNotFound - 2)];
-	[availableBookmarks removeIndexes:usedBookmarks];
-	NSUInteger newBookmark = [availableBookmarks firstIndex];
-	
-	if (newBookmark != NSNotFound) {
-	    [controller setRange:range forBookmark:newBookmark];
-	}
-	[availableBookmarks release];
+        HFRange range = [[ranges objectAtIndex:0] HFRange];
+        /* We always set a bookmark on at least one byte */
+        range.length = MAX(range.length, 1);
+        NSIndexSet *usedBookmarks = [controller bookmarksInRange:HFRangeMake(0, [controller contentsLength])];
+        
+        /* Find the first index that bookmarks does not contain, excepting 0 */
+        NSMutableIndexSet *availableBookmarks = [[NSMutableIndexSet alloc] initWithIndexesInRange:NSMakeRange(1, NSNotFound - 2)];
+        [availableBookmarks removeIndexes:usedBookmarks];
+        NSUInteger newBookmark = [availableBookmarks firstIndex];
+        
+        if (newBookmark != NSNotFound) {
+            [controller setRange:range forBookmark:newBookmark];
+        }
+        [availableBookmarks release];
     }
 }
 
@@ -1688,7 +1691,7 @@ invalidString:;
     USE(sender);
     NSInteger bookmark = [self selectedBookmark];
     if (bookmark != NSNotFound) {
-	[controller setRange:HFRangeMake(ULLONG_MAX, ULLONG_MAX) forBookmark:bookmark];
+        [controller setRange:HFRangeMake(ULLONG_MAX, ULLONG_MAX) forBookmark:bookmark];
     }
 }
 
@@ -1723,10 +1726,10 @@ invalidString:;
     HFASSERT(documentForThisByteArray != nil); //for now we require that saving a ByteArray is associated with a document save
     
     FOREACH(BaseDataDocument *, document, allDocuments) {
-	if (! [document isKindOfClass:[BaseDataDocument class]]) {
-	    /* Paranoia in case other NSDocument classes slip in */
-	    continue;
-	}
+        if (! [document isKindOfClass:[BaseDataDocument class]]) {
+            /* Paranoia in case other NSDocument classes slip in */
+            continue;
+        }
         
         if (document == documentForThisByteArray) {
             /* Skip the document being saved.  We'll come back to it.  We want to process it last (and all we need to do with it is clean up its undo stack) */
