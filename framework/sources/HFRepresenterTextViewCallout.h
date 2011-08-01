@@ -20,6 +20,7 @@
     
     CGFloat rotation;
     NSPoint tipOrigin;
+    NSPoint pinStart, pinEnd;
 }
 
 @property(nonatomic) NSUInteger byteOffset;

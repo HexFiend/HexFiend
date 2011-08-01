@@ -88,6 +88,8 @@ static NSBezierPath *copyTeardropPath(void) {
     // Keep track of how many drops are at a given location
     NSCountedSet *dropsPerByteLoc = [[NSCountedSet alloc] init];
     
+    const CGFloat lineHeight = [textView lineHeight];
+    
     NSArray *sortedCallouts = [callouts sortedArrayUsingSelector:@selector(compare:)];
     FOREACH(HFRepresenterTextViewCallout *, callout, sortedCallouts) {
         NSUInteger byteLoc = [callout byteOffset];
@@ -102,22 +104,30 @@ static NSBezierPath *copyTeardropPath(void) {
         CGFloat rotation = .125;
         
         // Change rotation by collision count like so: 0->0, 1->-.125, 2->.125, 3->-.25, 4->.25...
+        // A rotation of 0 corresponds to the tip pointing right
         CGFloat additionalRotation = ((collisions + 1)/2) * rotation;
         if (collisions & 1) additionalRotation = -additionalRotation;
         rotation += additionalRotation;
         
-        // a rotation of 0 corresponds to the tip pointing right
-        
         NSPoint characterOrigin = [textView originForCharacterAtByteIndex:byteLoc];
         
         // move us slightly towards the character
-        NSPoint teardropTipOrigin = NSMakePoint(characterOrigin.x + 1, characterOrigin.y + floor([textView lineHeight] / 8.));
+        NSPoint teardropTipOrigin = NSMakePoint(characterOrigin.x + 1, characterOrigin.y + floor(lineHeight / 8.));
         
-        // store it
+        // make the pin
+        NSPoint pinStart, pinEnd;
+        pinStart = NSMakePoint(characterOrigin.x + .25, characterOrigin.y);
+        pinEnd = NSMakePoint(pinStart.x, pinStart.y + lineHeight);
+        
+        // store it all
         callout->rotation = rotation;
         callout->tipOrigin = teardropTipOrigin;
+        callout->pinStart = pinStart;
+        callout->pinEnd = pinEnd;
         
     }
+    
+    [dropsPerByteLoc release];
 }
 
 - (CGAffineTransform)teardropTransform {
@@ -255,9 +265,8 @@ static NSBezierPath *copyTeardropPath(void) {
             textMatrix.ty = NSMinY(bulbRect) + textYOffset;
         }
         
-        CGContextSetTextMatrix(ctx, textMatrix);
-        
         // Draw
+        CGContextSetTextMatrix(ctx, textMatrix);
         CGContextShowGlyphsAtPositions(ctx, glyphs, positions, glyphCount);
         
         CGContextSetBlendMode(ctx, kCGBlendModeCopy);
@@ -268,13 +277,9 @@ static NSBezierPath *copyTeardropPath(void) {
         CGContextEndTransparencyLayer(ctx);            
         CGContextRestoreGState(ctx); // this also restores the clip, which is important
         
-#if 0
         // Lastly, draw the pin
-        NSPoint pinStart = NSMakePoint(characterOrigin.x + .25, characterOrigin.y);
-        NSPoint pinEnd = NSMakePoint(pinStart.x, pinStart.y + [self lineHeight]);
         [NSBezierPath setDefaultLineWidth:1.25];
         [NSBezierPath strokeLineFromPoint:pinStart toPoint:pinEnd];                               
-#endif
     }
     CFRelease(ctfont);
 }
@@ -283,138 +288,5 @@ static NSBezierPath *copyTeardropPath(void) {
     // return the transformed teardrop rect
     return CGRectApplyAffineTransform([self teardropBaseRect], [self teardropTransform]);
 }
-
-#if 0
-+ (void)layoutCalloutsOLD:(NSArray *)callouts inView:(HFRepresenterTextView *)textView {
-    // Keep track of how many drops are at a given location
-    NSCountedSet *dropsPerByteLoc = [[NSCountedSet alloc] init];
-    
-    // Figure out how tall our bulb is
-    const NSRect bulbRect = [teardrop bounds];
-    const NSSize bulbSize = bulbRect.size;
-    
-    const CGFloat radius = HFTeardropRadius;
-    
-    NSArray *sortedCallouts = [callouts sortedArrayUsingSelector:@selector(compare:)];
-    FOREACH(HFRepresenterTextViewCallout *, callout, sortedCallouts) {
-        
-        NSUInteger byteLoc = [callout byteOffset];
-        NSNumber *byteLocObj = [NSNumber numberWithUnsignedInt:byteLoc];
-        
-        const NSUInteger collisions = [dropsPerByteLoc countForObject:byteLocObj];
-        if (collisions > 8) continue; //don't try to show too much
-        // Remember this byteLocObj for future collisions
-        [dropsPerByteLoc addObject:byteLocObj];
-        
-        
-        NSUInteger bookmarkNum = [bookmarkNameObj integerValue];
-        NSUInteger bookmarkLen = HFCountDigitsBase10(bookmarkNum);
-        if (bookmarkLen < 1 || bookmarkLen > MAX_BOOKMARK_DIGIT_COUNT) continue; //erp
-        
-        
-        CGContextSaveGState(ctx);
-        const NSUInteger byteLoc = [byteLocObj unsignedLongValue];
-        NSPoint characterOrigin = [self originForCharacterAtByteIndex:byteLoc];
-        
-        // Compute how much to rotate (as a percentage of a full rotation) based on collisions
-        CGFloat rotation = .125;
-        
-        // Change rotation by collision count like so: 0->0, 1->-.125, 2->.125, 3->-.25, 4->.25...
-        CGFloat additionalRotation = ((collisions + 1)/2) * rotation;
-        if (collisions & 1) additionalRotation = -additionalRotation;
-        rotation += additionalRotation;
-        
-        CGAffineTransform transform = CGAffineTransformIdentity;
-        
-        // move us slightly towards the character
-        NSPoint teardropTipOrigin = NSMakePoint(characterOrigin.x + 1, characterOrigin.y + floor([self lineHeight] / 8.));
-        
-        CGContextBeginTransparencyLayer(ctx, NULL);            
-        
-        // Set the shadow
-        [shadow set];            
-        
-#if PERSPECTIVE_SHADOW
-        
-        // Draw the shadow first and separately
-        transform = CGAffineTransformTranslate(transform, teardropTipOrigin.x + offscreenOffset - shadowXOffset, teardropTipOrigin.y - shadowYOffset);
-        transform = CGAffineTransformRotate(transform, rotation * M_PI * 2 - atan2(shadowTranslationDistance, bulbSize.height));
-        
-        CGContextConcatCTM(ctx, transform);
-        [teardrop fill];
-        
-        // Clear the shadow
-        CGContextSetShadowWithColor(ctx, CGSizeZero, 0, NULL);
-        
-        // Set up the transform so applying it will invert what we've done
-        transform = CGAffineTransformInvert(transform);
-#endif
-        
-        // Rotate and translate in preparation for drawing the teardrop
-        transform = CGAffineTransformTranslate(transform, teardropTipOrigin.x, teardropTipOrigin.y);
-        transform = CGAffineTransformRotate(transform, rotation * M_PI * 2);
-        CGContextConcatCTM(ctx, transform);
-        
-        // Draw the teardrop
-        [teardrop fill];
-        
-        // Draw the text with white and alpha.  Use blend mode copy so that we clip out the shadow, and when the transparency layer is ended we'll composite over the text.
-        CGFloat textScale = (bookmarkLen == 1 ? 24 : 20);
-        
-        // we are flipped by default, so invert the rotation's sign to get the text direction
-        const CGFloat textDirection = (rotation >= -.25 && rotation <= .25) ? -1 : 1;
-        CGContextSetTextDrawingMode(ctx, kCGTextClip);
-        CGAffineTransform textMatrix = CGAffineTransformMakeScale(-copysign(textScale, textDirection), copysign(textScale, textDirection)); //roughly the font size we want
-        
-        CGPoint positions[MAX_BOOKMARK_DIGIT_COUNT];
-        CGFloat totalAdvance = 0;
-        for (NSUInteger i=0; i < bookmarkLen; i++) {
-            positions[i].x = totalAdvance;
-            positions[i].y = 0;
-            CGFloat advance = advances[i].width;
-            // Workaround 5834794
-            advance *= textScale;
-            // Tighten up the advances a little
-            advance *= .85;
-            totalAdvance += advance;
-        }
-        
-        // Compute the vertical offset
-        CGFloat textYOffset = (bookmarkLen == 1 ? 4 : 5);                
-        // LOL
-        if (bookmarkNum == 6 || bookmarkNum == 7) textYOffset -= 1;
-        
-        
-        // Apply this text matrix 
-        textMatrix.tx = NSMinX(bulbRect) + radius + copysign(totalAdvance/2, textDirection);
-        
-        if (textDirection < 0) {
-            textMatrix.ty = NSMaxY(bulbRect) - textYOffset;
-        } else {
-            textMatrix.ty = NSMinY(bulbRect) + textYOffset;
-        }
-        
-        CGContextSetTextMatrix(ctx, textMatrix);
-        
-        // Draw
-        CGContextShowGlyphsAtPositions(ctx, glyphs, positions, bookmarkLen);
-        
-        CGContextSetBlendMode(ctx, kCGBlendModeCopy);
-        CGContextSetGrayFillColor(ctx, 1., .75); //faint white fill
-        CGContextFillRect(ctx, NSRectToCGRect(NSInsetRect(bulbRect, -20, -20)));
-        
-        // Done drawing, so composite
-        CGContextEndTransparencyLayer(ctx);            
-        CGContextRestoreGState(ctx); // this also restores the clip, which is important
-        
-        // Lastly, draw the pin
-        NSPoint pinStart = NSMakePoint(characterOrigin.x + .25, characterOrigin.y);
-        NSPoint pinEnd = NSMakePoint(pinStart.x, pinStart.y + [self lineHeight]);
-        [NSBezierPath setDefaultLineWidth:1.25];
-        [NSBezierPath strokeLineFromPoint:pinStart toPoint:pinEnd];                               
-    }
-    
-}
-#endif
 
 @end
