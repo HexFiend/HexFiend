@@ -1519,6 +1519,31 @@ static NSPoint scalePoint(NSPoint center, NSPoint point, CGFloat percent) {
     }
     
     [HFRepresenterTextViewCallout layoutCallouts:callouts inView:self];
+    
+    /* Figure out which callouts we're going to draw */
+    NSUInteger idx = [callouts count];
+    NSRect allCalloutsRect = NSZeroRect;
+    while (idx--) {
+        HFRepresenterTextViewCallout *callout = [callouts objectAtIndex:idx];
+        NSRect calloutRect = [callout rect];
+        if (! NSIntersectsRect(clip, calloutRect)) {
+            [callouts removeObjectAtIndex:idx];
+        } else {
+            allCalloutsRect = NSUnionRect(allCalloutsRect, calloutRect);
+        }
+    }
+    allCalloutsRect = NSIntersectionRect(allCalloutsRect, clip);
+    
+    if ([callouts count]) {
+        /* Draw shadows first */    
+        CGContextRef ctx = [[NSGraphicsContext currentContext] graphicsPort];
+        CGContextBeginTransparencyLayerWithRect(ctx, NSRectToCGRect(allCalloutsRect), NULL);
+        FOREACH(HFRepresenterTextViewCallout *, callout, callouts) {
+            [callout drawShadowWithClip:clip];
+        }
+        CGContextEndTransparencyLayer(ctx);
+    }
+    
     FOREACH(HFRepresenterTextViewCallout *, callout, callouts) {
 //        NSRect rect = [callout rect];
 //        [[NSColor greenColor] set];

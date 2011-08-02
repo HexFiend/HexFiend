@@ -12,6 +12,10 @@
 static const CGFloat HFTeardropRadius = 12;
 static const CGFloat HFTeadropTipScale = 2.5;
 
+static const CGFloat HFShadowXOffset = -6;
+static const CGFloat HFShadowYOffset = 0;
+static const CGFloat HFShadowOffscreenHack = 3100;
+
 static NSPoint rotatePoint(NSPoint center, NSPoint point, CGFloat percent) {
     CGFloat radians = percent * M_PI * 2;
     CGFloat x = point.x - center.x;
@@ -89,6 +93,7 @@ static NSBezierPath *copyTeardropPath(void) {
     NSCountedSet *dropsPerByteLoc = [[NSCountedSet alloc] init];
     
     const CGFloat lineHeight = [textView lineHeight];
+    const NSRect bounds = [textView bounds];
     
     NSArray *sortedCallouts = [callouts sortedArrayUsingSelector:@selector(compare:)];
     FOREACH(HFRepresenterTextViewCallout *, callout, sortedCallouts) {
@@ -142,9 +147,49 @@ static NSBezierPath *copyTeardropPath(void) {
     return result;
 }
 
+- (CGAffineTransform)shadowTransform {
+    CGFloat shadowXOffset = HFShadowXOffset;
+    CGFloat shadowYOffset = HFShadowYOffset;
+    CGFloat offscreenOffset = HFShadowOffscreenHack;
+    
+    // Figure out how much movement the shadow offset produces
+    CGFloat shadowTranslationDistance = hypot(shadowXOffset, shadowYOffset);
+    
+    CGAffineTransform transform = CGAffineTransformIdentity;
+    transform = CGAffineTransformTranslate(transform, tipOrigin.x + offscreenOffset - shadowXOffset, tipOrigin.y - shadowYOffset);
+    transform = CGAffineTransformRotate(transform, rotation * M_PI * 2 - atan2(shadowTranslationDistance, 2*HFTeardropRadius /* bulbHeight */));
+    return transform;
+}
+
+- (void)drawShadowWithClip:(NSRect)clip {
+    CGContextRef ctx = [[NSGraphicsContext currentContext] graphicsPort];
+    
+    // Set the shadow. Note that these shadows are pretty unphysical for high rotations.
+    NSShadow *shadow = [[NSShadow alloc] init];
+    [shadow setShadowBlurRadius:5.];
+    [shadow setShadowOffset:NSMakeSize(HFShadowXOffset - HFShadowOffscreenHack, HFShadowYOffset)];
+    [shadow setShadowColor:[NSColor colorWithDeviceWhite:0. alpha:.5]];
+    [shadow set];
+    [shadow release];
+    
+    // Draw the shadow first and separately
+    CGAffineTransform transform = [self shadowTransform];
+    CGContextConcatCTM(ctx, transform);
+    
+    NSBezierPath *teardrop = copyTeardropPath();
+    [teardrop fill];
+    [teardrop release];
+    
+    // Clear the shadow
+    CGContextSetShadowWithColor(ctx, CGSizeZero, 0, NULL);
+    
+    // Undo the transform
+    CGContextConcatCTM(ctx, CGAffineTransformInvert(transform));
+}
+
 - (void)drawWithClip:(NSRect)clip {
     
-#define PERSPECTIVE_SHADOW 1
+#define PERSPECTIVE_SHADOW 0
     
     CGContextRef ctx = [[NSGraphicsContext currentContext] graphicsPort];
     // Here's the font we'll use
@@ -285,8 +330,12 @@ static NSBezierPath *copyTeardropPath(void) {
 }
 
 - (NSRect)rect {
-    // return the transformed teardrop rect
-    return CGRectApplyAffineTransform([self teardropBaseRect], [self teardropTransform]);
+    // get the transformed teardrop rect
+    NSRect result = NSRectFromCGRect(CGRectApplyAffineTransform(NSRectToCGRect([self teardropBaseRect]), [self teardropTransform]));
+    
+    // outset a bit for the shadow
+    result = NSInsetRect(result, -8, -8);
+    return result;
 }
 
 @end

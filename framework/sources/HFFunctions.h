@@ -197,6 +197,7 @@ static inline HFRange HFUnionRange(HFRange a, HFRange b) {
 
 /*! Returns whether a+b > c+d, as if there were no overflow (so ULLONG_MAX + 1 > 10 + 20) */
 static inline BOOL HFSumIsLargerThanSum(unsigned long long a, unsigned long long b, unsigned long long c, unsigned long long d) {
+#if 1
     // Theory: compare a/2 + b/2 to c/2 + d/2, and if they're equal, compare a%2 + b%2 to c%2 + d%2.  We may get into trouble if a and b are both even and c and d are both odd: e.g. a = 2, b = 2, c = 1, d = 3.  We would compare 1 + 1 vs 0 + 1, and therefore that 2 + 2 > 1 + 3.  To address this, if both remainders are 1, we add this to the sum.  We know this cannot overflow because ULLONG_MAX is odd, so (ULLONG_MAX/2) + (ULLONG_MAX/2) + 1 does not overflow.
     unsigned int rem1 = (unsigned)(a%2 + b%2);
     unsigned int rem2 = (unsigned)(c%2 + d%2);
@@ -209,6 +210,16 @@ static inline BOOL HFSumIsLargerThanSum(unsigned long long a, unsigned long long
         if (rem1%2 > rem2%2) return YES;
         else return NO;
     }
+#else
+    /* Faster version, but not thoroughly tested yet. */
+    unsigned long long xor1 = a^b;
+    unsigned long long xor2 = c^d;
+    unsigned long long avg1 = (a&b)+(xor1/2);
+    unsigned long long avg2 = (c&d)+(xor2/2);
+    unsigned s1l = avg1 > avg2;
+    unsigned eq = (avg1 == avg2);
+    return s1l | ((xor1 & ~xor2) & eq);
+#endif
 }
 
 /*! Returns the absolute value of a - b. */

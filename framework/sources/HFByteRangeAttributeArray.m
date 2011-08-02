@@ -274,25 +274,28 @@
 }
 
 - (void)byteRange:(HFRange)dyingRange wasReplacedByBytesOfLength:(unsigned long long)replacementLength {
-    NSLog(@"byteRange:%@ wasReplacedByBytesOfLength:%llu", HFRangeToString(dyingRange), replacementLength);
     NSArray *localRuns = [attributeRuns copy];
     NSUInteger idx = 0;
     FOREACH(HFByteRangeAttributeRun *, run, localRuns) {
         const HFRange runRange = run->range;
         HFRange newRange;
         
+        /* Check if we are inserting (not replacing) at either the very beginning of the run, or very end. */
+        BOOL insertionAtRunBeginning = (dyingRange.length == 0 && dyingRange.location == runRange.location);
+        BOOL insertionAtRunEnd = (dyingRange.length == 0 && dyingRange.location == HFMaxRange(runRange));
+        
         if (HFRangeIsSubrangeOfRange(runRange, dyingRange)) {
             /* This run is toast */
             newRange = (HFRange){0, 0};
-        } else if (HFRangeIsSubrangeOfRange(dyingRange, runRange)) {
+        } else if (HFRangeIsSubrangeOfRange(dyingRange, runRange) && !insertionAtRunBeginning && !insertionAtRunEnd) {
             /* The replaced range is wholly contained within this run, so expand the run. The location doesn't need to change. */
             newRange.location = run->range.location;
             newRange.length = HFSum(HFSubtract(runRange.length, dyingRange.length), replacementLength);
-        } else if (HFMaxRange(dyingRange) <= runRange.location) {
+        } else if (HFMaxRange(dyingRange) <= runRange.location || insertionAtRunBeginning) {
             /* The dying range is wholly before this run, so adjust the run location. The length doesn't need to change. */
             newRange.length = runRange.length;
             newRange.location = HFSum(HFSubtract(runRange.location, dyingRange.length), replacementLength);
-        } else if (dyingRange.location >= HFMaxRange(runRange)) {
+        } else if (dyingRange.location >= HFMaxRange(runRange) || insertionAtRunEnd) {
             /* The dying range is wholly after this run, so nothing to do */
             newRange = runRange;
         } else {

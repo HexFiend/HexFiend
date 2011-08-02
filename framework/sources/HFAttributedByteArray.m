@@ -62,7 +62,7 @@
     const unsigned long long insertedLength = [array length];
     [impl insertByteArray:array inRange:lrange];
     [attributes byteRange:lrange wasReplacedByBytesOfLength:insertedLength];
-    HFByteRangeAttributeArray *insertedAttributes = [array byteRangeAttributeArray];
+    HFByteRangeAttributeArray *insertedAttributes = [array byteRangeAttributeArray];    
     if (insertedAttributes && ! [insertedAttributes isEmpty]) {
         [attributes transferAttributesFromAttributeArray:insertedAttributes range:HFRangeMake(0, insertedLength) baseOffset:lrange.location];
     }

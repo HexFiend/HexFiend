@@ -31,6 +31,7 @@
 
 + (void)layoutCallouts:(NSArray *)callouts inView:(HFRepresenterTextView *)textView;
 
+- (void)drawShadowWithClip:(NSRect)clip;
 - (void)drawWithClip:(NSRect)clip;
 
 @end
