@@ -296,7 +296,8 @@ static int compareGlyphFontIndexes(const void *p1, const void *p2) {
     /* Trigger a redisplay */
     [self performSelectorOnMainThread:@selector(triggerRedisplay:) withObject:nil waitUntilDone:NO];
     
-    /* All done */
+    /* All done. We inherited the retain on requestedCharacters, so release it. */
+    [charactersToLoad release];
 }
 
 - (void)triggerRedisplay:unused {

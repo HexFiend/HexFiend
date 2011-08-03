@@ -13,7 +13,7 @@
 #define kHFRepresenterTextViewCalloutMaxGlyphCount 2
 
 @interface HFRepresenterTextViewCallout : NSObject {
-    NSUInteger byteOffset;
+    NSInteger byteOffset;
     id representedObject;
     NSColor *color;
     NSString *label;
@@ -23,7 +23,7 @@
     NSPoint pinStart, pinEnd;
 }
 
-@property(nonatomic) NSUInteger byteOffset;
+@property(nonatomic) NSInteger byteOffset;
 @property(nonatomic, copy) NSColor *color;
 @property(nonatomic, copy) NSString *label;
 @property(nonatomic, retain) id representedObject;

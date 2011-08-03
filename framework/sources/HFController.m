@@ -1107,7 +1107,15 @@ static inline Class preferredByteArrayClass(void) {
 - (void)scrollWithScrollEvent:(NSEvent *)scrollEvent {
     HFASSERT(scrollEvent != NULL);
     HFASSERT([scrollEvent type] == NSScrollWheel);
-    long double scrollY = - kScrollMultiplier * [scrollEvent deltaY];
+    long double scrollY;
+    
+    /* Prefer precise deltas */
+    if ([scrollEvent respondsToSelector:@selector(hasPreciseScrollingDeltas)] && (BOOL)[scrollEvent hasPreciseScrollingDeltas]) {
+        /* In this case, we're going to scroll by a certain number of points */
+        scrollY = -[scrollEvent scrollingDeltaY] / [self lineHeight];
+    } else {
+        scrollY = - kScrollMultiplier * [scrollEvent deltaY];
+    }
     [self scrollByLines:scrollY];
 }
 

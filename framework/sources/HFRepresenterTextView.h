@@ -90,7 +90,7 @@
 
 - (NSRect)caretRect;
 
-- (NSPoint)originForCharacterAtByteIndex:(NSUInteger)index;
+- (NSPoint)originForCharacterAtByteIndex:(NSInteger)index;
 - (NSUInteger)indexOfCharacterAtPoint:(NSPoint)point;
 
 /* The amount of padding space to inset from the left and right side. */

@@ -313,20 +313,32 @@
     return result;
 }
 
-//maps bookmark keys as NSNumber to byte locations as NSNumbers
+//maps bookmark keys as NSNumber to byte locations as NSNumbers. Because bookmark callouts may extend beyond the lines containing them, allow a larger range by 10 lines.
 - (NSDictionary *)displayedBookmarkLocations {
     NSMutableDictionary *result = nil;
     HFController *controller = [self controller];
+    NSUInteger rangeExtension = 10 * [controller bytesPerLine];
     HFRange displayedRange = [self entireDisplayedRange];
-    HFASSERT(displayedRange.length <= NSUIntegerMax);
-    NSIndexSet *allBookmarks = [controller bookmarksInRange:displayedRange];
+    
+    HFRange includedRange = displayedRange;
+    
+    /* Extend the bottom */
+    unsigned long long bottomExtension = MIN(includedRange.location, rangeExtension);
+    includedRange.location -= bottomExtension;
+    includedRange.length += bottomExtension;
+    
+    /* Extend the top */
+    unsigned long long topExtension = MIN([controller contentsLength] - HFMaxRange(includedRange), rangeExtension);
+    includedRange.length = HFSum(includedRange.length, topExtension);
+    
+    NSIndexSet *allBookmarks = [controller bookmarksInRange:includedRange];
     for (unsigned long mark = [allBookmarks firstIndex]; mark != NSNotFound; mark = [allBookmarks indexGreaterThanIndex:mark]) {
         HFRange bookmarkRange = [controller rangeForBookmark:mark];
-        if (HFLocationInRange(bookmarkRange.location, displayedRange)) {
+        if (HFLocationInRange(bookmarkRange.location, includedRange)) {
             if (! result) result = [NSMutableDictionary dictionary];
             
             NSNumber *key = [[NSNumber alloc] initWithUnsignedInteger:mark];
-            NSNumber *value = [[NSNumber alloc] initWithInteger:ll2l(bookmarkRange.location - displayedRange.location)];
+            NSNumber *value = [[NSNumber alloc] initWithInteger:(long)(bookmarkRange.location - displayedRange.location)];
             [result setObject:value forKey:key];
             [key release];
             [value release];

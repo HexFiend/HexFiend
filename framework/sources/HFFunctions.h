@@ -74,11 +74,19 @@ static inline NSUInteger HFSumInt(NSUInteger a, NSUInteger b) {
 }
 
 /*!
- Returns a + b as an NSUInteger, saturating an NSUIntegerMax
+ Returns a + b as an NSUInteger, saturating at NSUIntegerMax
  */
 static inline NSUInteger HFSumIntSaturate(NSUInteger a, NSUInteger b) {
     NSUInteger result = a + b;
     return (result < a) ? NSUIntegerMax : result;
+}
+
+/*!
+ Returns a + b as an unsigned long long, saturating at ULLONG_MAX
+ */
+static inline unsigned long long HFSumULLSaturate(unsigned long long a, unsigned long long b) {
+    unsigned long long result = a + b;
+    return (result < a) ? ULLONG_MAX : result;
 }
 
 /*!

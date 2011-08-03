@@ -65,7 +65,7 @@ static NSBezierPath *copyTeardropPath(void) {
 
 @implementation HFRepresenterTextViewCallout
 
-@synthesize byteOffset = location, representedObject = representedObject, color = color, label = label;
+@synthesize byteOffset = byteOffset, representedObject = representedObject, color = color, label = label;
 
 - (id)init {
     self = [super init];
@@ -87,6 +87,13 @@ static NSBezierPath *copyTeardropPath(void) {
     return [representedObject compare:[callout representedObject]];
 }
 
+static double normalizeAngle(double x) {
+    /* Convert an angle to the range [0, 1). We typically only generate angles that are off by a full rotation, so a loop isn't too bad. */
+    while (x >= 1) x -= 1.;
+    while (x < 0) x += 1.;
+    return x;
+}
+
 + (void)layoutCallouts:(NSArray *)callouts inView:(HFRepresenterTextView *)textView {
     
     // Keep track of how many drops are at a given location
@@ -95,27 +102,92 @@ static NSBezierPath *copyTeardropPath(void) {
     const CGFloat lineHeight = [textView lineHeight];
     const NSRect bounds = [textView bounds];
     
-    NSArray *sortedCallouts = [callouts sortedArrayUsingSelector:@selector(compare:)];
-    FOREACH(HFRepresenterTextViewCallout *, callout, sortedCallouts) {
-        NSUInteger byteLoc = [callout byteOffset];
-        NSNumber *byteLocObj = [NSNumber numberWithUnsignedInteger:byteLoc];
+    NSMutableArray *remainingCallouts = [[callouts mutableCopy] autorelease];
+    [remainingCallouts sortUsingSelector:@selector(compare:)];
+    
+    while ([remainingCallouts count] > 0) {
+        /* Get the next callout to lay out */
+        const NSInteger byteLoc = [[remainingCallouts objectAtIndex:0] byteOffset];
         
-        const NSUInteger collisions = [dropsPerByteLoc countForObject:byteLocObj];
-        if (collisions > 8) continue; //don't try to show too much
-        // Remember this byteLocObj for future collisions
-        [dropsPerByteLoc addObject:byteLocObj];
+        /* Get all the callouts that share that byteLoc */
+        NSMutableArray *sharedCallouts = [NSMutableArray array];
+        FOREACH(HFRepresenterTextViewCallout *, testCallout, remainingCallouts) {
+            if ([testCallout byteOffset] == byteLoc) {
+                [sharedCallouts addObject:testCallout];
+            }
+        }
         
-        // Compute how much to rotate (as a percentage of a full rotation) based on collisions
-        CGFloat rotation = .125;
+        /* We expect to get at least one */
+        const NSUInteger calloutCount = [sharedCallouts count];
+        HFASSERT(calloutCount > 0);
         
-        // Change rotation by collision count like so: 0->0, 1->-.125, 2->.125, 3->-.25, 4->.25...
-        // A rotation of 0 corresponds to the tip pointing right
-        CGFloat additionalRotation = ((collisions + 1)/2) * rotation;
-        if (collisions & 1) additionalRotation = -additionalRotation;
-        rotation += additionalRotation;
+        /* Get the character origin */
+        const NSPoint characterOrigin = [textView originForCharacterAtByteIndex:byteLoc];
         
-        NSPoint characterOrigin = [textView originForCharacterAtByteIndex:byteLoc];
+        /* This is how far it is to the center of our teardrop */
+        const double teardropLength = HFTeardropRadius * HFTeadropTipScale;
+
+        /* We're going to figure out the min and max angles */
+        double prohibitedMinAngle = 0, prohibitedMaxAngle = 0;
         
+        // Figure out which quadrant we're in
+        BOOL isNearerTop = (characterOrigin.y < NSMidY(bounds));
+        BOOL isNearerLeft = (characterOrigin.x < NSMidX(bounds));
+
+        // Compute how far we are from the top (or bottom)
+        double verticalDistance = (isNearerTop ? characterOrigin.y - NSMinY(bounds) : NSMaxY(bounds) - characterOrigin.y);
+        if (verticalDistance <= 0) {
+            /* We're either above or below the bounds */
+            prohibitedMinAngle = (isNearerTop ? 0. : .5);
+            prohibitedMaxAngle = (isNearerTop ? .5 : 1.);
+        } else if (verticalDistance < teardropLength) {
+            // Some angle will be forbidden
+            double forbiddenAngle = acos(verticalDistance / teardropLength) / (2 * M_PI);
+            
+            // This is a wedge out of the top (or bottom)
+            double topOrBottom = (isNearerTop ? .25 : .75);
+            prohibitedMinAngle = topOrBottom - forbiddenAngle;
+            prohibitedMaxAngle = topOrBottom + forbiddenAngle;
+        }
+        HFASSERT(prohibitedMaxAngle >= prohibitedMinAngle);
+        
+        /* How much will each callout rotate? No more than 1/8th. */
+        double prohibitedAmount = prohibitedMaxAngle - prohibitedMinAngle;
+        double changeInRotationPerCallout = fmin(.125, (1. - prohibitedAmount) / calloutCount);
+        double totalConsumedAmount = changeInRotationPerCallout * calloutCount;
+        
+        /* We would like to center around .125. */
+        const double goalCenter = .125;
+        
+        /* We're going to pretend to work on a line segment that extends from the max prohibited angle all the way back to min */
+        double segmentLength = 1. - prohibitedAmount;
+        double goalSegmentCenter = normalizeAngle(goalCenter - prohibitedMaxAngle); //may exceed segmentLength!
+                
+        /* Now center us on the goal. If the consumed max exceeds the segment length, move us left. If the consumed segment is less than zero, move us right */
+        double consumedSegmentCenter = goalSegmentCenter;
+        
+        /* We only need to worry about wrapping around if we have some prohibited angle */
+        if (prohibitedAmount > 0.) {
+            consumedSegmentCenter -= fmax(0, consumedSegmentCenter + totalConsumedAmount/2 - segmentLength);
+            consumedSegmentCenter -= fmin(0, consumedSegmentCenter - totalConsumedAmount/2);
+        }
+        
+        /* Now convert this back to an angle */
+        double consumedAngleCenter = normalizeAngle(prohibitedMaxAngle + consumedSegmentCenter);
+        
+        /* Distribute the callouts about this center */
+        NSInteger i;
+        for (i=0; i < (NSInteger)calloutCount; i++) {
+            HFRepresenterTextViewCallout *callout = [sharedCallouts objectAtIndex:i];
+            double seq = (i+1)/2; //0, 1, -1, 2, -2...
+            if ((i & 1) == 0) seq = -seq;
+            
+            //if we've got an even number of callouts, we want -.5, .5, -1.5, 1.5...
+            if (! (calloutCount & 1)) seq -= .5;
+            
+            callout->rotation = normalizeAngle(consumedAngleCenter + seq * changeInRotationPerCallout);
+        }
+                
         // move us slightly towards the character
         NSPoint teardropTipOrigin = NSMakePoint(characterOrigin.x + 1, characterOrigin.y + floor(lineHeight / 8.));
         
@@ -125,11 +197,18 @@ static NSBezierPath *copyTeardropPath(void) {
         pinEnd = NSMakePoint(pinStart.x, pinStart.y + lineHeight);
         
         // store it all
-        callout->rotation = rotation;
-        callout->tipOrigin = teardropTipOrigin;
-        callout->pinStart = pinStart;
-        callout->pinEnd = pinEnd;
+        FOREACH(HFRepresenterTextViewCallout *, callout, sharedCallouts) {
+            callout->tipOrigin = teardropTipOrigin;
+            callout->pinStart = pinStart;
+            callout->pinEnd = pinEnd;
+            
+            // Only the first gets a pin
+            pinStart = pinEnd = NSZeroPoint;
+        }
+
         
+        /* We're done laying out these callouts */
+        [remainingCallouts removeObjectsInArray:sharedCallouts];
     }
     
     [dropsPerByteLoc release];
@@ -162,6 +241,7 @@ static NSBezierPath *copyTeardropPath(void) {
 }
 
 - (void)drawShadowWithClip:(NSRect)clip {
+    USE(clip);
     CGContextRef ctx = [[NSGraphicsContext currentContext] graphicsPort];
     
     // Set the shadow. Note that these shadows are pretty unphysical for high rotations.
@@ -188,9 +268,7 @@ static NSBezierPath *copyTeardropPath(void) {
 }
 
 - (void)drawWithClip:(NSRect)clip {
-    
-#define PERSPECTIVE_SHADOW 0
-    
+    USE(clip);
     CGContextRef ctx = [[NSGraphicsContext currentContext] graphicsPort];
     // Here's the font we'll use
     CTFontRef ctfont = CTFontCreateWithName(CFSTR("Helvetica-Bold"), 1., NULL);
@@ -200,17 +278,7 @@ static NSBezierPath *copyTeardropPath(void) {
         CGFontRef cgfont = ctfont ? CTFontCopyGraphicsFont(ctfont, NULL) : NULL;
         CGContextSetFont(ctx, cgfont);
         CGFontRelease(cgfont);
-        
-#if PERSPECTIVE_SHADOW
-        
-        CGFloat shadowXOffset = -6;
-        CGFloat shadowYOffset = 0;
-        CGFloat offscreenOffset = NSWidth(clip) + 100;
-        
-        // Figure out how much movement the shadow offset produces
-        CGFloat shadowTranslationDistance = hypot(shadowXOffset, shadowYOffset);
-#endif
-        
+            
         // Get characters
         NSUInteger labelLength = MIN([label length], kHFRepresenterTextViewCalloutMaxGlyphCount);
         UniChar calloutUniLabel[kHFRepresenterTextViewCalloutMaxGlyphCount];
@@ -227,46 +295,18 @@ static NSBezierPath *copyTeardropPath(void) {
         for (glyphCount = 0; glyphCount < labelLength; glyphCount++) {
             if (glyphs[glyphCount] == 0) break;
         }
-        
-        // Get the teardrop
-        NSBezierPath *teardrop = copyTeardropPath();
-        
+                
         // Set our color.
         [color set];
         
         CGContextSaveGState(ctx);
-        CGAffineTransform transform = CGAffineTransformIdentity;
         CGContextBeginTransparencyLayer(ctx, NULL);
-                        
-#if PERSPECTIVE_SHADOW
-        
-        // Set the shadow
-        NSShadow *shadow = [[NSShadow alloc] init];
-        [shadow setShadowBlurRadius:5.];
-        [shadow setShadowOffset:NSMakeSize(shadowXOffset - offscreenOffset, shadowYOffset)];
-        [shadow setShadowColor:[NSColor colorWithDeviceWhite:0. alpha:.5]];
-        [shadow set];
-        [shadow release];
-        
-        // Draw the shadow first and separately
-        transform = CGAffineTransformTranslate(transform, tipOrigin.x + offscreenOffset - shadowXOffset, tipOrigin.y - shadowYOffset);
-        transform = CGAffineTransformRotate(transform, rotation * M_PI * 2 - atan2(shadowTranslationDistance, 2*HFTeardropRadius /* bulbHeight */));
-        
-        CGContextConcatCTM(ctx, transform);
-        [teardrop fill];
-        
-        // Clear the shadow
-        CGContextSetShadowWithColor(ctx, CGSizeZero, 0, NULL);
-        
-        // Set up the transform so applying it will invert what we've done
-        transform = CGAffineTransformInvert(transform);
-#endif
-        
+
         // Rotate and translate in preparation for drawing the teardrop
-        transform = CGAffineTransformConcat([self teardropTransform], transform);
-        CGContextConcatCTM(ctx, transform);
+        CGContextConcatCTM(ctx, [self teardropTransform]);
         
         // Draw the teardrop
+        NSBezierPath *teardrop = copyTeardropPath();
         [teardrop fill];
         [teardrop release];
         
@@ -274,7 +314,7 @@ static NSBezierPath *copyTeardropPath(void) {
         CGFloat textScale = (glyphCount == 1 ? 24 : 20);
         
         // we are flipped by default, so invert the rotation's sign to get the text direction
-        const CGFloat textDirection = (rotation >= -.25 && rotation <= .25) ? -1 : 1;
+        const CGFloat textDirection = (rotation <= .25 || rotation >= .75) ? -1 : 1;
         CGContextSetTextDrawingMode(ctx, kCGTextClip);
         CGAffineTransform textMatrix = CGAffineTransformMakeScale(-copysign(textScale, textDirection), copysign(textScale, textDirection)); //roughly the font size we want
         
@@ -323,8 +363,10 @@ static NSBezierPath *copyTeardropPath(void) {
         CGContextRestoreGState(ctx); // this also restores the clip, which is important
         
         // Lastly, draw the pin
-        [NSBezierPath setDefaultLineWidth:1.25];
-        [NSBezierPath strokeLineFromPoint:pinStart toPoint:pinEnd];                               
+        if (! NSEqualPoints(pinStart, pinEnd)) {
+            [NSBezierPath setDefaultLineWidth:1.25];
+            [NSBezierPath strokeLineFromPoint:pinStart toPoint:pinEnd];
+        }
     }
     CFRelease(ctfont);
 }
