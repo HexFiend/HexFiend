@@ -70,6 +70,12 @@ typedef enum {
 - (void)_updateDisplayedRange;
 @end
 
+@interface NSEvent (HFLionStuff)
+- (CGFloat)scrollingDeltaY;
+- (BOOL)hasPreciseScrollingDeltas;
+- (CGFloat)deviceDeltaY;
+@end
+
 static inline Class preferredByteArrayClass(void) {
     return [HFAttributedByteArray class];
 }
@@ -1107,14 +1113,26 @@ static inline Class preferredByteArrayClass(void) {
 - (void)scrollWithScrollEvent:(NSEvent *)scrollEvent {
     HFASSERT(scrollEvent != NULL);
     HFASSERT([scrollEvent type] == NSScrollWheel);
-    long double scrollY;
+    CGFloat preciseScroll;
+    BOOL hasPreciseScroll;
     
     /* Prefer precise deltas */
-    if ([scrollEvent respondsToSelector:@selector(hasPreciseScrollingDeltas)] && (BOOL)[scrollEvent hasPreciseScrollingDeltas]) {
+    if ([scrollEvent respondsToSelector:@selector(hasPreciseScrollingDeltas)] && [scrollEvent hasPreciseScrollingDeltas]) {
         /* In this case, we're going to scroll by a certain number of points */
-        scrollY = -[scrollEvent scrollingDeltaY] / [self lineHeight];
+        preciseScroll = [scrollEvent scrollingDeltaY];
+        hasPreciseScroll = YES;
+    } else if ([scrollEvent respondsToSelector:@selector(deviceDeltaY)]) {
+        preciseScroll = [scrollEvent deviceDeltaY];
+        hasPreciseScroll = YES;
     } else {
-        scrollY = - kScrollMultiplier * [scrollEvent deltaY];
+        hasPreciseScroll = NO;
+    }
+    
+    long double scrollY = 0;
+    if (! hasPreciseScroll) {
+        scrollY = -kScrollMultiplier * [scrollEvent scrollingDeltaY];
+    } else {
+        scrollY = -preciseScroll / [self lineHeight];
     }
     [self scrollByLines:scrollY];
 }
