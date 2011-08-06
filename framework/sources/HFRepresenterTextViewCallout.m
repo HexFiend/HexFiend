@@ -65,6 +65,44 @@ static NSBezierPath *copyTeardropPath(void) {
 
 @implementation HFRepresenterTextViewCallout
 
+/* A helpful struct for representing a wedge (portion of a circle). Wedges are counterclockwise. */
+typedef struct {
+    double offset; // 0 <= offset < 1
+    double length; // 0 <= length <= 1
+} Wedge_t;
+
+
+static inline double normalizeAngle(double x) {
+    /* Convert an angle to the range [0, 1). We typically only generate angles that are off by a full rotation, so a loop isn't too bad. */
+    while (x >= 1.) x -= 1.;
+    while (x < 0.) x += 1.;
+    return x;
+}
+
+static inline double distanceCCW(double a, double b) { return normalizeAngle(b-a); }
+static inline double distanceCW(double a, double b) { return normalizeAngle(a-b); }
+
+static inline double wedgeMax(Wedge_t wedge) {
+    return normalizeAngle(wedge.offset + wedge.length);
+}
+
+/* Computes the smallest wedge containing the two given wedges. Compute the wedge from the min of one to the furthest part of the other, and pick the smaller. */
+static Wedge_t wedgeUnion(Wedge_t wedge1, Wedge_t wedge2) {
+    // empty wedges don't participate
+    if (wedge1.length <= 0) return wedge2;
+    if (wedge2.length <= 0) return wedge1;
+    
+    Wedge_t union1 = wedge1;
+    union1.length = fmax(union1.length, distanceCCW(union1.offset, wedge2.offset));
+    union1.length = fmax(union1.length, distanceCCW(union1.offset, wedgeMax(wedge2)));
+    
+    Wedge_t union2 = wedge2;
+    union2.length = fmax(union2.length, distanceCCW(union2.offset, wedge1.offset));
+    union2.length = fmax(union2.length, distanceCCW(union2.offset, wedgeMax(wedge1)));
+    
+    return (union1.length <= union2.length ? union1 : union2);
+}
+
 @synthesize byteOffset = byteOffset, representedObject = representedObject, color = color, label = label;
 
 - (id)init {
@@ -87,11 +125,58 @@ static NSBezierPath *copyTeardropPath(void) {
     return [representedObject compare:[callout representedObject]];
 }
 
-static double normalizeAngle(double x) {
-    /* Convert an angle to the range [0, 1). We typically only generate angles that are off by a full rotation, so a loop isn't too bad. */
-    while (x >= 1) x -= 1.;
-    while (x < 0) x += 1.;
-    return x;
+static Wedge_t computeForbiddenAngle(double distanceFromEdge, double angleToEdge) {
+    Wedge_t newForbiddenAngle;
+    
+    /* This is how far it is to the center of our teardrop */
+    const double teardropLength = HFTeardropRadius * HFTeadropTipScale;
+    
+    if (distanceFromEdge <= 0) {
+        /* We're above or below. */
+        if (-distanceFromEdge >= (teardropLength + HFTeardropRadius)) {
+            /* We're so far above or below we won't be visible at all. No hope. */
+            newForbiddenAngle = (Wedge_t){.offset = 0, .length = 1};
+        } else { 
+            /* We're either above or below the bounds, but there's a hope we can be visible */
+            
+            double invertedAngleToEdge = normalizeAngle(angleToEdge + .5);
+            double requiredAngle;
+            if (-distanceFromEdge >= teardropLength) {
+                // We're too far north or south that all we can do is point in the right direction
+                requiredAngle = 0;
+            } else {
+                // By confining ourselves to required angles, we can make ourselves visible
+                requiredAngle = acos(-distanceFromEdge / teardropLength) / (2 * M_PI);
+            }
+            // Require at least a small spread
+            requiredAngle = fmax(requiredAngle, .04);
+            
+            double requiredMin = invertedAngleToEdge - requiredAngle;
+            double requiredMax = invertedAngleToEdge + requiredAngle;
+            
+            newForbiddenAngle = (Wedge_t){.offset = requiredMax, .length = distanceCCW(requiredMax, requiredMin) };
+        }
+    } else if (distanceFromEdge < teardropLength) {
+        // We're onscreen, but some angle will be forbidden
+        double forbiddenAngle = acos(distanceFromEdge / teardropLength) / (2 * M_PI);
+        
+        // This is a wedge out of the top (or bottom)
+        newForbiddenAngle = (Wedge_t){.offset = angleToEdge - forbiddenAngle, .length = 2 * forbiddenAngle};
+    } else {
+        /* Nothing prohibited at all */
+        newForbiddenAngle = (Wedge_t){0, 0};
+    }
+    return newForbiddenAngle;
+}
+
+
+static double distanceMod1(double a, double b) {
+    /* Assuming 0 <= a, b < 1, returns the distance between a and b, mod 1 */
+    if (a > b) {
+        return fmin(a-b, b-a+1);
+    } else {
+        return fmin(b-a, a-b+1);
+    }
 }
 
 + (void)layoutCallouts:(NSArray *)callouts inView:(HFRepresenterTextView *)textView {
@@ -127,53 +212,58 @@ static double normalizeAngle(double x) {
         /* This is how far it is to the center of our teardrop */
         const double teardropLength = HFTeardropRadius * HFTeadropTipScale;
 
-        /* We're going to figure out the min and max angles */
-        double prohibitedMinAngle = 0, prohibitedMaxAngle = 0;
+        Wedge_t forbiddenAngle = {0, 0};
         
-        // Figure out which quadrant we're in
-        BOOL isNearerTop = (characterOrigin.y < NSMidY(bounds));
-        BOOL isNearerLeft = (characterOrigin.x < NSMidX(bounds));
-
         // Compute how far we are from the top (or bottom)
+        BOOL isNearerTop = (characterOrigin.y < NSMidY(bounds));
         double verticalDistance = (isNearerTop ? characterOrigin.y - NSMinY(bounds) : NSMaxY(bounds) - characterOrigin.y);
-        if (verticalDistance <= 0) {
-            /* We're either above or below the bounds */
-            prohibitedMinAngle = (isNearerTop ? 0. : .5);
-            prohibitedMaxAngle = (isNearerTop ? .5 : 1.);
-        } else if (verticalDistance < teardropLength) {
-            // Some angle will be forbidden
-            double forbiddenAngle = acos(verticalDistance / teardropLength) / (2 * M_PI);
-            
-            // This is a wedge out of the top (or bottom)
-            double topOrBottom = (isNearerTop ? .25 : .75);
-            prohibitedMinAngle = topOrBottom - forbiddenAngle;
-            prohibitedMaxAngle = topOrBottom + forbiddenAngle;
-        }
-        HFASSERT(prohibitedMaxAngle >= prohibitedMinAngle);
+        forbiddenAngle = wedgeUnion(forbiddenAngle, computeForbiddenAngle(verticalDistance, (isNearerTop ? .25 : .75)));
+        
+        // Compute how far we are from the left (or right)
+        BOOL isNearerLeft = (characterOrigin.x < NSMidX(bounds));
+        double horizontalDistance = (isNearerLeft ? characterOrigin.x - NSMinX(bounds) : NSMaxX(bounds) - characterOrigin.x);
+        forbiddenAngle = wedgeUnion(forbiddenAngle, computeForbiddenAngle(horizontalDistance, (isNearerLeft ? .5 : 0.)));
+        
         
         /* How much will each callout rotate? No more than 1/8th. */
-        double prohibitedAmount = prohibitedMaxAngle - prohibitedMinAngle;
-        double changeInRotationPerCallout = fmin(.125, (1. - prohibitedAmount) / calloutCount);
+        HFASSERT(forbiddenAngle.length <= 1);
+        double changeInRotationPerCallout = fmin(.125, (1. - forbiddenAngle.length) / calloutCount);
         double totalConsumedAmount = changeInRotationPerCallout * calloutCount;
         
-        /* We would like to center around .125. */
-        const double goalCenter = .125;
+        /* We would like to center around .375. */
+        const double goalCenter = .375;
         
         /* We're going to pretend to work on a line segment that extends from the max prohibited angle all the way back to min */
-        double segmentLength = 1. - prohibitedAmount;
-        double goalSegmentCenter = normalizeAngle(goalCenter - prohibitedMaxAngle); //may exceed segmentLength!
+        double segmentLength = 1. - forbiddenAngle.length;
+        double goalSegmentCenter = normalizeAngle(goalCenter - wedgeMax(forbiddenAngle)); //may exceed segmentLength!
                 
-        /* Now center us on the goal. If the consumed max exceeds the segment length, move us left. If the consumed segment is less than zero, move us right */
-        double consumedSegmentCenter = goalSegmentCenter;
+        /* Now center us on the goal, or as close as we can get. */
+        double consumedSegmentCenter;
         
         /* We only need to worry about wrapping around if we have some prohibited angle */
-        if (prohibitedAmount > 0.) {
-            consumedSegmentCenter -= fmax(0, consumedSegmentCenter + totalConsumedAmount/2 - segmentLength);
-            consumedSegmentCenter -= fmin(0, consumedSegmentCenter - totalConsumedAmount/2);
+        if (forbiddenAngle.length <= 0) { //never expect < 0, but be paranoid
+            consumedSegmentCenter = goalSegmentCenter;
+        } else {
+            
+            /* The consumed segment center is confined to the segment range [amount/2, length - amount/2] */
+            double consumedSegmentCenterMin = totalConsumedAmount/2;
+            double consumedSegmentCenterMax = segmentLength - totalConsumedAmount/2;
+            if (goalSegmentCenter >= consumedSegmentCenterMin && goalSegmentCenter < consumedSegmentCenterMax) {
+                /* We can hit our goal */
+                consumedSegmentCenter = goalSegmentCenter;
+            } else {
+                /* Pick either the min or max location, depending on which one gets us closer to the goal segment center mod 1. */
+                if (distanceMod1(goalSegmentCenter, consumedSegmentCenterMin) <= distanceMod1(goalSegmentCenter, consumedSegmentCenterMax)) {
+                    consumedSegmentCenter = consumedSegmentCenterMin;
+                } else {
+                    consumedSegmentCenter = consumedSegmentCenterMax;
+                }
+                
+            }
         }
         
         /* Now convert this back to an angle */
-        double consumedAngleCenter = normalizeAngle(prohibitedMaxAngle + consumedSegmentCenter);
+        double consumedAngleCenter = normalizeAngle(wedgeMax(forbiddenAngle) + consumedSegmentCenter);
         
         /* Distribute the callouts about this center */
         NSInteger i;
@@ -185,7 +275,13 @@ static double normalizeAngle(double x) {
             //if we've got an even number of callouts, we want -.5, .5, -1.5, 1.5...
             if (! (calloutCount & 1)) seq -= .5;
             
-            callout->rotation = normalizeAngle(consumedAngleCenter + seq * changeInRotationPerCallout);
+            // compute teh angle of rotation
+            double angle = consumedAngleCenter + seq * changeInRotationPerCallout;
+            
+            // our notion of rotation has 0 meaning pointing right and going counterclockwise, but callouts with 0 pointing left and going clockwise, so convert
+            angle = normalizeAngle(.5 - angle);
+            
+            callout->rotation = angle;
         }
                 
         // move us slightly towards the character
@@ -273,7 +369,6 @@ static double normalizeAngle(double x) {
     // Here's the font we'll use
     CTFontRef ctfont = CTFontCreateWithName(CFSTR("Helvetica-Bold"), 1., NULL);
     if (ctfont) {
-        
         // Set the CG font
         CGFontRef cgfont = ctfont ? CTFontCopyGraphicsFont(ctfont, NULL) : NULL;
         CGContextSetFont(ctx, cgfont);
@@ -298,6 +393,12 @@ static double normalizeAngle(double x) {
                 
         // Set our color.
         [color set];
+        
+        // Draw the pin first
+        if (! NSEqualPoints(pinStart, pinEnd)) {
+            [NSBezierPath setDefaultLineWidth:1.25];
+            [NSBezierPath strokeLineFromPoint:pinStart toPoint:pinEnd];
+        }
         
         CGContextSaveGState(ctx);
         CGContextBeginTransparencyLayer(ctx, NULL);
@@ -361,12 +462,6 @@ static double normalizeAngle(double x) {
         // Done drawing, so composite
         CGContextEndTransparencyLayer(ctx);            
         CGContextRestoreGState(ctx); // this also restores the clip, which is important
-        
-        // Lastly, draw the pin
-        if (! NSEqualPoints(pinStart, pinEnd)) {
-            [NSBezierPath setDefaultLineWidth:1.25];
-            [NSBezierPath strokeLineFromPoint:pinStart toPoint:pinEnd];
-        }
     }
     CFRelease(ctfont);
 }
