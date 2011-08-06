@@ -416,9 +416,6 @@ static double distanceMod1(double a, double b) {
         
         // we are flipped by default, so invert the rotation's sign to get the text direction
         const CGFloat textDirection = (rotation <= .25 || rotation >= .75) ? -1 : 1;
-        CGContextSetTextDrawingMode(ctx, kCGTextClip);
-        CGAffineTransform textMatrix = CGAffineTransformMakeScale(-copysign(textScale, textDirection), copysign(textScale, textDirection)); //roughly the font size we want
-        
         
         CGPoint positions[kHFRepresenterTextViewCalloutMaxGlyphCount];
         CGFloat totalAdvance = 0;
@@ -443,7 +440,11 @@ static double distanceMod1(double a, double b) {
         
         // Apply this text matrix
         NSRect bulbRect = [self teardropBaseRect];
+        CGAffineTransform textMatrix = CGAffineTransformMakeScale(-copysign(textScale, textDirection), copysign(textScale, textDirection)); //roughly the font size we want
         textMatrix.tx = NSMinX(bulbRect) + HFTeardropRadius + copysign(totalAdvance/2, textDirection);
+        
+        //CGAffineTransform wat = CGContextGetCTM(ctx);
+        //NSLog(@"Scale: [%f %f %f %f] %f %f", wat.a, wat.b, wat.c, wat.d, wat.tx, wat.ty);
         
         if (textDirection < 0) {
             textMatrix.ty = NSMaxY(bulbRect) - textYOffset;
@@ -453,6 +454,7 @@ static double distanceMod1(double a, double b) {
         
         // Draw
         CGContextSetTextMatrix(ctx, textMatrix);
+        CGContextSetTextDrawingMode(ctx, kCGTextClip);
         CGContextShowGlyphsAtPositions(ctx, glyphs, positions, glyphCount);
         
         CGContextSetBlendMode(ctx, kCGBlendModeCopy);
@@ -460,7 +462,7 @@ static double distanceMod1(double a, double b) {
         CGContextFillRect(ctx, NSRectToCGRect(NSInsetRect(bulbRect, -20, -20)));
         
         // Done drawing, so composite
-        CGContextEndTransparencyLayer(ctx);            
+        CGContextEndTransparencyLayer(ctx);
         CGContextRestoreGState(ctx); // this also restores the clip, which is important
     }
     CFRelease(ctfont);
