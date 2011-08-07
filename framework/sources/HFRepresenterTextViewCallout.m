@@ -86,6 +86,10 @@ static inline double wedgeMax(Wedge_t wedge) {
     return normalizeAngle(wedge.offset + wedge.length);
 }
 
+static NSString *wedgeDescription(Wedge_t wedge) {
+    return [NSString stringWithFormat:@"{%f, %f}", wedge.offset, wedge.length];
+}
+
 /* Computes the smallest wedge containing the two given wedges. Compute the wedge from the min of one to the furthest part of the other, and pick the smaller. */
 static Wedge_t wedgeUnion(Wedge_t wedge1, Wedge_t wedge2) {
     // empty wedges don't participate
@@ -93,14 +97,13 @@ static Wedge_t wedgeUnion(Wedge_t wedge1, Wedge_t wedge2) {
     if (wedge2.length <= 0) return wedge1;
     
     Wedge_t union1 = wedge1;
-    union1.length = fmax(union1.length, distanceCCW(union1.offset, wedge2.offset));
-    union1.length = fmax(union1.length, distanceCCW(union1.offset, wedgeMax(wedge2)));
+    union1.length = fmax(union1.length, distanceCCW(union1.offset, wedge2.offset) + wedge2.length);
     
     Wedge_t union2 = wedge2;
-    union2.length = fmax(union2.length, distanceCCW(union2.offset, wedge1.offset));
-    union2.length = fmax(union2.length, distanceCCW(union2.offset, wedgeMax(wedge1)));
+    union2.length = fmax(union2.length, distanceCCW(union2.offset, wedge1.offset) + wedge1.length);
     
-    return (union1.length <= union2.length ? union1 : union2);
+    Wedge_t result = (union1.length <= union2.length ? union1 : union2);
+    return result;
 }
 
 @synthesize byteOffset = byteOffset, representedObject = representedObject, color = color, label = label;
@@ -369,10 +372,8 @@ static double distanceMod1(double a, double b) {
     // Here's the font we'll use
     CTFontRef ctfont = CTFontCreateWithName(CFSTR("Helvetica-Bold"), 1., NULL);
     if (ctfont) {
-        // Set the CG font
-        CGFontRef cgfont = ctfont ? CTFontCopyGraphicsFont(ctfont, NULL) : NULL;
-        CGContextSetFont(ctx, cgfont);
-        CGFontRelease(cgfont);
+        // Set the font
+        [(id)ctfont set];
             
         // Get characters
         NSUInteger labelLength = MIN([label length], kHFRepresenterTextViewCalloutMaxGlyphCount);
@@ -414,8 +415,8 @@ static double distanceMod1(double a, double b) {
         // Draw the text with white and alpha.  Use blend mode copy so that we clip out the shadow, and when the transparency layer is ended we'll composite over the text.
         CGFloat textScale = (glyphCount == 1 ? 24 : 20);
         
-        // we are flipped by default, so invert the rotation's sign to get the text direction
-        const CGFloat textDirection = (rotation <= .25 || rotation >= .75) ? -1 : 1;
+        // we are flipped by default, so invert the rotation's sign to get the text direction. Use a little slop so we don't get jitter.
+        const CGFloat textDirection = (rotation <= .27 || rotation >= .73) ? -1 : 1;
         
         CGPoint positions[kHFRepresenterTextViewCalloutMaxGlyphCount];
         CGFloat totalAdvance = 0;
@@ -464,8 +465,10 @@ static double distanceMod1(double a, double b) {
         // Done drawing, so composite
         CGContextEndTransparencyLayer(ctx);
         CGContextRestoreGState(ctx); // this also restores the clip, which is important
+        
+        // Done with the font
+        CFRelease(ctfont);
     }
-    CFRelease(ctfont);
 }
 
 - (NSRect)rect {
