@@ -145,8 +145,6 @@ static inline HFByteSlice *findInitialSlice(HFBTree *btree, HFRange *inoutArrayR
 - (void)insertByteSlice:(HFByteSlice *)slice atOffset:(unsigned long long)offset {
     [self incrementGenerationOrRaiseIfLockedForSelector:_cmd];
     
-    unsigned long long beforeLength = [self length];
-    
     if (offset == 0) {
         [btree insertEntry:slice atOffset:0];
     }
@@ -185,8 +183,6 @@ static inline HFByteSlice *findInitialSlice(HFBTree *btree, HFRange *inoutArrayR
             }
         }
     }
-    
-    unsigned long long afterLength = [self length];
 }
 
 - (void)deleteBytesInRange:(HFRange)range {

@@ -20,6 +20,7 @@
 #import <HexFiend/HFFileReference.h>
 #import <HexFiend/HFByteRangeAttributeArray.h>
 #import <objc/runtime.h>
+#import <objc/message.h>
 #import <objc/objc-auto.h>
 
 /* Used for the anchor range and location */

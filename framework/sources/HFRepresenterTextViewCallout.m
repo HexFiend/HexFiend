@@ -268,25 +268,6 @@ static double distanceMod1(double a, double b) {
         /* Now convert this back to an angle */
         double consumedAngleCenter = normalizeAngle(wedgeMax(forbiddenAngle) + consumedSegmentCenter);
         
-        /* Distribute the callouts about this center */
-        NSInteger i;
-        for (i=0; i < (NSInteger)calloutCount; i++) {
-            HFRepresenterTextViewCallout *callout = [sharedCallouts objectAtIndex:i];
-            double seq = (i+1)/2; //0, 1, -1, 2, -2...
-            if ((i & 1) == 0) seq = -seq;
-            
-            //if we've got an even number of callouts, we want -.5, .5, -1.5, 1.5...
-            if (! (calloutCount & 1)) seq -= .5;
-            
-            // compute teh angle of rotation
-            double angle = consumedAngleCenter + seq * changeInRotationPerCallout;
-            
-            // our notion of rotation has 0 meaning pointing right and going counterclockwise, but callouts with 0 pointing left and going clockwise, so convert
-            angle = normalizeAngle(.5 - angle);
-            
-            callout->rotation = angle;
-        }
-                
         // move us slightly towards the character
         NSPoint teardropTipOrigin = NSMakePoint(characterOrigin.x + 1, characterOrigin.y + floor(lineHeight / 8.));
         
@@ -295,14 +276,39 @@ static double distanceMod1(double a, double b) {
         pinStart = NSMakePoint(characterOrigin.x + .25, characterOrigin.y);
         pinEnd = NSMakePoint(pinStart.x, pinStart.y + lineHeight);
         
-        // store it all
+        // store it all, invalidating as necessary
+        NSInteger i = 0;
         FOREACH(HFRepresenterTextViewCallout *, callout, sharedCallouts) {
+            
+            /* Compute the rotation */
+            double seq = (i+1)/2; //0, 1, -1, 2, -2...
+            if ((i & 1) == 0) seq = -seq;
+            //if we've got an even number of callouts, we want -.5, .5, -1.5, 1.5...
+            if (! (calloutCount & 1)) seq -= .5;
+            // compute the angle of rotation
+            double angle = consumedAngleCenter + seq * changeInRotationPerCallout;
+            // our notion of rotation has 0 meaning pointing right and going counterclockwise, but callouts with 0 pointing left and going clockwise, so convert
+            angle = normalizeAngle(.5 - angle);
+
+            
+            NSRect beforeRect = [callout rect];
+            
+            callout->rotation = angle;
             callout->tipOrigin = teardropTipOrigin;
             callout->pinStart = pinStart;
             callout->pinEnd = pinEnd;
             
             // Only the first gets a pin
             pinStart = pinEnd = NSZeroPoint;
+            
+            NSRect afterRect = [callout rect];
+            
+            if (! NSEqualRects(beforeRect, afterRect)) {
+                [textView setNeedsDisplayInRect:beforeRect];
+                [textView setNeedsDisplayInRect:afterRect];
+            }
+            
+            i++;
         }
 
         
@@ -402,7 +408,7 @@ static double distanceMod1(double a, double b) {
         }
         
         CGContextSaveGState(ctx);
-        CGContextBeginTransparencyLayer(ctx, NULL);
+        CGContextBeginTransparencyLayerWithRect(ctx, NSRectToCGRect([self rect]), NULL);
 
         // Rotate and translate in preparation for drawing the teardrop
         CGContextConcatCTM(ctx, [self teardropTransform]);
@@ -444,9 +450,7 @@ static double distanceMod1(double a, double b) {
         CGAffineTransform textMatrix = CGAffineTransformMakeScale(-copysign(textScale, textDirection), copysign(textScale, textDirection)); //roughly the font size we want
         textMatrix.tx = NSMinX(bulbRect) + HFTeardropRadius + copysign(totalAdvance/2, textDirection);
         
-        //CGAffineTransform wat = CGContextGetCTM(ctx);
-        //NSLog(@"Scale: [%f %f %f %f] %f %f", wat.a, wat.b, wat.c, wat.d, wat.tx, wat.ty);
-        
+
         if (textDirection < 0) {
             textMatrix.ty = NSMaxY(bulbRect) - textYOffset;
         } else {

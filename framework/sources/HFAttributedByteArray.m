@@ -8,6 +8,7 @@
 
 #import <HexFiend/HFAttributedByteArray.h>
 #import <HexFiend/HFBTreeByteArray.h>
+#import <HexFiend/HFByteSlice.h>
 #import <HexFiend/HFByteRangeAttributeArray.h>
 
 @implementation HFAttributedByteArray
@@ -50,7 +51,7 @@
     HFAttributedByteArray *result = [[[self class] alloc] initWithImplementingByteArray:newImpl attributes:newAttrs];
     [newImpl release];
     [newAttrs release];
-    return result;
+    return [result autorelease];
 }
 
 - (void)deleteBytesInRange:(HFRange)range {

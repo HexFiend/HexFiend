@@ -260,8 +260,8 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
 
 - (id)initWithLeftByteArray:(HFByteArray *)left rightByteArray:(HFByteArray *)right {
     if ((self = [super init])) {
-        leftBytes = [left retain];
-        rightBytes = [right retain];
+        leftBytes = [left mutableCopy];
+        rightBytes = [right mutableCopy];
         //[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(synchronizeControllers:) name:HFControllerDidChangePropertiesNotification object:controller];
         
         /* Initially, the scrolling is just synchronized */
@@ -877,8 +877,12 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
     /* We, uh, can't have more lines than we can have. */
     const long double maxLineCount = HFULToFP([testController totalLineCount]);
     long double lineCount = MIN(abstractRange.length, maxLineCount);
-    long double maxStartLine = maxLineCount - abstractRange.length;
+    long double maxStartLine = MAX(0, maxLineCount - abstractRange.length);
     startLine = MIN(startLine, maxStartLine);
+    
+    /* Can't be negative */
+    HFASSERT(startLine >= 0);
+    HFASSERT(lineCount >= 0);
     
     /* Done */
     HFFPRange clippedRange = (HFFPRange){startLine, lineCount};

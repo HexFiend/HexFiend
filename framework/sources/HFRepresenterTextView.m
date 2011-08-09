@@ -857,6 +857,7 @@ enum LineCoverage_t {
     [data release];
     [styles release];
     [cachedSelectedRanges release];
+    [callouts release];
     [super dealloc];
 }
 
@@ -1471,56 +1472,74 @@ static size_t unionAndCleanLists(NSRect *rectList, id *valueList, size_t count) 
     [NSGraphicsContext restoreGraphicsState];
 }
 
-- (void)drawBookmarksWithClip:(NSRect)clip {
-    USE(clip);
-    NSNumber *key;
-    NSDictionary *bookmarks = [[self representer] displayedBookmarkLocations];
-    NSEnumerator *enumer = [bookmarks keyEnumerator];
-    NSMutableArray *callouts = [NSMutableArray array];
-    while ((key = [enumer nextObject])) {
-        NSUInteger bookmark = [key unsignedIntegerValue];
-        NSNumber *byteLocObj = [bookmarks objectForKey:key];
-        HFRepresenterTextViewCallout *callout = [[HFRepresenterTextViewCallout alloc] init];
-        [callout setByteOffset:[byteLocObj integerValue]];
-        [callout setColor:[self colorForBookmark:bookmark]];
-        [callout setLabel:[NSString stringWithFormat:@"%lu", bookmark]];
-        [callout setRepresentedObject:key];
-        [callouts addObject:callout];
-        [callout release];
-    }
-    
-    [HFRepresenterTextViewCallout layoutCallouts:callouts inView:self];
-    
-    /* Figure out which callouts we're going to draw */
-    NSUInteger idx = [callouts count];
-    NSRect allCalloutsRect = NSZeroRect;
-    while (idx--) {
-        HFRepresenterTextViewCallout *callout = [callouts objectAtIndex:idx];
-        NSRect calloutRect = [callout rect];
-        if (! NSIntersectsRect(clip, calloutRect)) {
-            [callouts removeObjectAtIndex:idx];
-        } else {
-            allCalloutsRect = NSUnionRect(allCalloutsRect, calloutRect);
+- (void)setBookmarks:(NSDictionary *)bookmarks {
+    if (! callouts) callouts = [[NSMutableDictionary alloc] init];
+
+    /* Invalidate any bookmarks we're losing */
+    NSArray *existingKeys = [callouts allKeys];
+    FOREACH(NSNumber *, key, existingKeys) {
+        if (! [bookmarks objectForKey:key]) {
+            HFRepresenterTextViewCallout *callout = [callouts objectForKey:key];
+            [self setNeedsDisplayInRect:[callout rect]];
+            [callouts removeObjectForKey:key];
         }
     }
+    
+    /* Add any bookmarks we're missing */
+    NSArray *newKeys = [bookmarks allKeys];
+    FOREACH(NSNumber *, newKey, newKeys) {
+        HFRepresenterTextViewCallout *callout = [callouts objectForKey:newKey];
+        if (! callout) {
+            NSUInteger bookmark = [newKey unsignedIntegerValue];
+            callout = [[HFRepresenterTextViewCallout alloc] init];
+            [callout setColor:[self colorForBookmark:bookmark]];
+            [callout setLabel:[NSString stringWithFormat:@"%lu", [newKey unsignedIntegerValue]]];
+            [callout setRepresentedObject:newKey];
+            [callouts setObject:callout forKey:newKey];
+            [callout release];
+        }
+        NSInteger byteOffset = [[bookmarks objectForKey:newKey] integerValue];
+        [callout setByteOffset:byteOffset];
+    }
+    
+    /* Layout. This also invalidates any that have changed */
+    [HFRepresenterTextViewCallout layoutCallouts:[callouts allValues] inView:self];
+}
+
+- (void)drawBookmarksWithClip:(NSRect)clip {
+    USE(clip);
+
+    /* Figure out which callouts we're going to draw */
+    NSRect allCalloutsRect = NSZeroRect;
+    NSMutableArray *localCallouts = [[NSMutableArray alloc] initWithCapacity:[callouts count]];
+    NSEnumerator *enumer = [callouts objectEnumerator];
+    HFRepresenterTextViewCallout *callout;
+    while ((callout = [enumer nextObject])) {
+        NSRect calloutRect = [callout rect];
+        if (NSIntersectsRect(clip, calloutRect)) {
+            [localCallouts addObject:callout];
+            allCalloutsRect = NSUnionRect(allCalloutsRect, calloutRect);
+        }        
+    }    
     allCalloutsRect = NSIntersectionRect(allCalloutsRect, clip);
     
-    if ([callouts count]) {
+    if ([localCallouts count]) {
         /* Draw shadows first */    
         CGContextRef ctx = [[NSGraphicsContext currentContext] graphicsPort];
         CGContextBeginTransparencyLayerWithRect(ctx, NSRectToCGRect(allCalloutsRect), NULL);
-        FOREACH(HFRepresenterTextViewCallout *, callout, callouts) {
+        FOREACH(HFRepresenterTextViewCallout *, callout, localCallouts) {
             [callout drawShadowWithClip:clip];
         }
         CGContextEndTransparencyLayer(ctx);
-    }
     
-    FOREACH(HFRepresenterTextViewCallout *, callout, callouts) {
-//        NSRect rect = [callout rect];
-//        [[NSColor greenColor] set];
-//        NSFrameRect(rect);
-        [callout drawWithClip:clip];
+        FOREACH(HFRepresenterTextViewCallout *, newCallout, localCallouts) {
+            // NSRect rect = [callout rect];
+            // [[NSColor greenColor] set];
+            // NSFrameRect(rect);
+            [newCallout drawWithClip:clip];
+        }
     }
+    [localCallouts release];
 }
 
 - (void)drawRect:(NSRect)clip {

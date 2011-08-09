@@ -249,8 +249,8 @@
     if (bits & (HFControllerAntialias)) {
         [[self view] setShouldAntialias:[[self controller] shouldAntialias]];
     }
-    if (bits & (HFControllerBookmarks)) {
-        [[self view] setNeedsDisplay:YES];
+    if (bits & (HFControllerBookmarks | HFControllerDisplayedLineRange | HFControllerContentValue)) {
+        [[self view] setBookmarks:[self displayedBookmarkLocations]];
     }
     [super controllerDidChange:bits];
 }

@@ -58,45 +58,41 @@ foundResult:
 
 #include <xmmintrin.h>
 
-static unsigned char* sse_memchr(const unsigned char* haystack, unsigned char needle, size_t length) {
+static unsigned char* sse_memchr(const unsigned char* haystack, unsigned char needle, size_t length) {    
     /* SSE likes 16 byte alignment */
-    unsigned prefixLength = (unsigned)((16 - ((unsigned long)haystack) % 16) % 16);
-    unsigned suffixLength = (unsigned)(((unsigned long)(haystack + length)) % 16);
-    size_t altivecLength = length - prefixLength - suffixLength;
-    size_t numVectors = altivecLength / 16;
     
-    while (prefixLength--) {
-        if (*haystack == needle) return (unsigned char*)haystack;
+    /* Unaligned prefix */
+    while (((intptr_t)haystack) % 16) {
+        if (! length--) return NULL;
+        if (*haystack == needle) return (unsigned char *)haystack;
         haystack++;
     }
     
-    unsigned int mashedByte = (needle << 24 ) | (needle << 16) | (needle << 8) | needle;
+    /* Compute the number of vectors we can compare, and the unaligned suffix */
+    size_t numVectors = length / 16;
+    size_t suffixLength = length % 16;
     
-    const __m128i searchVector = _mm_set_epi32(mashedByte, mashedByte, mashedByte, mashedByte);
-    unsigned maskedBits = 0;
-    
+    const __m128i searchVector = _mm_set1_epi8(needle);
     while (numVectors--) {
         __m128i bytesVec = _mm_load_si128((const __m128i*)haystack);
         __m128i mask = _mm_cmpeq_epi8(bytesVec, searchVector);
-        maskedBits = _mm_movemask_epi8(mask);
-        if (maskedBits) goto foundResult;
+        int maskedBits = _mm_movemask_epi8(mask);
+        if (maskedBits) {
+            /* some byte has the result - find the LSB of maskedBits */
+            haystack += __builtin_ffs(maskedBits) - 1;
+            return (unsigned char*)haystack;
+        }
         
         haystack += 16;
     }
     
+    /* Unaligned suffix */
     while (suffixLength--) {
         if (*haystack == needle) return (unsigned char*)haystack;
         haystack++;
     }
     
     return NULL;
-    
-foundResult:
-        ;
-    /* some byte has the result - find the LSB of maskedBits */
-    haystack += __builtin_ffs(maskedBits) - 1;
-    return (unsigned char*)haystack;
-    
 }
 
 #endif

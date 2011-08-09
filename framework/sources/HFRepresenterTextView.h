@@ -44,6 +44,7 @@
     NSUInteger bytesBetweenVerticalGuides;
     NSUInteger startingLineBackgroundColorIndex;
     NSArray *rowBackgroundColors;
+    NSMutableDictionary *callouts;
     
     struct  {
         unsigned antialias:1;
@@ -89,6 +90,8 @@
 - (BOOL)isWithinMouseDown;
 
 - (NSRect)caretRect;
+
+- (void)setBookmarks:(NSDictionary *)bookmarks;
 
 - (NSPoint)originForCharacterAtByteIndex:(NSInteger)index;
 - (NSUInteger)indexOfCharacterAtPoint:(NSPoint)point;

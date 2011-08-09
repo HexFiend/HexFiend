@@ -35,7 +35,7 @@ enum {
     NUM_CACHES
 };
 
-#define HEURISTIC_THRESHOLD 1024 * 64
+#define HEURISTIC_THRESHOLD 128 * 64
 
 // This is the type of an abstract index in some local LCS problem
 typedef int32_t LocalIndex_t;
@@ -165,14 +165,29 @@ struct Snake_t {
 
 static BOOL can_merge_instruction(const struct HFEditInstruction_t *left, const struct HFEditInstruction_t *right) {
     /* We can merge these if one (or both) of the dest ranges are empty, or if they are abutting.  Note that if a destination is empty, we have to copy the location from the other one, because we like to give nonsense locations (-1) to zero length ranges.  src never has a nonsense location. */
-    return HFMaxRange(left->src) == right->src.location && (left->dst.length == 0 || right->dst.length == 0 || HFMaxRange(left->dst) == right->dst.location);
+    //return HFMaxRange(left->src) == right->src.location && (left->dst.length == 0 || right->dst.length == 0 || HFMaxRange(left->dst) == right->dst.location);
+    
+    if (HFMaxRange(left->src) == right->src.location) {
+        return left->dst.length == 0 || right->dst.length == 0 || HFMaxRange(left->dst) == right->dst.location;
+    } else if (HFMaxRange(right->src) == left->src.location) {
+        return left->dst.length == 0 || right->dst.length == 0 || HFMaxRange(right->dst) == left->dst.location;
+    } else {
+        return NO;
+    }
 }
 
 static BOOL merge_instruction(struct HFEditInstruction_t *left, const struct HFEditInstruction_t *right) {
     BOOL result = NO;
     if (can_merge_instruction(left, right)) {
         left->src.length = HFSum(left->src.length, right->src.length);
-        if (left->dst.length == 0) left->dst.location = right->dst.location;
+        left->src.location = MIN(left->src.location, right->src.location);
+        
+        // We give nonsense (-1) locations to empty destinations, so guard against that
+        unsigned long long newDest = ULLONG_MAX;
+        if (left->dst.length > 0) newDest = MIN(newDest, left->dst.location);
+        if (right->dst.length > 0) newDest = MIN(newDest, right->dst.location);
+
+        left->dst.location = newDest;
         left->dst.length = HFSum(left->dst.length, right->dst.length);
         result = YES;
     }
@@ -253,13 +268,25 @@ static inline int compare_ull(unsigned long long a, unsigned long long b) {
     return (a > b) - (a < b);
 }
 
+static inline int compare_instructions(struct HFEditInstruction_t left, struct HFEditInstruction_t right) {
+    int result;
+    if ((result = compare_ull(left.src.location, right.src.location))) return result;
+    if ((result = compare_ull(left.dst.location, right.dst.location))) return result;
+    if ((result = compare_ull(left.src.length, right.src.length))) return result;
+    if ((result = compare_ull(right.dst.length, right.dst.length))) return result;
+    return 0;
+}
+
+
 static void append_instruction(HFByteArrayEditScript *self, HFRange rangeInA, HFRange rangeInB) {
     if (rangeInA.length || rangeInB.length) {
         
         /* Make the new instruction */
         const struct HFEditInstruction_t newInsn = {.src = rangeInA, .dst = rangeInB};
+        void * const selfP = self; //no need to retain self in the block
         
         dispatch_async(self->insnQueue, ^{
+            HFByteArrayEditScript * const self = selfP;
             /* The size of an instruction for some reason */
             const size_t insnSize = sizeof newInsn;
 
@@ -268,11 +295,7 @@ static void append_instruction(HFByteArrayEditScript *self, HFRange rangeInA, HF
             size_t low = 0, high = self->insnCount;
             while (low < high) {
                 size_t mid = low + (high - low)/2;
-                int direction = compare_ull(insnsPtr[mid].src.location, newInsn.src.location); //-1, 0, or 1
-                if (direction == 0) {
-                    //equal src, compare dst
-                    direction = compare_ull(insnsPtr[mid].dst.location, newInsn.dst.location);
-                }
+                int direction = compare_instructions(insnsPtr[mid], newInsn); //-1, 0, or 1
                 if (direction <= 0) {
                     // too low
                     low = mid + 1;
@@ -286,14 +309,34 @@ static void append_instruction(HFByteArrayEditScript *self, HFRange rangeInA, HF
             size_t insertionIndex = low;
             HFASSERT(insertionIndex <= self->insnCount);
             
-            /* Maybe we can merge */
+
+            BOOL done = NO;
+            
+            /* Maybe we can merge left */
             if (insertionIndex > 0 && merge_instruction(&self->insns[insertionIndex-1], &newInsn)) {
-                /* We merged left, so we're done! */
-            } else if (insertionIndex + 1 < self->insnCount && merge_instruction(&self->insns[insertionIndex+1], &newInsn)) {
-                /* We merged right, so we're done */
-            } else {
-                
-                /* Ensure we have enough space */
+                /* We merged left (into insertionIndex-1). We may also be able to merge right - try that. */
+                if (insertionIndex < self->insnCount && merge_instruction(&self->insns[insertionIndex - 1], &self->insns[insertionIndex])) {
+                    /* We merged right as well. Move everything past that left by 1. We just lost instruction insns[insertionIndex]. */
+                    memmove(&self->insns[insertionIndex], &self->insns[insertionIndex + 1], (self->insnCount - insertionIndex - 1) * sizeof(struct HFEditInstruction_t));
+                    self->insnCount--;
+                }
+                done = YES;
+            }
+            
+            /* Try merging right */
+            if (! done) {
+                if (insertionIndex < self->insnCount) {
+                    struct HFEditInstruction_t tmp = newInsn;
+                    if (merge_instruction(&tmp, &self->insns[insertionIndex])) {
+                        /* We merged right */
+                        self->insns[insertionIndex] = tmp;
+                        done = YES;
+                    }
+                }
+            }
+            
+            if (! done) {
+                /* We have to insert. Ensure we have enough space */
                 HFASSERT(self->insnCount <= self->insnCapacity);
                 if (self->insnCount == self->insnCapacity) {
                     size_t newBufferByteCount = malloc_good_size((self->insnCount + 1) * insnSize);
@@ -308,6 +351,20 @@ static void append_instruction(HFByteArrayEditScript *self, HFRange rangeInA, HF
                 self->insns[insertionIndex] = newInsn;
                 self->insnCount++;
             }
+            
+#if 0
+#if ! NDEBUG
+            /* This validation gets pretty slow */
+            if (! *self->cancelRequested) {
+                /* Verify that everything is sorted in ascending order and not mergeable */
+                size_t i;
+                for (i=1; i < self->insnCount; i++) {
+                    HFASSERT(compare_instructions(self->insns[i], self->insns[i-1]) > 0);
+                    HFASSERT(! can_merge_instruction(&self->insns[i-1], &self->insns[i]));
+                }
+            }
+#endif
+#endif
         });
     }
 }
@@ -591,7 +648,7 @@ static struct Snake_t computeActualMiddleSnake(HFByteArrayEditScript *self, stru
     result.progressConsumed = 0;
     
     volatile const int * const cancelRequested = self->cancelRequested;
-    
+        
     LocalIndex_t D;
     for (D=1; D <= maxD; D++) {
         //if (0 == (D % 256)) printf("Full %ld / %ld\n", D, maxD);
@@ -626,7 +683,7 @@ static struct Snake_t computeActualMiddleSnake(HFByteArrayEditScript *self, stru
         result.progressConsumed = progressConsumed;
 
         
-        /* We will be indexing from -D to D, so reallocate if necessary.  It's a little sketchy that we check both forwardsArray->length and backwardsArray->length, which are usually the same size: this is just in case malloc_good_size returns something different for them. */
+        /* We will be indexing from up to -D to D, so reallocate if necessary.  It's a little sketchy that we check both forwardsArray->length and backwardsArray->length, which are usually the same size: this is just in case malloc_good_size returns something different for them. */
         if ((size_t)D > forwardsBackwardsVectorLength) {
             GrowableArray_reallocate(&cacheGroup->forwardsArray, D, maxD);
             forwardsVector = cacheGroup->forwardsArray.ptr;
@@ -673,10 +730,24 @@ static struct Snake_t computeActualMiddleSnake(HFByteArrayEditScript *self, stru
 #else
         /* Manually unrolled variant */
         
+        /* We may have buffers of very different sizes. Rather than exploring "empty space" formed by the square, limit the diagonals we explore to the valid range. But make sure we keep the same parity (even/odd) as D!*/
+        LocalIndex_t startK = -D, endK = D;
+        if (-bLen > startK) {
+            /* We're going to skip empty space in the vertical direction (e.g. below our square). Keep same parity as D, rounding towards zero. E.g. if D is even, then -5 -> -4, -4 -> -4; if D is odd, then -6 -> -5, -5 -> -5 .*/
+            int parityChange = (D ^ bLen) & 1; //1 if the parities are different
+            startK = -bLen + parityChange;
+        }
+        if (aLen < endK) {
+            /* We're going to skip empty space in the horizontal direction (e.g. to the right of our square). Keep same parity as D, rounding towards zero. */
+            int parityChange = (D ^ aLen) & 1; //1 if the parities are different
+            endK = aLen - parityChange;
+        }
+        HFASSERT(startK < endK);
+        
         /* FORWARDS */
         if (oddDelta) {
             /* Check for overlap, but only when the diagonal is within the right range */
-            for (LocalIndex_t k = -D; k <= D; k += 2) {
+            for (LocalIndex_t k = startK; k <= endK; k += 2) {
                 if (*cancelRequested) break;
                 
                 LocalIndex_t flippedK = -(k + delta);
@@ -692,7 +763,7 @@ static struct Snake_t computeActualMiddleSnake(HFByteArrayEditScript *self, stru
             }
         } else {
             /* Don't check for overlap */
-            for (LocalIndex_t k = -D; k <= D; k += 2) {
+            for (LocalIndex_t k = startK; k <= endK; k += 2) {
                 if (*cancelRequested) break;
                 
                 computeMiddleSnakeTraversal(self, directABuff, directBBuff, YES /* forwards */, k, D, forwardsVector, aLen, bLen, &result);
@@ -702,7 +773,7 @@ static struct Snake_t computeActualMiddleSnake(HFByteArrayEditScript *self, stru
         /* BACKWARDS */
         if (! oddDelta) {
             /* Check for overlap, but only when the diagonal is within the right range */
-            for (LocalIndex_t k = -D; k <= D; k += 2) {
+            for (LocalIndex_t k = startK; k <= endK; k += 2) {
                 if (*cancelRequested) break;
                 
                 LocalIndex_t flippedK = -(k + delta);
@@ -718,7 +789,7 @@ static struct Snake_t computeActualMiddleSnake(HFByteArrayEditScript *self, stru
             }
         } else {
             /* Don't check for overlap */
-            for (LocalIndex_t k = -D; k <= D; k += 2) {
+            for (LocalIndex_t k = startK; k <= endK; k += 2) {
                 if (*cancelRequested) break;
                 
                 computeMiddleSnakeTraversal(self, directABuff, directBBuff, NO, k, D, backwardsVector, aLen, bLen, &result);
@@ -735,6 +806,29 @@ static struct Snake_t computeActualMiddleSnake(HFByteArrayEditScript *self, stru
 BYTEARRAY_RELEASE_INLINE
 static struct Snake_t computePrettyGoodSnake(HFByteArrayEditScript *self, struct TLCacheGroup_t * restrict cacheGroup, const unsigned char * restrict directABuff, const unsigned char * restrict directBBuff, LocalIndex_t aLen, LocalIndex_t bLen, unsigned long long fullLengthA, unsigned long long fullLengthB, BOOL forwards) {
     
+    /* Our result */
+    struct Snake_t result;
+    result.hasNonEmptySnake = true; //we don't support this, so just return true
+    result.progressConsumed = 0;
+    result.middleSnakeLength = 0; //we're always going to return a 0 length snake
+
+    
+    /* We mishandle one-length arrays, so treat those specially. */
+    HFASSERT(aLen >= 1 && bLen >= 1);
+    if (aLen == 1 || bLen == 1) {
+        if (aLen == 1) {
+            BOOL found = !! HFFastMemchr(directBBuff, *directABuff, bLen);
+            result.startX = found ? 1 : 0;
+            result.startY = bLen;
+        } else {
+            BOOL found = !! HFFastMemchr(directABuff, *directBBuff, aLen);
+            result.startY = found ? 1 : 0;
+            result.startX = aLen;            
+        }
+        result.startX = aLen/2;
+        result.startY = bLen/2;
+        return result;
+    }
     
     /* Run one-direction Myers diff until we exit the rectangle.  The diagonal that's made the most progress by the time any exit is the split point. */
     unsigned long long allocatedProgress = HFProductULL(fullLengthA, fullLengthB);
@@ -749,14 +843,9 @@ static struct Snake_t computePrettyGoodSnake(HFByteArrayEditScript *self, struct
     
     /* Initialize the vector */
     vector[0] = 0;
-    
-    /* Our result */
-    struct Snake_t result;
-    result.hasNonEmptySnake = true; //we don't support this, so just return true
-    result.progressConsumed = 0;
-    result.middleSnakeLength = 0; //we're always going to return a 0 length snake
-    
-    // we use 0 based indexing.  We have to remember to add in rangeInA.location and rangeInB.location before returning.
+        
+
+    // we use 0 based indexing.  Our caller will add in rangeInA.location and rangeInB.location before returning.
     result.startX = 0;
     result.startY = 0;
     
@@ -805,8 +894,11 @@ static struct Snake_t computeMiddleSnake(HFByteArrayEditScript *self, struct TLC
     LocalIndex_t readLengthA, readLengthB;
     BOOL useHeuristic = (rangeInA.length >= HEURISTIC_THRESHOLD || rangeInB.length >= HEURISTIC_THRESHOLD);
     if (useHeuristic) {
-        readLengthA = ull_to_index(MIN(HEURISTIC_THRESHOLD, rangeInA.length / 2));
-        readLengthB = ull_to_index(MIN(HEURISTIC_THRESHOLD, rangeInB.length / 2));
+        readLengthA = ull_to_index(MIN(HEURISTIC_THRESHOLD, MAX(1, rangeInA.length / 2)));
+        readLengthB = ull_to_index(MIN(HEURISTIC_THRESHOLD, MAX(1, rangeInB.length / 2)));
+        
+        /* No point in reading more from one than from the other */
+        readLengthA = readLengthB = MIN(readLengthA, readLengthB);
     } else {
         readLengthA = ull_to_index(rangeInA.length);
         readLengthB = ull_to_index(rangeInB.length);        
@@ -1084,7 +1176,10 @@ static inline enum HFEditInstructionType HFByteArrayInstructionType(struct HFEdi
             struct HFEditInstruction_t insn = insns[i];
             if (i > 0) {
                 HFASSERT(insn.src.location >= prevInsn.src.location);
-                HFASSERT(insn.dst.length == 0 || insn.dst.location >= prevInsn.dst.location);
+                HFASSERT(insn.dst.length == 0 || prevInsn.dst.length == 0 || insn.dst.location >= prevInsn.dst.location);
+                HFASSERT(compare_instructions(insn, prevInsn) > 0);
+                HFASSERT(! can_merge_instruction(&prevInsn, &insn));
+                HFASSERT(! can_merge_instruction(&insn, &prevInsn));
             }
             prevInsn = insn;
         }
@@ -1208,3 +1303,41 @@ static inline enum HFEditInstructionType HFByteArrayInstructionType(struct HFEdi
 }
 
 @end
+
+#if HFUNIT_TESTS
+
+@implementation HFByteArrayEditScript (HFUnitTests)
+
+#define HFTEST(a) do { if (! (a)) { printf("Test failed on line %u of file %s: %s\n", __LINE__, __FILE__, #a); exit(0); } } while (0)
+
+static BOOL test_merge(struct HFEditInstruction_t left, struct HFEditInstruction_t right, struct HFEditInstruction_t expectedResult) {
+    if (merge_instruction(&left, &right)) {
+        HFTEST(HFRangeEqualsRange(left.src, expectedResult.src));
+        HFTEST(HFRangeEqualsRange(left.dst, expectedResult.dst));
+        return YES;
+    }
+    return NO;
+}
+
+static struct HFEditInstruction_t newinsn(unsigned long long a, unsigned long long b, unsigned long long c, unsigned long long d) {
+    struct HFEditInstruction_t result;
+    result.src.location = a;
+    result.src.length = b;
+    result.dst.location = c;
+    result.dst.length = d;
+    return result;
+}
+
++ (void)_unitTestStaticFunctions {
+#if 0
+    struct HFEditInstruction_t left = newinsn(0, 0, 0, 0), right = newinsn(0, 0, ULLONG_MAX, 0);
+    HFTEST(test_merge(left, right, newinsn(0, 0, ULLONG_MAX, 0)));
+    left.src.length = 1;
+    HFTEST(test_merge(left, right, newinsn(0, 0, ULLONG_MAX, 0)));
+    //wow, do I ever need to make a lot more of these tests!
+#endif
+}
+
+@end
+
+#endif
