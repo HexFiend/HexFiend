@@ -370,7 +370,7 @@ BOOL HFStringEncodingIsSupersetOfASCII(NSStringEncoding encoding);
 uint8_t HFStringEncodingCharacterLength(NSStringEncoding encoding);
 
 /*! Converts an unsigned long long to NSUInteger.  The unsigned long long should be no more than ULLONG_MAX. */
-static inline unsigned long ll2l(unsigned long long val) { assert(val <= NSUIntegerMax); return (unsigned long)val; }
+static inline unsigned long ll2l(unsigned long long val) { assert(val <= ULONG_MAX); return (unsigned long)val; }
 
 /*! Returns an unsigned long long, which must be no more than ULLONG_MAX, as an unsigned long. */
 static inline CGFloat ld2f(long double val) {
