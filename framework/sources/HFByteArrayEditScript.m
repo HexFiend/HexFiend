@@ -1076,12 +1076,12 @@ static struct Snake_t computePrettyGoodSnake2(HFByteArrayEditScript *self, struc
 }
 
 struct LatticePoint_t {
-    unsigned long long x;
-    unsigned long long y;
+    LocalIndex_t x;
+    LocalIndex_t y;
 };
 
 BYTEARRAY_RELEASE_INLINE
-BOOL computePrettyGoodMiddleSnakeTraversal(HFByteArrayEditScript *self, const unsigned char * restrict aBuff, const unsigned char * restrict bBuff, BOOL forwards, LocalIndex_t k, LocalIndex_t D, GraphIndex_t *restrict vector, LocalIndex_t aLen, LocalIndex_t bLen, struct Snake_t * restrict result) {
+BOOL computePrettyGoodMiddleSnakeTraversal(HFByteArrayEditScript *self, const unsigned char * restrict aBuff, const unsigned char * restrict bBuff, BOOL forwards, LocalIndex_t k, LocalIndex_t D, GraphIndex_t *restrict vector, LocalIndex_t aLen, LocalIndex_t bLen, struct LatticePoint_t * restrict bestAchievedCoords) {
     /* It would be nice if this could be combined with computeMiddleSnakeTraversal */
     USE(self);
     
@@ -1133,6 +1133,10 @@ BOOL computePrettyGoodMiddleSnakeTraversal(HFByteArrayEditScript *self, const un
     HFASSERT(y <= bLen);
     vector[k] = x;
     
+    /* Update bestAchievedCoords */
+    if (x > bestAchievedCoords->x) bestAchievedCoords->x = x;
+    if (y > bestAchievedCoords->x) bestAchievedCoords->y = y;
+    
     /* Return YES if we reached the edge in either dimension. */
     return snakeLength == maxSnakeLength;
 }
@@ -1140,18 +1144,20 @@ BOOL computePrettyGoodMiddleSnakeTraversal(HFByteArrayEditScript *self, const un
 BYTEARRAY_RELEASE_INLINE
 static struct LatticePoint_t bestDiagonal(HFByteArrayEditScript *self, LocalIndex_t D, const LocalIndex_t * restrict vector) {
     /* Find the diagonal that did the best. */
-    LocalIndex_t bestX = 0, bestY = 0, bestScore = -1;
+    USE(self);
+    struct LatticePoint_t result = {0, 0};
+    LocalIndex_t bestScore = -1;
     for (LocalIndex_t k = -D; k <= D; k += 2) {
         LocalIndex_t x = vector[k];
         LocalIndex_t y = x - k;
         LocalIndex_t score = x + y;
         if (score > bestScore) {
             bestScore = score;
-            bestX = x;
-            bestY = y;
+            result.x = x;
+            result.y = y;
         }
     }
-    return (struct LatticePoint_t){bestX, bestY};
+    return result;
 }
 
 BYTEARRAY_RELEASE_INLINE
@@ -1163,10 +1169,6 @@ static struct Snake_t computePrettyGoodMiddleSnake3(HFByteArrayEditScript *self,
     HFASSERT(bLen > 0);
     const unsigned long long progressAllocated = HFProductULL(aLen, bLen);
 #endif
-        
-    /* Adding delta to k in the forwards direction gives you k in the backwards direction */
-    const LocalIndex_t delta = bLen - aLen;
-    const BOOL oddDelta = (delta & 1); 
     
     /* k cannot exceeed SQUARE_CACHE_SIZE so allocate that up front */
     const LocalIndex_t maxD = SQUARE_CACHE_SIZE;
@@ -1179,13 +1181,9 @@ static struct Snake_t computePrettyGoodMiddleSnake3(HFByteArrayEditScript *self,
     forwardsVector[0] = 0;
     backwardsVector[0] = 0;    
     
-    /* Our two results */
-    struct Snake_t forwardsResult = {0}, backwardsResult = {0};    
-    volatile const int * const cancelRequested = self->cancelRequested;
-    
+    volatile const int * const cancelRequested = self->cancelRequested;    
     struct LatticePoint_t maxAchievedForwards = {0, 0}, maxAchievedBackwards = {0, 0};
 
-    
     /* The offsets of our buffers */
     unsigned long long offsets[NUM_CACHES] = {0, 0, 0, 0};
     
@@ -1205,8 +1203,10 @@ static struct Snake_t computePrettyGoodMiddleSnake3(HFByteArrayEditScript *self,
         [DestBackwards] = get_cached_bytes(self, cacheGroup, self->destination, self->destLength, HFMaxRange(rangeInB) - lengths[DestBackwards], lengths[DestBackwards], DestBackwards)
     };
     
-    LocalIndex_t D;
-    for (D=1; D <= maxD; D++) {
+    LocalIndex_t forwardsD = 1, backwardsD = 1;
+    for (;;) {
+        HFASSERT(forwardsD <= maxD);
+        HFASSERT(backwardsD <= maxD);
         //if (0 == (D % 256)) printf("Heuristic %ld / %ld\n", D, maxD);
         
         /* Check for cancellation */
@@ -1232,51 +1232,116 @@ static struct Snake_t computePrettyGoodMiddleSnake3(HFByteArrayEditScript *self,
         
         /* Forwards */
         BOOL exitedForwards = NO;
-        for (LocalIndex_t k = -D; k <= D; k += 2) {
+        for (LocalIndex_t k = -forwardsD; k <= forwardsD; k += 2) {
             if (*cancelRequested) break;
-            if (computePrettyGoodMiddleSnakeTraversal(self, buffers[SourceForwards], buffers[DestForwards], YES /* forwards */, k, D, forwardsVector, lengths[SourceForwards], lengths[DestForwards], &result)) {
+            if (computePrettyGoodMiddleSnakeTraversal(self, buffers[SourceForwards], buffers[DestForwards], YES /* forwards */, k, forwardsD, forwardsVector, lengths[SourceForwards], lengths[DestForwards], &maxAchievedForwards)) {
                 exitedForwards = YES;
             }
         }
         
-        if (exitedForwards) {
-            /* Find the diagonal that did the best */
-            struct LatticePoint_t diagonal = bestDiagonal(self, D, forwardsVector);
-            HFASSERT(diagonal.x + offsets[SourceForwards] <= aLen);
-            HFASSERT(diagonal.y + offsets[SourceBackwards] <= bLen);
-            
-            /* Compute our new rectangle starting position */
-            unsigned long long aOffset = offsets[SourceForwards] + diagonal.x, bOffset = offsets[DestForwards] + diagonal.y;
-            
-            /* Extend any snake from that diagonal */
-            int64_t tmpProgress = 0;
-            unsigned long long snakeLength = compute_forwards_snake_length(self, cacheGroup, self->source, aOffset, rangeInA.length - aOffset, self->destination, bOffset, rangeInB.length - bOffset, &tmpProgress, cancelRequested);
-            aOffset = HFSum(aOffset, snakeLength);
-            bOffset = HFSum(bOffset, snakeLength);
-            
-            /* Now reallocate */
-            
-        }
-        
         /* Backwards */
         BOOL exitedBackwards = NO;
-        for (LocalIndex_t k = -D; k <= D; k += 2) {
+        for (LocalIndex_t k = -backwardsD; k <= backwardsD; k += 2) {
             if (*cancelRequested) break;            
-            if (computePrettyGoodMiddleSnakeTraversal(self, buffers[SourceBackwards], buffers[DestBackwards], NO /* backwards */, k, D, backwardsVector, lengths[SourceBackwards], lengths[DestBackwards], &result)) {
+            if (computePrettyGoodMiddleSnakeTraversal(self, buffers[SourceBackwards], buffers[DestBackwards], NO /* backwards */, k, backwardsD, backwardsVector, lengths[SourceBackwards], lengths[DestBackwards], &maxAchievedBackwards)) {
                 exitedBackwards = YES;
             }
         }
         
+        if (exitedForwards) {
+            const int sourceDir = SourceForwards, destDir = DestForwards;
+            
+            /* Find the diagonal that did the best */
+            struct LatticePoint_t diagonal = bestDiagonal(self, forwardsD, forwardsVector);
+            HFASSERT(diagonal.x >= 0);
+            HFASSERT(diagonal.y >= 0);
+            
+            /* Compute our new rectangle starting position */
+            offsets[sourceDir] += diagonal.x;
+            offsets[destDir] += diagonal.y;
+            HFASSERT(offsets[sourceDir] <= rangeInA.length);
+            HFASSERT(offsets[destDir] <= rangeInB.length);
+            
+            /* Extend any snake from that diagonal */
+            int64_t tmpProgress = 0;
+            unsigned long long snakeLength = compute_forwards_snake_length(self, cacheGroup, self->source, offsets[sourceDir] + rangeInA.location, rangeInA.length - offsets[sourceDir], self->destination, offsets[destDir] + rangeInB.location, rangeInB.length - offsets[destDir], &tmpProgress, cancelRequested);
+            offsets[sourceDir] = HFSum(offsets[sourceDir], snakeLength);
+            offsets[destDir] = HFSum(offsets[destDir], snakeLength);
+            
+            /* Compute new lengths */
+            lengths[sourceDir] = (LocalIndex_t)MIN(SQUARE_CACHE_SIZE, rangeInA.length - offsets[sourceDir]);
+            lengths[destDir] = (LocalIndex_t)MIN(SQUARE_CACHE_SIZE, rangeInB.length - offsets[destDir]);
+
+            /* Now reallocate */
+            buffers[sourceDir] = get_cached_bytes(self, cacheGroup, self->source, self->sourceLength, rangeInA.location + offsets[sourceDir], lengths[sourceDir], sourceDir);
+            buffers[destDir] = get_cached_bytes(self, cacheGroup, self->destination, self->destLength, rangeInB.location + offsets[destDir], lengths[destDir], destDir);
+            
+            /* D starts over */
+            //forwardsD = 1;
+        }
+        
+        if (exitedBackwards) {
+            const int sourceDir = SourceBackwards, destDir = DestBackwards;
+            
+            /* Find the diagonal that did the best */
+            struct LatticePoint_t diagonal = bestDiagonal(self, backwardsD, backwardsVector);
+            HFASSERT(diagonal.x >= 0);
+            HFASSERT(diagonal.y >= 0);
+            
+            /* Compute our new rectangle starting position */
+            offsets[sourceDir] += diagonal.x;
+            offsets[destDir] += diagonal.y;
+            HFASSERT(offsets[sourceDir] <= rangeInA.length);
+            HFASSERT(offsets[destDir] <= rangeInB.length);
+            
+            /* Extend any snake from that diagonal */
+            int64_t tmpProgress = 0;
+            unsigned long long snakeLength = compute_backwards_snake_length(self, cacheGroup, self->source, HFMaxRange(rangeInA) - offsets[sourceDir], rangeInA.length - offsets[sourceDir], self->destination, HFMaxRange(rangeInB) - offsets[destDir], rangeInB.length - offsets[destDir], &tmpProgress, cancelRequested);
+            offsets[sourceDir] = HFSum(offsets[sourceDir], snakeLength);
+            offsets[destDir] = HFSum(offsets[destDir], snakeLength);
+            
+            /* Compute new lengths */
+            lengths[sourceDir] = (LocalIndex_t)MIN(SQUARE_CACHE_SIZE, rangeInA.length - offsets[sourceDir]);
+            lengths[destDir] = (LocalIndex_t)MIN(SQUARE_CACHE_SIZE, rangeInB.length - offsets[DestForwards]);
+            
+            /* Now reallocate */
+            buffers[sourceDir] = get_cached_bytes(self, cacheGroup, self->source, self->sourceLength, rangeInA.location + offsets[sourceDir], lengths[sourceDir], sourceDir);
+            buffers[DestForwards] = get_cached_bytes(self, cacheGroup, self->destination, self->destLength, rangeInB.location + offsets[destDir], lengths[destDir], destDir);
+            
+            /* D starts over */
+            //backwardsD = 1;
+        }
+                        
         /* Check for overlap in either dimension */
-        if (HFSum(maxAchievedForwards.x, maxAchievedBackwards.x) > rangeInA.length || HFSum(forwardsResult.y, backwardsResult.y) > rangeInB.length) {
-            /* Overlap */
-            return something;
+        unsigned long long totalX = offsets[SourceForwards] + (unsigned long long)maxAchievedForwards.x + offsets[SourceBackwards] + (unsigned long long)maxAchievedBackwards.x;
+        unsigned long long totalY = offsets[DestForwards] + (unsigned long long)maxAchievedForwards.y + offsets[DestBackwards] + (unsigned long long)maxAchievedBackwards.y;
+        
+        if (totalX > rangeInA.length || totalY > rangeInB.length) {
+            
+            /* We've overlapped in some dimension. Return the best diagonal thus far. */
+            struct LatticePoint_t fw = bestDiagonal(self, forwardsD, forwardsVector);
+            struct LatticePoint_t bk = bestDiagonal(self, backwardsD, backwardsVector);
+            
+            unsigned long long forwardScore = fw.x + fw.y + offsets[SourceForwards] + offsets[DestForwards];
+            unsigned long long backwardScore = bk.x + bk.y + offsets[SourceBackwards] + offsets[DestBackwards];
+            
+            struct Snake_t result;
+            result.middleSnakeLength = 0;
+            result.progressConsumed = 0;
+            result.hasNonEmptySnake = YES;
+            if (forwardScore >= backwardScore) {
+                result.startX = rangeInA.location + HFSum(fw.x, offsets[SourceForwards]);
+                result.startY = rangeInB.location + HFSum(fw.y, offsets[DestForwards]);
+            } else {
+                result.startX = HFMaxRange(rangeInA) - HFSum(bk.x, offsets[SourceBackwards]);
+                result.startY = HFMaxRange(rangeInB) - HFSum(bk.y, offsets[DestBackwards]);                
+            }
         }
     }
     
     /* We don't expect to exit this loop unless we cancel */
     HFASSERT(*self->cancelRequested);
-    return result;
+    return forwardsResult;
 }
 
 
