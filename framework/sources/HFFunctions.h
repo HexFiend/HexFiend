@@ -179,6 +179,16 @@ static inline BOOL HFRangeIsSubrangeOfRange(HFRange needle, HFRange haystack) {
     return haystack.length - needle.length >= needle.location - haystack.location;
 }
 
+/*! Splits a range about a subrange, returning by reference the prefix and suffix (which may have length zero). */
+static inline void HFRangeSplitAboutSubrange(HFRange range, HFRange subrange, HFRange *outPrefix, HFRange *outSuffix) {
+    // Requires it to be a subrange
+    assert(HFRangeIsSubrangeOfRange(subrange, range));
+    outPrefix->location = range.location;
+    outPrefix->length = HFSubtract(subrange.location, range.location);
+    outSuffix->location = HFMaxRange(subrange);
+    outSuffix->length = HFMaxRange(range) - outSuffix->location;
+}
+
 /*! Returns YES if the given ranges intersect. Two ranges are considered to intersect if they share at least one index in common.  Thus, zero-length ranges do not intersect anything. */
 static inline BOOL HFIntersectsRange(HFRange a, HFRange b) {
     // Ranges are said to intersect if they share at least one value.  Therefore, zero length ranges never intersect anything.

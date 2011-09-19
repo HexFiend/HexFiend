@@ -348,13 +348,12 @@ static HFByteArray *byteArrayForFile(NSString *path) {
     
     const BOOL should_debug = NO;
     NSMutableArray *byteArrays = [NSMutableArray array];
-    NSUInteger i, arrayCount = 16;
+    NSUInteger i, arrayCount = 4;
     
     HFByteArray *base = [[HFBTreeByteArray alloc] init];
     [byteArrays addObject:base];
     [base release];
-    NSData *data = randomDataOfLength(15000);
-    HFByteSlice *slice = [[HFFullMemoryByteSlice alloc] initWithData:data];
+    HFByteSlice *slice = [[HFRandomDataByteSlice alloc] initWithRandomDataLength:32 * 1024];
     [base insertByteSlice:slice inRange:HFRangeMake(0, 0)];
     [slice release];
     unsigned long long baseLength = [base length];
@@ -371,19 +370,20 @@ static HFByteArray *byteArrayForFile(NSString *path) {
             NSUInteger op;
             switch ((op = (random()%2))) {
                 case 0: { //insert
-                    NSData *data = randomDataOfLength(1 + random()%64);
+                    number = 1 + random() % 64;
                     offset = random() % (1 + length);
-                    HFByteSlice* slice = [[HFFullMemoryByteSlice alloc] initWithData:data];
+                    HFByteSlice* slice = [[HFRandomDataByteSlice alloc] initWithRandomDataLength:number];
                     DEBUG printf("%lu)\tInserting %llu bytes at %llu...", i, [slice length], offset);
                     [modified insertByteSlice:slice inRange:HFRangeMake(offset, 0)];
                     [slice release];
-                    length += [data length];
+                    length += number;
+                    
                     break;
                 }
                 case 1: { //delete
                     if (length > 0) {
                         offset = random() % length;
-                        number = 1 + random() % (length - offset);
+                        number = 1 + (unsigned long long)sqrt(random() % (length - offset));
                         DEBUG printf("%lu)\tDeleting at %llu for %llu...", i, offset, number);
                         [modified deleteBytesInRange:HFRangeMake(offset, number)];
                         length -= number;
@@ -404,12 +404,11 @@ static HFByteArray *byteArrayForFile(NSString *path) {
         HFByteArray *src = [byteArrays objectAtIndex:i];
         NSUInteger j;
         for (j=0; j < arrayCount; j++) {
-            printf("Tested %lu / %lu\n", i * arrayCount + j, arrayCount * arrayCount);
             HFByteArray *dst = [byteArrays objectAtIndex:j];
+            printf("Tested %lu / %lu (lengths are %llu, %llu)\n", i * arrayCount + j, arrayCount * arrayCount, [src length], [dst length]);
             HFByteArrayEditScript *script = [[HFByteArrayEditScript alloc] initWithDifferenceFromSource:src toDestination:dst trackingProgress:nil];
             HFByteArray *guineaPig = [src mutableCopy];
             [script applyToByteArray:guineaPig];
-            [script release];
             if ([dst _debugIsEqual:guineaPig]) {
                 DEBUG printf("Edit script success with length %llu\n", [dst length]);
             }
@@ -417,6 +416,11 @@ static HFByteArray *byteArrayForFile(NSString *path) {
                 DEBUG printf("Error! Edit script failure with length %llu\n", [dst length]);
                 exit(EXIT_FAILURE);
             }
+            if (i == j) {
+                /* Comparing an array to itself should always produce a 0 length script */
+                HFTEST([script numberOfInstructions] == 0);
+            }
+            [script release];
             [guineaPig release];
         }
     }
@@ -764,11 +768,11 @@ static void exception_thrown(const char *methodName, NSException *exception) {
 
 + (void)runAllTests {
     CFAbsoluteTime start = CFAbsoluteTimeGetCurrent();
-    BOOL enableTest = YES;
+    BOOL enableTest = NO;
     if (enableTest) [self _runTest:"_testFastMemchr"];
     if (enableTest) [self _runTest:"_testRangeFunctions"];
     if (enableTest) [self _runTest:"_testByteArray"];
-    if (enableTest) [self _runTest:"_testByteArrayEditScripts"];
+    if (enableTest || 1) [self _runTest:"_testByteArrayEditScripts"];
     if (enableTest) [self _runTest:"_testTextInsertion"];
     if (enableTest) [self _runTest:"_testTextInsertion"];
     if (enableTest) [self _runTest:"_testObjectGraph"];

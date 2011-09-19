@@ -335,6 +335,11 @@
         idx++;
     }
     [localRuns release];
+}
+
+- (BOOL)isEqual:(id)val {
+    if (! [val isKindOfClass:[HFAnnotatedTree class]]) return NO;
+    
     
 }
 

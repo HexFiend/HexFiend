@@ -110,7 +110,7 @@ static inline unsigned char munge(unsigned long long val64, const unsigned char 
 - (HFByteSlice *)subsliceWithRange:(HFRange)range {
     HFASSERT(HFRangeIsSubrangeOfRange(range, HFRangeMake(0, length)));
     HFRandomDataByteSlice *result = [[[[self class] alloc] initWithLength:range.length pearsonTable:pearsonTable] autorelease];
-    result->start = range.location;
+    result->start = self->start + range.location;
     return result;
 }
 
