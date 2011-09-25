@@ -8,6 +8,11 @@
 
 #import <HexFiend/HFByteRangeAttributeArray.h>
 #import <HexFiend/HFAnnotatedTree.h>
+#import <HexFiend/HFByteRangeAttribute.h>
+
+@interface HFByteRangeAttributeArray (HFForwardDeclarations)
+- (BOOL)shouldTransferAttribute:(NSString *)attribute;
+@end
 
 @interface HFByteRangeAttributeRun : NSObject {
 @public
@@ -77,30 +82,50 @@
     UNIMPLEMENTED_VOID();
 }
 
+- (BOOL)shouldTransferAttribute:(NSString *)attribute {
+    /* Hack: in transferAttributesFromAttributeArray:, prevent things like getting duplicate bookmarks. This logic should live somewhere else. */
+    if ([attribute isEqualToString:kHFAttributeDiffInsertion] || [attribute isEqualToString:kHFAttributeFocused]) {
+        return NO;
+    } else if (HFBookmarkFromBookmarkAttribute(attribute) != NSNotFound) {
+        return HFRangeEqualsRange([self rangeOfAttribute:attribute], HFRangeMake(ULLONG_MAX, ULLONG_MAX));
+    } else {
+        return YES;
+    }
+}
+
+
 - (BOOL)isEqual:(HFByteRangeAttributeArray *)array {
     if (! [array isKindOfClass:[HFByteRangeAttributeArray class]]) return NO;
     HFRange remaining = HFRangeMake(0, ULLONG_MAX);
-    const BOOL log = YES;
     BOOL result = YES;
     NSUInteger amt = 0;
+    static int NUM = 0;
+    int num = ++NUM;
+    const BOOL log = (num == 2);
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     while (remaining.length > 0) {
         unsigned long long applied1, applied2;
         NSSet *atts1 = [self attributesAtIndex:remaining.location length:&applied1];
         NSSet *atts2 = [array attributesAtIndex:remaining.location length:&applied2];
         if (applied1 != applied2) {
-            if (log) NSLog(@"Failed %d", __LINE__);
+            if (log) {
+                NSLog(@"%d Failed %d", num, __LINE__);
+            }
             [array attributesAtIndex:remaining.location length:&applied2];
             result = NO;
             break;
         }
         if (result && !atts1 != !atts2) {
-            if (log) NSLog(@"Failed %d", __LINE__);
+            if (log) {
+                NSLog(@"%d Failed %d", num, __LINE__);
+            }
             result = NO;
             break;
         }
         if (! (atts1 == atts2 || [atts1 isEqual:atts2])) {
-            if (log) NSLog(@"Failed %d", __LINE__);
+            if (log) {
+                NSLog(@"%d Failed %d", num, __LINE__);
+            }
             result = NO;
             break;
         }
@@ -113,6 +138,10 @@
     }
     [pool drain];
     return result;
+}
+
+- (NSUInteger)hash {
+    return 0; //d'oh, no obvious way to hash this
 }
 
 @end
@@ -255,10 +284,12 @@
     HFASSERT(array != self);
     EXPECT_CLASS(array, HFNaiveByteRangeAttributeArray);
     FOREACH(HFByteRangeAttributeRun *, run, array->attributeRuns) {
-        HFRange intersection = HFIntersectionRange(range, run->range);
-        if (intersection.length > 0) {
-            intersection.location += baseOffset;
-            [self addAttribute:run->name range:intersection];
+        if ([self shouldTransferAttribute:run->name]) {
+            HFRange intersection = HFIntersectionRange(range, run->range);
+            if (intersection.length > 0) {
+                intersection.location += baseOffset;
+                [self addAttribute:run->name range:intersection];
+            }
         }
     }
 }
@@ -337,12 +368,6 @@
     [localRuns release];
 }
 
-- (BOOL)isEqual:(id)val {
-    if (! [val isKindOfClass:[HFAnnotatedTree class]]) return NO;
-    
-    
-}
-
 @end
 
 /* Our ATree node class for storing an attribute. */
@@ -407,7 +432,7 @@ static unsigned long long node_max_range(id left, id right) {
     return result;
 }
 
-static BOOL applyFunctionForNodesInRange(HFByteRangeAttributeArrayNode *node, HFRange rangeOfInterest, BOOL (*func)(HFByteRangeAttributeArrayNode *, HFRange, void *), void *userInfo, BOOL isRoot) {
+static BOOL applyHandlerForNodesInRange(HFByteRangeAttributeArrayNode *node, HFRange rangeOfInterest, BOOL (^block)(HFByteRangeAttributeArrayNode *, HFRange), BOOL isRoot) {
     BOOL shouldContinue = YES;
     
     /* Figure out whether to recurse left and/or right */
@@ -425,7 +450,7 @@ static BOOL applyFunctionForNodesInRange(HFByteRangeAttributeArrayNode *node, HF
     
     /* Recurse left first, so we go in-order */
     if (shouldContinue && recurseLeft) {
-        shouldContinue = applyFunctionForNodesInRange((HFByteRangeAttributeArrayNode *)(node->left), rangeOfInterest, func, userInfo, NO /* not isRoot */);
+        shouldContinue = applyHandlerForNodesInRange((HFByteRangeAttributeArrayNode *)(node->left), rangeOfInterest, block, NO /* not isRoot */);
     }
     
     /* Now try this node, unless it's root */
@@ -434,13 +459,13 @@ static BOOL applyFunctionForNodesInRange(HFByteRangeAttributeArrayNode *node, HF
         EXPECT_CLASS(node, HFByteRangeAttributeArrayNode);
         HFRange intersection = HFIntersectionRange(rangeOfInterest, node->range);
         if (intersection.length > 0) {
-            shouldContinue = func(node, intersection, userInfo);
+            shouldContinue = block(node, intersection);
         }	
     }
     
     /* Now recurse right */
     if (shouldContinue && recurseRight) {
-        shouldContinue = applyFunctionForNodesInRange((HFByteRangeAttributeArrayNode *)(node->right), rangeOfInterest, func, userInfo, NO /* not isRoot */);
+        shouldContinue = applyHandlerForNodesInRange((HFByteRangeAttributeArrayNode *)(node->right), rangeOfInterest, block, NO /* not isRoot */);
     }
     
     return shouldContinue;
@@ -458,8 +483,8 @@ static BOOL applyFunctionForNodesInRange(HFByteRangeAttributeArrayNode *node, HF
 
 @implementation HFAnnotatedTreeByteRangeAttributeArray
 
-- (BOOL)walkNodesInRange:(HFRange)range withFunction:(BOOL (*)(HFByteRangeAttributeArrayNode *, HFRange, void *))func userInfo:(void *)userInfoP {
-    return applyFunctionForNodesInRange([self->atree rootNode], range, func, userInfoP, YES /* isRoot */);
+- (BOOL)walkNodesInRange:(HFRange)range withBlock:(BOOL (^)(HFByteRangeAttributeArrayNode *node, HFRange range))handler {
+    return applyHandlerForNodesInRange([self->atree rootNode], range, handler, YES /* isRoot */);
 }
 
 - (id)init {
@@ -503,16 +528,16 @@ static void insertIntoDictionaryOfSets(NSMutableDictionary *dictionary, NSString
     [node release];
 }
 
-static BOOL collectNodesWithAttribute(HFByteRangeAttributeArrayNode *node, HFRange intersection, void *userInfoP) {
-    USE(intersection);
-    [(id)userInfoP addObject:node];
-    return YES; //continue
-}
-
 - (void)removeAttribute:(NSString *)attributeName range:(HFRange)range {
     /* Get the nodes that we will delete */
     NSMutableArray *nodesToDelete = [[NSMutableArray alloc] init];
-    [self walkNodesInRange:range withFunction:collectNodesWithAttribute userInfo:nodesToDelete];
+    [self walkNodesInRange:range withBlock:^(HFByteRangeAttributeArrayNode *node, HFRange range){
+        USE(range);
+        if ([attributeName isEqualToString:node->attribute]) {
+            [nodesToDelete addObject:node];
+        }
+        return YES;
+    }];
     
     /* We're going to remove these from the attributesToNodes set */
     NSMutableSet *allNodesWithAttribute = [attributesToNodes objectForKey:attributeName];
@@ -570,95 +595,68 @@ static BOOL collectNodesWithAttribute(HFByteRangeAttributeArrayNode *node, HFRan
     }
 }
 
-struct CollectAttributes_t {
-    NSMutableSet *attributes;
-    unsigned long long locationOfInterest;
-    unsigned long long validLength;
-};
-static BOOL collectAttributes(HFByteRangeAttributeArrayNode *node, HFRange intersection, void *userInfoP) {
-    struct CollectAttributes_t *userInfo = userInfoP;
-    BOOL shouldContinue;
-    /* Store in validLength the maximum length over which all attributes are valid. */
-    if (HFLocationInRange(userInfo->locationOfInterest, intersection)) {
-        /* We want this node's attribute */
-        [userInfo->attributes addObject:node->attribute];
-        /* This node contains the location we're interested in, so we are valid to the end of the intersection. */
-        userInfo->validLength = MIN(userInfo->validLength, HFSubtract(HFMaxRange(intersection), userInfo->locationOfInterest));
-        /* Maybe there's more nodes */
-        shouldContinue = YES;
-    }
-    else {
-        /* This node does not contain the location we're interested in (it must start beyond it), so we are valid to the beginning of its range */
-        userInfo->validLength = MIN(userInfo->validLength, HFSubtract(intersection.location, userInfo->locationOfInterest));
-        /* Since the nodes are walked left-to-right according to the node's start location, no subsequent node can contain our locationOfInterest, and all subsequent nodes must have a start location at or after this one.  So we're done. */
-        shouldContinue = NO;
-    }
-    return shouldContinue;
-}
-
 - (NSSet *)attributesAtIndex:(unsigned long long)index length:(unsigned long long *)length {
-    struct CollectAttributes_t userInfo = {
-        .attributes = [[NSMutableSet alloc] init],
-        .locationOfInterest = index,
-        .validLength = ULLONG_MAX
-    };
-    /* length will contain the length over which the given set of attributes applies.  In case no attributes apply, we need to return that length; so we need to walk the entire tree.. */
-    [self walkNodesInRange:HFRangeMake(index, ULLONG_MAX - index) withFunction:collectAttributes userInfo:&userInfo];
-    if (length) *length = userInfo.validLength;
-    return [userInfo.attributes autorelease];
-}
+    NSMutableSet *attributes = [[NSMutableSet alloc] init];
+    __block unsigned long long maxLocation = ULLONG_MAX;
+    /* length will contain the length over which the given set of attributes applies.  In case no attributes apply, we need to return that length; so we need to walk the entire tree. */
+    [self walkNodesInRange:HFRangeMake(index, ULLONG_MAX - index) withBlock:^(HFByteRangeAttributeArrayNode *node, HFRange intersection) {
+        BOOL shouldContinue;
+        /* Store in validLength the maximum length over which all attributes are valid. */
+        if (HFLocationInRange(index, intersection)) {
+            /* We want this node's attribute */
+            [attributes addObject:node->attribute];
+            /* This node contains the location we're interested in, so we are valid to the end of the intersection. */
+            maxLocation = MIN(maxLocation, HFMaxRange(intersection));
+            /* Maybe there's more nodes */
+            shouldContinue = YES;
+        }
+        else {
+            /* This node does not contain the location we're interested in (it must start beyond it), so we are valid to the beginning of its range */
+            maxLocation = MIN(maxLocation, intersection.location);
+            /* Since the nodes are walked left-to-right according to the node's start location, no subsequent node can contain our locationOfInterest, and all subsequent nodes must have a start location at or after this one.  So we're done. */
+            shouldContinue = NO;
+        }
+        return shouldContinue;
 
-struct FindAttribute_t {
-    NSString *attribute;
-    HFRange resultRange;
-};
-static BOOL findAttribute(HFByteRangeAttributeArrayNode *node, HFRange intersection, void *userInfoP) {
-    USE(intersection);
-    BOOL result = YES; /* assume continue */
-    struct FindAttribute_t *userInfo = userInfoP;
-    if ([userInfo->attribute isEqualToString:node->attribute]) {
-        userInfo->resultRange = node->range;
-        result = NO; /* all done */
-    }
-    return result;
+    }];
+    HFASSERT(maxLocation > index);
+    if (length) *length = maxLocation - index;
+    return [attributes autorelease];
 }
 
 - (HFRange)rangeOfAttribute:(NSString *)attribute {
-    struct FindAttribute_t userInfo = {
-        .attribute = attribute,
-        .resultRange = {ULLONG_MAX, ULLONG_MAX}
-    };
-    [self walkNodesInRange:HFRangeMake(0, ULLONG_MAX) withFunction:findAttribute userInfo:&userInfo];
-    return userInfo.resultRange;
+    __block HFRange resultRange = {ULLONG_MAX, ULLONG_MAX};
+    [self walkNodesInRange:HFRangeMake(0, ULLONG_MAX) withBlock:^BOOL(HFByteRangeAttributeArrayNode *node, HFRange range) {
+        USE(range);
+        BOOL result = YES; /* assume continue */
+        if ([attribute isEqualToString:node->attribute]) {
+            resultRange = node->range;
+            result = NO; /* all done */
+        }
+        return result;
+    }];
+    return resultRange;
 }
 
-static BOOL fetchAttributes(HFByteRangeAttributeArrayNode *node, HFRange range, void *userInfo) {
-    USE(range);
-    [(NSMutableSet *)userInfo addObject:[node attribute]];
-    return YES; /* continue fetching */
-}
 - (NSSet *)attributesInRange:(HFRange)range {
     NSMutableSet *result = [NSMutableSet set];
-    [self walkNodesInRange:range withFunction:fetchAttributes userInfo:result];
+    [self walkNodesInRange:range withBlock:^BOOL(HFByteRangeAttributeArrayNode *node, HFRange range) {
+        USE(range);
+        [result addObject:[node attribute]];
+        return YES; /* continue fetching */
+    }];
     return result;
-}
-
-struct TransferAttributes_t {
-    HFByteRangeAttributeArray *target;
-    unsigned long long baseOffset;
-};
-
-static BOOL transferAttributes(HFByteRangeAttributeArrayNode *node, HFRange intersection, void *userInfoP) {
-    struct TransferAttributes_t *userInfo = userInfoP;
-    intersection.location = HFSum(intersection.location, userInfo->baseOffset);
-    [userInfo->target addAttribute:node->attribute range:intersection];
-    return YES; /* continue transferring */
 }
 
 - (void)transferAttributesFromAttributeArray:(HFAnnotatedTreeByteRangeAttributeArray *)array range:(HFRange)range baseOffset:(unsigned long long)baseOffset {
     EXPECT_CLASS(array, HFAnnotatedTreeByteRangeAttributeArray);
-    struct TransferAttributes_t info = {self, baseOffset};
-    [array walkNodesInRange:range withFunction:transferAttributes userInfo:&info];
+    [array walkNodesInRange:range withBlock:^(HFByteRangeAttributeArrayNode *node, HFRange intersection) {
+        if ([self shouldTransferAttribute:node->attribute]) {            
+            intersection.location = HFSum(intersection.location, baseOffset);
+            [self addAttribute:node->attribute range:intersection];
+        }
+        return YES; /* continue transferring */
+    }];
 }
 
 - (BOOL)isEmpty {

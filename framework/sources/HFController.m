@@ -512,6 +512,13 @@ static inline Class preferredByteArrayClass(void) {
     HFASSERT(range.length > 0);
     HFByteRangeAttributeArray *attributeArray = [byteArray byteRangeAttributeArray];
     if (attributeArray) {
+        
+        /* Support undo */
+        HFRange existingRange = [self rangeForBookmark:bookmark];
+        NSUndoManager *undoer = [self undoManager];
+        [[undoer prepareWithInvocationTarget:self] setRange:existingRange forBookmark:bookmark];
+        [undoer setActionName:@"Bookmark"];
+        
         NSString *attribute = HFBookmarkAttributeFromBookmark(bookmark);
         [attributeArray removeAttribute:attribute];
         if (! (range.location == ULLONG_MAX && range.location == ULLONG_MAX)) {

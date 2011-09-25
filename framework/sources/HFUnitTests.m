@@ -768,11 +768,11 @@ static void exception_thrown(const char *methodName, NSException *exception) {
 
 + (void)runAllTests {
     CFAbsoluteTime start = CFAbsoluteTimeGetCurrent();
-    BOOL enableTest = NO;
+    BOOL enableTest = YES;
     if (enableTest) [self _runTest:"_testFastMemchr"];
     if (enableTest) [self _runTest:"_testRangeFunctions"];
     if (enableTest) [self _runTest:"_testByteArray"];
-    if (enableTest || 1) [self _runTest:"_testByteArrayEditScripts"];
+    if (enableTest) [self _runTest:"_testByteArrayEditScripts"];
     if (enableTest) [self _runTest:"_testTextInsertion"];
     if (enableTest) [self _runTest:"_testTextInsertion"];
     if (enableTest) [self _runTest:"_testObjectGraph"];

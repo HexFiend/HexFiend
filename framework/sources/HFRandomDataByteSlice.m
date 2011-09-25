@@ -12,12 +12,14 @@
 
 //#if ! NDEBUG
 
-static uint32_t my_arc4random_uniform(uint32_t max) {
+static uint32_t my_random_uniform(uint32_t max) {
     /* Generate a value in the range [0, max), uniformly distributed. To do this, we compute the largest multiple of max that fits in 32 bits, then roll until we get a value equal to or below that. */
-    uint32_t maxRollValue = UINT32_MAX - (UINT32_MAX % max);
+    const uint32_t rand_max = (1U << 31);
+    HFASSERT(max <= rand_max);
+    uint32_t maxRollValue = (uint32_t)(UINT32_MAX - (UINT32_MAX % rand_max));
     uint32_t rollValue;
     do {
-        rollValue = arc4random();
+        rollValue = (uint32_t)random();
     } while (rollValue > maxRollValue);
     return rollValue % max;
 }
@@ -27,7 +29,7 @@ static NSData *createPearsonTable(void) {
     unsigned char result[256];
     result[0] = 0;
     for (uint32_t i=1; i < 256; i++) {
-        uint32_t j = my_arc4random_uniform(i+1); //returns a value in the range [0, i]
+        uint32_t j = my_random_uniform(i+1); //returns a value in the range [0, i]
         result[i] = result[j];
         result[j] = i;
     }
@@ -128,7 +130,7 @@ static unsigned char *kRepeatingData;
         unsigned int *ptr = (unsigned int *)kRepeatingData;
         NSUInteger i = REPEATING_DATA_LENGTH / sizeof *ptr;
         while (i--) {
-            unsigned int val = (unsigned int)arc4random();
+            unsigned int val = (unsigned int)random();
             *ptr++ = val;
         }
     }
@@ -170,3 +172,6 @@ static unsigned char *kRepeatingData;
 @end
 
 //#endif //NDEBUG
+
+
+

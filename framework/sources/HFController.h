@@ -409,7 +409,7 @@ You create an HFController via <tt>[[HFController alloc] init]</tt>.  After that
 /*! Returns the range for the given bookmark.  If there is no bookmark, returns {ULLONG_MAX, ULLONG_MAX}. */
 - (HFRange)rangeForBookmark:(NSInteger)bookmark;
 
-/*! Sets the range for the given bookmark.  Pass {ULLONG_MAX, ULLONG_MAX} to remove the bookmark. */
+/*! Sets the range for the given bookmark.  Pass {ULLONG_MAX, ULLONG_MAX} to remove the bookmark. Undoable. */
 - (void)setRange:(HFRange)range forBookmark:(NSInteger)bookmark;
 
 /*! Returns an NSIndexSet of the bookmarks in the given range. */

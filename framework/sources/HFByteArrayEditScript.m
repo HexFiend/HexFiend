@@ -35,8 +35,8 @@ enum {
     NUM_CACHES
 };
 
-#define HEURISTIC_THRESHOLD (16 * 64)
-#define SQUARE_CACHE_SIZE (128 * 4)
+#define HEURISTIC_THRESHOLD (1024)
+#define SQUARE_CACHE_SIZE (1024)
 
 // This is the type of an abstract index in some local LCS problem
 typedef int32_t LocalIndex_t;
@@ -119,7 +119,7 @@ struct TLCacheGroup_t {
     
     /* The growable arrays for storing the furthest reaching D-paths */
     struct GrowableArray_t forwardsArray, backwardsArray;
-
+    
 } __attribute__ ((aligned (16)));
 
 /* Create a cache. */
@@ -585,7 +585,7 @@ static struct Snake_t computeActualMiddleSnake(HFByteArrayEditScript *self, stru
     result.progressConsumed = 0;
     
     volatile const int * const cancelRequested = self->cancelRequested;
-        
+    
     LocalIndex_t D;
     for (D=1; D <= maxD; D++) {
         //if (0 == (D % 256)) printf("Full %ld / %ld\n", D, maxD);
@@ -618,7 +618,7 @@ static struct Snake_t computeActualMiddleSnake(HFByteArrayEditScript *self, stru
         unsigned long long progressConsumed = progressAllocated - progressRemainingForThatXY;
         HFAtomicAdd64(progressConsumed - result.progressConsumed, self->currentProgress);
         result.progressConsumed = progressConsumed;
-
+        
         
         /* We will be indexing from up to -D to D, so reallocate if necessary.  It's a little sketchy that we check both forwardsArray->length and backwardsArray->length, which are usually the same size: this is just in case malloc_good_size returns something different for them. */
         if ((size_t)D > forwardsBackwardsVectorLength) {
@@ -756,6 +756,7 @@ BOOL computePrettyGoodMiddleSnakeTraversal(HFByteArrayEditScript *self, const un
     } else {
         snakeLength = match_backwards(aBuff + aLen - x - maxSnakeLength, bBuff + bLen - y - maxSnakeLength, maxSnakeLength);
     }
+
     HFASSERT(snakeLength <= maxSnakeLength);
     x += snakeLength;
     y += snakeLength;
@@ -765,15 +766,16 @@ BOOL computePrettyGoodMiddleSnakeTraversal(HFByteArrayEditScript *self, const un
     
     /* Update bestAchievedCoords */
     if (x > bestAchievedCoords->x) bestAchievedCoords->x = x;
-    if (y > bestAchievedCoords->x) bestAchievedCoords->y = y;
+    if (y > bestAchievedCoords->y) bestAchievedCoords->y = y;
     
 #if 1
+    /* Return YES if we reach the edge in either dimension */
     return snakeLength == maxSnakeLength;
 #else
     /* Return YES if we reached the edge in the longer dimension, i.e. something like this but exploiting the fact that x <= aLen && y <= bLen:
-       if (aLen > bLen) return x == aLen;
-       else if (bLen > aLen) return y == bLen;
-       else return x == aLen || y == bLen;
+     if (aLen > bLen) return x == aLen;
+     else if (bLen > aLen) return y == bLen;
+     else return x == aLen || y == bLen;
      */
     
     return MAX(x, y) == MAX(aLen, bLen);
@@ -800,13 +802,14 @@ static struct LatticePoint_t bestDiagonal(HFByteArrayEditScript *self, LocalInde
 }
 
 BYTEARRAY_RELEASE_INLINE
-static struct Snake_t computePrettyGoodMiddleSnake(HFByteArrayEditScript *self, struct TLCacheGroup_t * restrict cacheGroup, HFRange rangeInA, HFRange rangeInB) {
+static struct Snake_t computePrettyGoodMiddleSnake(HFByteArrayEditScript *self, struct TLCacheGroup_t * restrict cacheGroup, HFRange rangeInA, HFRange rangeInB, BOOL heuristicInA, BOOL heuristicInB) {
+    
+    /* At least one dimension must use the heuristic (else we'd just use the full algorithm) */
+    HFASSERT(heuristicInA || heuristicInB);
     
     /* This function wants to "consume" progress equal to aLen * bLen. */
     const unsigned long long progressAllocated = HFProductULL(rangeInA.length, rangeInB.length);
     unsigned long long progressConsumed = 0;
-    
-    const BOOL log = NO;
     
     /* k cannot exceeed SQUARE_CACHE_SIZE so allocate that up front */
     const LocalIndex_t maxD = SQUARE_CACHE_SIZE;
@@ -840,14 +843,6 @@ static struct Snake_t computePrettyGoodMiddleSnake(HFByteArrayEditScript *self, 
         [SourceBackwards] = get_cached_bytes(self, cacheGroup, self->source, self->sourceLength, HFMaxRange(rangeInA) - lengths[SourceBackwards], lengths[SourceBackwards], SourceBackwards),
         [DestBackwards] = get_cached_bytes(self, cacheGroup, self->destination, self->destLength, HFMaxRange(rangeInB) - lengths[DestBackwards], lengths[DestBackwards], DestBackwards)
     };
-
-    
-    /* Variables set to YES if either limit of our rectangle is an edge. This determines our end condition. */
-    BOOL forwardsFinalRectangle = (rangeInA.length <= SQUARE_CACHE_SIZE || rangeInB.length <= SQUARE_CACHE_SIZE);
-    BOOL backwardsFinalRectangle = (rangeInA.length <= SQUARE_CACHE_SIZE || rangeInB.length <= SQUARE_CACHE_SIZE);
-    
-    /* endgame is set to YES if we are in the final rectangle of one or both directions. In that case, we just run to completion; we don't exit at overlap. */
-    BOOL endgame = forwardsFinalRectangle || backwardsFinalRectangle;
     
     LocalIndex_t forwardsD = 0, backwardsD = 0;
     for (;;) {
@@ -911,8 +906,6 @@ static struct Snake_t computePrettyGoodMiddleSnake(HFByteArrayEditScript *self, 
             HFASSERT(diagonal.y >= 0);
             //NSLog(@"bestDiagonal: %d, %d\n", diagonal.x, diagonal.y);
             
-            if (log) NSLog(@"ResetForwards");
-            
             /* Compute our new rectangle starting position */
             offsets[sourceDir] += diagonal.x;
             offsets[destDir] += diagonal.y;
@@ -928,12 +921,7 @@ static struct Snake_t computePrettyGoodMiddleSnake(HFByteArrayEditScript *self, 
             /* Compute new lengths */
             lengths[sourceDir] = (LocalIndex_t)MIN(SQUARE_CACHE_SIZE, rangeInA.length - offsets[sourceDir]);
             lengths[destDir] = (LocalIndex_t)MIN(SQUARE_CACHE_SIZE, rangeInB.length - offsets[destDir]);
-            
-            /* Update endgame */
-            if (rangeInA.length - offsets[sourceDir] <= SQUARE_CACHE_SIZE || rangeInB.length - offsets[destDir] <= SQUARE_CACHE_SIZE) {
-                endgame = YES;
-            }
-            
+                        
             /* Now reallocate */
             buffers[sourceDir] = get_cached_bytes(self, cacheGroup, self->source, self->sourceLength, rangeInA.location + offsets[sourceDir], lengths[sourceDir], sourceDir);
             buffers[destDir] = get_cached_bytes(self, cacheGroup, self->destination, self->destLength, rangeInB.location + offsets[destDir], lengths[destDir], destDir);
@@ -953,15 +941,13 @@ static struct Snake_t computePrettyGoodMiddleSnake(HFByteArrayEditScript *self, 
             HFASSERT(diagonal.x >= 0);
             HFASSERT(diagonal.y >= 0);
             
-            if (log) NSLog(@"ResetBackwards");
-            
             /* Compute our new rectangle starting position */
             offsets[sourceDir] += diagonal.x;
             offsets[destDir] += diagonal.y;
             HFASSERT(offsets[sourceDir] <= rangeInA.length);
             HFASSERT(offsets[destDir] <= rangeInB.length);
             
-            /* Extend any snake from that diagonal */
+            /* Extend any snake from that diagonal. Todo: progress reporting! */
             int64_t tmpProgress = 0;
             unsigned long long snakeLength = compute_backwards_snake_length(self, cacheGroup, self->source, HFMaxRange(rangeInA) - offsets[sourceDir], rangeInA.length - offsets[sourceDir], self->destination, HFMaxRange(rangeInB) - offsets[destDir], rangeInB.length - offsets[destDir], &tmpProgress, cancelRequested);
             offsets[sourceDir] = HFSum(offsets[sourceDir], snakeLength);
@@ -971,15 +957,10 @@ static struct Snake_t computePrettyGoodMiddleSnake(HFByteArrayEditScript *self, 
             lengths[sourceDir] = (LocalIndex_t)MIN(SQUARE_CACHE_SIZE, rangeInA.length - offsets[sourceDir]);
             lengths[destDir] = (LocalIndex_t)MIN(SQUARE_CACHE_SIZE, rangeInB.length - offsets[destDir]);
             
-            /* Update endgame */
-            if (rangeInA.length - offsets[sourceDir] <= SQUARE_CACHE_SIZE || rangeInB.length - offsets[destDir] <= SQUARE_CACHE_SIZE) {
-                endgame = YES;
-            }
-            
             /* Now reallocate */
-            buffers[sourceDir] = get_cached_bytes(self, cacheGroup, self->source, self->sourceLength, rangeInA.location + offsets[sourceDir], lengths[sourceDir], sourceDir);
-            buffers[DestForwards] = get_cached_bytes(self, cacheGroup, self->destination, self->destLength, rangeInB.location + offsets[destDir], lengths[destDir], destDir);
-            
+            buffers[sourceDir] = get_cached_bytes(self, cacheGroup, self->source, self->sourceLength, HFMaxRange(rangeInA) - offsets[sourceDir] - lengths[sourceDir], lengths[sourceDir], sourceDir);
+            buffers[destDir] = get_cached_bytes(self, cacheGroup, self->destination, self->destLength, HFMaxRange(rangeInB) - offsets[destDir] - lengths[destDir], lengths[destDir], destDir);
+
             /* Backwards starts over */
             backwardsD = 0;
             backwardsVector[0] = 0;
@@ -1003,19 +984,15 @@ static struct Snake_t computePrettyGoodMiddleSnake(HFByteArrayEditScript *self, 
             }
         }
         
-        if (endgame) {
-            
-            /* Check to see if anyone just exited */
-            allDone = ! (lengths[SourceForwards] && lengths[SourceBackwards] && lengths[DestForwards] && lengths[DestBackwards]);
-            
-        } else {
-            
-            /* Not in the endgame. Check for overlap in either dimension */
+        /* Check for overlap in either dimension */
+        if (heuristicInA) {
             unsigned long long totalX = offsets[SourceForwards] + (unsigned long long)maxAchievedForwards.x + offsets[SourceBackwards] + (unsigned long long)maxAchievedBackwards.x;
-            unsigned long long totalY = offsets[DestForwards] + (unsigned long long)maxAchievedForwards.y + offsets[DestBackwards] + (unsigned long long)maxAchievedBackwards.y;
-            allDone = (totalX > rangeInA.length || totalY > rangeInB.length);
+            if (totalX > rangeInA.length) allDone = YES;
         }
-        
+        if (heuristicInB) {
+            unsigned long long totalY = offsets[DestForwards] + (unsigned long long)maxAchievedForwards.y + offsets[DestBackwards] + (unsigned long long)maxAchievedBackwards.y;
+            if (totalY > rangeInB.length) allDone = YES;
+        }        
         if (allDone) {
             
             /* We're all done! Return the best diagonal thus far. */
@@ -1032,12 +1009,15 @@ static struct Snake_t computePrettyGoodMiddleSnake(HFByteArrayEditScript *self, 
             if (forwardScore >= backwardScore) {
                 result.startX = rangeInA.location + HFSum(fw.x, offsets[SourceForwards]);
                 result.startY = rangeInB.location + HFSum(fw.y, offsets[DestForwards]);
-                if (log) NSLog(@"Taking forwards %llu, %llu", result.startX, result.startY);
             } else {
                 result.startX = HFMaxRange(rangeInA) - HFSum(bk.x, offsets[SourceBackwards]);
                 result.startY = HFMaxRange(rangeInB) - HFSum(bk.y, offsets[DestBackwards]);                
-                if (log) NSLog(@"Taking backwards %llu, %llu", result.startX, result.startY);
             }
+            
+            /* The middle snake has to actually be in the interior, otherwise we recurse forever */
+            HFASSERT(result.startX < HFMaxRange(rangeInA) || result.startY < HFMaxRange(rangeInB));
+            HFASSERT(result.startX > rangeInA.location || result.startY > rangeInB.location);
+
             return result;
         }
     }
@@ -1062,15 +1042,26 @@ static struct Snake_t computeMiddleSnake(HFByteArrayEditScript *self, struct TLC
         /* Offset the result */
         result.startX = HFSum(result.startX, rangeInA.location);
         result.startY = HFSum(result.startY, rangeInB.location);
-                
+        
+    } else if (rangeInA.length < HEURISTIC_THRESHOLD) {
+        /* Heuristic only in dest */
+        result = computePrettyGoodMiddleSnake(self, cacheGroup, rangeInA, rangeInB, NO /* heuristicInA */, YES /* heuristicInB */);
+    } else if (rangeInB.length < HEURISTIC_THRESHOLD) {
+        /* Heuristic only in source */
+        result = computePrettyGoodMiddleSnake(self, cacheGroup, rangeInA, rangeInB, YES /* heuristicInA */, NO /* heuristicInB */);
     } else {
-        /* Heuristic */
-        result = computePrettyGoodMiddleSnake(self, cacheGroup, rangeInA, rangeInB);
+        /* Heuristic in both */
+        result = computePrettyGoodMiddleSnake(self, cacheGroup, rangeInA, rangeInB, YES /* heuristicInA */, YES /* heuristicInB */);
     }
     HFASSERT(result.startX >= rangeInA.location);
     HFASSERT(result.startY >= rangeInB.location);
     HFASSERT(result.startX + result.middleSnakeLength <= HFMaxRange(rangeInA));
     HFASSERT(result.startY + result.middleSnakeLength <= HFMaxRange(rangeInB));
+    
+    /* The middle snake has to actually be in the interior, otherwise we recurse forever */
+    HFASSERT(result.startX < HFMaxRange(rangeInA) || result.startY < HFMaxRange(rangeInB));
+    HFASSERT(result.startX > rangeInA.location || result.startY > rangeInB.location);
+    
     return result;
 }
 
@@ -1086,10 +1077,10 @@ static void computeLongestCommonSubsequence(HFByteArrayEditScript *self, struct 
         dispatch_group_async(dispatchGroup, dispatch_get_global_queue(0, 0), ^{
             /* We can't re-use cacheGroup because our caller may want to use it again.  So get a new group. */
             struct TLCacheGroup_t *newGroup = dequeueOrCreateCacheGroup(cacheQueueHead);
-
+            
             /* Compute the LCS */
             computeLongestCommonSubsequence(self, newGroup, cacheQueueHead, dispatchGroup, rangeInA, rangeInB, 0);
-                        
+            
             /* Put the group on the queue (either back or fresh) so others can use it */
             OSAtomicEnqueue(cacheQueueHead, newGroup, offsetof(struct TLCacheGroup_t, next));
             OSAtomicDecrement32(&self->concurrentProcesses);
@@ -1174,7 +1165,7 @@ static void computeLongestCommonSubsequence(HFByteArrayEditScript *self, struct 
     HFRange prefixRangeA, prefixRangeB, suffixRangeA, suffixRangeB;
     HFRangeSplitAboutSubrange(rangeInA, HFRangeMake(middleSnake.startX, middleSnake.middleSnakeLength), &prefixRangeA, &suffixRangeA);
     HFRangeSplitAboutSubrange(rangeInB, HFRangeMake(middleSnake.startY, middleSnake.middleSnakeLength), &prefixRangeB, &suffixRangeB);
-        
+    
     /* Figure out how much we allocate to each of our subranges, and consume the remainder. */
     unsigned long long newRemainingProgress = prefixRangeA.length * prefixRangeB.length + suffixRangeA.length * suffixRangeB.length;
     
@@ -1185,7 +1176,7 @@ static void computeLongestCommonSubsequence(HFByteArrayEditScript *self, struct 
 #endif
     remainingProgress = change_progress(self, remainingProgress, newRemainingProgress);
     USE(remainingProgress);
-        
+    
     /* We check for *cancelRequested at the beginning of these functions, so we don't gain by checking for it again here */
     const unsigned long long minAsyncLength = 1024;
     BOOL asyncA = prefixRangeA.length > minAsyncLength || prefixRangeB.length > minAsyncLength;
@@ -1200,7 +1191,7 @@ static void computeLongestCommonSubsequence(HFByteArrayEditScript *self, struct 
             
             /* Attempt to dequeue a group. If we can't, we'll have to make one. */
             struct TLCacheGroup_t *newGroup = dequeueOrCreateCacheGroup(cacheQueueHead);
-
+            
             /* Compute the subsequence */
             computeLongestCommonSubsequence(self, newGroup, cacheQueueHead, dispatchGroup, suffixRangeA, suffixRangeB, 0);
             
@@ -1293,7 +1284,7 @@ static inline enum HFEditInstructionType HFByteArrayInstructionType(struct HFEdi
     dispatch_sync(insnQueue, ^{});
     dispatch_release(insnQueue);
     insnQueue = NULL;
-
+    
     if (! *cancelRequested) {
 #if ! NDEBUG
         /* Validate the data */
