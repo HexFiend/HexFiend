@@ -1053,14 +1053,17 @@ static struct Snake_t computeMiddleSnake(HFByteArrayEditScript *self, struct TLC
         /* Heuristic in both */
         result = computePrettyGoodMiddleSnake(self, cacheGroup, rangeInA, rangeInB, YES /* heuristicInA */, YES /* heuristicInB */);
     }
-    HFASSERT(result.startX >= rangeInA.location);
-    HFASSERT(result.startY >= rangeInB.location);
-    HFASSERT(result.startX + result.middleSnakeLength <= HFMaxRange(rangeInA));
-    HFASSERT(result.startY + result.middleSnakeLength <= HFMaxRange(rangeInB));
     
-    /* The middle snake has to actually be in the interior, otherwise we recurse forever */
-    HFASSERT(result.startX < HFMaxRange(rangeInA) || result.startY < HFMaxRange(rangeInB));
-    HFASSERT(result.startX > rangeInA.location || result.startY > rangeInB.location);
+    if (! *self->cancelRequested) {
+        HFASSERT(result.startX >= rangeInA.location);
+        HFASSERT(result.startY >= rangeInB.location);
+        HFASSERT(result.startX + result.middleSnakeLength <= HFMaxRange(rangeInA));
+        HFASSERT(result.startY + result.middleSnakeLength <= HFMaxRange(rangeInB));
+        
+        /* The middle snake has to actually be in the interior, otherwise we recurse forever */
+        HFASSERT(result.startX < HFMaxRange(rangeInA) || result.startY < HFMaxRange(rangeInB));
+        HFASSERT(result.startX > rangeInA.location || result.startY > rangeInB.location);
+    }
     
     return result;
 }

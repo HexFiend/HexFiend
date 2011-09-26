@@ -696,6 +696,21 @@ static HFByteArray *byteArrayForFile(NSString *path) {
     [pool drain];
 }
 
+static HFRange randomRange(uint32_t max) {
+    HFASSERT(max <= RAND_MAX);
+    uint32_t start, end;
+    do {
+        start = (uint32_t)(random() % max);
+        end = (uint32_t)(random() % max);
+    } while (start == end);
+    if (end < start) {
+        uint32_t tmp = end;
+        end = start;
+        start = tmp;
+    }
+    return HFRangeMake(start, end - start);
+}
+
 + (void)_testAnnotatedTree {
     HFByteRangeAttributeArray *naiveTree = [[HFNaiveByteRangeAttributeArray alloc] init];
     HFAnnotatedTreeByteRangeAttributeArray *smartTree = [[HFAnnotatedTreeByteRangeAttributeArray alloc] init];
@@ -707,18 +722,8 @@ static HFByteArray *byteArrayForFile(NSString *path) {
         NSString *attribute = attributes[random() % (sizeof attributes / sizeof *attributes)];
         if (round % 4096 == 0) printf("%s %lu\n", sel_getName(_cmd), round);
         BOOL insert = ([smartTree isEmpty] || (random() % 2));
-        
-        unsigned long long end, start;
-        end = random() % 16;
-        do {
-            start = random() % 16;
-        } while (start == end);
-        if (end < start) {
-            unsigned long long temp = end;
-            end = start;
-            start = temp;
-        }
-        HFRange range = HFRangeMake(start, end - start);
+
+        HFRange range = randomRange(4096);
         
         if (log) NSLog(@"Round %lu", round);
         if (insert) {
@@ -731,7 +736,13 @@ static HFByteArray *byteArrayForFile(NSString *path) {
             [naiveTree removeAttribute:attribute range:range];
             [smartTree removeAttribute:attribute range:range];
         }
+        HFASSERT([naiveTree isEqual:smartTree]);
         
+        /* Test replacements */
+        HFRange range1 = randomRange(4096);
+        uint32_t length1 = (uint32_t)(random() % 4096);
+        [naiveTree byteRange:range1 wasReplacedByBytesOfLength:length1];
+        [smartTree byteRange:range1 wasReplacedByBytesOfLength:length1];
         HFASSERT([naiveTree isEqual:smartTree]);
     }
     
