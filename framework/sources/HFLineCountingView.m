@@ -53,7 +53,9 @@
     HFUnregisterViewForWindowAppearanceChanges(self, registeredForAppNotifications);
     [font release];
     [layoutManager release];
+    [textContainer release];
     [textStorage release];
+    [textAttributes release];
     [super dealloc];
 }
 
@@ -201,8 +203,8 @@ static inline int common_prefix_length(const char *a, const char *b) {
         char formatString[64];
         [self getLineNumberFormatString:formatString length:sizeof formatString];
         
-	if (NSIntersectsRect(textRect, clipRect)) {
-	    NSString *replacementCharacters = nil;
+        if (NSIntersectsRect(textRect, clipRect)) {
+            NSString *replacementCharacters = nil;
             NSRange replacementRange;
             char buff[256];
             int newStringLength = snprintf(buff, sizeof buff, formatString, lineValue);
@@ -212,26 +214,26 @@ static inline int common_prefix_length(const char *a, const char *b) {
             HFASSERT(prefixLength <= previousStringLength);
             replacementRange = NSMakeRange(prefixLength, previousStringLength - prefixLength);
             replacementCharacters = [[NSString alloc] initWithBytesNoCopy:buff + prefixLength length:newStringLength - prefixLength encoding:NSASCIIStringEncoding freeWhenDone:NO];
-	    NSUInteger glyphCount;
-	    [textStorage replaceCharactersInRange:replacementRange withString:replacementCharacters];
-	    if (previousTextStorageCharacterCount == 0) {
-		NSDictionary *atts = [[NSDictionary alloc] initWithObjectsAndKeys:font, NSFontAttributeName, [NSColor colorWithCalibratedWhite:(CGFloat).1 alpha:(CGFloat).8], NSForegroundColorAttributeName, nil];
-		[textStorage setAttributes:atts range:NSMakeRange(0, newStringLength)];
+            NSUInteger glyphCount;
+            [textStorage replaceCharactersInRange:replacementRange withString:replacementCharacters];
+            if (previousTextStorageCharacterCount == 0) {
+                NSDictionary *atts = [[NSDictionary alloc] initWithObjectsAndKeys:font, NSFontAttributeName, [NSColor colorWithCalibratedWhite:(CGFloat).1 alpha:(CGFloat).8], NSForegroundColorAttributeName, nil];
+                [textStorage setAttributes:atts range:NSMakeRange(0, newStringLength)];
                 [atts release];
-	    }
-	    glyphCount = [layoutManager numberOfGlyphs];
-	    if (glyphCount > 0) {
-		CGFloat maxX = NSMaxX([layoutManager lineFragmentUsedRectForGlyphAtIndex:glyphCount - 1 effectiveRange:NULL]);
-		[layoutManager drawGlyphsForGlyphRange:NSMakeRange(0, glyphCount) atPoint:NSMakePoint(textRect.origin.x + textRect.size.width - maxX, textRect.origin.y)];
-	    }
-	    previousTextStorageCharacterCount = newStringLength;
-	    [replacementCharacters release];
+            }
+            glyphCount = [layoutManager numberOfGlyphs];
+            if (glyphCount > 0) {
+                CGFloat maxX = NSMaxX([layoutManager lineFragmentUsedRectForGlyphAtIndex:glyphCount - 1 effectiveRange:NULL]);
+                [layoutManager drawGlyphsForGlyphRange:NSMakeRange(0, glyphCount) atPoint:NSMakePoint(textRect.origin.x + textRect.size.width - maxX, textRect.origin.y)];
+            }
+            previousTextStorageCharacterCount = newStringLength;
+            [replacementCharacters release];
             memcpy(previousBuff, buff, newStringLength + 1);
             previousStringLength = newStringLength;
-	}
-	textRect.origin.y += lineHeight;
-	lineIndex++;
-	lineValue = HFSum(lineValue, bytesPerLine);
+        }
+        textRect.origin.y += lineHeight;
+        lineIndex++;
+        lineValue = HFSum(lineValue, bytesPerLine);
     }
 #if TIME_LINE_NUMBERS
     CFAbsoluteTime endTime = CFAbsoluteTimeGetCurrent();
@@ -261,17 +263,17 @@ static inline int common_prefix_length(const char *a, const char *b) {
     [self getLineNumberFormatString:formatString length:sizeof formatString];
     
     while (linesRemaining--) {
-	if (NSIntersectsRect(textRect, clipRect)) {
+        if (NSIntersectsRect(textRect, clipRect)) {
             char buff[256];
             int newStringLength = snprintf(buff, sizeof buff, formatString, lineValue);
             HFASSERT(newStringLength > 0);
-	    NSString *string = [[NSString alloc] initWithBytesNoCopy:buff length:newStringLength encoding:NSASCIIStringEncoding freeWhenDone:NO];
+            NSString *string = [[NSString alloc] initWithBytesNoCopy:buff length:newStringLength encoding:NSASCIIStringEncoding freeWhenDone:NO];
             [string drawInRect:textRect withAttributes:textAttributes];
             [string release];
-	}
-	textRect.origin.y += lineHeight;
-	lineIndex++;
-	if (linesRemaining > 0) lineValue = HFSum(lineValue, bytesPerLine); //we could do this unconditionally, but then we risk overflow
+        }
+        textRect.origin.y += lineHeight;
+        lineIndex++;
+        if (linesRemaining > 0) lineValue = HFSum(lineValue, bytesPerLine); //we could do this unconditionally, but then we risk overflow
     }
 }
 
@@ -339,7 +341,7 @@ static inline int common_prefix_length(const char *a, const char *b) {
     else {
         HFRange leftRangeToReplace, rightRangeToReplace;
         HFRange leftRangeToStore, rightRangeToStore;
-
+        
         HFRange oldRange = HFRangeMake(storedLineIndex, storedLineCount);
         HFRange newRange = HFRangeMake(startingLineIndex, linesRemaining);
         HFRange rangeToPreserve = HFIntersectionRange(oldRange, newRange);
@@ -364,7 +366,7 @@ static inline int common_prefix_length(const char *a, const char *b) {
         if (debug) NSLog(@"Changing %@ -> %@", HFRangeToString(oldRange), HFRangeToString(newRange));
         if (debug) NSLog(@"LEFT: %@ -> %@", HFRangeToString(leftRangeToReplace), HFRangeToString(leftRangeToStore));
         if (debug) NSLog(@"RIGHT: %@ -> %@", HFRangeToString(rightRangeToReplace), HFRangeToString(rightRangeToStore));
-    
+        
         HFASSERT(leftRangeToReplace.length == 0 || HFRangeIsSubrangeOfRange(leftRangeToReplace, oldRange));
         HFASSERT(rightRangeToReplace.length == 0 || HFRangeIsSubrangeOfRange(rightRangeToReplace, oldRange));
         
@@ -400,7 +402,7 @@ static inline int common_prefix_length(const char *a, const char *b) {
             }
         }
     }
-        
+    
     if (! textAttributes) {
         NSMutableParagraphStyle *mutableStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
         [mutableStyle setAlignment:NSRightTextAlignment];
@@ -432,7 +434,7 @@ static inline int common_prefix_length(const char *a, const char *b) {
     USE(clipRect);
     unsigned long long lineIndex = HFFPToUL(floorl(lineRangeToDraw.location));
     NSUInteger linesRemaining = ll2l(HFFPToUL(ceill(lineRangeToDraw.length + lineRangeToDraw.location) - floorl(lineRangeToDraw.location)));
-
+    
     CGFloat linesToVerticallyOffset = ld2f(lineRangeToDraw.location - floorl(lineRangeToDraw.location));
     CGFloat verticalOffset = linesToVerticallyOffset * lineHeight + 1;
     NSRect textRect = [self bounds];
@@ -588,7 +590,7 @@ static inline int common_prefix_length(const char *a, const char *b) {
     if (val != font) {
         [font release];
         font = [val retain];
-	[textStorage deleteCharactersInRange:NSMakeRange(0, [textStorage length])]; //delete the characters so we know to set the font next time we render
+        [textStorage deleteCharactersInRange:NSMakeRange(0, [textStorage length])]; //delete the characters so we know to set the font next time we render
         [textAttributes release];
         textAttributes = nil;
         storedLineCount = INVALID_LINE_COUNT;
