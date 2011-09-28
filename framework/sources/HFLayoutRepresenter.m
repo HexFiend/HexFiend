@@ -60,7 +60,7 @@ static NSInteger sortByLayoutPosition(id a, id b, void *self) {
         }
         currentRepY = info->layoutPosition.y;
         [currentReps addObject:info];
-	[info release];
+        [info release];
     }
     if ([currentReps count]) [result addObject:[[currentReps copy] autorelease]];
     return result;
@@ -344,9 +344,9 @@ static NSInteger sortByLayoutPosition(id a, id b, void *self) {
 - (CGFloat)minimumViewWidthForLayoutInProposedWidth:(CGFloat)proposedWidth {
     NSUInteger bytesPerLine;
     if ([self maximizesBytesPerLine]) {
-	bytesPerLine = [self maximumBytesPerLineForLayoutInProposedWidth:proposedWidth];
+        bytesPerLine = [self maximumBytesPerLineForLayoutInProposedWidth:proposedWidth];
     } else {
-	bytesPerLine = [[self controller] bytesPerLine];
+        bytesPerLine = [[self controller] bytesPerLine];
     }
     CGFloat newWidth = [self minimumViewWidthForBytesPerLine:bytesPerLine];
     return newWidth;

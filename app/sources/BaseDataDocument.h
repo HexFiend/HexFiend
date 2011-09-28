@@ -48,6 +48,7 @@
     NSError *saveError;
     
     BOOL currentlySettingFont;
+    BOOL isTransient;
 }
 
 - (void)moveSelectionForwards:(NSMenuItem *)sender;
@@ -82,6 +83,9 @@
 
 - (HFByteArray *)byteArray; //accessed during diffing
 
+- (BOOL)isTransientAndCanBeReplaced; //like TextEdit
+- (void)adoptWindowController:(NSWindowController *)windowController fromTransientDocument:(BaseDataDocument *)transientDocument;
+
 - (void)populateBookmarksMenu:(NSMenu *)menu;
 
 - (HFDocumentOperationView *)newOperationViewForNibName:(NSString *)name displayName:(NSString *)displayName fixedHeight:(BOOL)fixedHeight;
@@ -92,6 +96,9 @@
 - (NSStringEncoding)stringEncoding;
 - (void)setStringEncoding:(NSStringEncoding)encoding;
 - (IBAction)setStringEncodingFromMenuItem:(NSMenuItem *)item;
+
+- (BOOL)isTransient;
+- (void)setTransient:(BOOL)flag;
 
 /* Returns a string identifier used as an NSUserDefault prefix for storing the layout for documents of this type.  If you return nil, the layout will not be stored.  The default is to return the class name. */
 + (NSString *)layoutUserDefaultIdentifier;

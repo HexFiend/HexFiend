@@ -109,6 +109,7 @@ static NSString *read_line(FILE *file) {
 }
 
 - (BOOL)readFile:(int)fd offset:(unsigned long long)requestedOffset alignment:(uint32_t)alignment length:(uint32_t *)inoutLength result:(unsigned char *)result error:(int *)outErr {
+    BOOL log = NO;
     HFASSERT(inoutLength);
     HFASSERT(alignment > 0);
     if (! *inoutLength) return YES;
@@ -126,7 +127,7 @@ static NSString *read_line(FILE *file) {
     
     uint32_t alignedLength = (uint32_t)alignedRange.length;
     mach_msg_type_number_t bufferAllocatedSize = 0;
-    NSLog(@"Issuing read %llu / %u", alignedRange.location, alignedLength);
+    if (log) NSLog(@"Issuing read %llu / %u", alignedRange.location, alignedLength);
     kern_return_t kr = _GratefulFatherReadFile(childReceivePort, fd, alignedRange.location, &alignedLength, &buffer, &bufferAllocatedSize, outErr);
     if (kr != KERN_SUCCESS) {
         fprintf(stdout, "_GratefulFatherReadFile failed with mach error: %s\n", (char*) mach_error_string(kr));

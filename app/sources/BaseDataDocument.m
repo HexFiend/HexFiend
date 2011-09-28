@@ -295,12 +295,22 @@ static inline Class preferredByteArrayClass(void) {
 }
 
 - (void)makeWindowControllers {
-    NSString *windowNibName = [self windowNibName];
-    if (windowNibName != nil) {
-        NSWindowController *windowController = [[MyDocumentWindowController alloc] initWithWindowNibName:windowNibName owner:self];
-        [self addWindowController:windowController];
-        [windowController release];
+    /* We may already have a window controller if we replaced a transient document; in that case do nothing. */
+    if ([[self windowControllers] count] == 0) {
+        NSString *windowNibName = [self windowNibName];
+        if (windowNibName != nil) {
+            NSWindowController *windowController = [[MyDocumentWindowController alloc] initWithWindowNibName:windowNibName owner:self];
+            [self addWindowController:windowController];
+            [windowController release];
+        }
     }
+}
+
+- (CGFloat)minimumWindowFrameWidthForBytesPerLine:(NSUInteger)bytesPerLine {
+    NSView *layoutView = [layoutRepresenter view];
+    CGFloat resultingWidthInLayoutCoordinates = [layoutRepresenter minimumViewWidthForBytesPerLine:bytesPerLine];
+    NSSize resultSize = [layoutView convertSize:NSMakeSize(resultingWidthInLayoutCoordinates, 1) toView:nil];
+    return resultSize.width;
 }
 
 - (NSSize)minimumWindowFrameSizeForProposedSize:(NSSize)frameSize {
@@ -342,13 +352,12 @@ static inline Class preferredByteArrayClass(void) {
     containerView = view;
 }
 
-- (void)windowControllerDidLoadNib:(NSWindowController *)windowController {
-    USE(windowController);
+/* Shared point for setting up a window, optionally setting a bytes per line */
+- (void)setupWindowEnforcingBytesPerLine:(NSUInteger)bplOrZero {
     
     NSView *layoutView = [layoutRepresenter view];
     [layoutView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
     
-    NSWindow *window = [windowController window];
     if (containerView) {
         [containerView setVertical:NO];
         if ([containerView respondsToSelector:@selector(setDividerStyle:)]) {
@@ -359,9 +368,54 @@ static inline Class preferredByteArrayClass(void) {
         [containerView addSubview:layoutView];
     }
     [self applyDefaultRepresentersToDisplay];
-    NSRect windowFrame = [window frame];
-    windowFrame.size = [self minimumWindowFrameSizeForProposedSize:windowFrame.size];
-    [window setFrame:windowFrame display:NO];
+    
+    if (bplOrZero > 0) {
+        /* Here we probably get larger */
+        [self relayoutAndResizeWindowForBytesPerLine:bplOrZero];
+    } else {
+        /* Here we probably get smaller */
+        [self relayoutAndResizeWindowPreservingFrame];
+    }
+}
+
+- (void)windowControllerDidLoadNib:(NSWindowController *)windowController {
+    [super windowControllerDidLoadNib:windowController];
+    [self setupWindowEnforcingBytesPerLine:0];
+}
+
+- (void)adoptWindowController:(NSWindowController *)windowController fromTransientDocument:(BaseDataDocument *)transientDocument {
+    NSParameterAssert(windowController != nil);
+    NSParameterAssert(transientDocument != nil);
+    
+    NSWindow *window = [windowController window];
+    if (! window) return;
+    
+    /* Get the BPL of the document so we can preserve it */
+    NSUInteger oldBPL = [transientDocument->controller bytesPerLine];
+    
+    /* Set the delegate */
+    [window setDelegate:self];
+    
+    /* Find the split view */
+    NSView *contentView = [window contentView];
+    NSArray *contentSubviews = [contentView subviews];
+    NSAssert1([contentSubviews count] == 1, @"Unable to adopt transient window controller %@", windowController);
+    NSSplitView *splitView = [contentSubviews objectAtIndex:0];
+    NSAssert1([splitView isKindOfClass:[NSSplitView class]], @"Unable to adopt transient window controller %@", windowController);
+    
+    /* Remove all of its subviews */
+    NSArray *existingViews = [[splitView subviews] copy];
+    FOREACH(NSView *, view, existingViews) {
+        [view removeFromSuperview];
+    }
+    [existingViews release];
+    
+    /* It's our split view now! */
+    [containerView release];
+    containerView = [splitView retain];
+    
+    /* Set up the window */
+    [self setupWindowEnforcingBytesPerLine:oldBPL];
 }
 
 /* When our line counting view needs more space, we increase the size of our window, and also move it left by the same amount so that the other content does not appear to move. */
@@ -1693,6 +1747,35 @@ invalidString:;
     if (bookmark != NSNotFound) {
         [controller setRange:HFRangeMake(ULLONG_MAX, ULLONG_MAX) forBookmark:bookmark];
     }
+}
+
+- (BOOL)isTransient {
+    return isTransient;
+}
+
+- (void)setTransient:(BOOL)flag {
+    isTransient = flag;
+}
+
+/* When we're changed we're no longer transient */
+- (void)updateChangeCount:(NSDocumentChangeType)change {
+    [self setTransient:NO];
+    [super updateChangeCount:change];
+}
+
+- (BOOL)isTransientAndCanBeReplaced {
+    BOOL result = NO;
+    if ([self isTransient]) {
+        NSWindowController *controllerWithSheet = nil;
+        FOREACH(NSWindowController *, localController, [self windowControllers]) {
+            if ([[localController window] attachedSheet]) {
+                controllerWithSheet = localController;
+                break;
+            }
+        }
+        result = (controllerWithSheet == nil);
+    }
+    return result;
 }
 
 
