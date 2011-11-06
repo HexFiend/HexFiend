@@ -41,8 +41,8 @@
 /*! Called from HFByteArray to indicate when the bytes have changed, and the attributes need to be fixed up. */
 - (void)byteRange:(HFRange)srcRange wasReplacedByBytesOfLength:(unsigned long long)replacementLength;
 
-/*! Transfer attributes in the given range from array, adding baseOffset to each attribute range. range is interpreted as a range in array. */
-- (void)transferAttributesFromAttributeArray:(HFByteRangeAttributeArray *)array range:(HFRange)range baseOffset:(unsigned long long)baseOffset;
+/*! Transfer attributes in the given range from array, adding baseOffset to each attribute range. range is interpreted as a range in array. If validator is not NULL, then it is called for each attribute; a YES return allows it to be added and a NO return prevents it. */
+- (void)transferAttributesFromAttributeArray:(HFByteRangeAttributeArray *)array range:(HFRange)range baseOffset:(unsigned long long)baseOffset validator:(BOOL (^)(NSString *))allowTransfer;
 
 @end
 

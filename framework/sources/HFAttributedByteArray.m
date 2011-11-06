@@ -10,6 +10,7 @@
 #import <HexFiend/HFBTreeByteArray.h>
 #import <HexFiend/HFByteSlice.h>
 #import <HexFiend/HFByteRangeAttributeArray.h>
+#import <HexFiend/HFByteRangeAttribute.h>
 
 @implementation HFAttributedByteArray
 
@@ -59,13 +60,29 @@
     [attributes byteRange:range wasReplacedByBytesOfLength:0];
 }
 
+/* Hack to avoid certain attributes coming along for the ride (for example, in copy/paste). Attributes should really be a class. */
+- (BOOL)shouldTransferAttribute:(NSString *)attribute {
+    if ([attribute isEqualToString:kHFAttributeDiffInsertion] || [attribute isEqualToString:kHFAttributeFocused]) {
+        /* Don't move Insertion or Focused attributes (related to diff documents). */
+        return NO;
+    } else if (HFBookmarkFromBookmarkAttribute(attribute) != NSNotFound) {
+        /* Disallow duplicate bookmarks */
+        return HFRangeEqualsRange([attributes rangeOfAttribute:attribute], HFRangeMake(ULLONG_MAX, ULLONG_MAX));
+    } else {
+        return YES;
+    }
+}
+
 - (void)insertByteArray:(HFByteArray *)array inRange:(HFRange)lrange {
     const unsigned long long insertedLength = [array length];
     [impl insertByteArray:array inRange:lrange];
     [attributes byteRange:lrange wasReplacedByBytesOfLength:insertedLength];
     HFByteRangeAttributeArray *insertedAttributes = [array byteRangeAttributeArray];    
     if (insertedAttributes && ! [insertedAttributes isEmpty]) {
-        [attributes transferAttributesFromAttributeArray:insertedAttributes range:HFRangeMake(0, insertedLength) baseOffset:lrange.location];
+        /* Transfer attributes */
+        [attributes transferAttributesFromAttributeArray:insertedAttributes range:HFRangeMake(0, insertedLength) baseOffset:lrange.location validator:^(NSString *attr) {
+            return [self shouldTransferAttribute:attr]; 
+        }];
     }
 }
 
@@ -82,7 +99,7 @@
     HFByteRangeAttributeArray *result = [impl attributesForBytesInRange:range];
     /* Transfer from attributes */
     if (! [attributes isEmpty]) {
-        [result transferAttributesFromAttributeArray:attributes range:range baseOffset:0];
+        [result transferAttributesFromAttributeArray:attributes range:range baseOffset:0 validator:NULL];
     }
     return result;
 }
@@ -131,7 +148,7 @@
         
         HFByteRangeAttributeArray *sliceAttributes = [slice attributesForBytesInRange:HFRangeMake(overlap.location - beginningOffset, overlap.length)];
         if (sliceAttributes) {
-            [result transferAttributesFromAttributeArray:sliceAttributes range:HFRangeMake(0, sliceLength) baseOffset:beginningOffset];
+            [result transferAttributesFromAttributeArray:sliceAttributes range:HFRangeMake(0, sliceLength) baseOffset:beginningOffset validator:NULL];
         }
         
         HFASSERT(overlap.location == remainingRange.location);
@@ -142,7 +159,7 @@
     /* Transfer from arrayAttributes */
     HFByteRangeAttributeArray *arrayAttributes = [self byteRangeAttributeArray];
     if (arrayAttributes && ! [arrayAttributes isEmpty]) {
-        [result transferAttributesFromAttributeArray:arrayAttributes range:range baseOffset:0];
+        [result transferAttributesFromAttributeArray:arrayAttributes range:range baseOffset:0 validator:NULL];
     }
     
     return result;

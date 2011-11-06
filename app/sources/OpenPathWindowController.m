@@ -196,8 +196,10 @@ static CFURLRef copyCharacterDevicePathForPossibleBlockDevice(NSURL *url) {
 
 - (void)windowDidLoad {
     [super windowDidLoad];
+    NSUserDefaults *defs = [NSUserDefaults standardUserDefaults];
+    [defs registerDefaults:[NSDictionary dictionaryWithObject:@"/dev/disk0s1" forKey:kOpenPathDialogPathKey]];
     [okButton setEnabled:[[pathField stringValue] length] > 0];
-    NSString *value = [[NSUserDefaults standardUserDefaults] stringForKey:kOpenPathDialogPathKey];
+    NSString *value = [defs stringForKey:kOpenPathDialogPathKey];
     if (value) [pathField setStringValue:value];
     if (! operationQueue) {
         operationQueue = [[NSClassFromString(@"NSOperationQueue") alloc] init];

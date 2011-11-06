@@ -70,10 +70,11 @@
 - (void)removeAttributes:(NSSet *)attributeName { USE(attributeName); UNIMPLEMENTED_VOID(); }
 - (BOOL)isEmpty { UNIMPLEMENTED(); }
 - (NSEnumerator *)attributeEnumerator { UNIMPLEMENTED(); }
-- (void)transferAttributesFromAttributeArray:(HFByteRangeAttributeArray *)array range:(HFRange)range baseOffset:(unsigned long long)baseOffset {
+- (void)transferAttributesFromAttributeArray:(HFByteRangeAttributeArray *)array range:(HFRange)range baseOffset:(unsigned long long)baseOffset validator:(BOOL (^)(NSString *))allowTransferValidator {
     USE(array);
     USE(range);
     USE(baseOffset);
+    USE(allowTransferValidator);
     UNIMPLEMENTED_VOID();
 }
 - (void)byteRange:(HFRange)srcRange wasReplacedByBytesOfLength:(unsigned long long)replacementLength {
@@ -279,12 +280,12 @@
     return HFRangeMake(ULLONG_MAX, ULLONG_MAX);
 }
 
-- (void)transferAttributesFromAttributeArray:(HFNaiveByteRangeAttributeArray *)array range:(HFRange)range baseOffset:(unsigned long long)baseOffset {
+- (void)transferAttributesFromAttributeArray:(HFNaiveByteRangeAttributeArray *)array range:(HFRange)range baseOffset:(unsigned long long)baseOffset validator:(BOOL (^)(NSString *))allowTransfer {
     HFASSERT(array != NULL);
     HFASSERT(array != self);
     EXPECT_CLASS(array, HFNaiveByteRangeAttributeArray);
     FOREACH(HFByteRangeAttributeRun *, run, array->attributeRuns) {
-        if ([self shouldTransferAttribute:run->name]) {
+        if (! allowTransfer || allowTransfer(run->name)) {
             HFRange intersection = HFIntersectionRange(range, run->range);
             if (intersection.length > 0) {
                 intersection.location += baseOffset;
@@ -662,10 +663,10 @@ static void removeFromDictionaryOfSets(NSMutableDictionary *dictionary, NSString
     return result;
 }
 
-- (void)transferAttributesFromAttributeArray:(HFAnnotatedTreeByteRangeAttributeArray *)array range:(HFRange)range baseOffset:(unsigned long long)baseOffset {
+- (void)transferAttributesFromAttributeArray:(HFAnnotatedTreeByteRangeAttributeArray *)array range:(HFRange)range baseOffset:(unsigned long long)baseOffset validator:(BOOL (^)(NSString *))allowTransferValidator {
     EXPECT_CLASS(array, HFAnnotatedTreeByteRangeAttributeArray);
     [array walkNodesInRange:range withBlock:^(HFByteRangeAttributeArrayNode *node, HFRange intersection) {
-        if ([self shouldTransferAttribute:node->attribute]) {            
+        if (allowTransferValidator == NULL || allowTransferValidator(node->attribute)) {            
             intersection.location = HFSum(intersection.location, baseOffset);
             [self addAttribute:node->attribute range:intersection];
         }
