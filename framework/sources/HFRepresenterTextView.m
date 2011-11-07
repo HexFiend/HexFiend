@@ -1236,7 +1236,7 @@ static size_t unionAndCleanLists(NSRect *rectList, id *valueList, size_t count) 
     
     /* Draw backgrounds */
     p = propertyInfos + 0;
-    if (p->count > 0) NSRectFillListWithColors(p->rectList, p->propertyValueList, p->count);
+    if (p->count > 0) NSRectFillListWithColorsUsingOperation(p->rectList, p->propertyValueList, p->count, NSCompositeSourceOver);
     
     /* Draw bookmark starts, extents, and ends */
     p = propertyInfos + 1;

@@ -1,0 +1,12 @@
+//
+//  AppUtilities.h
+//  HexFiend_2
+//
+//  Created by Peter Ammon on 9/11/10.
+//  Copyright 2010 ridiculous_fish. All rights reserved.
+//
+
+@class NSString;
+
+/* Parses an NSString into a quantity and a sign. The string may contain a suffix (e.g. KB). Returns YES if successful, NO if not. */
+BOOL parseNumericStringWithSuffix(NSString *string, unsigned long long *resultValue, unsigned int *signBit);

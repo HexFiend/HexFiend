@@ -21,6 +21,39 @@
     HFLayoutRepresenter *leftLayout = [leftView layoutRepresenter], *rightLayout = [rightView layoutRepresenter];
     CGFloat textViewToLayoutView = [leftView bounds].size.width - [[leftLayout view] frame].size.width; //we assume this is the same between both text views
     const CGFloat availableTextViewSpace = viewWidth - interviewDistance - 2 * textViewToLayoutView;
+
+    /* Compute byte granularity */
+    NSUInteger granularity = 1;
+    FOREACH(HFRepresenter *, rep, [[leftView layoutRepresenter] representers]) {
+        granularity = HFLeastCommonMultiple(granularity, [rep byteGranularity]);
+    }
+    FOREACH(HFRepresenter *, rep2, [[rightView layoutRepresenter] representers]) {
+        granularity = HFLeastCommonMultiple(granularity, [rep2 byteGranularity]);
+    }
+    
+    /* Do a binary search to find the maximum number of granules that can fit */
+    NSUInteger maxKnownGood = 0, minKnownBad = (NSUIntegerMax - 1) / granularity;
+    while (maxKnownGood + 1 < minKnownBad) {
+        NSUInteger proposedNumGranules = maxKnownGood + (minKnownBad - maxKnownGood)/2;
+        NSUInteger proposedBytesPerLine = proposedNumGranules * granularity;
+        CGFloat requiredSpace = [leftLayout minimumViewWidthForBytesPerLine:proposedBytesPerLine] + [rightLayout minimumViewWidthForBytesPerLine:proposedBytesPerLine];
+        if (requiredSpace > availableTextViewSpace) minKnownBad = proposedNumGranules;
+        else maxKnownGood = proposedNumGranules;
+    }
+
+    /* Compute BPL */
+    NSUInteger bpl = MAX(maxKnownGood, 1) * granularity;
+    
+    /* Return what we've discovered */
+    *leftWidth = [leftLayout minimumViewWidthForBytesPerLine:bpl] + textViewToLayoutView;
+    *rightWidth = [rightLayout minimumViewWidthForBytesPerLine:bpl] + textViewToLayoutView;
+}
+
+- (void)OLDgetLeftLayoutWidth:(CGFloat *)leftWidth rightLayoutWidth:(CGFloat *)rightWidth forProposedWidth:(CGFloat)viewWidth {
+    /* Compute how much space we can allocate to each text view */
+    HFLayoutRepresenter *leftLayout = [leftView layoutRepresenter], *rightLayout = [rightView layoutRepresenter];
+    CGFloat textViewToLayoutView = [leftView bounds].size.width - [[leftLayout view] frame].size.width; //we assume this is the same between both text views
+    const CGFloat availableTextViewSpace = viewWidth - interviewDistance - 2 * textViewToLayoutView;
     
     /* Start by dividing the space evenly, then iterate on finding the max bytes per line until we don't see any more changes */
     CGFloat leftLayoutViewSpace = HFFloor(availableTextViewSpace / 2);
@@ -37,24 +70,24 @@
     /* If the BPLs are the same, then there's no hope of fitting more in.  If they're not the same, there may be hope.  See how much unused space we have and assign it to the side that we want to get bigger. */
     CGFloat slackSpace = HFMax(availableTextViewSpace - leftLayoutViewSpace - rightLayoutViewSpace, 0.);
     if (rightBytesPerLine < leftBytesPerLine) {
-	rightLayoutViewSpace += slackSpace;
-	rightBytesPerLine = [rightLayout maximumBytesPerLineForLayoutInProposedWidth:rightLayoutViewSpace];
-	rightLayoutViewSpace = [rightLayout minimumViewWidthForBytesPerLine:rightBytesPerLine];
+        rightLayoutViewSpace += slackSpace;
+        rightBytesPerLine = [rightLayout maximumBytesPerLineForLayoutInProposedWidth:rightLayoutViewSpace];
+        rightLayoutViewSpace = [rightLayout minimumViewWidthForBytesPerLine:rightBytesPerLine];
     } else if (leftBytesPerLine < rightBytesPerLine) {
-	leftLayoutViewSpace += slackSpace;
-	leftBytesPerLine = [leftLayout maximumBytesPerLineForLayoutInProposedWidth:leftLayoutViewSpace];
-	leftLayoutViewSpace = [leftLayout minimumViewWidthForBytesPerLine:leftBytesPerLine];	    
+        leftLayoutViewSpace += slackSpace;
+        leftBytesPerLine = [leftLayout maximumBytesPerLineForLayoutInProposedWidth:leftLayoutViewSpace];
+        leftLayoutViewSpace = [leftLayout minimumViewWidthForBytesPerLine:leftBytesPerLine];	    
     }
     
     /* If they're still not the same, then use the smaller of the two */
     if (rightBytesPerLine > leftBytesPerLine) {
-	rightBytesPerLine = leftBytesPerLine;
-	rightLayoutViewSpace = [rightLayout minimumViewWidthForBytesPerLine:rightBytesPerLine];
+        rightBytesPerLine = leftBytesPerLine;
+        rightLayoutViewSpace = [rightLayout minimumViewWidthForBytesPerLine:rightBytesPerLine];
     } else if (leftBytesPerLine > rightBytesPerLine) {
-	leftBytesPerLine = rightBytesPerLine;
-	leftLayoutViewSpace = [leftLayout minimumViewWidthForBytesPerLine:leftBytesPerLine];
+        leftBytesPerLine = rightBytesPerLine;
+        leftLayoutViewSpace = [leftLayout minimumViewWidthForBytesPerLine:leftBytesPerLine];
     }
-
+    
     /* Done, return the stuff */
     HFASSERT(leftBytesPerLine == rightBytesPerLine);
     *leftWidth = leftLayoutViewSpace + textViewToLayoutView;
@@ -62,6 +95,7 @@
 }
 
 - (NSSize)minimumFrameSizeForProposedSize:(NSSize)frameSize {
+    NSLog(@"minimumFrameSizeForProposedSize: %f", frameSize.width);
     NSSize result;
     CGFloat leftWidth, rightWidth;
     [self getLeftLayoutWidth:&leftWidth rightLayoutWidth:&rightWidth forProposedWidth:frameSize.width];
@@ -134,7 +168,7 @@
     lineRect.size.width = lineWidth;
     lineRect.origin.x = NSMinX(middleFrame);
     if (NSIntersectsRect(lineRect, dirtyRect)) NSRectFill(lineRect);
-
+    
     lineRect.origin.x = NSMaxX(middleFrame) - lineWidth;
     if (NSIntersectsRect(lineRect, dirtyRect)) NSRectFill(lineRect);
 }

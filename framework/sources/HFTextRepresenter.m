@@ -28,7 +28,7 @@
 
 - (void)dealloc {
     if ([self isViewLoaded]) {
-	[[self view] clearRepresenter];
+        [[self view] clearRepresenter];
     }
     [rowBackgroundColors release];
     [super dealloc];
@@ -70,14 +70,14 @@
     HFASSERT(lineEnd >= lineStart);
     HFRange byteRange = HFRangeMake(HFProductULL(bytesPerLine, lineStart), HFProductULL(lineEnd - lineStart, bytesPerLine));
     if (byteRange.length == 0) {
-	/* This can happen if we are too small to even show one line */
-	return HFRangeMake(0, 0);
+        /* This can happen if we are too small to even show one line */
+        return HFRangeMake(0, 0);
     }
     else {
-	HFASSERT(byteRange.location <= contentsLength);
-	byteRange.length = MIN(byteRange.length, contentsLength - byteRange.location);
-	HFASSERT(HFRangeIsSubrangeOfRange(byteRange, HFRangeMake(0, [controller contentsLength])));
-	return byteRange;
+        HFASSERT(byteRange.location <= contentsLength);
+        byteRange.length = MIN(byteRange.length, contentsLength - byteRange.location);
+        HFASSERT(HFRangeIsSubrangeOfRange(byteRange, HFRangeMake(0, [controller contentsLength])));
+        return byteRange;
     }
 }
 
@@ -93,16 +93,16 @@
         }
     }
     else if (byteRange.location < displayedRange.location) {
-	/* We're below it. */
-	return NSMakeRect(-CGFLOAT_MAX, -CGFLOAT_MAX, 0, 0);
+        /* We're below it. */
+        return NSMakeRect(-CGFLOAT_MAX, -CGFLOAT_MAX, 0, 0);
     }
     else if (byteRange.location >= HFMaxRange(displayedRange)) {
-	/* We're above it */
-	return NSMakeRect(CGFLOAT_MAX, CGFLOAT_MAX, 0, 0);
+        /* We're above it */
+        return NSMakeRect(CGFLOAT_MAX, CGFLOAT_MAX, 0, 0);
     }
     else {
-	/* Shouldn't be possible to get here */
-	[NSException raise:NSInternalInconsistencyException format:@"furthestRectOnEdge: expected an intersection, or a range below or above the byte range, but nothin'"];
+        /* Shouldn't be possible to get here */
+        [NSException raise:NSInternalInconsistencyException format:@"furthestRectOnEdge: expected an intersection, or a range below or above the byte range, but nothin'"];
     }
     return result;
 }
@@ -115,10 +115,10 @@
         result = [[self view] originForCharacterAtByteIndex:location];
     }
     else if (index < displayedRange.location) {
-	result = NSMakePoint(-CGFLOAT_MAX, -CGFLOAT_MAX);
+        result = NSMakePoint(-CGFLOAT_MAX, -CGFLOAT_MAX);
     }
     else {
-	result = NSMakePoint(CGFLOAT_MAX, CGFLOAT_MAX);
+        result = NSMakePoint(CGFLOAT_MAX, CGFLOAT_MAX);
     }
     return result;
 }
@@ -148,11 +148,11 @@
     if ([attributes containsObject:kHFAttributeFocused]) {
         [run setBackgroundColor:[NSColor colorWithCalibratedRed:(CGFloat)128/255. green:(CGFloat)0/255. blue:0/255. alpha:1.]];
         [run setScale:1.15];
-	[run setForegroundColor:[NSColor whiteColor]];
+        [run setForegroundColor:[NSColor whiteColor]];
     }
     else if ([attributes containsObject:kHFAttributeDiffInsertion]) {
-	CGFloat white = 180;
-        [run setBackgroundColor:[NSColor colorWithCalibratedRed:(CGFloat)255./255. green:(CGFloat)white/255. blue:white/255. alpha:1.]];
+        CGFloat white = 180;
+        [run setBackgroundColor:[NSColor colorWithCalibratedRed:(CGFloat)255./255. green:(CGFloat)white/255. blue:white/255. alpha:.7]];
     }
     
     /* Process bookmarks */
@@ -166,8 +166,8 @@
     }
     
     if (bookmarkExtents) {
-	[run setBookmarkExtents:bookmarkExtents];
-	[bookmarkExtents release];
+        [run setBookmarkExtents:bookmarkExtents];
+        [bookmarkExtents release];
     }
     return run;
 }
@@ -401,7 +401,7 @@
     HFController *controller = [self controller];
     if ([controller inOverwriteMode]) return NO;
     if (! [controller editable]) return NO;
-
+    
     FOREACH(HFRangeWrapper *, rangeWrapper, [controller selectedContentsRanges]) {
         if ([rangeWrapper HFRange].length > 0) return YES; //we have something selected
     }

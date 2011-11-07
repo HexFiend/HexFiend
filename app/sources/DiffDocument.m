@@ -14,7 +14,7 @@
 #import <HexFiend/HexFiend.h>
 
 @interface DiffDocument (ForwardDeclarations)
-- (void)setFocusedInstructionIndex:(NSUInteger)index;
+- (void)setFocusedInstructionIndex:(NSUInteger)index scroll:(BOOL)alsoScrollToIt;
 - (void)updateScrollerValue;
 - (void)scrollWithScrollEvent:(NSEvent *)event;
 - (void)scrollByLines:(long double)lines;
@@ -24,6 +24,12 @@
 - (unsigned long long)concreteToAbstractExpansionBeforeConcreteLocation:(unsigned long long)concreteEndpoint onLeft:(BOOL)left;
 - (unsigned long long)abstractToConcreteCollapseBeforeAbstractLocation:(unsigned long long)abstractEndpoint onLeft:(BOOL)left;
 - (void)scrollToFocusedInstruction;
+@end
+
+@interface NSEvent (HFLionStuff)
+- (CGFloat)scrollingDeltaY;
+- (BOOL)hasPreciseScrollingDeltas;
+- (CGFloat)deviceDeltaY;
 @end
 
 @implementation DiffDocument
@@ -36,33 +42,24 @@
     NSUInteger i, insnCount = [editScript numberOfInstructions];
     for (i=0; i < insnCount; i++) {
         struct HFEditInstruction_t insn = [editScript instructionAtIndex:i];
-        if (insn.dst.length > 0) {
-            [[[rightTextView controller] byteRangeAttributeArray] addAttribute:kHFAttributeDiffInsertion range:insn.dst];
-        }
         if (insn.src.length > 0) {
             [[[leftTextView controller] byteRangeAttributeArray] addAttribute:kHFAttributeDiffInsertion range:insn.src];        	    
+        }
+        if (insn.dst.length > 0) {
+            [[[rightTextView controller] byteRangeAttributeArray] addAttribute:kHFAttributeDiffInsertion range:insn.dst];
         }
     }
     
     /* Compute the totalAbstractLength */
     unsigned long long abstractLength = 0;
     unsigned long long leftMatchedLength = [[leftTextView controller] contentsLength], rightMatchedLength = [[rightTextView controller] contentsLength];
-    unsigned long long lastLeftLocation = 0;
     for (i=0; i < insnCount; i++) {
         struct HFEditInstruction_t insn = [editScript instructionAtIndex:i];
-        
-        /* Add in the length of any matching bytes */
-        abstractLength = HFSum(abstractLength, HFSubtract(insn.src.location, lastLeftLocation));
-        
         unsigned long long insnLength = MAX(insn.src.length, insn.dst.length);
         abstractLength = HFSum(abstractLength, insnLength);
         leftMatchedLength = HFSubtract(leftMatchedLength, insn.src.length);
         rightMatchedLength = HFSubtract(rightMatchedLength, insn.dst.length);
-        lastLeftLocation = HFSum(insn.src.location, insn.src.length);
     }
-    
-    /* Add in any matching suffix */
-    abstractLength = HFSum(abstractLength, HFSubtract([[leftTextView controller] contentsLength], lastLeftLocation));
     
     /* If the diff is correct, then the matched text must be equal in length */
     HFASSERT(leftMatchedLength == rightMatchedLength);
@@ -75,7 +72,7 @@
     [[leftTextView controller] representer:nil changedProperties:HFControllerByteRangeAttributes];
     [diffTable reloadData];
     if ([editScript numberOfInstructions] > 0) {
-        [self setFocusedInstructionIndex:0];
+        [self setFocusedInstructionIndex:0 scroll:YES];
     }
 }
 
@@ -170,6 +167,22 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
     }    
 }
 
+- (void)synchronizeTableHiddenScrollers {
+    /* Work around an AppKit bug that the scrollers don't update their value if they're hidden, but their value becomes very relevant if we scroll via the scroll wheel! */
+    NSScrollView *scrollView = [diffTable enclosingScrollView];
+    NSClipView *clipView = [scrollView contentView];
+    NSRect clipViewBounds = [clipView bounds];
+    NSRect documentRect = [clipView documentRect];
+    double scrollVal;
+    if (NSHeight(clipViewBounds) >= NSHeight(documentRect)) {
+        scrollVal = 0;
+    } else {
+        double scrollHeight = NSHeight(documentRect) - NSHeight(clipViewBounds);
+        scrollVal = (NSMinY(clipViewBounds) - NSMinY(documentRect)) / scrollHeight;
+    }
+    [[scrollView verticalScroller] setDoubleValue:scrollVal];
+}
+
 - (void)updateTableViewSelection {
     if (focusedInstructionIndex >= [editScript numberOfInstructions]) {
         [diffTable selectRowIndexes:[NSIndexSet indexSet] byExtendingSelection:NO];
@@ -177,12 +190,13 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
     else {
         [diffTable selectRowIndexes:[NSIndexSet indexSetWithIndex:focusedInstructionIndex] byExtendingSelection:NO];
         [diffTable scrollRowToVisible:focusedInstructionIndex];
+        [self synchronizeTableHiddenScrollers];
     }
 }
 
-- (void)setFocusedInstructionIndex:(NSUInteger)idx {
+- (void)setFocusedInstructionIndex:(NSUInteger)idx scroll:(BOOL)scroll {
     focusedInstructionIndex = idx;
-    [self scrollToFocusedInstruction];
+    if (scroll) [self scrollToFocusedInstruction];
     [self updateInstructionOverlayView];
     [self updateTableViewSelection];
 }
@@ -197,7 +211,7 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
         NSBeep();
     }
     else {
-        [self setFocusedInstructionIndex:focusedInstructionIndex + direction];
+        [self setFocusedInstructionIndex:focusedInstructionIndex + direction scroll:YES];
     }
 }
 
@@ -286,6 +300,12 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
     [super dealloc];
 }
 
+/* Diff documents never show a divider */
+- (BOOL)dividerRepresenterShouldBeShown {
+    return NO;
+}
+
+
 - (void)synchronizeController:(HFController *)client properties:(HFControllerPropertyBits)propertyMask {
     if (propertyMask & HFControllerDisplayedLineRange) {
         HFFPRange displayedLineRange = [controller displayedLineRange];
@@ -320,10 +340,35 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
     }
 }
 
-
 /* Return the property bits that our overlay view cares about */
 - (HFControllerPropertyBits)propertiesAffectingOverlayView {
     return HFControllerContentLength | HFControllerDisplayedLineRange | HFControllerBytesPerLine | HFControllerBytesPerColumn;
+}
+
+/* Returns the index of the instruction that either contains the given index, or the index of the first instruction after it. left indicates that we're talking about the instruction source; right indicates the destination. Returns NSNotFound if no instruction contains or is after the given index. */
+- (NSUInteger)indexOfInstructionContainingOrAfterIndex:(unsigned long long)idx onLeft:(BOOL)left {
+    const NSUInteger insnCount = [editScript numberOfInstructions];
+    NSUInteger low = 0, high = insnCount;
+    while (low < high) {
+        NSUInteger mid = low + (high - low)/2;
+        struct HFEditInstruction_t insn = [editScript instructionAtIndex:mid];
+        HFRange range = (left ? insn.src : insn.dst);
+        
+        if (HFLocationInRange(idx, range)) {
+            /* If it's in the range we're definitely done */
+            low = high = mid;
+        } else if (idx > range.location) {
+            /* Must have idx >= HFMaxRange(range), so pick a greater range */
+            low = mid + 1;
+        } else {
+            /* Must have idx < range.location, so this range may work */
+            high = mid;
+        }
+
+    }
+    HFASSERT(low <= insnCount);
+    if (low == insnCount) return NSNotFound;
+    else return low;
 }
 
 - (NSRange)visibleInstructionRangeInController:(HFController *)targetController {
@@ -441,7 +486,7 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
 }
 
 - (void)synchronizeControllers:(NSNotification *)note {
-    /* Set and chec synchronizingControllers to avoid recursive invocations */
+    /* Set and check synchronizingControllers to avoid recursive invocations */
     if (synchronizingControllers) return;
     synchronizingControllers = YES;
     NSNumber *propertyNumber = [[note userInfo] objectForKey:HFControllerChangedPropertiesKey];
@@ -462,6 +507,21 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
     /* Synchronize the selection */
     if (propertyMask & HFControllerSelectedRanges) {
         [self propagateSelectedRangesFromLeftToRight:controllerIsLeft];
+        
+        /* If the user clicks on a range containing a diff, jump to that in the table */
+        NSArray *ranges = [changedController selectedContentsRanges];
+        if ([ranges count] == 1) {
+            HFRange selectedRange = [[ranges objectAtIndex:0] HFRange];
+            if (selectedRange.length == 0) {
+                NSUInteger insnIndex = [self indexOfInstructionContainingOrAfterIndex:selectedRange.location onLeft:controllerIsLeft];
+                if (insnIndex != NSNotFound) {
+                    struct HFEditInstruction_t insn = [editScript instructionAtIndex:insnIndex];
+                    if (HFLocationInRange(selectedRange.location, controllerIsLeft ? insn.src : insn.dst)) {
+                        [self setFocusedInstructionIndex:insnIndex scroll:NO];
+                    }
+                }
+            }
+        }
     }
     
 #if 0
@@ -471,10 +531,12 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
     if (changedController != [rightTextView controller]) {
         [self synchronizeController:[rightTextView controller] properties:propertyMask];
     }
-    
-    if (0 && changedController == [rightTextView controller] && (propertyMask & HFControllerDisplayedLineRange)) {
-        /* Scroll our table view to show the instruction.  If our focused instruction is visible, scroll to that; otherwise scroll to the first visible one. */
+#endif
+    if (0 && propertyMask & HFControllerDisplayedLineRange) {
+        /* Scroll our table view to show the instruction.  If our focused instruction is not visible, scroll to it; otherwise scroll to the first visible one. */
         NSRange visibleInstructions = [self visibleInstructionRangeInController:changedController];
+        
+        NSLog(@"visibleInstructions: %@", NSStringFromRange(visibleInstructions));
         
         //	NSLog(@"visible instructions: %@", NSStringFromRange(visibleInstructions));
         if (visibleInstructions.location != NSNotFound) {
@@ -483,7 +545,7 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
         }
         
     }
-#endif
+
     synchronizingControllers = NO;
 }
 
@@ -646,7 +708,7 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
     [window setFrame:windowFrame display:YES];
     
     /* Start at instruction zero */
-    [self setFocusedInstructionIndex:0];
+    [self setFocusedInstructionIndex:0 scroll:YES];
 }
 
 - (NSString *)windowNibName {
@@ -720,7 +782,9 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
 - (void)tableViewSelectionDidChange:(NSNotification *)notification {
     USE(notification);
     NSInteger row = [diffTable selectedRow];
-    [self setFocusedInstructionIndex:row];
+    
+    /* If we are synchronizing controllers, we'll take care of scrolling things. If we are not synchronizing controllers, scroll to the focused instruction. */
+    [self setFocusedInstructionIndex:row scroll: ! synchronizingControllers];
 }
 
 @end
@@ -955,7 +1019,27 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
 - (void)scrollWithScrollEvent:(NSEvent *)scrollEvent {
     HFASSERT(scrollEvent != NULL);
     HFASSERT([scrollEvent type] == NSScrollWheel);
-    long double scrollY = - kScrollMultiplier * [scrollEvent deltaY];
+    CGFloat preciseScroll;
+    BOOL hasPreciseScroll;
+    
+    /* Prefer precise deltas */
+    if ([scrollEvent respondsToSelector:@selector(hasPreciseScrollingDeltas)] && [scrollEvent hasPreciseScrollingDeltas]) {
+        /* In this case, we're going to scroll by a certain number of points */
+        preciseScroll = [scrollEvent scrollingDeltaY];
+        hasPreciseScroll = YES;
+    } else if ([scrollEvent respondsToSelector:@selector(deviceDeltaY)]) {
+        preciseScroll = [scrollEvent deviceDeltaY];
+        hasPreciseScroll = YES;
+    } else {
+        hasPreciseScroll = NO;
+    }
+    
+    long double scrollY = 0;
+    if (! hasPreciseScroll) {
+        scrollY = -kScrollMultiplier * [scrollEvent scrollingDeltaY];
+    } else {
+        scrollY = -preciseScroll / [[leftTextView controller] lineHeight];
+    }
     [self scrollByLines:scrollY];
 }
 

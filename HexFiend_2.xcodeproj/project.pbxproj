@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 44;
+	objectVersion = 46;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -158,6 +158,7 @@
 		D0A47C110D288EDF00CB9BB9 /* HFControllerCoalescedUndo.h in Headers */ = {isa = PBXBuildFile; fileRef = D0A47C0F0D288EDF00CB9BB9 /* HFControllerCoalescedUndo.h */; };
 		D0A47C120D288EDF00CB9BB9 /* HFControllerCoalescedUndo.m in Sources */ = {isa = PBXBuildFile; fileRef = D0A47C100D288EDF00CB9BB9 /* HFControllerCoalescedUndo.m */; };
 		D0A6C9D80DCC68610077175C /* HFController.h in Headers */ = {isa = PBXBuildFile; fileRef = D0A6C9D70DCC68610077175C /* HFController.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D0A8AF7D1467273900387627 /* AppUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = D0A8AF7C1467273900387627 /* AppUtilities.m */; };
 		D0A90B050D160414008975B9 /* HFStatusBarRepresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = D0A90B030D160414008975B9 /* HFStatusBarRepresenter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D0A90B060D160414008975B9 /* HFStatusBarRepresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = D0A90B040D160414008975B9 /* HFStatusBarRepresenter.m */; };
 		D0A9F3F10CFBEA9F0077D577 /* HFLineCountingRepresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = D0A9F3EF0CFBEA9F0077D577 /* HFLineCountingRepresenter.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -458,6 +459,8 @@
 		D0A47C0F0D288EDF00CB9BB9 /* HFControllerCoalescedUndo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFControllerCoalescedUndo.h; path = sources/HFControllerCoalescedUndo.h; sourceTree = "<group>"; };
 		D0A47C100D288EDF00CB9BB9 /* HFControllerCoalescedUndo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFControllerCoalescedUndo.m; path = sources/HFControllerCoalescedUndo.m; sourceTree = "<group>"; };
 		D0A6C9D70DCC68610077175C /* HFController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFController.h; path = sources/HFController.h; sourceTree = "<group>"; };
+		D0A8AF7B1467272B00387627 /* AppUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppUtilities.h; path = app/sources/AppUtilities.h; sourceTree = "<group>"; };
+		D0A8AF7C1467273900387627 /* AppUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppUtilities.m; path = app/sources/AppUtilities.m; sourceTree = "<group>"; };
 		D0A90B030D160414008975B9 /* HFStatusBarRepresenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFStatusBarRepresenter.h; path = sources/HFStatusBarRepresenter.h; sourceTree = "<group>"; };
 		D0A90B040D160414008975B9 /* HFStatusBarRepresenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFStatusBarRepresenter.m; path = sources/HFStatusBarRepresenter.m; sourceTree = "<group>"; };
 		D0A9F3EF0CFBEA9F0077D577 /* HFLineCountingRepresenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFLineCountingRepresenter.h; path = sources/HFLineCountingRepresenter.h; sourceTree = "<group>"; };
@@ -877,6 +880,8 @@
 			children = (
 				32CA4F630368D1EE00C91783 /* HexFiend_2_Prefix.pch */,
 				29B97316FDCFA39411CA2CEA /* main.m */,
+				D0A8AF7B1467272B00387627 /* AppUtilities.h */,
+				D0A8AF7C1467273900387627 /* AppUtilities.m */,
 				D02BD6D910545E7B00535EDE /* DocumentTypes */,
 				D0D8C45C12A3EF3F00960FC4 /* Dialogs */,
 				D0CD51F40DA2B928006E8D1B /* AppDelegate.h */,
@@ -1243,10 +1248,11 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 0420;
 				ORGANIZATIONNAME = ridiculous_fish;
 			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "HexFiend_2" */;
-			compatibilityVersion = "Xcode 3.0";
+			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 1;
 			knownRegions = (
@@ -1368,6 +1374,7 @@
 				D0D8C45812A3EF3900960FC4 /* ProcessList.m in Sources */,
 				D059E1291311C676001493B8 /* AppDebugging.m in Sources */,
 				D01EF15413B2A0D300CC9283 /* TextDividerRepresenter.m in Sources */,
+				D0A8AF7D1467273900387627 /* AppUtilities.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1641,8 +1648,7 @@
 		C01FCF5008A954540054247B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
-				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "x86_64 i386 ppc";
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_OPTIMIZATION_LEVEL = s;
@@ -1654,7 +1660,6 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.4;
 				"MACOSX_DEPLOYMENT_TARGET[arch=ppc64]" = 10.5;
 				"MACOSX_DEPLOYMENT_TARGET[arch=x86_64]" = 10.5;
-				PREBINDING = NO;
 				"SDKROOT[arch=ppc64]" = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
 				VALID_ARCHS = "armv6 armv7 i386 x86_64";
 			};
@@ -1664,7 +1669,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
@@ -1674,7 +1678,6 @@
 					"-framework",
 					HexFiend,
 				);
-				PREBINDING = NO;
 				PRODUCT_NAME = HexFiendling;
 				VALID_ARCHS = "ppc64 x86_64 i386 ppc ppc7400 ppc970";
 			};
@@ -1684,7 +1687,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
@@ -1694,7 +1696,6 @@
 					"-framework",
 					HexFiend,
 				);
-				PREBINDING = NO;
 				PRODUCT_NAME = HexFiendling;
 				VALID_ARCHS = "ppc64 x86_64 i386 ppc ppc7400 ppc970";
 			};
@@ -1704,7 +1705,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
@@ -1714,7 +1714,6 @@
 					"-framework",
 					HexFiend,
 				);
-				PREBINDING = NO;
 				PRODUCT_NAME = HexFiendling;
 				VALID_ARCHS = "ppc64 x86_64 i386 ppc ppc7400 ppc970";
 			};
@@ -1726,7 +1725,6 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
@@ -1736,7 +1734,6 @@
 					"-framework",
 					HexFiend,
 				);
-				PREBINDING = NO;
 				PRODUCT_NAME = HexFiendling;
 				VALID_ARCHS = "ppc64 x86_64 i386 ppc ppc7400 ppc970";
 				ZERO_LINK = NO;
@@ -1747,7 +1744,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
@@ -1757,7 +1753,6 @@
 					"-framework",
 					HexFiend,
 				);
-				PREBINDING = NO;
 				PRODUCT_NAME = HexFiendling;
 				VALID_ARCHS = "ppc64 x86_64 i386 ppc ppc7400 ppc970";
 			};
@@ -1772,13 +1767,11 @@
 					"$(inherited)",
 					"\"$(DEVELOPER_FRAMEWORKS_DIR)\"",
 				);
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INFOPLIST_FILE = "ib_plugin/HexFiend_IBPlugin-Info.plist";
 				INSTALL_PATH = "$(HOME)/Library/Bundles";
-				PREBINDING = NO;
 				PRODUCT_NAME = HexFiend;
 				VALID_ARCHS = "armv6 i386 ppc ppc7400 ppc970 x86_64";
 				WRAPPER_EXTENSION = ibplugin;
@@ -1798,7 +1791,6 @@
 					"\"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\"",
 				);
 				FRAMEWORK_VERSION = A;
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_ENABLE_OBJC_GC = supported;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -1815,7 +1807,6 @@
 					"-framework",
 					AppKit,
 				);
-				PREBINDING = NO;
 				PRODUCT_NAME = HexFiend;
 				WARNING_CFLAGS = (
 					"-W",
@@ -1831,7 +1822,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				INSTALL_PATH = /usr/local/bin;
@@ -1841,7 +1831,6 @@
 					"-framework",
 					AppKit,
 				);
-				PREBINDING = NO;
 				PRODUCT_NAME = FortunateSon;
 			};
 			name = "Debug-NoUnitTests";
@@ -1850,7 +1839,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				INSTALL_PATH = /usr/local/bin;
@@ -1860,7 +1848,6 @@
 					"-framework",
 					AppKit,
 				);
-				PREBINDING = NO;
 				PRODUCT_NAME = FortunateSon;
 			};
 			name = "Debug-UnitTests";
@@ -1869,7 +1856,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				INSTALL_PATH = /usr/local/bin;
@@ -1879,7 +1865,6 @@
 					"-framework",
 					AppKit,
 				);
-				PREBINDING = NO;
 				PRODUCT_NAME = FortunateSon;
 			};
 			name = "Debug-UnitTests-Optimized";
@@ -1890,7 +1875,6 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				INSTALL_PATH = /usr/local/bin;
@@ -1900,7 +1884,6 @@
 					"-framework",
 					AppKit,
 				);
-				PREBINDING = NO;
 				PRODUCT_NAME = FortunateSon;
 				ZERO_LINK = NO;
 			};
@@ -1910,7 +1893,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				INSTALL_PATH = /usr/local/bin;
@@ -1920,7 +1902,6 @@
 					"-framework",
 					AppKit,
 				);
-				PREBINDING = NO;
 				PRODUCT_NAME = FortunateSon;
 			};
 			name = "Release-GC";
@@ -1928,7 +1909,7 @@
 		D06CD66F1160AD8100396759 /* Debug-NoUnitTests-NoAnalyze */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ONLY_ACTIVE_ARCH_PRE_XCODE_3_1)";
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -1939,8 +1920,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.4;
 				"MACOSX_DEPLOYMENT_TARGET[arch=ppc64]" = 10.5;
 				"MACOSX_DEPLOYMENT_TARGET[arch=x86_64]" = 10.5;
-				ONLY_ACTIVE_ARCH_PRE_XCODE_3_1 = "$(NATIVE_ARCH_ACTUAL)";
-				PREBINDING = NO;
+				ONLY_ACTIVE_ARCH = YES;
 				"SDKROOT[arch=ppc64]" = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
 				VALID_ARCHS = "armv6 armv7 i386 x86_64";
 			};
@@ -1956,7 +1936,6 @@
 					"\"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\"",
 				);
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_ENABLE_OBJC_GC = unsupported;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -1993,7 +1972,6 @@
 				);
 				FRAMEWORK_VERSION = A;
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_ENABLE_OBJC_GC = supported;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -2011,7 +1989,6 @@
 					AppKit,
 					"-lcrypto",
 				);
-				PREBINDING = NO;
 				PRODUCT_NAME = HexFiend;
 				WARNING_CFLAGS = (
 					"-W",
@@ -2032,14 +2009,12 @@
 					"\"$(DEVELOPER_FRAMEWORKS_DIR)\"",
 				);
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INFOPLIST_FILE = "ib_plugin/HexFiend_IBPlugin-Info.plist";
 				INSTALL_PATH = "$(HOME)/Library/Bundles";
-				PREBINDING = NO;
 				PRODUCT_NAME = HexFiend;
 				VALID_ARCHS = "armv6 i386 ppc ppc7400 ppc970 x86_64";
 				WRAPPER_EXTENSION = ibplugin;
@@ -2051,10 +2026,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				INSTALL_PATH = /usr/local/bin;
-				PREBINDING = NO;
 				PRODUCT_NAME = FortunateSonCopier;
 			};
 			name = "Debug-NoUnitTests-NoAnalyze";
@@ -2063,7 +2036,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				INSTALL_PATH = /usr/local/bin;
@@ -2073,7 +2045,6 @@
 					"-framework",
 					AppKit,
 				);
-				PREBINDING = NO;
 				PRODUCT_NAME = FortunateSon;
 			};
 			name = "Debug-NoUnitTests-NoAnalyze";
@@ -2082,7 +2053,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = sources/BTree/BTree_Testing/BTree_Test_Prefix.pch;
@@ -2095,7 +2065,6 @@
 					"-framework",
 					AppKit,
 				);
-				PREBINDING = NO;
 				PRODUCT_NAME = Test_BTree;
 			};
 			name = "Debug-NoUnitTests-NoAnalyze";
@@ -2104,7 +2073,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
@@ -2114,7 +2082,6 @@
 					"-framework",
 					HexFiend,
 				);
-				PREBINDING = NO;
 				PRODUCT_NAME = HexFiendling;
 				VALID_ARCHS = "ppc64 x86_64 i386 ppc ppc7400 ppc970";
 			};
@@ -2131,7 +2098,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = sources/BTree/BTree_Testing/BTree_Test_Prefix.pch;
@@ -2144,7 +2110,6 @@
 					"-framework",
 					AppKit,
 				);
-				PREBINDING = NO;
 				PRODUCT_NAME = Test_BTree;
 			};
 			name = "Debug-NoUnitTests";
@@ -2153,7 +2118,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = sources/BTree/BTree_Testing/BTree_Test_Prefix.pch;
@@ -2166,7 +2130,6 @@
 					"-framework",
 					AppKit,
 				);
-				PREBINDING = NO;
 				PRODUCT_NAME = Test_BTree;
 			};
 			name = "Debug-UnitTests";
@@ -2175,7 +2138,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = sources/BTree/BTree_Testing/BTree_Test_Prefix.pch;
@@ -2188,7 +2150,6 @@
 					"-framework",
 					AppKit,
 				);
-				PREBINDING = NO;
 				PRODUCT_NAME = Test_BTree;
 			};
 			name = "Debug-UnitTests-Optimized";
@@ -2199,7 +2160,6 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = sources/BTree/BTree_Testing/BTree_Test_Prefix.pch;
@@ -2212,7 +2172,6 @@
 					"-framework",
 					AppKit,
 				);
-				PREBINDING = NO;
 				PRODUCT_NAME = Test_BTree;
 				ZERO_LINK = NO;
 			};
@@ -2222,7 +2181,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = sources/BTree/BTree_Testing/BTree_Test_Prefix.pch;
@@ -2235,7 +2193,6 @@
 					"-framework",
 					AppKit,
 				);
-				PREBINDING = NO;
 				PRODUCT_NAME = Test_BTree;
 			};
 			name = "Release-GC";
@@ -2243,8 +2200,7 @@
 		D083F7350DBCBD5F00C2B632 /* Release-GC */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
-				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "x86_64 i386 ppc";
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_PREPROCESSOR_DEFINITIONS = "NDEBUG=1";
@@ -2255,7 +2211,6 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.4;
 				"MACOSX_DEPLOYMENT_TARGET[arch=ppc64]" = 10.5;
 				"MACOSX_DEPLOYMENT_TARGET[arch=x86_64]" = 10.5;
-				PREBINDING = NO;
 				"SDKROOT[arch=ppc64]" = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
 				VALID_ARCHS = "armv6 armv7 i386 x86_64";
 			};
@@ -2273,7 +2228,6 @@
 					"\"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\"",
 				);
 				FRAMEWORK_VERSION = A;
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_ENABLE_OBJC_GC = supported;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -2290,7 +2244,6 @@
 					"-framework",
 					AppKit,
 				);
-				PREBINDING = NO;
 				PRODUCT_NAME = HexFiend;
 				WARNING_CFLAGS = (
 					"-W",
@@ -2340,13 +2293,11 @@
 					"$(inherited)",
 					"\"$(DEVELOPER_FRAMEWORKS_DIR)\"",
 				);
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INFOPLIST_FILE = "ib_plugin/HexFiend_IBPlugin-Info.plist";
 				INSTALL_PATH = "$(HOME)/Library/Bundles";
-				PREBINDING = NO;
 				PRODUCT_NAME = HexFiend;
 				VALID_ARCHS = "armv6 i386 ppc ppc7400 ppc970 x86_64";
 				WRAPPER_EXTENSION = ibplugin;
@@ -2357,7 +2308,7 @@
 		D0A6CA030DCC6B8B0077175C /* Debug-NoUnitTests */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ONLY_ACTIVE_ARCH_PRE_XCODE_3_1)";
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -2368,8 +2319,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.4;
 				"MACOSX_DEPLOYMENT_TARGET[arch=ppc64]" = 10.5;
 				"MACOSX_DEPLOYMENT_TARGET[arch=x86_64]" = 10.5;
-				ONLY_ACTIVE_ARCH_PRE_XCODE_3_1 = "$(NATIVE_ARCH_ACTUAL)";
-				PREBINDING = NO;
+				ONLY_ACTIVE_ARCH = YES;
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				"SDKROOT[arch=ppc64]" = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
 				VALID_ARCHS = "armv6 armv7 i386 x86_64";
@@ -2389,7 +2339,6 @@
 				);
 				FRAMEWORK_VERSION = A;
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_ENABLE_OBJC_GC = supported;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -2407,7 +2356,6 @@
 					AppKit,
 					"-lcrypto",
 				);
-				PREBINDING = NO;
 				PRODUCT_NAME = HexFiend;
 				WARNING_CFLAGS = (
 					"-W",
@@ -2429,7 +2377,6 @@
 					"\"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\"",
 				);
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_ENABLE_OBJC_GC = unsupported;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -2462,14 +2409,12 @@
 					"\"$(DEVELOPER_FRAMEWORKS_DIR)\"",
 				);
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INFOPLIST_FILE = "ib_plugin/HexFiend_IBPlugin-Info.plist";
 				INSTALL_PATH = "$(HOME)/Library/Bundles";
-				PREBINDING = NO;
 				PRODUCT_NAME = HexFiend;
 				VALID_ARCHS = "armv6 i386 ppc ppc7400 ppc970 x86_64";
 				WRAPPER_EXTENSION = ibplugin;
@@ -2480,7 +2425,7 @@
 		D0CD52040DA2BA4B006E8D1B /* Debug-UnitTests */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ONLY_ACTIVE_ARCH_PRE_XCODE_3_1)";
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -2492,8 +2437,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.4;
 				"MACOSX_DEPLOYMENT_TARGET[arch=ppc64]" = 10.5;
 				"MACOSX_DEPLOYMENT_TARGET[arch=x86_64]" = 10.5;
-				ONLY_ACTIVE_ARCH_PRE_XCODE_3_1 = "$(NATIVE_ARCH_ACTUAL)";
-				PREBINDING = NO;
+				ONLY_ACTIVE_ARCH = YES;
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				"SDKROOT[arch=ppc64]" = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
 				VALID_ARCHS = "armv6 armv7 i386 x86_64";
@@ -2513,7 +2457,6 @@
 				);
 				FRAMEWORK_VERSION = A;
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_ENABLE_OBJC_GC = supported;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -2531,7 +2474,6 @@
 					AppKit,
 					"-lcrypto",
 				);
-				PREBINDING = NO;
 				PRODUCT_NAME = HexFiend;
 				WARNING_CFLAGS = (
 					"-W",
@@ -2553,7 +2495,6 @@
 					"\"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\"",
 				);
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_ENABLE_OBJC_GC = unsupported;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -2586,14 +2527,12 @@
 					"\"$(DEVELOPER_FRAMEWORKS_DIR)\"",
 				);
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INFOPLIST_FILE = "ib_plugin/HexFiend_IBPlugin-Info.plist";
 				INSTALL_PATH = "$(HOME)/Library/Bundles";
-				PREBINDING = NO;
 				PRODUCT_NAME = HexFiend;
 				VALID_ARCHS = "armv6 i386 ppc ppc7400 ppc970 x86_64";
 				WRAPPER_EXTENSION = ibplugin;
@@ -2604,7 +2543,7 @@
 		D0D317F20F0F322A008AD92F /* Debug-UnitTests-Optimized */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ONLY_ACTIVE_ARCH_PRE_XCODE_3_1)";
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_OPTIMIZATION_LEVEL = 3;
@@ -2619,8 +2558,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.4;
 				"MACOSX_DEPLOYMENT_TARGET[arch=ppc64]" = 10.5;
 				"MACOSX_DEPLOYMENT_TARGET[arch=x86_64]" = 10.5;
-				ONLY_ACTIVE_ARCH_PRE_XCODE_3_1 = "$(NATIVE_ARCH_ACTUAL)";
-				PREBINDING = NO;
+				ONLY_ACTIVE_ARCH = YES;
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				"SDKROOT[arch=ppc64]" = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
 				VALID_ARCHS = "armv6 armv7 i386 x86_64";
@@ -2640,7 +2578,6 @@
 				);
 				FRAMEWORK_VERSION = A;
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_ENABLE_OBJC_GC = supported;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -2658,7 +2595,6 @@
 					AppKit,
 					"-lcrypto",
 				);
-				PREBINDING = NO;
 				PRODUCT_NAME = HexFiend;
 				WARNING_CFLAGS = (
 					"-W",
@@ -2680,7 +2616,6 @@
 					"\"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\"",
 				);
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_ENABLE_OBJC_GC = unsupported;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -2713,14 +2648,12 @@
 					"\"$(DEVELOPER_FRAMEWORKS_DIR)\"",
 				);
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INFOPLIST_FILE = "ib_plugin/HexFiend_IBPlugin-Info.plist";
 				INSTALL_PATH = "$(HOME)/Library/Bundles";
-				PREBINDING = NO;
 				PRODUCT_NAME = HexFiend;
 				VALID_ARCHS = "armv6 i386 ppc ppc7400 ppc970 x86_64";
 				WRAPPER_EXTENSION = ibplugin;
@@ -2732,10 +2665,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				INSTALL_PATH = /usr/local/bin;
-				PREBINDING = NO;
 				PRODUCT_NAME = FortunateSonCopier;
 			};
 			name = "Debug-NoUnitTests";
@@ -2744,10 +2675,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				INSTALL_PATH = /usr/local/bin;
-				PREBINDING = NO;
 				PRODUCT_NAME = FortunateSonCopier;
 			};
 			name = "Debug-UnitTests";
@@ -2756,10 +2685,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				INSTALL_PATH = /usr/local/bin;
-				PREBINDING = NO;
 				PRODUCT_NAME = FortunateSonCopier;
 			};
 			name = "Debug-UnitTests-Optimized";
@@ -2770,10 +2697,8 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_MODEL_TUNING = G5;
 				INSTALL_PATH = /usr/local/bin;
-				PREBINDING = NO;
 				PRODUCT_NAME = FortunateSonCopier;
 				ZERO_LINK = NO;
 			};
@@ -2783,10 +2708,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				INSTALL_PATH = /usr/local/bin;
-				PREBINDING = NO;
 				PRODUCT_NAME = FortunateSonCopier;
 			};
 			name = "Release-GC";
@@ -2817,7 +2740,6 @@
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				PRODUCT_NAME = "Documentation Generation";
 				ZERO_LINK = NO;
 			};

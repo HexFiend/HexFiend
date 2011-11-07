@@ -7,6 +7,7 @@
 //
 
 #import "AppDebugging.h"
+#import "AppUtilities.h"
 
 @implementation GenericPrompt
 
@@ -52,7 +53,10 @@
 @end
 
 static unsigned long long unsignedLongLongValue(NSString *s) {
-    return strtoull([s UTF8String], NULL, 0);
+    unsigned long long result = 0;
+    unsigned signBit;
+    parseNumericStringWithSuffix(s, &result, &signBit);
+    return result;
 }
 
 @interface HFRandomDataByteSlice : HFByteSlice

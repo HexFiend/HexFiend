@@ -10,7 +10,7 @@
 #import <HexFiend/HFProcessMemoryByteSlice.h>
 
 static inline Class preferredByteArrayClass(void) {
-    return [HFBTreeByteArray class];
+    return [HFAttributedByteArray class];
 }
 
 @implementation ProcessMemoryDocument

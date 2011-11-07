@@ -37,14 +37,17 @@
 - (void)verifyIntegrity;
 #endif
 
-/* Returns the range containing the given value.  If the index is not present in the set, returns {ULLONG_MAX, ULLONG_MAX}. */
+/*! Returns the range containing the given value.  If the index is not present in the set, returns {ULLONG_MAX, ULLONG_MAX}. */
 - (HFRange)rangeContainingValue:(unsigned long long)idx;
 
 @end
 
 @interface HFMutableIndexSet : HFIndexSet
 
+/*! Adds indexes in the given range. */
 - (void)addIndexesInRange:(HFRange)range;
+
+/*! Removes indexes in the given range. */
 - (void)removeIndexesInRange:(HFRange)range;
 
 /*! Shifts all values equal to or greater than the given value right (increase) by the given delta.  This raises an exception if indexes are shifted past ULLONG_MAX. */
@@ -60,6 +63,7 @@
 
 @interface HFIndexSet (HFNSIndexSetCompatibility)
 
+/*! Indicates whether the receiver contains exactly the same indexes as the given NSIndexSet. */
 - (BOOL)isEqualToNSIndexSet:(NSIndexSet *)indexSet;
 
 @end

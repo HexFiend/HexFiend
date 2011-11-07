@@ -12,6 +12,7 @@
 #import "DataInspectorRepresenter.h"
 #import "TextDividerRepresenter.h"
 #import "AppDebugging.h"
+#import "AppUtilities.h"
 #import <HexFiend/HexFiend.h>
 #include <pthread.h>
 #include <objc/runtime.h>
@@ -30,7 +31,7 @@ static BOOL isRunningOnLeopardOrLater(void) {
 }
 
 static inline Class preferredByteArrayClass(void) {
-    return [HFBTreeByteArray class];
+    return [HFAttributedByteArray class];
 }
 
 @interface BaseDataDocument (ForwardDeclarations)
@@ -185,9 +186,13 @@ static inline Class preferredByteArrayClass(void) {
     [layoutRepresenter removeRepresenter:rep];
 }
 
+- (BOOL)dividerRepresenterShouldBeShown {
+    return [self representerIsShown:hexRepresenter] && [self representerIsShown:asciiRepresenter];
+}
+
 /* Called to show or hide the divider representer. This should be shown when both our text representers are visible */
 - (void)showOrHideDividerRepresenter {
-    BOOL dividerRepresenterShouldBeShown = [self representerIsShown:hexRepresenter] && [self representerIsShown:asciiRepresenter];
+    BOOL dividerRepresenterShouldBeShown = [self dividerRepresenterShouldBeShown];;
     BOOL dividerRepresenterIsShown = [self representerIsShown:textDividerRepresenter];
     if (dividerRepresenterShouldBeShown && ! dividerRepresenterIsShown) {
         [self showViewForRepresenter:textDividerRepresenter];
@@ -1449,88 +1454,6 @@ cancelled:;
     [self prepareBannerWithView:jumpToOffsetView withTargetFirstResponder:[jumpToOffsetView viewNamed:@"moveSelectionByTextField"]];
 }
 
-- (BOOL)parseSuffixMultiplier:(const char *)multiplier intoMultiplier:(unsigned long long *)multiplierResultValue {
-    NSParameterAssert(multiplier != NULL);
-    NSParameterAssert(multiplierResultValue != NULL);
-    size_t length = strlen(multiplier);
-    /* Allow spaces at the end */
-    while (length > 0 && multiplier[length-1] == ' ') length--;
-    /* Allow an optional trailing b or B (e.g. MB or M) */
-    if (length > 0 && strchr("bB", multiplier[length-1]) != NULL) length--;
-    
-    /* If this exhausted our string, return success, e.g. so that the user can type "5 b" and it will return a multiplier of 1 */
-    if (length == 0) {
-        *multiplierResultValue = 1;
-        return YES;
-    }
-    
-    /* Now check each SI suffix */
-    const char * const decimalSuffixes[] = {"k", "m", "g", "t", "p", "e", "z", "y"};
-    const char * const binarySuffixes[] = {"ki", "mi", "gi", "ti", "pi", "ei", "zi", "yi"};
-    NSUInteger i;
-    unsigned long long suffixMultiplier = 1;
-    BOOL suffixMultiplierDidOverflow = NO;
-    for (i=0; i < sizeof decimalSuffixes / sizeof *decimalSuffixes; i++) {
-        unsigned long long product = suffixMultiplier * 1000;
-        suffixMultiplierDidOverflow = suffixMultiplierDidOverflow || (product/1000 != suffixMultiplier);
-        suffixMultiplier = product;
-        if (! strncasecmp(multiplier, decimalSuffixes[i], length)) {
-            if (suffixMultiplierDidOverflow) suffixMultiplier = ULLONG_MAX;
-            *multiplierResultValue = suffixMultiplier;
-            return ! suffixMultiplierDidOverflow;
-        }
-    }
-    suffixMultiplier = 1;
-    suffixMultiplierDidOverflow = NO;
-    for (i=0; i < sizeof binarySuffixes / sizeof *binarySuffixes; i++) {
-        unsigned long long product = suffixMultiplier * 1024;
-        suffixMultiplierDidOverflow = suffixMultiplierDidOverflow || (product/1024 != suffixMultiplier);
-        suffixMultiplier = product;
-        if (! strncasecmp(multiplier, binarySuffixes[i], length)) {
-            if (suffixMultiplierDidOverflow) suffixMultiplier = ULLONG_MAX;
-            *multiplierResultValue = suffixMultiplier;
-            return ! suffixMultiplierDidOverflow;
-        }
-    }
-    return NO;
-}
-
-- (BOOL)parseMoveString:(NSString *)stringValue into:(unsigned long long *)resultValue isNegative:(BOOL *)resultIsNegative {
-    const char *string = [stringValue UTF8String];
-    if (string == NULL) goto invalidString;
-    /* Parse the string with strtoull */
-    unsigned long long amount = -1;
-    unsigned long long suffixMultiplier = 1;
-    int err = 0;
-    BOOL isNegative = NO;
-    char *endPtr = NULL;
-    for (;;) {
-        while (isspace(*string)) string++;
-        if (*string == '-') {
-            if (isNegative) goto invalidString;
-            isNegative = YES;
-            string++;
-        }
-        else {
-            break;
-        }
-    }
-    errno = 0;
-    amount = strtoull(string, &endPtr, 0);
-    err = errno;
-    if (err != 0 || endPtr == NULL) goto invalidString;
-    if (*endPtr != '\0' && ![self parseSuffixMultiplier:endPtr intoMultiplier:&suffixMultiplier]) goto invalidString;
-    
-    if (! HFProductDoesNotOverflow(amount, suffixMultiplier)) goto invalidString;
-    amount *= suffixMultiplier;
-    
-    *resultValue = amount;
-    *resultIsNegative = isNegative;
-    return YES;
-invalidString:;
-    return NO;
-}
-
 - (BOOL)movingRanges:(NSArray *)ranges byAmount:(unsigned long long)value isNegative:(BOOL)isNegative isValidForLength:(unsigned long long)length {
     FOREACH(HFRangeWrapper *, wrapper, ranges) {
         HFRange range = [wrapper HFRange];
@@ -1550,8 +1473,8 @@ invalidString:;
     USE(sender);
     BOOL success = NO;
     unsigned long long value;
-    BOOL isNegative;
-    if ([self parseMoveString:[[jumpToOffsetView viewNamed:@"moveSelectionByTextField"] stringValue] into:&value isNegative:&isNegative]) {
+    unsigned isNegative;
+    if (! parseNumericStringWithSuffix([[jumpToOffsetView viewNamed:@"moveSelectionByTextField"] stringValue], &value, &isNegative)) {
         unsigned long long length = [controller contentsLength];
         if (length >= value) {
             const unsigned long long offset = (isNegative ? length - value : value);
@@ -1569,8 +1492,8 @@ invalidString:;
     USE(sender);
     BOOL success = NO;
     unsigned long long value;
-    BOOL isNegative;
-    if ([self parseMoveString:[[moveSelectionByView viewNamed:@"moveSelectionByTextField"] stringValue] into:&value isNegative:&isNegative]) {
+    unsigned isNegative;
+    if (parseNumericStringWithSuffix([[moveSelectionByView viewNamed:@"moveSelectionByTextField"] stringValue], &value, &isNegative)) {
         if ([self movingRanges:[controller selectedContentsRanges] byAmount:value isNegative:isNegative isValidForLength:[controller contentsLength]]) {
             BOOL extendSelection = !![[moveSelectionByView viewNamed:@"extendSelectionByCheckbox"] intValue];
             HFControllerMovementDirection direction = (isNegative ? HFControllerDirectionLeft : HFControllerDirectionRight);
