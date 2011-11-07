@@ -43,7 +43,7 @@ static HFAnnotatedTreeNode *right_child(HFAnnotatedTreeNode *node);
 @implementation HFAnnotatedTree
 
 - (id)initWithAnnotater:(HFAnnotatedTreeAnnotaterFunction_t)annot {
-    [super init];
+    self = [super init];
     annotater = annot ? annot : null_annotater;    
     /* root is always an HFAnnotatedTreeNode with a left child but no right child */
     root = create_root();

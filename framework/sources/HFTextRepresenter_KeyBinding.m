@@ -102,10 +102,6 @@ FORWARD(scrollLineDown)
 FORWARD(transpose)
 FORWARD(transposeWords)
 
-- (void)selectAll:sender {
-    [[self controller] selectAll:sender];
-}
-
 FORWARD(selectParagraph)
 FORWARD(selectLine)
 FORWARD(selectWord)

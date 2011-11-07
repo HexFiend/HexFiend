@@ -37,7 +37,7 @@ enum {
 @implementation HFByteSliceFileOperationSimple
 
 - initWithByteSlice:(HFByteSlice *)val targetRange:(HFRange)range {
-    [super initWithTargetRange:range];
+    self = [super initWithTargetRange:range];
     REQUIRE_NOT_NULL(val);
     HFASSERT([val length] == range.length);
     HFASSERT(HFSumDoesNotOverflow(range.location, range.length));
@@ -133,7 +133,7 @@ bail:;
 }
 
 - initWithByteSlice:(HFByteSlice *)val sourceRange:(HFRange)source targetRange:(HFRange)target {
-    [super initWithTargetRange:target];
+    self = [super initWithTargetRange:target];
     REQUIRE_NOT_NULL(val);
     HFASSERT([val length] == source.length);
     HFASSERT([val length] == target.length);
@@ -342,7 +342,7 @@ bail:;
 
 - initWithInternalOperations:(NSArray *)ops {
     REQUIRE_NOT_NULL(ops);
-    [super initWithTargetRange:HFRangeMake(ULLONG_MAX, ULLONG_MAX)];
+    self = [super initWithTargetRange:HFRangeMake(ULLONG_MAX, ULLONG_MAX)];
     maximumAllocatedMemory = 1024 * 1024 * 4;
 #if ! NDEBUG
     FOREACH(id, op, ops) {
@@ -466,7 +466,7 @@ bail:;
 }
 
 - initWithTargetRange:(HFRange)range {
-    [super init];
+    self = [super init];
     HFASSERT(! [self isMemberOfClass:[HFByteSliceFileOperation class]]);
     targetRange = range;
     return self;

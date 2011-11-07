@@ -21,7 +21,7 @@
 }
 
 - (id)init {
-    [super init];
+    self = [super init];
     rowBackgroundColors = [[NSColor controlAlternatingRowBackgroundColors] copy];
     return self;
 }
@@ -43,7 +43,7 @@
 
 - (id)initWithCoder:(NSCoder *)coder {
     HFASSERT([coder allowsKeyedCoding]);
-    [super initWithCoder:coder];
+    self = [super initWithCoder:coder];
     behavesAsTextField = [coder decodeBoolForKey:@"HFBehavesAsTextField"];
     rowBackgroundColors = [[coder decodeObjectForKey:@"HFRowBackgroundColors"] retain];
     return self;

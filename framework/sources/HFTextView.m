@@ -70,7 +70,7 @@
 
 - (id)initWithCoder:(NSCoder *)coder {
     HFASSERT([coder allowsKeyedCoding]);
-    [super initWithCoder:coder];
+    self = [super initWithCoder:coder];
     dataController = [[coder decodeObjectForKey:@"HFController"] retain];
     layoutRepresenter = [[coder decodeObjectForKey:@"HFLayoutRepresenter"] retain];
     backgroundColors = [[coder decodeObjectForKey:@"HFBackgroundColors"] retain];
@@ -103,7 +103,7 @@
 }
 
 - (id)initWithFrame:(NSRect)frame {
-    [super initWithFrame:frame];
+    self = [super initWithFrame:frame];
     
     backgroundColors = [[NSColor controlAlternatingRowBackgroundColors] copy];
     

@@ -16,7 +16,7 @@
 @implementation HFSharedMemoryByteSlice
 
 - initWithUnsharedData:(NSData *)unsharedData {
-    [super init];
+    self = [super init];
     REQUIRE_NOT_NULL(unsharedData);
     NSUInteger dataLength = [unsharedData length];
     NSUInteger inlineAmount = MIN(dataLength, MAX_TAIL_LENGTH);
@@ -40,7 +40,7 @@
 }
 
 - initWithData:(NSMutableData *)dat offset:(NSUInteger)off length:(NSUInteger)len {
-    [super init];
+    self = [super init];
     REQUIRE_NOT_NULL(dat);
     HFASSERT(off + len >= off); //check for overflow
     HFASSERT(off + len <= [dat length]);
@@ -51,7 +51,7 @@
 }
 
 - initWithSharedData:(NSMutableData *)dat offset:(NSUInteger)off length:(NSUInteger)len tail:(const void *)tail tailLength:(NSUInteger)tailLen {
-    [super init];
+    self = [super init];
     if (off || len) REQUIRE_NOT_NULL(dat);
     if (tailLen) REQUIRE_NOT_NULL(tail);
     HFASSERT(tailLen <= MAX_TAIL_LENGTH);

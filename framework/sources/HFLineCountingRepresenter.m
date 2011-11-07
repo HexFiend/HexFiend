@@ -70,7 +70,7 @@ static CGFloat maximumDigitAdvanceForFont(NSFont *font) {
 
 - (id)initWithCoder:(NSCoder *)coder {
     HFASSERT([coder allowsKeyedCoding]);
-    [super initWithCoder:coder];
+    self = [super initWithCoder:coder];
     lineHeight = (CGFloat)[coder decodeDoubleForKey:@"HFLineHeight"];
     minimumDigitCount = (NSUInteger)[coder decodeInt64ForKey:@"HFMinimumDigitCount"];
     lineNumberFormat = (HFLineNumberFormat)[coder decodeInt64ForKey:@"HFLineNumberFormat"];

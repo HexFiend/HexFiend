@@ -55,7 +55,7 @@ static inline unsigned char munge(unsigned long long val64, const unsigned char 
 @implementation HFRandomDataByteSlice
 
 - (id)initWithLength:(unsigned long long)len pearsonTable:(NSData *)table {
-    [super init];
+    self = [super init];
     start = 0;
     length = len;
     pearsonTable = [table copy];
@@ -137,7 +137,7 @@ static unsigned char *kRepeatingData;
 }
 
 - (id)initWithRepeatingDataLength:(unsigned long long)len {
-    [super init];
+    self = [super init];
     start = 0;
     length = len;
     return self;

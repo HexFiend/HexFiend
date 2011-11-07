@@ -25,7 +25,7 @@ static mach_port_t launch_child_returning_recv_port(const char *path);
 }
 
 - (id)init {
-    [super init];
+    self = [super init];
     
     return self;
 }

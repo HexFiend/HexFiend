@@ -12,7 +12,7 @@
 @implementation HFTextVisualStyleRun
 
 - (id)init {
-    [super init];
+    self = [super init];
     scale = 1.;
     shouldDraw = YES;
     return self;

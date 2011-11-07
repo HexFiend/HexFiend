@@ -52,7 +52,7 @@
 
 - (id)initWithCoder:(NSCoder *)coder {
     HFASSERT([coder allowsKeyedCoding]);
-    [super initWithCoder:coder];
+    self = [super initWithCoder:coder];
     [self generateGlyphTable];
     return self;
 }

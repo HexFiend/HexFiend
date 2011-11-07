@@ -26,7 +26,7 @@ NSString *const HFPrivateByteArrayPboardType = @"HFPrivateByteArrayPboardType";
     REQUIRE_NOT_NULL(pboard);
     REQUIRE_NOT_NULL(array);
     REQUIRE_NOT_NULL(types);
-    [super init];
+    self = [super init];
     byteArray = [array retain];
     pasteboard = pboard;
     [pasteboard declareTypes:types owner:self];

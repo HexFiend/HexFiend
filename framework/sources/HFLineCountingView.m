@@ -72,7 +72,7 @@
 
 - (id)initWithCoder:(NSCoder *)coder {
     HFASSERT([coder allowsKeyedCoding]);
-    [super initWithCoder:coder];
+    self = [super initWithCoder:coder];
     [self _sharedInitLineCountingView];
     font = [[coder decodeObjectForKey:@"HFFont"] retain];
     lineHeight = (CGFloat)[coder decodeDoubleForKey:@"HFLineHeight"];

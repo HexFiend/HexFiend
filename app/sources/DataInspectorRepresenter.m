@@ -104,7 +104,7 @@ static NSString *errorStringForInspectionStatus(enum InspectionStatus_t status) 
 
 - (id)initWithCoder:(NSCoder *)coder {
     HFASSERT([coder allowsKeyedCoding]);
-    [super init];
+    self = [super init];
     inspectorType = [coder decodeInt32ForKey:@"InspectorType"];
     endianness = [coder decodeInt32ForKey:@"Endianness"];
     return self;
@@ -468,7 +468,7 @@ static BOOL valueCanFitInByteCount(unsigned long long unsignedValue, NSUInteger 
 @implementation DataInspectorRepresenter
 
 - (id)init {
-    [super init];
+    self = [super init];
     inspectors = [[NSMutableArray alloc] init];
     [self loadDefaultInspectors];
     return self;
@@ -487,7 +487,7 @@ static BOOL valueCanFitInByteCount(unsigned long long unsignedValue, NSUInteger 
 
 - (id)initWithCoder:(NSCoder *)coder {
     HFASSERT([coder allowsKeyedCoding]);
-    [super initWithCoder:coder];
+    self = [super initWithCoder:coder];
     inspectors = [[coder decodeObjectForKey:@"HFInspectors"] retain];
     return self;
 }
@@ -766,7 +766,7 @@ static NSAttributedString *inspectionError(NSString *s) {
 @implementation DataInspectorPlusMinusButtonCell
 
 - (id)initWithCoder:(NSCoder *)coder {
-    [super initWithCoder:coder];
+    self = [super initWithCoder:coder];
     [self setBezelStyle:NSRoundRectBezelStyle];
     return self;
 }

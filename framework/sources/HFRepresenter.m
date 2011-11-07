@@ -27,7 +27,7 @@
 }
 
 - init {
-    [super init];
+    self = [super init];
     [self setLayoutPosition:[[self class] defaultLayoutPosition]];
     return self;
 }
@@ -46,7 +46,7 @@
 
 - (id)initWithCoder:(NSCoder *)coder {
     HFASSERT([coder allowsKeyedCoding]);
-    [super init];
+    self = [super init];
     layoutPosition = [coder decodePointForKey:@"HFLayoutPosition"];   
     controller = [coder decodeObjectForKey:@"HFController"]; // not retained
     view = [[coder decodeObjectForKey:@"HFRepresenterView"] retain];

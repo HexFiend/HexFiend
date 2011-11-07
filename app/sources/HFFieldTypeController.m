@@ -30,7 +30,7 @@
 }
 
 - init {
-    [super init];
+    self = [super init];
     fieldTypeIsASCII = 	[[NSUserDefaults standardUserDefaults] boolForKey:@"FindPrefersASCII"];
     return self;
 }

@@ -22,7 +22,7 @@
 - initWithFile:(HFFileReference *)file offset:(unsigned long long)off length:(unsigned long long)len {
     HFASSERT(HFSum(off, len) <= [file length]);
     REQUIRE_NOT_NULL(file);
-    [super init];
+    self = [super init];
     fileReference = [file retain];
     offset = off;
     length = len;

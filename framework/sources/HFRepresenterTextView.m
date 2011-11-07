@@ -618,7 +618,7 @@ enum LineCoverage_t {
 }
 
 - initWithRepresenter:(HFTextRepresenter *)rep {
-    [super initWithFrame:NSMakeRect(0, 0, 1, 1)];
+    self = [super initWithFrame:NSMakeRect(0, 0, 1, 1)];
     horizontalContainerInset = 4;
     representer = rep;
     _hftvflags.editable = YES;
@@ -648,7 +648,7 @@ enum LineCoverage_t {
 
 - (id)initWithCoder:(NSCoder *)coder {
     HFASSERT([coder allowsKeyedCoding]);
-    [super initWithCoder:coder];
+    self = [super initWithCoder:coder];
     representer = [coder decodeObjectForKey:@"HFRepresenter"];
     font = [[coder decodeObjectForKey:@"HFFont"] retain];
     data = [[coder decodeObjectForKey:@"HFData"] retain];

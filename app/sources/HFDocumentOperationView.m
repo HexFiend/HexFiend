@@ -85,7 +85,7 @@ static NSString *sNibName;
 
 
 - initWithFrame:(NSRect)frame {
-    [super initWithFrame:frame];
+    self = [super initWithFrame:frame];
     defaultSize = frame.size;
     nibName = [sNibName copy];
     views = [[NSMutableDictionary alloc] init];

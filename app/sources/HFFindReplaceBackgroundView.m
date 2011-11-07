@@ -90,7 +90,7 @@ static CGFloat roundTowardsInfinity(CGFloat x) {
 }
 
 - initWithFrame:(NSRect)rect {
-    [super initWithFrame:rect];
+    self = [super initWithFrame:rect];
     defaultHeight = NSHeight(rect);
     return self;
 }

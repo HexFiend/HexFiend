@@ -161,7 +161,7 @@ static HFBTreeNode *mutable_copy_node(HFBTreeNode *node, TreeDepth_t depth, HFBT
 @implementation HFBTree
 
 - (id)init {
-    [super init];
+    self = [super init];
     depth = BAD_DEPTH;
     root = nil;
     return self;

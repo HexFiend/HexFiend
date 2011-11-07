@@ -31,14 +31,14 @@
 }
 
 - (id)initWithValue:(unsigned long long)value {
-    [self init];
+    self = [self init];
     rangeCount = 1;
     singleRange = HFRangeMake(value, 1);
     return self;
 }
 
 - (id)initWithValuesInRange:(HFRange)range {
-    [self init];
+    self = [self init];
     rangeCount = 1;
     singleRange = range;
     return self;    

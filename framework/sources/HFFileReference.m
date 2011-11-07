@@ -151,7 +151,7 @@ static BOOL returnFTruncateError(NSError **error) {
 }
 
 - initWithPath:(NSString *)path error:(NSError **)error {
-    [super init];
+    self = [super init];
     isWritable = NO;
     fileDescriptor = -1;
     if (! ([self initSharedWithPath:path error:error] && [self validateWithError:error])) {
@@ -163,7 +163,7 @@ static BOOL returnFTruncateError(NSError **error) {
 }
 
 - initWritableWithPath:(NSString *)path error:(NSError **)error{
-    [super init];
+    self = [super init];
     isWritable = YES;
     fileDescriptor = -1;
     if (! ([self initSharedWithPath:path error:error] && [self validateWithError:error])) {

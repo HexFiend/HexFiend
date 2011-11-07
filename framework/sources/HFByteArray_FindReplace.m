@@ -307,8 +307,9 @@ cancelled:
 - (unsigned long long)_byteSearchSingle:(unsigned char)byte inRange:(const HFRange)range forwards:(BOOL)forwards trackingProgress:(HFProgressTracker *)progressTracker {
     unsigned long long tempProgressValue = 0;
     unsigned long long result = ULLONG_MAX;
+    const int tempCancelRequested = 0;
     volatile unsigned long long * const progressValuePtr = (progressTracker ? &progressTracker->currentProgress : &tempProgressValue);
-    volatile int *cancelRequested = &progressTracker->cancelRequested;
+    const volatile int *cancelRequested = (progressTracker ? &progressTracker->cancelRequested : &tempCancelRequested);
         
     unsigned char buff[SEARCH_CHUNK_SIZE];
     HFRange remainingRange = range;

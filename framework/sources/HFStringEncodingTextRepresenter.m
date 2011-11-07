@@ -60,14 +60,14 @@
 @implementation HFStringEncodingTextRepresenter
 
 - (id)init {
-    [super init];
+    self = [super init];
     stringEncoding = [NSString defaultCStringEncoding];
     return self;
 }
 
 - (id)initWithCoder:(NSCoder *)coder {
     HFASSERT([coder allowsKeyedCoding]);
-    [super initWithCoder:coder];
+    self = [super initWithCoder:coder];
     stringEncoding = (NSStringEncoding)[coder decodeInt64ForKey:@"HFStringEncoding"];
     return self;
 }

@@ -32,7 +32,7 @@ static NSData *newDataFromByteArray(HFByteArray *array) {
     HFASSERT(array != nil);
     HFASSERT([array length] <= NSIntegerMax);
     NSUInteger dataLength = ll2l([array length]);
-    [super init];
+    self = [super init];
     length = dataLength;
     byteArray = [array copy];
     return self;

@@ -39,14 +39,14 @@
 }
 
 - initWithFrame:(NSRect)frame {
-    [super initWithFrame:frame];
+    self = [super initWithFrame:frame];
     [self _sharedInitStatusBarView];
     return self;
 }
 
 - (id)initWithCoder:(NSCoder *)coder {
     HFASSERT([coder allowsKeyedCoding]);
-    [super initWithCoder:coder];
+    self = [super initWithCoder:coder];
     [self _sharedInitStatusBarView];
     return self;
 }
@@ -103,13 +103,13 @@
 
 - (id)initWithCoder:(NSCoder *)coder {
     HFASSERT([coder allowsKeyedCoding]);
-    [super initWithCoder:coder];
+    self = [super initWithCoder:coder];
     statusMode = (NSUInteger)[coder decodeInt64ForKey:@"HFStatusMode"];
     return self;
 }
 
 - (id)init {
-    [super init];
+    self = [super init];
     statusMode = [[NSUserDefaults standardUserDefaults] integerForKey:kHFStatusBarDefaultModeUserDefaultsKey];
     return self;
 }

@@ -15,7 +15,7 @@
 @implementation HFAttributedByteArray
 
 - (id)initWithImplementingByteArray:(HFByteArray *)newImpl attributes:(HFByteRangeAttributeArray *)newAttrs {
-    [super init];
+    self = [super init];
     impl = [newImpl retain];
     attributes = [newAttrs retain];
     return self;
@@ -24,7 +24,7 @@
 - (id)init {
     HFBTreeByteArray *arr = [[HFBTreeByteArray alloc] init];
     HFByteRangeAttributeArray *attr = [[HFByteRangeAttributeArray alloc] init];
-    [self initWithImplementingByteArray:arr attributes:attr];
+    self = [self initWithImplementingByteArray:arr attributes:attr];
     [arr release];
     [attr release];
     return self;

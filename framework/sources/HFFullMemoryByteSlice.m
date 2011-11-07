@@ -13,7 +13,7 @@
 
 - initWithData:(NSData *)val {
     REQUIRE_NOT_NULL(val);
-    [super init];
+    self = [super init];
     data = [val copy];
     return self;
 }

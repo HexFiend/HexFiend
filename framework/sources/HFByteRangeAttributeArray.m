@@ -29,7 +29,7 @@
 
 - (id)initWithName:(NSString *)nameParameter range:(HFRange)rangeParameter {
     HFASSERT(nameParameter != nil);
-    [super init];
+    self = [super init];
     name = [nameParameter copy];
     range = rangeParameter;
     return self;
@@ -154,7 +154,7 @@
 }
 
 - (id)init {
-    [super init];
+    self = [super init];
     attributeRuns = [[NSMutableArray alloc] init];
     return self;
 }
@@ -393,7 +393,7 @@
 }
 
 - (id)initWithAttribute:(NSString *)attr range:(HFRange)val {
-    [super init];
+    self = [super init];
     attribute = [attr copy];
     range = val;
     return self;
@@ -495,7 +495,7 @@ static BOOL applyHandlerForNodesInRange(HFByteRangeAttributeArrayNode *node, HFR
 }
 
 - (id)init {
-    [super init];
+    self = [super init];
     atree = [[HFAnnotatedTree alloc] initWithAnnotater:node_max_range];
     attributesToNodes = [[NSMutableDictionary alloc] init];
     return self;
@@ -775,7 +775,7 @@ static void removeFromDictionaryOfSets(NSMutableDictionary *dictionary, NSString
 @implementation HFAnnotatedTreeByteRangeAttributeArrayEnumerator
 
 - (id)initWithNode:(HFByteRangeAttributeArrayNode *)val {
-    [super init];
+    self = [super init];
     node = val;
     return self;
 }

@@ -65,7 +65,7 @@ static CGFloat norm(unsigned char x) {
 - (void)stopAnimation:(id)sender { USE(sender); }
 
 - (id)initWithFrame:(NSRect)frame {
-    [super initWithFrame:frame];
+    self = [super initWithFrame:frame];
     NSColor *colors[3];
 #if 1
     // Aqua gradient */

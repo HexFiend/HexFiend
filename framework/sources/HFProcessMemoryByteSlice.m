@@ -18,7 +18,7 @@
 }
 
 - (id)initWithAddressSpaceOfPID:(pid_t)pid {
-    [super init];
+    self = [super init];
     struct HFProcessInfo_t info = {0};
     BOOL success = [[self connection] getInfo:&info forProcess:pid];
     if (! success || ! info.bits) {
@@ -38,7 +38,7 @@
 }
 
 - (id)initWithPID:(pid_t)pid range:(HFRange)range {
-    [super init];
+    self = [super init];
     processIdentifier = pid;
     memoryRange = range;
     return self;

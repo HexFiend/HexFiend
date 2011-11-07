@@ -1361,7 +1361,7 @@ static inline enum HFEditInstructionType HFByteArrayInstructionType(struct HFEdi
 }
 
 - (id)initWithSource:(HFByteArray *)src toDestination:(HFByteArray *)dst { 
-    [super init];
+    self = [super init];
     NSParameterAssert(src != nil);
     NSParameterAssert(dst != nil);
     source = [src retain];
@@ -1413,7 +1413,7 @@ static inline enum HFEditInstructionType HFByteArrayInstructionType(struct HFEdi
 }
 
 - (id)initWithDifferenceFromSource:(HFByteArray *)src toDestination:(HFByteArray *)dst trackingProgress:(HFProgressTracker *)progressTracker {
-    [self initWithSource:src toDestination:dst];
+    self = [self initWithSource:src toDestination:dst];
     BOOL success = [self computeDifferencesTrackingProgress:progressTracker];
     if (! success) {
         /* Cancelled */

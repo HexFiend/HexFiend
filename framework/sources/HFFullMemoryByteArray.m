@@ -15,7 +15,7 @@
 @implementation HFFullMemoryByteArray
 
 - init {
-    [super init];
+    self = [super init];
     data = [[NSMutableData alloc] init];
     return self;
 }

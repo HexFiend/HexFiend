@@ -92,7 +92,7 @@ static inline Class preferredByteArrayClass(void) {
 }
 
 - (id)init {
-    [super init];
+    self = [super init];
     [self _sharedInit];
     bytesPerLine = 16;
     bytesPerColumn = 1;
@@ -136,7 +136,7 @@ static inline Class preferredByteArrayClass(void) {
 
 - (id)initWithCoder:(NSCoder *)coder {
     HFASSERT([coder allowsKeyedCoding]);
-    [super init];
+    self = [super init];
     [self _sharedInit];
     bytesPerLine = (NSUInteger)[coder decodeInt64ForKey:@"HFBytesPerLine"];
     bytesPerColumn = (NSUInteger)[coder decodeInt64ForKey:@"HFBytesPerColumn"];

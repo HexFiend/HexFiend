@@ -476,7 +476,7 @@ static inline Class preferredByteArrayClass(void) {
 }
 
 - init {
-    [super init];
+    self = [super init];
     
     /* Make sure we register our defaults for this class */
     [[self class] registerDefaultDefaults];

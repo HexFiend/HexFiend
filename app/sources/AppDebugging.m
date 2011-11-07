@@ -22,7 +22,7 @@
 }
 
 - (id)initWithPromptText:(NSString *)text {
-    [super initWithWindowNibName:@"GenericPrompt"];
+    self = [super initWithWindowNibName:@"GenericPrompt"];
     promptText = [text copy];
     return self;
 }
