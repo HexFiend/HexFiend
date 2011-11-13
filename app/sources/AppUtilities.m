@@ -11,8 +11,9 @@
 static BOOL parseSuffixMultiplier(const char *multiplier, unsigned long long *multiplierResultValue) {
     NSCParameterAssert(multiplier != NULL);
     NSCParameterAssert(multiplierResultValue != NULL);
+    /* Allow spaces at the beginning and end */
+    while (multiplier[0] == ' ') multiplier++;
     size_t length = strlen(multiplier);
-    /* Allow spaces at the end */
     while (length > 0 && multiplier[length-1] == ' ') length--;
     /* Allow an optional trailing b or B (e.g. MB or M) */
     if (length > 0 && strchr("bB", multiplier[length-1]) != NULL) length--;

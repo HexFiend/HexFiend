@@ -989,13 +989,8 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
             value = ld2f(lineRange.location / maxScroll);
         }
     }
-#if __LP64__
-    // must be >= 10_5
     [scroller setDoubleValue:value];
     [scroller setKnobProportion:proportion];
-#else
-    [scroller setFloatValue:value knobProportion:proportion];
-#endif
     [scroller setEnabled:enable];
 }
 

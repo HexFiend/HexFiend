@@ -47,5 +47,10 @@
 	<string>NSApplication</string>
 	<key>NSSupportsSuddenTermination</key>
 	<string>YES</string>
+	<key>SMPrivilegedExecutables</key>
+	<dict>
+		<key>com.ridiculousfish.HexFiend.PrivilegedHelper</key>
+		<string>identifier com.ridiculousfish.HexFiend.PrivilegedHelper and certificate leaf[subject.CN] = &quot;Hex Fiend&quot;</string>
+	</dict>
 </dict>
 </plist>

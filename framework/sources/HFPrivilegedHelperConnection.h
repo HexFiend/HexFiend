@@ -19,7 +19,7 @@ struct HFProcessInfo_t {
 }
 
 + (HFPrivilegedHelperConnection *)sharedConnection;
-- (BOOL)launchAndConnect;
+- (BOOL)launchAndConnect:(NSError **)error;
 - (BOOL)connectIfNecessary;
 
 - (BOOL)readBytes:(void *)bytes range:(HFRange)range process:(pid_t)process error:(NSError **)error;

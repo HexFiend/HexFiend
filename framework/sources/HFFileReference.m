@@ -17,20 +17,20 @@
 /* The return code is just to quiet the static analyzer */
 static BOOL returnReadError(NSError **error) {
     if (! error) return NO;
-
+    
     int posixCode = errno;
     NSInteger cocoaCode = 0;
     switch (posixCode) {
-	case ENOENT:	cocoaCode = NSFileReadNoSuchFileError; break;
-	case EPERM:
-	case EACCES:	cocoaCode = NSFileReadNoPermissionError; break;
-	case ENAMETOOLONG:  cocoaCode = NSFileReadInvalidFileNameError; break;
+        case ENOENT:	cocoaCode = NSFileReadNoSuchFileError; break;
+        case EPERM:
+        case EACCES:	cocoaCode = NSFileReadNoPermissionError; break;
+        case ENAMETOOLONG:  cocoaCode = NSFileReadInvalidFileNameError; break;
     }
     if (cocoaCode != 0) {
-	*error = [NSError errorWithDomain:NSCocoaErrorDomain code:cocoaCode userInfo:nil];	
+        *error = [NSError errorWithDomain:NSCocoaErrorDomain code:cocoaCode userInfo:nil];	
     }
     else {
-	*error = [NSError errorWithDomain:NSPOSIXErrorDomain code:posixCode userInfo:nil];
+        *error = [NSError errorWithDomain:NSPOSIXErrorDomain code:posixCode userInfo:nil];
     }
     return NO;
 }
@@ -40,28 +40,28 @@ static BOOL returnUnsupportedFileTypeError(NSError **error, mode_t mode) {
     
     printf("TYPE: %o\n", mode);
     NSString *fileType;
-
+    
     
     if (S_ISBLK(mode)) {
-	fileType = @"special block file";
+        fileType = @"special block file";
     }
     else if (S_ISCHR(mode)) {
-	fileType = @"special character file";
+        fileType = @"special character file";
     }
     else if (S_ISDIR(mode)) {
-	fileType = @"directory";
+        fileType = @"directory";
     }    
     else if (S_ISFIFO(mode)) {
-	fileType = @"named pipe (fifo)";
+        fileType = @"named pipe (fifo)";
     }
     else if (S_ISSOCK(mode)) {
-	fileType = @"socket";
+        fileType = @"socket";
     }
     else if (S_ISWHT(mode)) {
-	fileType = @"whiteout";
+        fileType = @"whiteout";
     }
     else {
-	fileType = [NSString stringWithFormat:@"unknown type (mode 0x%lx)", (long)mode];
+        fileType = [NSString stringWithFormat:@"unknown type (mode 0x%lx)", (long)mode];
     }
     NSString *errorDescription = [NSString stringWithFormat:@"The file is a %@ which is not a supported type.", fileType];
     NSDictionary *errorDict = [NSDictionary dictionaryWithObjectsAndKeys:errorDescription, NSLocalizedDescriptionKey, nil];
@@ -88,20 +88,19 @@ static BOOL isFileTypeWritable(mode_t mode) {
 }
 
 static BOOL returnFTruncateError(NSError **error) {
-    const NSInteger HF_NSFileWriteVolumeReadOnlyError = 642 /* NSFileWriteVolumeReadOnlyError, only on SnowLeopard and later */;
     if (error) {
-	int posixCode = errno;
-	NSInteger cocoaCode = 0;
-	switch (posixCode) {
-	    case ENOSPC:	cocoaCode = NSFileWriteOutOfSpaceError; break;
-	    case EROFS:		if (HFIsRunningOnLeopardOrLater()) cocoaCode = HF_NSFileWriteVolumeReadOnlyError; break;
-	}
-	if (cocoaCode != 0) {
-	    *error = [NSError errorWithDomain:NSCocoaErrorDomain code:cocoaCode userInfo:nil];	
-	}
-	else {
-	    *error = [NSError errorWithDomain:NSPOSIXErrorDomain code:posixCode userInfo:nil];
-	}
+        int posixCode = errno;
+        NSInteger cocoaCode = 0;
+        switch (posixCode) {
+            case ENOSPC:	cocoaCode = NSFileWriteOutOfSpaceError; break;
+            case EROFS:		cocoaCode = NSFileWriteVolumeReadOnlyError; break;
+        }
+        if (cocoaCode != 0) {
+            *error = [NSError errorWithDomain:NSCocoaErrorDomain code:cocoaCode userInfo:nil];	
+        }
+        else {
+            *error = [NSError errorWithDomain:NSPOSIXErrorDomain code:posixCode userInfo:nil];
+        }
     }
     return YES;
 }
@@ -132,19 +131,19 @@ static BOOL returnFTruncateError(NSError **error) {
 
 + allocWithZone:(NSZone *)zone {
     if (self == [HFFileReference class]) {
-	/* Default to HFUnprivilegedFileReference */
-	return [HFUnprivilegedFileReference allocWithZone:zone];
+        /* Default to HFUnprivilegedFileReference */
+        return [HFUnprivilegedFileReference allocWithZone:zone];
     }
     else {
-	return [super allocWithZone:zone];
+        return [super allocWithZone:zone];
     }
 }
 
 - (BOOL)validateWithError:(NSError **)error {
     /* If this file is not a supported file type, then we fail validation */
     if (! isFileTypeSupported(fileMode) || (isWritable && ! isFileTypeWritable(fileMode))) {
-	returnUnsupportedFileTypeError(error, fileMode);
-	return NO;
+        returnUnsupportedFileTypeError(error, fileMode);
+        return NO;
     }
     return YES;
     
@@ -155,9 +154,9 @@ static BOOL returnFTruncateError(NSError **error) {
     isWritable = NO;
     fileDescriptor = -1;
     if (! ([self initSharedWithPath:path error:error] && [self validateWithError:error])) {
-	[self close];
-	[self release];
-	self = nil;
+        [self close];
+        [self release];
+        self = nil;
     }
     return self;
 }
@@ -167,9 +166,9 @@ static BOOL returnFTruncateError(NSError **error) {
     isWritable = YES;
     fileDescriptor = -1;
     if (! ([self initSharedWithPath:path error:error] && [self validateWithError:error])) {
-	[self close];
-	[self release];
-	self = nil;
+        [self close];
+        [self release];
+        self = nil;
     }
     return self;
 }
@@ -199,8 +198,8 @@ static BOOL returnFTruncateError(NSError **error) {
         fileDescriptor = open(p, O_RDONLY, 0);
     }
     if (fileDescriptor < 0) {
-	returnReadError(error);
-	return NO;
+        returnReadError(error);
+        return NO;
     }
 #if USE_STAT64
     struct stat64 sb;
@@ -210,10 +209,10 @@ static BOOL returnFTruncateError(NSError **error) {
     result = fstat(fileDescriptor, &sb);
 #endif
     if (result != 0) {
-	int err = errno;
-	returnReadError(error);
+        int err = errno;
+        returnReadError(error);
         NSLog(@"Unable to fstat64 file %@. %s.", path, strerror(err));
-	return NO;
+        return NO;
     }
     
     fileLength = sb.st_size;
@@ -270,7 +269,7 @@ static BOOL returnFTruncateError(NSError **error) {
     int result = ftruncate(fileDescriptor, (off_t)length);
     HFASSERT(result <= 0);
     if (result < 0) {
-	returnFTruncateError(error);
+        returnFTruncateError(error);
     }
     else {
         fileLength = length;
@@ -287,10 +286,10 @@ static BOOL returnFTruncateError(NSError **error) {
 - (size_t)readAlignment {
     /* Returns the required alignment and block multiple for reads, or 1 if there is no required alignment.  This is mostly just a guess. */
     if (S_ISBLK(fileMode) || S_ISCHR(fileMode)) {
-	return 512;
+        return 512;
     }
     else {
-	return 1;
+        return 1;
     }
 }
 
@@ -304,20 +303,20 @@ static BOOL returnFTruncateError(NSError **error) {
     const char *p = [path fileSystemRepresentation];
     int localErrno = 0;
     if (! [[self connection] openFileAtPath:p writable:isWritable result:&fileDescriptor resultError:&localErrno fileSize:&fileLength fileType:&fileMode inode:&inode device:&device]) {
-	returnFortunateSonError(error);
-	return NO;
+        returnFortunateSonError(error);
+        return NO;
     }
     if (fileDescriptor < 0) {
-	errno = localErrno;
-	returnReadError(error);
-	return NO;
+        errno = localErrno;
+        returnReadError(error);
+        return NO;
     }
     return YES;
 }
 
 - (void)close {
     if (fileDescriptor >= 0) {
-	[[self connection] closeFile:fileDescriptor];
+        [[self connection] closeFile:fileDescriptor];
         fileDescriptor = -1;
     }    
 }
@@ -337,16 +336,16 @@ static BOOL returnFTruncateError(NSError **error) {
     /* The most we can read at once is UINT32_MAX (clipped to our alignment).  In the very unlikely case that length is larger than that, we loop. */
     NSUInteger remainingToRead = length;
     while (remainingToRead > 0) {
-	uint32_t amountToRead = (uint32_t)MIN(remainingToRead, (UINT32_MAX / alignment) * alignment);
-	uint32_t amountRead = amountToRead;
-	int err = 0;
-	[[self connection] readFile:fileDescriptor offset:pos alignment:(unsigned int)alignment length:&amountRead result:buff error:&err];
-	if (amountRead != amountToRead) {
-	    [NSException raise:NSGenericException format:@"Read result: %u expected: %u error: %s", amountRead, amountToRead, strerror(err)];
-	}
-	buff += amountRead;
-	pos = HFSum(pos, amountRead);
-	remainingToRead -= amountRead;
+        uint32_t amountToRead = (uint32_t)MIN(remainingToRead, (UINT32_MAX / alignment) * alignment);
+        uint32_t amountRead = amountToRead;
+        int err = 0;
+        [[self connection] readFile:fileDescriptor offset:pos alignment:(unsigned int)alignment length:&amountRead result:buff error:&err];
+        if (amountRead != amountToRead) {
+            [NSException raise:NSGenericException format:@"Read result: %u expected: %u error: %s", amountRead, amountToRead, strerror(err)];
+        }
+        buff += amountRead;
+        pos = HFSum(pos, amountRead);
+        remainingToRead -= amountRead;
     }
 }
 

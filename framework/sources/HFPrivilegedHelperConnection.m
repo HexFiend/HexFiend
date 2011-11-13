@@ -9,6 +9,8 @@
 #import "HFPrivilegedHelperConnection.h"
 #import "HFHelperProcessSharedCode.h"
 #import "FortunateSon.h"
+#import <ServiceManagement/ServiceManagement.h>
+#import <Security/Authorization.h>
 
 static HFPrivilegedHelperConnection *sSharedConnection;
 
@@ -175,80 +177,66 @@ static NSString *read_line(FILE *file) {
 
 - (BOOL)connectIfNecessary {
     if (childReceivePort == MACH_PORT_NULL) {
-        [self launchAndConnect];
+        NSError *oops = nil;
+        if (! [self launchAndConnect:&oops]) {
+            if (oops) [NSApp presentError:oops];
+        }
     }
     return childReceivePort != MACH_PORT_NULL;
 }
 
-- (BOOL)launchAndConnect {
-    BOOL result = YES;
+- (BOOL)launchAndConnect:(NSError **)error {
+    BOOL result = NO;
     NSBundle *bund = [NSBundle bundleForClass:[self class]];
     NSString *helperPath = [bund pathForResource:@"FortunateSon" ofType:@""];
     NSString *privilegedHelperPath = nil;
     if (! helperPath) {
-        [NSException raise:NSInternalInconsistencyException format:@"Couldn't find FortunateSon helper tool in bundle %@", bund];
-    }
-    NSString *launcherPath = [bund pathForResource:@"FortunateSonCopier" ofType:@""];
-    if (! launcherPath) {
-        [NSException raise:NSInternalInconsistencyException format:@"Couldn't find FortunateSonCopier helper tool in bundle %@", bund];
-    }
-    
-    OSStatus status;
-    
-    AuthorizationRef authorizationRef = NULL;
-    status = AuthorizationCreate(NULL, kAuthorizationEmptyEnvironment, kAuthorizationFlagDefaults, &authorizationRef);
-    result = result && (status == noErr);
-    
-    if (result) {
-        AuthorizationItem authItems = { kAuthorizationRightExecute, 0, NULL, 0};
-        AuthorizationRights authRights = {1, &authItems};
-        
-        AuthorizationFlags authFlags = kAuthorizationFlagDefaults | kAuthorizationFlagInteractionAllowed | kAuthorizationFlagPreAuthorize | kAuthorizationFlagExtendRights;
-        
-        status = AuthorizationCopyRights(authorizationRef, &authRights, NULL, authFlags, NULL);
-        if (status != errAuthorizationSuccess) {
-            result = NO;
-            if (status != errAuthorizationCanceled && status != errAuthorizationDenied) {
-                NSLog(@"AuthorizationCopyRights returned error: %ld", (long)status);
-            }
+        if (error) {
+            NSString *description = [NSString stringWithFormat:@"The privileged helper tool is not present."];
+            *error = [NSError errorWithDomain:NSCocoaErrorDomain code:NSFileNoSuchFileError userInfo:[NSDictionary dictionaryWithObjectsAndKeys:description, NSLocalizedDescriptionKey, nil]];
         }
+        return NO;
     }
     
-    FILE *pipe = NULL;
-    if (result) {
-        const char *launcherPathCString = [launcherPath fileSystemRepresentation];
-        const char * const arguments[] = {[helperPath fileSystemRepresentation], NULL};
-        OSStatus authorizationResult = AuthorizationExecuteWithPrivileges(authorizationRef, launcherPathCString, 0, (char * const *)arguments, &pipe);
-        
-        if (authorizationResult != errAuthorizationSuccess) {
-            NSLog(@"AuthorizationExecuteWithPrivileges %s returned error: %ld (%lx)", launcherPathCString, (long)authorizationResult, (long)authorizationResult);
-            result = NO;
+    /* Our label and port name happen to be the same */
+    CFStringRef label = CFSTR("com.ridiculousfish.HexFiend.PrivilegedHelper");
+    NSString *portName = @"com.ridiculousfish.HexFiend.PrivilegedHelper_BLAHBLAH";
+    
+	AuthorizationItem authItem = { kSMRightBlessPrivilegedHelper, 0, NULL, 0 };
+	AuthorizationRights authRights = { 1, &authItem };
+	AuthorizationFlags flags = kAuthorizationFlagDefaults | kAuthorizationFlagInteractionAllowed | kAuthorizationFlagPreAuthorize | kAuthorizationFlagExtendRights;
+	AuthorizationRef authRef = NULL;
+	
+	/* Obtain the right to install privileged helper tools (kSMRightBlessPrivilegedHelper). */
+	OSStatus status = AuthorizationCreate(&authRights, kAuthorizationEmptyEnvironment, flags, &authRef);
+	if (status != errAuthorizationSuccess) {
+        if (error) {
+            NSString *description = [NSString stringWithFormat:@"Failed to create AuthorizationRef (error code %ld).", (long)status];
+            *error = [NSError errorWithDomain:NSCocoaErrorDomain code:NSFileReadNoPermissionError userInfo:[NSDictionary dictionaryWithObjectsAndKeys:description, NSLocalizedDescriptionKey, nil]];
         }
-    }
-    
-    if (result) {
-        privilegedHelperPath = read_line(pipe);
-        NSString *error = read_line(pipe);
-        if ([error length] > 0) {
-            NSLog(@"Error: %@", error);
-            result = NO;
+	} else {
+		/* This does all the work of verifying the helper tool against the application
+		 * and vice-versa. Once verification has passed, the embedded launchd.plist
+		 * is extracted and placed in /Library/LaunchDaemons and then loaded. The
+		 * executable is placed in /Library/PrivilegedHelperTools.
+		 */
+        CFErrorRef localError = NULL;
+		result = SMJobBless(kSMDomainSystemLaunchd, (CFStringRef)label, authRef, (CFErrorRef *)&localError);
+        if (localError) {
+            NSLog(@"SMJobBless returned an error: %@", localError);
+            if (*error) *error = [[(id)localError retain] autorelease];
+            CFRelease(localError);
         }
-        else if (! [privilegedHelperPath length]) {
-            NSLog(@"Unable to get path");
-            result = NO;
-        }
-    }
-    
+	}
+    if (authRef) AuthorizationFree(authRef, kAuthorizationFlagDestroyRights);
+	
     if (result) {
-        /* Launch the path */
-        const char *pathToLaunch = [privilegedHelperPath fileSystemRepresentation];
-        childReceivePort = launch_child_returning_recv_port(pathToLaunch);
+        NSMachBootstrapServer *boots = [NSMachBootstrapServer sharedInstance];
+        NSMachPort *port = (NSMachPort *)[boots portForName:portName];
+        NSLog(@"PORT: %@", port);
     }
     
-    /* Tell our launcher, OK, so it deletes it for us */
-    if (pipe) fputs("OK\n", pipe);
-    
-    return result;
+	return result;
 }
 
 + (void)UNUSEDload {
@@ -260,7 +248,8 @@ static NSString *read_line(FILE *file) {
 + (void)test:unused {
     USE(unused);
     HFPrivilegedHelperConnection *helper = [HFPrivilegedHelperConnection sharedConnection];
-    [helper launchAndConnect];
+    NSError *oops = nil;
+    [helper launchAndConnect:&oops];
 }
 
 @end
@@ -280,8 +269,6 @@ int posix_spawnattr_setflags(posix_spawnattr_t *, short) WEAK_IMPORT;
 
 extern char ***_NSGetEnviron(void);
 
-#define USE_BOOTSTRAP_DIRECTLY 0
-
 
 static mach_port_t launch_child_returning_recv_port(const char *path) {
     const mach_port_t errorReturn = MACH_PORT_NULL;
@@ -291,15 +278,10 @@ static mach_port_t launch_child_returning_recv_port(const char *path) {
     
     if (setup_recv_port(&parent_recv_port) != 0)
         return errorReturn;
-
+    
     // register a port with launchd
     char ipc_name[256];
     derive_ipc_name(ipc_name, getpid());
-#if USE_BOOTSTRAP_DIRECTLY
-    mach_port_t bp = MACH_PORT_NULL;
-    task_get_bootstrap_port(mach_task_self(), &bp);
-    CHECK_MACH_ERROR(bootstrap_register(bp, ipc_name, parent_recv_port));
-#else
     NSString *portName = [[NSString alloc] initWithCString:ipc_name encoding:NSASCIIStringEncoding];
     NSMachPort *machPort = [[NSMachPort alloc] initWithMachPort:parent_recv_port options:NSMachPortDeallocateNone];
     NSMachBootstrapServer *bootstrapper = [NSMachBootstrapServer sharedInstance];
@@ -310,7 +292,6 @@ static mach_port_t launch_child_returning_recv_port(const char *path) {
         printf("Failed to register mach port %s", ipc_name);
         return errorReturn;
     }
-#endif
     
     char * argv[] = {(char *)path, NULL};
     pid_t childPID = -1;
@@ -319,19 +300,14 @@ static mach_port_t launch_child_returning_recv_port(const char *path) {
         printf("posix_spawn failed: %d %s\n", posixErr, strerror(posixErr));
         return errorReturn;
     }
-        
+    
     /* talk to the child */
     if (recv_port(parent_recv_port, &child_recv_port) != 0)
         return errorReturn;
     
     /* Note: this is one of those weird cases where we really really do want to destroy the Mach port (not simply decrement its refcount. This is what allows us to unregister it. */
     CHECK_MACH_ERROR(mach_port_destroy (mach_task_self(), parent_recv_port));
-    
-#if USE_BOOTSTRAP_DIRECTLY
-    /* since we got the child port, we can unregister our launchd service */
-    CHECK_MACH_ERROR(bootstrap_register(bp, ipc_name, MACH_PORT_NULL));
-#endif
-    
+        
     int val;
     _GratefulFatherSayHey(child_recv_port, "From Daddy", &val);
     printf("Daddy got back Val: %d\n", val);

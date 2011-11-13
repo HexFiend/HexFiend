@@ -467,7 +467,6 @@ unsigned long long compute_backwards_snake_length(HFByteArrayEditScript *self, s
     
     HFByteArray *a = self->source, *b = self->destination;
     const volatile int * const cancelRequested = self->cancelRequested;
-    volatile int64_t * const restrict outProgress = self->currentProgress;
     
     HFASSERT(HFMaxRange(rangeInSource) <= self->sourceLength);
     HFASSERT(HFMaxRange(rangeInDest) <= self->destLength);

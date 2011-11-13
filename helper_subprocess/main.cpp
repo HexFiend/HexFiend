@@ -12,7 +12,7 @@ static void close_all_open_files(void) {
     long open_max = sysconf(_SC_OPEN_MAX);
     int fd;
     for (fd = 0; fd < open_max; fd++) {
-	close(fd);
+        close(fd);
     }
 }
 
@@ -20,29 +20,21 @@ static mach_port_t get_parent_receive_port(void) {
     const mach_port_t errorReturn = MACH_PORT_NULL;
     mach_port_t parent_recv_port = MACH_PORT_NULL; //the port on which the parent receives data from us
     mach_port_t child_recv_port = MACH_PORT_NULL; //the poirt on which we receive data to the parent
-#if MESS_WITH_BOOTSTRAP_PORT
-    CHECK_MACH_ERROR(task_get_bootstrap_port (mach_task_self (), &parent_recv_port));
-#else
+
     // figure out what name our parent used
     char ipc_name[256];
     derive_ipc_name(ipc_name, getppid());
     mach_port_t bp = MACH_PORT_NULL;
     task_get_bootstrap_port(mach_task_self(), &bp);
     CHECK_MACH_ERROR(bootstrap_look_up(bp, ipc_name, &parent_recv_port));
-#endif
-                     
+    
     // create a port on which we will receive data
     if (setup_recv_port (&child_recv_port) != 0)
 	return errorReturn;
     
     if (send_port (parent_recv_port, child_recv_port, MACH_MSG_TYPE_MOVE_SEND) != 0) //Move our send right over.  That way we can get a No Senders notification when Daddy dies, because we can't send to our own port!
-	return errorReturn;
+        return errorReturn;
     
-#if MESS_WITH_BOOTSTRAP_PORT
-    if (recv_port (child_recv_port, &bootstrap_port) != 0)
-	return errorReturn;
-    CHECK_MACH_ERROR(task_set_bootstrap_port (mach_task_self (), bootstrap_port));
-#endif
     return child_recv_port;
 }
 
@@ -59,7 +51,7 @@ static boolean_t do_server_thing(struct DummyMsg_t *requestMsg, struct DummyMsg_
     mach_msg_options_t options = 0;
 
     boolean_t handled = HexFiendHelper_server((mach_msg_header_t *)request, (mach_msg_header_t *)reply);
-    fprintf(ERR_FILE, "Got back %d\n", handled);
+    if (ERR_FILE) fprintf(ERR_FILE, "Got back %d\n", handled);
     if (handled) {
     /* Copied from Libc/mach/mach_msg.c:mach_msg_server_once(): Start */
         if (!(reply->Head.msgh_bits & MACH_MSGH_BITS_COMPLEX)) {
@@ -113,7 +105,7 @@ static void run_server(mach_port_t portset, mach_port_t notification_port) {
         DumMsg.head.msgh_local_port = portset;
         mach_msg_return_t msgcode = mach_msg(&DumMsg.head, MACH_RCV_MSG, 0, sizeof DumMsg, portset, MACH_MSG_TIMEOUT_NONE, MACH_PORT_NULL);
         if (msgcode != MACH_MSG_SUCCESS) {
-            fprintf(ERR_FILE, "error %s in Receive, message will be ignored.\n", mach_error_string((kern_return_t)msgcode));
+            if (ERR_FILE) fprintf(ERR_FILE, "error %s in Receive, message will be ignored.\n", mach_error_string((kern_return_t)msgcode));
         }
         else {
             /* Try handling it from the server */
@@ -125,19 +117,19 @@ static void run_server(mach_port_t portset, mach_port_t notification_port) {
                     isFinished = 1;
                 }
                 else {
-                    fprintf(ERR_FILE, "Unknown Mach message id %ld\n", (long)DumMsg.head.msgh_id);
+                    if (ERR_FILE) fprintf(ERR_FILE, "Unknown Mach message id %ld\n", (long)DumMsg.head.msgh_id);
                 }
             }
         }
-        fflush(ERR_FILE);
+        if (ERR_FILE) fflush(ERR_FILE);
     }
 }
 
 int main(void) {
-   // close_all_open_files();
-    puts("get_parent_receive_port");
+    close_all_open_files();
+//    puts("get_parent_receive_port");
     mach_port_t parent_recv_port = get_parent_receive_port();
-    puts("Done");
+//    puts("Done");
     
     mach_port_t my_task = mach_task_self();
     
@@ -151,7 +143,7 @@ int main(void) {
     CHECK_MACH_ERROR(mach_port_allocate(my_task, MACH_PORT_RIGHT_PORT_SET, &portSet));
     CHECK_MACH_ERROR(mach_port_insert_member(my_task, parent_recv_port, portSet));
     CHECK_MACH_ERROR(mach_port_insert_member(my_task, notificationPort, portSet));
-    ERR_FILE = fopen("/tmp/FortunateSonErrorFile.txt", "a");
+    //ERR_FILE = fopen("/tmp/FortunateSonErrorFile.txt", "a");
     run_server(portSet, notificationPort);
     return 0;
 }
