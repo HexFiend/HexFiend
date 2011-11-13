@@ -14,6 +14,7 @@
 #define HFASSERT(a)
 #endif
 
+#define USE(x) if (0) x=x
 
 static inline BOOL HFSumDoesNotOverflow(unsigned long long a, unsigned long long b) {
     return a + b >= a;
@@ -40,3 +41,4 @@ static inline NSUInteger HFAtomicDecrement(NSUInteger *ptr, BOOL barrier) {
     return (barrier ? OSAtomicDecrement32Barrier : OSAtomicDecrement32)((volatile int32_t *)ptr);
 #endif
 }
+

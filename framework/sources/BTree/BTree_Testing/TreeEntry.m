@@ -41,7 +41,7 @@
     return self;
 }
 
-- (void)release {
+- (oneway void)release {
     NSUInteger result = HFAtomicDecrement(&rc, NO);
     if (result == (NSUInteger)(-1)) {
         [self dealloc];

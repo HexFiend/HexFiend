@@ -10,26 +10,42 @@
 #import <HexFiend/HexFiend.h>
 
 @interface FiendlingAppDelegate : NSObject {
+    
     /* The tab view in our nib */
     IBOutlet NSTabView *tabView;
     
-    /*** FIRST TAB ****/
+    /**** FIRST TAB ****/
     /* Data bound to by both the NSTextView and HFTextView */
+    IBOutlet HFTextView *boundDataTextView;
+    
     NSData *textViewBoundData;
 
-    /*** SECOND TAB ****/    
+    /**** SECOND TAB ****/    
     HFController *inMemoryController;
     HFController *fileController;
 
-    /*** THIRD TAB ****/        
+    /**** THIRD TAB ****/        
     HFController *externalDataController;
     IBOutlet NSTextView *externalDataTextView;
     NSData *externalData;
+
     
     /* Explanatory texts */
-    NSArray *explanatoryTexts;
+    NSMutableArray *examples;
     IBOutlet NSTextField *explanatoryTextField;
     
 }
+
+@end
+
+@interface FiendlingExample : NSObject {
+    NSString *label;
+    NSString *explanation;
+}
+
+@property(readonly) NSString *label;
+@property(readonly) NSString *explanation;
+
++ (id)exampleWithLabel:(NSString *)someLabel explanation:(NSString *)someExplanation;
 
 @end

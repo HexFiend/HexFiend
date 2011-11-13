@@ -20,11 +20,6 @@
 + (void)_testSearchAlgorithmsLookingForArray:(HFByteArray *)needle inArray:(HFByteArray *)haystack;
 @end
 
-@interface HFByteArrayEditScript (HFUnitTests)
-+ (void)_unitTestStaticFunctions;
-@end
-
-
 @interface HFUnitTests : NSObject
 @end
 

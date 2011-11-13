@@ -1458,17 +1458,3 @@ static inline enum HFEditInstructionType HFByteArrayInstructionType(struct HFEdi
 }
 
 @end
-
-#if HFUNIT_TESTS
-
-@implementation HFByteArrayEditScript (HFUnitTests)
-
-#define HFTEST(a) do { if (! (a)) { printf("Test failed on line %u of file %s: %s\n", __LINE__, __FILE__, #a); exit(0); } } while (0)
-
-+ (void)_unitTestStaticFunctions {
-    /* No tests yet */
-}
-
-@end
-
-#endif

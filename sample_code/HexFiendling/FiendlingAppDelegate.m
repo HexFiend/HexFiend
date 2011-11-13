@@ -11,6 +11,19 @@
 
 @implementation FiendlingAppDelegate
 
+- (NSData *)rtfSampleData {
+    const unsigned char data[] = {
+        0x7B, 0x5C, 0x72, 0x74, 0x66, 0x31, 0x5C, 0x61, 0x6E, 0x73, 0x69, 0x5C, 0x61, 0x6E, 0x73, 0x69, 0x63, 0x70, 0x67, 0x31, 0x32, 0x35, 0x32, 0x5C, 0x63, 0x6F, 0x63, 0x6F, 0x61, 0x72, 0x74, 0x66, 0x31, 0x30, 0x33, 0x38, 0x5C, 0x63, 0x6F, 0x63, 0x6F, 0x61, 0x73, 0x75, 0x62, 0x72, 0x74, 0x66, 0x33, 0x36, 0x30, 0x0A, 0x7B, 0x5C, 0x66, 0x6F, 0x6E, 0x74, 0x74, 0x62, 0x6C, 0x5C, 0x66, 0x30, 0x5C, 0x66, 0x73, 0x77, 0x69, 0x73, 0x73, 0x5C, 0x66, 0x63, 0x68, 0x61, 0x72, 0x73, 0x65, 0x74, 0x30, 0x20, 0x48, 0x65, 0x6C, 0x76, 0x65, 0x74, 0x69, 0x63, 0x61, 0x3B, 0x7D, 0x0A, 0x7B, 0x5C, 0x63, 0x6F, 0x6C, 0x6F, 0x72, 0x74, 0x62, 0x6C, 0x3B, 0x5C, 0x72, 0x65, 0x64, 0x32, 0x35, 0x35, 0x5C, 0x67, 0x72, 0x65, 0x65, 0x6E, 0x32, 0x35, 0x35, 0x5C, 0x62, 0x6C, 0x75, 0x65, 0x32, 0x35, 0x35, 0x3B, 0x7D, 0x0A, 0x5C, 0x70, 0x61, 0x72, 0x64, 0x5C, 0x74, 0x78, 0x35, 0x36, 0x30, 0x5C, 0x74, 0x78, 0x31, 0x31, 0x32, 0x30, 0x5C, 0x74, 0x78, 0x31, 0x36, 0x38, 0x30, 0x5C, 0x74, 0x78, 0x32, 0x32, 0x34, 0x30, 0x5C, 0x74, 0x78, 0x32, 0x38, 0x30, 0x30, 0x5C, 0x74, 0x78, 0x33, 0x33, 0x36, 0x30, 0x5C, 0x74, 0x78, 0x33, 0x39, 0x32, 0x30, 0x5C, 0x74, 0x78, 0x34, 0x34, 0x38, 0x30, 0x5C, 0x74, 0x78, 0x35, 0x30, 0x34, 0x30, 0x5C, 0x74, 0x78, 0x35, 0x36, 0x30, 0x30, 0x5C, 0x74, 0x78, 0x36, 0x31, 0x36, 0x30, 0x5C, 0x74, 0x78, 0x36, 0x37, 0x32, 0x30, 0x5C, 0x71, 0x6C, 0x5C, 0x71, 0x6E, 0x61, 0x74, 0x75, 0x72, 0x61, 0x6C, 0x5C, 0x70, 0x61, 0x72, 0x64, 0x69, 0x72, 0x6E, 0x61, 0x74, 0x75, 0x72, 0x61, 0x6C, 0x0A, 0x0A, 0x5C, 0x66, 0x30, 0x5C, 0x66, 0x73, 0x33, 0x36, 0x20, 0x5C, 0x63, 0x66, 0x30, 0x20, 0x54, 0x72, 0x79, 0x20, 0x74, 0x79, 0x70, 0x69, 0x6E, 0x67, 0x20, 0x69, 0x6E, 0x20, 0x68, 0x65, 0x72, 0x65, 0x21, 0x7D
+    };
+    return [[[NSData alloc] initWithBytesNoCopy:data length:sizeof data freeWhenDone:NO] autorelease];
+}
+
+- (void)setUpBoundDataHexView {
+    /* Bind our text view to our bound data */
+    [boundDataTextView bind:@"data" toObject:self withKeyPath:@"textViewBoundData" options:nil];
+    [self setValue:[self rtfSampleData] forKey:@"textViewBoundData"];
+}
+
 - (void)setUpInMemoryHexViewIntoView:(NSView *)containerView {
     /* Get some random data to display */
     const unsigned int dataSize = 1024;
@@ -18,11 +31,11 @@
     int fd = open("/dev/random", O_RDONLY);
     read(fd, [data mutableBytes], dataSize);
     close(fd);
-
+    
     /* Make a controller to hook everything up, and then configure it a bit. */
     inMemoryController = [[HFController alloc] init];
     [inMemoryController setBytesPerColumn:4];
-
+    
     /* Put that data in a byte slice.  Here we use initWithData:, which causes the byte slice to take ownership of the data (and may modify it).  If we want to prevent our data from being modified, we would use initWithUnsharedData: */
     HFSharedMemoryByteSlice *byteSlice = [[[HFSharedMemoryByteSlice alloc] initWithData:data] autorelease];
     HFByteArray *byteArray = [[[HFBTreeByteArray alloc] init] autorelease];
@@ -44,7 +57,7 @@
 - (void)setUpFileMultipleViewIntoView:(NSView *)containerView {
     /* We're going to show the contents of mach_kernel */
     HFFileReference *reference = [[[HFFileReference alloc] initWithPath:@"/mach_kernel" error:NULL] autorelease];
-
+    
     /* Make a controller to hook everything up, and then configure it a bit. */
     fileController = [[HFController alloc] init];
     [fileController setBytesPerColumn:1];
@@ -54,7 +67,7 @@
     HFByteArray *byteArray = [[[HFBTreeByteArray alloc] init] autorelease];
     [byteArray insertByteSlice:byteSlice inRange:HFRangeMake(0, 0)];
     [fileController setByteArray:byteArray];
-
+    
     /* Here we're going to make three representers - one for the hex, one for the ASCII, and one for the scrollbar.  To lay these all out properly, we'll use a fourth HFLayoutRepresenter. */
     HFLayoutRepresenter *layoutRep = [[[HFLayoutRepresenter alloc] init] autorelease];
     HFHexTextRepresenter *hexRep = [[[HFHexTextRepresenter alloc] init] autorelease];
@@ -66,7 +79,7 @@
     [fileController addRepresenter:hexRep];
     [fileController addRepresenter:asciiRep];
     [fileController addRepresenter:scrollRep];
-
+    
     /* Tell the layout rep which reps it should lay out. */    
     [layoutRep addRepresenter:hexRep];
     [layoutRep addRepresenter:asciiRep];
@@ -86,11 +99,11 @@
     HFByteArray *byteArray = [[[HFBTreeByteArray alloc] init] autorelease];
     [externalDataController setByteArray:byteArray];
     [externalDataController setEditable:NO];
-
+    
     /* Here we're going to make three representers - one for the hex, one for the ASCII, and one for the scrollbar.  To lay these all out properly, we'll use a fourth HFLayoutRepresenter. */
     HFLayoutRepresenter *layoutRep = [[[HFLayoutRepresenter alloc] init] autorelease];
     HFHexTextRepresenter *hexRep = [[[HFHexTextRepresenter alloc] init] autorelease];
-    HFHexTextRepresenter *asciiRep = [[[HFStringEncodingTextRepresenter alloc] init] autorelease];
+    HFStringEncodingTextRepresenter *asciiRep = [[[HFStringEncodingTextRepresenter alloc] init] autorelease];
     HFVerticalScrollerRepresenter *scrollRep = [[[HFVerticalScrollerRepresenter alloc] init] autorelease];
     
     /* Add all our reps to the controller. */
@@ -98,14 +111,14 @@
     [externalDataController addRepresenter:hexRep];
     [externalDataController addRepresenter:asciiRep];
     [externalDataController addRepresenter:scrollRep];
-
+    
     /* Tell the layout rep which reps it should lay out. */    
     [layoutRep addRepresenter:hexRep];
     [layoutRep addRepresenter:scrollRep];
     [layoutRep addRepresenter:asciiRep];
     
     [(NSView *)[hexRep view] setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
-
+    
     /* Grab the layout rep's view and stick it into our container. */
     NSView *layoutView = [layoutRep view];
     NSRect scrollViewFrame = [[externalDataTextView enclosingScrollView] frame];
@@ -115,7 +128,11 @@
     [layoutView setFrame:layoutViewFrame];
     [layoutView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable | NSViewMaxYMargin];
     [containerView addSubview:layoutView];
+    
+    /* Set some sample data */
+    [self setValue:[self rtfSampleData] forKey:@"externalData"];
 }
+
 
 - (void)setExternalData:(NSData *)data {
     NSData *oldData = externalData;
@@ -149,27 +166,44 @@
 }
 
 - (void)applicationDidFinishLaunching:(NSNotification *)note {
-    NSMutableArray *texts = [[NSMutableArray alloc] init];
-    explanatoryTexts = texts;
+    [self willChangeValueForKey:@"examples"];
+    examples = [[NSMutableArray alloc] init];
     
-    [texts addObject:@"This tab demonstrates showing and editing data via the \"data\" binding on both NSTextView and HFTextView."];
-    //nothing to set up programmatically!
+    [examples addObject:[FiendlingExample exampleWithLabel:@"Bound HFTextView" explanation:@"This example demonstrates showing and editing data via the \"data\" binding on both NSTextView and HFTextView."]];
+    [self setUpBoundDataHexView];
     
-    [texts addObject:@"This tab demonstrates showing in-memory data in a hex view."];
+    
+    [examples addObject:[FiendlingExample exampleWithLabel:@"In-Memory Data" explanation:@"This example demonstrates showing in-memory data in a hex view."]];
     [self setUpInMemoryHexViewIntoView:[self viewForIdentifier:@"in_memory_hex_view"]];
     
-    [texts addObject:@"This tab demonstrates showing file data in three coherent views (a hex view, an ASCII view, and a scroll bar)."];
+    [examples addObject:[FiendlingExample exampleWithLabel:@"File Data, Multiple Views" explanation:@"This example demonstrates showing file data in three coherent views (a hex view, an ASCII view, and a scroll bar)."]];
     [self setUpFileMultipleViewIntoView:[self viewForIdentifier:@"file_data_multiple_views"]];
-
-    [texts addObject:@"This tab demonstrates showing data from an external source."];
-    [self setUpExternalDataView:[self viewForIdentifier:@"external_data"]];
     
-    [explanatoryTextField setStringValue:[explanatoryTexts objectAtIndex:[tabView indexOfTabViewItem:[tabView selectedTabViewItem]]]];
+    [examples addObject:[FiendlingExample exampleWithLabel:@"External Data" explanation:@"This example demonstrates showing data from an external source."]];
+    [self setUpExternalDataView:[self viewForIdentifier:@"external_data"]];
+
+    [self didChangeValueForKey:@"examples"];
 }
 
-- (void)tabView:(NSTabView *)tv didSelectTabViewItem:(NSTabViewItem *)tabViewItem {
-    NSInteger index = [tabView indexOfTabViewItem:tabViewItem];
-    [explanatoryTextField setStringValue:[explanatoryTexts objectAtIndex:index]];
+
+@end
+
+
+@implementation FiendlingExample
+
+@synthesize label = label, explanation = explanation;
+
++ (id)exampleWithLabel:(NSString *)someLabel explanation:(NSString *)someExplanation {
+    FiendlingExample *example = [[self  alloc] init];
+    example->label = [someLabel copy];
+    example->explanation = [someExplanation copy];
+    return [example autorelease];
+}
+
+- (void)dealloc {
+    [label release];
+    [explanation release];
+    [super dealloc];
 }
 
 @end
