@@ -26,7 +26,7 @@ NSData *HFHashFile(NSURL *url) {
     NSInputStream *stream = [[[NSInputStream alloc] initWithFileAtPath:[url path]] autorelease];
     [stream open];
     while ((amount = [stream read:buffer maxLength:bufferSize]) > 0) {
-	SHA1_Update(&ctx, buffer, amount);
+        SHA1_Update(&ctx, buffer, amount);
     }
     [stream close];
     SHA1_Final([data mutableBytes], &ctx);
@@ -45,11 +45,11 @@ NSData *HFHashByteArray(HFByteArray *array) {
     unsigned char *buffer = malloc(bufferSize);
     unsigned long long offset = 0, length = [array length];
     while (offset < length) {
-	NSUInteger amount = bufferSize;
-	if (amount > (length - offset)) amount = ll2l(length - offset);
-	[array copyBytes:buffer range:HFRangeMake(offset, amount)];
-	SHA1_Update(&ctx, buffer, amount);
-	offset += amount;
+        NSUInteger amount = bufferSize;
+        if (amount > (length - offset)) amount = ll2l(length - offset);
+        [array copyBytes:buffer range:HFRangeMake(offset, amount)];
+        SHA1_Update(&ctx, buffer, amount);
+        offset += amount;
     }
     SHA1_Final([data mutableBytes], &ctx);
     free(buffer);

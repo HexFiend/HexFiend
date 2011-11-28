@@ -35,10 +35,16 @@
 /*! Sets whether the hexadecimal view is shown. */
 - (void)setUsesHexArea:(BOOL)val;
 
-/*! Returns whether the ASCII view is shown. */
+/*! Returns whether the text area is shown. */
 - (BOOL)usesTextArea;
 
-/*! Sets whether the ASCII view is shown. */
+/*! Sets whether the text area is shown. */
 - (void)setUsesTextArea:(BOOL)val;
+
+/*! Sets the string encoding used by the text area. */
+- (void)setStringEncoding:(NSStringEncoding)encoding;
+
+/*! Gets the string encoding used by the text area. */
+- (NSStringEncoding)stringEncoding;
 
 @end

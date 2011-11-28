@@ -15,7 +15,7 @@ struct HFProcessInfo_t {
 };
 
 @interface HFPrivilegedHelperConnection : NSObject {
-    mach_port_t childReceivePort;
+    NSMachPort *childReceiveMachPort;
 }
 
 + (HFPrivilegedHelperConnection *)sharedConnection;

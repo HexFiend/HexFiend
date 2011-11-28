@@ -293,8 +293,16 @@ static BOOL returnFTruncateError(NSError **error) {
     }
 }
 
-- (HFPrivilegedHelperConnection *)connection {
++ (HFPrivilegedHelperConnection *)connection {
     return [HFPrivilegedHelperConnection sharedConnection];
+}
+
+- (HFPrivilegedHelperConnection *)connection {
+    return [[self class] connection];
+}
+
++ (BOOL)preflightAuthenticationReturningError:(NSError **)error {
+    return [[self connection] launchAndConnect:error];
 }
 
 - (BOOL)initSharedWithPath:(NSString *)path error:(NSError **)error {

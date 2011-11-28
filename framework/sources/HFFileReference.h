@@ -74,5 +74,9 @@
  @brief A reference to an open file that can be read (and possibly written) using our privileged helper process FortunateSon
  */
 @interface HFPrivilegedFileReference : HFFileReference
+
+/*! Attempts to authenticate, returning an error on failure. */
++ (BOOL)preflightAuthenticationReturningError:(NSError **)error;
+
 @end
 #endif

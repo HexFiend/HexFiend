@@ -13,6 +13,8 @@ static inline void derive_ipc_name(char buff[256], pid_t pid) {
     snprintf(buff, 256, "com.ridiculous_fish.HexFiend.parent_%ld", (long)pid);
 }
 
+#define kPrivilegedHelperLaunchdLabel "com.ridiculousfish.HexFiend.PrivilegedHelper"
+
 static int setup_recv_port (mach_port_t *recv_port) {
     kern_return_t       err;
     mach_port_t         port = MACH_PORT_NULL;
@@ -47,7 +49,6 @@ send_port (mach_port_t remote_port, mach_port_t port, mach_msg_type_name_t send_
     msg.task_port.name = port;
     msg.task_port.disposition = send_type;
     msg.task_port.type = MACH_MSG_PORT_DESCRIPTOR;
-    printf("send_port\n");
     CHECK_MACH_ERROR(mach_msg_send(&msg.header));
     return 0;
 }
@@ -58,22 +59,19 @@ send_port (mach_port_t remote_port, mach_port_t port, mach_msg_type_name_t send_
 static int
 recv_port (mach_port_t recv_port, mach_port_t *port)
 {
-    printf("recv_port\n");
     kern_return_t       err;
     struct {
         mach_msg_header_t          header;
         mach_msg_body_t            body;
         mach_msg_port_descriptor_t task_port;
-        mach_msg_max_trailer_t     trailer; //note: we have to use this instead of mach_msg_trailer_t to avoid getting (spurious?) MACH_RCV_TOO_LARGE replies
+        mach_msg_trailer_t         trailer;
     } msg;
     bzero(&msg, sizeof msg);
-
-    /* When we fork(), Xcode sends us some crap on our bootstrap port.  Ignore it.  I think this only happens when running in Xcode in the debugger. */
-    err = mach_msg (&msg.header, MACH_RCV_MSG | MACH_RCV_LARGE,
+    
+    err = mach_msg (&msg.header, MACH_RCV_MSG,
                     0, sizeof msg, recv_port,
                     MACH_MSG_TIMEOUT_NONE, MACH_PORT_NULL);
-    CHECK_MACH_ERROR (err);
-
+    
     *port = msg.task_port.name;
-    return 0;
+    return err;
 }

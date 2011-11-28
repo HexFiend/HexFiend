@@ -18,94 +18,99 @@ unsigned char* boyer_moore_helper(const unsigned char * restrict haystack, const
     const unsigned char *const end_haystack = haystack + haystack_length;
     
     if (haystack_length > 12 * needle_length) {
-	const unsigned char *end_quick_look = haystack + haystack_length - 11 * needle_length;
-	for (;;) {
-	    while (u_text < end_quick_look) {
-		unsigned long offset;
-		offset = char_jump[*u_text]; u_text += offset;
-		offset = char_jump[*u_text]; u_text += offset;
-		if (offset == 0) goto stage2;
-		
-		offset = char_jump[*u_text]; u_text += offset;
-		offset = char_jump[*u_text]; u_text += offset;
-		offset = char_jump[*u_text]; u_text += offset;
-		if (offset == 0) goto stage2;
-		
-		offset = char_jump[*u_text]; u_text += offset;
-		offset = char_jump[*u_text]; u_text += offset;
-		offset = char_jump[*u_text]; u_text += offset;
-		if (offset == 0) goto stage2;
-		
-		offset = char_jump[*u_text]; u_text += offset;
-		offset = char_jump[*u_text]; u_text += offset;
-		if (offset == 0) goto stage2;
-	    }
-	    break;
-	    
-stage2:
-	    u_text--;
-	    u_pat--;
-	    while (u_pat > needle) {
-		if (*u_text == u_pat[-1]) {
-		    u_text--;
-		    u_pat--;
-		} else {
-		    ua = char_jump[*u_text];
-		    ub = match_jump[u_pat - needle];
-		    
-		    unsigned long result;
-		    
-		    result = (ua > ub ? ua : ub);
-		    
-		    u_text += result;
-		    
-		    u_pat = needle + needle_length;
-		    break;
-		}
-	    }
-	    if (u_pat == needle) {
-		return (unsigned char*)(u_text + 1);
-	    }
-	}
+        const unsigned char *end_quick_look = haystack + haystack_length - 11 * needle_length;
+        for (;;) {
+            while (u_text < end_quick_look) {
+                unsigned long offset;
+                offset = char_jump[*u_text]; u_text += offset;
+                offset = char_jump[*u_text]; u_text += offset;
+                if (offset == 0) goto stage2;
+                
+                offset = char_jump[*u_text]; u_text += offset;
+                offset = char_jump[*u_text]; u_text += offset;
+                offset = char_jump[*u_text]; u_text += offset;
+                if (offset == 0) goto stage2;
+                
+                offset = char_jump[*u_text]; u_text += offset;
+                offset = char_jump[*u_text]; u_text += offset;
+                offset = char_jump[*u_text]; u_text += offset;
+                if (offset == 0) goto stage2;
+                
+                offset = char_jump[*u_text]; u_text += offset;
+                offset = char_jump[*u_text]; u_text += offset;
+                if (offset == 0) goto stage2;
+            }
+            break;
+            
+        stage2:
+            u_text--;
+            u_pat--;
+            while (u_pat > needle) {
+                if (*u_text == u_pat[-1]) {
+                    u_text--;
+                    u_pat--;
+                } else {
+                    ua = char_jump[*u_text];
+                    ub = match_jump[u_pat - needle];
+                    
+                    unsigned long result;
+                    
+                    result = (ua > ub ? ua : ub);
+                    
+                    u_text += result;
+                    
+                    u_pat = needle + needle_length;
+                    break;
+                }
+            }
+            if (u_pat == needle) {
+                return (unsigned char*)(u_text + 1);
+            }
+        }
     }
     
-
+    
     while (u_text < end_haystack && u_pat > needle) {
-	if (*u_text == u_pat[-1]) {
-	    u_text--;
-	    u_pat--;
-	} else {
-	    ua = char_jump[*u_text];
-	    ub = match_jump[u_pat - needle];
-	    
-	    unsigned long result;
-	    
-	    result = (ua > ub ? ua : ub);
-	    
-	    u_text += result;
-	    
-	    u_pat = needle + needle_length;
-	}
+        if (*u_text == u_pat[-1]) {
+            u_text--;
+            u_pat--;
+        } else {
+            ua = char_jump[*u_text];
+            ub = match_jump[u_pat - needle];
+            
+            unsigned long result;
+            
+            result = (ua > ub ? ua : ub);
+            
+            u_text += result;
+            
+            u_pat = needle + needle_length;
+        }
     }
     
     if (u_pat == needle) {
-	return (unsigned char*)(u_text + 1);
+        return (unsigned char*)(u_text + 1);
     } else {
-	return NULL;
+        return NULL;
     }
 }
 
 @implementation HFByteArray (HFFindReplace)
+
+static HFRange invertRangeInRange(HFRange range, HFRange enclosingRange) {
+    HFASSERT(HFRangeIsSubrangeOfRange(range, enclosingRange));
+    unsigned long long offsetIntoEnclosingRange = HFSubtract(range.location, enclosingRange.location);
+    unsigned long long invertedRangeEnd = HFMaxRange(enclosingRange) - offsetIntoEnclosingRange;
+    unsigned long long invertedRangeBeginning = HFSubtract(invertedRangeEnd, range.length);
+    return HFRangeMake(invertedRangeBeginning, range.length);
+}
 
 - (void)_copyBytes:(unsigned char *)bytes range:(HFRange)range forwards:(BOOL)forwards inEnclosingRange:(HFRange)enclosingRange {
     if (forwards) {
         [self copyBytes:bytes range:range];
     }
     else {
-        unsigned long long endEnclosingRange = HFMaxRange(enclosingRange);
-        HFASSERT(HFMaxRange(range) <= endEnclosingRange);
-        HFRange invertedRange = HFRangeMake(endEnclosingRange - range.length - range.location, range.length);
-        
+        HFRange invertedRange = invertRangeInRange(range, enclosingRange);
         if (0 && invertedRange.length <= SEARCH_CHUNK_SIZE) {
             /* Copy to a temporary buffer, then reverse to the output buffer */
             unsigned char tempBuffer[SEARCH_CHUNK_SIZE];
@@ -142,12 +147,12 @@ stage2:
     unsigned long needle_length = ll2l([findBytes length]);
     needle = malloc(needle_length);
     if (! needle) {
-	NSLog(@"Out of memory allocating %lu bytes", needle_length);
-	return ULLONG_MAX;
+        NSLog(@"Out of memory allocating %lu bytes", needle_length);
+        return ULLONG_MAX;
     }
     [findBytes _copyBytes:needle range:HFRangeMake(0, needle_length) forwards:forwards inEnclosingRange:HFRangeMake(0, needle_length)];
     if (*cancelRequested) goto cancelled;
-
+    
     const unsigned long long total_haystack_length = range.length;
     unsigned long haystack_bytes_to_allocate;
     
@@ -157,27 +162,27 @@ stage2:
     /* does the haystack fit entirely in memory? */
     if (! search_with_chunks) haystack_bytes_to_allocate = ll2l(total_haystack_length);
     else {
-	/* we are searching by chunks, so we will need to prepend up to needle_length bytes to handle the case where a result overlaps two chunks.  To get our base buffer page-aligned, we round needle_length up to a page size */
-	unsigned long needle_length_page_overflow = needle_length % PAGE_SIZE;
-	needle_length_rounded_up_to_page_size = needle_length + (needle_length_page_overflow ? (PAGE_SIZE - needle_length_page_overflow) : 0);
-	
-	haystack_bytes_to_allocate = SEARCH_CHUNK_SIZE + needle_length_rounded_up_to_page_size;
+        /* we are searching by chunks, so we will need to prepend up to needle_length bytes to handle the case where a result overlaps two chunks.  To get our base buffer page-aligned, we round needle_length up to a page size */
+        unsigned long needle_length_page_overflow = needle_length % PAGE_SIZE;
+        needle_length_rounded_up_to_page_size = needle_length + (needle_length_page_overflow ? (PAGE_SIZE - needle_length_page_overflow) : 0);
+        
+        haystack_bytes_to_allocate = SEARCH_CHUNK_SIZE + needle_length_rounded_up_to_page_size;
     }
     
     haystack = malloc(haystack_bytes_to_allocate);
     if (! haystack) {
-	free(needle);
-	NSLog(@"Out of memory allocating %lu bytes", haystack_bytes_to_allocate);
-	return ULLONG_MAX;
+        free(needle);
+        NSLog(@"Out of memory allocating %lu bytes", haystack_bytes_to_allocate);
+        return ULLONG_MAX;
     }
-
+    
     /* generate the two Boyer-Moore auxiliary buffers */
     unsigned long char_jump[UCHAR_MAX + 1] = {0};
     match_jump = malloc(2 * (needle_length + 1) * sizeof *match_jump);
     if (! match_jump) {
-	NSLog(@"Out of memory allocating %lu bytes", (2 * (needle_length + 1) * sizeof *match_jump));
-	free(haystack);
-	free(needle);
+        NSLog(@"Out of memory allocating %lu bytes", (2 * (needle_length + 1) * sizeof *match_jump));
+        free(haystack);
+        free(needle);
         return ULLONG_MAX;
     }
     
@@ -189,111 +194,99 @@ stage2:
     
     /* heuristic #1 setup, simple text search */
     for (u=0; u < sizeof char_jump / sizeof *char_jump; u++)
-	char_jump[u] = needle_length;
+        char_jump[u] = needle_length;
     
     for (u = 0; u < needle_length; u++)
-	char_jump[((unsigned char) needle[u])] = needle_length - u - 1;
-
-
+        char_jump[((unsigned char) needle[u])] = needle_length - u - 1;
+    
+    
     /* heuristic #2 setup, repeating pattern search */
     for (u = 1; u <= needle_length; u++)
-	match_jump[u] = 2 * needle_length - u;
+        match_jump[u] = 2 * needle_length - u;
     
     u = needle_length;
     ua = needle_length + 1;
     while (u > 0) {
-	backup[u] = ua;
-	while (ua <= needle_length && needle[u - 1] != needle[ua - 1]) {
-	    if (match_jump[ua] > needle_length - u) match_jump[ua] = needle_length - u;
-	    ua = backup[ua];
-	}
-	u--; ua--;
+        backup[u] = ua;
+        while (ua <= needle_length && needle[u - 1] != needle[ua - 1]) {
+            if (match_jump[ua] > needle_length - u) match_jump[ua] = needle_length - u;
+            ua = backup[ua];
+        }
+        u--; ua--;
     }
     
     for (u = 1; u <= ua; u++)
-	if (match_jump[u] > needle_length + ua - u) match_jump[u] = needle_length + ua - u;
+        if (match_jump[u] > needle_length + ua - u) match_jump[u] = needle_length + ua - u;
     
     ub = backup[ua];
     while (ua <= needle_length) {
-	while (ua <= ub) {
-	    if (match_jump[ua] > ub - ua + needle_length)
-		match_jump[ua] = ub - ua + needle_length;
-	    ua++;
-	}
-	ub = backup[ub];
+        while (ua <= ub) {
+            if (match_jump[ua] > ub - ua + needle_length)
+                match_jump[ua] = ub - ua + needle_length;
+            ua++;
+        }
+        ub = backup[ub];
     }
     
     if (*cancelRequested) goto cancelled;
     
     /* start the search */
     if (! search_with_chunks) {
-	unsigned long haystack_length = ll2l(total_haystack_length);
-	[self _copyBytes:haystack range:range forwards:forwards inEnclosingRange:range];
-	unsigned char *search_result = boyer_moore_helper(haystack, needle, haystack_length, needle_length, char_jump, match_jump);
+        unsigned long haystack_length = ll2l(total_haystack_length);
+        [self _copyBytes:haystack range:range forwards:forwards inEnclosingRange:range];
+        unsigned char *search_result = boyer_moore_helper(haystack, needle, haystack_length, needle_length, char_jump, match_jump);
         HFAtomicAdd64(haystack_length, (int64_t *)progressValuePtr);
-	if (search_result == NULL) {
+        if (search_result == NULL) {
             result = ULLONG_MAX;
         }
-	else {
+        else {
             result = range.location + (search_result - haystack);
-            /* Compensate for the reversing that _copyBytes does when searching backwards */
-            if (! forwards) {
-                result = HFMaxRange(range) - result - needle_length;
-            }
         }
     }
     else {
-	unsigned char * const base_read_in_location = haystack + needle_length_rounded_up_to_page_size;
-	unsigned char * const base_copy_location = base_read_in_location - needle_length;
-	unsigned char * const base_copy_src = base_read_in_location + SEARCH_CHUNK_SIZE - needle_length;
-	HFRange remaining_range = range;
-	
-	/* start us off */
-	HFRange search_range = remaining_range;
-	if (search_range.length > SEARCH_CHUNK_SIZE) search_range.length = SEARCH_CHUNK_SIZE;
-	[self _copyBytes:base_read_in_location range:search_range forwards:forwards inEnclosingRange:range];
-	unsigned char *search_result = boyer_moore_helper(base_read_in_location, needle, SEARCH_CHUNK_SIZE, needle_length, char_jump, match_jump);
+        unsigned char * const base_read_in_location = haystack + needle_length_rounded_up_to_page_size;
+        unsigned char * const base_copy_location = base_read_in_location - needle_length;
+        unsigned char * const base_copy_src = base_read_in_location + SEARCH_CHUNK_SIZE - needle_length;
+        HFRange remaining_range = range;
+        
+        /* start us off */
+        HFRange search_range = remaining_range;
+        if (search_range.length > SEARCH_CHUNK_SIZE) search_range.length = SEARCH_CHUNK_SIZE;
+        [self _copyBytes:base_read_in_location range:search_range forwards:forwards inEnclosingRange:range];
+        unsigned char *search_result = boyer_moore_helper(base_read_in_location, needle, SEARCH_CHUNK_SIZE, needle_length, char_jump, match_jump);
         if (*cancelRequested) goto cancelled;
         HFAtomicAdd64(search_range.length, (int64_t *)progressValuePtr);
-	if (search_result) {
-            result = search_range.location + (search_result - base_read_in_location);
-            /* Compensate for the reversing that _copyBytes does when searching backwards */
-            if (! forwards) {
-                result = HFMaxRange(range) - result - needle_length;
-            }            
+        if (search_result) {
+            result = search_range.location + (search_result - base_read_in_location);         
         }
-	else {
-	    result = ULLONG_MAX;
-	    remaining_range.location += search_range.length - needle_length;
-	    remaining_range.length -= search_range.length - needle_length;
-	    while (remaining_range.length > needle_length) {
-		search_range = remaining_range;
-		if (search_range.length > SEARCH_CHUNK_SIZE + needle_length) search_range.length = SEARCH_CHUNK_SIZE + needle_length;
-		memmove(base_copy_location, base_copy_src, needle_length);
-		
-		HFRange copy_range = search_range;
-		copy_range.location += llmin(copy_range.length, needle_length);
-		copy_range.length -= llmin(copy_range.length, needle_length);
-		
-		if (copy_range.length) [self _copyBytes:base_read_in_location range:copy_range forwards:forwards inEnclosingRange:range];
-		
-		search_result = boyer_moore_helper(base_copy_location, needle, ll2l(search_range.length), needle_length, char_jump, match_jump);
+        else {
+            result = ULLONG_MAX;
+            remaining_range.location += search_range.length - needle_length;
+            remaining_range.length -= search_range.length - needle_length;
+            while (remaining_range.length > needle_length) {
+                search_range = remaining_range;
+                if (search_range.length > SEARCH_CHUNK_SIZE + needle_length) search_range.length = SEARCH_CHUNK_SIZE + needle_length;
+                memmove(base_copy_location, base_copy_src, needle_length);
+                
+                HFRange copy_range = search_range;
+                copy_range.location += llmin(copy_range.length, needle_length);
+                copy_range.length -= llmin(copy_range.length, needle_length);
+                
+                if (copy_range.length) [self _copyBytes:base_read_in_location range:copy_range forwards:forwards inEnclosingRange:range];
+                
+                search_result = boyer_moore_helper(base_copy_location, needle, ll2l(search_range.length), needle_length, char_jump, match_jump);
                 if (*cancelRequested) goto cancelled;
                 HFAtomicAdd64(search_range.length, (int64_t *)progressValuePtr);
-		if (search_result) {
-		    result = search_range.location + (search_result - base_copy_location);
-                    /* Compensate for the reversing that _copyBytes does when searching backwards */
-                    if (! forwards) {
-                        result = HFMaxRange(range) - result - needle_length;
-                    }
-		    break;
-		}
-		else {
-		    remaining_range.location += search_range.length - needle_length;
-		    remaining_range.length -= search_range.length - needle_length;
-		}
-	    }
-	}
+                if (search_result) {
+                    result = search_range.location + (search_result - base_copy_location);
+                    break;
+                }
+                else {
+                    remaining_range.location += search_range.length - needle_length;
+                    remaining_range.length -= search_range.length - needle_length;
+                }
+            }
+        }
     }
     
 cancelled:
@@ -301,6 +294,11 @@ cancelled:
     free(needle);
     free(haystack);
     free(match_jump);
+    
+    if (! forwards && result != ULLONG_MAX) {
+        /* Compensate for the reversing that occurs when searching backwards */
+        result = invertRangeInRange(HFRangeMake(result, needle_length), range).location;
+    }
     return result;
 }
 
@@ -310,9 +308,10 @@ cancelled:
     const int tempCancelRequested = 0;
     volatile unsigned long long * const progressValuePtr = (progressTracker ? &progressTracker->currentProgress : &tempProgressValue);
     volatile int *cancelRequested = (progressTracker ? &progressTracker->cancelRequested : &tempCancelRequested);
-        
+    
     unsigned char buff[SEARCH_CHUNK_SIZE];
-    HFRange remainingRange = range;
+    
+    HFRange remainingRange = range;    
     while (remainingRange.length > 0) {
         if (*cancelRequested) goto cancelled;
         NSUInteger lengthToCopy = ll2l(MIN(remainingRange.length, sizeof buff));
@@ -321,20 +320,21 @@ cancelled:
         unsigned char *resultPtr = HFFastMemchr(buff, byte, lengthToCopy);
         if (resultPtr) {
             result = HFSum((resultPtr - buff), remainingRange.location);
-            if (! forwards) {
-                /* Because we reversed everything while searching, our result itself is reversed; so reverse it again */
-                HFASSERT(result < HFMaxRange(range));
-                result = HFMaxRange(range) - result - 1/*found range length*/;
-            }
             break;
         }
         remainingRange.location = HFSum(remainingRange.location, lengthToCopy);
         remainingRange.length -= lengthToCopy;
         HFAtomicAdd64(lengthToCopy, (int64_t *)progressValuePtr);
     }
+    
+    if (! forwards && result != ULLONG_MAX) {
+        /* Because we reversed everything while searching, our result itself is reversed; so reverse it again. 1 because the match has length 1. */
+        result = invertRangeInRange(HFRangeMake(result, 1), range).location;
+    }
+    
     return result;
     
-    cancelled:
+cancelled:
     return ULLONG_MAX;
 }
 
@@ -428,7 +428,7 @@ static BOOL matchOccursAtIndex(HFByteArray *needle, HFByteArray *haystack, HFRan
             if (rollingHash == needleHash) {
                 unsigned long long proposedResult = HFSum(remainingRange.location, bufferIndex) - needleLength;
                 if (! forwards) {
-                    proposedResult = HFMaxRange(range) - proposedResult - needleLength;
+                    proposedResult = invertRangeInRange(HFRangeMake(proposedResult, needleLength), range).location;
                 }
                 if (matchOccursAtIndex(findBytes, self, HFRangeMake(proposedResult, needleLength))) {
                     result = proposedResult;

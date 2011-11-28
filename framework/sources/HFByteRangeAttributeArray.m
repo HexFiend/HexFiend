@@ -10,6 +10,19 @@
 #import <HexFiend/HFAnnotatedTree.h>
 #import <HexFiend/HFByteRangeAttribute.h>
 
+#if NDEBUG
+#define VERIFY_INTEGRITY(x) do { } while (0)
+#else
+#define VERIFY_INTEGRITY(x) [(x) verifyIntegrity]
+#endif
+
+/* Helper function to construct a range */
+static HFRange entireRangeExtendingFromIndex(unsigned long long start) {
+    return HFRangeMake(start, ULLONG_MAX - start);
+}
+
+static const HFRange kEntireRange = {0, ULLONG_MAX};
+
 @interface HFByteRangeAttributeArray (HFForwardDeclarations)
 - (BOOL)shouldTransferAttribute:(NSString *)attribute;
 @end
@@ -55,7 +68,7 @@
 - (id)init {
     if ([self class] == [HFByteRangeAttributeArray class]) {
         [self release];
-        return [[HFNaiveByteRangeAttributeArray alloc] init];
+        return [[HFAnnotatedTreeByteRangeAttributeArray alloc] init];
     }
     return [super init];
 }
@@ -94,15 +107,25 @@
     }
 }
 
+#if ! NDEBUG
+- (void)verifyIntegrity {
+    
+}
+#endif
 
 - (BOOL)isEqual:(HFByteRangeAttributeArray *)array {
     if (! [array isKindOfClass:[HFByteRangeAttributeArray class]]) return NO;
+    VERIFY_INTEGRITY(self);
+    VERIFY_INTEGRITY(array);
     HFRange remaining = HFRangeMake(0, ULLONG_MAX);
     BOOL result = YES;
     NSUInteger amt = 0;
     static int NUM = 0;
     int num = ++NUM;
-    const BOOL log = (num == 2);
+    const BOOL log = YES;
+    if (num == 5) {
+        puts("Yay");
+    }
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     while (remaining.length > 0) {
         unsigned long long applied1, applied2;
@@ -386,10 +409,12 @@
 
 @implementation HFByteRangeAttributeArrayNode
 
-/* We are immutable */
-- (id)copyWithZone:(NSZone *)zone {
-    USE(zone);
-    return [self retain];
+- (id)mutableCopyWithZone:(NSZone *)zone {
+    HFByteRangeAttributeArrayNode *result = [super mutableCopyWithZone:zone];
+    [result->attribute release]; //probably this is nil
+    result->attribute = [attribute copy];
+    result->range = range;
+    return result;
 }
 
 - (id)initWithAttribute:(NSString *)attr range:(HFRange)val {
@@ -536,6 +561,30 @@ static void removeFromDictionaryOfSets(NSMutableDictionary *dictionary, NSString
     }
 }
 
+- (void)populateAttributesToNodes:(NSMutableDictionary *)dictionary {
+    [self walkNodesInRange:kEntireRange withBlock:^(HFByteRangeAttributeArrayNode *node, HFRange range) {
+        USE(range);
+        insertIntoDictionaryOfSets(dictionary, node->attribute, node);
+        /* Continue */
+        return (BOOL)YES;
+    }];
+}
+
+#if ! NDEBUG
+- (void)verifyIntegrity {
+    [super verifyIntegrity];
+    
+    /* Verify our tree */
+    [atree verifyIntegrity];
+    
+    /* Ensure attributesToNodes is correct */
+    NSMutableDictionary *temp = [[NSMutableDictionary alloc] init];
+    [self populateAttributesToNodes:temp];
+    HFASSERT([temp isEqual:attributesToNodes]);
+    [temp release];
+}
+#endif
+
 - (void)addAttribute:(NSString *)attributeName range:(HFRange)range {
     HFByteRangeAttributeArrayNode *node = [[HFByteRangeAttributeArrayNode alloc] initWithAttribute:attributeName range:range];
     [atree insertNode:node];
@@ -614,7 +663,7 @@ static void removeFromDictionaryOfSets(NSMutableDictionary *dictionary, NSString
     NSMutableSet *attributes = [[NSMutableSet alloc] init];
     __block unsigned long long maxLocation = ULLONG_MAX;
     /* length will contain the length over which the given set of attributes applies.  In case no attributes apply, we need to return that length; so we need to walk the entire tree. */
-    [self walkNodesInRange:HFRangeMake(index, ULLONG_MAX - index) withBlock:^(HFByteRangeAttributeArrayNode *node, HFRange intersection) {
+    [self walkNodesInRange:entireRangeExtendingFromIndex(index) withBlock:^(HFByteRangeAttributeArrayNode *node, HFRange intersection) {
         BOOL shouldContinue;
         /* Store in validLength the maximum length over which all attributes are valid. */
         if (HFLocationInRange(index, intersection)) {
@@ -641,7 +690,7 @@ static void removeFromDictionaryOfSets(NSMutableDictionary *dictionary, NSString
 
 - (HFRange)rangeOfAttribute:(NSString *)attribute {
     __block HFRange resultRange = {ULLONG_MAX, ULLONG_MAX};
-    [self walkNodesInRange:HFRangeMake(0, ULLONG_MAX) withBlock:^BOOL(HFByteRangeAttributeArrayNode *node, HFRange range) {
+    [self walkNodesInRange:kEntireRange withBlock:^BOOL(HFByteRangeAttributeArrayNode *node, HFRange range) {
         USE(range);
         BOOL result = YES; /* assume continue */
         if ([attribute isEqualToString:node->attribute]) {
@@ -675,8 +724,9 @@ static void removeFromDictionaryOfSets(NSMutableDictionary *dictionary, NSString
 }
 
 - (void)byteRange:(HFRange)dyingRange wasReplacedByBytesOfLength:(unsigned long long)replacementLength {
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     
-    NSMutableDictionary *nodesToReplace = [[NSMutableDictionary alloc] init];
+    NSMapTable *nodesToReplace = [NSMapTable mapTableWithStrongToStrongObjects];
     
     const id null = [NSNull null];
     
@@ -745,7 +795,9 @@ static void removeFromDictionaryOfSets(NSMutableDictionary *dictionary, NSString
     }];
     
     /* Apply our replacements */
-    FOREACH(HFByteRangeAttributeArrayNode *, dyingNode, [nodesToReplace allKeys]) {
+    NSEnumerator *dyingNodes = [nodesToReplace keyEnumerator];
+    HFByteRangeAttributeArrayNode *dyingNode;
+    while ((dyingNode = [dyingNodes nextObject])) {
         HFByteRangeAttributeArrayNode *replacementNodeOrNULL = [nodesToReplace objectForKey:dyingNode];
         
         /* Remove existing node */
@@ -759,7 +811,17 @@ static void removeFromDictionaryOfSets(NSMutableDictionary *dictionary, NSString
         }
     }
     
-    [nodesToReplace release];
+    [pool drain];
+}
+
+- (id)mutableCopyWithZone:(NSZone *)zone {
+    HFAnnotatedTreeByteRangeAttributeArray *result = [[[self class] alloc] init];
+    [result->atree release];
+    result->atree = [atree mutableCopyWithZone:zone];
+    [result populateAttributesToNodes:result->attributesToNodes];
+    VERIFY_INTEGRITY(self);
+    VERIFY_INTEGRITY(result);
+    return result;
 }
 
 - (BOOL)isEmpty {

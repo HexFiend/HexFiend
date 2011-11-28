@@ -11,7 +11,7 @@
 typedef unsigned long long (*HFAnnotatedTreeAnnotaterFunction_t)(id left, id right);
 
 
-@interface HFAnnotatedTreeNode : NSObject {
+@interface HFAnnotatedTreeNode : NSObject <NSMutableCopying> {
     HFAnnotatedTreeNode *left;
     HFAnnotatedTreeNode *right;
     HFAnnotatedTreeNode *parent;
@@ -39,7 +39,7 @@ typedef unsigned long long (*HFAnnotatedTreeAnnotaterFunction_t)(id left, id rig
 @end
 
 
-@interface HFAnnotatedTree : NSObject {
+@interface HFAnnotatedTree : NSObject <NSMutableCopying> {
     HFAnnotatedTreeAnnotaterFunction_t annotater;
     HFAnnotatedTreeNode *root;
 }

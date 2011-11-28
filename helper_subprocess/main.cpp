@@ -1,42 +1,16 @@
-extern "C" {
 #include "HFHelperProcessSharedCode.h"
-#include "FortunateSonServer.h"
+#include <asl.h>
 #include <unistd.h>
+#include <launch.h>
+#include <errno.h>
+
+extern "C" {
+#include "FortunateSonServer.h"
+}
 
 #define MAX_MESSAGE_SIZE 512
 
 static FILE *ERR_FILE;
-
-/* I wish there were a better way to do this */
-static void close_all_open_files(void) {
-    long open_max = sysconf(_SC_OPEN_MAX);
-    int fd;
-    for (fd = 0; fd < open_max; fd++) {
-        close(fd);
-    }
-}
-
-static mach_port_t get_parent_receive_port(void) {
-    const mach_port_t errorReturn = MACH_PORT_NULL;
-    mach_port_t parent_recv_port = MACH_PORT_NULL; //the port on which the parent receives data from us
-    mach_port_t child_recv_port = MACH_PORT_NULL; //the poirt on which we receive data to the parent
-
-    // figure out what name our parent used
-    char ipc_name[256];
-    derive_ipc_name(ipc_name, getppid());
-    mach_port_t bp = MACH_PORT_NULL;
-    task_get_bootstrap_port(mach_task_self(), &bp);
-    CHECK_MACH_ERROR(bootstrap_look_up(bp, ipc_name, &parent_recv_port));
-    
-    // create a port on which we will receive data
-    if (setup_recv_port (&child_recv_port) != 0)
-	return errorReturn;
-    
-    if (send_port (parent_recv_port, child_recv_port, MACH_MSG_TYPE_MOVE_SEND) != 0) //Move our send right over.  That way we can get a No Senders notification when Daddy dies, because we can't send to our own port!
-        return errorReturn;
-    
-    return child_recv_port;
-}
 
 struct DummyMsg_t {
     mach_msg_header_t head;
@@ -44,14 +18,14 @@ struct DummyMsg_t {
     unsigned char space[MAX_MESSAGE_SIZE];
 };
 
-static boolean_t do_server_thing(struct DummyMsg_t *requestMsg, struct DummyMsg_t *replyMsg) {
+static boolean_t handle_server_message(struct DummyMsg_t *requestMsg, struct DummyMsg_t *replyMsg) {
     mig_reply_error_t * request = (mig_reply_error_t *)requestMsg;
     mig_reply_error_t *	reply = (mig_reply_error_t *)replyMsg;
     mach_msg_return_t r = MACH_MSG_SUCCESS;
     mach_msg_options_t options = 0;
 
     boolean_t handled = HexFiendHelper_server((mach_msg_header_t *)request, (mach_msg_header_t *)reply);
-    if (ERR_FILE) fprintf(ERR_FILE, "Got back %d\n", handled);
+    //if (ERR_FILE) fprintf(ERR_FILE, "Got back %d\n", handled);
     if (handled) {
     /* Copied from Libc/mach/mach_msg.c:mach_msg_server_once(): Start */
         if (!(reply->Head.msgh_bits & MACH_MSGH_BITS_COMPLEX)) {
@@ -109,11 +83,12 @@ static void run_server(mach_port_t portset, mach_port_t notification_port) {
         }
         else {
             /* Try handling it from the server */
-            boolean_t handled = do_server_thing(&DumMsg, &DumMsgReply);
+            boolean_t handled = handle_server_message(&DumMsg, &DumMsgReply);
             if (! handled) {
                 /* Could be a No Senders notification */
                 if (DumMsg.head.msgh_id == MACH_NOTIFY_NO_SENDERS) {
                     /* Our parent process died, or closed our port, so we should go away */
+                    if (ERR_FILE) fprintf(ERR_FILE, "Parent appears to have closed its port, so we're exiting.\n");
                     isFinished = 1;
                 }
                 else {
@@ -125,14 +100,81 @@ static void run_server(mach_port_t portset, mach_port_t notification_port) {
     }
 }
 
+/* Get the Mach port upon which we'll receive requests from our parent */
+static mach_port_t get_hex_fiend_receive_port(void) {
+    mach_port_t launchdReceivePort = MACH_PORT_NULL, hexFiendReceivePort = MACH_PORT_NULL;
+    launch_data_t resp = NULL, machServices = NULL, msg = NULL, service = NULL;
+    int err = 0;
+    
+    /* Check in with launchd */
+    msg = launch_data_new_string(LAUNCH_KEY_CHECKIN);
+	resp = launch_msg(msg);
+	if (resp == NULL) {
+		if (ERR_FILE) fprintf(ERR_FILE, "launch_msg(): %s\n", strerror(errno));
+		exit(EXIT_FAILURE);
+	}
+    
+    /* Guard against errors */
+	if (launch_data_get_type(resp) == LAUNCH_DATA_ERRNO) {
+		errno = launch_data_get_errno(resp);
+		if (ERR_FILE) fprintf(ERR_FILE, "launch_msg() response: %s\n", strerror(errno));
+		exit(EXIT_FAILURE);
+	}
+    
+    /* Get our MachServices dictioanry */
+	machServices = launch_data_dict_lookup(resp, LAUNCH_JOBKEY_MACHSERVICES);
+    
+    /* Die if it's not there */
+	if (machServices == NULL) {
+		if (ERR_FILE) fprintf(ERR_FILE, "No mach services found!\n");
+		exit(EXIT_FAILURE);
+	}
+    
+    /* Get the one we care about */
+    service = launch_data_dict_lookup(machServices, kPrivilegedHelperLaunchdLabel);
+    if (service == NULL) {
+		if (ERR_FILE) fprintf(ERR_FILE, "Mach service %s not found!\n", kPrivilegedHelperLaunchdLabel);
+		exit(EXIT_FAILURE);
+    }
+    
+    /* Make sure we've got a mach port */
+    if (launch_data_get_type(service) != LAUNCH_DATA_MACHPORT) {
+        if (ERR_FILE) fprintf(ERR_FILE, "%s: not a mach port\n", kPrivilegedHelperLaunchdLabel);
+        exit(EXIT_FAILURE);
+    }
+    
+    /* Now get the launchd mach port */
+    launchdReceivePort = launch_data_get_machport(service);
+    
+    /* We don't want to use launchd's port - we want one from Hex Fiend (so we can get a no senders notification). So receive a port from Hex Fiend on our launchd port. */
+    hexFiendReceivePort = MACH_PORT_NULL;
+    if ((err = recv_port(launchdReceivePort, &hexFiendReceivePort))) {
+        if (ERR_FILE) fprintf(ERR_FILE, "recv_port() failed with Mach error %d\n", err);
+        exit(EXIT_FAILURE);
+    }
+    
+    /* Make sure we got something back */
+    if (hexFiendReceivePort == MACH_PORT_NULL) {
+        if (ERR_FILE) fprintf(ERR_FILE, "recv_port() returned a null Mach port\n");
+        exit(EXIT_FAILURE);
+    }
+    
+    /* Clean up */
+    if (msg) launch_data_free(msg);
+    if (resp) launch_data_free(resp);
+    
+    return hexFiendReceivePort;
+}
+
+
 int main(void) {
-    close_all_open_files();
-//    puts("get_parent_receive_port");
-    mach_port_t parent_recv_port = get_parent_receive_port();
-//    puts("Done");
+    ERR_FILE = fopen("/tmp/FortunateSonErrorFile.txt", "a");
+    fprintf(ERR_FILE, "Started with pid %d\n", getpid());
     
+    mach_port_t parent_recv_port = get_hex_fiend_receive_port();
+    
+    // Get notified when the parent receive port dies
     mach_port_t my_task = mach_task_self();
-    
     mach_port_t notificationPort = MACH_PORT_NULL;
     CHECK_MACH_ERROR(mach_port_allocate(my_task, MACH_PORT_RIGHT_RECEIVE, &notificationPort));
     mach_port_t old;
@@ -143,9 +185,8 @@ int main(void) {
     CHECK_MACH_ERROR(mach_port_allocate(my_task, MACH_PORT_RIGHT_PORT_SET, &portSet));
     CHECK_MACH_ERROR(mach_port_insert_member(my_task, parent_recv_port, portSet));
     CHECK_MACH_ERROR(mach_port_insert_member(my_task, notificationPort, portSet));
-    //ERR_FILE = fopen("/tmp/FortunateSonErrorFile.txt", "a");
     run_server(portSet, notificationPort);
+    
+    /* Once run_server returns, we're done, so exit */
     return 0;
-}
-
 }

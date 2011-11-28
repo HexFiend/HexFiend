@@ -168,5 +168,13 @@
     }
 }
 
+- (void)setStringEncoding:(NSStringEncoding)encoding {
+    [textRepresenter setEncoding:encoding];
+}
+
+- (NSStringEncoding)stringEncoding {
+    return [textRepresenter encoding];
+}
+
 
 @end

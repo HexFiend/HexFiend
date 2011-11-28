@@ -7,19 +7,10 @@
 //
 
 #import "HFFieldTypeController.h"
+#import "BaseDataDocument.h"
 #import <HexFiend/HFTextField.h>
 
 @implementation HFFieldTypeController
-
-- (void)setOperationView:(HFDocumentOperationView *)view {
-    operationView = view;
-    [self bind:@"operationIsRunning" toObject:view withKeyPath:@"operationIsRunning" options:nil];
-}
-
-- (void)dealloc {
-    [self unbind:@"operationIsRunning"];
-    [super dealloc];
-}
 
 - (BOOL)operationIsRunning {
     return operationIsRunning;
@@ -68,6 +59,49 @@
     [replaceField setUsesTextArea: fieldTypeIsASCII];
     if (restoreFRToFind) [[findField window] makeFirstResponder:findField];
     if (restoreFRToReplace) [[replaceField window] makeFirstResponder:replaceField];
+}
+
+- (void)updateTextFieldStringEncodingFromDocument {
+    NSStringEncoding encoding;
+    if (document) {
+        encoding = [document stringEncoding];
+    } else {
+        encoding = [NSString defaultCStringEncoding];
+    }
+    [findField setStringEncoding:encoding];
+    [replaceField setStringEncoding:encoding];
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
+    if (object == document && [keyPath isEqualToString:@"stringEncoding"]) {
+        [self updateTextFieldStringEncodingFromDocument];
+    } else {
+        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+    }
+}
+
+- (void)awakeFromNib {
+    if (document && ! observingDocument) {
+        /* Observe the document for changes in its string encoding */
+        [document addObserver:self forKeyPath:@"stringEncoding" options:0 context:NULL];
+        observingDocument = YES;
+    }
+    [self updateTextFieldStringEncodingFromDocument];
+}
+
+- (void)setOperationView:(HFDocumentOperationView *)view {
+    operationView = view;
+    [self bind:@"operationIsRunning" toObject:view withKeyPath:@"operationIsRunning" options:nil];
+}
+
+- (void)dealloc {
+    [self unbind:@"operationIsRunning"];
+    /* Oooh this is sketchy to do this here */
+    if (observingDocument) {
+        [document removeObserver:self forKeyPath:@"stringEncoding"];
+        observingDocument = NO;
+    }
+    [super dealloc];
 }
 
 @end

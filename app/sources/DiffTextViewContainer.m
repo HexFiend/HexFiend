@@ -95,7 +95,6 @@
 }
 
 - (NSSize)minimumFrameSizeForProposedSize:(NSSize)frameSize {
-    NSLog(@"minimumFrameSizeForProposedSize: %f", frameSize.width);
     NSSize result;
     CGFloat leftWidth, rightWidth;
     [self getLeftLayoutWidth:&leftWidth rightLayoutWidth:&rightWidth forProposedWidth:frameSize.width];

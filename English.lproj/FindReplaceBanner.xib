@@ -2,13 +2,13 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.10">
 	<data>
 		<int key="IBDocument.SystemTarget">1050</int>
-		<string key="IBDocument.SystemVersion">10J567</string>
-		<string key="IBDocument.InterfaceBuilderVersion">1305</string>
-		<string key="IBDocument.AppKitVersion">1038.35</string>
-		<string key="IBDocument.HIToolboxVersion">462.00</string>
+		<string key="IBDocument.SystemVersion">10K549</string>
+		<string key="IBDocument.InterfaceBuilderVersion">1938</string>
+		<string key="IBDocument.AppKitVersion">1038.36</string>
+		<string key="IBDocument.HIToolboxVersion">461.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
-			<string key="NS.object.0">1305</string>
+			<string key="NS.object.0">1938</string>
 		</object>
 		<object class="NSArray" key="IBDocument.IntegratedClassDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -27,11 +27,8 @@
 			<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 		</object>
 		<object class="NSMutableDictionary" key="IBDocument.Metadata">
-			<bool key="EncodedWithXMLCoder">YES</bool>
-			<object class="NSArray" key="dict.sortedKeys" id="0">
-				<bool key="EncodedWithXMLCoder">YES</bool>
-			</object>
-			<reference key="dict.values" ref="0"/>
+			<string key="NS.key.0">PluginDependencyRecalculationVersion</string>
+			<integer value="1" key="NS.object.0"/>
 		</object>
 		<object class="NSMutableArray" key="IBDocument.RootObjects" id="1000">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -55,6 +52,7 @@
 						<string key="NSFrame">{{100, 5}, {339, 18}}</string>
 						<reference key="NSSuperview" ref="1005"/>
 						<reference key="NSWindow"/>
+						<reference key="NSNextKeyView"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSSegmentedCell" key="NSCell" id="151734930">
 							<int key="NSCellFlags">67239424</int>
@@ -100,6 +98,7 @@
 						<string key="NSFrame">{{15, 26}, {11, 11}}</string>
 						<reference key="NSSuperview" ref="1005"/>
 						<reference key="NSWindow"/>
+						<reference key="NSNextKeyView" ref="638879442"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSButtonCell" key="NSCell" id="986322513">
 							<int key="NSCellFlags">67239424</int>
@@ -125,6 +124,7 @@
 						<string key="NSFrame">{{8, 49}, {84, 18}}</string>
 						<reference key="NSSuperview" ref="1005"/>
 						<reference key="NSWindow"/>
+						<reference key="NSNextKeyView" ref="168651019"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSSegmentedCell" key="NSCell" id="401570410">
 							<int key="NSCellFlags">67239424</int>
@@ -164,6 +164,7 @@
 										<string key="NSFrame">{{17, 3}, {38, 16}}</string>
 										<reference key="NSSuperview" ref="739882413"/>
 										<reference key="NSWindow"/>
+										<reference key="NSNextKeyView" ref="18878521"/>
 										<bool key="NSEnabled">YES</bool>
 										<object class="NSTextFieldCell" key="NSCell" id="568357850">
 											<int key="NSCellFlags">67239488</int>
@@ -201,12 +202,14 @@
 										<string key="NSFrame">{{63, 2}, {290, 18}}</string>
 										<reference key="NSSuperview" ref="739882413"/>
 										<reference key="NSWindow"/>
+										<reference key="NSNextKeyView" ref="25928326"/>
 										<string key="NSClassName">HFTextField</string>
 									</object>
 								</object>
 								<string key="NSFrame">{{0, 24}, {359, 24}}</string>
 								<reference key="NSSuperview" ref="638879442"/>
 								<reference key="NSWindow"/>
+								<reference key="NSNextKeyView" ref="64193229"/>
 								<string key="NSClassName">HFResizingView</string>
 							</object>
 							<object class="NSCustomView" id="25928326">
@@ -220,6 +223,7 @@
 										<string key="NSFrame">{{5, 5}, {53, 16}}</string>
 										<reference key="NSSuperview" ref="25928326"/>
 										<reference key="NSWindow"/>
+										<reference key="NSNextKeyView" ref="1054605105"/>
 										<bool key="NSEnabled">YES</bool>
 										<object class="NSTextFieldCell" key="NSCell" id="823614387">
 											<int key="NSCellFlags">67239488</int>
@@ -237,18 +241,21 @@
 										<string key="NSFrame">{{63, 4}, {290, 18}}</string>
 										<reference key="NSSuperview" ref="25928326"/>
 										<reference key="NSWindow"/>
+										<reference key="NSNextKeyView" ref="551564727"/>
 										<string key="NSClassName">HFTextField</string>
 									</object>
 								</object>
 								<string key="NSFrameSize">{359, 24}</string>
 								<reference key="NSSuperview" ref="638879442"/>
 								<reference key="NSWindow"/>
+								<reference key="NSNextKeyView" ref="135703682"/>
 								<string key="NSClassName">HFResizingView</string>
 							</object>
 						</object>
 						<string key="NSFrame">{{89, 25}, {359, 48}}</string>
 						<reference key="NSSuperview" ref="1005"/>
 						<reference key="NSWindow"/>
+						<reference key="NSNextKeyView" ref="739882413"/>
 						<string key="NSClassName">HFResizingView</string>
 					</object>
 					<object class="NSCustomView" id="121329192">
@@ -257,12 +264,14 @@
 						<string key="NSFrameSize">{448, 73}</string>
 						<reference key="NSSuperview" ref="1005"/>
 						<reference key="NSWindow"/>
+						<reference key="NSNextKeyView" ref="457221005"/>
 						<string key="NSClassName">StretchableProgressIndicator</string>
 					</object>
 				</object>
 				<string key="NSFrameSize">{448, 73}</string>
 				<reference key="NSSuperview"/>
 				<reference key="NSWindow"/>
+				<reference key="NSNextKeyView" ref="121329192"/>
 				<string key="NSClassName">HFDocumentOperationView</string>
 			</object>
 			<object class="NSCustomObject" id="635484156">
@@ -275,6 +284,22 @@
 		<object class="IBObjectContainer" key="IBDocument.Objects">
 			<object class="NSMutableArray" key="connectionRecords">
 				<bool key="EncodedWithXMLCoder">YES</bool>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">findReplaceBackgroundView</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="1005"/>
+					</object>
+					<int key="connectionID">30</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">performFindReplaceActionFromSelectedSegment:</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="151734930"/>
+					</object>
+					<int key="connectionID">134</int>
+				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
 						<string key="label">findLabel</string>
@@ -301,14 +326,6 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
-						<string key="label">findReplaceBackgroundView</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="1005"/>
-					</object>
-					<int key="connectionID">30</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
 						<string key="label">replaceField</string>
 						<reference key="source" ref="1005"/>
 						<reference key="destination" ref="1054605105"/>
@@ -322,46 +339,6 @@
 						<reference key="destination" ref="18878521"/>
 					</object>
 					<int key="connectionID">44</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">operationView</string>
-						<reference key="source" ref="635484156"/>
-						<reference key="destination" ref="1005"/>
-					</object>
-					<int key="connectionID">59</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">findField</string>
-						<reference key="source" ref="635484156"/>
-						<reference key="destination" ref="18878521"/>
-					</object>
-					<int key="connectionID">72</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">replaceField</string>
-						<reference key="source" ref="635484156"/>
-						<reference key="destination" ref="1054605105"/>
-					</object>
-					<int key="connectionID">73</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">selectedIndex: fieldTypeIsASCII</string>
-						<reference key="source" ref="457221005"/>
-						<reference key="destination" ref="635484156"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="457221005"/>
-							<reference key="NSDestination" ref="635484156"/>
-							<string key="NSLabel">selectedIndex: fieldTypeIsASCII</string>
-							<string key="NSBinding">selectedIndex</string>
-							<string key="NSKeyPath">fieldTypeIsASCII</string>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">103</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
@@ -388,12 +365,52 @@
 					<int key="connectionID">118</int>
 				</object>
 				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">performFindReplaceActionFromSelectedSegment:</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="151734930"/>
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">operationView</string>
+						<reference key="source" ref="635484156"/>
+						<reference key="destination" ref="1005"/>
 					</object>
-					<int key="connectionID">134</int>
+					<int key="connectionID">59</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">findField</string>
+						<reference key="source" ref="635484156"/>
+						<reference key="destination" ref="18878521"/>
+					</object>
+					<int key="connectionID">72</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">replaceField</string>
+						<reference key="source" ref="635484156"/>
+						<reference key="destination" ref="1054605105"/>
+					</object>
+					<int key="connectionID">73</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">document</string>
+						<reference key="source" ref="635484156"/>
+						<reference key="destination" ref="1001"/>
+					</object>
+					<int key="connectionID">146</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">selectedIndex: fieldTypeIsASCII</string>
+						<reference key="source" ref="457221005"/>
+						<reference key="destination" ref="635484156"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="457221005"/>
+							<reference key="NSDestination" ref="635484156"/>
+							<string key="NSLabel">selectedIndex: fieldTypeIsASCII</string>
+							<string key="NSBinding">selectedIndex</string>
+							<string key="NSKeyPath">fieldTypeIsASCII</string>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">103</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -401,7 +418,9 @@
 					<bool key="EncodedWithXMLCoder">YES</bool>
 					<object class="IBObjectRecord">
 						<int key="objectID">0</int>
-						<reference key="object" ref="0"/>
+						<object class="NSArray" key="object" id="0">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+						</object>
 						<reference key="children" ref="1000"/>
 						<nil key="parent"/>
 					</object>
@@ -576,68 +595,52 @@
 					<string>-1.IBPluginDependency</string>
 					<string>-2.IBPluginDependency</string>
 					<string>-3.IBPluginDependency</string>
-					<string>1.IBEditorWindowLastContentRect</string>
 					<string>1.IBPluginDependency</string>
-					<string>1.WindowOrigin</string>
-					<string>1.editorWindowContentRectSynchronizationRect</string>
 					<string>100.IBPluginDependency</string>
 					<string>105.IBPluginDependency</string>
-					<string>105.IBViewBoundsToFrameTransform</string>
 					<string>114.CustomClassName</string>
 					<string>114.IBPluginDependency</string>
-					<string>114.IBViewBoundsToFrameTransform</string>
 					<string>115.IBPluginDependency</string>
 					<string>12.IBPluginDependency</string>
 					<string>132.IBPluginDependency</string>
-					<string>132.IBViewBoundsToFrameTransform</string>
 					<string>133.IBPluginDependency</string>
 					<string>15.IBPluginDependency</string>
 					<string>16.IBPluginDependency</string>
 					<string>17.IBPluginDependency</string>
-					<string>17.IBViewBoundsToFrameTransform</string>
 					<string>18.IBPluginDependency</string>
+					<string>41.IBPluginDependency</string>
+					<string>42.IBPluginDependency</string>
 					<string>55.IBPluginDependency</string>
+					<string>85.IBPluginDependency</string>
 					<string>9.IBPluginDependency</string>
+					<string>95.IBPluginDependency</string>
 					<string>99.IBPluginDependency</string>
-					<string>99.IBViewBoundsToFrameTransform</string>
 				</object>
 				<object class="NSMutableArray" key="dict.values">
 					<bool key="EncodedWithXMLCoder">YES</bool>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{504, 1013}, {448, 73}}</string>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{628, 654}</string>
-					<string>{{483, 443}, {448, 73}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<object class="NSAffineTransform"/>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>HFCancelButton</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<object class="NSAffineTransform">
-						<bytes key="NSTransformStruct">P4AAAL+AAABBcAAAwgwAAA</bytes>
-					</object>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<object class="NSAffineTransform">
-						<bytes key="NSTransformStruct">P4AAAL+AAABCyAAAwagAAA</bytes>
-					</object>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<object class="NSAffineTransform">
-						<bytes key="NSTransformStruct">P4AAAL+AAABAoAAAwZgAAA</bytes>
-					</object>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<object class="NSAffineTransform">
-						<bytes key="NSTransformStruct">P4AAAL+AAABBAAAAwoIAAA</bytes>
-					</object>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="unlocalizedProperties">
@@ -652,7 +655,7 @@
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">145</int>
+			<int key="maxID">146</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -840,12 +843,14 @@
 						<bool key="EncodedWithXMLCoder">YES</bool>
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>document</string>
 							<string>findField</string>
 							<string>operationView</string>
 							<string>replaceField</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>BaseDataDocument</string>
 							<string>HFTextField</string>
 							<string>HFDocumentOperationView</string>
 							<string>HFTextField</string>
@@ -855,12 +860,17 @@
 						<bool key="EncodedWithXMLCoder">YES</bool>
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>document</string>
 							<string>findField</string>
 							<string>operationView</string>
 							<string>replaceField</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<object class="IBToOneOutletInfo">
+								<string key="name">document</string>
+								<string key="candidateClassName">BaseDataDocument</string>
+							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">findField</string>
 								<string key="candidateClassName">HFTextField</string>

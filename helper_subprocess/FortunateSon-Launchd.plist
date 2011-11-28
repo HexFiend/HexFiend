@@ -6,10 +6,12 @@
 	<string>com.ridiculousfish.HexFiend.PrivilegedHelper</string>
 	<key>EnableTransactions</key>
 	<true/>
+	<key>ExitTimeOut</key>
+	<integer>0</integer>
 	<key>MachServices</key>
 	<dict>
 		<key>com.ridiculousfish.HexFiend.PrivilegedHelper</key>
-		<string></string>
+		<true/>
 	</dict>
 </dict>
 </plist>

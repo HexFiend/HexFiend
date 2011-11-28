@@ -63,6 +63,14 @@ static HFAnnotatedTreeNode *right_child(HFAnnotatedTreeNode *node);
     return first_node(root);
 }
 
+- (id)mutableCopyWithZone:(NSZone *)zone {
+    HFAnnotatedTree *copied = [[[self class] alloc] init];
+    copied->annotater = annotater;
+    [copied->root release];
+    copied->root = [root mutableCopyWithZone:zone];
+    return copied;
+}
+
 - (BOOL)isEmpty {
     /* We're empty if our root has no children. */
     return left_child(root) == nil && right_child(root) == nil;
@@ -121,6 +129,21 @@ static HFAnnotatedTreeAnnotaterFunction_t get_annotater(HFAnnotatedTree *tree) {
 - (id)leftNode { return left; }
 - (id)rightNode { return right; }
 - (id)parentNode { return parent; }
+
+- (id)mutableCopyWithZone:(NSZone *)zone {
+    HFAnnotatedTreeNode *copied = [[[self class] alloc] init];
+    if (left) {
+        copied->left = [left mutableCopyWithZone:zone];
+        copied->left->parent = copied;
+    }
+    if (right) {
+        copied->right = [right mutableCopyWithZone:zone];
+        copied->right->parent = copied;
+    }
+    copied->level = level;
+    copied->annotation = annotation;
+    return copied;
+}
 
 static HFAnnotatedTreeNode *left_child(HFAnnotatedTreeNode *node) {
     return node->left;

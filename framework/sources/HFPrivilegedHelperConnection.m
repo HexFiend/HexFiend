@@ -6,6 +6,8 @@
 //  Copyright 2009 __MyCompanyName__. All rights reserved.
 //
 
+/* Since the SMJobBless() API requires that the helper live in the app's bundle and plist (grr) this should be factored so that the app provides the interface to the framework. */
+
 #import "HFPrivilegedHelperConnection.h"
 #import "HFHelperProcessSharedCode.h"
 #import "FortunateSon.h"
@@ -13,9 +15,6 @@
 #import <Security/Authorization.h>
 
 static HFPrivilegedHelperConnection *sSharedConnection;
-
-
-static mach_port_t launch_child_returning_recv_port(const char *path);
 
 @implementation HFPrivilegedHelperConnection
 
@@ -59,6 +58,8 @@ static NSString *read_line(FILE *file) {
     void *resultData = NULL;
     mach_msg_type_number_t resultCnt;
     
+    mach_port_t childReceivePort = [childReceiveMachPort machPort];
+    
     kern_return_t kr = _GratefulFatherReadProcess(childReceivePort, process, range.location, range.length, (unsigned char **)&resultData, &resultCnt);
     if (kr != KERN_SUCCESS) {
         fprintf(stdout, "_GratefulFatherReadProcess failed with mach error: %s\n", (char*) mach_error_string(kr));
@@ -77,7 +78,7 @@ static NSString *read_line(FILE *file) {
     if (! [self connectIfNecessary]) return NO;
     VMRegionAttributes atts = 0;
     mach_vm_size_t length = 0;
-    kern_return_t kr = _GratefulFatherAttributesForAddress(childReceivePort, process, offset, &atts, &length);
+    kern_return_t kr = _GratefulFatherAttributesForAddress([childReceiveMachPort machPort], process, offset, &atts, &length);
     if (kr != KERN_SUCCESS) {
         fprintf(stdout, "_GratefulFatherAttributesForAddress failed with mach error: %s\n", (char*) mach_error_string(kr));
         if (error) *error = nil;
@@ -91,7 +92,7 @@ static NSString *read_line(FILE *file) {
 - (BOOL)openFileAtPath:(const char *)path writable:(BOOL)writable result:(int *)outFD resultError:(int *)outErrno fileSize:(unsigned long long *)outFileSize fileType:(uint16_t *)outFileType inode:(unsigned long long *)outInode device:(int *)outDevice {
     if (! [self connectIfNecessary]) return NO;
     HFASSERT(outFD && outErrno && outFileSize && outFileType && outInode && outDevice);
-    kern_return_t kr = _GratefulFatherOpenFile(childReceivePort, path, writable, outFD, outErrno, outFileSize, outFileType, outInode, outDevice);
+    kern_return_t kr = _GratefulFatherOpenFile([childReceiveMachPort machPort], path, writable, outFD, outErrno, outFileSize, outFileType, outInode, outDevice);
     if (kr != KERN_SUCCESS) {
         fprintf(stdout, "_GratefulFatherOpenFile failed with mach error: %s\n", (char*) mach_error_string(kr));
         return NO;
@@ -102,7 +103,7 @@ static NSString *read_line(FILE *file) {
 - (BOOL)closeFile:(int)fd {
     HFASSERT(fd > 0);
     if (! [self connectIfNecessary]) return NO;
-    kern_return_t kr = _GratefulFatherCloseFile(childReceivePort, fd);
+    kern_return_t kr = _GratefulFatherCloseFile([childReceiveMachPort machPort], fd);
     if (kr != KERN_SUCCESS) {
         fprintf(stdout, "_GratefulFatherCloseFile failed with mach error: %s\n", (char*) mach_error_string(kr));
         return NO;
@@ -130,7 +131,7 @@ static NSString *read_line(FILE *file) {
     uint32_t alignedLength = (uint32_t)alignedRange.length;
     mach_msg_type_number_t bufferAllocatedSize = 0;
     if (log) NSLog(@"Issuing read %llu / %u", alignedRange.location, alignedLength);
-    kern_return_t kr = _GratefulFatherReadFile(childReceivePort, fd, alignedRange.location, &alignedLength, &buffer, &bufferAllocatedSize, outErr);
+    kern_return_t kr = _GratefulFatherReadFile([childReceiveMachPort machPort], fd, alignedRange.location, &alignedLength, &buffer, &bufferAllocatedSize, outErr);
     if (kr != KERN_SUCCESS) {
         fprintf(stdout, "_GratefulFatherReadFile failed with mach error: %s\n", (char*) mach_error_string(kr));
         return NO;
@@ -166,7 +167,7 @@ static NSString *read_line(FILE *file) {
     HFASSERT(outInfo != NULL);
     if (! [self connectIfNecessary]) return NO;
     uint8_t bitSize = 0;
-    kern_return_t kr = _GratefulFatherProcessInfo(childReceivePort, process, &bitSize);
+    kern_return_t kr = _GratefulFatherProcessInfo([childReceiveMachPort machPort], process, &bitSize);
     if (kr != KERN_SUCCESS) {
         fprintf(stdout, "_GratefulFatherProcessInfo failed with mach error: %s\n", (char*) mach_error_string(kr));
         return NO;
@@ -176,141 +177,102 @@ static NSString *read_line(FILE *file) {
 }
 
 - (BOOL)connectIfNecessary {
-    if (childReceivePort == MACH_PORT_NULL) {
+    if (childReceiveMachPort == nil) {
         NSError *oops = nil;
         if (! [self launchAndConnect:&oops]) {
             if (oops) [NSApp presentError:oops];
         }
     }
-    return childReceivePort != MACH_PORT_NULL;
+    return [childReceiveMachPort isValid];
 }
 
 - (BOOL)launchAndConnect:(NSError **)error {
-    BOOL result = NO;
-    NSBundle *bund = [NSBundle bundleForClass:[self class]];
-    NSString *helperPath = [bund pathForResource:@"FortunateSon" ofType:@""];
-    NSString *privilegedHelperPath = nil;
-    if (! helperPath) {
-        if (error) {
-            NSString *description = [NSString stringWithFormat:@"The privileged helper tool is not present."];
-            *error = [NSError errorWithDomain:NSCocoaErrorDomain code:NSFileNoSuchFileError userInfo:[NSDictionary dictionaryWithObjectsAndKeys:description, NSLocalizedDescriptionKey, nil]];
-        }
-        return NO;
-    }
+    /* If we're already connected, we're done */
+    if ([childReceiveMachPort isValid]) return YES;
+    
+    /* Guess not. This is probably the first connection. */
+    [childReceiveMachPort invalidate];
+    [childReceiveMachPort release];
+    childReceiveMachPort = nil;
+    int err = 0;
     
     /* Our label and port name happen to be the same */
     CFStringRef label = CFSTR("com.ridiculousfish.HexFiend.PrivilegedHelper");
-    NSString *portName = @"com.ridiculousfish.HexFiend.PrivilegedHelper_BLAHBLAH";
+    NSString *portName = @"com.ridiculousfish.HexFiend.PrivilegedHelper";
     
-	AuthorizationItem authItem = { kSMRightBlessPrivilegedHelper, 0, NULL, 0 };
-	AuthorizationRights authRights = { 1, &authItem };
+    /* Always remove the job if we've previously submitted it. This is to help with versioning (we always install the latest tool). It also avoids conflicts where the installed tool was signed with a different key (i.e. someone building Hex Fiend while also having run the signed distribution). A potentially negative consequence is that we have to authenticate every launch, but that is actually a benefit, because it serves as a sort of notification that user's action requires elevated privileges, instead of just (potentially silently) doing it. */
+    BOOL helperIsAlreadyInstalled = NO;
+    CFDictionaryRef existingJob = SMJobCopyDictionary(kSMDomainSystemLaunchd, label);
+    if (existingJob) {
+        helperIsAlreadyInstalled = YES;
+        CFRelease(existingJob);
+    }
+    
+    /* Decide what rights to authorize with. If the helper is not installed, we only need the privileged helper; if it is installed we need ModifySystemDaemons too, to uninstall it. */
+	AuthorizationItem authItems[2] = {{ kSMRightBlessPrivilegedHelper, 0, NULL, 0 }, { kSMRightModifySystemDaemons, 0, NULL, 0 }};
+	AuthorizationRights authRights = { (helperIsAlreadyInstalled ? 2 : 1), authItems };
 	AuthorizationFlags flags = kAuthorizationFlagDefaults | kAuthorizationFlagInteractionAllowed | kAuthorizationFlagPreAuthorize | kAuthorizationFlagExtendRights;
 	AuthorizationRef authRef = NULL;
 	
-	/* Obtain the right to install privileged helper tools (kSMRightBlessPrivilegedHelper). */
-	OSStatus status = AuthorizationCreate(&authRights, kAuthorizationEmptyEnvironment, flags, &authRef);
-	if (status != errAuthorizationSuccess) {
+	/* Now authorize. */
+	err = AuthorizationCreate(&authRights, kAuthorizationEmptyEnvironment, flags, &authRef);
+	if (err != errAuthorizationSuccess) {
         if (error) {
-            NSString *description = [NSString stringWithFormat:@"Failed to create AuthorizationRef (error code %ld).", (long)status];
-            *error = [NSError errorWithDomain:NSCocoaErrorDomain code:NSFileReadNoPermissionError userInfo:[NSDictionary dictionaryWithObjectsAndKeys:description, NSLocalizedDescriptionKey, nil]];
+            if (err == errAuthorizationCanceled) {
+                *error = [NSError errorWithDomain:NSCocoaErrorDomain code:NSUserCancelledError userInfo:nil];
+            } else {
+                NSString *description = [NSString stringWithFormat:@"Failed to create AuthorizationRef (error code %ld).", (long)err];
+                *error = [NSError errorWithDomain:NSCocoaErrorDomain code:NSFileReadNoPermissionError userInfo:[NSDictionary dictionaryWithObjectsAndKeys:description, NSLocalizedDescriptionKey, nil]];
+            }
         }
-	} else {
-		/* This does all the work of verifying the helper tool against the application
-		 * and vice-versa. Once verification has passed, the embedded launchd.plist
-		 * is extracted and placed in /Library/LaunchDaemons and then loaded. The
-		 * executable is placed in /Library/PrivilegedHelperTools.
-		 */
+	}
+    
+    /* Remove the existing helper. If this fails it's not a fatal error (SMJobBless can handle the case when a job is already installed). */
+    if (! err && helperIsAlreadyInstalled) {
         CFErrorRef localError = NULL;
-		result = SMJobBless(kSMDomainSystemLaunchd, (CFStringRef)label, authRef, (CFErrorRef *)&localError);
+        SMJobRemove(kSMDomainSystemLaunchd, label, authRef, true /* wait */, &localError);
         if (localError) {
-            NSLog(@"SMJobBless returned an error: %@", localError);
-            if (*error) *error = [[(id)localError retain] autorelease];
+            NSLog(@"SMJobRemove() failed with error %@", localError);
+            CFRelease(localError);
+        }
+    }
+    
+    /* Bless the job */
+    if (! err) {
+        CFErrorRef localError = NULL;
+		err = ! SMJobBless(kSMDomainSystemLaunchd, label, authRef, (CFErrorRef *)&localError);
+        if (localError) {
+            if (error) *error = [[(id)localError retain] autorelease];
             CFRelease(localError);
         }
 	}
+    
+    /* Done with any AuthRef */
     if (authRef) AuthorizationFree(authRef, kAuthorizationFlagDestroyRights);
 	
-    if (result) {
+    /* Get the port for our helper as provided by launchd */
+    NSMachPort *helperLaunchdPort = nil;
+    if (! err) {
         NSMachBootstrapServer *boots = [NSMachBootstrapServer sharedInstance];
-        NSMachPort *port = (NSMachPort *)[boots portForName:portName];
-        NSLog(@"PORT: %@", port);
+        helperLaunchdPort = (NSMachPort *)[boots portForName:portName];
+        err = ! [helperLaunchdPort isValid];
     }
     
-	return result;
-}
-
-+ (void)UNUSEDload {
-    id pool = [[NSAutoreleasePool alloc] init];
-    [self performSelector:@selector(test:) withObject:nil afterDelay:.1];
-    [pool release];
-}
-
-+ (void)test:unused {
-    USE(unused);
-    HFPrivilegedHelperConnection *helper = [HFPrivilegedHelperConnection sharedConnection];
-    NSError *oops = nil;
-    [helper launchAndConnect:&oops];
+    /* Create our own port, and give it a send right */
+    mach_port_t ourSendPort = MACH_PORT_NULL;
+    if (! err) err = mach_port_allocate(mach_task_self(), MACH_PORT_RIGHT_RECEIVE, &ourSendPort);
+    if (! err) err = mach_port_insert_right(mach_task_self(), ourSendPort, ourSendPort, MACH_MSG_TYPE_MAKE_SEND);
+    
+    /* Tell our privileged helper about it, moving the receive right over */
+    if (! err) err = send_port([helperLaunchdPort machPort], ourSendPort, MACH_MSG_TYPE_MOVE_RECEIVE);
+    
+    /* Now we have the ability to send on this port, and only the privileged helper can receive on it. We are responsible for cleaning up the send right we created. */
+    if (! err) childReceiveMachPort = [[NSMachPort alloc] initWithMachPort:ourSendPort options:NSMachPortDeallocateSendRight];
+    
+    /* Done with helperLaunchdPort */
+    [helperLaunchdPort invalidate];
+	return ! err;
 }
 
 @end
 
-// We need to weak-import posix_spawn and friends as they're not available on Tiger.
-// The BSD-level system headers do not have availability macros, so we redeclare the
-// functions ourselves with the "weak" attribute.
-
-#define WEAK_IMPORT __attribute__((weak))
-#define POSIX_SPAWN_SETEXEC 0x0040
-typedef void *posix_spawnattr_t;
-typedef void *posix_spawn_file_actions_t;
-int posix_spawnattr_init(posix_spawnattr_t *) WEAK_IMPORT;
-int posix_spawn(pid_t * __restrict, const char * __restrict, const posix_spawn_file_actions_t *, const posix_spawnattr_t * __restrict, char *const __argv[ __restrict], char *const __envp[ __restrict]) WEAK_IMPORT;
-int posix_spawnattr_setbinpref_np(posix_spawnattr_t * __restrict, size_t, cpu_type_t *__restrict, size_t *__restrict) WEAK_IMPORT;
-int posix_spawnattr_setflags(posix_spawnattr_t *, short) WEAK_IMPORT;
-
-extern char ***_NSGetEnviron(void);
-
-
-static mach_port_t launch_child_returning_recv_port(const char *path) {
-    const mach_port_t errorReturn = MACH_PORT_NULL;
-    kern_return_t       err;
-    mach_port_t         parent_recv_port = MACH_PORT_NULL;
-    mach_port_t         child_recv_port = MACH_PORT_NULL;
-    
-    if (setup_recv_port(&parent_recv_port) != 0)
-        return errorReturn;
-    
-    // register a port with launchd
-    char ipc_name[256];
-    derive_ipc_name(ipc_name, getpid());
-    NSString *portName = [[NSString alloc] initWithCString:ipc_name encoding:NSASCIIStringEncoding];
-    NSMachPort *machPort = [[NSMachPort alloc] initWithMachPort:parent_recv_port options:NSMachPortDeallocateNone];
-    NSMachBootstrapServer *bootstrapper = [NSMachBootstrapServer sharedInstance];
-    err = ! [bootstrapper registerPort:machPort name:portName];
-    [machPort release];
-    [portName release];
-    if (err) {
-        printf("Failed to register mach port %s", ipc_name);
-        return errorReturn;
-    }
-    
-    char * argv[] = {(char *)path, NULL};
-    pid_t childPID = -1;
-    int posixErr = posix_spawn(&childPID, path, NULL/*file actions*/, NULL/*spawn attr*/, argv, *_NSGetEnviron());
-    if (posixErr != 0) {
-        printf("posix_spawn failed: %d %s\n", posixErr, strerror(posixErr));
-        return errorReturn;
-    }
-    
-    /* talk to the child */
-    if (recv_port(parent_recv_port, &child_recv_port) != 0)
-        return errorReturn;
-    
-    /* Note: this is one of those weird cases where we really really do want to destroy the Mach port (not simply decrement its refcount. This is what allows us to unregister it. */
-    CHECK_MACH_ERROR(mach_port_destroy (mach_task_self(), parent_recv_port));
-        
-    int val;
-    _GratefulFatherSayHey(child_recv_port, "From Daddy", &val);
-    printf("Daddy got back Val: %d\n", val);
-    
-    return child_recv_port;
-}

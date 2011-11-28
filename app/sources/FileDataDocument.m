@@ -25,7 +25,12 @@ static inline Class preferredByteArrayClass(void) {
     if (localError && [[localError domain] isEqualToString:NSCocoaErrorDomain] && [localError code] == NSFileReadNoPermissionError) {
         /* Try again with a privileged file reference */
 #ifndef HF_NO_PRIVILEGED_FILE_OPERATIONS
-        fileReference = [[[HFPrivilegedFileReference alloc] initWithPath:path error:&localError] autorelease];
+        
+        localError = nil;
+        BOOL canConnect = [HFPrivilegedFileReference preflightAuthenticationReturningError:&localError];
+        if (canConnect) {   
+            fileReference = [[[HFPrivilegedFileReference alloc] initWithPath:path error:&localError] autorelease];
+        }
 #endif
     }
     if (fileReference == nil) {

@@ -338,12 +338,9 @@ static HFByteArray *byteArrayForFile(NSString *path) {
 
 + (void)_testByteArrayEditScripts {
     
-    /* Give the class a chance to test its static functions */
-    [HFByteArrayEditScript _unitTestStaticFunctions];
-    
     const BOOL should_debug = NO;
     NSMutableArray *byteArrays = [NSMutableArray array];
-    NSUInteger i, arrayCount = 4;
+    unsigned long i, arrayCount = 4;
     
     HFByteArray *base = [[HFBTreeByteArray alloc] init];
     [byteArrays addObject:base];
@@ -640,10 +637,10 @@ static HFByteArray *byteArrayForFile(NSString *path) {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     NSMutableIndexSet *nsindexset = [[NSMutableIndexSet alloc] init];
     HFMutableIndexSet *hfindexset = [[HFMutableIndexSet alloc] init];
-    NSUInteger round;
+    unsigned long round, roundCount = 4096 * 4;
     const NSUInteger supportedIndexEnd = NSNotFound;
     for (round = 0; round < 4096 * 4; round++) {
-        if (round % 4096 == 0) printf("%lu\n", round);
+        if (round % (roundCount / 8) == 0) printf("Index set test %lu / %lu\n", round, roundCount);
         BOOL insert = ([nsindexset count] == 0 || (random() % 2));
         NSUInteger end = 1 + (random() % supportedIndexEnd);
         NSUInteger start = 1 + (random() % supportedIndexEnd);
@@ -712,10 +709,10 @@ static HFRange randomRange(uint32_t max) {
     
     NSString * const attributes[3] = {@"Alpha", @"Beta", @"Gamma"};
     BOOL log = NO;
-    NSUInteger round;
-    for (round = 0; round < 4096 * 6; round++) {
+    unsigned long round;
+    for (round = 0; round < 128 * 6; round++) {
         NSString *attribute = attributes[random() % (sizeof attributes / sizeof *attributes)];
-        if (round % 4096 == 0) printf("%s %lu\n", sel_getName(_cmd), round);
+        if (round % 128 == 0) printf("%s %lu\n", sel_getName(_cmd), round);
         BOOL insert = ([smartTree isEmpty] || (random() % 2));
 
         HFRange range = randomRange(4096);
@@ -732,6 +729,11 @@ static HFRange randomRange(uint32_t max) {
             [smartTree removeAttribute:attribute range:range];
         }
         HFASSERT([naiveTree isEqual:smartTree]);
+        
+        /* Test copying */
+        id copied = [smartTree mutableCopy];
+        HFASSERT([copied isEqual:smartTree]);
+        [copied release];
         
         /* Test replacements */
         HFRange range1 = randomRange(4096);

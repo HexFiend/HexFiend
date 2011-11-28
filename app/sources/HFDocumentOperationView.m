@@ -166,7 +166,7 @@ static NSString *sNibName;
 }
 
 - (BOOL)respondsToSelector:(SEL)sel {
-    if ([self selectorIsSetMethod:sel]) return YES;
+    if (! awokenFromNib && [self selectorIsSetMethod:sel]) return YES;
     return [super respondsToSelector:sel];
 }
 
