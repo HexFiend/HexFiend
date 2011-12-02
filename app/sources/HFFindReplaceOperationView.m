@@ -1,33 +1,20 @@
 //
-//  HFFieldTypeController.m
+//  HFFindReplaceOperationView.m
 //  HexFiend_2
 //
-//  Created by Peter Ammon on 4/4/08.
-//  Copyright 2008 ridiculous_fish. All rights reserved.
+//  Created by Peter Ammon on 12/1/11.
+//  Copyright (c) 2011 ridiculous_fish. All rights reserved.
 //
 
-#import "HFFieldTypeController.h"
+#import "HFFindReplaceOperationView.h"
 #import "BaseDataDocument.h"
-#import <HexFiend/HFTextField.h>
 
-@implementation HFFieldTypeController
+@implementation HFFindReplaceOperationView
 
-- (BOOL)operationIsRunning {
-    return operationIsRunning;
-}
-
-- (void)setOperationIsRunning:(BOOL)val {
-    operationIsRunning = val;
-}
-
-- init {
-    self = [super init];
+- initWithFrame:(NSRect)frame {
+    self = [super initWithFrame:frame];
     fieldTypeIsASCII = 	[[NSUserDefaults standardUserDefaults] boolForKey:@"FindPrefersASCII"];
     return self;
-}
-
-- (BOOL)fieldTypeIsASCII {
-    return fieldTypeIsASCII;
 }
 
 - (void)setFindField:(HFTextField *)field {
@@ -46,6 +33,16 @@
     [replaceField setUsesTextArea: fieldTypeIsASCII];
 }
 
+- (void)updateFieldEditability {
+    BOOL shouldBeEditable = ! [self operationIsRunning];
+    [findField setEditable:shouldBeEditable];
+    [replaceField setEditable:shouldBeEditable];
+}
+
+- (BOOL)fieldTypeIsASCII {
+    return fieldTypeIsASCII;
+}
+
 - (void)setFieldTypeIsASCII:(BOOL)val {
     fieldTypeIsASCII = val;
     [[NSUserDefaults standardUserDefaults] setBool:val forKey:@"FindPrefersASCII"];
@@ -59,9 +56,24 @@
     [replaceField setUsesTextArea: fieldTypeIsASCII];
     if (restoreFRToFind) [[findField window] makeFirstResponder:findField];
     if (restoreFRToReplace) [[replaceField window] makeFirstResponder:replaceField];
+    
+    [fieldTypeControl setSelectedSegment:(fieldTypeIsASCII ? 0 : 1)];
 }
 
-- (void)updateTextFieldStringEncodingFromDocument {
+- (BaseDataDocument *)document {
+    return document;
+}
+
+- (void)setDocument:(id)val {
+    document = val;
+}
+
+- (IBAction)modifyFieldTypeFromControl:(NSSegmentedControl *)sender {
+    [self setFieldTypeIsASCII: ([sender selectedSegment] ? YES : NO)];
+}
+
+- (void)updateTextFieldStringEncodingFromDocumentNotification:(id)unused {
+    USE(unused);
     NSStringEncoding encoding;
     if (document) {
         encoding = [document stringEncoding];
@@ -73,34 +85,36 @@
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
-    if (object == document && [keyPath isEqualToString:@"stringEncoding"]) {
-        [self updateTextFieldStringEncodingFromDocument];
+    if ([keyPath isEqualToString:@"operationIsRunning"]) {
+        [self updateFieldEditability];
     } else {
         [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
     }
 }
 
 - (void)awakeFromNib {
-    if (document && ! observingDocument) {
-        /* Observe the document for changes in its string encoding */
-        [document addObserver:self forKeyPath:@"stringEncoding" options:0 context:NULL];
-        observingDocument = YES;
-    }
-    [self updateTextFieldStringEncodingFromDocument];
-}
+    [super awakeFromNib];
 
-- (void)setOperationView:(HFDocumentOperationView *)view {
-    operationView = view;
-    [self bind:@"operationIsRunning" toObject:view withKeyPath:@"operationIsRunning" options:nil];
+    [fieldTypeControl setSelectedSegment:(fieldTypeIsASCII ? 0 : 1)];
+    [self setView:findField forName:@"findField"];
+    [self setView:replaceField forName:@"replaceField"];
+    
+    [self addObserver:self forKeyPath:@"operationIsRunning" options:NSKeyValueObservingOptionInitial context:NULL];
+
+    if (! installedObservations) {
+        NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
+        
+        /* Observe the document for changes in its string encoding */
+        [nc addObserver:self selector:@selector(updateTextFieldStringEncodingFromDocumentNotification:) name:BaseDataDocumentDidChangeStringEncodingNotification object:document];
+        
+        installedObservations = YES;
+    }
+    [self updateTextFieldStringEncodingFromDocumentNotification:nil];
 }
 
 - (void)dealloc {
-    [self unbind:@"operationIsRunning"];
-    /* Oooh this is sketchy to do this here */
-    if (observingDocument) {
-        [document removeObserver:self forKeyPath:@"stringEncoding"];
-        observingDocument = NO;
-    }
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [self removeObserver:self forKeyPath:@"operationIsRunning"];
     [super dealloc];
 }
 

@@ -22,7 +22,18 @@
 
 - (id)init {
     self = [super init];
-    rowBackgroundColors = [[NSColor controlAlternatingRowBackgroundColors] copy];
+    
+    /* SnowLeopard controlAlternatingRowBackgroundColors were:
+       1.0, 1.0, 1.0
+       0.93, 0.95, 1.0
+    */
+       
+    
+    NSColor *color1 = [NSColor colorWithCalibratedWhite:1.0 alpha:1.0];
+    NSColor *color2 = [NSColor colorWithCalibratedRed:.87 green:.89 blue:1. alpha:1.];
+    rowBackgroundColors = [[NSArray alloc] initWithObjects:color1, color2, nil];
+//    rowBackgroundColors = [[NSColor controlAlternatingRowBackgroundColors] copy];
+    
     return self;
 }
 

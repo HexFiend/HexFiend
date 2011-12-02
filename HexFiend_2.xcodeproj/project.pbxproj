@@ -180,6 +180,7 @@
 		D0CDB7550CE735590084926B /* HFRepresenterStringEncodingTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = D0CDB7530CE735590084926B /* HFRepresenterStringEncodingTextView.m */; };
 		D0CDB77D0CE737130084926B /* HFStringEncodingTextRepresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = D0CDB77B0CE737130084926B /* HFStringEncodingTextRepresenter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D0CDB77E0CE737130084926B /* HFStringEncodingTextRepresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = D0CDB77C0CE737130084926B /* HFStringEncodingTextRepresenter.m */; };
+		D0D0536E1487FF2500704643 /* HFFindReplaceOperationView.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D0536D1487FF2500704643 /* HFFindReplaceOperationView.m */; };
 		D0D110540FF602D800AE5CFB /* FiendlingAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D110530FF602D800AE5CFB /* FiendlingAppDelegate.m */; };
 		D0D149310D8A37580018296B /* HFTestHashing.h in Headers */ = {isa = PBXBuildFile; fileRef = D0D1492F0D8A37580018296B /* HFTestHashing.h */; };
 		D0D149320D8A37580018296B /* HFTestHashing.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D149300D8A37580018296B /* HFTestHashing.m */; };
@@ -191,7 +192,6 @@
 		D0D8C2B012A3BE4300960FC4 /* ChooseStringEncodingDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = D0D8C2AF12A3BE4300960FC4 /* ChooseStringEncodingDialog.xib */; };
 		D0D8C2BC12A3C10100960FC4 /* ChooseStringEncodingWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D8C2BB12A3C10100960FC4 /* ChooseStringEncodingWindowController.m */; };
 		D0D8C45812A3EF3900960FC4 /* ProcessList.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D8C45712A3EF3900960FC4 /* ProcessList.m */; };
-		D0F2157D0DA61CF000ED1AA7 /* HFFieldTypeController.m in Sources */ = {isa = PBXBuildFile; fileRef = D0F2157C0DA61CF000ED1AA7 /* HFFieldTypeController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -462,6 +462,8 @@
 		D0CDB7530CE735590084926B /* HFRepresenterStringEncodingTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFRepresenterStringEncodingTextView.m; path = sources/HFRepresenterStringEncodingTextView.m; sourceTree = "<group>"; };
 		D0CDB77B0CE737130084926B /* HFStringEncodingTextRepresenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFStringEncodingTextRepresenter.h; path = sources/HFStringEncodingTextRepresenter.h; sourceTree = "<group>"; };
 		D0CDB77C0CE737130084926B /* HFStringEncodingTextRepresenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFStringEncodingTextRepresenter.m; path = sources/HFStringEncodingTextRepresenter.m; sourceTree = "<group>"; };
+		D0D0536C1487FF2500704643 /* HFFindReplaceOperationView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFFindReplaceOperationView.h; path = app/sources/HFFindReplaceOperationView.h; sourceTree = "<group>"; };
+		D0D0536D1487FF2500704643 /* HFFindReplaceOperationView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFFindReplaceOperationView.m; path = app/sources/HFFindReplaceOperationView.m; sourceTree = "<group>"; };
 		D0D110520FF602D800AE5CFB /* FiendlingAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FiendlingAppDelegate.h; sourceTree = "<group>"; };
 		D0D110530FF602D800AE5CFB /* FiendlingAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FiendlingAppDelegate.m; sourceTree = "<group>"; };
 		D0D1492F0D8A37580018296B /* HFTestHashing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFTestHashing.h; path = sources/HFTestHashing.h; sourceTree = "<group>"; };
@@ -477,8 +479,6 @@
 		D0D8C2BB12A3C10100960FC4 /* ChooseStringEncodingWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ChooseStringEncodingWindowController.m; path = app/sources/ChooseStringEncodingWindowController.m; sourceTree = "<group>"; };
 		D0D8C45612A3EF3900960FC4 /* ProcessList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProcessList.h; path = app/sources/ProcessList.h; sourceTree = "<group>"; };
 		D0D8C45712A3EF3900960FC4 /* ProcessList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ProcessList.m; path = app/sources/ProcessList.m; sourceTree = "<group>"; };
-		D0F2157B0DA61CF000ED1AA7 /* HFFieldTypeController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFFieldTypeController.h; path = app/sources/HFFieldTypeController.h; sourceTree = "<group>"; };
-		D0F2157C0DA61CF000ED1AA7 /* HFFieldTypeController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFFieldTypeController.m; path = app/sources/HFFieldTypeController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -611,8 +611,8 @@
 			children = (
 				D00122E10D48A8D400540B10 /* HFFindReplaceBackgroundView.h */,
 				D00122E20D48A8D400540B10 /* HFFindReplaceBackgroundView.m */,
-				D0F2157B0DA61CF000ED1AA7 /* HFFieldTypeController.h */,
-				D0F2157C0DA61CF000ED1AA7 /* HFFieldTypeController.m */,
+				D0D0536C1487FF2500704643 /* HFFindReplaceOperationView.h */,
+				D0D0536D1487FF2500704643 /* HFFindReplaceOperationView.m */,
 			);
 			name = Find_Replace;
 			sourceTree = "<group>";
@@ -1297,7 +1297,6 @@
 				D01772F50D751DB1002E03DE /* HFDocumentOperationView.m in Sources */,
 				D01773920D7A2F32002E03DE /* HFResizingView.m in Sources */,
 				D0CD51F60DA2B928006E8D1B /* AppDelegate.m in Sources */,
-				D0F2157D0DA61CF000ED1AA7 /* HFFieldTypeController.m in Sources */,
 				D03CFA8A0FC78BCD00EE79E4 /* DataInspectorRepresenter.m in Sources */,
 				D02BD6CC10545E5600535EDE /* ProcessMemoryDocument.m in Sources */,
 				D02BD6E010545E9000535EDE /* FileDataDocument.m in Sources */,
@@ -1313,6 +1312,7 @@
 				D059E1291311C676001493B8 /* AppDebugging.m in Sources */,
 				D01EF15413B2A0D300CC9283 /* TextDividerRepresenter.m in Sources */,
 				D0A8AF7D1467273900387627 /* AppUtilities.m in Sources */,
+				D0D0536E1487FF2500704643 /* HFFindReplaceOperationView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

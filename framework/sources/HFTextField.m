@@ -176,5 +176,13 @@
     return [textRepresenter encoding];
 }
 
+- (void)setEditable:(BOOL)flag {
+    [dataController setEditable:flag];
+}
+
+- (BOOL)isEditable {
+    return [dataController editable];
+}
+
 
 @end

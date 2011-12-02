@@ -42,8 +42,8 @@ static NSString *sNibName;
             if (! otherObjects) otherObjects = [NSMutableArray array];
             [otherObjects addObject:obj];
         }
-	/* Balance the retain acquired by virtue of being a top level object in a nib.  Call objc_msgSend directly so that the static analyzer can't see it, because the static analyzer doesn't know about top level objects from nibs. */
-	objc_msgSend(obj, @selector(autorelease));
+        /* Balance the retain acquired by virtue of being a top level object in a nib.  Call objc_msgSend directly so that the static analyzer can't see it, because the static analyzer doesn't know about top level objects from nibs. */
+        objc_msgSend(obj, @selector(autorelease));
     }
     HFASSERT(resultObject != nil);
     if (otherObjects != nil) [resultObject setOtherTopLevelObjects:otherObjects];
@@ -135,6 +135,10 @@ static NSString *sNibName;
     return result;
 }
 
+- (void)setView:(NSView *)view forName:(NSString *)name {
+    [views setObject:view forKey:name];
+}
+
 - (NSString *)viewNameFromSelector:(SEL)sel {
     HFASSERT([self selectorIsSetMethod:sel]);
     char *selName = strdup(3 + sel_getName(sel));
@@ -151,7 +155,7 @@ static NSString *sNibName;
         [invocation getArgument:&view atIndex:2];
         HFASSERT([view isKindOfClass:[NSView class]]);
         NSString *name = [self viewNameFromSelector:sel];
-        [views setObject:view forKey:name];
+        [self setView:view forName:name];
     }
     else {
         [NSException raise:NSInvalidArgumentException format:@"Can't forward %@", invocation];

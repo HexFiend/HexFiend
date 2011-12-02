@@ -17,7 +17,7 @@
     
     An HFTextField can be configured to show a hexadecimal view, an ASCII (really the \c defaultCStringEncoding) view, or both.
     
-    This class is currently missing a fair amount of functionality, such as enabled or editable state.
+    This class is currently missing a fair amount of functionality, such as enabled state.
 */
     
 @interface HFTextField : NSControl {
@@ -46,5 +46,11 @@
 
 /*! Gets the string encoding used by the text area. */
 - (NSStringEncoding)stringEncoding;
+
+/*! Sets editability. */
+- (void)setEditable:(BOOL)flag;
+
+/*! Returns editability. */
+- (BOOL)isEditable;
 
 @end

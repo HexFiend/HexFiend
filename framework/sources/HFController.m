@@ -1599,7 +1599,8 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
 
 - (void)_activateTypingUndoCoalescingForReplacingRange:(HFRange)rangeToReplace withDataOfLength:(unsigned long long)dataLength {
     HFASSERT(HFRangeIsSubrangeOfRange(rangeToReplace, HFRangeMake(0, [self contentsLength])));
-    HFASSERT(dataLength > 0 || rangeToReplace.length > 0);
+    if (dataLength == 0 && rangeToReplace.length == 0) return; //nothing to do!
+    
     BOOL replaceUndoCoalescer = YES, canCoalesceAppend = NO, canCoalesceDelete = NO;
     HFByteArray *bytes = [self byteArray];
     

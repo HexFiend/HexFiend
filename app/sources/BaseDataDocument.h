@@ -10,6 +10,8 @@
 
 @class HFByteArray, HFRepresenter, HFLineCountingRepresenter, HFLayoutRepresenter, HFDocumentOperationView, DataInspectorRepresenter;
 
+NSString * const BaseDataDocumentDidChangeStringEncodingNotification;
+
 @interface BaseDataDocument : NSDocument <NSWindowDelegate> {
     IBOutlet NSSplitView *containerView;
     HFController *controller;

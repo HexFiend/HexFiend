@@ -19,6 +19,8 @@
 
 static const char *const kProgressContext = "context";
 
+NSString * const BaseDataDocumentDidChangeStringEncodingNotification = @"BaseDataDocumentDidChangeStringEncodingNotification";
+
 enum {
     HFSaveSuccessful,
     HFSaveCancelled,
@@ -712,6 +714,7 @@ static inline Class preferredByteArrayClass(void) {
     if ([[self windowControllers] count] > 0) {
         [self relayoutAndResizeWindowForBytesPerLine:bytesPerLine];
     }
+    [[NSNotificationCenter defaultCenter] postNotificationName:BaseDataDocumentDidChangeStringEncodingNotification object:self userInfo:nil];
 }
 
 - (void)setStringEncodingFromMenuItem:(NSMenuItem *)item {

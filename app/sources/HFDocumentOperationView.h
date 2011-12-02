@@ -37,7 +37,10 @@ struct HFDocumentOperationCallbacks {
 - (void)setOtherTopLevelObjects:(NSArray *)objects;
 
 + viewWithNibNamed:(NSString *)name owner:(id)owner;
+
 - viewNamed:(NSString *)name;
+- (void)setView:(NSView *)view forName:(NSString *)name;
+
 - (CGFloat)defaultHeight;
 
 - (BOOL)isFixedHeight;
@@ -47,6 +50,8 @@ struct HFDocumentOperationCallbacks {
 - (void)setDisplayName:(NSString *)name;
 
 - (IBAction)cancelViewOperation:sender;
+
+/* KVO compliant */
 - (BOOL)operationIsRunning;
 
 /* KVO compliant, in the range [0, 1], or -1 to mean not running */
