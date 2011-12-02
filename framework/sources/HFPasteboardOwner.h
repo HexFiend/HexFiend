@@ -2,7 +2,6 @@
 //  HFPasteboardOwner.h
 //  HexFiend_2
 //
-//  Created by Peter Ammon on 1/12/08.
 //  Copyright 2008 ridiculous_fish. All rights reserved.
 //
 

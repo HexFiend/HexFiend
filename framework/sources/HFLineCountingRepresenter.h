@@ -2,7 +2,6 @@
 //  HFLineCountingRepresenter.h
 //  HexFiend_2
 //
-//  Created by Peter Ammon on 11/26/07.
 //  Copyright 2007 ridiculous_fish. All rights reserved.
 //
 

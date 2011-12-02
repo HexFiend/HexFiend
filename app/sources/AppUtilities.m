@@ -2,7 +2,6 @@
 //  AppUtilities.h
 //  HexFiend_2
 //
-//  Created by Peter Ammon on 9/11/10.
 //  Copyright 2010 ridiculous_fish. All rights reserved.
 //
 

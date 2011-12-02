@@ -2,7 +2,6 @@
 //  HFAttributedByteArray.m
 //  HexFiend_2
 //
-//  Created by Peter Ammon on 6/25/11.
 //  Copyright 2011 ridiculous_fish. All rights reserved.
 //
 

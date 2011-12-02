@@ -2,7 +2,6 @@
 //  HFBTree.h
 //  HexFiend
 //
-//  Created by Peter Ammon on 2/6/09.
 //
 
 #import <Foundation/Foundation.h>

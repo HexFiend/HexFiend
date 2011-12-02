@@ -2,7 +2,6 @@
 //  HFTextVisualStyle.h
 //  HexFiend_2
 //
-//  Created by Peter Ammon on 8/29/09.
 //  Copyright 2009 ridiculous_fish. All rights reserved.
 //
 

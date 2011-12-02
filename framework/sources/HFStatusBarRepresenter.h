@@ -2,7 +2,6 @@
 //  HFStatusBarRepresenter.h
 //  HexFiend_2
 //
-//  Created by Peter Ammon on 12/16/07.
 //  Copyright 2007 ridiculous_fish. All rights reserved.
 //
 

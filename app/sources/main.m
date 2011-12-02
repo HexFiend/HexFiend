@@ -2,7 +2,6 @@
 //  main.m
 //  HexFiend_2
 //
-//  Created by Peter Ammon on 11/2/07.
 //  Copyright ridiculous_fish 2007. All rights reserved.
 //
 

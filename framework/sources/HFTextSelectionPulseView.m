@@ -2,7 +2,6 @@
 //  HFTextSelectionPulseView.m
 //  HexFiend_2
 //
-//  Created by Peter Ammon on 4/27/08.
 //  Copyright 2008 ridiculous_fish. All rights reserved.
 //
 

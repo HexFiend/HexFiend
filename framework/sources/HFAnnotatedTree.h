@@ -2,7 +2,6 @@
 //  HFAnnotatedTree.h
 //  HexFiend_2
 //
-//  Created by Peter Ammon on 8/25/10.
 //  Copyright 2010 ridiculous_fish. All rights reserved.
 //
 

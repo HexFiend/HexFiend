@@ -2,7 +2,6 @@
 //  main.m
 //  HexFiendling
 //
-//  Created by Peter Ammon on 6/22/09.
 //  Copyright ridiculous_fish 2009. All rights reserved.
 //
 

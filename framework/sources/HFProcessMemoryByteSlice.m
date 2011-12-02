@@ -2,7 +2,6 @@
 //  HFProcessMemoryByteSlice.m
 //  HexFiend_2
 //
-//  Created by Peter Ammon on 8/23/09.
 //  Copyright 2009 Apple Computer. All rights reserved.
 //
 

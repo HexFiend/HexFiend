@@ -2,7 +2,6 @@
 //  HFByteArrayDataProxy.m
 //  HexFiend_2
 //
-//  Created by Peter Ammon on 7/9/09.
 //  Copyright 2009 __MyCompanyName__. All rights reserved.
 //
 

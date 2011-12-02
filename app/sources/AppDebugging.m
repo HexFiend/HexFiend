@@ -2,7 +2,6 @@
 //  AppDebugging.m
 //  HexFiend_2
 //
-//  Created by Peter Ammon on 2/20/11.
 //  Copyright 2011 ridiculous_fish. All rights reserved.
 //
 

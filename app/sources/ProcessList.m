@@ -2,7 +2,6 @@
 //  ProcessList.m
 //  HexFiend_2
 //
-//  Created by Peter Ammon on 11/29/10.
 //  Copyright 2010 ridiculous_fish. All rights reserved.
 //
 

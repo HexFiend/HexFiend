@@ -2,7 +2,6 @@
 //  DiffDocument.m
 //  HexFiend_2
 //
-//  Created by Peter Ammon on 10/5/09.
 //  Copyright 2009 ridiculous_fish. All rights reserved.
 //
 

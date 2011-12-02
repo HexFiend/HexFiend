@@ -2,7 +2,6 @@
 //  HFSharedMemoryByteSlice.h
 //  HexFiend_2
 //
-//  Created by Peter Ammon on 2/17/08.
 //  Copyright 2008 ridiculous_fish. All rights reserved.
 //
 
