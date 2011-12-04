@@ -155,6 +155,10 @@ typedef NSUInteger HFByteArrayDataStringType;
 
 @end
 
+
+/*! @category HFByteArray(HFAttributes)
+    @brief HFByteArray methods for attributes of byte arrays.
+*/
 @interface HFByteArray (HFAttributes)
 
 /*! Returns a byte range attribute array for the bytes in the given range. */

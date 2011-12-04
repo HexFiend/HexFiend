@@ -16,11 +16,16 @@
 
 @class HFByteArray, HFProgressTracker;
 
-/*! @struct HFEditInstruction
- @breief A struct that represents a single instruction in an @link HFByteArrayEditScript @link.  Replace the bytes in the source in range 'src' with the from the destination in range 'dst'.  Note that if src is empty, then it is a pure insertion at src.location; if dst is empty it is a pure deletion of src.  If neither is empty, it is replacing some bytes with others.  Both are empty should never happen.
+/*! @struct HFEditInstruction_t
+    @brief A struct that represents a single instruction in an @link HFByteArrayEditScript @endlink.
+ 
+   Replace the bytes in the source in range 'src' with bytes from the destination in range 'dst'.  Note that if src is empty, then it is a pure insertion at src.location; if dst is empty it is a pure deletion of src.  If neither is empty, it is replacing some bytes with others.  It should never happen that both are empty.
  */
 struct HFEditInstruction_t {
+/*! Source range, to be replaced */
     HFRange src;
+    
+/*! Destination range, that does the replacing */
     HFRange dst;
 };
 

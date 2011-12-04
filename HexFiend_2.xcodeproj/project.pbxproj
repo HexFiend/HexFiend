@@ -11,7 +11,7 @@
 			isa = PBXAggregateTarget;
 			buildConfigurationList = D0F6FE180FFF67AC00C609F0 /* Build configuration list for PBXAggregateTarget "Documentation Generation" */;
 			buildPhases = (
-				D0F6FE090FFF679200C609F0 /* ShellScript */,
+				D01D1D711489D208008212BB /* ShellScript */,
 			);
 			dependencies = (
 				D0F6FE120FFF679D00C609F0 /* PBXTargetDependency */,
@@ -45,6 +45,7 @@
 		D019B9020D83FEB3005789AA /* HFByteSliceFileOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = D019B9000D83FEB3005789AA /* HFByteSliceFileOperation.m */; };
 		D019B9550D840FE8005789AA /* HFObjectGraph.h in Headers */ = {isa = PBXBuildFile; fileRef = D019B9530D840FE8005789AA /* HFObjectGraph.h */; };
 		D019B9560D840FE8005789AA /* HFObjectGraph.m in Sources */ = {isa = PBXBuildFile; fileRef = D019B9540D840FE8005789AA /* HFObjectGraph.m */; };
+		D01D1D721489DFE5008212BB /* HFAnnotatedTree.h in Headers */ = {isa = PBXBuildFile; fileRef = D0315BEA1225C553008C9EAB /* HFAnnotatedTree.h */; };
 		D01E7BED0CDC55D000943F9E /* HFController.m in Sources */ = {isa = PBXBuildFile; fileRef = D01E7BEB0CDC55D000943F9E /* HFController.m */; };
 		D01E7BF00CDC564B00943F9E /* HexFiend.h in Headers */ = {isa = PBXBuildFile; fileRef = D01E7BEF0CDC564B00943F9E /* HexFiend.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D01E7C160CDC58AA00943F9E /* BaseDataDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = D01E7C150CDC58AA00943F9E /* BaseDataDocument.m */; };
@@ -60,7 +61,6 @@
 		D026C7C10CDD54D00082279E /* HFHexTextRepresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = D026C7BF0CDD54D00082279E /* HFHexTextRepresenter.m */; };
 		D02BD6CC10545E5600535EDE /* ProcessMemoryDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = D02BD6CB10545E5600535EDE /* ProcessMemoryDocument.m */; };
 		D02BD6E010545E9000535EDE /* FileDataDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = D02BD6DF10545E9000535EDE /* FileDataDocument.m */; };
-		D0315BEC1225C553008C9EAB /* HFAnnotatedTree.h in Headers */ = {isa = PBXBuildFile; fileRef = D0315BEA1225C553008C9EAB /* HFAnnotatedTree.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D0315BED1225C553008C9EAB /* HFAnnotatedTree.m in Sources */ = {isa = PBXBuildFile; fileRef = D0315BEB1225C553008C9EAB /* HFAnnotatedTree.m */; };
 		D0370A3F0D68307A00B3A8C6 /* HFSharedMemoryByteSlice.h in Headers */ = {isa = PBXBuildFile; fileRef = D0370A3D0D68307A00B3A8C6 /* HFSharedMemoryByteSlice.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D0370A400D68307A00B3A8C6 /* HFSharedMemoryByteSlice.m in Sources */ = {isa = PBXBuildFile; fileRef = D0370A3E0D68307A00B3A8C6 /* HFSharedMemoryByteSlice.m */; };
@@ -302,6 +302,9 @@
 		D019B9000D83FEB3005789AA /* HFByteSliceFileOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFByteSliceFileOperation.m; path = sources/HFByteSliceFileOperation.m; sourceTree = "<group>"; };
 		D019B9530D840FE8005789AA /* HFObjectGraph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFObjectGraph.h; path = sources/HFObjectGraph.h; sourceTree = "<group>"; };
 		D019B9540D840FE8005789AA /* HFObjectGraph.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFObjectGraph.m; path = sources/HFObjectGraph.m; sourceTree = "<group>"; };
+		D01D1D6D1489D1F6008212BB /* build_documentation.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = build_documentation.py; sourceTree = "<group>"; };
+		D01D1D6F1489D1F6008212BB /* hexfiend_doxyfile.config */ = {isa = PBXFileReference; lastKnownFileType = text; path = hexfiend_doxyfile.config; sourceTree = "<group>"; };
+		D01D1D701489D1F6008212BB /* munge_header_for_doxy.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = munge_header_for_doxy.py; sourceTree = "<group>"; };
 		D01E7BB80CDC530C00943F9E /* HexFiend.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = HexFiend.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D01E7BB90CDC530C00943F9E /* HexFiend_Framework-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "HexFiend_Framework-Info.plist"; sourceTree = "<group>"; };
 		D01E7BC60CDC53B300943F9E /* HexFiend_2_Framework_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HexFiend_2_Framework_Prefix.pch; path = sources/HexFiend_2_Framework_Prefix.pch; sourceTree = "<group>"; };
@@ -566,6 +569,7 @@
 				D00C166E0FF4925A006D021F /* HexFiendling */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
+				D01D1D6C1489D1F6008212BB /* Documentation Scripts */,
 				D075E20F1481ACFF0010D9AE /* Configurations + Scripts */,
 			);
 			name = HexFiend_2;
@@ -644,6 +648,17 @@
 				D08630EF0D8BEE9900FF0BE7 /* HFByteSliceFileOperationQueueEntry.m */,
 			);
 			name = "File Writing";
+			sourceTree = "<group>";
+		};
+		D01D1D6C1489D1F6008212BB /* Documentation Scripts */ = {
+			isa = PBXGroup;
+			children = (
+				D01D1D6D1489D1F6008212BB /* build_documentation.py */,
+				D01D1D6F1489D1F6008212BB /* hexfiend_doxyfile.config */,
+				D01D1D701489D1F6008212BB /* munge_header_for_doxy.py */,
+			);
+			name = "Documentation Scripts";
+			path = documentation_tools;
 			sourceTree = "<group>";
 		};
 		D01E7C010CDC569F00943F9E /* Resources */ = {
@@ -1057,9 +1072,9 @@
 				D0B0919F10425AAB00B204AE /* HFProcessMemoryByteSlice.h in Headers */,
 				D08943F81042B57800AB9141 /* HFByteRangeAttribute.h in Headers */,
 				D089443C1042BA7100AB9141 /* HFByteRangeAttributeArray.h in Headers */,
+				D01D1D721489DFE5008212BB /* HFAnnotatedTree.h in Headers */,
 				D010173610491BB200536FBC /* HFTextVisualStyleRun.h in Headers */,
 				D0BAA835120A7DE800D8FB51 /* HFIndexSet.h in Headers */,
-				D0315BEC1225C553008C9EAB /* HFAnnotatedTree.h in Headers */,
 				D016437313E5F7BC00294E60 /* HFRepresenterTextViewCallout.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1241,6 +1256,19 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		D01D1D711489D208008212BB /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "'documentation_tools/build_documentation.py'";
+		};
 		D039DBF31481AE4300364FA6 /* Run CodeSign Script */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1268,20 +1296,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "'configurations + scripts/codesign.sh'";
-		};
-		D0F6FE090FFF679200C609F0 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"$(SRCROOT)/../DocumentationTools/Doxyfile",
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /usr/bin/python;
-			shellScript = "import sys, os, subprocess\n\nenv = os.getenv\nnorm = os.path.normpath\nsrc_root = env(\"SOURCE_ROOT\")\n\nconfig_path= norm(src_root + \"/../../DocumentationTools/hexfiend_doxyfile.config\")\nif not os.path.isfile(config_path):\n    print \"Doxygen config file does not exist at \" + config_path\n    sys.exit(1)\n\ndoxygen = norm(src_root + \"/../../DocumentationTools/doxygen\")\nif not os.path.isfile(doxygen):\n    print \"The doxygen binary does not exist at \" + doxygen\n    sys.exit(1)\n\nheaders = norm(env(\"BUILT_PRODUCTS_DIR\") + \"/HexFiend.framework/Headers\")\nif not os.path.isdir(headers):\n    print \"The HexFiend header directory does not exist at \" + headers\n    sys.exit(1)\n\noutput_dir = norm(src_root + \"/../../Documentation\")\nif not os.path.isdir(output_dir):\n    print \"The documentation output directory does not exist at \" + output_dir\n    sys.exit(1)\n\nnew_wd = norm(src_root + \"/../../DocumentationTools/\")\n\nproc = subprocess.Popen([doxygen, '-'], shell=False, cwd=new_wd, stdin=subprocess.PIPE)\n\nconf_file = open(config_path, 'r')\nfor line in conf_file:\n\tif line.startswith('INPUT '):\n\t\tline = 'INPUT = ' + headers\n\telif line.startswith('OUTPUT_DIRECTORY '):\n\t\tline = 'OUTPUT_DIRECTORY = ' + output_dir\n\tproc.stdin.write(line)\nproc.stdin.close()\nproc.wait()\n\nprint 'Documentation written to ' + output_dir + '/html/index.html'\nsys.exit(0)\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -1559,7 +1573,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				"MACOSX_DEPLOYMENT_TARGET[arch=ppc64]" = 10.5;
-				SDKROOT = macosx10.6;
+				SDKROOT = macosx;
 				"SDKROOT[arch=ppc64]" = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
 				VALID_ARCHS = "armv6 armv7 i386 x86_64";
 			};
@@ -1704,7 +1718,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				"MACOSX_DEPLOYMENT_TARGET[arch=ppc64]" = 10.5;
-				SDKROOT = macosx10.6;
+				SDKROOT = macosx;
 				"SDKROOT[arch=ppc64]" = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
 				VALID_ARCHS = "armv6 armv7 i386 x86_64";
 			};
@@ -1849,7 +1863,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				"MACOSX_DEPLOYMENT_TARGET[arch=ppc64]" = 10.5;
-				SDKROOT = macosx10.6;
+				SDKROOT = macosx;
 				"SDKROOT[arch=ppc64]" = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
 				VALID_ARCHS = "armv6 armv7 i386 x86_64";
 			};
@@ -2034,7 +2048,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				"MACOSX_DEPLOYMENT_TARGET[arch=ppc64]" = 10.5;
-				SDKROOT = macosx10.6;
+				SDKROOT = macosx;
 				"SDKROOT[arch=ppc64]" = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
 				VALID_ARCHS = "armv6 armv7 i386 x86_64";
 			};
@@ -2179,7 +2193,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				"MACOSX_DEPLOYMENT_TARGET[arch=ppc64]" = 10.5;
-				SDKROOT = macosx10.6;
+				SDKROOT = macosx;
 				"SDKROOT[arch=ppc64]" = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
 				VALID_ARCHS = "armv6 armv7 i386 x86_64";
 			};

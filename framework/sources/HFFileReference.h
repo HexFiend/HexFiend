@@ -69,8 +69,8 @@
 @end
 
 #ifndef HF_NO_PRIVILEGED_FILE_OPERATIONS
-/*! @class HFUnprivilegedFileReference
- @brief A reference to an open file that can be read (and possibly written) using our privileged helper process FortunateSon
+/*! @class HFPrivilegedFileReference
+ @brief A reference to an open file that can be read (and possibly written) using our privileged helper process
  */
 @interface HFPrivilegedFileReference : HFFileReference
 

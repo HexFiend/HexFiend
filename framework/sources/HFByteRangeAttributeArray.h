@@ -7,6 +7,9 @@
 
 #import <Foundation/Foundation.h>
 
+/*! @class HFByteRangeAttributeArray
+    @brief A class that represents sets of attributes, attached to ranges of bytes.
+*/
 @interface HFByteRangeAttributeArray : NSObject <NSMutableCopying> {
 }
 
@@ -45,6 +48,7 @@
 
 @end
 
+#ifndef DOXYGEN_ONLY
 @interface HFNaiveByteRangeAttributeArray : HFByteRangeAttributeArray {
     NSMutableArray *attributeRuns;
 }
@@ -56,3 +60,4 @@
     NSMutableDictionary *attributesToNodes;
 }
 @end
+#endif

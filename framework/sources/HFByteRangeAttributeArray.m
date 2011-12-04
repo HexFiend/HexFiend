@@ -119,12 +119,8 @@ static const HFRange kEntireRange = {0, ULLONG_MAX};
     HFRange remaining = HFRangeMake(0, ULLONG_MAX);
     BOOL result = YES;
     NSUInteger amt = 0;
-    static int NUM = 0;
-    int num = ++NUM;
-    const BOOL log = YES;
-    if (num == 5) {
-        puts("Yay");
-    }
+    int num = 0;
+    const BOOL log = NO;
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     while (remaining.length > 0) {
         unsigned long long applied1, applied2;

@@ -748,33 +748,41 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
 
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView {
     USE(tableView);
-    return [editScript numberOfInstructions];
+    NSInteger result = [editScript numberOfInstructions];
+    if (result == 0 && editScript != nil) {
+        result = 1; //will say "Documents are identical"
+    }
+    return result;
 }
 
 - (id)tableView:(NSTableView *)tableView objectValueForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row {
     USE(tableView);
     USE(tableColumn);
-    struct HFEditInstruction_t insn = [editScript instructionAtIndex:row];
-    char offsetBuffer[64];
-    HFLineNumberFormat format = [lineCountingRepresenter lineNumberFormat];
-    switch (format) {
-        default:
-        case HFLineNumberFormatHexadecimal:
-            snprintf(offsetBuffer, sizeof offsetBuffer, "0x%llx", insn.dst.location);
-            break;
-        case HFLineNumberFormatDecimal:
-            snprintf(offsetBuffer, sizeof offsetBuffer, "%llx", insn.dst.location);
-            break;
-    }
-    
-    if (insn.src.length == 0) {
-        return [NSString stringWithFormat:@"%lu: Insert %@ at offset 0x%llx", row + 1, HFDescribeByteCount(insn.dst.length), insn.dst.location];
-    }
-    else if (insn.dst.length == 0) {
-        return [NSString stringWithFormat:@"%lu: Delete %@ at offset 0x%llx", row + 1, HFDescribeByteCount(insn.src.length), insn.src.location];
-    }
-    else {
-        return [NSString stringWithFormat:@"%lu: Replace %@ at offset 0x%llx with %@", row + 1, HFDescribeByteCount(insn.src.length), insn.src.location, HFDescribeByteCount(insn.dst.length)];
+    if ([editScript numberOfInstructions] == 0) {
+        return @"Documents are identical";
+    } else {
+        struct HFEditInstruction_t insn = [editScript instructionAtIndex:row];
+        char offsetBuffer[64];
+        HFLineNumberFormat format = [lineCountingRepresenter lineNumberFormat];
+        switch (format) {
+            default:
+            case HFLineNumberFormatHexadecimal:
+                snprintf(offsetBuffer, sizeof offsetBuffer, "0x%llx", insn.dst.location);
+                break;
+            case HFLineNumberFormatDecimal:
+                snprintf(offsetBuffer, sizeof offsetBuffer, "%llx", insn.dst.location);
+                break;
+        }
+        
+        if (insn.src.length == 0) {
+            return [NSString stringWithFormat:@"%lu: Insert %@ at offset 0x%llx", row + 1, HFDescribeByteCount(insn.dst.length), insn.dst.location];
+        }
+        else if (insn.dst.length == 0) {
+            return [NSString stringWithFormat:@"%lu: Delete %@ at offset 0x%llx", row + 1, HFDescribeByteCount(insn.src.length), insn.src.location];
+        }
+        else {
+            return [NSString stringWithFormat:@"%lu: Replace %@ at offset 0x%llx with %@", row + 1, HFDescribeByteCount(insn.src.length), insn.src.location, HFDescribeByteCount(insn.dst.length)];
+        }
     }
 }
 

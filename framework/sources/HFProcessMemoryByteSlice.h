@@ -7,7 +7,9 @@
 
 #import <HexFiend/HFByteSlice.h>
 
-
+/*! @class HFProcessMemoryByteSlice
+    @brief Some day…
+*/
 @interface HFProcessMemoryByteSlice : HFByteSlice {
     pid_t processIdentifier;
     HFRange memoryRange;

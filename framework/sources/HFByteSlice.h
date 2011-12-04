@@ -43,8 +43,11 @@ The two principal subclasses of HFByteSlice are HFSharedMemoryByteSlice and HFFi
 
 @end
 
+/*! @category HFByteSlice(HFAttributes)
+    @brief Methods for querying attributes of individual byte slices. */
 @interface HFByteSlice (HFAttributes)
 
+/*!  Returns the attributes for the bytes in the given range. */
 - (HFByteRangeAttributeArray *)attributesForBytesInRange:(HFRange)range;
 
 @end
