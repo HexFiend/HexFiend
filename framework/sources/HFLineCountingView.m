@@ -582,7 +582,7 @@ static inline int common_prefix_length(const char *a, const char *b) {
 
 - (BOOL)canUseStringDrawingPathForFont:(NSFont *)testFont {
     NSString *name = [testFont fontName];
-    return [name isEqualToString:@"Monaco"] || [name isEqualToString:@"Courier"] || [name isEqualToString:@"Menlo-Regular"];
+    return [name isEqualToString:@"Monaco"] || [name isEqualToString:@"Courier"];
 }
 
 - (void)setFont:(NSFont *)val {
