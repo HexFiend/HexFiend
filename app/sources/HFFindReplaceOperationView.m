@@ -32,6 +32,10 @@
     [replaceField setUsesTextArea: fieldTypeIsASCII];
 }
 
+- (void)setFieldTypeControl:(NSSegmentedControl *)val {
+    fieldTypeControl = val;
+}
+
 - (void)updateFieldEditability {
     BOOL shouldBeEditable = ! [self operationIsRunning];
     [findField setEditable:shouldBeEditable];
@@ -56,7 +60,7 @@
     if (restoreFRToFind) [[findField window] makeFirstResponder:findField];
     if (restoreFRToReplace) [[replaceField window] makeFirstResponder:replaceField];
     
-    [fieldTypeControl setSelectedSegment:(fieldTypeIsASCII ? 0 : 1)];
+    [fieldTypeControl setSelectedSegment:(fieldTypeIsASCII ? 1 : 0)];
 }
 
 - (BaseDataDocument *)document {
@@ -94,9 +98,10 @@
 - (void)awakeFromNib {
     [super awakeFromNib];
 
-    [fieldTypeControl setSelectedSegment:(fieldTypeIsASCII ? 0 : 1)];
+    [fieldTypeControl setSelectedSegment:(fieldTypeIsASCII ? 1 : 0)];
     [self setView:findField forName:@"findField"];
     [self setView:replaceField forName:@"replaceField"];
+    [self setView:fieldTypeControl forName:@"fieldTypeControl"];
     
     [self addObserver:self forKeyPath:@"operationIsRunning" options:NSKeyValueObservingOptionInitial context:NULL];
 
