@@ -96,12 +96,13 @@ static Wedge_t wedgeUnion(Wedge_t wedge1, Wedge_t wedge2) {
     if (wedge2.length <= 0) return wedge1;
     
     Wedge_t union1 = wedge1;
-    union1.length = fmax(union1.length, distanceCCW(union1.offset, wedge2.offset) + wedge2.length);
+    union1.length = fmin(1., fmax(union1.length, distanceCCW(union1.offset, wedge2.offset) + wedge2.length));
     
     Wedge_t union2 = wedge2;
-    union2.length = fmax(union2.length, distanceCCW(union2.offset, wedge1.offset) + wedge1.length);
+    union2.length = fmin(1., fmax(union2.length, distanceCCW(union2.offset, wedge1.offset) + wedge1.length));
     
     Wedge_t result = (union1.length <= union2.length ? union1 : union2);
+    HFASSERT(result.length <= 1);
     return result;
 }
 
