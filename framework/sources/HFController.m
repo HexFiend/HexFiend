@@ -991,13 +991,15 @@ static inline Class preferredByteArrayClass(void) {
     HFASSERT(byteIndex <= [self contentsLength]);
     BEGIN_TRANSACTION();
     if (_hfflags.commandExtendSelection) {
-#if 0
-        /* Clear any zero-length ranges */
-        NSUInteger rangeIndex = [selectedContentsRanges count];
+        /* Clear any zero-length ranges, unless there's only one */
+        NSUInteger rangeCount = [selectedContentsRanges count];
+        NSUInteger rangeIndex = rangeCount;
         while (rangeIndex-- > 0) {
-            if ([[selectedContentsRanges objectAtIndex:rangeIndex] HFRange].length == 0) [selectedContentsRanges removeObjectAtIndex:rangeIndex];
+            if (rangeCount > 1 && [[selectedContentsRanges objectAtIndex:rangeIndex] HFRange].length == 0) {
+                [selectedContentsRanges removeObjectAtIndex:rangeIndex];
+                rangeCount--;
+            }
         }
-#endif
         selectionAnchorRange.location = MIN(byteIndex, selectionAnchor);
         selectionAnchorRange.length = MAX(byteIndex, selectionAnchor) - selectionAnchorRange.location;
         [self _addPropertyChangeBits:HFControllerSelectedRanges];
@@ -1028,6 +1030,7 @@ static inline Class preferredByteArrayClass(void) {
         [self _setSingleSelectedContentsRange:range];
     }
     END_TRANSACTION();
+    VALIDATE_SELECTION();
 }
 
 - (void)endSelectionWithEvent:(NSEvent *)event forByteIndex:(unsigned long long)characterIndex {
