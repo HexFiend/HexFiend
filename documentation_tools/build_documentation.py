@@ -35,6 +35,9 @@ if not os.path.isdir(output_dir):
     print "The documentation output directory does not exist at " + output_dir
     sys.exit(1)
 
+print 'Documentation output: ' + output_dir
+sys.stdout.flush()
+
 new_wd = norm(src_root + "/documentation_tools/")
 
 proc = subprocess.Popen([doxygen, '-'], shell=False, cwd=new_wd, stdin=subprocess.PIPE)
@@ -49,6 +52,5 @@ for line in conf_file:
 proc.stdin.close()
 proc.wait()
 
-print 'Documentation written to ' + output_dir + '/html/index.html'
 sys.exit(0)
 
