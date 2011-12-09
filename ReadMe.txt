@@ -2,5 +2,6 @@ Hex Fiend is a fast and clever hex editor for Mac OS X, written using the Cocoa 
 
 Hex Fiend is released under a liberal BSD-style license.
 
+For the framework API documentation, see http://ridiculousfish.com/hexfiend/docs/
 For more information about Hex Fiend, see http://ridiculousfish.com/hexfiend/
 
