@@ -64,7 +64,7 @@
 		D0315BED1225C553008C9EAB /* HFAnnotatedTree.m in Sources */ = {isa = PBXBuildFile; fileRef = D0315BEB1225C553008C9EAB /* HFAnnotatedTree.m */; };
 		D0370A3F0D68307A00B3A8C6 /* HFSharedMemoryByteSlice.h in Headers */ = {isa = PBXBuildFile; fileRef = D0370A3D0D68307A00B3A8C6 /* HFSharedMemoryByteSlice.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D0370A400D68307A00B3A8C6 /* HFSharedMemoryByteSlice.m in Sources */ = {isa = PBXBuildFile; fileRef = D0370A3E0D68307A00B3A8C6 /* HFSharedMemoryByteSlice.m */; };
-		D039DC031482DCD000364FA6 /* FortunateSon in CopyFiles */ = {isa = PBXBuildFile; fileRef = D047E3151022CEFE00EF307B /* FortunateSon */; };
+		D039DC031482DCD000364FA6 /* com.ridiculousfish.HexFiend.PrivilegedHelper in CopyFiles */ = {isa = PBXBuildFile; fileRef = D047E3151022CEFE00EF307B /* com.ridiculousfish.HexFiend.PrivilegedHelper */; };
 		D039DC091483100500364FA6 /* Release+CodeSign.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = D039DC081483100500364FA6 /* Release+CodeSign.xcconfig */; };
 		D03BD7D3146F676600881576 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 29B97325FDCFA39411CA2CEA /* Foundation.framework */; };
 		D03BD7D4146F676D00881576 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 29B97324FDCFA39411CA2CEA /* AppKit.framework */; };
@@ -249,7 +249,7 @@
 			dstPath = Contents/Library/LaunchServices;
 			dstSubfolderSpec = 1;
 			files = (
-				D039DC031482DCD000364FA6 /* FortunateSon in CopyFiles */,
+				D039DC031482DCD000364FA6 /* com.ridiculousfish.HexFiend.PrivilegedHelper in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -345,7 +345,7 @@
 		D0422FDD0D62599300F8FCDE /* HFProgressTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFProgressTracker.h; path = sources/HFProgressTracker.h; sourceTree = "<group>"; };
 		D0422FDE0D62599300F8FCDE /* HFProgressTracker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFProgressTracker.m; path = sources/HFProgressTracker.m; sourceTree = "<group>"; };
 		D04327A30CF081CD00C14250 /* HFFunctions_Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFFunctions_Private.h; path = sources/HFFunctions_Private.h; sourceTree = "<group>"; };
-		D047E3151022CEFE00EF307B /* FortunateSon */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = FortunateSon; path = com.ridiculousfish.HexFiend.PrivilegedHelper; sourceTree = BUILT_PRODUCTS_DIR; };
+		D047E3151022CEFE00EF307B /* com.ridiculousfish.HexFiend.PrivilegedHelper */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = com.ridiculousfish.HexFiend.PrivilegedHelper; sourceTree = BUILT_PRODUCTS_DIR; };
 		D047E33F1022CFA800EF307B /* FortunateSon.defs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.mig; name = FortunateSon.defs; path = helper_subprocess/FortunateSon.defs; sourceTree = "<group>"; };
 		D047E4431022DF6F00EF307B /* FortunateSonIPCTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FortunateSonIPCTypes.h; path = helper_subprocess/FortunateSonIPCTypes.h; sourceTree = "<group>"; };
 		D047E48B1022E09300EF307B /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = helper_subprocess/main.cpp; sourceTree = "<group>"; };
@@ -555,7 +555,7 @@
 				D01E7BB80CDC530C00943F9E /* HexFiend.framework */,
 				D06D60100FA69B26002376EE /* Test_BTree */,
 				D00C15E50FF091FF006D021F /* HexFiendling.app */,
-				D047E3151022CEFE00EF307B /* FortunateSon */,
+				D047E3151022CEFE00EF307B /* com.ridiculousfish.HexFiend.PrivilegedHelper */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1157,7 +1157,7 @@
 			);
 			name = "FortunateSon (PrivilegedHelper)";
 			productName = Fortunate_Son;
-			productReference = D047E3151022CEFE00EF307B /* FortunateSon */;
+			productReference = D047E3151022CEFE00EF307B /* com.ridiculousfish.HexFiend.PrivilegedHelper */;
 			productType = "com.apple.product-type.tool";
 		};
 		D06D600F0FA69B26002376EE /* Test_BTree */ = {
