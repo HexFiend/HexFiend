@@ -9,24 +9,18 @@
 
 @class HFProgressTracker;
 
-struct HFDocumentOperationCallbacks {
-    id target;
-    NSDictionary *userInfo; // set on the HFProgressTracker
-    SEL startSelector; // - (void)beginThread:(HFProgressTracker *)tracker; delivered on child thread
-    SEL endSelector; // - (void)threadDidEnd:(id)result; delivered on main thread
-};
-
 @interface HFDocumentOperationView : HFResizingView {
     NSMutableDictionary *views;
     NSString *nibName;
     NSString *displayName;
     BOOL awokenFromNib;
-    pthread_t thread;
+    id threadResult;
+    dispatch_group_t waitGroup;
+
+    id (^startBlock)(HFProgressTracker *tracker);
+    void (^completionHandler)(id result);
     
     HFProgressTracker *tracker;
-    id target;
-    SEL startSelector;
-    SEL endSelector;
     NSArray *otherTopLevelObjects;
     double progress;
     BOOL isFixedHeight;
@@ -56,7 +50,7 @@ struct HFDocumentOperationCallbacks {
 /* KVO compliant, in the range [0, 1], or -1 to mean not running */
 - (double)progress;
 
-- (void)startOperationWithCallbacks:(struct HFDocumentOperationCallbacks)callbacks;
+- (void)startOperation:(id (^)(HFProgressTracker *tracker))block completionHandler:(void (^)(id result))completionHandler;
 
 - (HFProgressTracker *)progressTracker;
 

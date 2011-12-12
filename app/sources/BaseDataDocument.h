@@ -45,8 +45,6 @@ NSString * const BaseDataDocumentDidChangeStringEncodingNotification;
     SEL commandToRunAfterBannerIsDoneHiding;
     
     BOOL saveInProgress;
-    NSInteger saveResult;
-    NSError *saveError;
     
     BOOL currentlySettingFont;
     BOOL isTransient;

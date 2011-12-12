@@ -608,49 +608,35 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
     [[textView controller] setEditable:NO];
 }
 
-- (id)threadedStartComputeDiff:(HFProgressTracker *)tracker {
-    NSDictionary *userInfo = [tracker userInfo];
-    HFByteArray *left = [userInfo objectForKey:@"left"];
-    HFByteArray *right = [userInfo objectForKey:@"right"];
-    return [[[HFByteArrayEditScript alloc] initWithDifferenceFromSource:left toDestination:right trackingProgress:tracker] autorelease];
-}
-
 - (void)close {
     /* Make sure we cancel if we close */
     [diffComputationView cancelViewOperation:self];
     [super close];
 }
 
-- (void)computeDiffEnded:(HFByteArrayEditScript *)script {    
-    /* script may be nil if we cancelled */
-    if (! script) {
-        [self close];
-    } else {
-        
-        /* Hide the script banner */
-        if (operationView != nil && operationView == diffComputationView) [self hideBannerFirstThenDo:NULL];
-        
-        editScript = [script retain];
-        [self showInstructionsFromEditScript];	
-    }
-}
-
 - (void)kickOffComputeDiff {
     HFASSERT(! [diffComputationView operationIsRunning]);
     
-    NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-                              leftBytes, @"left",
-                              rightBytes, @"right",
-                              nil];
-    
-    struct HFDocumentOperationCallbacks callbacks = {
-        .target = self,
-        .userInfo = userInfo,
-        .startSelector = @selector(threadedStartComputeDiff:),
-        .endSelector = @selector(computeDiffEnded:)
-    };
-    
-    [diffComputationView startOperationWithCallbacks:callbacks];
+    [leftBytes incrementChangeLockCounter];
+    [rightBytes incrementChangeLockCounter];
+    [diffComputationView startOperation:^id(HFProgressTracker *tracker) {
+        return [[[HFByteArrayEditScript alloc] initWithDifferenceFromSource:leftBytes toDestination:rightBytes trackingProgress:tracker] autorelease];
+    } completionHandler:^(id script) {
+        [leftBytes decrementChangeLockCounter];
+        [rightBytes decrementChangeLockCounter];
+        
+        /* script may be nil if we cancelled */
+        if (! script) {
+            [self close];
+        } else {
+            
+            /* Hide the script banner */
+            if (operationView != nil && operationView == diffComputationView) [self hideBannerFirstThenDo:NULL];
+            
+            editScript = [script retain];
+            [self showInstructionsFromEditScript];	
+        }
+    }];
 }
 
 - (void)windowControllerDidLoadNib:(NSWindowController *)windowController {

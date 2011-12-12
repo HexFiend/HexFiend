@@ -37,6 +37,7 @@ static inline Class preferredByteArrayClass(void) {
 
 @interface BaseDataDocument (ForwardDeclarations)
 - (NSString *)documentWindowTitleFormatString;
+- (id)threadedSaveToURL:(NSURL *)targetURL trackingProgress:(HFProgressTracker *)tracker error:(NSError **)error;
 @end
 
 /* Subclass to display custom window title that shows progress */
@@ -541,7 +542,6 @@ static inline Class preferredByteArrayClass(void) {
     
     [controller release];
     [bannerView release];
-    [saveError release];
     
     /* Release and stop observing our banner views.  Note that any of these may be nil. */
     HFDocumentOperationView *views[] = {findReplaceView, moveSelectionByView, jumpToOffsetView, saveView};
@@ -964,32 +964,39 @@ static inline Class preferredByteArrayClass(void) {
     showSaveViewAfterDelayTimer = [[NSTimer scheduledTimerWithTimeInterval:.5 target:self selector:@selector(showSaveBannerHavingDelayed:) userInfo:nil repeats:NO] retain];
     
     if (! saveView) saveView = [self newOperationViewForNibName:@"SaveBanner" displayName:@"Saving" fixedHeight:YES];
-    saveResult = 0;
-    
-    struct HFDocumentOperationCallbacks callbacks = {
-        .target = self,
-        .userInfo = [NSDictionary dictionaryWithObjectsAndKeys:inAbsoluteURL, @"targetURL", nil],
-        .startSelector = @selector(threadedStartSave:),
-        .endSelector = @selector(endSave:)
-    };
     
     [[controller byteArray] incrementChangeLockCounter];
     
     [[saveView viewNamed:@"saveLabelField"] setStringValue:[NSString stringWithFormat:@"Saving \"%@\"", [self displayName]]];
     
-    [saveView startOperationWithCallbacks:callbacks];
+    __block NSError *error = nil;
+    __block NSInteger saveResult = 0;
+    [saveView startOperation:^id(HFProgressTracker *tracker) {
+        id result = [self threadedSaveToURL:inAbsoluteURL trackingProgress:tracker error:&error];
+        /* Retain the error so it can be autoreleased in the main thread */
+        [error retain];
+        return result;
+    } completionHandler:^(id result) {
+        saveResult = [result integerValue];
+        
+        /* Autorelease now that we're in the main thread */
+        if (outError) *outError = error;
+        [error autorelease];
+        
+        /* Post an event so our event loop wakes up */
+        [NSApp postEvent:[NSEvent otherEventWithType:NSApplicationDefined location:NSZeroPoint modifierFlags:0 timestamp:0 windowNumber:0 context:NULL subtype:0 data1:0 data2:0] atStart:NO];
+
+    }];
     
     while ([saveView operationIsRunning]) {
-        NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-        @try {  
-            NSEvent *event = [NSApp nextEventMatchingMask:NSAnyEventMask untilDate:[NSDate distantFuture] inMode:NSDefaultRunLoopMode dequeue:YES];
-            if (event) [NSApp sendEvent:event];
-        }
-        @catch (NSException *localException) {
-            NSLog(@"Exception thrown during save: %@", localException);
-        }
-        @finally {
-            [pool drain];
+        @autoreleasepool {
+            @try {  
+                NSEvent *event = [NSApp nextEventMatchingMask:NSAnyEventMask untilDate:[NSDate distantFuture] inMode:NSDefaultRunLoopMode dequeue:YES];
+                if (event) [NSApp sendEvent:event];
+            }
+            @catch (NSException *localException) {
+                NSLog(@"Exception thrown during save: %@", localException);
+            }
         }
     }
     
@@ -1026,10 +1033,6 @@ static inline Class preferredByteArrayClass(void) {
     }
     
     if (operationView != nil && operationView == saveView) [self hideBannerFirstThenDo:NULL];
-    
-    if (outError) *outError = saveError;
-    [saveError autorelease];
-    saveError = nil;
     
     saveInProgress = NO;
     
@@ -1157,27 +1160,24 @@ static inline Class preferredByteArrayClass(void) {
     }
 }
 
-- (id)threadedStartSave:(HFProgressTracker *)tracker {
+- (id)threadedSaveToURL:(NSURL *)targetURL trackingProgress:(HFProgressTracker *)tracker error:(NSError **)error {
     HFByteArray *byteArray = [controller byteArray];
-    NSDictionary *userInfo = [tracker userInfo];
-    NSURL *targetURL = [userInfo objectForKey:@"targetURL"];
-    NSError *error = nil;
-    BOOL result = [byteArray writeToFile:targetURL trackingProgress:tracker error:&error];
+    BOOL result = [byteArray writeToFile:targetURL trackingProgress:tracker error:error];
     [tracker noteFinished:self];
-    saveError = [error retain];
     if (tracker->cancelRequested) return [NSNumber numberWithInt:HFSaveCancelled];
     else if (! result) return [NSNumber numberWithInt:HFSaveError];
-    else return [NSNumber numberWithInt:HFSaveSuccessful];
+    else return [NSNumber numberWithInt:HFSaveSuccessful];    
 }
 
-- (void)endSave:(id)result {
-#if __LP64__
-    saveResult = [result integerValue];
-#else
-    saveResult = [result intValue]; //Tiger compatibility
-#endif
-    /* Post an event so our event loop wakes up */
-    [NSApp postEvent:[NSEvent otherEventWithType:NSApplicationDefined location:NSZeroPoint modifierFlags:0 timestamp:0 windowNumber:0 context:NULL subtype:0 data1:0 data2:0] atStart:NO];
+- (id)threadedFindBytes:(HFByteArray *)needle inBytes:(HFByteArray *)haystack inRange1:(HFRange)range1 range2:(HFRange)range2 forwards:(BOOL)forwards trackingProgress:(HFProgressTracker *)tracker {
+    unsigned long long searchResult;
+    [tracker setMaxProgress:[haystack length]];
+    searchResult = [haystack indexOfBytesEqualToBytes:needle inRange:range1 searchingForwards:forwards trackingProgress:tracker];
+    if (searchResult == ULLONG_MAX) {
+        searchResult = [haystack indexOfBytesEqualToBytes:needle inRange:range2 searchingForwards:forwards trackingProgress:tracker];
+    }
+    if (tracker->cancelRequested) return nil;
+    else return [NSNumber numberWithUnsignedLongLong:searchResult];
 }
 
 - (id)threadedStartFind:(HFProgressTracker *)tracker {
@@ -1247,34 +1247,30 @@ static inline Class preferredByteArrayClass(void) {
         HFRange searchRange1 = (forwards ? laterRange : earlierRange);
         HFRange searchRange2 = (forwards ? earlierRange : laterRange);
         
-        NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-                                  needle, @"needle",
-                                  haystack, @"haystack",
-                                  [NSNumber numberWithBool:forwards], @"forwards",
-                                  [HFRangeWrapper withRange:searchRange1], @"range1",
-                                  [HFRangeWrapper withRange:searchRange2], @"range2",
-                                  nil];
-        
-        struct HFDocumentOperationCallbacks callbacks = {
-            .target = self,
-            .userInfo = userInfo,
-            .startSelector = @selector(threadedStartFind:),
-            .endSelector = @selector(findEnded:)
-        };
-        
         [needle incrementChangeLockCounter];
         [haystack incrementChangeLockCounter];
         
-        [findReplaceView startOperationWithCallbacks:callbacks];
+        [findReplaceView startOperation:^id(HFProgressTracker *tracker) {
+            return [self threadedFindBytes:needle inBytes:haystack inRange1:searchRange1 range2:searchRange2 forwards:forwards trackingProgress:tracker];
+        } completionHandler:^(id result) {
+            unsigned long long searchResult = result ? [result unsignedLongLongValue] : ULLONG_MAX;
+            if (searchResult == ULLONG_MAX) {
+                /* nil result means cancelled; we don't want to beep in that case */
+                if (result) NSBeep();
+            } else {
+                HFRange resultRange = HFRangeMake(searchResult, [needle length]);
+                [controller setSelectedContentsRanges:[HFRangeWrapper withRanges:&resultRange count:1]];
+                [controller maximizeVisibilityOfContentsRange:resultRange];
+                [self restoreFirstResponderToSavedResponder];
+                [controller pulseSelection];
+            }
+            [needle decrementChangeLockCounter];
+            [haystack decrementChangeLockCounter];
+        }];        
     }
 }
 
-- (id)threadedStartReplaceAll:(HFProgressTracker *)tracker {
-    HFASSERT(tracker != NULL);
-    NSDictionary *userInfo = [tracker userInfo];
-    HFByteArray *needle = [userInfo objectForKey:@"needle"];
-    HFByteArray *haystack = [userInfo objectForKey:@"haystack"];
-    HFByteArray *replacementValue = [userInfo objectForKey:@"replacementValue"];
+- (id)threadedReplaceBytes:(HFByteArray *)needle inBytes:(HFByteArray *)haystack withBytes:(HFByteArray *)replacementValue trackingProgress:(HFProgressTracker *)tracker {
     const unsigned long long needleLength = [needle length];
     const unsigned long long replacementLength = [replacementValue length];
     const unsigned long long haystackLength = [haystack length];
@@ -1306,14 +1302,6 @@ static inline Class preferredByteArrayClass(void) {
     
 cancelled:;
     return nil;
-}
-
-- (void)replaceAllEnded:(HFByteArray *)newValue {
-    [[[findReplaceView viewNamed:@"searchField"] objectValue] decrementChangeLockCounter];
-    [[controller byteArray] decrementChangeLockCounter];
-    if (newValue != nil) {
-        [controller replaceByteArray:newValue];
-    }
 }
 
 - (void)findNext:sender {
@@ -1356,34 +1344,34 @@ cancelled:;
 }
 
 - (IBAction)replaceAll:sender {
+    USE(sender);
     if ([operationView operationIsRunning]) {
         NSBeep();
         return;
     }
-    USE(sender);
-    HFByteArray *replacementValue = [[findReplaceView viewNamed:@"replaceField"] objectValue];
-    HFASSERT(replacementValue != NULL);
     HFByteArray *needle = [[findReplaceView viewNamed:@"searchField"] objectValue];
     if ([needle length] == 0) {
         NSBeep();
         return;
     }
+    HFByteArray *replacementValue = [[findReplaceView viewNamed:@"replaceField"] objectValue];
+    HFASSERT(replacementValue != NULL);
     HFByteArray *haystack = [controller byteArray];
-    NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-                              replacementValue, @"replacementValue",
-                              needle, @"needle",
-                              haystack, @"haystack",
-                              nil];
     
-    struct HFDocumentOperationCallbacks callbacks = {
-        .target = self,
-        .userInfo = userInfo,
-        .startSelector = @selector(threadedStartReplaceAll:),
-        .endSelector = @selector(replaceAllEnded:)
-    };
     [needle incrementChangeLockCounter];
     [haystack incrementChangeLockCounter];
-    [findReplaceView startOperationWithCallbacks:callbacks];
+    [replacementValue incrementChangeLockCounter];
+    
+    [findReplaceView startOperation:^id(HFProgressTracker *tracker) {
+        return [self threadedReplaceBytes:needle inBytes:haystack withBytes:replacementValue trackingProgress:tracker];
+    } completionHandler:^(id newByteArray) {
+        [needle decrementChangeLockCounter];
+        [haystack decrementChangeLockCounter];
+        [replacementValue decrementChangeLockCounter];
+        if (newByteArray != nil) {
+            [controller replaceByteArray:newByteArray];
+        }
+    }];
 }
 
 - (void)performHFFindPanelAction:(NSMenuItem *)item {

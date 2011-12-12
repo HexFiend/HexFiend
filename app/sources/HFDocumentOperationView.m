@@ -7,7 +7,7 @@
 
 #import "HFDocumentOperationView.h"
 #import <HexFiend/HFProgressTracker.h>
-#include <pthread.h>
+#include <dispatch/dispatch.h>
 #include <objc/message.h>
 
 static NSString *sNibName;
@@ -195,17 +195,14 @@ static NSString *sNibName;
     [tracker setDelegate:nil];
     [[views objectForKey:@"cancelButton"] setHidden:YES];
     [[views objectForKey:@"progressIndicator"] setHidden:YES];
-    void *result = nil;
-    int pthreadErr = pthread_join(thread, &result);
-    if (pthreadErr) [NSException raise:NSGenericException format:@"pthread_join returned %d", result];
-    [target performSelector:endSelector withObject:result];
-    [(id)result release];
-    [target release];
-    target = nil;
+    dispatch_group_wait(waitGroup, DISPATCH_TIME_FOREVER);
+    completionHandler(threadResult);
+    [(id)threadResult release];
     [tracker release];
     tracker = nil;
     [self willChangeValueForKey:@"operationIsRunning"];
-    thread = NULL;
+    dispatch_release(waitGroup);
+    waitGroup = NULL;
     [self didChangeValueForKey:@"operationIsRunning"];
     [tracker release];
     tracker = nil;
@@ -243,30 +240,16 @@ static NSString *sNibName;
     }
 }
 
-- (BOOL)operationIsRunning { return !! thread; }
+- (BOOL)operationIsRunning { return !! waitGroup; }
 
-- (id)beginThread {
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    id result = [target performSelector:startSelector withObject:tracker];
-    [result retain];
-    [tracker noteFinished:self];
-    [pool drain];
-    return result; //result is released in spinUntilFinished
-}
-
-static void *startThread(void *self) {
-    return [(id)self beginThread];
-}
-
-- (void)startOperationWithCallbacks:(struct HFDocumentOperationCallbacks)callbacks {
+- (void)startOperation:(id (^)(HFProgressTracker *tracker))block completionHandler:(void (^)(id result))handler {
     HFASSERT(! [self operationIsRunning]);
     NSProgressIndicator *progressIndicator = [views objectForKey:@"progressIndicator"];
-    startSelector = callbacks.startSelector;
-    endSelector = callbacks.endSelector;
-    target = [callbacks.target retain];
+    startBlock = [block copy];
+    completionHandler = [handler copy];
+
     tracker = [[HFProgressTracker alloc] init];
     [tracker setDelegate:self];
-    [tracker setUserInfo:callbacks.userInfo];
     [progressIndicator setDoubleValue:0];
     
     [[views objectForKey:@"cancelButton"] setHidden:NO];
@@ -276,8 +259,13 @@ static void *startThread(void *self) {
     
     [self retain];
     [self willChangeValueForKey:@"operationIsRunning"];
-    int threadResult = pthread_create(&thread, NULL, startThread, self);
-    if (threadResult != 0) [NSException raise:NSGenericException format:@"pthread_create returned error %d", threadResult];
+    waitGroup = dispatch_group_create();
+    dispatch_group_async(waitGroup, dispatch_get_global_queue(0, 0), ^{
+        @autoreleasepool {
+            threadResult = [startBlock(tracker) retain];
+            [tracker noteFinished:self];
+        }
+    });
     [self didChangeValueForKey:@"operationIsRunning"];
 }
 
