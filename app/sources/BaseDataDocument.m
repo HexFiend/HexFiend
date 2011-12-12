@@ -999,7 +999,7 @@ static inline Class preferredByteArrayClass(void) {
     
     [[controller byteArray] decrementChangeLockCounter];
     
-    /* If we save to a file, then we've probably overwritten some source data, so throw away undo and just reset the document to reference the new file.  Only do this if there was no error.
+    /* If we save to a file, then we've probably overwritten some source data, so just reset the document to reference the new file.  Only do this if there was no error.
      
      Note that this is actually quite wrong.  It's entirely possible that e.g. there was an error after the file was touched, e.g. when writing to the file.  In that case, we do want to just reference the file again.
      
@@ -1008,10 +1008,20 @@ static inline Class preferredByteArrayClass(void) {
     if ((saveResult != HFSaveError) && (saveOperation == NSSaveOperation || saveOperation == NSSaveAsOperation)) {
         HFFileReference *fileReference = [[[HFFileReference alloc] initWithPath:[inAbsoluteURL path] error:NULL] autorelease];
         if (fileReference) {
+            HFByteArray *oldByteArray = [controller byteArray];
+
+            HFByteArray *newByteArray = [[[preferredByteArrayClass() alloc] init] autorelease];
             HFFileByteSlice *byteSlice = [[[HFFileByteSlice alloc] initWithFile:fileReference] autorelease];
-            HFByteArray *byteArray = [[[preferredByteArrayClass() alloc] init] autorelease];
-            [byteArray insertByteSlice:byteSlice inRange:HFRangeMake(0, 0)];
-            [controller setByteArray:byteArray];
+            [newByteArray insertByteSlice:byteSlice inRange:HFRangeMake(0, 0)];
+            
+            /* Propogate attributes (like bookmarks) */
+            HFByteRangeAttributeArray *oldAttributes = [oldByteArray byteRangeAttributeArray];
+            HFByteRangeAttributeArray *newAttributes = [newByteArray byteRangeAttributeArray];
+            if (oldAttributes && newAttributes) {
+                HFRange range = HFRangeMake(0, MIN([oldByteArray length], [newByteArray length]));
+                [newAttributes transferAttributesFromAttributeArray:oldAttributes range:range baseOffset:0 validator:NULL];
+            }            
+            [controller setByteArray:newByteArray];
         }
     }
     
