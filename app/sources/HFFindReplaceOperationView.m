@@ -99,10 +99,7 @@
     [super awakeFromNib];
 
     [fieldTypeControl setSelectedSegment:(fieldTypeIsASCII ? 1 : 0)];
-    [self setView:findField forName:@"findField"];
-    [self setView:replaceField forName:@"replaceField"];
-    [self setView:fieldTypeControl forName:@"fieldTypeControl"];
-    
+
     [self addObserver:self forKeyPath:@"operationIsRunning" options:NSKeyValueObservingOptionInitial context:NULL];
 
     if (! installedObservations) {

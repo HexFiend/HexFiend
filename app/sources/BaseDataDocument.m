@@ -142,6 +142,9 @@ static inline Class preferredByteArrayClass(void) {
                               yes, USERDEFS_KEY_FOR_REP(dataInspectorRepresenter),
                               yes, USERDEFS_KEY_FOR_REP(statusBarRepresenter),
                               yes, USERDEFS_KEY_FOR_REP(scrollRepresenter),
+#if ! NDEBUG
+                              yes, @"NSApplicationShowExceptions",
+#endif
                               nil];
         [[NSUserDefaults standardUserDefaults] registerDefaults:defs];
         [defs release];

@@ -10,7 +10,6 @@
 @class HFProgressTracker;
 
 @interface HFDocumentOperationView : HFResizingView {
-    NSMutableDictionary *views;
     NSString *nibName;
     NSString *displayName;
     BOOL awokenFromNib;
@@ -20,6 +19,8 @@
     id (^startBlock)(HFProgressTracker *tracker);
     void (^completionHandler)(id result);
     
+    IBOutlet NSProgressIndicator *progressIndicator;
+    IBOutlet NSButton *cancelButton;
     HFProgressTracker *tracker;
     NSArray *otherTopLevelObjects;
     double progress;
@@ -32,7 +33,6 @@
 + viewWithNibNamed:(NSString *)name owner:(id)owner;
 
 - viewNamed:(NSString *)name;
-- (void)setView:(NSView *)view forName:(NSString *)name;
 
 - (CGFloat)defaultHeight;
 

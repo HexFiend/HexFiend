@@ -13,6 +13,13 @@ static CGFloat norm(unsigned char x) {
 
 #define EDGE_WIDTH 1
 
+#define kStretchableProgressIndicatorIdentifier @"progressIndicator"
+
+@interface NSObject (BackwardCompatibleDeclarations)
+- (void)setUserInterfaceItemIdentifier:(NSString *)val;
+@end
+
+
 @implementation StretchableProgressIndicator
 
 - (BOOL)isFlipped {
@@ -65,6 +72,13 @@ static CGFloat norm(unsigned char x) {
 
 - (id)initWithFrame:(NSRect)frame {
     self = [super initWithFrame:frame];
+    
+    if ([self respondsToSelector:@selector(setIdentifier:)]) {
+        [self setIdentifier:kStretchableProgressIndicatorIdentifier];
+    } else if ([self respondsToSelector:@selector(setUserInterfaceItemIdentifier:)]) {
+        [self setUserInterfaceItemIdentifier:kStretchableProgressIndicatorIdentifier];
+    }
+    
     NSColor *colors[3];
 #if 1
     // Aqua gradient */

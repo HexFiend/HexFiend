@@ -8,8 +8,24 @@
 
 #import <HexFiend/HFCancelButton.h>
 
+#define kHFCancelButtonIdentifier @"cancelButton"
+
+@interface NSObject (BackwardCompatibleDeclarations)
+- (void)setUserInterfaceItemIdentifier:(NSString *)val;
+@end
+
 
 @implementation HFCancelButton
+
+- (id)initWithFrame:(NSRect)frameRect {
+    self = [super initWithFrame:frameRect];
+    if ([self respondsToSelector:@selector(setIdentifier:)]) {
+        [self setIdentifier:kHFCancelButtonIdentifier];
+    } else if ([self respondsToSelector:@selector(setUserInterfaceItemIdentifier:)]) {
+        [self setUserInterfaceItemIdentifier:kHFCancelButtonIdentifier];
+    }
+    return self;
+}
 
 - initWithCoder:(NSCoder *)coder {
     if ((self = [super initWithCoder:coder])) {

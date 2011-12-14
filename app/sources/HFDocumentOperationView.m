@@ -18,6 +18,10 @@ static NSString *sNibName;
 - (id)beginThread NS_RETURNS_RETAINED;
 @end
 
+@interface NSObject (BackwardCompatibleDeclarations)
+- (NSString *)userInterfaceItemIdentifier;
+@end
+
 @implementation HFDocumentOperationView
 
 + viewWithNibNamed:(NSString *)name owner:(id)owner {
@@ -57,16 +61,6 @@ static NSString *sNibName;
     otherTopLevelObjects = objects;
 }
 
-- (void)setValue:(id)value forKey:(NSString *)key {
-    if (! awokenFromNib) {
-        if ([value isKindOfClass:[NSView class]]) {
-            [views setObject:value forKey:key];
-            return;
-        }
-    }
-    [super setValue:value forKey:key];
-}
-
 - (void)awakeFromNib {
     awokenFromNib = YES;
     [super awakeFromNib];
@@ -87,21 +81,37 @@ static NSString *sNibName;
     self = [super initWithFrame:frame];
     defaultSize = frame.size;
     nibName = [sNibName copy];
-    views = [[NSMutableDictionary alloc] init];
     progress = NO_TRACKING_PERCENTAGE;
     return self;
 }
 
 - (void)dealloc {
     [otherTopLevelObjects release];
-    [views release];
     [nibName release];
     [displayName release];
     [super dealloc];
 }
 
+static NSView *searchForViewWithIdentifier(NSView *view, NSString *identifier) {
+    /* Maybe this view is it */
+    NSView *result = nil;
+    if ([view respondsToSelector:@selector(identifier)]) {
+        if ([[view identifier] isEqual:identifier]) result = view;
+    } else if ([view respondsToSelector:@selector(userInterfaceItemIdentifier)]) {
+        if ([[view userInterfaceItemIdentifier] isEqual:identifier]) result = view;
+    }
+    
+    if (! result) {
+        /* Try subviews */
+        for (NSView *subview in [view subviews]) {
+            if ((result = searchForViewWithIdentifier(subview, identifier))) break;
+        }
+    }
+    return result;
+}
+
 - viewNamed:(NSString *)name {
-    NSView *view = [views objectForKey:name];
+    NSView *view = searchForViewWithIdentifier(self, name);
     if (! view) [NSException raise:NSInvalidArgumentException format:@"No view named %@ in nib %@", name, nibName];
     return view;
 }
@@ -134,45 +144,6 @@ static NSString *sNibName;
     return result;
 }
 
-- (void)setView:(NSView *)view forName:(NSString *)name {
-    [views setObject:view forKey:name];
-}
-
-- (NSString *)viewNameFromSelector:(SEL)sel {
-    HFASSERT([self selectorIsSetMethod:sel]);
-    char *selName = strdup(3 + sel_getName(sel));
-    if (! selName) [NSException raise:NSMallocException format:@"strdup failed"];
-    selName[0] = tolower(selName[0]);
-    NSString *result = [[[NSString alloc] initWithBytesNoCopy:selName length:strlen(selName) - 1 encoding:NSMacOSRomanStringEncoding freeWhenDone:YES] autorelease];
-    return result;
-}
-
-- (void)forwardInvocation:(NSInvocation *)invocation {
-    SEL sel = [invocation selector];
-    if ([self selectorIsSetMethod:sel]) {
-        id view = nil;
-        [invocation getArgument:&view atIndex:2];
-        HFASSERT([view isKindOfClass:[NSView class]]);
-        NSString *name = [self viewNameFromSelector:sel];
-        [self setView:view forName:name];
-    }
-    else {
-        [NSException raise:NSInvalidArgumentException format:@"Can't forward %@", invocation];
-    }
-}
-
-- (NSMethodSignature *)methodSignatureForSelector:(SEL)sel {
-    if ([self selectorIsSetMethod:sel]) {
-        return [super methodSignatureForSelector:@selector(setMenu:)]; //identical to our set method
-    }
-    return [super methodSignatureForSelector:sel];
-}
-
-- (BOOL)respondsToSelector:(SEL)sel {
-    if (! awokenFromNib && [self selectorIsSetMethod:sel]) return YES;
-    return [super respondsToSelector:sel];
-}
-
 - (void)drawRect:(NSRect)dirtyRect {
     USE(dirtyRect);
     static NSGradient *sGradient = nil;
@@ -193,8 +164,8 @@ static NSString *sNibName;
     HFASSERT([self operationIsRunning]);
     [tracker endTrackingProgress];
     [tracker setDelegate:nil];
-    [[views objectForKey:@"cancelButton"] setHidden:YES];
-    [[views objectForKey:@"progressIndicator"] setHidden:YES];
+    [cancelButton setHidden:YES];
+    [progressIndicator setHidden:YES];
     dispatch_group_wait(waitGroup, DISPATCH_TIME_FOREVER);
     completionHandler(threadResult);
     [(id)threadResult release];
@@ -204,6 +175,7 @@ static NSString *sNibName;
     dispatch_release(waitGroup);
     waitGroup = NULL;
     [self didChangeValueForKey:@"operationIsRunning"];
+    [cancelButton setHidden: ! [self operationIsRunning]];
     [tracker release];
     tracker = nil;
     [self release];
@@ -219,10 +191,11 @@ static NSString *sNibName;
 
 - (void)progressTracker:(HFProgressTracker *)track didChangeProgressTo:(double)fraction {
     USE(track);
-    if (fabs(fraction - progress) >= .01) {
+    if (fabs(fraction - progress) >= .001) {
         [self willChangeValueForKey:@"progress"];
         progress = fraction;
         [self didChangeValueForKey:@"progress"];
+        [progressIndicator setDoubleValue:progress];
     }
 }
 
@@ -244,7 +217,6 @@ static NSString *sNibName;
 
 - (void)startOperation:(id (^)(HFProgressTracker *tracker))block completionHandler:(void (^)(id result))handler {
     HFASSERT(! [self operationIsRunning]);
-    NSProgressIndicator *progressIndicator = [views objectForKey:@"progressIndicator"];
     startBlock = [block copy];
     completionHandler = [handler copy];
 
@@ -252,7 +224,7 @@ static NSString *sNibName;
     [tracker setDelegate:self];
     [progressIndicator setDoubleValue:0];
     
-    [[views objectForKey:@"cancelButton"] setHidden:NO];
+    [cancelButton setHidden:NO];
     [progressIndicator setHidden:NO];
     [tracker setProgressIndicator:progressIndicator];
     [tracker beginTrackingProgress];
@@ -267,6 +239,7 @@ static NSString *sNibName;
         }
     });
     [self didChangeValueForKey:@"operationIsRunning"];
+    [cancelButton setHidden: ! [self operationIsRunning]];
 }
 
 - (HFProgressTracker *)progressTracker {
