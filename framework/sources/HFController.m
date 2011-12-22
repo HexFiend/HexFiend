@@ -1127,20 +1127,25 @@ static inline Class preferredByteArrayClass(void) {
     BOOL hasPreciseScroll;
     
     /* Prefer precise deltas */
-    if ([scrollEvent respondsToSelector:@selector(hasPreciseScrollingDeltas)] && [scrollEvent hasPreciseScrollingDeltas]) {
-        /* In this case, we're going to scroll by a certain number of points */
-        preciseScroll = [scrollEvent scrollingDeltaY];
-        hasPreciseScroll = YES;
+    if ([scrollEvent respondsToSelector:@selector(hasPreciseScrollingDeltas)]) {
+        hasPreciseScroll = [scrollEvent hasPreciseScrollingDeltas];
+        if (hasPreciseScroll) {
+            /* In this case, we're going to scroll by a certain number of points */
+            preciseScroll = [scrollEvent scrollingDeltaY];
+        }
     } else if ([scrollEvent respondsToSelector:@selector(deviceDeltaY)]) {
-        preciseScroll = [scrollEvent deviceDeltaY];
-        hasPreciseScroll = YES;
+        /* Legacy (SnowLeopard) support */
+        hasPreciseScroll = ([scrollEvent subtype] == 1);
+        if (hasPreciseScroll) {
+            preciseScroll = [scrollEvent deviceDeltaY];
+        }
     } else {
         hasPreciseScroll = NO;
     }
     
     long double scrollY = 0;
     if (! hasPreciseScroll) {
-        scrollY = -kScrollMultiplier * [scrollEvent scrollingDeltaY];
+        scrollY = -kScrollMultiplier * [scrollEvent deltaY];
     } else {
         scrollY = -preciseScroll / [self lineHeight];
     }
