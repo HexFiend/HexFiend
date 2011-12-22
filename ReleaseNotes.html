@@ -1,0 +1,23 @@
+<head>
+<title>Hex Fiend Release Notes</title>
+</head><body>
+<h3>Release Notes for v2.1.1</h3>
+
+<ul>
+<li>Fixed a bug that caused exceptions when scrolling with a non-precise scrolling device (like a classic scroll wheel mouse).</li>
+<li>Removed an .xcconfig file that was inadvertently being copied into Resources</li>
+</ul>
+
+<h3>Release Notes for v2.1.0</h3>
+
+<ul>
+<li>Support for computing a binary diff between two files. This is a "true" LCS-based diff. Support for computing the diff lives in HexFiend.framework, while the document that presents it is in HexFiend.app.</li>
+<li>Bookmark support. Bookmarks are little balloons that point at a range of bytes. They are not saved with the document.</li>
+<li>Some support for attributes on ranges of bytes, which then can be translated into visual styles (such as colors).</li>
+<li>Hex Fiend now has a privileged helper process ("Fortunate Son"), which can be used to read raw devices, root owned files, etc. Communication is via MIG.</li>
+<li>Transient untitled document support. That is, if there is an untitled document that has never been edited, its window gets used by any document that's opened.</li>
+<li>Undo can now be preserved across saves, when doing so doesn't require too much memory.</li>
+<li>It looks more 3D. It's like you're really inside a hex editor!</li>
+<li>Many more bug fixes representing a few years of work.</li>
+
+</body></html>
