@@ -971,26 +971,20 @@ static inline Class preferredByteArrayClass(void) {
     [[controller byteArray] incrementChangeLockCounter];
     
     [[saveView viewNamed:@"saveLabelField"] setStringValue:[NSString stringWithFormat:@"Saving \"%@\"", [self displayName]]];
-    
-    __block NSError *error = nil;
+
     __block NSInteger saveResult = 0;
     [saveView startOperation:^id(HFProgressTracker *tracker) {
-        id result = [self threadedSaveToURL:inAbsoluteURL trackingProgress:tracker error:&error];
+        id result = [self threadedSaveToURL:inAbsoluteURL trackingProgress:tracker error:outError];
         /* Retain the error so it can be autoreleased in the main thread */
-        [error retain];
+        [*outError retain];
         return result;
     } completionHandler:^(id result) {
         saveResult = [result integerValue];
         
-        /* Autorelease now that we're in the main thread */
-        if (outError) *outError = error;
-        [error autorelease];
-        
         /* Post an event so our event loop wakes up */
         [NSApp postEvent:[NSEvent otherEventWithType:NSApplicationDefined location:NSZeroPoint modifierFlags:0 timestamp:0 windowNumber:0 context:NULL subtype:0 data1:0 data2:0] atStart:NO];
-
     }];
-    
+
     while ([saveView operationIsRunning]) {
         @autoreleasepool {
             @try {  
@@ -1002,7 +996,9 @@ static inline Class preferredByteArrayClass(void) {
             }
         }
     }
-    
+
+    [*outError autorelease];
+
     [showSaveViewAfterDelayTimer invalidate];
     [showSaveViewAfterDelayTimer release];
     showSaveViewAfterDelayTimer = nil;

@@ -10,6 +10,11 @@
 #include <sys/types.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <sys/disk.h>
+
+#ifndef HF_NO_PRIVILEGED_FILE_OPERATIONS
+#import "HFPrivilegedHelperConnection.h"
+#endif
 
 #define USE_STAT64 0
 
@@ -83,7 +88,7 @@ static BOOL isFileTypeSupported(mode_t mode) {
 
 static BOOL isFileTypeWritable(mode_t mode) {
     /* We only support writing to regular files */
-    return S_ISREG(mode);
+    return S_ISREG(mode) || S_ISBLK(mode) || S_ISCHR(mode);
 }
 
 static BOOL returnFTruncateError(NSError **error) {
@@ -130,8 +135,8 @@ static BOOL returnFTruncateError(NSError **error) {
 
 + allocWithZone:(NSZone *)zone {
     if (self == [HFFileReference class]) {
-        /* Default to HFUnprivilegedFileReference */
-        return [HFUnprivilegedFileReference allocWithZone:zone];
+        /* Default to HFConcreteFileReference */
+        return [HFConcreteFileReference allocWithZone:zone];
     }
     else {
         return [super allocWithZone:zone];
@@ -184,7 +189,7 @@ static BOOL returnFTruncateError(NSError **error) {
 
 @end
 
-@implementation HFUnprivilegedFileReference
+@implementation HFConcreteFileReference
 
 - (BOOL)initSharedWithPath:(NSString *)path error:(NSError **)error {
     int result;
@@ -196,6 +201,16 @@ static BOOL returnFTruncateError(NSError **error) {
     else {
         fileDescriptor = open(p, O_RDONLY, 0);
     }
+
+#ifndef HF_NO_PRIVILEGED_FILE_OPERATIONS
+	if (fileDescriptor < 0 && errno == EACCES) {
+		if (![[HFPrivilegedHelperConnection sharedConnection] openFileAtPath:p writable:isWritable fileDescriptor:&fileDescriptor error:error]) {
+			fileDescriptor = -1; 
+			errno = EACCES;
+		}
+	}
+#endif
+
     if (fileDescriptor < 0) {
         returnReadError(error);
         return NO;
@@ -213,8 +228,24 @@ static BOOL returnFTruncateError(NSError **error) {
         NSLog(@"Unable to fstat64 file %@. %s.", path, strerror(err));
         return NO;
     }
-    
-    fileLength = sb.st_size;
+
+    if (!sb.st_size && (S_ISCHR(sb.st_mode) || S_ISBLK(sb.st_mode))) {
+        uint64_t blockCount;
+        
+        if (ioctl(fileDescriptor, DKIOCGETBLOCKSIZE, &blockSize) < 0
+            || ioctl(fileDescriptor, DKIOCGETBLOCKCOUNT, &blockCount) < 0) {
+            int err = errno;
+            returnReadError(error);
+            NSLog(@"Unable to get block size/count file %@. %s.", path, strerror(err));
+            return NO;
+        }
+        
+        fileLength = blockSize * blockCount;
+    }
+    else {
+        fileLength = sb.st_size;
+    }
+
     fileMode = sb.st_mode;
     inode = sb.st_ino;
     device = sb.st_dev;
@@ -229,10 +260,48 @@ static BOOL returnFTruncateError(NSError **error) {
     HFASSERT(pos <= fileLength);
     HFASSERT(length <= fileLength - pos);
     if (fileDescriptor < 0) [NSException raise:NSInvalidArgumentException format:@"File has already been closed."];
+
+	NSUInteger lastBlockLen = 0;
+	void *tempBuf = NULL;
+
+	if (S_ISCHR(fileMode) && blockSize) {
+		// We have to make sure all accesses are aligned
+		void *tempBuf = NULL;
+		unsigned prePad = (unsigned)(pos % blockSize);
+		if (prePad) {
+			// Deal with the first unaligned block
+			tempBuf = malloc(blockSize);
+			ssize_t result = pread(fileDescriptor, tempBuf, blockSize, pos - prePad);
+			if (result != (ssize_t)blockSize) {
+				[NSException raise:NSGenericException format:@"Read result: %d expected: %u error: %s", result, blockSize, strerror(errno)];
+			}
+			NSUInteger toCopy = blockSize - prePad;
+			if (toCopy > length)
+				toCopy = length;
+			memcpy(buff, tempBuf + prePad, toCopy);
+			length -= toCopy;
+			pos += toCopy;
+			buff += toCopy;
+		}
+		lastBlockLen = length % blockSize;
+		length -= lastBlockLen;
+	}
+
     ssize_t result = pread(fileDescriptor, buff, length, pos);
     if (result != (long)length) {
         [NSException raise:NSGenericException format:@"Read result: %d expected: %u error: %s", result, length, strerror(errno)];
-    }    
+    }
+
+	if (lastBlockLen) {
+		if (!tempBuf)
+			tempBuf = malloc(blockSize);
+		result = pread(fileDescriptor, tempBuf, blockSize, pos + length);
+		if (result != (ssize_t)blockSize) {
+			[NSException raise:NSGenericException format:@"Read result: %d expected: %u error: %s", result, blockSize, strerror(errno)];
+		}
+		memcpy(buff + length, tempBuf, lastBlockLen);
+	}
+	free (tempBuf);
 }
 
 - (int)writeBytes:(const unsigned char *)buff length:(NSUInteger)length to:(unsigned long long)offset {
@@ -243,12 +312,66 @@ static BOOL returnFTruncateError(NSError **error) {
     HFASSERT(offset <= fileLength);
     HFASSERT(length <= LONG_MAX);
     HFASSERT(offset <= LLONG_MAX);
-    int err = 0;
+
+	NSUInteger lastBlockLen = 0;
+	void *tempBuf = NULL;
+	
+	if (S_ISCHR(fileMode) && blockSize) {
+		// We have to make sure all accesses are aligned
+		void *tempBuf = NULL;
+		unsigned prePad = (unsigned)(offset % blockSize);
+		if (prePad) {
+			// Deal with the first unaligned block
+			tempBuf = malloc(blockSize);
+			ssize_t result = pread(fileDescriptor, tempBuf, blockSize, offset - prePad);
+			if (result != (ssize_t)blockSize) {
+				[NSException raise:NSGenericException format:@"Read result: %d expected: %u error: %s", result, blockSize, strerror(errno)];
+			}
+			NSUInteger toCopy = blockSize - prePad;
+			if (toCopy > length)
+				toCopy = length;
+			memcpy(tempBuf + prePad, buff, toCopy);
+			
+			result = pwrite(fileDescriptor, tempBuf, blockSize, offset - prePad);
+			if (result < 0)
+				return errno;
+			HFASSERT(result == (ssize_t)blockSize);
+
+			if (!(length -= toCopy))
+                return 0;
+
+			offset += toCopy;
+			buff += toCopy;
+		}
+		lastBlockLen = length % blockSize;
+		length -= lastBlockLen;
+	}
+
     ssize_t result = pwrite(fileDescriptor, buff, (size_t)length, (off_t)offset);
-    HFASSERT(result == -1 || result == (ssize_t)length);
-    if (result < 0) err = errno;
-    if (result == 0) fileLength = MAX(fileLength, HFSum(length, offset));
-    return err;
+    if (result < 0)
+		return errno;
+    HFASSERT(result == (ssize_t)length);
+
+	if (lastBlockLen) {
+		offset += length;
+		buff += length;
+
+		if (!tempBuf)
+			tempBuf = malloc(blockSize);
+
+		result = pread(fileDescriptor, tempBuf, blockSize, offset);
+		if (result != (ssize_t)blockSize) {
+			[NSException raise:NSGenericException format:@"Read result: %d expected: %u error: %s", result, blockSize, strerror(errno)];
+		}
+		memcpy(tempBuf, buff, lastBlockLen);
+
+		result = pwrite(fileDescriptor, tempBuf, blockSize, offset);
+		if (result < 0)
+			return errno;
+		HFASSERT(result == (ssize_t)blockSize);
+	}
+
+	return 0;
 }
 
 - (void)close {
@@ -277,84 +400,3 @@ static BOOL returnFTruncateError(NSError **error) {
 }
 
 @end
-
-#ifndef HF_NO_PRIVILEGED_FILE_OPERATIONS
-#import "HFPrivilegedHelperConnection.h"
-@implementation HFPrivilegedFileReference
-
-- (size_t)readAlignment {
-    /* Returns the required alignment and block multiple for reads, or 1 if there is no required alignment.  This is mostly just a guess. */
-    if (S_ISBLK(fileMode) || S_ISCHR(fileMode)) {
-        return 512;
-    }
-    else {
-        return 1;
-    }
-}
-
-+ (HFPrivilegedHelperConnection *)connection {
-    return [HFPrivilegedHelperConnection sharedConnection];
-}
-
-- (HFPrivilegedHelperConnection *)connection {
-    return [[self class] connection];
-}
-
-+ (BOOL)preflightAuthenticationReturningError:(NSError **)error {
-    return [[self connection] launchAndConnect:error];
-}
-
-- (BOOL)initSharedWithPath:(NSString *)path error:(NSError **)error {
-    int result;
-    REQUIRE_NOT_NULL(path);
-    const char *p = [path fileSystemRepresentation];
-    int localErrno = 0;
-    if (! [[self connection] openFileAtPath:p writable:isWritable result:&fileDescriptor resultError:&localErrno fileSize:&fileLength fileType:&fileMode inode:&inode device:&device]) {
-        returnFortunateSonError(error);
-        return NO;
-    }
-    if (fileDescriptor < 0) {
-        errno = localErrno;
-        returnReadError(error);
-        return NO;
-    }
-    return YES;
-}
-
-- (void)close {
-    if (fileDescriptor >= 0) {
-        [[self connection] closeFile:fileDescriptor];
-        fileDescriptor = -1;
-    }    
-}
-
-- (void)readBytes:(unsigned char *)buff length:(NSUInteger)length from:(unsigned long long)pos {
-    if (! length) return;
-    REQUIRE_NOT_NULL(buff);
-    HFASSERT(length <= LONG_MAX);
-    HFASSERT(pos <= fileLength);
-    HFASSERT(length <= fileLength - pos);
-    if (fileDescriptor < 0) [NSException raise:NSInvalidArgumentException format:@"File has already been closed."];
-    
-    /* Expand to multiples of readAlignment */
-    NSUInteger alignment = [self readAlignment];
-    HFASSERT(alignment > 0);
-    
-    /* The most we can read at once is UINT32_MAX (clipped to our alignment).  In the very unlikely case that length is larger than that, we loop. */
-    NSUInteger remainingToRead = length;
-    while (remainingToRead > 0) {
-        uint32_t amountToRead = (uint32_t)MIN(remainingToRead, (UINT32_MAX / alignment) * alignment);
-        uint32_t amountRead = amountToRead;
-        int err = 0;
-        [[self connection] readFile:fileDescriptor offset:pos alignment:(unsigned int)alignment length:&amountRead result:buff error:&err];
-        if (amountRead != amountToRead) {
-            [NSException raise:NSGenericException format:@"Read result: %u expected: %u error: %s", amountRead, amountToRead, strerror(err)];
-        }
-        buff += amountRead;
-        pos = HFSum(pos, amountRead);
-        remainingToRead -= amountRead;
-    }
-}
-
-@end
-#endif

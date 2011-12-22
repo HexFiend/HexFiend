@@ -21,17 +21,6 @@ static inline Class preferredByteArrayClass(void) {
     NSError *localError = nil;
     NSString *path = [absoluteURL path];
     HFFileReference *fileReference = [[[HFFileReference alloc] initWithPath:path error:&localError] autorelease];
-    if (localError && [[localError domain] isEqualToString:NSCocoaErrorDomain] && [localError code] == NSFileReadNoPermissionError) {
-        /* Try again with a privileged file reference */
-#ifndef HF_NO_PRIVILEGED_FILE_OPERATIONS
-        
-        localError = nil;
-        BOOL canConnect = [HFPrivilegedFileReference preflightAuthenticationReturningError:&localError];
-        if (canConnect) {   
-            fileReference = [[[HFPrivilegedFileReference alloc] initWithPath:path error:&localError] autorelease];
-        }
-#endif
-    }
     if (fileReference == nil) {
         if (outError) *outError = localError;
     }
@@ -41,6 +30,11 @@ static inline Class preferredByteArrayClass(void) {
         [byteArray insertByteSlice:byteSlice inRange:HFRangeMake(0, 0)];
         [controller setByteArray:byteArray];
         result = YES;
+
+		// If the file is > 64 MB in size, default to starting in overwrite mode
+		if ([fileReference length] > 64 * 1024 * 1024)
+			[controller setInOverwriteMode:YES];
+			
     }
     return result;
 }
