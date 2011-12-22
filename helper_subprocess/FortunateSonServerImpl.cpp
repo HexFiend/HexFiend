@@ -22,29 +22,12 @@ extern "C" INDENT_HIDDEN_FROM_XCODE
 #include <mach/mach_traps.h>
 #include <mach/mach_error.h>
 #include <mach/machine.h>
+#include "fileport.h"
+#include <Security/Authorization.h>
 
 #define MAX_FD_VALUE 1024
 
-static char sOpenFiles[MAX_FD_VALUE / CHAR_BIT];
-
-static unsigned get_bit_value(int index) {
-    if (index < 0 || index >= MAX_FD_VALUE) return 0;
-    unsigned byte = index / CHAR_BIT;
-    unsigned bit = index % CHAR_BIT;
-    return !! (sOpenFiles[byte] & (1 << bit));
-}
-
-static void set_bit_value(int index, unsigned val) {        
-    assert(val >= 0 && val < MAX_FD_VALUE);
-    unsigned byte = index / CHAR_BIT;
-    unsigned bit = index % CHAR_BIT;
-    if (val) {
-        sOpenFiles[byte] |= (1 << bit);
-    }
-    else {
-        sOpenFiles[byte] &= ~(1 << bit);
-    }
-}
+static AuthorizationRef authRef;
 
 static void print_error(const char *fmt, ...) __attribute__ ((format (printf, 1, 2)));
 static void print_error(const char *fmt, ...) {
@@ -83,105 +66,56 @@ kern_return_t _FortunateSonSayHey(mach_port_t server, FilePath path, int *result
     return KERN_SUCCESS;
 }
 
-kern_return_t _FortunateSonOpenFile(mach_port_t server, FilePath path, int writable, int *result, int *result_error, uint64_t *file_size, uint16_t *file_type, uint64_t *inode, int *device) {
-    if (! result || ! result_error) {
-        print_error("Cannot pass NULL pointers to OpenFile()");
-        return KERN_SUCCESS;
-    }
-    writable = 0;
-    printf("Opening %s\n", path);    
-    int flags = (writable ? O_RDONLY : O_RDWR);
-    errno = 0;
-    int fd = open(path, flags);
-    if (fd == -1) {
-        *result_error = errno;
-    }
-    int oldErr = errno;
-    printf("Seeking: %d - %lld\n", fd, lseek(fd, 100, SEEK_END));
-    errno = oldErr;
-    
-    if (fd >= 0) {
-        fcntl(fd, F_NOCACHE, 0); //disable caching
-        set_bit_value(fd, 1);
-        *result_error = 0;
-    }
-    
-    struct stat sb = {0};
-    if (fd >= 0) {
-	int statresult = fstat(fd, &sb);
-	if (statresult != 0) {
-	    *result_error = errno;
-	    close(fd);
-	    fd = -1;
+kern_return_t _FortunateSonOpenFile(mach_port_t server, FilePath path, int writable, fileport_t *fd_port, int *err) {
+	char *right_name;
+	asprintf(&right_name, "sys.openfile.%s.%s",
+			 writable ? "readwritecreate" : "readonly",
+			 path);
+
+	AuthorizationItem right = {
+		.name = right_name
+	};
+	
+	AuthorizationRights rights = {
+		.count = 1,
+		.items = &right
+	};
+
+	OSStatus status = AuthorizationCopyRights(authRef, &rights, NULL, kAuthorizationFlagExtendRights | kAuthorizationFlagInteractionAllowed, NULL);
+	free (right_name);
+
+	if (status == errAuthorizationCanceled) {
+		*fd_port = MACH_PORT_NULL;
+		*err = ECANCELED;
+		return KERN_SUCCESS;
 	}
-    }
-    
-    if (fd >= 0) {
-	if (S_ISBLK(sb.st_mode) || S_ISCHR(sb.st_mode)) {
-	    /* Block and character files don't return their size in the stat struct.  We can get it with some ioctls. There's a ton more ioctls we should be handling here, like DKIOCGETMAXBLOCKCOUNTREAD; we don't get these right yet. */
-	    uint32_t blockSize = 0;
-	    uint64_t blockCount = 0;
-	    int bsderr = 0;
-	    bsderr = bsderr || ioctl(fd, DKIOCGETBLOCKSIZE, &blockSize);
-	    bsderr = bsderr || ioctl(fd, DKIOCGETBLOCKCOUNT, &blockCount);
-	    if (bsderr) {
-		*result_error = errno;
-		close(fd);
-		fd = -1;
-	    }
-	    *file_size = blockSize * (uint64_t)blockCount;
-	    printf("SIZE: %llu\n", *file_size);
+	if (status) {
+		*fd_port = MACH_PORT_NULL;
+		*err = EACCES;
+		return KERN_SUCCESS;
 	}
-	else {
-	    *file_size = sb.st_size;
+
+	int fd = open(path, writable ? O_RDWR | O_CREAT : O_RDONLY);
+
+	if (fd < 0) {
+		*fd_port = MACH_PORT_NULL;
+		*err = errno;
+		return KERN_SUCCESS;
 	}
 	
-	*file_type = sb.st_mode;
-	*inode = sb.st_ino;
-	*device = sb.st_dev;
-    }
-    *result = fd;
-    return KERN_SUCCESS;
-}
+	if (fileport_makeport(fd, fd_port)) {
+		*fd_port = MACH_PORT_NULL;
+		*err = errno;
+		perror("fileport_makeport failed");
+		close(fd);
+		return KERN_SUCCESS;
+	}
 
-kern_return_t _FortunateSonReadFile(mach_port_t server, int fd, FileOffset_t offset, uint32_t *requestedLength, VarData_t *result, mach_msg_type_number_t *resultCnt, int *result_error) {
-    if (! result || ! result_error || ! resultCnt || ! requestedLength) {
-        print_error("Cannot pass NULL pointers to ReadFile()");
-        return KERN_SUCCESS;
-    }
-    if (! get_bit_value(fd)) {
-        print_error("File %d is not open", fd);
-        return KERN_SUCCESS;
-    }
+	if (close(fd))
+		perror("close failed");
+	*err = 0;
 
-    vm_size_t localSize = *requestedLength;
-    void *localAddress = allocate_mach_memory(&localSize);
-    
-    int localError = 0;
-    ssize_t amountRead = pread(fd, localAddress, *requestedLength, offset);
-    if (amountRead == -1) {
-	localError = errno;
-	free_mach_memory(localAddress, localSize);
-	localAddress = 0;
-	localSize = 0;
-    }
-    
-    *result = (VarData_t)localAddress;
-    *resultCnt = localSize;
-    *requestedLength = (uint32_t)amountRead;
-    *result_error = localError;
-    
-    return KERN_SUCCESS;
-}
-
-kern_return_t _FortunateSonCloseFile(mach_port_t server, int fd) {
-    if (! get_bit_value(fd)) {
-        print_error("File %d is not open", fd);
-        return KERN_SUCCESS;
-    }
-    close(fd);
-    set_bit_value(fd, 0);
-    return KERN_SUCCESS;
+	return KERN_SUCCESS;
 }
 
 #if 0
@@ -352,6 +286,11 @@ kern_return_t _FortunateSonProcessInfo(mach_port_t server, int pid, uint8_t *out
     
     *outBitSize = bitSize;
     return KERN_SUCCESS;
+}
+
+kern_return_t _FortunateSonSetAuthorization(mach_port_t server, AuthorizationExternalForm authExt) {
+	AuthorizationCreateFromExternalForm(&authExt, &authRef);
+	return KERN_SUCCESS;
 }
 
 //extern C

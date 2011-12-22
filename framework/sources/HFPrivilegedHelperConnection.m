@@ -13,6 +13,8 @@
 #import <ServiceManagement/ServiceManagement.h>
 #import <Security/Authorization.h>
 
+#include "fileport.h"
+
 static HFPrivilegedHelperConnection *sSharedConnection;
 
 @implementation HFPrivilegedHelperConnection
@@ -88,78 +90,34 @@ static NSString *read_line(FILE *file) {
     return YES;
 }
 
-- (BOOL)openFileAtPath:(const char *)path writable:(BOOL)writable result:(int *)outFD resultError:(int *)outErrno fileSize:(unsigned long long *)outFileSize fileType:(uint16_t *)outFileType inode:(unsigned long long *)outInode device:(int *)outDevice {
+- (BOOL)openFileAtPath:(const char *)path writable:(BOOL)writable fileDescriptor:(int *)outFD error:(NSError **)error
+{
     if (! [self connectIfNecessary]) return NO;
-    HFASSERT(outFD && outErrno && outFileSize && outFileType && outInode && outDevice);
-    kern_return_t kr = _GratefulFatherOpenFile([childReceiveMachPort machPort], path, writable, outFD, outErrno, outFileSize, outFileType, outInode, outDevice);
+	
+	int err;
+	fileport_t fd_port;
+
+    kern_return_t kr = _GratefulFatherOpenFile([childReceiveMachPort machPort], path, writable, &fd_port, &err);
+
     if (kr != KERN_SUCCESS) {
         fprintf(stdout, "_GratefulFatherOpenFile failed with mach error: %s\n", (char*) mach_error_string(kr));
         return NO;
     }
-    return YES;
-}
 
-- (BOOL)closeFile:(int)fd {
-    HFASSERT(fd > 0);
-    if (! [self connectIfNecessary]) return NO;
-    kern_return_t kr = _GratefulFatherCloseFile([childReceiveMachPort machPort], fd);
-    if (kr != KERN_SUCCESS) {
-        fprintf(stdout, "_GratefulFatherCloseFile failed with mach error: %s\n", (char*) mach_error_string(kr));
-        return NO;
-    }    
-    return YES;
-}
+	if (fd_port == MACH_PORT_NULL) {
+		if (error)
+			*error = [NSError errorWithDomain:NSPOSIXErrorDomain
+										 code:err
+									 userInfo:nil];
+		return NO;
+	}
+	
+	if (outFD)
+		*outFD = fileport_makefd(fd_port);
 
-- (BOOL)readFile:(int)fd offset:(unsigned long long)requestedOffset alignment:(uint32_t)alignment length:(uint32_t *)inoutLength result:(unsigned char *)result error:(int *)outErr {
-    BOOL log = NO;
-    HFASSERT(inoutLength);
-    HFASSERT(alignment > 0);
-    if (! *inoutLength) return YES;
-    if (! [self connectIfNecessary]) return NO;
-    unsigned char * buffer = NULL;
-    const uint32_t requestedLength = *inoutLength;    
-    
-    /* Expand to multiples of alignment */
-    unsigned long long end = HFSum(requestedOffset, requestedLength);
-    unsigned long long alignedStart = requestedOffset - requestedOffset % alignment, alignedEnd = HFRoundUpToMultiple(end, alignment);
-    HFASSERT(alignedEnd > alignedStart);
-    HFASSERT(alignedEnd - alignedStart >= requestedLength);
-    HFRange alignedRange = HFRangeMake(alignedStart, alignedEnd - alignedStart);
-    HFASSERT(alignedRange.length < UINT_MAX); //there's no reason for this to necessarily be true - we just require the app to not pass us buffers that are so close to UINT_MAX that they overflow when aligned
-    
-    uint32_t alignedLength = (uint32_t)alignedRange.length;
-    mach_msg_type_number_t bufferAllocatedSize = 0;
-    if (log) NSLog(@"Issuing read %llu / %u", alignedRange.location, alignedLength);
-    kern_return_t kr = _GratefulFatherReadFile([childReceiveMachPort machPort], fd, alignedRange.location, &alignedLength, &buffer, &bufferAllocatedSize, outErr);
-    if (kr != KERN_SUCCESS) {
-        fprintf(stdout, "_GratefulFatherReadFile failed with mach error: %s\n", (char*) mach_error_string(kr));
-        return NO;
-    }
-    if (! buffer) return NO; // paranoia
-    
-    
-    /* Buffer now contains mach allocated memory that we own.  Copy it over to the result, handling the alignment, and then free it. */
-    uint32_t realAmountCopied = alignedLength;
-    NSUInteger prefix = ll2l(requestedOffset - alignedRange.location);
-    unsigned long long realBufferEnd = HFSum(alignedRange.location, realAmountCopied);
-    if (realBufferEnd <= requestedOffset) {
-        /* The only stuff that got copied was in the prefix */
-        *inoutLength = 0;
-    }
-    else {
-        /* Add alignedRange.location to amountCopied to get the true end of the buffer, and subtract pos to get the range from position to the end of the buffer, then take the smaller of that with the amount desired to get the amount to copy to the buffer. */
-        *inoutLength = (uint32_t)MIN(realBufferEnd - requestedOffset, requestedLength);
-        memcpy(result, buffer + prefix, *inoutLength);
-    }
-    
-    if (buffer) {
-        kr = vm_deallocate(mach_task_self(), (vm_address_t)buffer, bufferAllocatedSize);
-        if (kr != KERN_SUCCESS) {
-            fprintf(stdout, "failed to vm_deallocate(%p)\nmach error: %s\n", buffer, (char *)mach_error_string(kr));
-        }
-    }
-    
-    return YES;
+	mach_port_deallocate(mach_task_self(), fd_port);
+
+    return YES;    
 }
 
 - (BOOL)getInfo:(struct HFProcessInfo_t *)outInfo forProcess:(pid_t)process {
@@ -246,9 +204,6 @@ static NSString *read_line(FILE *file) {
         }
 	}
     
-    /* Done with any AuthRef */
-    if (authRef) AuthorizationFree(authRef, kAuthorizationFlagDestroyRights);
-	
     /* Get the port for our helper as provided by launchd */
     NSMachPort *helperLaunchdPort = nil;
     if (! err) {
@@ -266,8 +221,19 @@ static NSString *read_line(FILE *file) {
     if (! err) err = send_port([helperLaunchdPort machPort], ourSendPort, MACH_MSG_TYPE_MOVE_RECEIVE);
     
     /* Now we have the ability to send on this port, and only the privileged helper can receive on it. We are responsible for cleaning up the send right we created. */
-    if (! err) childReceiveMachPort = [[NSMachPort alloc] initWithMachPort:ourSendPort options:NSMachPortDeallocateSendRight];
-    
+    if (! err) {
+		childReceiveMachPort = [[NSMachPort alloc] initWithMachPort:ourSendPort options:NSMachPortDeallocateSendRight];
+	
+		/* Pass over our authorization reference. */
+		AuthorizationExternalForm authExt;
+		AuthorizationMakeExternalForm(authRef, &authExt);
+
+		_GratefulFatherSetAuthorization([childReceiveMachPort machPort], authExt);
+	}
+	
+    /* Done with any AuthRef */
+    if (authRef) AuthorizationFree(authRef, kAuthorizationFlagDestroyRights);
+
     /* Done with helperLaunchdPort */
     [helperLaunchdPort invalidate];
 	return ! err;
