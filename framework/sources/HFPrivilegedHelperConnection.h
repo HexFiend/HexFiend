@@ -26,11 +26,6 @@ struct HFProcessInfo_t {
 
 - (BOOL)getInfo:(struct HFProcessInfo_t *)outInfo forProcess:(pid_t)process;
 
-- (BOOL)openFileAtPath:(const char *)path writable:(BOOL)writable result:(int *)outFD resultError:(int *)outErrno fileSize:(unsigned long long *)outFileSize fileType:(uint16_t *)outFileType inode:(unsigned long long *)outInode device:(int *)outDevice;
-
-/* Reads the file 'fd' at offset 'offset' into the given buffer 'result' with the given length and given alignment.  Returns how many bytes were read in that length. */
-- (BOOL)readFile:(int)fd offset:(unsigned long long)offset alignment:(uint32_t)alignment length:(uint32_t *)inoutLength result:(unsigned char *)result error:(int *)outErr;
-
-- (BOOL)closeFile:(int)fd;
+- (BOOL)openFileAtPath:(const char *)path writable:(BOOL)writable fileDescriptor:(int *)outFD error:(NSError **)error;
 
 @end

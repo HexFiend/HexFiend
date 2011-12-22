@@ -14,6 +14,8 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <xpc/connection.h>
+#include <syslog.h>
 
 @implementation AppDelegate
 
@@ -37,7 +39,7 @@
     [extendForwardsItem setKeyEquivalentModifierMask:[extendForwardsItem keyEquivalentModifierMask] | NSShiftKeyMask];
     [extendBackwardsItem setKeyEquivalentModifierMask:[extendBackwardsItem keyEquivalentModifierMask] | NSShiftKeyMask];
     [extendForwardsItem setKeyEquivalent:@"]"];
-    [extendBackwardsItem setKeyEquivalent:@"["];
+    [extendBackwardsItem setKeyEquivalent:@"["];	
 }
 
 static NSComparisonResult compareFontDisplayNames(NSFont *a, NSFont *b, void *unused) {

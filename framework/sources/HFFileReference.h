@@ -12,7 +12,7 @@
     
     HFFileReference encapsulates a reference to an open file.  Multiple instances of HFFileByteSlice may share an HFFileReference, so that the file only needs to be opened once.
  
-    HFFileReference is an abstract class.  You must instantiate either HFUnprivilegedFileReference or HFPrivilegedFileReference.
+    HFFileReference is an abstract class.  You must instantiate HFConcreteFileReference.
     
     All HFFileReferences use non-caching IO (F_NOCACHE is set).
 */
@@ -24,6 +24,7 @@
     unsigned long long fileLength;
     mode_t fileMode;
     BOOL isWritable;
+    uint32_t blockSize;
 }
 
 
@@ -62,20 +63,8 @@
 
 @end
 
-/*! @class HFUnprivilegedFileReference
+/*! @class HFConcreteFileReference
  @brief A reference to an open file that can be read (and possibly written) using normal C functions
 */
-@interface HFUnprivilegedFileReference : HFFileReference
+@interface HFConcreteFileReference : HFFileReference
 @end
-
-#ifndef HF_NO_PRIVILEGED_FILE_OPERATIONS
-/*! @class HFPrivilegedFileReference
- @brief A reference to an open file that can be read (and possibly written) using our privileged helper process
- */
-@interface HFPrivilegedFileReference : HFFileReference
-
-/*! Attempts to authenticate, returning an error on failure. */
-+ (BOOL)preflightAuthenticationReturningError:(NSError **)error;
-
-@end
-#endif

@@ -4,6 +4,8 @@
 #include <mach/mach_types.defs>
 
 import "FortunateSonIPCTypes.h";
+import "fileport.h";
+import "Security/Authorization.h";
 
 subsystem HexFiendHelper 1500;
 
@@ -17,6 +19,8 @@ type VMRegionAttributes = uint32_t;
 type FileOffset_t = uint64_t;
 
 type VarData_t = ^ array [] of uint8_t;
+type fileport_t = MACH_MSG_TYPE_MOVE_SEND;
+type AuthorizationExternalForm = struct [32] of uint8_t;
 
 routine SayHey(
     server: mach_port_t;
@@ -24,27 +28,11 @@ routine SayHey(
     out result : int);
 
 routine OpenFile(
-    server: mach_port_t;
-    in path: FilePath;
-    in writable: int;
-    out result: int;
-    out result_error: int;
-    out file_size: uint64_t;
-    out file_type: uint16_t;
-    out inode: uint64_t;
-    out device: int);
-    
-routine CloseFile(
-    server: mach_port_t;
-    in fd: int);
-
-routine ReadFile(
-    server: mach_port_t;
-    in fd: int;
-    in offset: FileOffset_t;
-    inout requestedLength: uint32_t;
-    out result: VarData_t;
-    out result_error: int);
+	server: mach_port_t;
+	in path: FilePath;
+	in writable: int;
+	out fd: fileport_t;
+	out err: int);
 
 routine ProcessInfo(
     server: mach_port_t;
@@ -65,4 +53,9 @@ routine AttributesForAddress(
     in offset: mach_vm_address_t;
     out result: VMRegionAttributes;
     out applicableLength: mach_vm_size_t
+);
+
+routine SetAuthorization(
+	server: mach_port_t;
+	in auth: AuthorizationExternalForm
 );

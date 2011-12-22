@@ -379,7 +379,7 @@ BOOL HFStringEncodingIsSupersetOfASCII(NSStringEncoding encoding);
 /*! Returns the "granularity" of an encoding, in bytes.  ASCII is 1, UTF-16 is 2, etc.  Variable width encodings return the smallest (e.g. Shift-JIS returns 1). */
 uint8_t HFStringEncodingCharacterLength(NSStringEncoding encoding);
 
-/*! Converts an unsigned long long to NSUInteger.  The unsigned long long should be no more than ULLONG_MAX. */
+/*! Converts an unsigned long long to NSUInteger.  The unsigned long long should be no more than ULONG_MAX. */
 static inline unsigned long ll2l(unsigned long long val) { assert(val <= ULONG_MAX); return (unsigned long)val; }
 
 /*! Returns an unsigned long long, which must be no more than ULLONG_MAX, as an unsigned long. */
