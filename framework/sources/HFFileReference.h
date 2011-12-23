@@ -25,8 +25,12 @@
     mode_t fileMode;
     BOOL isWritable;
     uint32_t blockSize;
+    BOOL isPrivileged;
+    BOOL isFixedLength;
 }
 
+@property (readonly) BOOL isPrivileged;
+@property (readonly) BOOL isFixedLength;
 
 /*! Open a file for reading and writing at the given path.  The permissions mode of any newly created file is 0744.  Returns nil if the file could not be opened, in which case the error parameter (if not nil) will be set. */
 - initWritableWithPath:(NSString *)path error:(NSError **)error;

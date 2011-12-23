@@ -409,7 +409,7 @@
 - (BOOL)canCut {
     /* We can cut if we are editable, we have at least one byte selected, and we are not in overwrite mode */
     HFController *controller = [self controller];
-    if ([controller inOverwriteMode]) return NO;
+    if ([controller editMode] != HFInsertMode) return NO;
     if (! [controller editable]) return NO;
     
     FOREACH(HFRangeWrapper *, rangeWrapper, [controller selectedContentsRanges]) {
