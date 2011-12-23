@@ -31,12 +31,23 @@ static inline Class preferredByteArrayClass(void) {
         [controller setByteArray:byteArray];
         result = YES;
 
-		// If the file is > 64 MB in size, default to starting in overwrite mode
-		if ([fileReference length] > 64 * 1024 * 1024)
-			[controller setInOverwriteMode:YES];
-			
+        if ([fileReference isPrivileged])
+            [controller setEditMode:HFReadOnlyMode];
+        else {
+            // If the file is > 64 MB in size, default to starting in overwrite mode
+            if ([fileReference length] > 64 * 1024 * 1024)
+                [controller setEditMode:HFOverwriteMode];
+        }
     }
+
+    requiresOverwriteMode = [fileReference isFixedLength];
+
     return result;
+}
+
+- (BOOL)requiresOverwriteMode
+{
+    return requiresOverwriteMode;
 }
 
 @end

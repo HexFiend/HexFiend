@@ -14,8 +14,6 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <xpc/connection.h>
-#include <syslog.h>
 
 @implementation AppDelegate
 
