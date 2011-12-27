@@ -75,6 +75,16 @@ enum
 };
 typedef NSInteger HFControllerMovementGranularity;
 
+/*! @enum HFEditMode
+ 
+HFEditMode enumerates the different edit modes that a document might be in.
+ */
+typedef enum {
+    HFInsertMode,
+    HFOverwriteMode,
+    HFReadOnlyMode,
+} HFEditMode;
+
 /*! @class HFController
 @brief A central class that acts as the controller layer for HexFiend.framework
 
@@ -122,7 +132,7 @@ You create an HFController via <tt>[[HFController alloc] init]</tt>.  After that
     
     struct  {
         unsigned antialias:1;
-        unsigned overwriteMode:1;
+        HFEditMode editMode:2;
         unsigned editable:1;
         unsigned selectable:1;
         unsigned selectionInProgress:1;
@@ -240,18 +250,13 @@ You create an HFController via <tt>[[HFController alloc] init]</tt>.  After that
 - (NSUInteger)bytesPerColumn;
 //@}
 
-/*! @name Overwrite mode
-   Determines whether text insertion overwrites subsequent text or not. */
+/*! @name Edit Mode
+   Determines what mode we're in, read-only, overwrite or insert. */
 //@{
 
-/*! Determines whether this HFController is in overwrite mode or not. */
-- (BOOL)inOverwriteMode;
+- (HFEditMode)editMode;
 
-/*! Sets whether we this HFController is in overwrite mode or not. */
-- (void)setInOverwriteMode:(BOOL)val;
-
-/*! Returns YES if we must be in overwrite mode (because our backing data cannot have its size changed) */
-- (BOOL)requiresOverwriteMode;
+- (void)setEditMode:(HFEditMode)val;
 
 //@}
 

@@ -111,6 +111,8 @@ static BOOL returnFTruncateError(NSError **error) {
 
 @implementation HFFileReference
 
+@synthesize isPrivileged, isFixedLength;
+
 - (void)close { UNIMPLEMENTED_VOID(); }
 - (void)readBytes:(unsigned char *)buff length:(NSUInteger)length from:(unsigned long long)offset {USE(buff); USE(length); USE(offset); UNIMPLEMENTED_VOID(); }
 - (int)writeBytes:(const unsigned char *)buff length:(NSUInteger)length to:(unsigned long long)offset {USE(buff); USE(length); USE(offset);  UNIMPLEMENTED(); }
@@ -204,7 +206,9 @@ static BOOL returnFTruncateError(NSError **error) {
 
 #ifndef HF_NO_PRIVILEGED_FILE_OPERATIONS
 	if (fileDescriptor < 0 && errno == EACCES) {
-		if (![[HFPrivilegedHelperConnection sharedConnection] openFileAtPath:p writable:isWritable fileDescriptor:&fileDescriptor error:error]) {
+		if ([[HFPrivilegedHelperConnection sharedConnection] openFileAtPath:p writable:isWritable fileDescriptor:&fileDescriptor error:error]) {
+            isPrivileged = YES;
+        } else {
 			fileDescriptor = -1; 
 			errno = EACCES;
 		}
@@ -231,7 +235,7 @@ static BOOL returnFTruncateError(NSError **error) {
 
     if (!sb.st_size && (S_ISCHR(sb.st_mode) || S_ISBLK(sb.st_mode))) {
         uint64_t blockCount;
-        
+
         if (ioctl(fileDescriptor, DKIOCGETBLOCKSIZE, &blockSize) < 0
             || ioctl(fileDescriptor, DKIOCGETBLOCKCOUNT, &blockCount) < 0) {
             int err = errno;
@@ -241,6 +245,7 @@ static BOOL returnFTruncateError(NSError **error) {
         }
         
         fileLength = blockSize * blockCount;
+        isFixedLength = YES;
     }
     else {
         fileLength = sb.st_size;
@@ -370,6 +375,7 @@ static BOOL returnFTruncateError(NSError **error) {
 			return errno;
 		HFASSERT(result == (ssize_t)blockSize);
 	}
+    free(tempBuf);
 
 	return 0;
 }

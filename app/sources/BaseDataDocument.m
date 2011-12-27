@@ -266,11 +266,18 @@ static inline Class preferredByteArrayClass(void) {
 /* Return a format string that can take one argument which is the document name. */
 - (NSString *)documentWindowTitleFormatString {
     NSMutableString *result = [NSMutableString stringWithString:@"%@"]; //format specifier that is replaced with document name
-    
-    if ([controller inOverwriteMode]) {
-        [result appendString:@" **OVERWRITE MODE**"];
+
+    switch ([controller editMode]) {
+    case HFInsertMode:
+        break;
+    case HFOverwriteMode:
+        [result appendString:NSLocalizedString(@" **OVERWRITE MODE**", @"Title Suffix")];
+        break;
+    case HFReadOnlyMode:
+        [result appendString:NSLocalizedString(@" **READ-ONLY MODE**", @"Title Suffix")];
+        break;
     }
-    
+
     BOOL hasAppendedProgressMarker = NO;
     NSArray *runningViews = [self runningOperationViews];
     FOREACH(HFDocumentOperationView *, view, runningViews) {
@@ -789,10 +796,18 @@ static inline Class preferredByteArrayClass(void) {
         [item setState:[controller shouldAntialias]];
         return YES;		
     }
-    else if (action == @selector(toggleOverwriteMode:)) {
-        [item setState:[controller inOverwriteMode]];
+    else if (action == @selector(setOverwriteMode:)) {
+        [item setState:[controller editMode] == HFOverwriteMode];
         /* We can toggle overwrite mode only if the controller doesn't require that it be on */
-        return ! [controller requiresOverwriteMode];
+        return YES;
+    }
+    else if (action == @selector(setInsertMode:)) {
+        [item setState:[controller editMode] == HFInsertMode];
+        return ![self requiresOverwriteMode];
+    }
+    else if (action == @selector(setReadOnlyMode:)) {
+        [item setState:[controller editMode] == HFReadOnlyMode];
+        return YES;
     }
     else if (action == @selector(modifyByteGrouping:)) {
         [item setState:(NSUInteger)[item tag] == [controller bytesPerColumn]];
@@ -814,7 +829,13 @@ static inline Class preferredByteArrayClass(void) {
         [item setTitle:newTitle];
         return selectedBookmark != NSNotFound;
     }
-    else return [super validateMenuItem:item];
+    else if (action == @selector(saveDocument:)) {
+        if ([controller editMode] == HFReadOnlyMode)
+            return NO;
+        // Fall through
+    }
+
+    return [super validateMenuItem:item];
 }
 
 - (void)finishedAnimation {
@@ -1603,10 +1624,22 @@ cancelled:;
     [[NSUserDefaults standardUserDefaults] setInteger:newBytesPerColumn forKey:@"BytesPerColumn"];
 }
 
-- (IBAction)toggleOverwriteMode:sender {
+- (IBAction)setOverwriteMode:sender {
     USE(sender);
-    [controller setInOverwriteMode:![controller inOverwriteMode]];
+    [controller setEditMode:HFOverwriteMode];
     [self updateDocumentWindowTitle];
+}
+
+- (IBAction)setInsertMode:sender {
+    USE(sender);
+    [controller setEditMode:HFInsertMode];
+    [self updateDocumentWindowTitle];    
+}
+
+- (IBAction)setReadOnlyMode:sender {
+    USE(sender);
+    [controller setEditMode:HFReadOnlyMode];
+    [self updateDocumentWindowTitle];    
 }
 
 - (void)jumpToBookmarkIndex:(NSInteger)bookmark selecting:(BOOL)select {
@@ -1773,6 +1806,11 @@ cancelled:;
     if (! *cancellationPointer) [documentForThisByteArray->controller clearUndoManagerDependenciesOnRanges:modifiedRanges inFile:fileReference hint:hint];
     
     [allDocuments release];
+}
+
+- (BOOL)requiresOverwriteMode
+{
+    return NO;
 }
 
 @end

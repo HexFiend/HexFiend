@@ -8,7 +8,7 @@
 #import "BaseDataDocument.h"
 
 @interface FileDataDocument : BaseDataDocument {
-
+    BOOL requiresOverwriteMode;
 }
 
 @end

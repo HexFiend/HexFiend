@@ -47,7 +47,7 @@ NSString * const BaseDataDocumentDidChangeStringEncodingNotification;
     BOOL saveInProgress;
     
     BOOL currentlySettingFont;
-    BOOL isTransient;
+    BOOL isTransient;    
 }
 
 - (void)moveSelectionForwards:(NSMenuItem *)sender;
@@ -74,7 +74,9 @@ NSString * const BaseDataDocumentDidChangeStringEncodingNotification;
 - (IBAction)replaceAll:sender;
 - (IBAction)performFindReplaceActionFromSelectedSegment:(id)sender;
 
-- (IBAction)toggleOverwriteMode:sender;
+- (IBAction)setOverwriteMode:sender;
+- (IBAction)setInsertMode:sender;
+- (IBAction)setReadOnlyMode:sender;
 - (IBAction)modifyByteGrouping:sender;
 
 - (IBAction)setBookmark:sender;
@@ -101,5 +103,7 @@ NSString * const BaseDataDocumentDidChangeStringEncodingNotification;
 
 /* Returns a string identifier used as an NSUserDefault prefix for storing the layout for documents of this type.  If you return nil, the layout will not be stored.  The default is to return the class name. */
 + (NSString *)layoutUserDefaultIdentifier;
+
+- (BOOL)requiresOverwriteMode;
 
 @end
