@@ -1486,7 +1486,7 @@ cancelled:;
     BOOL success = NO;
     unsigned long long value;
     unsigned isNegative;
-    if (! parseNumericStringWithSuffix([[jumpToOffsetView viewNamed:@"moveSelectionByTextField"] stringValue], &value, &isNegative)) {
+    if (parseNumericStringWithSuffix([[jumpToOffsetView viewNamed:@"moveSelectionByTextField"] stringValue], &value, &isNegative)) {
         unsigned long long length = [controller contentsLength];
         if (length >= value) {
             const unsigned long long offset = (isNegative ? length - value : value);
