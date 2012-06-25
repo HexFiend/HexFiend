@@ -194,6 +194,7 @@
 		D0D8C2B012A3BE4300960FC4 /* ChooseStringEncodingDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = D0D8C2AF12A3BE4300960FC4 /* ChooseStringEncodingDialog.xib */; };
 		D0D8C2BC12A3C10100960FC4 /* ChooseStringEncodingWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D8C2BB12A3C10100960FC4 /* ChooseStringEncodingWindowController.m */; };
 		D0D8C45812A3EF3900960FC4 /* ProcessList.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D8C45712A3EF3900960FC4 /* ProcessList.m */; };
+		DAE8EBFE1598FFDB0008ADB9 /* DocumentWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = DAE8EBFD1598FFDB0008ADB9 /* DocumentWindow.m */; };
 		FB1E99AA14A301CD002136A3 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D05984CB1032C6D900059E72 /* Security.framework */; };
 /* End PBXBuildFile section */
 
@@ -484,6 +485,8 @@
 		D0D8C2BB12A3C10100960FC4 /* ChooseStringEncodingWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ChooseStringEncodingWindowController.m; path = app/sources/ChooseStringEncodingWindowController.m; sourceTree = "<group>"; };
 		D0D8C45612A3EF3900960FC4 /* ProcessList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProcessList.h; path = app/sources/ProcessList.h; sourceTree = "<group>"; };
 		D0D8C45712A3EF3900960FC4 /* ProcessList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ProcessList.m; path = app/sources/ProcessList.m; sourceTree = "<group>"; };
+		DAE8EBFC1598FFDB0008ADB9 /* DocumentWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DocumentWindow.h; path = app/sources/DocumentWindow.h; sourceTree = "<group>"; };
+		DAE8EBFD1598FFDB0008ADB9 /* DocumentWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DocumentWindow.m; path = app/sources/DocumentWindow.m; sourceTree = "<group>"; };
 		FBEA8E7F14A2C10B00C27288 /* fileport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fileport.h; path = helper_subprocess/fileport.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -716,6 +719,8 @@
 			children = (
 				D0AFA784123C2BDF00CFC513 /* MyDocumentController.h */,
 				D0AFA785123C2BDF00CFC513 /* MyDocumentController.m */,
+				DAE8EBFC1598FFDB0008ADB9 /* DocumentWindow.h */,
+				DAE8EBFD1598FFDB0008ADB9 /* DocumentWindow.m */,
 				D01E7C140CDC58AA00943F9E /* BaseDataDocument.h */,
 				D01E7C150CDC58AA00943F9E /* BaseDataDocument.m */,
 				D02BD6DE10545E9000535EDE /* FileDataDocument.h */,
@@ -1321,6 +1326,7 @@
 				D0A8AF7D1467273900387627 /* AppUtilities.m in Sources */,
 				D0D0536E1487FF2500704643 /* HFFindReplaceOperationView.m in Sources */,
 				795F46C114BAA45D00EB2F7D /* OpenDriveWindowController.m in Sources */,
+				DAE8EBFE1598FFDB0008ADB9 /* DocumentWindow.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
