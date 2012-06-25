@@ -623,6 +623,14 @@ static inline Class preferredByteArrayClass(void) {
     [self updateDocumentWindowTitle];
 }
 
+- (BOOL)performDragOperation:(id <NSDraggingInfo>)sender {
+    NSArray *files = [sender.draggingPasteboard propertyListForType:NSFilenamesPboardType];
+    for (NSString *filename in files) {
+        NSURL *fileURL = [NSURL fileURLWithPath:filename];
+        [[NSDocumentController sharedDocumentController] openDocumentWithContentsOfURL:fileURL display:YES error:nil];
+    }
+    return YES;
+}
 
 - (BOOL)readFromURL:(NSURL *)absoluteURL ofType:(NSString *)typeName error:(NSError **)outError {
     USE(typeName);
