@@ -37,7 +37,8 @@ NSString * const DataInspectorDidDeleteAllRows = @"DataInspectorDidDeleteAllRows
 enum InspectorType_t {
     eInspectorTypeInteger,
     eInspectorTypeSignedInteger,
-    eInspectorTypeFloatingPoint
+    eInspectorTypeFloatingPoint,
+    eInspectorTypeBinary
 };
 
 enum Endianness_t {
@@ -139,6 +140,7 @@ static NSString *errorStringForInspectionStatus(enum InspectionStatus_t status) 
     switch ([self type]) {
         case eInspectorTypeInteger:
         case eInspectorTypeSignedInteger:
+        case eInspectorTypeBinary:
             /* Only allow positive powers of 2 up to 8 */
 	    switch (count) {
 		case 0: return eInspectionNoData;
@@ -181,9 +183,44 @@ static void flip(void *val, NSUInteger amount) {
     }
 }
 
+static NSString *formatAsBinary(uint64_t value, int digitsPerGroup) {
+    if (value == 0)
+        return @"0";
+    
+    NSMutableString *string = [NSMutableString string];
+    
+    while (value > 0) {
+        [string insertString:(value & 0x1) ? @"1" : @"0" atIndex:0];
+        value >>= 1;
+    }
+    
+    if (digitsPerGroup <= 0) {
+        return string;
+    }
+    
+    // Prefix with 0s
+    int prefixLength = (digitsPerGroup - [string length] % digitsPerGroup);
+    if (prefixLength < digitsPerGroup) {
+        NSString *prefix = [[NSString string] stringByPaddingToLength:prefixLength withString:@"0" startingAtIndex:0];
+        [string insertString:prefix atIndex:0];
+    }
+    
+    // Group digits
+    
+    int spaceIndex = [string length] - digitsPerGroup;
+    while (spaceIndex > 0) {
+        [string insertString:@" " atIndex:spaceIndex];
+        spaceIndex -= digitsPerGroup;
+    }
+    
+    return string;
+}
+
 #define FETCH(type) type s = *(const type *)bytes;
 #define FLIP(amount) if (endianness != eNativeEndianness) { flip(&s, amount); }
 #define FORMAT(specifier) return [NSString stringWithFormat:specifier, s];
+#define FORMAT_BINARY return formatAsBinary(s, 4);
+
 static id unsignedIntegerDescription(const unsigned char *bytes, NSUInteger length, enum Endianness_t endianness) {
     switch (length) {
         case 1:
@@ -243,6 +280,36 @@ static id signedIntegerDescription(const unsigned char *bytes, NSUInteger length
         default: return nil;
     }
 }
+
+static id binaryDescription(const unsigned char *bytes, NSUInteger length, enum Endianness_t endianness) {
+    switch (length) {
+        case 1:
+        {
+            FETCH(uint8_t)
+            FORMAT_BINARY
+        }
+        case 2:
+        {
+            FETCH(uint16_t)
+            FLIP(2)
+            FORMAT_BINARY
+        }
+        case 4:
+        {
+            FETCH(uint32_t)
+            FLIP(4)
+            FORMAT_BINARY
+        }
+        case 8:
+        {
+            FETCH(uint64_t)
+            FLIP(8)
+            FORMAT_BINARY
+        }
+        default: return nil;
+    }
+}
+
 #undef FETCH
 #undef FLIP
 #undef FORMAT
@@ -288,6 +355,9 @@ static id floatingPointDescription(const unsigned char *bytes, NSUInteger length
         case eInspectorTypeFloatingPoint:
             return floatingPointDescription(bytes, length, endianness);
             
+        case eInspectorTypeBinary:
+            return binaryDescription(bytes, length, endianness);
+            
         default:
             return nil;
     }
@@ -302,7 +372,7 @@ static id floatingPointDescription(const unsigned char *bytes, NSUInteger length
         endianness = eEndianBig;
         inspectorType++;
         
-        if (inspectorType > eInspectorTypeFloatingPoint) {
+        if (inspectorType > eInspectorTypeBinary) {
             inspectorType = eInspectorTypeInteger;
             wrapped = YES;
         }        
