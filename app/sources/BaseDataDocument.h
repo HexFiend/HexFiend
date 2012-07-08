@@ -6,12 +6,13 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import "DocumentWindow.h"
 
 @class HFByteArray, HFRepresenter, HFLineCountingRepresenter, HFLayoutRepresenter, HFDocumentOperationView, DataInspectorRepresenter;
 
 NSString * const BaseDataDocumentDidChangeStringEncodingNotification;
 
-@interface BaseDataDocument : NSDocument <NSWindowDelegate> {
+@interface BaseDataDocument : NSDocument <NSWindowDelegate, DragDropDelegate> {
     IBOutlet NSSplitView *containerView;
     HFController *controller;
     
