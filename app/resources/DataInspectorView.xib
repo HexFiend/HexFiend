@@ -2,13 +2,13 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.10">
 	<data>
 		<int key="IBDocument.SystemTarget">1050</int>
-		<string key="IBDocument.SystemVersion">11C74</string>
-		<string key="IBDocument.InterfaceBuilderVersion">1938</string>
-		<string key="IBDocument.AppKitVersion">1138.23</string>
-		<string key="IBDocument.HIToolboxVersion">567.00</string>
+		<string key="IBDocument.SystemVersion">11E53</string>
+		<string key="IBDocument.InterfaceBuilderVersion">2182</string>
+		<string key="IBDocument.AppKitVersion">1138.47</string>
+		<string key="IBDocument.HIToolboxVersion">569.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
-			<string key="NS.object.0">1938</string>
+			<string key="NS.object.0">2182</string>
 		</object>
 		<object class="NSArray" key="IBDocument.IntegratedClassDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -57,7 +57,7 @@
 								<int key="NSvFlags">256</int>
 								<string key="NSFrameSize">{563, 20}</string>
 								<reference key="NSSuperview" ref="809801618"/>
-								<reference key="NSWindow"/>
+								<reference key="NSNextKeyView"/>
 								<bool key="NSEnabled">YES</bool>
 								<object class="_NSCornerView" key="NSCornerView">
 									<nil key="NSNextResponder"/>
@@ -105,30 +105,29 @@
 											<string key="NSKeyEquivalent"/>
 											<int key="NSPeriodicDelay">400</int>
 											<int key="NSPeriodicInterval">75</int>
-											<object class="NSMenuItem" key="NSMenuItem" id="482150782">
-												<reference key="NSMenu" ref="870295687"/>
-												<string key="NSTitle">Signed Int</string>
-												<string key="NSKeyEquiv"/>
-												<int key="NSKeyEquivModMask">1048576</int>
-												<int key="NSMnemonicLoc">2147483647</int>
-												<int key="NSState">1</int>
-												<object class="NSCustomResource" key="NSOnImage" id="1030047595">
-													<string key="NSClassName">NSImage</string>
-													<string key="NSResourceName">NSMenuCheckmark</string>
-												</object>
-												<object class="NSCustomResource" key="NSMixedImage" id="14459319">
-													<string key="NSClassName">NSImage</string>
-													<string key="NSResourceName">NSMenuMixedState</string>
-												</object>
-												<string key="NSAction">_popUpItemAction:</string>
-												<reference key="NSTarget" ref="332395822"/>
-											</object>
+											<nil key="NSMenuItem"/>
 											<bool key="NSMenuItemRespectAlignment">YES</bool>
 											<object class="NSMenu" key="NSMenu" id="870295687">
 												<string key="NSTitle">OtherViews</string>
 												<object class="NSMutableArray" key="NSMenuItems">
 													<bool key="EncodedWithXMLCoder">YES</bool>
-													<reference ref="482150782"/>
+													<object class="NSMenuItem" id="482150782">
+														<reference key="NSMenu" ref="870295687"/>
+														<string key="NSTitle">Signed Int</string>
+														<string key="NSKeyEquiv"/>
+														<int key="NSKeyEquivModMask">1048576</int>
+														<int key="NSMnemonicLoc">2147483647</int>
+														<object class="NSCustomResource" key="NSOnImage" id="1030047595">
+															<string key="NSClassName">NSImage</string>
+															<string key="NSResourceName">NSMenuCheckmark</string>
+														</object>
+														<object class="NSCustomResource" key="NSMixedImage" id="14459319">
+															<string key="NSClassName">NSImage</string>
+															<string key="NSResourceName">NSMenuMixedState</string>
+														</object>
+														<string key="NSAction">_popUpItemAction:</string>
+														<reference key="NSTarget" ref="332395822"/>
+													</object>
 													<object class="NSMenuItem" id="447354924">
 														<reference key="NSMenu" ref="870295687"/>
 														<string key="NSTitle">Unsigned Int</string>
@@ -142,6 +141,16 @@
 													<object class="NSMenuItem" id="1059299314">
 														<reference key="NSMenu" ref="870295687"/>
 														<string key="NSTitle">Floats</string>
+														<string key="NSKeyEquiv"/>
+														<int key="NSMnemonicLoc">2147483647</int>
+														<reference key="NSOnImage" ref="1030047595"/>
+														<reference key="NSMixedImage" ref="14459319"/>
+														<string key="NSAction">_popUpItemAction:</string>
+														<reference key="NSTarget" ref="332395822"/>
+													</object>
+													<object class="NSMenuItem" id="280438182">
+														<reference key="NSMenu" ref="870295687"/>
+														<string key="NSTitle">Binary</string>
 														<string key="NSKeyEquiv"/>
 														<int key="NSMnemonicLoc">2147483647</int>
 														<reference key="NSOnImage" ref="1030047595"/>
@@ -373,7 +382,6 @@
 						</object>
 						<string key="NSFrame">{{2, 2}, {563, 20}}</string>
 						<reference key="NSSuperview" ref="1014968909"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="177753097"/>
 						<reference key="NSDocView" ref="177753097"/>
 						<object class="NSColor" key="NSBGColor">
@@ -389,7 +397,7 @@
 						<int key="NSvFlags">-2147483392</int>
 						<string key="NSFrame">{{-100, -100}, {15, 61}}</string>
 						<reference key="NSSuperview" ref="1014968909"/>
-						<reference key="NSWindow"/>
+						<reference key="NSNextKeyView" ref="882894248"/>
 						<reference key="NSTarget" ref="1014968909"/>
 						<string key="NSAction">_doScroller:</string>
 						<double key="NSPercent">0.73684210000000006</double>
@@ -399,7 +407,7 @@
 						<int key="NSvFlags">-2147483392</int>
 						<string key="NSFrame">{{-100, -100}, {485, 15}}</string>
 						<reference key="NSSuperview" ref="1014968909"/>
-						<reference key="NSWindow"/>
+						<reference key="NSNextKeyView" ref="809801618"/>
 						<int key="NSsFlags">1</int>
 						<reference key="NSTarget" ref="1014968909"/>
 						<string key="NSAction">_doScroller:</string>
@@ -408,8 +416,7 @@
 				</object>
 				<string key="NSFrameSize">{567, 24}</string>
 				<reference key="NSSuperview"/>
-				<reference key="NSWindow"/>
-				<reference key="NSNextKeyView" ref="809801618"/>
+				<reference key="NSNextKeyView" ref="661019875"/>
 				<int key="NSsFlags">133123</int>
 				<reference key="NSVScroller" ref="661019875"/>
 				<reference key="NSHScroller" ref="882894248"/>
@@ -581,6 +588,7 @@
 							<reference ref="1059299314"/>
 							<reference ref="482150782"/>
 							<reference ref="447354924"/>
+							<reference ref="280438182"/>
 						</object>
 						<reference key="parent" ref="332395822"/>
 					</object>
@@ -656,6 +664,11 @@
 						<reference key="object" ref="447354924"/>
 						<reference key="parent" ref="870295687"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">94</int>
+						<reference key="object" ref="280438182"/>
+						<reference key="parent" ref="870295687"/>
+					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -690,8 +703,9 @@
 					<string>87.CustomClassName</string>
 					<string>87.IBPluginDependency</string>
 					<string>93.IBPluginDependency</string>
+					<string>94.IBPluginDependency</string>
 				</object>
-				<object class="NSMutableArray" key="dict.values">
+				<object class="NSArray" key="dict.values">
 					<bool key="EncodedWithXMLCoder">YES</bool>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -721,6 +735,7 @@
 					<string>DataInspectorPlusMinusButtonCell</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="unlocalizedProperties">
@@ -735,124 +750,9 @@
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">93</int>
+			<int key="maxID">94</int>
 		</object>
-		<object class="IBClassDescriber" key="IBDocument.Classes">
-			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
-				<bool key="EncodedWithXMLCoder">YES</bool>
-				<object class="IBPartialClassDescription">
-					<string key="className">DataInspectorPlusMinusButtonCell</string>
-					<string key="superclassName">NSButtonCell</string>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/DataInspectorPlusMinusButtonCell.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">DataInspectorRepresenter</string>
-					<string key="superclassName">HFRepresenter</string>
-					<object class="NSMutableDictionary" key="actions">
-						<bool key="EncodedWithXMLCoder">YES</bool>
-						<object class="NSArray" key="dict.sortedKeys">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>addRow:</string>
-							<string>doubleClickedTable:</string>
-							<string>removeRow:</string>
-						</object>
-						<object class="NSMutableArray" key="dict.values">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-						</object>
-					</object>
-					<object class="NSMutableDictionary" key="actionInfosByName">
-						<bool key="EncodedWithXMLCoder">YES</bool>
-						<object class="NSArray" key="dict.sortedKeys">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>addRow:</string>
-							<string>doubleClickedTable:</string>
-							<string>removeRow:</string>
-						</object>
-						<object class="NSMutableArray" key="dict.values">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<object class="IBActionInfo">
-								<string key="name">addRow:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">doubleClickedTable:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">removeRow:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-						</object>
-					</object>
-					<object class="NSMutableDictionary" key="outlets">
-						<bool key="EncodedWithXMLCoder">YES</bool>
-						<object class="NSArray" key="dict.sortedKeys">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>outletView</string>
-							<string>table</string>
-						</object>
-						<object class="NSMutableArray" key="dict.values">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>NSView</string>
-							<string>NSTableView</string>
-						</object>
-					</object>
-					<object class="NSMutableDictionary" key="toOneOutletInfosByName">
-						<bool key="EncodedWithXMLCoder">YES</bool>
-						<object class="NSArray" key="dict.sortedKeys">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>outletView</string>
-							<string>table</string>
-						</object>
-						<object class="NSMutableArray" key="dict.values">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<object class="IBToOneOutletInfo">
-								<string key="name">outletView</string>
-								<string key="candidateClassName">NSView</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">table</string>
-								<string key="candidateClassName">NSTableView</string>
-							</object>
-						</object>
-					</object>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/DataInspectorRepresenter.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">DataInspectorScrollView</string>
-					<string key="superclassName">NSScrollView</string>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/DataInspectorScrollView.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">DataInspectorTableView</string>
-					<string key="superclassName">NSTableView</string>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/DataInspectorTableView.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">HFRepresenter</string>
-					<string key="superclassName">NSObject</string>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/HFRepresenter.h</string>
-					</object>
-				</object>
-			</object>
-		</object>
+		<object class="IBClassDescriber" key="IBDocument.Classes"/>
 		<int key="IBDocument.localizationMode">0</int>
 		<string key="IBDocument.TargetRuntimeIdentifier">IBCocoaFramework</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginDeclaredDependencies">
@@ -872,10 +772,10 @@
 				<string>NSMenuCheckmark</string>
 				<string>NSMenuMixedState</string>
 			</object>
-			<object class="NSMutableArray" key="dict.values">
+			<object class="NSArray" key="dict.values">
 				<bool key="EncodedWithXMLCoder">YES</bool>
-				<string>{9, 8}</string>
-				<string>{7, 2}</string>
+				<string>{11, 11}</string>
+				<string>{10, 3}</string>
 			</object>
 		</object>
 	</data>
