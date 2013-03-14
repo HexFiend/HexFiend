@@ -17,6 +17,7 @@
 }
 
 - (IBAction)diffFrontDocuments:(id)sender;
+- (IBAction)diffFrontDocumentsByRange:(id)sender;
 
 - (IBAction)setStringEncodingFromMenuItem:(NSMenuItem *)item;
 - (void)setStringEncoding:(NSStringEncoding)encoding;

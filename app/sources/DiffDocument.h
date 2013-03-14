@@ -28,9 +28,17 @@
     // momentum scroll hackery
     BOOL handledLastScrollEvent;
     CFAbsoluteTime timeOfLastScrollEvent;
+    
+    HFRange range_;
 }
 
++ (NSArray *)getFrontTwoDocumentsForDiffing;
++ (void)compareDocument:(BaseDataDocument *)document againstDocument:(BaseDataDocument *)otherDocument usingRange:(HFRange)range;
++ (void)compareFrontTwoDocuments;
++ (void)compareFrontTwoDocumentsUsingRange:(HFRange)range;
+
 - (id)initWithLeftByteArray:(HFByteArray *)left rightByteArray:(HFByteArray *)right;
+- (id)initWithLeftByteArray:(HFByteArray *)left rightByteArray:(HFByteArray *)right range:(HFRange)range;
 - (BOOL)handleEvent:(NSEvent *)event;
 
 - (void)setLeftFileName:(NSString *)leftName;

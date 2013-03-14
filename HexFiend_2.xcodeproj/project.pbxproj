@@ -194,6 +194,8 @@
 		D0D8C2B012A3BE4300960FC4 /* ChooseStringEncodingDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = D0D8C2AF12A3BE4300960FC4 /* ChooseStringEncodingDialog.xib */; };
 		D0D8C2BC12A3C10100960FC4 /* ChooseStringEncodingWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D8C2BB12A3C10100960FC4 /* ChooseStringEncodingWindowController.m */; };
 		D0D8C45812A3EF3900960FC4 /* ProcessList.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D8C45712A3EF3900960FC4 /* ProcessList.m */; };
+		D8C1F92C16F278BA00A4C36E /* DiffRangeDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = D8C1F92A16F278BA00A4C36E /* DiffRangeDialog.xib */; };
+		D8EE3EFE16F26689001C7C09 /* DiffRangeWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = D8EE3EFD16F26689001C7C09 /* DiffRangeWindowController.m */; };
 		DAE8EBFE1598FFDB0008ADB9 /* DocumentWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = DAE8EBFD1598FFDB0008ADB9 /* DocumentWindow.m */; };
 		FB1E99AA14A301CD002136A3 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D05984CB1032C6D900059E72 /* Security.framework */; };
 /* End PBXBuildFile section */
@@ -485,6 +487,9 @@
 		D0D8C2BB12A3C10100960FC4 /* ChooseStringEncodingWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ChooseStringEncodingWindowController.m; path = app/sources/ChooseStringEncodingWindowController.m; sourceTree = "<group>"; };
 		D0D8C45612A3EF3900960FC4 /* ProcessList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProcessList.h; path = app/sources/ProcessList.h; sourceTree = "<group>"; };
 		D0D8C45712A3EF3900960FC4 /* ProcessList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ProcessList.m; path = app/sources/ProcessList.m; sourceTree = "<group>"; };
+		D8C1F92B16F278BA00A4C36E /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/DiffRangeDialog.xib; sourceTree = "<group>"; };
+		D8EE3EFC16F26689001C7C09 /* DiffRangeWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DiffRangeWindowController.h; path = app/sources/DiffRangeWindowController.h; sourceTree = "<group>"; };
+		D8EE3EFD16F26689001C7C09 /* DiffRangeWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DiffRangeWindowController.m; path = app/sources/DiffRangeWindowController.m; sourceTree = "<group>"; };
 		DAE8EBFC1598FFDB0008ADB9 /* DocumentWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DocumentWindow.h; path = app/sources/DocumentWindow.h; sourceTree = "<group>"; };
 		DAE8EBFD1598FFDB0008ADB9 /* DocumentWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DocumentWindow.m; path = app/sources/DocumentWindow.m; sourceTree = "<group>"; };
 		FBEA8E7F14A2C10B00C27288 /* fileport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fileport.h; path = helper_subprocess/fileport.h; sourceTree = "<group>"; };
@@ -578,7 +583,6 @@
 				D0D8C2AF12A3BE4300960FC4 /* ChooseStringEncodingDialog.xib */,
 				D059E1411311CA71001493B8 /* GenericPrompt.xib */,
 				D09163C9123857BB009D7D47 /* OpenPathDialog.xib */,
-				D04A6BA9100EA7B800704963 /* MainMenu.xib */,
 				D04A6BA3100EA78700704963 /* MyDocument.xib */,
 				D04A6B9C100EA75400704963 /* MoveSelectionByBanner.xib */,
 				D04A6B95100EA73800704963 /* JumpToOffsetBanner.xib */,
@@ -586,6 +590,8 @@
 				D04A6B69100EA47C00704963 /* SaveBanner.xib */,
 				D0B47FED1272427B0095120E /* DiffComputationBanner.xib */,
 				D018F137107AB64900AE805F /* DiffDocument.xib */,
+				D8C1F92A16F278BA00A4C36E /* DiffRangeDialog.xib */,
+				D04A6BA9100EA7B800704963 /* MainMenu.xib */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -997,6 +1003,8 @@
 				D0D8C2BB12A3C10100960FC4 /* ChooseStringEncodingWindowController.m */,
 				795F46BF14BAA45D00EB2F7D /* OpenDriveWindowController.h */,
 				795F46C014BAA45D00EB2F7D /* OpenDriveWindowController.m */,
+				D8EE3EFC16F26689001C7C09 /* DiffRangeWindowController.h */,
+				D8EE3EFD16F26689001C7C09 /* DiffRangeWindowController.m */,
 			);
 			name = Dialogs;
 			sourceTree = "<group>";
@@ -1229,6 +1237,7 @@
 				D0D8C2B012A3BE4300960FC4 /* ChooseStringEncodingDialog.xib in Resources */,
 				D059E1421311CA71001493B8 /* GenericPrompt.xib in Resources */,
 				795F46C514BAAEFB00EB2F7D /* OpenDriveDialog.xib in Resources */,
+				D8C1F92C16F278BA00A4C36E /* DiffRangeDialog.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1327,6 +1336,7 @@
 				D0D0536E1487FF2500704643 /* HFFindReplaceOperationView.m in Sources */,
 				795F46C114BAA45D00EB2F7D /* OpenDriveWindowController.m in Sources */,
 				DAE8EBFE1598FFDB0008ADB9 /* DocumentWindow.m in Sources */,
+				D8EE3EFE16F26689001C7C09 /* DiffRangeWindowController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1537,6 +1547,14 @@
 				D0B47FEE1272427B0095120E /* English */,
 			);
 			name = DiffComputationBanner.xib;
+			sourceTree = "<group>";
+		};
+		D8C1F92A16F278BA00A4C36E /* DiffRangeDialog.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D8C1F92B16F278BA00A4C36E /* English */,
+			);
+			name = DiffRangeDialog.xib;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
