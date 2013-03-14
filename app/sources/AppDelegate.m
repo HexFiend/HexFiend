@@ -9,6 +9,7 @@
 #import "BaseDataDocument.h"
 #import "DiffDocument.h"
 #import "MyDocumentController.h"
+#import "DiffRangeWindowController.h"
 #include <assert.h>
 #include <errno.h>
 #include <stdbool.h>
@@ -99,24 +100,6 @@ static NSComparisonResult compareFontDisplayNames(NSFont *a, NSFont *b, void *un
     [document setFont:font registeringUndo:YES];
 }
 
-/* Returns either nil, or an array of two documents that would be compared in the "Compare Front Documents" menu item. */
-- (NSArray *)documentsForDiffing {
-    id resultDocs[2];
-    NSUInteger i = 0;
-    FOREACH(NSDocument *, doc, [NSApp orderedDocuments]) {
-        if ([doc isKindOfClass:[BaseDataDocument class]] && ! [doc isKindOfClass:[DiffDocument class]]) {
-            resultDocs[i++] = doc;
-            if (i == 2) break;
-        }
-    }
-    if (i == 2) {
-        return [NSArray arrayWithObjects:resultDocs count:2];
-    }
-    else {
-        return nil;
-    }
-}
-
 - (BOOL)validateMenuItem:(NSMenuItem *)item {
     SEL sel = [item action];
     if (sel == @selector(setFontFromMenuItem:)) {
@@ -130,7 +113,7 @@ static NSComparisonResult compareFontDisplayNames(NSFont *a, NSFont *b, void *un
         return document != nil;
     }
     else if (sel == @selector(diffFrontDocuments:)) {
-        NSArray *docs = [self documentsForDiffing];
+        NSArray *docs = [DiffDocument getFrontTwoDocumentsForDiffing];
         if (docs) {
             NSString *firstTitle = [[docs objectAtIndex:0] displayName];
             NSString *secondTitle = [[docs objectAtIndex:1] displayName];
@@ -142,23 +125,32 @@ static NSComparisonResult compareFontDisplayNames(NSFont *a, NSFont *b, void *un
             [item setTitle:@"Compare Front Documents"];
             return NO;
         }
+    } else if (sel == @selector(diffFrontDocumentsByRange:)) {
+        NSArray *docs = [DiffDocument getFrontTwoDocumentsForDiffing];
+        if (docs) {
+            NSString *firstTitle = [[docs objectAtIndex:0] displayName];
+            NSString *secondTitle = [[docs objectAtIndex:1] displayName];
+            [item setTitle:[NSString stringWithFormat:@"Compare Range of \u201C%@\u201D and \u201C%@\u201D", firstTitle, secondTitle]];
+            return YES;
+        }
+        else {
+            /* Zero or one document, so give it a generic title and disable it */
+            [item setTitle:@"Compare Range of Front Documents"];
+            return NO;
+        }
     }
     return YES;
 }
 
 - (IBAction)diffFrontDocuments:(id)sender {
     USE(sender);
-    NSArray *docs = [self documentsForDiffing];
-    if (! docs) return; //the menu item would be disabled in this case
-    HFByteArray *left = [[docs objectAtIndex:0] byteArray];
-    HFByteArray *right = [[docs objectAtIndex:1] byteArray];
-    DiffDocument *doc = [[DiffDocument alloc] initWithLeftByteArray:left rightByteArray:right];
-    [doc setLeftFileName:[[docs objectAtIndex:0] displayName]];
-    [doc setRightFileName:[[docs objectAtIndex:1] displayName]];
-    [[NSDocumentController sharedDocumentController] addDocument:doc];
-    [doc makeWindowControllers];
-    [doc showWindows];
-    [doc release];
+    [DiffDocument compareFrontTwoDocuments];
+}
+
+- (IBAction)diffFrontDocumentsByRange:(id)sender {
+    USE(sender);
+    DiffRangeWindowController* range = [[DiffRangeWindowController alloc] initWithWindowNibName:@"DiffRangeDialog"];
+    [range showWindow:self];
 }
 
 - (void)menuNeedsUpdate:(NSMenu *)menu {
