@@ -33,8 +33,63 @@
 
 @implementation DiffDocument
 
+/* Returns either nil, or an array of two documents that would be compared in the "Compare (Range of) Front Documents" menu item. */
++ (NSArray *)getFrontTwoDocumentsForDiffing {
+    id resultDocs[2];
+    NSUInteger i = 0;
+    FOREACH(NSDocument *, doc, [NSApp orderedDocuments]) {
+        if ([doc isKindOfClass:[DiffDocument class]]) continue;
+        if (![doc isKindOfClass:[BaseDataDocument class]]) continue;
+        resultDocs[i++] = doc;
+        if (i >= 2) break;
+    }
+    if (i != 2) return nil;
+    return [NSArray arrayWithObjects:resultDocs count:2];
+}
+
++ (void)compareDocument:(BaseDataDocument *)document againstDocument:(BaseDataDocument *)otherDocument {
+    [DiffDocument compareDocument:document againstDocument:otherDocument usingRange:HFRangeMake(0, 0)];
+}
+
++ (void)compareDocument:(BaseDataDocument *)document againstDocument:(BaseDataDocument *)otherDocument usingRange:(HFRange)range {
+    
+    // convert documents to bytearrays
+    HFByteArray *leftBytes = [document byteArray];
+    HFByteArray *rightBytes = [otherDocument byteArray];
+    
+    // extract range if present
+    if (range.length > 0) {
+        leftBytes = [leftBytes subarrayWithRange:range];
+        rightBytes = [rightBytes subarrayWithRange:range];
+    }
+    
+    // launch diff window
+    DiffDocument *doc = [[DiffDocument alloc] initWithLeftByteArray:leftBytes rightByteArray:rightBytes range:range];
+    [doc setLeftFileName:[document displayName]];
+    [doc setRightFileName:[otherDocument displayName]];
+    [[NSDocumentController sharedDocumentController] addDocument:doc];
+    [doc makeWindowControllers];
+    [doc showWindows];
+    [doc release];
+}
+
++ (void)compareFrontTwoDocuments {
+    [DiffDocument compareFrontTwoDocumentsUsingRange:HFRangeMake(0, 0)];
+}
+
++ (void)compareFrontTwoDocumentsUsingRange:(HFRange)range {
+    NSArray *docs = [DiffDocument getFrontTwoDocumentsForDiffing];
+    if (!docs) return;
+    [DiffDocument compareDocument:[docs objectAtIndex:0] againstDocument:[docs objectAtIndex:1] usingRange:range];
+}
+
 - (NSString *)displayName {
-    return [NSString stringWithFormat:@"%@ vs %@", leftFileName, rightFileName];
+    NSString *format = @"%@ vs %@";
+    if (range_.length > 0) {
+        format = [NSString stringWithFormat:@"(%llu:%llu) %@", range_.location, range_.length, format];
+    }
+    
+    return [NSString stringWithFormat:format, leftFileName, rightFileName];
 }
 
 - (void)showInstructionsFromEditScript {
@@ -285,6 +340,11 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
         
     }
     return self;
+}
+
+- (id)initWithLeftByteArray:(HFByteArray *)left rightByteArray:(HFByteArray *)right range:(HFRange)range {
+    range_ = range;
+    return [self initWithLeftByteArray:left rightByteArray:right];
 }
 
 - (void)dealloc {
