@@ -623,6 +623,8 @@ static inline Class preferredByteArrayClass(void) {
 
 - (void)maximizeVisibilityOfContentsRange:(HFRange)range {
     HFASSERT(HFRangeIsSubrangeOfRange(range, HFRangeMake(0, [self contentsLength])));
+    
+    // Find the minimum move necessary to make range visible
     HFFPRange displayRange = [self displayedLineRange];
     HFFPRange newDisplayRange = displayRange;
     unsigned long long startLine = range.location / bytesPerLine;
@@ -642,7 +644,13 @@ static inline Class preferredByteArrayClass(void) {
         // the >= 1 check prevents some wacky behavior when we have less than one line's worth of space, that caused bouncing between the top and bottom of the line
         newDisplayRange.location -= linesToMoveUpToMakeFirstLineVisible;
     }
-    [self setDisplayedLineRange:newDisplayRange];
+    
+    // Use the minimum movement if it would be visually helpful; otherwise just center.
+    if (HFFPIntersectsRange(displayRange, newDisplayRange)) {
+        [self setDisplayedLineRange:newDisplayRange];
+    } else {
+        [self centerContentsRange:range];
+    }
 }
 
 - (void)centerContentsRange:(HFRange)range {
