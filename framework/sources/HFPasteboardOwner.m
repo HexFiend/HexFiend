@@ -21,7 +21,7 @@ NSString *const HFPrivateByteArrayPboardType = @"HFPrivateByteArrayPboardType";
     }
 }
 
-- initWithPasteboard:(NSPasteboard *)pboard forByteArray:(HFByteArray *)array withTypes:(NSArray *)types {
+- (id)initWithPasteboard:(NSPasteboard *)pboard forByteArray:(HFByteArray *)array withTypes:(NSArray *)types {
     REQUIRE_NOT_NULL(pboard);
     REQUIRE_NOT_NULL(array);
     REQUIRE_NOT_NULL(types);
@@ -36,7 +36,7 @@ NSString *const HFPrivateByteArrayPboardType = @"HFPrivateByteArrayPboardType";
     return self;
 }
 
-+ ownPasteboard:(NSPasteboard *)pboard forByteArray:(HFByteArray *)array withTypes:(NSArray *)types {
++ (id)ownPasteboard:(NSPasteboard *)pboard forByteArray:(HFByteArray *)array withTypes:(NSArray *)types {
     return [[[self alloc] initWithPasteboard:pboard forByteArray:array withTypes:types] autorelease];
 }
 

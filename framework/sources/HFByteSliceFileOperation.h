@@ -18,11 +18,11 @@ typedef enum {
     HFRange targetRange;
 }
 
-+ identityOperationWithByteSlice:(HFByteSlice *)slice targetRange:(HFRange)range;
-+ externalOperationWithByteSlice:(HFByteSlice *)slice targetRange:(HFRange)range;
-+ internalOperationWithByteSlice:(HFByteSlice *)slice sourceRange:(HFRange)source targetRange:(HFRange)target;
++ (id)identityOperationWithByteSlice:(HFByteSlice *)slice targetRange:(HFRange)range;
++ (id)externalOperationWithByteSlice:(HFByteSlice *)slice targetRange:(HFRange)range;
++ (id)internalOperationWithByteSlice:(HFByteSlice *)slice sourceRange:(HFRange)source targetRange:(HFRange)target;
 
-+ chainedOperationWithInternalOperations:(NSArray *)internalOperations;
++ (id)chainedOperationWithInternalOperations:(NSArray *)internalOperations;
 
 - (HFRange)sourceRange;
 - (HFRange)targetRange;

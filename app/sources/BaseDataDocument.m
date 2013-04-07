@@ -487,7 +487,7 @@ static inline Class preferredByteArrayClass(void) {
     [layoutRepresenter performLayout];
 }
 
-- init {
+- (id)init {
     self = [super init];
     
     /* Make sure we register our defaults for this class */
@@ -999,7 +999,7 @@ static inline Class preferredByteArrayClass(void) {
     
     [[controller byteArray] incrementChangeLockCounter];
     
-    [[saveView viewNamed:@"saveLabelField"] setStringValue:[NSString stringWithFormat:@"Saving \"%@\"", [self displayName]]];
+    [(NSTextField*)[saveView viewNamed:@"saveLabelField"] setStringValue:[NSString stringWithFormat:@"Saving \"%@\"", [self displayName]]];
 
     __block NSInteger saveResult = 0;
     [saveView startOperation:^id(HFProgressTracker *tracker) {
@@ -1115,10 +1115,10 @@ static inline Class preferredByteArrayClass(void) {
     
     if (! findReplaceView) {
         findReplaceView = [self newOperationViewForNibName:@"FindReplaceBanner" displayName:@"Finding" fixedHeight:NO];
-        [[findReplaceView viewNamed:@"searchField"] setTarget:self];
-        [[findReplaceView viewNamed:@"searchField"] setAction:@selector(findNext:)];
-        [[findReplaceView viewNamed:@"replaceField"] setTarget:self];
-        [[findReplaceView viewNamed:@"replaceField"] setAction:@selector(findNext:)]; //yes, this should be findNext:, not replace:, because when you just hit return in the replace text field, it only finds; replace is for the replace button
+        [(HFTextField*)[findReplaceView viewNamed:@"searchField"] setTarget:self];
+        [(HFTextField*)[findReplaceView viewNamed:@"searchField"] setAction:@selector(findNext:)];
+        [(HFTextField*)[findReplaceView viewNamed:@"replaceField"] setTarget:self];
+        [(HFTextField*)[findReplaceView viewNamed:@"replaceField"] setAction:@selector(findNext:)]; //yes, this should be findNext:, not replace:, because when you just hit return in the replace text field, it only finds; replace is for the replace button
     }
     
     [self prepareBannerWithView:findReplaceView withTargetFirstResponder:[findReplaceView viewNamed:@"searchField"]];
@@ -1261,7 +1261,7 @@ static inline Class preferredByteArrayClass(void) {
         NSBeep();
         return;
     }
-    HFByteArray *needle = [[findReplaceView viewNamed:@"searchField"] objectValue];
+    HFByteArray *needle = [(HFTextField*)[findReplaceView viewNamed:@"searchField"] objectValue];
     if ([needle length] > 0) {
         HFByteArray *haystack = [controller byteArray];
         unsigned long long startLocation = [controller maximumSelectionLocation];
@@ -1356,7 +1356,7 @@ cancelled:;
         NSBeep();
         return;
     }
-    HFByteArray *replaceArray = [[findReplaceView viewNamed:@"replaceField"] objectValue];
+    HFByteArray *replaceArray = [(HFTextField*)[findReplaceView viewNamed:@"replaceField"] objectValue];
     HFASSERT(replaceArray != NULL);
     [controller insertByteArray:replaceArray replacingPreviousBytes:0 allowUndoCoalescing:NO];
     
@@ -1377,12 +1377,12 @@ cancelled:;
         NSBeep();
         return;
     }
-    HFByteArray *needle = [[findReplaceView viewNamed:@"searchField"] objectValue];
+    HFByteArray *needle = [(HFTextField*)[findReplaceView viewNamed:@"searchField"] objectValue];
     if ([needle length] == 0) {
         NSBeep();
         return;
     }
-    HFByteArray *replacementValue = [[findReplaceView viewNamed:@"replaceField"] objectValue];
+    HFByteArray *replacementValue = [(HFTextField*)[findReplaceView viewNamed:@"replaceField"] objectValue];
     HFASSERT(replacementValue != NULL);
     HFByteArray *haystack = [controller byteArray];
     
@@ -1432,12 +1432,12 @@ cancelled:;
 
 - (void)showNavigationBannerSettingExtendSelectionCheckboxTo:(BOOL)extend {
     if (moveSelectionByView == operationView && moveSelectionByView != nil) {
-        [[moveSelectionByView viewNamed:@"extendSelectionByCheckbox"] setIntValue:extend];
+        [(NSButton*)[moveSelectionByView viewNamed:@"extendSelectionByCheckbox"] setIntValue:extend];
         [self saveFirstResponderIfNotInBannerAndThenSetItTo:[moveSelectionByView viewNamed:@"moveSelectionByTextField"]];
         return;
     }
     if (! moveSelectionByView) moveSelectionByView = [self newOperationViewForNibName:@"MoveSelectionByBanner" displayName:@"Moving Selection" fixedHeight:YES];
-    [[moveSelectionByView viewNamed:@"extendSelectionByCheckbox"] setIntValue:extend];
+    [(NSButton*)[moveSelectionByView viewNamed:@"extendSelectionByCheckbox"] setIntValue:extend];
     [self prepareBannerWithView:moveSelectionByView withTargetFirstResponder:[moveSelectionByView viewNamed:@"moveSelectionByTextField"]];
     
 }
@@ -1502,7 +1502,7 @@ cancelled:;
     BOOL success = NO;
     unsigned long long value;
     unsigned isNegative;
-    if (parseNumericStringWithSuffix([[jumpToOffsetView viewNamed:@"moveSelectionByTextField"] stringValue], &value, &isNegative)) {
+    if (parseNumericStringWithSuffix([(NSTextField*)[jumpToOffsetView viewNamed:@"moveSelectionByTextField"] stringValue], &value, &isNegative)) {
         unsigned long long length = [controller contentsLength];
         if (length >= value) {
             const unsigned long long offset = (isNegative ? length - value : value);
@@ -1521,9 +1521,9 @@ cancelled:;
     BOOL success = NO;
     unsigned long long value;
     unsigned isNegative;
-    if (parseNumericStringWithSuffix([[moveSelectionByView viewNamed:@"moveSelectionByTextField"] stringValue], &value, &isNegative)) {
+    if (parseNumericStringWithSuffix([(NSTextField*)[moveSelectionByView viewNamed:@"moveSelectionByTextField"] stringValue], &value, &isNegative)) {
         if ([self movingRanges:[controller selectedContentsRanges] byAmount:value isNegative:isNegative isValidForLength:[controller contentsLength]]) {
-            BOOL extendSelection = !![[moveSelectionByView viewNamed:@"extendSelectionByCheckbox"] intValue];
+            BOOL extendSelection = !![(NSTextField*)[moveSelectionByView viewNamed:@"extendSelectionByCheckbox"] intValue];
             HFControllerMovementDirection direction = (isNegative ? HFControllerDirectionLeft : HFControllerDirectionRight);
             HFControllerSelectionTransformation transformation = (extendSelection ? HFControllerExtendSelection : HFControllerShiftSelection);
             [controller moveInDirection:direction byByteCount:value withSelectionTransformation:transformation usingAnchor:NO];
@@ -1585,7 +1585,7 @@ cancelled:;
         NSMenuItem *item;
         
         item = [bookmarksMenu itemAtIndex:itemIndex++];
-        [item setTitle:[NSString stringWithFormat:@"Select Bookmark %lu", bookmarkIndex]];
+        [item setTitle:[NSString stringWithFormat:@"Select Bookmark %lu", (unsigned long)bookmarkIndex]];
         [item setKeyEquivalent:keString];
         [item setAction:@selector(selectBookmark:)];
         [item setKeyEquivalentModifierMask:NSCommandKeyMask];
@@ -1597,7 +1597,7 @@ cancelled:;
         [item setAction:@selector(scrollToBookmark:)];
         [item setKeyEquivalentModifierMask:NSCommandKeyMask | NSShiftKeyMask];
         [item setAlternate:YES];
-        [item setTitle:[NSString stringWithFormat:@"Scroll to Bookmark %lu", bookmarkIndex]];
+        [item setTitle:[NSString stringWithFormat:@"Scroll to Bookmark %lu", (unsigned long)bookmarkIndex]];
         [item setTag:bookmarkIndex];
         
         [keString release];

@@ -13,12 +13,12 @@
 
 @implementation HFFileByteSlice
 
-- initWithFile:(HFFileReference *)file {
+- (id)initWithFile:(HFFileReference *)file {
     REQUIRE_NOT_NULL(file);
     return [self initWithFile:file offset:0 length:[file length]];
 }
 
-- initWithFile:(HFFileReference *)file offset:(unsigned long long)off length:(unsigned long long)len {
+- (id)initWithFile:(HFFileReference *)file offset:(unsigned long long)off length:(unsigned long long)len {
     HFASSERT(HFSum(off, len) <= [file length]);
     REQUIRE_NOT_NULL(file);
     self = [super init];

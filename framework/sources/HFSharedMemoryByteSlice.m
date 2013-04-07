@@ -14,7 +14,7 @@
 
 @implementation HFSharedMemoryByteSlice
 
-- initWithUnsharedData:(NSData *)unsharedData {
+- (id)initWithUnsharedData:(NSData *)unsharedData {
     self = [super init];
     REQUIRE_NOT_NULL(unsharedData);
     NSUInteger dataLength = [unsharedData length];
@@ -33,12 +33,12 @@
 }
 
 // retains, does not copy
-- initWithData:(NSMutableData *)dat {
+- (id)initWithData:(NSMutableData *)dat {
     REQUIRE_NOT_NULL(dat);
     return [self initWithData:dat offset:0 length:[dat length]];
 }
 
-- initWithData:(NSMutableData *)dat offset:(NSUInteger)off length:(NSUInteger)len {
+- (id)initWithData:(NSMutableData *)dat offset:(NSUInteger)off length:(NSUInteger)len {
     self = [super init];
     REQUIRE_NOT_NULL(dat);
     HFASSERT(off + len >= off); //check for overflow
@@ -49,7 +49,7 @@
     return self;
 }
 
-- initWithSharedData:(NSMutableData *)dat offset:(NSUInteger)off length:(NSUInteger)len tail:(const void *)tail tailLength:(NSUInteger)tailLen {
+- (id)initWithSharedData:(NSMutableData *)dat offset:(NSUInteger)off length:(NSUInteger)len tail:(const void *)tail tailLength:(NSUInteger)tailLen {
     self = [super init];
     if (off || len) REQUIRE_NOT_NULL(dat);
     if (tailLen) REQUIRE_NOT_NULL(tail);
@@ -131,7 +131,7 @@
     return result;
 }
 
-- byteSliceByAppendingSlice:(HFByteSlice *)slice {
+- (HFByteSlice *)byteSliceByAppendingSlice:(HFByteSlice *)slice {
     REQUIRE_NOT_NULL(slice);
     const unsigned long long sliceLength = [slice length];
     if (sliceLength == 0) return self;

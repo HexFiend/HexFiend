@@ -626,7 +626,7 @@ enum LineCoverage_t {
     return result;
 }
 
-- initWithRepresenter:(HFTextRepresenter *)rep {
+- (id)initWithRepresenter:(HFTextRepresenter *)rep {
     self = [super initWithFrame:NSMakeRect(0, 0, 1, 1)];
     horizontalContainerInset = 4;
     representer = rep;
@@ -1502,7 +1502,7 @@ static size_t unionAndCleanLists(NSRect *rectList, id *valueList, size_t count) 
             NSUInteger bookmark = [newKey unsignedIntegerValue];
             callout = [[HFRepresenterTextViewCallout alloc] init];
             [callout setColor:[self colorForBookmark:bookmark]];
-            [callout setLabel:[NSString stringWithFormat:@"%lu", [newKey unsignedIntegerValue]]];
+            [callout setLabel:[NSString stringWithFormat:@"%lu", (unsigned long)[newKey unsignedIntegerValue]]];
             [callout setRepresentedObject:newKey];
             [callouts setObject:callout forKey:newKey];
             [callout release];

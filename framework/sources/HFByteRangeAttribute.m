@@ -37,7 +37,7 @@ NSString *HFBookmarkAttributeFromBookmark(NSInteger bookmark) {
         return sStaticBookmarkStrings[bookmark];
     }
     else {
-        return [NSString stringWithFormat:BOOKMARK_PREFIX @"%ld", bookmark];
+        return [NSString stringWithFormat:BOOKMARK_PREFIX @"%ld", (long)bookmark];
     }
 }
 

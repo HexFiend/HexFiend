@@ -25,7 +25,7 @@
     
 }
 
-- init {
+- (id)init {
     self = [super init];
     [self setLayoutPosition:[[self class] defaultLayoutPosition]];
     return self;

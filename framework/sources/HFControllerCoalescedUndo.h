@@ -20,9 +20,9 @@
 }
 
 /* replacedData may be nil if it should be considered empty */
-- initWithReplacedData:(HFByteArray *)replacedData atAnchorLocation:(unsigned long long)anchor;
+- (id)initWithReplacedData:(HFByteArray *)replacedData atAnchorLocation:(unsigned long long)anchor;
 
-- initWithOverwrittenData:(HFByteArray *)overwrittenData atAnchorLocation:(unsigned long long)anchor;
+- (id)initWithOverwrittenData:(HFByteArray *)overwrittenData atAnchorLocation:(unsigned long long)anchor;
 
 - (BOOL)canCoalesceAppendInRange:(HFRange)range;
 - (BOOL)canCoalesceDeleteInRange:(HFRange)range;

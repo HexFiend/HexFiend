@@ -821,13 +821,13 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
         }
         
         if (insn.src.length == 0) {
-            return [NSString stringWithFormat:@"%lu: Insert %@ at offset 0x%llx", row + 1, HFDescribeByteCount(insn.dst.length), insn.dst.location];
+            return [NSString stringWithFormat:@"%ld: Insert %@ at offset 0x%llx", (long)row + 1, HFDescribeByteCount(insn.dst.length), insn.dst.location];
         }
         else if (insn.dst.length == 0) {
-            return [NSString stringWithFormat:@"%lu: Delete %@ at offset 0x%llx", row + 1, HFDescribeByteCount(insn.src.length), insn.src.location];
+            return [NSString stringWithFormat:@"%ld: Delete %@ at offset 0x%llx", (long)row + 1, HFDescribeByteCount(insn.src.length), insn.src.location];
         }
         else {
-            return [NSString stringWithFormat:@"%lu: Replace %@ at offset 0x%llx with %@", row + 1, HFDescribeByteCount(insn.src.length), insn.src.location, HFDescribeByteCount(insn.dst.length)];
+            return [NSString stringWithFormat:@"%ld: Replace %@ at offset 0x%llx with %@", (long)row + 1, HFDescribeByteCount(insn.src.length), insn.src.location, HFDescribeByteCount(insn.dst.length)];
         }
     }
 }

@@ -135,7 +135,7 @@ static BOOL returnFTruncateError(NSError **error) {
     return ref->device == device && ref->inode == inode;
 }
 
-+ allocWithZone:(NSZone *)zone {
++ (id)allocWithZone:(NSZone *)zone {
     if (self == [HFFileReference class]) {
         /* Default to HFConcreteFileReference */
         return [HFConcreteFileReference allocWithZone:zone];
@@ -155,7 +155,7 @@ static BOOL returnFTruncateError(NSError **error) {
     
 }
 
-- initWithPath:(NSString *)path error:(NSError **)error {
+- (id)initWithPath:(NSString *)path error:(NSError **)error {
     self = [super init];
     isWritable = NO;
     fileDescriptor = -1;
@@ -167,7 +167,7 @@ static BOOL returnFTruncateError(NSError **error) {
     return self;
 }
 
-- initWritableWithPath:(NSString *)path error:(NSError **)error{
+- (id)initWritableWithPath:(NSString *)path error:(NSError **)error{
     self = [super init];
     isWritable = YES;
     fileDescriptor = -1;
@@ -278,7 +278,7 @@ static BOOL returnFTruncateError(NSError **error) {
 			tempBuf = malloc(blockSize);
 			ssize_t result = pread(fileDescriptor, tempBuf, blockSize, pos - prePad);
 			if (result != (ssize_t)blockSize) {
-				[NSException raise:NSGenericException format:@"Read result: %d expected: %u error: %s", result, blockSize, strerror(errno)];
+				[NSException raise:NSGenericException format:@"Read result: %zd expected: %u error: %s", result, blockSize, strerror(errno)];
 			}
 			NSUInteger toCopy = blockSize - prePad;
 			if (toCopy > length)
@@ -294,7 +294,7 @@ static BOOL returnFTruncateError(NSError **error) {
 
     ssize_t result = pread(fileDescriptor, buff, length, pos);
     if (result != (long)length) {
-        [NSException raise:NSGenericException format:@"Read result: %d expected: %u error: %s", result, length, strerror(errno)];
+        [NSException raise:NSGenericException format:@"Read result: %zd expected: %lu error: %s", result, (unsigned long)length, strerror(errno)];
     }
 
 	if (lastBlockLen) {
@@ -302,7 +302,7 @@ static BOOL returnFTruncateError(NSError **error) {
 			tempBuf = malloc(blockSize);
 		result = pread(fileDescriptor, tempBuf, blockSize, pos + length);
 		if (result != (ssize_t)blockSize) {
-			[NSException raise:NSGenericException format:@"Read result: %d expected: %u error: %s", result, blockSize, strerror(errno)];
+			[NSException raise:NSGenericException format:@"Read result: %zd expected: %u error: %s", result, blockSize, strerror(errno)];
 		}
 		memcpy(buff + length, tempBuf, lastBlockLen);
 	}
@@ -330,7 +330,7 @@ static BOOL returnFTruncateError(NSError **error) {
 			tempBuf = malloc(blockSize);
 			ssize_t result = pread(fileDescriptor, tempBuf, blockSize, offset - prePad);
 			if (result != (ssize_t)blockSize) {
-				[NSException raise:NSGenericException format:@"Read result: %d expected: %u error: %s", result, blockSize, strerror(errno)];
+				[NSException raise:NSGenericException format:@"Read result: %zd expected: %u error: %s", result, blockSize, strerror(errno)];
 			}
 			NSUInteger toCopy = blockSize - prePad;
 			if (toCopy > length)
@@ -366,7 +366,7 @@ static BOOL returnFTruncateError(NSError **error) {
 
 		result = pread(fileDescriptor, tempBuf, blockSize, offset);
 		if (result != (ssize_t)blockSize) {
-			[NSException raise:NSGenericException format:@"Read result: %d expected: %u error: %s", result, blockSize, strerror(errno)];
+			[NSException raise:NSGenericException format:@"Read result: %zd expected: %u error: %s", result, blockSize, strerror(errno)];
 		}
 		memcpy(tempBuf, buff, lastBlockLen);
 

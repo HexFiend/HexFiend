@@ -433,7 +433,7 @@ NSString *HFDescribeByteCount(unsigned long long count);
 /*! @brief An object wrapper for the HFRange type.
 
   A simple class responsible for holding an immutable HFRange as an object.  Methods that logically work on multiple HFRanges usually take or return arrays of HFRangeWrappers. */
-@interface HFRangeWrapper : NSObject {
+@interface HFRangeWrapper : NSObject <NSCopying> {
     @public
     HFRange range;
 }

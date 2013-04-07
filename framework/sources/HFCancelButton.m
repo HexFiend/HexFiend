@@ -27,7 +27,7 @@
     return self;
 }
 
-- initWithCoder:(NSCoder *)coder {
+- (id)initWithCoder:(NSCoder *)coder {
     if ((self = [super initWithCoder:coder])) {
 	NSImage *stopImage = [NSImage imageNamed:@"NSStopProgressTemplate"];
 	if (stopImage) {

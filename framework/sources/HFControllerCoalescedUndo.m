@@ -17,7 +17,7 @@
 
 @implementation HFControllerCoalescedUndo
 
-- initWithReplacedData:(HFByteArray *)replacedData atAnchorLocation:(unsigned long long)anchor  {
+- (id)initWithReplacedData:(HFByteArray *)replacedData atAnchorLocation:(unsigned long long)anchor  {
     self = [super init];
     deletedData = [replacedData retain];
     byteArrayWasCopied = NO;
@@ -30,7 +30,7 @@
     return self;
 }
 
-- initWithOverwrittenData:(HFByteArray *)overwrittenData atAnchorLocation:(unsigned long long)anchor {
+- (id)initWithOverwrittenData:(HFByteArray *)overwrittenData atAnchorLocation:(unsigned long long)anchor {
     self = [super init];
     HFASSERT([overwrittenData length] > 0);
     deletedData = [overwrittenData retain];

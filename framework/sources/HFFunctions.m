@@ -612,7 +612,7 @@ NSString *HFDescribeByteCountWithPrefixAndSuffix(const char *stringPrefix, unsig
     else remainderBuff[0] = 0;
     
     char* resultPointer = NULL;
-    int numChars = asprintf(&resultPointer, "%s%llu%s %s%s%s", stringPrefix, dividend, remainderBuff, suffixes[i].suffix, "s" + !needsPlural, stringSuffix);
+    int numChars = asprintf(&resultPointer, "%s%llu%s %s%s%s", stringPrefix, dividend, remainderBuff, suffixes[i].suffix, needsPlural ? "s" : "", stringSuffix);
     if (numChars < 0) return NULL;
     return [[[NSString alloc] initWithBytesNoCopy:resultPointer length:numChars encoding:NSASCIIStringEncoding freeWhenDone:YES] autorelease];
 }
