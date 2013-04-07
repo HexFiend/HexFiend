@@ -57,7 +57,7 @@
     } _hftvflags;
 }
 
-- initWithRepresenter:(HFTextRepresenter *)rep;
+- (id)initWithRepresenter:(HFTextRepresenter *)rep;
 - (void)clearRepresenter;
 
 - (HFTextRepresenter *)representer;

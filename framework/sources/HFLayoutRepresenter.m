@@ -256,7 +256,7 @@ static NSInteger sortByLayoutPosition(id a, id b, void *self) {
     return representers ? [NSArray arrayWithArray:representers] : [NSArray array];
 }
 
-- init {
+- (id)init {
     self = [super init];
     maximizesBytesPerLine = YES;
     return self;

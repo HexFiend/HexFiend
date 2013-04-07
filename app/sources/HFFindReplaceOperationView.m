@@ -10,7 +10,7 @@
 
 @implementation HFFindReplaceOperationView
 
-- initWithFrame:(NSRect)frame {
+- (id)initWithFrame:(NSRect)frame {
     self = [super initWithFrame:frame];
     fieldTypeIsASCII = 	[[NSUserDefaults standardUserDefaults] boolForKey:@"FindPrefersASCII"];
     return self;

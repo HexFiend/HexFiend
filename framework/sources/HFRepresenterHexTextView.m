@@ -21,12 +21,11 @@
     /* We'll calculate the max glyph advancement as we go.  If this is a bottleneck, we can use the bulk getAdvancements:... method */
     glyphAdvancement = 0;
 
-    NSUInteger nybbleValue;
-    for (nybbleValue=0; nybbleValue <= 0xF; nybbleValue++) {
+    for (short nybbleValue=0; nybbleValue <= 0xF; nybbleValue++) {
         NSString *string;
         NSGlyph glyphs[GLYPH_BUFFER_SIZE];
         NSUInteger glyphCount;
-        string = [[NSString alloc] initWithFormat:@"%lX", nybbleValue];
+        string = [[NSString alloc] initWithFormat:@"%hX", nybbleValue];
         [[storage mutableString] setString:string];
         [storage addAttribute:NSFontAttributeName value:font range:NSMakeRange(0, 1)];
         [string release];

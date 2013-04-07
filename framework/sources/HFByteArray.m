@@ -11,7 +11,7 @@
 
 @implementation HFByteArray
 
-- init {
+- (id)init {
     if ([self class] == [HFByteArray class]) {
         [NSException raise:NSInvalidArgumentException format:@"init sent to HFByteArray, but HFByteArray is an abstract class.  Instantiate one of its subclasses instead, like HFBTreeByteArray."];
     }
@@ -72,12 +72,12 @@
 
 - (HFByteArray *)subarrayWithRange:(HFRange)range { USE(range); UNIMPLEMENTED(); }
 
-- mutableCopyWithZone:(NSZone *)zone {
+- (id)mutableCopyWithZone:(NSZone *)zone {
     USE(zone);
     return [[self subarrayWithRange:HFRangeMake(0, [self length])] retain];
 }
 
-- copyWithZone:(NSZone *)zone {
+- (id)copyWithZone:(NSZone *)zone {
     USE(zone);
     return [[self subarrayWithRange:HFRangeMake(0, [self length])] retain];
 }

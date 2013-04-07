@@ -10,7 +10,7 @@
 
 @implementation HFFullMemoryByteSlice
 
-- initWithData:(NSData *)val {
+- (id)initWithData:(NSData *)val {
     REQUIRE_NOT_NULL(val);
     self = [super init];
     data = [val copy];

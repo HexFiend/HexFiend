@@ -35,7 +35,7 @@
     [cell setBackgroundStyle:NSBackgroundStyleRaised];
 }
 
-- initWithFrame:(NSRect)frame {
+- (id)initWithFrame:(NSRect)frame {
     self = [super initWithFrame:frame];
     [self _sharedInitStatusBarView];
     return self;

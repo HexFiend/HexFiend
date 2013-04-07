@@ -306,7 +306,7 @@ cancelled:
     unsigned long long result = ULLONG_MAX;
     const int tempCancelRequested = 0;
     volatile unsigned long long * const progressValuePtr = (progressTracker ? &progressTracker->currentProgress : &tempProgressValue);
-    volatile int *cancelRequested = (progressTracker ? &progressTracker->cancelRequested : &tempCancelRequested);
+    const volatile int *cancelRequested = (progressTracker ? &progressTracker->cancelRequested : &tempCancelRequested);
     
     unsigned char buff[SEARCH_CHUNK_SIZE];
     
