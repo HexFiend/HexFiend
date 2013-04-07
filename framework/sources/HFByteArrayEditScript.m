@@ -438,7 +438,7 @@ unsigned long long compute_forwards_snake_length(HFByteArrayEditScript *self, st
     unsigned long long alreadyRead = 0, remainingToRead = MIN(rangeInSource.length, rangeInDest.length);
     unsigned long long progressConsumed = (inoutProgressConsumed ? *inoutProgressConsumed : 0);
     while (remainingToRead > 0) {
-        LocalIndex_t amountToRead = MIN(READ_AMOUNT, remainingToRead);
+        LocalIndex_t amountToRead = (LocalIndex_t)MIN(READ_AMOUNT, remainingToRead);
         const unsigned char *a_buff = get_cached_bytes(self, cacheGroup, a, self->sourceLength, rangeInSource.location + alreadyRead, amountToRead, SourceForwards);
         const unsigned char *b_buff = get_cached_bytes(self, cacheGroup, b, self->destLength, rangeInDest.location + alreadyRead, amountToRead, DestForwards);
         LocalIndex_t matchLen = match_forwards(a_buff, b_buff, amountToRead);
@@ -473,7 +473,7 @@ unsigned long long compute_backwards_snake_length(HFByteArrayEditScript *self, s
     unsigned long long progressConsumed = (inoutProgressConsumed ? *inoutProgressConsumed : 0);
     unsigned long long a_offset = HFMaxRange(rangeInSource), b_offset = HFMaxRange(rangeInDest);
     while (remainingToRead > 0) {
-        LocalIndex_t amountToRead = MIN(READ_AMOUNT, remainingToRead);
+        LocalIndex_t amountToRead = (LocalIndex_t)MIN(READ_AMOUNT, remainingToRead);
         const unsigned char *a_buff = get_cached_bytes(self, cacheGroup, a, self->sourceLength, a_offset - alreadyRead - amountToRead, amountToRead, SourceBackwards);
         const unsigned char *b_buff = get_cached_bytes(self, cacheGroup, b, self->destLength, b_offset - alreadyRead - amountToRead, amountToRead, DestBackwards);
         LocalIndex_t matchLen = match_backwards(a_buff, b_buff, amountToRead);
