@@ -274,7 +274,7 @@ You create an HFController via <tt>[[HFController alloc] init]</tt>.  After that
 /*! Sets the displayed line range.  When setting the displayed line range, the given range must be nonnegative, and the maximum of the range must be no larger than the total line count.  See the -displayedLineRange method for more information. */
 - (void)setDisplayedLineRange:(HFFPRange)range;
 
-/*! Modify the displayedLineRange as little as possible so that as much of the given range as can fit is visible. */
+/*! Modify the displayedLineRange so that as much of the given range as can fit is visible. If possible, moves by as little as possible so that the visible ranges before and afterward intersect with each other. */
 - (void)maximizeVisibilityOfContentsRange:(HFRange)range;
 
 /*! Modify the displayedLineRange as to center the given contents range.  If the range is near the bottom or top, this will center as close as possible.  If contents range is too large to fit, it centers the top of the range.  contentsRange may be empty. */

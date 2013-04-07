@@ -125,6 +125,7 @@
 
 - (void)updateSelectedRanges;
 - (void)updateSelectionPulse;
+- (void)terminateSelectionPulse; // Start fading the pulse.
 
 /* Given a rect edge, return an NSRect representing the maximum edge in that direction.  The dimension in the direction of the edge is 0 (so if edge is NSMaxXEdge, the resulting width is 0).  The returned rect is in the coordinate space of the receiver's view.  If the byte range is not displayed, returns NSZeroRect.
  */
