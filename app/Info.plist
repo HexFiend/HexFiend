@@ -41,6 +41,8 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>300</string>
+	<key>LSApplicationCategoryType</key>
+	<string>public.app-category.developer-tools</string>
 	<key>NSMainNibFile</key>
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
