@@ -147,7 +147,6 @@
 /* Following two must be overridden */
 - (CGFloat)advanceBetweenColumns;
 - (CGFloat)advancePerCharacter;
-- (NSUInteger)bytesPerCharacter;
 
 - (CGFloat)advancePerColumn;
 - (CGFloat)totalAdvanceForBytesInRange:(NSRange)range;
