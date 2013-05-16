@@ -21,7 +21,7 @@
 #define NSTableViewSelectionHighlightStyleNone (-1)
 
 /* The largest number of bytes that any inspector type can edit */
-#define MAX_EDITABLE_BYTE_COUNT 8
+#define MAX_EDITABLE_BYTE_COUNT 128
 #define INVALID_EDITING_BYTE_COUNT NSUIntegerMax
 
 #define kDataInspectorUserDefaultsKey @"DataInspectorDefaults"
@@ -260,6 +260,11 @@ static NSAttributedString *inspectionError(NSString *s) {
         return inspectionError(InspectionErrorNoData);
     }
     
+    if(range.length > MAX_EDITABLE_BYTE_COUNT) {
+        if(outIsError) *outIsError = YES;
+        return inspectionError(InspectionErrorTooMuch);
+    }
+    
     switch ([self type]) {
         case eInspectorTypeUnsignedInteger:
         case eInspectorTypeSignedInteger:
@@ -270,7 +275,7 @@ static NSAttributedString *inspectionError(NSString *s) {
             }
             break;
         case eInspectorTypeUTF8Text:
-            if(range.length > 100) {
+            if(range.length > MAX_EDITABLE_BYTE_COUNT) {
                 if(outIsError) *outIsError = YES;
                 return inspectionError(InspectionErrorTooMuch);
             }
@@ -321,7 +326,7 @@ static NSAttributedString *inspectionError(NSString *s) {
                 
         case eInspectorTypeUTF8Text: {
             if(length == 0) return inspectionError(InspectionErrorNoData);
-            if(length > 100) return inspectionError(InspectionErrorTooMuch);
+            if(length > MAX_EDITABLE_BYTE_COUNT) return inspectionError(InspectionErrorTooMuch);
             NSString *ret = [[[NSString alloc] initWithBytes:bytes length:length encoding:NSUTF8StringEncoding] autorelease];
             if(ret == nil) return inspectionError(@"(bytes are not valid UTF-8)");
             if(outIsError) *outIsError = NO;
@@ -365,6 +370,29 @@ static BOOL valueCanFitInByteCount(unsigned long long unsignedValue, NSUInteger 
 	default:
 	    return NO;
     }
+}
+
+static BOOL stringRangeIsNullBytes(NSString *string, NSRange range) {
+    static const int bufferChars = 256;
+    static const unichar zeroBuf[bufferChars] = {0}; //unicode null bytes
+    unichar buffer[bufferChars];
+    
+    NSRange r = NSMakeRange(range.location, bufferChars);
+    
+    if(range.length > bufferChars) { // No underflow please.
+        NSUInteger lastBlock = range.location + range.length - bufferChars;
+        for(; r.location < lastBlock; r.location += bufferChars) {
+            [string getCharacters:buffer range:r];
+            if(memcmp(buffer, zeroBuf, bufferChars)) return NO;
+        }
+    }
+
+    // Handle the uneven bytes at the end.
+    r.length = range.location + range.length - r.location;
+    [string getCharacters:buffer range:r];
+    if(memcmp(buffer, zeroBuf, r.length)) return NO;    
+
+    return YES;
 }
 
 - (BOOL)acceptStringValue:(NSString *)value replacingByteCount:(NSUInteger)count intoData:(unsigned char *)outData {
@@ -472,17 +500,50 @@ static BOOL valueCanFitInByteCount(unsigned long long unsignedValue, NSUInteger 
 	return YES;
     }
     else if (inspectorType == eInspectorTypeUTF8Text) {
+        /*
+         * If count is longer than the UTF-8 encoded value, succeed and zero fill
+         * the rest of outbuf. It's obvious behavior and probably more useful than
+         * only allowing an exact length UTF-8 replacement.
+         *
+         * By the same token, allow ending zero bytes to be dropped, so re-editing
+         * the same text doesn't fail due to the null bytes we added at the end.
+         */
+        
         unsigned char buffer_[256];
         unsigned char *buffer = buffer_;
         NSUInteger used;
         BOOL ret;
+        NSRange fullRange = NSMakeRange(0, [value length]);
+        NSRange leftover;
         
-        if(count > 256) buffer = malloc(count);
-        ret = [value getBytes:buffer maxLength:count usedLength:&used encoding:NSUTF8StringEncoding options:0 range:NSMakeRange(0, [value length]) remainingRange:NULL];
-        ret = ret && used == count;
-        if(ret && outData != NULL) memcpy(outData, buffer, used);
-        if(count > 256) free(buffer);
+        // Speculate that 256 chars is enough.
+        ret = [value getBytes:buffer maxLength:count < sizeof(buffer_) ? count : sizeof(buffer_) usedLength:&used
+                     encoding:NSUTF8StringEncoding options:0 range:fullRange remainingRange:&leftover];
         
+        if(!ret) return NO;
+        if(leftover.length == 0 || stringRangeIsNullBytes(value, leftover)) {
+            // Buffer was large enough, yay!
+            if(outData) {
+                memcpy(outData, buffer, used);
+                memset(outData+used, 0, count-used);
+            }
+            return YES;
+        }
+        
+        // Buffer wasn't large enough.
+        // Don't bother trying to reuse previous conversion, it's small beans anyways.
+        
+        if(!outData) return count <= [value lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
+        
+        buffer = malloc(count);
+        ret = [value getBytes:buffer maxLength:count usedLength:&used encoding:NSUTF8StringEncoding
+                      options:0 range:fullRange remainingRange:&leftover];
+        ret = ret && (leftover.length == 0 || stringRangeIsNullBytes(value, leftover)) && used <= count;
+        if(ret) {
+            memcpy(outData, buffer, used);
+            memset(outData+used, 0, count-used);
+        }
+        free(buffer);
         return ret;
     }
     else {
@@ -662,19 +723,19 @@ static BOOL valueCanFitInByteCount(unsigned long long unsignedValue, NSUInteger 
         [tableView reloadData];
     }
     else if ([ident isEqualToString:kInspectorValueColumnIdentifier]) {
-	NSUInteger byteCount = [self selectedByteCountForEditing];
-	if (byteCount != INVALID_EDITING_BYTE_COUNT) {
-	    HFASSERT(byteCount <= MAX_EDITABLE_BYTE_COUNT);
-	    unsigned char bytes[MAX_EDITABLE_BYTE_COUNT];
-	    if ([inspector acceptStringValue:object replacingByteCount:byteCount intoData:bytes]) {
-		HFController *controller = [self controller];
-		NSArray *selectedRanges = [controller selectedContentsRanges];
-		NSData *data = [[NSData alloc] initWithBytes:bytes length:byteCount];
-		[controller insertData:data replacingPreviousBytes:0 allowUndoCoalescing:NO];
-		[data release];
-		[controller setSelectedContentsRanges:selectedRanges]; //Hack to preserve the selection across the data insertion
-	    }
-	}
+        NSUInteger byteCount = [self selectedByteCountForEditing];
+        if (byteCount != INVALID_EDITING_BYTE_COUNT) {
+            unsigned char bytes[MAX_EDITABLE_BYTE_COUNT];
+            HFASSERT(byteCount <= sizeof(bytes));
+            if ([inspector acceptStringValue:object replacingByteCount:byteCount intoData:bytes]) {
+                HFController *controller = [self controller];
+                NSArray *selectedRanges = [controller selectedContentsRanges];
+                NSData *data = [[NSData alloc] initWithBytesNoCopy:bytes length:byteCount freeWhenDone:NO];
+                [controller insertData:data replacingPreviousBytes:0 allowUndoCoalescing:NO];
+                [data release];
+                [controller setSelectedContentsRanges:selectedRanges]; //Hack to preserve the selection across the data insertion
+            }
+        }
     }
     else if ([ident isEqualToString:kInspectorAddButtonColumnIdentifier] || [ident isEqualToString:kInspectorSubtractButtonColumnIdentifier]) {
         /* Nothing to do */
