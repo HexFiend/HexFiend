@@ -252,7 +252,10 @@ static NSAttributedString *inspectionError(NSString *s) {
 - (id)valueForController:(HFController *)controller ranges:(NSArray *)ranges isError:(BOOL *)outIsError {
     /* Just do a rough cut on length before going to valueForData. */
     
-    if ([ranges count] != 1) return inspectionError(@"(select a contiguous range)");
+    if ([ranges count] != 1) {
+        if(outIsError) *outIsError = YES;
+        return inspectionError(@"(select a contiguous range)");
+    }
     HFRange range = [[ranges objectAtIndex:0] HFRange];
     
     if(range.length == 0) {
