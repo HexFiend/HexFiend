@@ -25,6 +25,9 @@
 		795F46C114BAA45D00EB2F7D /* OpenDriveWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 795F46C014BAA45D00EB2F7D /* OpenDriveWindowController.m */; };
 		795F46C314BAADB600EB2F7D /* DiskArbitration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 795F46C214BAADB600EB2F7D /* DiskArbitration.framework */; };
 		795F46C514BAAEFB00EB2F7D /* OpenDriveDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = 795F46C414BAAEFB00EB2F7D /* OpenDriveDialog.xib */; };
+		79E2FF1C17459F5E00FA8F12 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 79E2FF1B17459F5E00FA8F12 /* Sparkle.framework */; };
+		79E2FF1E17459FA700FA8F12 /* Sparkle.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 79E2FF1B17459F5E00FA8F12 /* Sparkle.framework */; };
+		79E2FF201745A2B300FA8F12 /* dsa_pub.pem in Resources */ = {isa = PBXBuildFile; fileRef = 79E2FF1F1745A2B300FA8F12 /* dsa_pub.pem */; };
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
@@ -239,6 +242,16 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		79E2FF1D17459F9E00FA8F12 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				79E2FF1E17459FA700FA8F12 /* Sparkle.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D01E7BDA0CDC540700943F9E /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -282,6 +295,8 @@
 		795F46C014BAA45D00EB2F7D /* OpenDriveWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OpenDriveWindowController.m; path = app/sources/OpenDriveWindowController.m; sourceTree = "<group>"; };
 		795F46C214BAADB600EB2F7D /* DiskArbitration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DiskArbitration.framework; path = System/Library/Frameworks/DiskArbitration.framework; sourceTree = SDKROOT; };
 		795F46C414BAAEFB00EB2F7D /* OpenDriveDialog.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = OpenDriveDialog.xib; path = app/resources/OpenDriveDialog.xib; sourceTree = "<group>"; };
+		79E2FF1B17459F5E00FA8F12 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Sparkle.framework; path = app/updater/Sparkle.framework; sourceTree = "<group>"; };
+		79E2FF1F1745A2B300FA8F12 /* dsa_pub.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = dsa_pub.pem; path = app/resources/dsa_pub.pem; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* Hex Fiend.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Hex Fiend.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D00122E10D48A8D400540B10 /* HFFindReplaceBackgroundView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFFindReplaceBackgroundView.h; path = app/sources/HFFindReplaceBackgroundView.h; sourceTree = "<group>"; };
 		D00122E20D48A8D400540B10 /* HFFindReplaceBackgroundView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFFindReplaceBackgroundView.m; path = app/sources/HFFindReplaceBackgroundView.m; sourceTree = "<group>"; };
@@ -502,6 +517,7 @@
 			files = (
 				795F46C314BAADB600EB2F7D /* DiskArbitration.framework in Frameworks */,
 				8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */,
+				79E2FF1C17459F5E00FA8F12 /* Sparkle.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -575,6 +591,7 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				79E2FF1F1745A2B300FA8F12 /* dsa_pub.pem */,
 				795F46C414BAAEFB00EB2F7D /* OpenDriveDialog.xib */,
 				D024AFB20E349A7B00F39EBB /* hex_icon.icns */,
 				D01E7C0A0CDC570400943F9E /* Info.plist */,
@@ -599,6 +616,7 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				79E2FF1B17459F5E00FA8F12 /* Sparkle.framework */,
 				795F46C214BAADB600EB2F7D /* DiskArbitration.framework */,
 				D0D4BE84146F43A1001B0A71 /* ServiceManagement.framework */,
 				D05984CB1032C6D900059E72 /* Security.framework */,
@@ -1098,6 +1116,7 @@
 				8D11072E0486CEB800E47090 /* Frameworks */,
 				D039DC011481C18400364FA6 /* CopyFiles */,
 				D075E2151481ADAA0010D9AE /* Run CodeSign Script */,
+				79E2FF1D17459F9E00FA8F12 /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -1238,6 +1257,7 @@
 				D059E1421311CA71001493B8 /* GenericPrompt.xib in Resources */,
 				795F46C514BAAEFB00EB2F7D /* OpenDriveDialog.xib in Resources */,
 				D8C1F92C16F278BA00A4C36E /* DiffRangeDialog.xib in Resources */,
+				79E2FF201745A2B300FA8F12 /* dsa_pub.pem in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1604,6 +1624,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\"",
+					"\"$(SRCROOT)\"",
 				);
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -1749,6 +1770,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\"",
+					"\"$(SRCROOT)\"",
 				);
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -1894,6 +1916,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\"",
+					"\"$(SRCROOT)\"",
 				);
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -2079,6 +2102,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\"",
+					"\"$(SRCROOT)\"",
 				);
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -2257,6 +2281,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\"",
+					"\"$(SRCROOT)\"",
 				);
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;

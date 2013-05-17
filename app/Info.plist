@@ -47,12 +47,16 @@
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
+	<key>SUPublicDSAKeyFile</key>
+	<string>dsa_pub.pem</string>
+	<key>SUFeedURL</key>
+	<string>https://raw.github.com/ridiculousfish/HexFiend/master/app/updater/HexFiend_appcast.xml</string>
 	<key>NSSupportsSuddenTermination</key>
 	<string>YES</string>
 	<key>SMPrivilegedExecutables</key>
 	<dict>
 		<key>com.ridiculousfish.HexFiend.PrivilegedHelper</key>
-		<string>identifier com.ridiculousfish.HexFiend.PrivilegedHelper and certificate leaf[subject.CN] = "Hex Fiend"</string>
+		<string>identifier com.ridiculousfish.HexFiend.PrivilegedHelper and certificate leaf[subject.CN] = &quot;Hex Fiend&quot;</string>
 	</dict>
 </dict>
 </plist>
