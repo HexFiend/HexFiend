@@ -144,6 +144,7 @@ static HFRange invertRangeInRange(HFRange range, HFRange enclosingRange) {
     volatile int *cancelRequested = progressTracker ? &progressTracker->cancelRequested : &tempCancelRequested;
     if (*cancelRequested) goto cancelled;
     unsigned long needle_length = ll2l([findBytes length]);
+    HFASSERT(needle_length > 0);
     needle = malloc(needle_length);
     if (! needle) {
         NSLog(@"Out of memory allocating %lu bytes", needle_length);
@@ -217,14 +218,14 @@ static HFRange invertRangeInRange(HFRange range, HFRange enclosingRange) {
     for (u = 1; u <= ua; u++)
         if (match_jump[u] > needle_length + ua - u) match_jump[u] = needle_length + ua - u;
     
-    ub = backup[ua];
+    ub = ua;
     while (ua <= needle_length) {
+        ub = backup[ub];
         while (ua <= ub) {
             if (match_jump[ua] > ub - ua + needle_length)
                 match_jump[ua] = ub - ua + needle_length;
             ua++;
         }
-        ub = backup[ub];
     }
     
     if (*cancelRequested) goto cancelled;
