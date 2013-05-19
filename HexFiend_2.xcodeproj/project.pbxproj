@@ -1728,7 +1728,7 @@
 			};
 			name = Release;
 		};
-		D022259D146F629E00646C27 /* Debug + Unit Tests */ = {
+		D022259D146F629E00646C27 /* Debug+UnitTests */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D075E2121481ACFF0010D9AE /* Debug+UnitTests.xcconfig */;
 			buildSettings = {
@@ -1750,9 +1750,9 @@
 				"SDKROOT[arch=ppc64]" = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
 				VALID_ARCHS = "armv6 armv7 i386 x86_64";
 			};
-			name = "Debug + Unit Tests";
+			name = "Debug+UnitTests";
 		};
-		D022259E146F629E00646C27 /* Debug + Unit Tests */ = {
+		D022259E146F629E00646C27 /* Debug+UnitTests */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -1778,9 +1778,9 @@
 				);
 				WRAPPER_EXTENSION = app;
 			};
-			name = "Debug + Unit Tests";
+			name = "Debug+UnitTests";
 		};
-		D022259F146F629E00646C27 /* Debug + Unit Tests */ = {
+		D022259F146F629E00646C27 /* Debug+UnitTests */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
@@ -1811,9 +1811,9 @@
 				);
 				ZERO_LINK = NO;
 			};
-			name = "Debug + Unit Tests";
+			name = "Debug+UnitTests";
 		};
-		D02225A1146F629E00646C27 /* Debug + Unit Tests */ = {
+		D02225A1146F629E00646C27 /* Debug+UnitTests */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				GCC_MODEL_TUNING = G5;
@@ -1831,9 +1831,9 @@
 				);
 				PRODUCT_NAME = com.ridiculousfish.HexFiend.PrivilegedHelper;
 			};
-			name = "Debug + Unit Tests";
+			name = "Debug+UnitTests";
 		};
-		D02225A2146F629E00646C27 /* Debug + Unit Tests */ = {
+		D02225A2146F629E00646C27 /* Debug+UnitTests */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -1851,9 +1851,9 @@
 				);
 				PRODUCT_NAME = Test_BTree;
 			};
-			name = "Debug + Unit Tests";
+			name = "Debug+UnitTests";
 		};
-		D02225A3146F629E00646C27 /* Debug + Unit Tests */ = {
+		D02225A3146F629E00646C27 /* Debug+UnitTests */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -1869,16 +1869,16 @@
 				PRODUCT_NAME = HexFiendling;
 				VALID_ARCHS = "ppc64 x86_64 i386 ppc ppc7400 ppc970";
 			};
-			name = "Debug + Unit Tests";
+			name = "Debug+UnitTests";
 		};
-		D02225A4146F629E00646C27 /* Debug + Unit Tests */ = {
+		D02225A4146F629E00646C27 /* Debug+UnitTests */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				PRODUCT_NAME = "Documentation Generation";
 			};
-			name = "Debug + Unit Tests";
+			name = "Debug+UnitTests";
 		};
-		D039DC1114835A1400364FA6 /* Release + Code Sign */ = {
+		D039DC1114835A1400364FA6 /* Release+CodeSign */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D039DC081483100500364FA6 /* Release+CodeSign.xcconfig */;
 			buildSettings = {
@@ -1900,9 +1900,9 @@
 				"SDKROOT[arch=ppc64]" = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
 				VALID_ARCHS = "armv6 armv7 i386 x86_64";
 			};
-			name = "Release + Code Sign";
+			name = "Release+CodeSign";
 		};
-		D039DC1214835A1400364FA6 /* Release + Code Sign */ = {
+		D039DC1214835A1400364FA6 /* Release+CodeSign */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -1928,9 +1928,9 @@
 				);
 				WRAPPER_EXTENSION = app;
 			};
-			name = "Release + Code Sign";
+			name = "Release+CodeSign";
 		};
-		D039DC1314835A1400364FA6 /* Release + Code Sign */ = {
+		D039DC1314835A1400364FA6 /* Release+CodeSign */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
@@ -1961,9 +1961,9 @@
 				);
 				ZERO_LINK = NO;
 			};
-			name = "Release + Code Sign";
+			name = "Release+CodeSign";
 		};
-		D039DC1414835A1400364FA6 /* Release + Code Sign */ = {
+		D039DC1414835A1400364FA6 /* Release+CodeSign */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				GCC_MODEL_TUNING = G5;
@@ -1981,9 +1981,9 @@
 				);
 				PRODUCT_NAME = com.ridiculousfish.HexFiend.PrivilegedHelper;
 			};
-			name = "Release + Code Sign";
+			name = "Release+CodeSign";
 		};
-		D039DC1514835A1400364FA6 /* Release + Code Sign */ = {
+		D039DC1514835A1400364FA6 /* Release+CodeSign */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -2001,9 +2001,9 @@
 				);
 				PRODUCT_NAME = Test_BTree;
 			};
-			name = "Release + Code Sign";
+			name = "Release+CodeSign";
 		};
-		D039DC1614835A1400364FA6 /* Release + Code Sign */ = {
+		D039DC1614835A1400364FA6 /* Release+CodeSign */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -2019,14 +2019,14 @@
 				PRODUCT_NAME = HexFiendling;
 				VALID_ARCHS = "ppc64 x86_64 i386 ppc ppc7400 ppc970";
 			};
-			name = "Release + Code Sign";
+			name = "Release+CodeSign";
 		};
-		D039DC1714835A1400364FA6 /* Release + Code Sign */ = {
+		D039DC1714835A1400364FA6 /* Release+CodeSign */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				PRODUCT_NAME = "Documentation Generation";
 			};
-			name = "Release + Code Sign";
+			name = "Release+CodeSign";
 		};
 		D047E31E1022CEFF00EF307B /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -2068,7 +2068,7 @@
 			};
 			name = Debug;
 		};
-		D075E204148196B00010D9AE /* Debug + Code Sign */ = {
+		D075E204148196B00010D9AE /* Debug+CodeSign */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D075E2111481ACFF0010D9AE /* Debug+CodeSign.xcconfig */;
 			buildSettings = {
@@ -2090,9 +2090,9 @@
 				"SDKROOT[arch=ppc64]" = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
 				VALID_ARCHS = "armv6 armv7 i386 x86_64";
 			};
-			name = "Debug + Code Sign";
+			name = "Debug+CodeSign";
 		};
-		D075E205148196B00010D9AE /* Debug + Code Sign */ = {
+		D075E205148196B00010D9AE /* Debug+CodeSign */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -2118,9 +2118,9 @@
 				);
 				WRAPPER_EXTENSION = app;
 			};
-			name = "Debug + Code Sign";
+			name = "Debug+CodeSign";
 		};
-		D075E206148196B00010D9AE /* Debug + Code Sign */ = {
+		D075E206148196B00010D9AE /* Debug+CodeSign */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
@@ -2151,9 +2151,9 @@
 				);
 				ZERO_LINK = NO;
 			};
-			name = "Debug + Code Sign";
+			name = "Debug+CodeSign";
 		};
-		D075E208148196B00010D9AE /* Debug + Code Sign */ = {
+		D075E208148196B00010D9AE /* Debug+CodeSign */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				GCC_MODEL_TUNING = G5;
@@ -2171,9 +2171,9 @@
 				);
 				PRODUCT_NAME = com.ridiculousfish.HexFiend.PrivilegedHelper;
 			};
-			name = "Debug + Code Sign";
+			name = "Debug+CodeSign";
 		};
-		D075E209148196B00010D9AE /* Debug + Code Sign */ = {
+		D075E209148196B00010D9AE /* Debug+CodeSign */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -2191,9 +2191,9 @@
 				);
 				PRODUCT_NAME = Test_BTree;
 			};
-			name = "Debug + Code Sign";
+			name = "Debug+CodeSign";
 		};
-		D075E20A148196B00010D9AE /* Debug + Code Sign */ = {
+		D075E20A148196B00010D9AE /* Debug+CodeSign */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -2209,14 +2209,14 @@
 				PRODUCT_NAME = HexFiendling;
 				VALID_ARCHS = "ppc64 x86_64 i386 ppc ppc7400 ppc970";
 			};
-			name = "Debug + Code Sign";
+			name = "Debug+CodeSign";
 		};
-		D075E20B148196B00010D9AE /* Debug + Code Sign */ = {
+		D075E20B148196B00010D9AE /* Debug+CodeSign */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				PRODUCT_NAME = "Documentation Generation";
 			};
-			name = "Debug + Code Sign";
+			name = "Debug+CodeSign";
 		};
 		D083F7350DBCBD5F00C2B632 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -2317,10 +2317,10 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D083F7370DBCBD5F00C2B632 /* Debug */,
-				D075E205148196B00010D9AE /* Debug + Code Sign */,
-				D022259E146F629E00646C27 /* Debug + Unit Tests */,
+				D075E205148196B00010D9AE /* Debug+CodeSign */,
+				D022259E146F629E00646C27 /* Debug+UnitTests */,
 				D0222569146F5D3900646C27 /* Release */,
-				D039DC1214835A1400364FA6 /* Release + Code Sign */,
+				D039DC1214835A1400364FA6 /* Release+CodeSign */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
@@ -2329,10 +2329,10 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D083F7350DBCBD5F00C2B632 /* Debug */,
-				D075E204148196B00010D9AE /* Debug + Code Sign */,
-				D022259D146F629E00646C27 /* Debug + Unit Tests */,
+				D075E204148196B00010D9AE /* Debug+CodeSign */,
+				D022259D146F629E00646C27 /* Debug+UnitTests */,
 				D0222568146F5D3900646C27 /* Release */,
-				D039DC1114835A1400364FA6 /* Release + Code Sign */,
+				D039DC1114835A1400364FA6 /* Release+CodeSign */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
@@ -2341,10 +2341,10 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D00C15ED0FF09200006D021F /* Debug */,
-				D075E20A148196B00010D9AE /* Debug + Code Sign */,
-				D02225A3146F629E00646C27 /* Debug + Unit Tests */,
+				D075E20A148196B00010D9AE /* Debug+CodeSign */,
+				D02225A3146F629E00646C27 /* Debug+UnitTests */,
 				D022256E146F5D3900646C27 /* Release */,
-				D039DC1614835A1400364FA6 /* Release + Code Sign */,
+				D039DC1614835A1400364FA6 /* Release+CodeSign */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
@@ -2353,10 +2353,10 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D083F7360DBCBD5F00C2B632 /* Debug */,
-				D075E206148196B00010D9AE /* Debug + Code Sign */,
-				D022259F146F629E00646C27 /* Debug + Unit Tests */,
+				D075E206148196B00010D9AE /* Debug+CodeSign */,
+				D022259F146F629E00646C27 /* Debug+UnitTests */,
 				D022256A146F5D3900646C27 /* Release */,
-				D039DC1314835A1400364FA6 /* Release + Code Sign */,
+				D039DC1314835A1400364FA6 /* Release+CodeSign */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
@@ -2365,10 +2365,10 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D047E31E1022CEFF00EF307B /* Debug */,
-				D075E208148196B00010D9AE /* Debug + Code Sign */,
-				D02225A1146F629E00646C27 /* Debug + Unit Tests */,
+				D075E208148196B00010D9AE /* Debug+CodeSign */,
+				D02225A1146F629E00646C27 /* Debug+UnitTests */,
 				D022256C146F5D3900646C27 /* Release */,
-				D039DC1414835A1400364FA6 /* Release + Code Sign */,
+				D039DC1414835A1400364FA6 /* Release+CodeSign */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
@@ -2377,10 +2377,10 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D06D60170FA69B27002376EE /* Debug */,
-				D075E209148196B00010D9AE /* Debug + Code Sign */,
-				D02225A2146F629E00646C27 /* Debug + Unit Tests */,
+				D075E209148196B00010D9AE /* Debug+CodeSign */,
+				D02225A2146F629E00646C27 /* Debug+UnitTests */,
 				D022256D146F5D3900646C27 /* Release */,
-				D039DC1514835A1400364FA6 /* Release + Code Sign */,
+				D039DC1514835A1400364FA6 /* Release+CodeSign */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
@@ -2389,10 +2389,10 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D0F6FE100FFF679300C609F0 /* Debug */,
-				D075E20B148196B00010D9AE /* Debug + Code Sign */,
-				D02225A4146F629E00646C27 /* Debug + Unit Tests */,
+				D075E20B148196B00010D9AE /* Debug+CodeSign */,
+				D02225A4146F629E00646C27 /* Debug+UnitTests */,
 				D022256F146F5D3900646C27 /* Release */,
-				D039DC1714835A1400364FA6 /* Release + Code Sign */,
+				D039DC1714835A1400364FA6 /* Release+CodeSign */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
