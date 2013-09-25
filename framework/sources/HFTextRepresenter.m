@@ -264,12 +264,12 @@
     }
     if (bits & (HFControllerColorBytes)) {
         if([[self controller] shouldColorBytes]) {
-            NSGradient *g = [[NSGradient alloc] initWithStartingColor:[NSColor colorWithCalibratedWhite:1.0 alpha:0.7]
-                                                          endingColor:[NSColor colorWithCalibratedWhite:0.4 alpha:0.7]];
-            [[self view] setByteGradient: g];
-            [g release];
+            [[self view] setByteColoring: ^(uint8_t byte, uint8_t *r, uint8_t *g, uint8_t *b, uint8_t *a){
+                *r = *g = *b = 255 * ((255-byte)/255.0*0.6+0.4);
+                *a = 255 * 0.7;
+            }];
         } else {
-            [[self view] setByteGradient:nil];
+            [[self view] setByteColoring:NULL];
         }
     }
     [super controllerDidChange:bits];
