@@ -1193,9 +1193,11 @@ static size_t unionAndCleanLists(NSRect *rectList, id *valueList, size_t count) 
     
     // Do a CGImage dance to draw the buffer
     CGDataProviderRef provider = CGDataProviderCreateWithData(NULL, buffer, 4 * rect.size.width, NULL);
-    CGImageRef image = CGImageCreate(rect.size.width, 1, 8, 32, 4 * rect.size.width, CGColorSpaceCreateDeviceRGB(),
+    CGColorSpaceRef cgcolorspace = CGColorSpaceCreateDeviceRGB();
+    CGImageRef image = CGImageCreate(rect.size.width, 1, 8, 32, 4 * rect.size.width, cgcolorspace,
                                      kCGImageAlphaLast, provider, NULL, false, kCGRenderingIntentDefault);
     CGContextDrawImage([[NSGraphicsContext currentContext] graphicsPort], rect, image);
+    CGColorSpaceRelease(cgcolorspace);
     CGImageRelease(image);
     CGDataProviderRelease(provider);
     free(buffer);

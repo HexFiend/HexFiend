@@ -980,6 +980,7 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
     HFASSERT(collapse <= firstDisplayedAbstractCharacterIndex);
     
     /* We collapse by an integer number of lines (rounded down) */
+    HFASSERT(bytesPerLine > 0);
     collapse -= collapse % bytesPerLine;
     
     /* Now get the concrete character index */

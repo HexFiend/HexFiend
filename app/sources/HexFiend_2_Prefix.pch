@@ -15,7 +15,7 @@
 
 
 /* Macro to "use" a variable to prevent unused variable warnings. */
-#define USE(x) if (0) x=x
+#define USE(x) (void)(x)
 
 /* Nasty FOREACH macro */
 #define FOREACH(type, var, exp) NSEnumerator *enum_ ## var = [exp objectEnumerator]; type var ; while ((var = [enum_ ## var nextObject]))

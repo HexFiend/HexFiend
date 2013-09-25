@@ -50,6 +50,7 @@ static NSString *nameForProcessWithPID(pid_t pidNum)
 	returnString = [[NSString alloc] initWithUTF8String:stringPtr];
     }
     
+    free( args );
     return [returnString autorelease];
 }
 
@@ -213,6 +214,8 @@ static NSInteger compareMenuItems(id item1, id item2, void *unused) {
 	    [item release];
 	}
     }
+    free(procs);
+    
     [items sortUsingFunction:compareMenuItems context:NULL];
     FOREACH(NSMenuItem *, item, items) {
 	[menu addItem:item];

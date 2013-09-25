@@ -98,9 +98,11 @@ enum {
 void addDisk(DADiskRef disk, void * context)
 {
     USE(context);
-	if(DADiskCopyDescription(disk))
+    CFDictionaryRef diskDesc = DADiskCopyDescription(disk);
+	if(diskDesc)
 	{
-        [(id)refSelf addToDriveList:((NSDictionary*)DADiskCopyDescription(disk))];
+        [(id)refSelf addToDriveList:(NSDictionary*)diskDesc];
+        CFRelease(diskDesc);
 	}
 }
 
