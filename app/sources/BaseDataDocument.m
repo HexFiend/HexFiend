@@ -513,6 +513,7 @@ static inline Class preferredByteArrayClass(void) {
     
     controller = [[HFController alloc] init];
     [controller setShouldAntialias:[defs boolForKey:@"AntialiasText"]];
+    [controller setShouldColorBytes:[defs boolForKey:@"ColorBytes"]];
     [controller setUndoManager:[self undoManager]];
     [controller setBytesPerColumn:[defs integerForKey:@"BytesPerColumn"]];
     [controller addRepresenter:layoutRepresenter];
@@ -749,6 +750,13 @@ static inline Class preferredByteArrayClass(void) {
     [[NSUserDefaults standardUserDefaults] setBool:newVal forKey:@"AntialiasText"];
 }
 
+- (IBAction)setColorBytesFromMenuItem:(id)sender {
+    USE(sender);
+    BOOL newVal = ! [controller shouldColorBytes];
+    [controller setShouldColorBytes:newVal];
+    [[NSUserDefaults standardUserDefaults] setBool:newVal forKey:@"ColorBytes"];
+}
+
 
 /* Returns the selected bookmark, or NSNotFound. If more than one bookmark is selected, returns the largest. */
 - (NSInteger)selectedBookmark {
@@ -802,7 +810,11 @@ static inline Class preferredByteArrayClass(void) {
     }    
     else if (action == @selector(setAntialiasFromMenuItem:)) {
         [item setState:[controller shouldAntialias]];
-        return YES;		
+        return YES;
+    }
+    else if (action == @selector(setColorBytesFromMenuItem:)) {
+        [item setState:[controller shouldColorBytes]];
+        return YES;
     }
     else if (action == @selector(setOverwriteMode:)) {
         [item setState:[controller editMode] == HFOverwriteMode];

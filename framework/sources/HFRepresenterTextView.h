@@ -45,6 +45,8 @@
     NSArray *rowBackgroundColors;
     NSMutableDictionary *callouts;
     
+    NSGradient *byteGradient;
+    
     struct  {
         unsigned antialias:1;
         unsigned editable:1;
@@ -91,6 +93,7 @@
 - (NSRect)caretRect;
 
 - (void)setBookmarks:(NSDictionary *)bookmarks;
+- (void)setByteGradient:(NSGradient *)gradient;
 
 - (NSPoint)originForCharacterAtByteIndex:(NSInteger)index;
 - (NSUInteger)indexOfCharacterAtPoint:(NSPoint)point;

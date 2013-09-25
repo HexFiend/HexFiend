@@ -262,6 +262,16 @@
     if (bits & (HFControllerBookmarks | HFControllerDisplayedLineRange | HFControllerContentValue)) {
         [[self view] setBookmarks:[self displayedBookmarkLocations]];
     }
+    if (bits & (HFControllerColorBytes)) {
+        if([[self controller] shouldColorBytes]) {
+            NSGradient *g = [[NSGradient alloc] initWithStartingColor:[NSColor colorWithCalibratedWhite:1.0 alpha:0.7]
+                                                          endingColor:[NSColor colorWithCalibratedWhite:0.4 alpha:0.7]];
+            [[self view] setByteGradient: g];
+            [g release];
+        } else {
+            [[self view] setByteGradient:nil];
+        }
+    }
     [super controllerDidChange:bits];
 }
 

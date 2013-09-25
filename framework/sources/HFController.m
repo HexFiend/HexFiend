@@ -128,6 +128,7 @@ static inline Class preferredByteArrayClass(void) {
     [coder encodeObject:font forKey:@"HFFont"];
     [coder encodeDouble:lineHeight forKey:@"HFLineHeight"];
     [coder encodeBool:_hfflags.antialias forKey:@"HFAntialias"];
+    [coder encodeBool:_hfflags.colorbytes forKey:@"HFColorBytes"];
     [coder encodeInt:_hfflags.editMode forKey:@"HFEditMode"];
     [coder encodeBool:_hfflags.editable forKey:@"HFEditable"];
     [coder encodeBool:_hfflags.selectable forKey:@"HFSelectable"];
@@ -142,6 +143,7 @@ static inline Class preferredByteArrayClass(void) {
     font = [[coder decodeObjectForKey:@"HFFont"] retain];
     lineHeight = (CGFloat)[coder decodeDoubleForKey:@"HFLineHeight"];
     _hfflags.antialias = [coder decodeBoolForKey:@"HFAntialias"];
+    _hfflags.colorbytes = [coder decodeBoolForKey:@"HFColorBytes"];
     
     if ([coder containsValueForKey:@"HFEditMode"])
         _hfflags.editMode = [coder decodeIntForKey:@"HFEditMode"];
@@ -336,6 +338,19 @@ static inline Class preferredByteArrayClass(void) {
         [self _addPropertyChangeBits:HFControllerAntialias];
     }
 }
+
+- (BOOL)shouldColorBytes {
+    return _hfflags.colorbytes;
+}
+
+- (void)setShouldColorBytes:(BOOL)colorbytes {
+    colorbytes = !! colorbytes;
+    if (colorbytes != _hfflags.colorbytes) {
+        _hfflags.colorbytes = colorbytes;
+        [self _addPropertyChangeBits:HFControllerColorBytes];
+    }
+}
+
 
 - (void)setBytesPerColumn:(NSUInteger)val {
     if (val != bytesPerColumn) {

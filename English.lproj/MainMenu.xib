@@ -2,10 +2,10 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.10">
 	<data>
 		<int key="IBDocument.SystemTarget">1060</int>
-		<string key="IBDocument.SystemVersion">12C60</string>
+		<string key="IBDocument.SystemVersion">12F37</string>
 		<string key="IBDocument.InterfaceBuilderVersion">3084</string>
-		<string key="IBDocument.AppKitVersion">1187.34</string>
-		<string key="IBDocument.HIToolboxVersion">625.00</string>
+		<string key="IBDocument.AppKitVersion">1187.39</string>
+		<string key="IBDocument.HIToolboxVersion">626.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
 			<string key="NS.object.0">3084</string>
@@ -871,7 +871,14 @@
 									<reference key="NSMenu" ref="134862247"/>
 									<string key="NSTitle">Anti-alias</string>
 									<string key="NSKeyEquiv"/>
-									<int key="NSKeyEquivModMask">1048576</int>
+									<int key="NSMnemonicLoc">2147483647</int>
+									<reference key="NSOnImage" ref="171599450"/>
+									<reference key="NSMixedImage" ref="491729860"/>
+								</object>
+								<object class="NSMenuItem" id="802720590">
+									<reference key="NSMenu" ref="134862247"/>
+									<string key="NSTitle">Color bytes</string>
+									<string key="NSKeyEquiv"/>
 									<int key="NSMnemonicLoc">2147483647</int>
 									<reference key="NSOnImage" ref="171599450"/>
 									<reference key="NSMixedImage" ref="491729860"/>
@@ -1979,6 +1986,14 @@
 					<int key="connectionID">728</int>
 				</object>
 				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">setColorBytesFromMenuItem:</string>
+						<reference key="source" ref="1014"/>
+						<reference key="destination" ref="802720590"/>
+					</object>
+					<int key="connectionID">741</int>
+				</object>
+				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
 						<string key="label">extendForwardsItem</string>
 						<reference key="source" ref="449992897"/>
@@ -2600,6 +2615,7 @@
 							<reference ref="450998945"/>
 							<reference ref="948902726"/>
 							<reference ref="301228071"/>
+							<reference ref="802720590"/>
 						</object>
 						<reference key="parent" ref="563227307"/>
 					</object>
@@ -3105,6 +3121,11 @@
 						<reference key="parent" ref="720053764"/>
 						<string key="objectName">Menu Item - Compare Parts of MyDocument and YourDocument</string>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">740</int>
+						<reference key="object" ref="802720590"/>
+						<reference key="parent" ref="134862247"/>
+					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -3249,6 +3270,7 @@
 					<string>733.IBPluginDependency</string>
 					<string>735.IBPluginDependency</string>
 					<string>74.IBPluginDependency</string>
+					<string>740.IBPluginDependency</string>
 					<string>75.IBPluginDependency</string>
 					<string>77.IBPluginDependency</string>
 					<string>78.IBPluginDependency</string>
@@ -3261,6 +3283,7 @@
 				</object>
 				<object class="NSArray" key="dict.values">
 					<bool key="EncodedWithXMLCoder">YES</bool>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -3422,7 +3445,7 @@
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">739</int>
+			<int key="maxID">741</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -3554,6 +3577,7 @@
 							<string>replaceAndFind:</string>
 							<string>setAntialiasFromMenuItem:</string>
 							<string>setBookmark:</string>
+							<string>setColorBytesFromMenuItem:</string>
 							<string>setInsertMode:</string>
 							<string>setOverwriteMode:</string>
 							<string>setReadOnlyMode:</string>
@@ -3562,6 +3586,7 @@
 						</object>
 						<object class="NSArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
@@ -3599,6 +3624,7 @@
 							<string>replaceAndFind:</string>
 							<string>setAntialiasFromMenuItem:</string>
 							<string>setBookmark:</string>
+							<string>setColorBytesFromMenuItem:</string>
 							<string>setInsertMode:</string>
 							<string>setOverwriteMode:</string>
 							<string>setReadOnlyMode:</string>
@@ -3657,6 +3683,10 @@
 							</object>
 							<object class="IBActionInfo">
 								<string key="name">setBookmark:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">setColorBytesFromMenuItem:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
