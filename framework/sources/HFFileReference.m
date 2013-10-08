@@ -269,44 +269,48 @@ static BOOL returnFTruncateError(NSError **error) {
 	NSUInteger lastBlockLen = 0;
 	void *tempBuf = NULL;
 
-	if (S_ISCHR(fileMode) && blockSize) {
-		// We have to make sure all accesses are aligned
-		void *tempBuf = NULL;
-		unsigned prePad = (unsigned)(pos % blockSize);
-		if (prePad) {
-			// Deal with the first unaligned block
-			tempBuf = malloc(blockSize);
-			ssize_t result = pread(fileDescriptor, tempBuf, blockSize, pos - prePad);
-			if (result != (ssize_t)blockSize) {
-				[NSException raise:NSGenericException format:@"Read result: %zd expected: %u error: %s", result, blockSize, strerror(errno)];
-			}
-			NSUInteger toCopy = blockSize - prePad;
-			if (toCopy > length)
-				toCopy = length;
-			memcpy(buff, tempBuf + prePad, toCopy);
-			length -= toCopy;
-			pos += toCopy;
-			buff += toCopy;
-		}
-		lastBlockLen = length % blockSize;
-		length -= lastBlockLen;
-	}
+    @try {
+        if (S_ISCHR(fileMode) && blockSize) {
+            // We have to make sure all accesses are aligned
+            unsigned prePad = (unsigned)(pos % blockSize);
+            if (prePad) {
+                // Deal with the first unaligned block
+                tempBuf = malloc(blockSize);
+                ssize_t result = pread(fileDescriptor, tempBuf, blockSize, pos - prePad);
+                if (result != (ssize_t)blockSize) {
+                    [NSException raise:NSGenericException format:@"Read result: %zd expected: %u error: %s", result, blockSize, strerror(errno)];
+                }
+                NSUInteger toCopy = blockSize - prePad;
+                if (toCopy > length)
+                    toCopy = length;
+                memcpy(buff, tempBuf + prePad, toCopy);
+                length -= toCopy;
+                pos += toCopy;
+                buff += toCopy;
+            }
+            lastBlockLen = length % blockSize;
+            length -= lastBlockLen;
+        }
+        
+        ssize_t result = pread(fileDescriptor, buff, length, pos);
+        if (result != (long)length) {
+            [NSException raise:NSGenericException format:@"Read result: %zd expected: %lu error: %s", result, (unsigned long)length, strerror(errno)];
+        }
+        
+        if (lastBlockLen) {
+            if (!tempBuf)
+                tempBuf = malloc(blockSize);
+            result = pread(fileDescriptor, tempBuf, blockSize, pos + length);
+            if (result != (ssize_t)blockSize) {
+                [NSException raise:NSGenericException format:@"Read result: %zd expected: %u error: %s", result, blockSize, strerror(errno)];
+            }
+            memcpy(buff + length, tempBuf, lastBlockLen);
+        }
 
-    ssize_t result = pread(fileDescriptor, buff, length, pos);
-    if (result != (long)length) {
-        [NSException raise:NSGenericException format:@"Read result: %zd expected: %lu error: %s", result, (unsigned long)length, strerror(errno)];
     }
-
-	if (lastBlockLen) {
-		if (!tempBuf)
-			tempBuf = malloc(blockSize);
-		result = pread(fileDescriptor, tempBuf, blockSize, pos + length);
-		if (result != (ssize_t)blockSize) {
-			[NSException raise:NSGenericException format:@"Read result: %zd expected: %u error: %s", result, blockSize, strerror(errno)];
-		}
-		memcpy(buff + length, tempBuf, lastBlockLen);
-	}
-	free (tempBuf);
+    @finally {
+        free (tempBuf);
+    }
 }
 
 - (int)writeBytes:(const unsigned char *)buff length:(NSUInteger)length to:(unsigned long long)offset {
@@ -321,63 +325,67 @@ static BOOL returnFTruncateError(NSError **error) {
 	NSUInteger lastBlockLen = 0;
 	void *tempBuf = NULL;
 	
-	if (S_ISCHR(fileMode) && blockSize) {
-		// We have to make sure all accesses are aligned
-		void *tempBuf = NULL;
-		unsigned prePad = (unsigned)(offset % blockSize);
-		if (prePad) {
-			// Deal with the first unaligned block
-			tempBuf = malloc(blockSize);
-			ssize_t result = pread(fileDescriptor, tempBuf, blockSize, offset - prePad);
-			if (result != (ssize_t)blockSize) {
-				[NSException raise:NSGenericException format:@"Read result: %zd expected: %u error: %s", result, blockSize, strerror(errno)];
-			}
-			NSUInteger toCopy = blockSize - prePad;
-			if (toCopy > length)
-				toCopy = length;
-			memcpy(tempBuf + prePad, buff, toCopy);
-			
-			result = pwrite(fileDescriptor, tempBuf, blockSize, offset - prePad);
-			if (result < 0)
-				return errno;
-			HFASSERT(result == (ssize_t)blockSize);
-
-			if (!(length -= toCopy))
-                return 0;
-
-			offset += toCopy;
-			buff += toCopy;
-		}
-		lastBlockLen = length % blockSize;
-		length -= lastBlockLen;
-	}
-
-    ssize_t result = pwrite(fileDescriptor, buff, (size_t)length, (off_t)offset);
-    if (result < 0)
-		return errno;
-    HFASSERT(result == (ssize_t)length);
-
-	if (lastBlockLen) {
-		offset += length;
-		buff += length;
-
-		if (!tempBuf)
-			tempBuf = malloc(blockSize);
-
-		result = pread(fileDescriptor, tempBuf, blockSize, offset);
-		if (result != (ssize_t)blockSize) {
-			[NSException raise:NSGenericException format:@"Read result: %zd expected: %u error: %s", result, blockSize, strerror(errno)];
-		}
-		memcpy(tempBuf, buff, lastBlockLen);
-
-		result = pwrite(fileDescriptor, tempBuf, blockSize, offset);
-		if (result < 0)
-			return errno;
-		HFASSERT(result == (ssize_t)blockSize);
-	}
-    free(tempBuf);
-
-	return 0;
+    @try {
+        if (S_ISCHR(fileMode) && blockSize) {
+            // We have to make sure all accesses are aligned
+            void *tempBuf = NULL;
+            unsigned prePad = (unsigned)(offset % blockSize);
+            if (prePad) {
+                // Deal with the first unaligned block
+                tempBuf = malloc(blockSize);
+                ssize_t result = pread(fileDescriptor, tempBuf, blockSize, offset - prePad);
+                if (result != (ssize_t)blockSize) {
+                    [NSException raise:NSGenericException format:@"Read result: %zd expected: %u error: %s", result, blockSize, strerror(errno)];
+                }
+                NSUInteger toCopy = blockSize - prePad;
+                if (toCopy > length)
+                    toCopy = length;
+                memcpy(tempBuf + prePad, buff, toCopy);
+                
+                result = pwrite(fileDescriptor, tempBuf, blockSize, offset - prePad);
+                if (result < 0)
+                    return errno;
+                HFASSERT(result == (ssize_t)blockSize);
+                
+                if (!(length -= toCopy))
+                    return 0;
+                
+                offset += toCopy;
+                buff += toCopy;
+            }
+            lastBlockLen = length % blockSize;
+            length -= lastBlockLen;
+        }
+        
+        ssize_t result = pwrite(fileDescriptor, buff, (size_t)length, (off_t)offset);
+        if (result < 0)
+            return errno;
+        HFASSERT(result == (ssize_t)length);
+        
+        if (lastBlockLen) {
+            offset += length;
+            buff += length;
+            
+            if (!tempBuf)
+                tempBuf = malloc(blockSize);
+            
+            result = pread(fileDescriptor, tempBuf, blockSize, offset);
+            if (result != (ssize_t)blockSize) {
+                [NSException raise:NSGenericException format:@"Read result: %zd expected: %u error: %s", result, blockSize, strerror(errno)];
+            }
+            memcpy(tempBuf, buff, lastBlockLen);
+            
+            result = pwrite(fileDescriptor, tempBuf, blockSize, offset);
+            if (result < 0)
+                return errno;
+            HFASSERT(result == (ssize_t)blockSize);
+        }
+        
+        return 0;
+    }
+    @finally {
+        free(tempBuf);
+    }
 }
 
 - (void)close {
