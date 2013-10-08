@@ -303,6 +303,9 @@ static inline int common_prefix_length(const char *a, const char *b) {
 
 - (NSString *)newLineStringForRange:(HFRange)range {
     HFASSERT(range.length <= NSUIntegerMax);
+    if(range.length == 0)
+        return [[NSString alloc] init]; // Placate the analyzer.
+    
     NSUInteger lineCount = ll2l(range.length);
     const NSUInteger stride = bytesPerLine;
     unsigned long long lineValue = HFProductULL(range.location, bytesPerLine);

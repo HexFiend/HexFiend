@@ -482,6 +482,11 @@ static inline Class preferredByteArrayClass(void) {
     HFASSERT(range.length <= NSUIntegerMax); // it doesn't make sense to ask for a buffer larger than can be stored in memory
     HFASSERT(HFRangeIsSubrangeOfRange(range, HFRangeMake(0, [self contentsLength])));
     
+    if(range.length == 0) {
+        // Don't throw out cache for an empty request! Also makes the analyzer happier.
+        return [NSData data];
+    }
+    
     NSUInteger newGenerationIndex = [byteArray changeGenerationCount];
     if (cachedData == nil || newGenerationIndex != cachedGenerationIndex || ! HFRangeIsSubrangeOfRange(range, cachedRange)) {
         [cachedData release];
@@ -1713,7 +1718,7 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
     HFASSERT(direction == HFControllerDirectionLeft || direction == HFControllerDirectionRight);
     BEGIN_TRANSACTION();
     unsigned long long locationToMakeVisible = NO_SELECTION;
-    HFRange additionalSelection = {NO_SELECTION, NO_SELECTION};
+    HFRange additionalSelection = HFRangeMake(NO_SELECTION, 0);
     unsigned long long minLocation = NO_SELECTION, newMinLocation = NO_SELECTION, maxLocation = NO_SELECTION, newMaxLocation = NO_SELECTION;
     if (direction == HFControllerDirectionLeft) {
         /* If we are at the beginning of a line, this should be a no-op */

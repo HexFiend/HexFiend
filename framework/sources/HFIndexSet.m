@@ -70,6 +70,7 @@
     if (val->rangeCount != rangeCount) return NO;
     NSUInteger count = rangeCount;
     const HFRange *mine = [self pointerToRangeAtIndex:0], *his = [val pointerToRangeAtIndex:0];
+    HFASSERT((mine && his) || count == 0); // Placate the analyzer
     while (count--) {
         if (! HFRangeEqualsRange(*mine++, *his++)) return NO;
     }
@@ -347,6 +348,7 @@ static NSUInteger deleteFromRange(HFRange source, HFRange rangeToDelete, HFRange
     else {
         /* Handle multiple ranges */
         [self setCapacity:MAX(rangeCount + newRangeCount, rangeCapacity)];
+        HFASSERT(multipleRanges != NULL); // Will be true since newRangeCount > 1, and better be true or memmove/cpy will crash
         
         /* Make our gap.  We know we must be multiple because capacity must be at least 2. */
         memmove(multipleRanges + idx + newRangeCount, multipleRanges + idx, (rangeCount - idx) * sizeof *multipleRanges);
