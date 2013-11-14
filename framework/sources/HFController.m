@@ -128,6 +128,7 @@ static inline Class preferredByteArrayClass(void) {
     [coder encodeObject:font forKey:@"HFFont"];
     [coder encodeDouble:lineHeight forKey:@"HFLineHeight"];
     [coder encodeBool:_hfflags.antialias forKey:@"HFAntialias"];
+    [coder encodeBool:_hfflags.colorbytes forKey:@"HFColorBytes"];
     [coder encodeInt:_hfflags.editMode forKey:@"HFEditMode"];
     [coder encodeBool:_hfflags.editable forKey:@"HFEditable"];
     [coder encodeBool:_hfflags.selectable forKey:@"HFSelectable"];
@@ -142,6 +143,7 @@ static inline Class preferredByteArrayClass(void) {
     font = [[coder decodeObjectForKey:@"HFFont"] retain];
     lineHeight = (CGFloat)[coder decodeDoubleForKey:@"HFLineHeight"];
     _hfflags.antialias = [coder decodeBoolForKey:@"HFAntialias"];
+    _hfflags.colorbytes = [coder decodeBoolForKey:@"HFColorBytes"];
     
     if ([coder containsValueForKey:@"HFEditMode"])
         _hfflags.editMode = [coder decodeIntForKey:@"HFEditMode"];
@@ -337,6 +339,19 @@ static inline Class preferredByteArrayClass(void) {
     }
 }
 
+- (BOOL)shouldColorBytes {
+    return _hfflags.colorbytes;
+}
+
+- (void)setShouldColorBytes:(BOOL)colorbytes {
+    colorbytes = !! colorbytes;
+    if (colorbytes != _hfflags.colorbytes) {
+        _hfflags.colorbytes = colorbytes;
+        [self _addPropertyChangeBits:HFControllerColorBytes];
+    }
+}
+
+
 - (void)setBytesPerColumn:(NSUInteger)val {
     if (val != bytesPerColumn) {
         bytesPerColumn = val;
@@ -466,6 +481,11 @@ static inline Class preferredByteArrayClass(void) {
 - (NSData *)dataForRange:(HFRange)range {
     HFASSERT(range.length <= NSUIntegerMax); // it doesn't make sense to ask for a buffer larger than can be stored in memory
     HFASSERT(HFRangeIsSubrangeOfRange(range, HFRangeMake(0, [self contentsLength])));
+    
+    if(range.length == 0) {
+        // Don't throw out cache for an empty request! Also makes the analyzer happier.
+        return [NSData data];
+    }
     
     NSUInteger newGenerationIndex = [byteArray changeGenerationCount];
     if (cachedData == nil || newGenerationIndex != cachedGenerationIndex || ! HFRangeIsSubrangeOfRange(range, cachedRange)) {
@@ -1698,7 +1718,7 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
     HFASSERT(direction == HFControllerDirectionLeft || direction == HFControllerDirectionRight);
     BEGIN_TRANSACTION();
     unsigned long long locationToMakeVisible = NO_SELECTION;
-    HFRange additionalSelection = {NO_SELECTION, NO_SELECTION};
+    HFRange additionalSelection = HFRangeMake(NO_SELECTION, 0);
     unsigned long long minLocation = NO_SELECTION, newMinLocation = NO_SELECTION, maxLocation = NO_SELECTION, newMaxLocation = NO_SELECTION;
     if (direction == HFControllerDirectionLeft) {
         /* If we are at the beginning of a line, this should be a no-op */

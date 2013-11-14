@@ -867,6 +867,7 @@ enum LineCoverage_t {
     [styles release];
     [cachedSelectedRanges release];
     [callouts release];
+    if(byteColoring) Block_release(byteColoring);
     [super dealloc];
 }
 
@@ -1153,6 +1154,50 @@ static size_t unionAndCleanLists(NSRect *rectList, id *valueList, size_t count) 
     }
 }
 
+- (void)setByteColoring:(void (^)(uint8_t, uint8_t*, uint8_t*, uint8_t*, uint8_t*))coloring {
+    Block_release(byteColoring);
+    byteColoring = coloring ? Block_copy(coloring) : NULL;
+    [self setNeedsDisplay:YES];
+}
+
+- (void)drawByteColoringBackground:(NSRange)range inRect:(NSRect)rect {
+    if(!byteColoring) return;
+    
+    // A rgba, 8-bit, single row image.
+    // +1 in case messing around with floats makes us overshoot a bit.
+    uint32_t *buffer = calloc(rect.size.width+1, 4);
+    
+    const uint8_t *bytes = [data bytes];
+    bytes += range.location;
+    
+    NSUInteger bytesPerColumn = [self _effectiveBytesPerColumn];
+    CGFloat advancePerCharacter = [self advancePerCharacter];
+    CGFloat advanceBetweenColumns = [self advanceBetweenColumns];
+    
+    // For each character, draw the corresponding part of the image
+    CGFloat offset = [self horizontalContainerInset];
+    for(NSUInteger i = 0; i < range.length; i++) {
+        uint8_t r, g, b, a;
+        byteColoring(bytes[i], &r, &g, &b, &a);
+        uint32_t c = ((uint32_t)r<<0) | ((uint32_t)g<<8) | ((uint32_t)b<<16) | ((uint32_t)a<<24);
+        memset_pattern4(&buffer[(size_t)offset], &c, 4*(size_t)(advancePerCharacter+1));
+        offset += advancePerCharacter;
+        if(bytesPerColumn && (i+1) % bytesPerColumn == 0)
+            offset += advanceBetweenColumns;
+    }
+    
+    // Do a CGImage dance to draw the buffer
+    CGDataProviderRef provider = CGDataProviderCreateWithData(NULL, buffer, 4 * rect.size.width, NULL);
+    CGColorSpaceRef cgcolorspace = CGColorSpaceCreateWithName(kCGColorSpaceGenericRGB);
+    CGImageRef image = CGImageCreate(rect.size.width, 1, 8, 32, 4 * rect.size.width, cgcolorspace,
+                                     kCGImageAlphaLast, provider, NULL, false, kCGRenderingIntentDefault);
+    CGContextDrawImage([[NSGraphicsContext currentContext] graphicsPort], rect, image);
+    CGColorSpaceRelease(cgcolorspace);
+    CGImageRelease(image);
+    CGDataProviderRelease(provider);
+    free(buffer);
+}
+
 - (void)drawStyledBackgroundsForByteRange:(NSRange)range inRect:(NSRect)rect {
     NSRect remainingRunRect = rect;
     NSRange remainingRange = range;
@@ -1240,7 +1285,9 @@ static size_t unionAndCleanLists(NSRect *rectList, id *valueList, size_t count) 
         p->count = unionAndCleanLists(p->rectList, p->propertyValueList, listCount);
     }
     
-    /* Finally we can draw them! */
+    /* Finally we can draw them! First, draw byte backgrounds. */
+    [self drawByteColoringBackground:range inRect:rect];
+    
     const struct PropertyInfo_t *p;
     
     /* Draw backgrounds */

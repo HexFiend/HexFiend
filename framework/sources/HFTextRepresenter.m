@@ -262,6 +262,16 @@
     if (bits & (HFControllerBookmarks | HFControllerDisplayedLineRange | HFControllerContentValue)) {
         [[self view] setBookmarks:[self displayedBookmarkLocations]];
     }
+    if (bits & (HFControllerColorBytes)) {
+        if([[self controller] shouldColorBytes]) {
+            [[self view] setByteColoring: ^(uint8_t byte, uint8_t *r, uint8_t *g, uint8_t *b, uint8_t *a){
+                *r = *g = *b = 255 * ((255-byte)/255.0*0.6+0.4);
+                *a = 255 * 0.7;
+            }];
+        } else {
+            [[self view] setByteColoring:NULL];
+        }
+    }
     [super controllerDidChange:bits];
 }
 

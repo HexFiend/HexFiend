@@ -303,6 +303,9 @@ static inline int common_prefix_length(const char *a, const char *b) {
 
 - (NSString *)newLineStringForRange:(HFRange)range {
     HFASSERT(range.length <= NSUIntegerMax);
+    if(range.length == 0)
+        return [[NSString alloc] init]; // Placate the analyzer.
+    
     NSUInteger lineCount = ll2l(range.length);
     const NSUInteger stride = bytesPerLine;
     unsigned long long lineValue = HFProductULL(range.location, bytesPerLine);
@@ -514,21 +517,34 @@ static inline int common_prefix_length(const char *a, const char *b) {
 #if TIME_LINE_NUMBERS
     CFAbsoluteTime startTime = CFAbsoluteTimeGetCurrent();
 #endif
-    NSInteger drawingMode = (useStringDrawingPath ? 1 : 2);
+    NSInteger drawingMode = (useStringDrawingPath ? 1 : 3);
     switch (drawingMode) {
+        // Drawing can't be done right if fonts are wider than expected, but all
+        // of these have rather nasty behavior in that case. I've commented what
+        // that behavior is; the comment is hypothetical 'could' if it shouldn't
+        // actually be a problem in practice.
+        // TODO: Make a drawing mode that is "Fonts could get clipped if too wide"
+        //       because that seems like better behavior than any of these.
         case 0:
+            // Most fonts are too wide and every character gets piled on right (unreadable).
             [self drawLineNumbersWithClipLayoutManagerPerLine:clipRect];
             break;
         case 1:
+            // Last characters could get omitted (*not* clipped) if too wide.
+            // Also, most fonts have bottoms clipped (very unsigntly).
             [self drawLineNumbersWithClipStringDrawing:clipRect];
             break;
         case 2:
+            // Most fonts are too wide and wrap (breaks numbering).
             [self drawLineNumbersWithClipFullLayoutManager:clipRect];
             break;
         case 3:
+            // Fonts could wrap if too wide (breaks numbering).
+            // *Note that that this is the only mode that generally works.*
             [self drawLineNumbersWithClipSingleStringDrawing:clipRect];
             break;
         case 4:
+            // Most fonts are too wide and wrap (breaks numbering).
             [self drawLineNumbersWithClipSingleStringCellDrawing:clipRect];
             break;
     }
@@ -536,7 +552,6 @@ static inline int common_prefix_length(const char *a, const char *b) {
     CFAbsoluteTime endTime = CFAbsoluteTimeGetCurrent();
     NSLog(@"Line number time: %f", endTime - startTime);
 #endif
-    
 }
 
 - (void)drawRect:(NSRect)clipRect {

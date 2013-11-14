@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
+   LastUpgradeVersion = "0460"
    version = "1.8">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -25,7 +26,7 @@
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.GDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.GDB"
       shouldUseLaunchSchemeArgsEnv = "YES"
-      buildConfiguration = "Debug + Code Sign">
+      buildConfiguration = "Release+CodeSign">
       <Testables>
       </Testables>
       <MacroExpansion>
@@ -45,7 +46,8 @@
       displayScale = "1.00"
       launchStyle = "0"
       useCustomWorkingDirectory = "NO"
-      buildConfiguration = "Release + Code Sign"
+      buildConfiguration = "Release+CodeSign"
+      ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
       allowLocationSimulation = "YES">
       <BuildableProductRunnable>
@@ -59,42 +61,14 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "/Users/peter/Documents/first.data"
-            isEnabled = "YES">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "/Users/peter/Documents/second.data"
-            isEnabled = "YES">
-         </CommandLineArgument>
-         <CommandLineArgument
             argument = "-HFDebugMenu"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "YES"
-            isEnabled = "YES">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "/Users/peter/Desktop/As.data"
-            isEnabled = "NO">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "/Users/peter/Desktop/Bs.data"
             isEnabled = "NO">
          </CommandLineArgument>
       </CommandLineArguments>
-      <EnvironmentVariables>
-         <EnvironmentVariable
-            key = "NSZombieEnabled"
-            value = "YES"
-            isEnabled = "NO">
-         </EnvironmentVariable>
-         <EnvironmentVariable
-            key = "MallocStackLoggingNoCompact"
-            value = "YES"
-            isEnabled = "NO">
-         </EnvironmentVariable>
-      </EnvironmentVariables>
       <AdditionalOptions>
       </AdditionalOptions>
    </LaunchAction>
@@ -104,7 +78,7 @@
       shouldUseLaunchSchemeArgsEnv = "YES"
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
-      buildConfiguration = "Release"
+      buildConfiguration = "Release+CodeSign"
       debugDocumentVersioning = "YES">
       <BuildableProductRunnable>
          <BuildableReference
@@ -117,10 +91,10 @@
       </BuildableProductRunnable>
    </ProfileAction>
    <AnalyzeAction
-      buildConfiguration = "Debug-NoUnitTests">
+      buildConfiguration = "Release+CodeSign">
    </AnalyzeAction>
    <ArchiveAction
-      buildConfiguration = "Release"
+      buildConfiguration = "Release+CodeSign"
       revealArchiveInOrganizer = "YES">
    </ArchiveAction>
 </Scheme>

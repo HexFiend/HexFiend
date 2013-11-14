@@ -95,7 +95,7 @@ kern_return_t _FortunateSonOpenFile(mach_port_t server, FilePath path, int writa
 		return KERN_SUCCESS;
 	}
 
-	int fd = open(path, writable ? O_RDWR | O_CREAT : O_RDONLY);
+	int fd = open(path, writable ? O_RDWR | O_CREAT : O_RDONLY, S_IRUSR|S_IWUSR);
 
 	if (fd < 0) {
 		*fd_port = MACH_PORT_NULL;

@@ -45,6 +45,8 @@
     NSArray *rowBackgroundColors;
     NSMutableDictionary *callouts;
     
+    void (^byteColoring)(uint8_t byte, uint8_t *r, uint8_t *g, uint8_t *b, uint8_t *a);
+    
     struct  {
         unsigned antialias:1;
         unsigned editable:1;
@@ -91,6 +93,7 @@
 - (NSRect)caretRect;
 
 - (void)setBookmarks:(NSDictionary *)bookmarks;
+- (void)setByteColoring:(void (^)(uint8_t byte, uint8_t *r, uint8_t *g, uint8_t *b, uint8_t *a))coloring;
 
 - (NSPoint)originForCharacterAtByteIndex:(NSInteger)index;
 - (NSUInteger)indexOfCharacterAtPoint:(NSPoint)point;
@@ -147,7 +150,6 @@
 /* Following two must be overridden */
 - (CGFloat)advanceBetweenColumns;
 - (CGFloat)advancePerCharacter;
-- (NSUInteger)bytesPerCharacter;
 
 - (CGFloat)advancePerColumn;
 - (CGFloat)totalAdvanceForBytesInRange:(NSRange)range;

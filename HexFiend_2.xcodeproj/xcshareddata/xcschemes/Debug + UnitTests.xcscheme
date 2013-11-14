@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
+   LastUpgradeVersion = "0460"
    version = "1.8">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -25,7 +26,7 @@
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.GDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.GDB"
       shouldUseLaunchSchemeArgsEnv = "YES"
-      buildConfiguration = "Debug-NoUnitTests">
+      buildConfiguration = "Debug+UnitTests">
       <Testables>
       </Testables>
       <MacroExpansion>
@@ -45,7 +46,8 @@
       displayScale = "1.00"
       launchStyle = "0"
       useCustomWorkingDirectory = "NO"
-      buildConfiguration = "Debug + Unit Tests"
+      buildConfiguration = "Debug+UnitTests"
+      ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
       allowLocationSimulation = "YES">
       <BuildableProductRunnable>
@@ -60,11 +62,11 @@
       <CommandLineArguments>
          <CommandLineArgument
             argument = "/Users/peter/Documents/first.data"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "/Users/peter/Documents/second.data"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-HFDebugMenu"
@@ -83,19 +85,27 @@
             isEnabled = "NO">
          </CommandLineArgument>
       </CommandLineArguments>
-      <EnvironmentVariables>
-         <EnvironmentVariable
+      <AdditionalOptions>
+         <AdditionalOption
+            key = "MallocScribble"
+            value = ""
+            isEnabled = "YES">
+         </AdditionalOption>
+         <AdditionalOption
+            key = "DYLD_INSERT_LIBRARIES"
+            value = "/usr/lib/libgmalloc.dylib"
+            isEnabled = "YES">
+         </AdditionalOption>
+         <AdditionalOption
+            key = "MallocGuardEdges"
+            value = ""
+            isEnabled = "YES">
+         </AdditionalOption>
+         <AdditionalOption
             key = "NSZombieEnabled"
             value = "YES"
-            isEnabled = "NO">
-         </EnvironmentVariable>
-         <EnvironmentVariable
-            key = "MallocStackLoggingNoCompact"
-            value = "YES"
-            isEnabled = "NO">
-         </EnvironmentVariable>
-      </EnvironmentVariables>
-      <AdditionalOptions>
+            isEnabled = "YES">
+         </AdditionalOption>
       </AdditionalOptions>
    </LaunchAction>
    <ProfileAction
@@ -104,7 +114,7 @@
       shouldUseLaunchSchemeArgsEnv = "YES"
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
-      buildConfiguration = "Release"
+      buildConfiguration = "Debug+UnitTests"
       debugDocumentVersioning = "YES">
       <BuildableProductRunnable>
          <BuildableReference
@@ -117,10 +127,10 @@
       </BuildableProductRunnable>
    </ProfileAction>
    <AnalyzeAction
-      buildConfiguration = "Debug-NoUnitTests">
+      buildConfiguration = "Debug+UnitTests">
    </AnalyzeAction>
    <ArchiveAction
-      buildConfiguration = "Release"
+      buildConfiguration = "Debug+UnitTests"
       revealArchiveInOrganizer = "YES">
    </ArchiveAction>
 </Scheme>

@@ -14,7 +14,7 @@
 #define HFASSERT(a)
 #endif
 
-#define USE(x) if (0) x=x
+#define USE(x) (void)(x)
 
 static inline BOOL HFSumDoesNotOverflow(unsigned long long a, unsigned long long b) {
     return a + b >= a;

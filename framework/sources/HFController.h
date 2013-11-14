@@ -34,7 +34,8 @@ enum
     HFControllerViewSizeRatios = 1 << 11,	/*!< Indicates that the optimum size for each view may have changed; used by HFLayoutController after font changes. */
     HFControllerByteRangeAttributes = 1 << 12,  /*!< Indicates that some attributes of the ByteArray has changed within the document.  There is no indication as to what the change is. */
     HFControllerByteGranularity = 1 << 13,       /*!< Indicates that the byte granularity has changed.  For example, when moving from ASCII to UTF-16, the byte granularity increases from 1 to 2. */
-    HFControllerBookmarks = 1 << 14       /*!< Indicates that a bookmark has been added or removed. */
+    HFControllerBookmarks = 1 << 14,       /*!< Indicates that a bookmark has been added or removed. */
+    HFControllerColorBytes = 1 << 15,   /*!< Indicates that the shouldColorBytes property has changed. */
 };
 typedef NSUInteger HFControllerPropertyBits;
 
@@ -132,13 +133,14 @@ You create an HFController via <tt>[[HFController alloc] init]</tt>.  After that
     
     struct  {
         unsigned antialias:1;
+        unsigned colorbytes:1;
         HFEditMode editMode:2;
         unsigned editable:1;
         unsigned selectable:1;
         unsigned selectionInProgress:1;
         unsigned shiftExtendSelection:1;
         unsigned commandExtendSelection:1;
-        unsigned reserved1:25;
+        unsigned reserved1:24;
         unsigned reserved2:32;
     } _hfflags;
 }
@@ -324,6 +326,17 @@ You create an HFController via <tt>[[HFController alloc] init]</tt>.  After that
 
 /*! Sets whether text should be antialiased. */
 - (void)setShouldAntialias:(BOOL)antialias;
+//@}
+
+
+/*! @name Byte coloring
+ Set and get whether the bytes should be colorized. When enabled, characters have a background color that correlates to their byte values. */
+//@{
+/*! Returns whether characters should be colored. */
+- (BOOL)shouldColorBytes;
+
+/*! Sets whether characters should be colored. */
+- (void)setShouldColorBytes:(BOOL)colorbytes;
 //@}
 
 /*! Representer initiated property changes

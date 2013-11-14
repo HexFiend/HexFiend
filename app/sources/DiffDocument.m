@@ -980,6 +980,7 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
     HFASSERT(collapse <= firstDisplayedAbstractCharacterIndex);
     
     /* We collapse by an integer number of lines (rounded down) */
+    HFASSERT(bytesPerLine > 0);
     collapse -= collapse % bytesPerLine;
     
     /* Now get the concrete character index */
@@ -1067,27 +1068,16 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
 - (void)scrollWithScrollEvent:(NSEvent *)scrollEvent {
     HFASSERT(scrollEvent != NULL);
     HFASSERT([scrollEvent type] == NSScrollWheel);
-    CGFloat preciseScroll;
-    BOOL hasPreciseScroll;
+    long double scrollY = 0;
     
     /* Prefer precise deltas */
-    if ([scrollEvent respondsToSelector:@selector(hasPreciseScrollingDeltas)] && [scrollEvent hasPreciseScrollingDeltas]) {
+    if ([scrollEvent hasPreciseScrollingDeltas]) {
         /* In this case, we're going to scroll by a certain number of points */
-        preciseScroll = [scrollEvent scrollingDeltaY];
-        hasPreciseScroll = YES;
-    } else if ([scrollEvent respondsToSelector:@selector(deviceDeltaY)]) {
-        preciseScroll = [scrollEvent deviceDeltaY];
-        hasPreciseScroll = YES;
+        scrollY = -[scrollEvent scrollingDeltaY] / [[leftTextView controller] lineHeight];
     } else {
-        hasPreciseScroll = NO;
+        scrollY = -kScrollMultiplier * [scrollEvent scrollingDeltaY];
     }
     
-    long double scrollY = 0;
-    if (! hasPreciseScroll) {
-        scrollY = -kScrollMultiplier * [scrollEvent scrollingDeltaY];
-    } else {
-        scrollY = -preciseScroll / [[leftTextView controller] lineHeight];
-    }
     [self scrollByLines:scrollY];
 }
 

@@ -67,6 +67,7 @@ NSString * const BaseDataDocumentDidChangeStringEncodingNotification;
 
 - (IBAction)showFontPanel:sender;
 - (IBAction)setAntialiasFromMenuItem:sender;
+- (IBAction)setColorBytesFromMenuItem:sender;
 
 - (IBAction)findNext:sender;
 - (IBAction)findPrevious:sender;
