@@ -29,8 +29,11 @@ typedef NSUInteger HFLineNumberFormat;
     NSUInteger minimumDigitCount;
     HFLineNumberFormat lineNumberFormat;
     NSInteger interiorShadowEdge;
+    NSInteger borderedEdges;
     CGFloat preferredWidth;
     CGFloat digitAdvance;
+    NSColor * backgroundColor;
+    NSColor * borderColor;
 }
 
 /*! Sets the minimum digit count.  The receiver will always ensure it is big enough to display at least the minimum digit count.  The default is 2. */
@@ -59,6 +62,25 @@ typedef NSUInteger HFLineNumberFormat;
 
 /*! Returns the edge (as an NSRectEdge) on which the view draws a shadow, or -1 if no edge. */
 - (NSInteger)interiorShadowEdge;
+
+/*! Sets the border color to use at the edges specified by -borderedEdges. */
+- (void)setBorderColor:(NSColor *)color;
+- (NSColor *)borderColor;
+
+/*! Sets the edges on which to draw borders. The edge returned by interiorShadowEdge always has a border drawn. The edges are specified by a bitwise or of 1 left shifted by the NSRectEdge values. For example, to draw a border on the min x and max y edges use: (1 << NSMinXEdge) | (1 << NSMaxYEdge). 0 (or -1) specfies no edges. */
+- (void)setBorderedEdges:(NSInteger)edges;
+
+/*! Returns the edges on which borders will be drawn. The edge returned by interiorShadowEdge always has a border drawn. 0 (or -1) specfies no edges. */
+- (NSInteger)borderedEdges;
+
+/*! Sets the background color */
+- (void)setBackgroundColor:(NSColor *)color;
+
+/*! Returns the background color */
+- (NSColor *)backgroundColor;
+
+
+
 
 @end
 

@@ -55,6 +55,10 @@ static CGFloat maximumDigitAdvanceForFont(NSFont *font) {
         minimumDigitCount = 2;
         digitsToRepresentContentsLength = minimumDigitCount;
         interiorShadowEdge = NSMaxXEdge;
+        
+        borderedEdges = (1 << NSMaxXEdge);
+        borderColor = [[NSColor darkGrayColor] retain];
+        backgroundColor = [[NSColor colorWithCalibratedWhite:(CGFloat).87 alpha:1] retain];
     }
     return self;
 }
@@ -65,6 +69,9 @@ static CGFloat maximumDigitAdvanceForFont(NSFont *font) {
     [coder encodeDouble:lineHeight forKey:@"HFLineHeight"];
     [coder encodeInt64:minimumDigitCount forKey:@"HFMinimumDigitCount"];
     [coder encodeInt64:lineNumberFormat forKey:@"HFLineNumberFormat"];
+    [coder encodeObject:backgroundColor forKey:@"HFBackgroundColor"];
+    [coder encodeObject:borderColor forKey:@"HFBackgroundColor"];
+    [coder encodeInt64:borderedEdges forKey:@"HFBorderedEdges"];
 }
 
 - (id)initWithCoder:(NSCoder *)coder {
@@ -73,7 +80,30 @@ static CGFloat maximumDigitAdvanceForFont(NSFont *font) {
     lineHeight = (CGFloat)[coder decodeDoubleForKey:@"HFLineHeight"];
     minimumDigitCount = (NSUInteger)[coder decodeInt64ForKey:@"HFMinimumDigitCount"];
     lineNumberFormat = (HFLineNumberFormat)[coder decodeInt64ForKey:@"HFLineNumberFormat"];
+    
+    if ([coder decodeObjectForKey:@"HFBorderedEdges"]) {
+        borderedEdges = (NSInteger)[coder decodeInt64ForKey:@"HFBorderedEdges"];
+    } else {
+        borderedEdges = 0;
+    }
+    
+    borderColor = [[coder decodeObjectForKey:@"HFBorderColor"] retain];
+    if (!borderColor) {
+        borderColor = [[NSColor darkGrayColor] retain];
+    }
+    
+    backgroundColor = [[coder decodeObjectForKey:@"HFBackgroundColor"] retain];
+    if (!backgroundColor) {
+        backgroundColor = [[NSColor colorWithCalibratedWhite:(CGFloat).87 alpha:1] retain];
+    }
+    
     return self;
+}
+
+- (void)dealloc {
+    [borderColor release];
+    [backgroundColor release];
+    [super dealloc];
 }
 
 - (NSView *)createView {
@@ -210,6 +240,43 @@ static CGFloat maximumDigitAdvanceForFont(NSFont *font) {
 
 - (NSInteger)interiorShadowEdge {
     return interiorShadowEdge;
+}
+
+
+- (void)setBorderColor:(NSColor *)color {
+    [borderColor autorelease];
+    borderColor = [color retain];
+    if ([self isViewLoaded]) {
+        [[self view] setNeedsDisplay:YES];
+    }
+}
+
+- (NSColor *)borderColor {
+    return borderColor;
+}
+
+
+
+- (void)setBackgroundColor:(NSColor *)color {
+    [backgroundColor autorelease];
+    backgroundColor = [color retain];
+    if ([self isViewLoaded]) {
+        [[self view] setNeedsDisplay:YES];
+    }
+}
+
+- (NSColor *)backgroundColor {
+    return backgroundColor;
+}
+
+
+
+- (void)setBorderedEdges:(NSInteger)edges {
+    borderedEdges = edges;
+}
+
+- (NSInteger)borderedEdges {
+    return borderedEdges;
 }
 
 @end
