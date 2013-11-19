@@ -1717,21 +1717,21 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
 - (void)moveToLineBoundaryInDirection:(HFControllerMovementDirection)direction andModifySelection:(BOOL)modifySelection {
     HFASSERT(direction == HFControllerDirectionLeft || direction == HFControllerDirectionRight);
     BEGIN_TRANSACTION();
-    unsigned long long locationToMakeVisible = NO_SELECTION;
-    HFRange additionalSelection = HFRangeMake(NO_SELECTION, 0);
-    unsigned long long minLocation = NO_SELECTION, newMinLocation = NO_SELECTION, maxLocation = NO_SELECTION, newMaxLocation = NO_SELECTION;
+    unsigned long long locationToMakeVisible;
+    HFRange additionalSelection;
+    
     if (direction == HFControllerDirectionLeft) {
         /* If we are at the beginning of a line, this should be a no-op */
-        minLocation = [self _minimumSelectionLocation];
-        newMinLocation = (minLocation / bytesPerLine) * bytesPerLine;
+        unsigned long long minLocation = [self _minimumSelectionLocation];
+        unsigned long long newMinLocation = (minLocation / bytesPerLine) * bytesPerLine;
         locationToMakeVisible = newMinLocation;
         additionalSelection = HFRangeMake(newMinLocation, minLocation - newMinLocation);
     }
     else {
         /* This always advances to the next line */
-        maxLocation = [self _maximumSelectionLocation];
+        unsigned long long maxLocation = [self _maximumSelectionLocation];
         unsigned long long proposedNewMaxLocation = HFRoundUpToNextMultipleSaturate(maxLocation, bytesPerLine);
-        newMaxLocation = MIN([self contentsLength], proposedNewMaxLocation);
+        unsigned long long newMaxLocation = MIN([self contentsLength], proposedNewMaxLocation);
         HFASSERT(newMaxLocation >= maxLocation);
         locationToMakeVisible = newMaxLocation;
         additionalSelection = HFRangeMake(maxLocation, newMaxLocation - maxLocation);

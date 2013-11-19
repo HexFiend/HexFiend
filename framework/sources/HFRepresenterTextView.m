@@ -588,7 +588,7 @@ enum LineCoverage_t {
 - (void)pulseSelection {
     pulseStartTime = CFAbsoluteTimeGetCurrent();
     if (! pulseTimer) {
-        pulseTimer = [[NSTimer scheduledTimerWithTimeInterval:(1. / 30.) target:self selector:@selector(pulseSelectionTimer:) userInfo:nil repeats:YES] retain];
+        pulseTimer = [[NSTimer scheduledTimerWithTimeInterval:(1. / 30.) target:self selector:@selector(updateSelectionPulse) userInfo:nil repeats:YES] retain];
     }
 }
 
@@ -1549,7 +1549,7 @@ static size_t unionAndCleanLists(NSRect *rectList, id *valueList, size_t count) 
             NSUInteger bookmark = [newKey unsignedIntegerValue];
             callout = [[HFRepresenterTextViewCallout alloc] init];
             [callout setColor:[self colorForBookmark:bookmark]];
-            [callout setLabel:[NSString stringWithFormat:@"%lu", (unsigned long)[newKey unsignedIntegerValue]]];
+            [callout setLabel:[NSString stringWithFormat:@"%lu", [newKey unsignedLongValue]]];
             [callout setRepresentedObject:newKey];
             [callouts setObject:callout forKey:newKey];
             [callout release];

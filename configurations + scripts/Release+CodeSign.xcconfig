@@ -1,3 +1,0 @@
-#include "Release.xcconfig"
-
-CODE_SIGN_IDENTITY_HIDE_FROM_XCODE = Hex Fiend

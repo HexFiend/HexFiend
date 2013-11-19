@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle"  xmlns:dc="http://purl.org/dc/elements/1.1/">
-   <channel>
-      <title>HexFiend</title>
-      <link>https://raw.github.com/ridiculousfish/HexFiend/master/app/appcast.xml</link>
-      <description>HexFiend 2 Release Notes</description>
-      <language>en</language>
-         <item>
-            <title>HexFiend 2.2</title>
-						<sparkle:releaseNotesLink>
-							http://www.ridiculousfish.com/hexfiend/ReleaseNotes.html
-						</sparkle:releaseNotesLink>
-            <pubDate>Wed, 15 Jan 2013 12:00:00 +0800</pubDate>
-             <enclosure url="http://ridiculousfish.com/hexfiend/files/HexFiend.zip" sparkle:version="200" sparkle:shortVersionString="2.2" length="1986688" type="application/octet-stream" sparkle:dsaSignature="MCwCFG4GyOASB/dlAoyN0Pketk7hXeUKAhRRpoRLHlm0kiyBUezq8AaydKfz+g==" />
-         </item>
-  </channel>
+	<channel>
+		<title>HexFiend</title>
+		<link>https://raw.github.com/ridiculousfish/HexFiend/master/app/appcast.xml</link>
+		<description>HexFiend 2 Release Notes</description>
+		<language>en</language>
+		<item>
+			<title>HexFiend 2.2</title>
+			<sparkle:releaseNotesLink>
+				http://www.ridiculousfish.com/hexfiend/ReleaseNotes.html
+			</sparkle:releaseNotesLink>
+			<pubDate>Wed, 15 Jan 2013 12:00:00 +0800</pubDate>
+			<enclosure url="http://ridiculousfish.com/hexfiend/files/HexFiend.zip" sparkle:version="200" sparkle:shortVersionString="2.2" length="1986688" type="application/octet-stream" sparkle:dsaSignature="MCwCFG4GyOASB/dlAoyN0Pketk7hXeUKAhRRpoRLHlm0kiyBUezq8AaydKfz+g==" />
+		</item>
+	</channel>
 </rss>
