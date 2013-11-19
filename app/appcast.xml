@@ -2,7 +2,7 @@
 <rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle"  xmlns:dc="http://purl.org/dc/elements/1.1/">
    <channel>
       <title>HexFiend</title>
-      <link>http://raw.github.com//appcast.xml</link>
+      <link>https://raw.github.com/ridiculousfish/HexFiend/master/app/appcast.xml</link>
       <description>HexFiend 2 Release Notes</description>
       <language>en</language>
          <item>
