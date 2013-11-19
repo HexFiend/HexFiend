@@ -50,7 +50,7 @@
 	<key>SUPublicDSAKeyFile</key>
 	<string>dsa_pub.pem</string>
 	<key>SUFeedURL</key>
-	<string>https://raw.github.com/contactritsard/HexFiend/master/app/updater/HexFiend_appcast.xml</string>
+	<string>https://raw.github.com/ridiculousfish/HexFiend/master/app/updater/HexFiend_appcast.xml</string>
 	<key>NSSupportsSuddenTermination</key>
 	<string>YES</string>
 	<key>SMPrivilegedExecutables</key>
