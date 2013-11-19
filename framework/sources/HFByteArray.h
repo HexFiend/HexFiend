@@ -9,6 +9,14 @@
 
 @class HFByteSlice, HFProgressTracker, HFFileReference, HFByteRangeAttributeArray;
 
+enum
+{
+    HFHexDataStringType,
+    HFASCIIDataStringType
+};
+typedef NSUInteger HFByteArrayDataStringType;
+
+
 /*! @class HFByteArray
 @brief The principal Model class for HexFiend's MVC architecture.
 
@@ -24,13 +32,6 @@ ByteArrays have the usual threading restrictions for non-concurrent data structu
 
 HFByteArray is an abstract class.  It will raise an exception if you attempt to instantiate it directly.  The principal concrete subclass is HFBTreeByteArray.
 */
-
-enum
-{
-    HFHexDataStringType,
-    HFASCIIDataStringType
-};
-typedef NSUInteger HFByteArrayDataStringType;
 
 @class HFByteRangeAttributeArray;
 

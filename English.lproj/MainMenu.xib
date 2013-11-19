@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="4510" systemVersion="12F45" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
-        <deployment version="1080" defaultVersion="1070" identifier="macosx"/>
+        <deployment version="1080" defaultVersion="1080" identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="4510"/>
     </dependencies>
     <objects>
@@ -94,11 +94,11 @@
                                     <action selector="showWindow:" target="733" id="734"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Open Process" hidden="YES" id="510">
+                            <menuItem title="Open Process" hidden="YES" enabled="NO" id="510">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <menu key="submenu" title="Open Process" id="511">
                                     <items>
-                                        <menuItem title="Item" id="512">
+                                        <menuItem title="Item" enabled="NO" id="512">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                         </menuItem>
                                     </items>
@@ -107,7 +107,7 @@
                                     </connections>
                                 </menu>
                             </menuItem>
-                            <menuItem title="Open Process by PID…" hidden="YES" keyEquivalent="o" id="506">
+                            <menuItem title="Open Process by PID…" hidden="YES" enabled="NO" keyEquivalent="o" id="506">
                                 <modifierMask key="keyEquivalentModifierMask" control="YES" option="YES" command="YES"/>
                                 <connections>
                                     <action selector="openProcess:" target="717" id="721"/>

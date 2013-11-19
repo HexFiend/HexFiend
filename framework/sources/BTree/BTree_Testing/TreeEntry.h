@@ -15,7 +15,7 @@
     NSUInteger rc;
 }
 
-+ entryWithLength:(HFBTreeIndex)len value:(NSString *)val;
++ (id)entryWithLength:(HFBTreeIndex)len value:(NSString *)val;
 - (id)initWithLength:(HFBTreeIndex)len value:(NSString *)val;
 - (unsigned long long)length;
 

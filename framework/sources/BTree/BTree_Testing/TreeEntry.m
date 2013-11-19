@@ -16,7 +16,7 @@
     return self;
 }
 
-+ entryWithLength:(HFBTreeIndex)len value:(NSString *)val {
++ (id)entryWithLength:(HFBTreeIndex)len value:(NSString *)val {
     TreeEntry *result = [[[self alloc] init] autorelease];
     result->length = len;
     result->value = [val copy];

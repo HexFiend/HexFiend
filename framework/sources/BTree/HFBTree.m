@@ -706,7 +706,7 @@ static HFBTreeLeaf *btree_descend(HFBTree *tree, struct SubtreeInfo_t *outDescen
     for (TreeDepth_t currentDepth = 0; currentDepth < maxDepth; currentDepth++) {
         ASSERT_IS_BRANCH(currentBranchOrLeaf);
         HFBTreeBranch *currentBranch = currentBranchOrLeaf;
-        HFBTreeIndex priorCombinedOffset = -1;
+        HFBTreeIndex priorCombinedOffset = (HFBTreeIndex)-1;
         ChildIndex_t nextChildIndex = (isForDelete ? child_index_for_deletion_at_offset : child_index_for_insertion_at_offset)(currentBranch, offsetForSubtree, &priorCombinedOffset);
         outDescentInfo[currentDepth].branch = currentBranch;
         outDescentInfo[currentDepth].childIndex = nextChildIndex;
@@ -965,7 +965,7 @@ static BOOL btree_are_cached_lengths_correct(HFBTreeNode *branchOrLeaf, HFBTreeI
         HFBTreeBranch *branch = CHECK_CAST(branchOrLeaf, HFBTreeBranch);
         for (ChildIndex_t i=0; i < BTREE_BRANCH_ORDER; i++) {
             if (! branch->children[i]) break;
-            HFBTreeIndex subLength = -1;
+            HFBTreeIndex subLength = (HFBTreeIndex)-1;
             if (! btree_are_cached_lengths_correct(branch->children[i], &subLength)) {
                 return NO;
             }

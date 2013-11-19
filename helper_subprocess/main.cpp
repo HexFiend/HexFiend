@@ -70,6 +70,7 @@ static boolean_t handle_server_message(struct DummyMsg_t *requestMsg, struct Dum
 }
 
 static void run_server(mach_port_t portset, mach_port_t notification_port) {
+    (void)notification_port;
     struct DummyMsg_t DumMsg, DumMsgReply;
     int isFinished = 0;
     while (! isFinished) {

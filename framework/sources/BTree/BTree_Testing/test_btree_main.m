@@ -5,7 +5,7 @@
 
 static inline HFBTreeIndex random_value(NSUInteger max) {
     unsigned int result;
-    while ((result = (random() % max)) == 0)
+    while ((result = ((unsigned)random() % max)) == 0)
         ;
     return result;
 }
@@ -16,7 +16,7 @@ static void run_for_shark(void) {
     CFAbsoluteTime start = CFAbsoluteTimeGetCurrent();
     for (NSUInteger i = 0; i < max; i++) {
         TreeEntry *entry = [[TreeEntry alloc] initWithLength:1 value:@"yay"];
-        [btree insertEntry:entry atOffset: (random() % (i + 1))];
+        [btree insertEntry:entry atOffset: ((unsigned)random() % (i + 1))];
         [entry release];
     }
     CFAbsoluteTime end = CFAbsoluteTimeGetCurrent();
@@ -36,8 +36,8 @@ static void test_trees(NaiveArray *naiveArray, HFBTree *btree) {
         TreeEntry *btreeEntry = [btreeEnumerator nextObject];
         HFASSERT(naiveEntry == btreeEntry);
         if (naiveEntry == nil || btreeEntry == nil) break;
-        HFBTreeIndex randomOffsetWithinEntry = enumeratedOffset + (random() % [btreeEntry length]);
-        HFBTreeIndex beginningOffset = -1;
+        HFBTreeIndex randomOffsetWithinEntry = enumeratedOffset + ((unsigned)random() % [btreeEntry length]);
+        HFBTreeIndex beginningOffset = (HFBTreeIndex)-1;
 #if 0
         TreeEntry *naiveFoundEntry = [naiveArray entryContainingOffset:randomOffsetWithinEntry beginningOffset:&beginningOffset];
         HFASSERT(naiveFoundEntry == naiveEntry);

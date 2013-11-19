@@ -28,17 +28,17 @@ static inline unsigned long long HFSum(unsigned long long a, unsigned long long 
 
 static inline NSUInteger HFAtomicIncrement(NSUInteger *ptr, BOOL barrier) {
 #if __LP64__
-    return (barrier ? OSAtomicIncrement64Barrier : OSAtomicIncrement64)((volatile int64_t *)ptr);
+    return (NSUInteger)(barrier ? OSAtomicIncrement64Barrier : OSAtomicIncrement64)((volatile int64_t *)ptr);
 #else
-    return (barrier ? OSAtomicIncrement32Barrier : OSAtomicIncrement32)((volatile int32_t *)ptr);
+    return (NSUInteger)(barrier ? OSAtomicIncrement32Barrier : OSAtomicIncrement32)((volatile int32_t *)ptr);
 #endif
 }
 
 static inline NSUInteger HFAtomicDecrement(NSUInteger *ptr, BOOL barrier) {
 #if __LP64__
-    return (barrier ? OSAtomicDecrement64Barrier : OSAtomicDecrement64)((volatile int64_t *)ptr);
+    return (NSUInteger)(barrier ? OSAtomicDecrement64Barrier : OSAtomicDecrement64)((volatile int64_t *)ptr);
 #else
-    return (barrier ? OSAtomicDecrement32Barrier : OSAtomicDecrement32)((volatile int32_t *)ptr);
+    return (NSUInteger)(barrier ? OSAtomicDecrement32Barrier : OSAtomicDecrement32)((volatile int32_t *)ptr);
 #endif
 }
 

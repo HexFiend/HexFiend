@@ -50,12 +50,12 @@
 }
 
 - (HFBTreeIndex)randomOffset {
-    return [self offsetForEntryAtIndex:random() % (1 + [entries count])];
+    return [self offsetForEntryAtIndex:(NSUInteger)random() % (1 + [entries count])];
 }
 
 - (HFBTreeIndex)randomOffsetExcludingLast {
     HFASSERT([entries count] > 0);
-    return [self offsetForEntryAtIndex:random() % [entries count]];
+    return [self offsetForEntryAtIndex:(NSUInteger)random() % [entries count]];
 }
 
 - (TreeEntry *)entryContainingOffset:(HFBTreeIndex)offset beginningOffset:(HFBTreeIndex *)outBeginningOffset {

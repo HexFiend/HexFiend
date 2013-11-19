@@ -585,13 +585,6 @@ enum LineCoverage_t {
     }
 }
 
-- (void)pulseSelection {
-    pulseStartTime = CFAbsoluteTimeGetCurrent();
-    if (! pulseTimer) {
-        pulseTimer = [[NSTimer scheduledTimerWithTimeInterval:(1. / 30.) target:self selector:@selector(updateSelectionPulse) userInfo:nil repeats:YES] retain];
-    }
-}
-
 - (BOOL)acceptsFirstResponder {
     return YES;
 }
