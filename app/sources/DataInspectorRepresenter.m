@@ -905,7 +905,7 @@ static BOOL stringRangeIsNullBytes(NSString *string, NSRange range) {
 
     CGColorSpaceRef space = CGColorSpaceCreateWithName(kCGColorSpaceGenericGray);
     CGDataProviderRef provider = CGDataProviderCreateWithData(NULL, bitmapData, width * height * bytesPerPixel, NULL);
-    CGImageRef image = CGImageCreate(width, height, CHAR_BIT, bytesPerPixel * CHAR_BIT, bytesPerPixel * width, space, kCGImageAlphaPremultipliedLast, provider, NULL, YES, kCGRenderingIntentDefault);
+    CGImageRef image = CGImageCreate(width, height, CHAR_BIT, bytesPerPixel * CHAR_BIT, bytesPerPixel * width, space, (CGBitmapInfo)kCGImageAlphaPremultipliedLast, provider, NULL, YES, kCGRenderingIntentDefault);
     CGDataProviderRelease(provider);
     CGColorSpaceRelease(space);
     [[NSGraphicsContext currentContext] setCompositingOperation:NSCompositeSourceOver];
