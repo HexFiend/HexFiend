@@ -167,8 +167,8 @@ static NSComparisonResult compareFontDisplayNames(NSFont *a, NSFont *b, void *un
             bookmarksMenuItems = nil;
         }
         
-        if ([currentDocument respondsToSelector:@selector(makeBookmarksMenuItems)]) {
-            bookmarksMenuItems = [currentDocument performSelector:@selector(makeBookmarksMenuItems)];
+        if ([currentDocument respondsToSelector:@selector(copyBookmarksMenuItems)]) {
+            bookmarksMenuItems = [currentDocument performSelector:@selector(copyBookmarksMenuItems)];
             if(bookmarksMenuItems) {
                 NSInteger index = [bookmarksMenu indexOfItem:noBookmarksMenuItem];
                 for(NSMenuItem *bm in bookmarksMenuItems) {

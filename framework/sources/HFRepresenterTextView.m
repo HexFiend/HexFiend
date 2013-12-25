@@ -1032,15 +1032,13 @@ static size_t unionAndCleanLists(NSRect *rectList, id *valueList, size_t count) 
 }
 
 - (NSColor *)colorForBookmark:(NSUInteger)bookmark {
-    return [self colorForBookmark:bookmark withAlpha:(CGFloat).88];
+    return [self colorForBookmark:bookmark withAlpha:(CGFloat).66];
 }
 
 - (void)drawBookmark:(NSUInteger)bookmark inRect:(NSRect)rect {
     [NSGraphicsContext saveGraphicsState];
-    NSColor *color = [self colorForBookmark:bookmark withAlpha:1.];
+    NSColor *color = [self colorForBookmark:bookmark];
     if (color) {
-        [[color colorWithAlphaComponent:(CGFloat).66] set];
-        
         NSBezierPath *path = [[NSBezierPath alloc] init];
         [path appendBezierPathWithOvalInRect:NSMakeRect(rect.origin.x, rect.origin.y, 6, 6)];
         [path appendBezierPathWithRect:NSMakeRect(rect.origin.x, rect.origin.y, 2, defaultLineHeight)];

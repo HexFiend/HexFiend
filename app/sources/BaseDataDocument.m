@@ -1562,7 +1562,7 @@ cancelled:;
     if (! success) NSBeep();
 }
 
-- (NSArray *)makeBookmarksMenuItems {
+- (NSArray *)copyBookmarksMenuItems {
     NSMutableArray *items = [[NSMutableArray alloc] init];
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     

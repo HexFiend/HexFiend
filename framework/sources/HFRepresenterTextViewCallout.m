@@ -463,7 +463,7 @@ static double distanceMod1(double a, double b) {
         CGContextShowGlyphsAtPositions(ctx, glyphs, positions, glyphCount);
         
         CGContextSetBlendMode(ctx, kCGBlendModeCopy);
-        CGContextSetGrayFillColor(ctx, 1., .75); //faint white fill
+        CGContextSetGrayFillColor(ctx, 1., .66); //faint white fill
         CGContextFillRect(ctx, NSRectToCGRect(NSInsetRect(bulbRect, -20, -20)));
         
         // Done drawing, so composite
