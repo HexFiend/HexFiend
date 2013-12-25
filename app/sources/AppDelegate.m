@@ -156,17 +156,28 @@ static NSComparisonResult compareFontDisplayNames(NSFont *a, NSFont *b, void *un
 
 - (void)menuNeedsUpdate:(NSMenu *)menu {
     if (menu == bookmarksMenu) {
-	NSDocument *currentDocument = [[NSDocumentController sharedDocumentController] currentDocument];
-	if ([currentDocument respondsToSelector:@selector(populateBookmarksMenu:)]) {
-	    [(BaseDataDocument *)currentDocument populateBookmarksMenu:menu];
-	}
-	else {
-	    /* Unknown document, so remove all menu items except the first two. */
-	    NSUInteger itemCount = [bookmarksMenu numberOfItems];
-	    while (itemCount > 2) {
-		[bookmarksMenu removeItemAtIndex:--itemCount];
-	    }
-	}
+        NSDocument *currentDocument = [[NSDocumentController sharedDocumentController] currentDocument];
+        
+        // Remove any old bookmark menu items
+        if(bookmarksMenuItems) {
+            for(NSMenuItem *bm in bookmarksMenuItems) {
+                [bookmarksMenu removeItem:bm];
+            }
+            [bookmarksMenuItems release];
+            bookmarksMenuItems = nil;
+        }
+        
+        if ([currentDocument respondsToSelector:@selector(makeBookmarksMenuItems)]) {
+            bookmarksMenuItems = [currentDocument performSelector:@selector(makeBookmarksMenuItems)];
+            if(bookmarksMenuItems) {
+                NSInteger index = [bookmarksMenu indexOfItem:noBookmarksMenuItem];
+                for(NSMenuItem *bm in bookmarksMenuItems) {
+                    [bookmarksMenu insertItem:bm atIndex:index++];
+                }
+            }
+        }
+    
+        [noBookmarksMenuItem setHidden:bookmarksMenuItems && [bookmarksMenuItems count]];
     }
     else if (menu == [fontMenuItem submenu]) {
         /* Nothing to do */
@@ -174,10 +185,10 @@ static NSComparisonResult compareFontDisplayNames(NSFont *a, NSFont *b, void *un
     else if (menu == stringEncodingMenu) {
         /* Check the menu item whose string encoding corresponds to the key document, or if none do, select the default. */
         NSInteger selectedEncoding;
-	BaseDataDocument *currentDocument = [[NSDocumentController sharedDocumentController] currentDocument];
-	if (currentDocument && [currentDocument isKindOfClass:[BaseDataDocument class]]) {
-	    selectedEncoding = [currentDocument stringEncoding];
-	} else {
+        BaseDataDocument *currentDocument = [[NSDocumentController sharedDocumentController] currentDocument];
+        if (currentDocument && [currentDocument isKindOfClass:[BaseDataDocument class]]) {
+            selectedEncoding = [currentDocument stringEncoding];
+        } else {
             selectedEncoding = [[NSUserDefaults standardUserDefaults] integerForKey:@"DefaultStringEncoding"];
         }
         

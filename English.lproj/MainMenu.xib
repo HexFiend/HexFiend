@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="4510" systemVersion="12F45" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="4514" systemVersion="13B42" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
         <deployment version="1080" defaultVersion="1080" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="4510"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="4514"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication"/>
@@ -388,8 +388,9 @@
                                 <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                             </menuItem>
                             <menuItem title="Anti-alias" id="457">
+                                <modifierMask key="keyEquivalentModifierMask" control="YES"/>
                                 <connections>
-                                    <action selector="setAntialiasFromMenuItem:" target="-1" id="459"/>
+                                    <action selector="setAntialiasFromMenuItem:" target="-1" id="xJB-SX-oT5"/>
                                 </connections>
                             </menuItem>
                             <menuItem title="Color bytes" id="HpS-tB-2Bk">
@@ -568,6 +569,16 @@
                                     <action selector="deleteBookmark:" target="-1" id="626"/>
                                 </connections>
                             </menuItem>
+                            <menuItem title="Show Callouts" keyEquivalent="b" id="rPG-eZ-i3i">
+                                <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
+                                <connections>
+                                    <action selector="setShowCalloutsFromMenuItem:" target="-1" id="a2B-HT-IRQ"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="dWP-KQ-lb4"/>
+                            <menuItem title="No Bookmarks" enabled="NO" id="8Hb-Ga-nGj">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                            </menuItem>
                         </items>
                         <connections>
                             <outlet property="delegate" destination="403" id="622"/>
@@ -652,6 +663,7 @@
                 <outlet property="bookmarksMenu" destination="569" id="623"/>
                 <outlet property="extendForwardsItem" destination="397" id="407"/>
                 <outlet property="fontMenuItem" destination="409" id="413"/>
+                <outlet property="noBookmarksMenuItem" destination="8Hb-Ga-nGj" id="cOn-oy-A85"/>
                 <outlet property="processListMenuItem" destination="510" id="515"/>
                 <outlet property="stringEncodingMenu" destination="684" id="716"/>
             </connections>

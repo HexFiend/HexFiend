@@ -13,6 +13,8 @@
     IBOutlet NSMenuItem *fontMenuItem;
     IBOutlet NSMenuItem *processListMenuItem;
     IBOutlet NSMenu *bookmarksMenu;
+    IBOutlet NSMenuItem *noBookmarksMenuItem;
+    NSArray *bookmarksMenuItems;
     IBOutlet NSMenu *stringEncodingMenu;
 }
 

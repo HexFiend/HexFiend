@@ -97,6 +97,7 @@ static inline Class preferredByteArrayClass(void) {
         /* Defaults common to all subclasses */
         NSDictionary *defs = [[NSDictionary alloc] initWithObjectsAndKeys:
                               yes, @"AntialiasText",
+                              yes, @"ShowCallouts",
                               @"Monaco", @"DefaultFontName",
                               [NSNumber numberWithDouble:10.], @"DefaultFontSize",
                               [NSNumber numberWithInteger:4], @"BytesPerColumn",
@@ -133,6 +134,7 @@ static inline Class preferredByteArrayClass(void) {
         NSNumber *yes = [NSNumber numberWithBool:YES];
         NSDictionary *defs = [[NSDictionary alloc] initWithObjectsAndKeys:
                               yes, @"AntialiasText",
+                              yes, @"ShowCallouts",
                               @"Monaco", @"DefaultFontName",
                               [NSNumber numberWithDouble:10.], @"DefaultFontSize",
                               [NSNumber numberWithInt:4], @"BytesPerColumn",
@@ -513,6 +515,7 @@ static inline Class preferredByteArrayClass(void) {
     
     controller = [[HFController alloc] init];
     [controller setShouldAntialias:[defs boolForKey:@"AntialiasText"]];
+    [controller setShouldShowCallouts:[defs boolForKey:@"ShowCallouts"]];
     [controller setShouldColorBytes:[defs boolForKey:@"ColorBytes"]];
     [controller setUndoManager:[self undoManager]];
     [controller setBytesPerColumn:[defs integerForKey:@"BytesPerColumn"]];
@@ -750,6 +753,14 @@ static inline Class preferredByteArrayClass(void) {
     [[NSUserDefaults standardUserDefaults] setBool:newVal forKey:@"AntialiasText"];
 }
 
+- (IBAction)setShowCalloutsFromMenuItem:(id)sender {
+    USE(sender);
+    BOOL newVal = ! [controller shouldShowCallouts];
+    [controller setShouldShowCallouts:newVal];
+    [[NSUserDefaults standardUserDefaults] setBool:newVal forKey:@"ShowCallouts"];
+}
+
+
 - (IBAction)setColorBytesFromMenuItem:(id)sender {
     USE(sender);
     BOOL newVal = ! [controller shouldColorBytes];
@@ -810,6 +821,10 @@ static inline Class preferredByteArrayClass(void) {
     }    
     else if (action == @selector(setAntialiasFromMenuItem:)) {
         [item setState:[controller shouldAntialias]];
+        return YES;
+    }
+    else if (action == @selector(setShowCalloutsFromMenuItem:)) {
+        [item setState:[controller shouldShowCallouts]];
         return YES;
     }
     else if (action == @selector(setColorBytesFromMenuItem:)) {
@@ -1547,77 +1562,53 @@ cancelled:;
     if (! success) NSBeep();
 }
 
-- (void)populateBookmarksMenu:(NSMenu *)bookmarksMenu {
+- (NSArray *)makeBookmarksMenuItems {
+    NSMutableArray *items = [[NSMutableArray alloc] init];
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    
-    NSUInteger itemCount = [bookmarksMenu numberOfItems];
-    HFASSERT(itemCount >= 2); //we never delete the first two items
     
     /* Get a list of the bookmarks. */
     NSIndexSet *bookmarks = [controller bookmarksInRange:HFRangeMake(0, [controller contentsLength])];
     const NSUInteger numberOfBookmarks = [bookmarks count];
     
-    /* Initial two items, plus maybe a separator, plus two bookmark items per bookmark */
-    NSUInteger desiredItemCount = 2 + (numberOfBookmarks > 0) + 2 * numberOfBookmarks;
-    
-    /* Delete items until we get to the desired amount */
-    while (itemCount > desiredItemCount) [bookmarksMenu removeItemAtIndex:--itemCount];
-    
-    /* Add items until we get to the new amount */
-    while (itemCount < desiredItemCount) {
-        if (itemCount == 2) {
-            [bookmarksMenu insertItem:[NSMenuItem separatorItem] atIndex:itemCount];
-        }
-        else {
-            NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:@"" action:@selector(self) keyEquivalent:@""];
-            [bookmarksMenu insertItem:item atIndex:itemCount];
-            [item release];
-        }
-        itemCount++;
-    }
-    
-    /* Update the items */
-    NSUInteger itemIndex = 3, bookmarkIndex = 0; //0 is an invalid bookmark
-    while (itemIndex < itemCount) {
+    NSUInteger bookmarkIndex = 0; //0 is an invalid bookmark
+    for(NSUInteger i = 0; i < numberOfBookmarks; i++) {
         /* Get this bookmark index */
         bookmarkIndex = [bookmarks indexGreaterThanIndex:bookmarkIndex];
         
         /* Compute our KE */
-        NSString *keString;
+        NSString *keString = @"";
         if (bookmarkIndex <= 10) {
             char ke = '0' + (bookmarkIndex % 10);
-            keString = [[NSString alloc] initWithBytes:&ke length:1 encoding:NSASCIIStringEncoding];	
-        }
-        else {
-            keString = [@"" retain];
+            keString = [[[NSString alloc] initWithBytes:&ke length:1 encoding:NSASCIIStringEncoding] autorelease];
         }
         
         /* The first item is Select Bookmark, the second (alternate) is Scroll To Bookmark */
         
         NSMenuItem *item;
-        
-        item = [bookmarksMenu itemAtIndex:itemIndex++];
-        [item setTitle:[NSString stringWithFormat:@"Select Bookmark %lu", (unsigned long)bookmarkIndex]];
-        [item setKeyEquivalent:keString];
-        [item setAction:@selector(selectBookmark:)];
+
+        item = [[NSMenuItem alloc]
+                initWithTitle:[NSString stringWithFormat:@"Select Bookmark %lu", (unsigned long)bookmarkIndex]
+                action:@selector(selectBookmark:)
+                keyEquivalent:keString];
         [item setKeyEquivalentModifierMask:NSCommandKeyMask];
         [item setAlternate:NO];
         [item setTag:bookmarkIndex];
+        [items addObject:item];
+        [item release];
         
-        item = [bookmarksMenu itemAtIndex:itemIndex++];
-        [item setKeyEquivalent:keString];
-        [item setAction:@selector(scrollToBookmark:)];
+        item = [[NSMenuItem alloc]
+                initWithTitle:[NSString stringWithFormat:@"Scroll to Bookmark %lu", (unsigned long)bookmarkIndex]
+                action:@selector(scrollToBookmark:)
+                keyEquivalent:keString];
         [item setKeyEquivalentModifierMask:NSCommandKeyMask | NSShiftKeyMask];
         [item setAlternate:YES];
-        [item setTitle:[NSString stringWithFormat:@"Scroll to Bookmark %lu", (unsigned long)bookmarkIndex]];
         [item setTag:bookmarkIndex];
-        
-        [keString release];
+        [items addObject:item];
+        [item release];
     }
     
     [pool drain];
-    
-    HFASSERT([bookmarksMenu numberOfItems] >= 2); //we never delete the first two items
+    return items;
 }
 
 - (IBAction)showFontPanel:(id)sender {

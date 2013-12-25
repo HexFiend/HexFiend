@@ -645,6 +645,7 @@ enum LineCoverage_t {
     [coder encodeInt64:startingLineBackgroundColorIndex forKey:@"HFStartingLineBackgroundColorIndex"];
     [coder encodeObject:rowBackgroundColors forKey:@"HFRowBackgroundColors"];
     [coder encodeBool:_hftvflags.antialias forKey:@"HFAntialias"];
+    [coder encodeBool:_hftvflags.drawCallouts forKey:@"HFDrawCallouts"];
     [coder encodeBool:_hftvflags.editable forKey:@"HFEditable"];
 }
 
@@ -661,6 +662,7 @@ enum LineCoverage_t {
     startingLineBackgroundColorIndex = (NSUInteger)[coder decodeInt64ForKey:@"HFStartingLineBackgroundColorIndex"];
     rowBackgroundColors = [[coder decodeObjectForKey:@"HFRowBackgroundColors"] retain];
     _hftvflags.antialias = [coder decodeBoolForKey:@"HFAntialias"];
+    _hftvflags.drawCallouts = [coder decodeBoolForKey:@"HFDrawCallouts"];
     _hftvflags.editable = [coder decodeBoolForKey:@"HFEditable"];
     return self;
 }
@@ -1555,40 +1557,49 @@ static size_t unionAndCleanLists(NSRect *rectList, id *valueList, size_t count) 
     [HFRepresenterTextViewCallout layoutCallouts:[callouts allValues] inView:self];
 }
 
-- (void)drawBookmarksWithClip:(NSRect)clip {
-    USE(clip);
+- (BOOL)shouldDrawCallouts {
+    return _hftvflags.drawCallouts;
+}
 
-    /* Figure out which callouts we're going to draw */
-    NSRect allCalloutsRect = NSZeroRect;
-    NSMutableArray *localCallouts = [[NSMutableArray alloc] initWithCapacity:[callouts count]];
-    NSEnumerator *enumer = [callouts objectEnumerator];
-    HFRepresenterTextViewCallout *callout;
-    while ((callout = [enumer nextObject])) {
-        NSRect calloutRect = [callout rect];
-        if (NSIntersectsRect(clip, calloutRect)) {
-            [localCallouts addObject:callout];
-            allCalloutsRect = NSUnionRect(allCalloutsRect, calloutRect);
-        }        
-    }    
-    allCalloutsRect = NSIntersectionRect(allCalloutsRect, clip);
-    
-    if ([localCallouts count]) {
-        /* Draw shadows first */    
-        CGContextRef ctx = [[NSGraphicsContext currentContext] graphicsPort];
-        CGContextBeginTransparencyLayerWithRect(ctx, NSRectToCGRect(allCalloutsRect), NULL);
-        FOREACH(HFRepresenterTextViewCallout *, callout, localCallouts) {
-            [callout drawShadowWithClip:clip];
+- (void)setShouldDrawCallouts:(BOOL)val {
+    _hftvflags.drawCallouts = val;
+    [self setNeedsDisplay:YES];
+}
+
+- (void)drawBookmarksWithClip:(NSRect)clip {
+    if([self shouldDrawCallouts]) {
+        /* Figure out which callouts we're going to draw */
+        NSRect allCalloutsRect = NSZeroRect;
+        NSMutableArray *localCallouts = [[NSMutableArray alloc] initWithCapacity:[callouts count]];
+        NSEnumerator *enumer = [callouts objectEnumerator];
+        HFRepresenterTextViewCallout *callout;
+        while ((callout = [enumer nextObject])) {
+            NSRect calloutRect = [callout rect];
+            if (NSIntersectsRect(clip, calloutRect)) {
+                [localCallouts addObject:callout];
+                allCalloutsRect = NSUnionRect(allCalloutsRect, calloutRect);
+            }
         }
-        CGContextEndTransparencyLayer(ctx);
-    
-        FOREACH(HFRepresenterTextViewCallout *, newCallout, localCallouts) {
-            // NSRect rect = [callout rect];
-            // [[NSColor greenColor] set];
-            // NSFrameRect(rect);
-            [newCallout drawWithClip:clip];
+        allCalloutsRect = NSIntersectionRect(allCalloutsRect, clip);
+        
+        if ([localCallouts count]) {
+            /* Draw shadows first */
+            CGContextRef ctx = [[NSGraphicsContext currentContext] graphicsPort];
+            CGContextBeginTransparencyLayerWithRect(ctx, NSRectToCGRect(allCalloutsRect), NULL);
+            FOREACH(HFRepresenterTextViewCallout *, callout, localCallouts) {
+                [callout drawShadowWithClip:clip];
+            }
+            CGContextEndTransparencyLayer(ctx);
+            
+            FOREACH(HFRepresenterTextViewCallout *, newCallout, localCallouts) {
+                // NSRect rect = [callout rect];
+                // [[NSColor greenColor] set];
+                // NSFrameRect(rect);
+                [newCallout drawWithClip:clip];
+            }
         }
+        [localCallouts release];
     }
-    [localCallouts release];
 }
 
 - (void)drawRect:(NSRect)clip {

@@ -259,6 +259,9 @@
     if (bits & (HFControllerAntialias)) {
         [[self view] setShouldAntialias:[[self controller] shouldAntialias]];
     }
+    if (bits & (HFControllerShowCallouts)) {
+        [[self view] setShouldDrawCallouts:[[self controller] shouldShowCallouts]];
+    }
     if (bits & (HFControllerBookmarks | HFControllerDisplayedLineRange | HFControllerContentValue)) {
         [[self view] setBookmarks:[self displayedBookmarkLocations]];
     }

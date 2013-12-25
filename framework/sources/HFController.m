@@ -97,6 +97,7 @@ static inline Class preferredByteArrayClass(void) {
     bytesPerColumn = 1;
     _hfflags.editable = YES;
     _hfflags.antialias = YES;
+    _hfflags.showcallouts = YES;
     _hfflags.selectable = YES;
     representers = [[NSMutableArray alloc] init];
     [self setFont:[NSFont fontWithName:@"Monaco" size:10.f]];
@@ -128,6 +129,7 @@ static inline Class preferredByteArrayClass(void) {
     [coder encodeObject:font forKey:@"HFFont"];
     [coder encodeDouble:lineHeight forKey:@"HFLineHeight"];
     [coder encodeBool:_hfflags.antialias forKey:@"HFAntialias"];
+    [coder encodeBool:_hfflags.showcallouts forKey:@"HFShowCallouts"];
     [coder encodeBool:_hfflags.colorbytes forKey:@"HFColorBytes"];
     [coder encodeInt:_hfflags.editMode forKey:@"HFEditMode"];
     [coder encodeBool:_hfflags.editable forKey:@"HFEditable"];
@@ -143,6 +145,7 @@ static inline Class preferredByteArrayClass(void) {
     font = [[coder decodeObjectForKey:@"HFFont"] retain];
     lineHeight = (CGFloat)[coder decodeDoubleForKey:@"HFLineHeight"];
     _hfflags.antialias = [coder decodeBoolForKey:@"HFAntialias"];
+    _hfflags.showcallouts = [coder decodeBoolForKey:@"HFShowCallouts"];
     _hfflags.colorbytes = [coder decodeBoolForKey:@"HFColorBytes"];
     
     if ([coder containsValueForKey:@"HFEditMode"])
@@ -338,6 +341,19 @@ static inline Class preferredByteArrayClass(void) {
         [self _addPropertyChangeBits:HFControllerAntialias];
     }
 }
+
+- (BOOL)shouldShowCallouts {
+    return _hfflags.showcallouts;
+}
+
+- (void)setShouldShowCallouts:(BOOL)showcallouts {
+    showcallouts = !! showcallouts;
+    if (showcallouts != _hfflags.showcallouts) {
+        _hfflags.showcallouts = showcallouts;
+        [self _addPropertyChangeBits:HFControllerShowCallouts];
+    }
+}
+
 
 - (BOOL)shouldColorBytes {
     return _hfflags.colorbytes;

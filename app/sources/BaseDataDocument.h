@@ -89,7 +89,7 @@ NSString * const BaseDataDocumentDidChangeStringEncodingNotification;
 - (BOOL)isTransientAndCanBeReplaced; //like TextEdit
 - (void)adoptWindowController:(NSWindowController *)windowController fromTransientDocument:(BaseDataDocument *)transientDocument;
 
-- (void)populateBookmarksMenu:(NSMenu *)menu;
+- (NSArray *)makeBookmarksMenuItems;
 
 - (HFDocumentOperationView *)newOperationViewForNibName:(NSString *)name displayName:(NSString *)displayName fixedHeight:(BOOL)fixedHeight;
 - (void)prepareBannerWithView:(HFDocumentOperationView *)newSubview withTargetFirstResponder:(id)targetFirstResponder;

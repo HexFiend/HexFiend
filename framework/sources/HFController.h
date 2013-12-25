@@ -36,6 +36,7 @@ enum
     HFControllerByteGranularity = 1 << 13,       /*!< Indicates that the byte granularity has changed.  For example, when moving from ASCII to UTF-16, the byte granularity increases from 1 to 2. */
     HFControllerBookmarks = 1 << 14,       /*!< Indicates that a bookmark has been added or removed. */
     HFControllerColorBytes = 1 << 15,   /*!< Indicates that the shouldColorBytes property has changed. */
+    HFControllerShowCallouts = 1 << 16, /*!< Indicates that the shouldShowCallouts property has changed. */
 };
 typedef NSUInteger HFControllerPropertyBits;
 
@@ -133,6 +134,7 @@ You create an HFController via <tt>[[HFController alloc] init]</tt>.  After that
     
     struct  {
         unsigned antialias:1;
+        unsigned showcallouts:1;
         unsigned colorbytes:1;
         HFEditMode editMode:2;
         unsigned editable:1;
@@ -140,8 +142,6 @@ You create an HFController via <tt>[[HFController alloc] init]</tt>.  After that
         unsigned selectionInProgress:1;
         unsigned shiftExtendSelection:1;
         unsigned commandExtendSelection:1;
-        unsigned reserved1:24;
-        unsigned reserved2:32;
     } _hfflags;
 }
 
@@ -326,6 +326,16 @@ You create an HFController via <tt>[[HFController alloc] init]</tt>.  After that
 
 /*! Sets whether text should be antialiased. */
 - (void)setShouldAntialias:(BOOL)antialias;
+//@}
+
+/*! @name Callouts
+ Set and get whether bookmark callouts should be shown/ */
+//@{
+/*! Returns whether text should be antialiased. */
+- (BOOL)shouldShowCallouts;
+
+/*! Sets whether text should be antialiased. */
+- (void)setShouldShowCallouts:(BOOL)showcallouts;
 //@}
 
 

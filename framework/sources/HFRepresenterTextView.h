@@ -47,15 +47,14 @@
     
     void (^byteColoring)(uint8_t byte, uint8_t *r, uint8_t *g, uint8_t *b, uint8_t *a);
     
-    struct  {
+    struct {
         unsigned antialias:1;
+        unsigned drawCallouts:1;
         unsigned editable:1;
         unsigned caretVisible:1;
         unsigned registeredForAppNotifications:1;
         unsigned withinMouseDown:1;
         unsigned receivedMouseUp:1;
-        unsigned reserved1:26;
-        unsigned reserved2:32;
     } _hftvflags;
 }
 
@@ -93,6 +92,9 @@
 - (NSRect)caretRect;
 
 - (void)setBookmarks:(NSDictionary *)bookmarks;
+- (BOOL)shouldDrawCallouts;
+- (void)setShouldDrawCallouts:(BOOL)val;
+
 - (void)setByteColoring:(void (^)(uint8_t byte, uint8_t *r, uint8_t *g, uint8_t *b, uint8_t *a))coloring;
 
 - (NSPoint)originForCharacterAtByteIndex:(NSInteger)index;
