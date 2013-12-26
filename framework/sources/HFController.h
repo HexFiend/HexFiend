@@ -134,14 +134,15 @@ You create an HFController via <tt>[[HFController alloc] init]</tt>.  After that
     
     struct  {
         unsigned antialias:1;
-        unsigned showcallouts:1;
         unsigned colorbytes:1;
+        unsigned showcallouts:1;
         HFEditMode editMode:2;
         unsigned editable:1;
         unsigned selectable:1;
         unsigned selectionInProgress:1;
         unsigned shiftExtendSelection:1;
         unsigned commandExtendSelection:1;
+        unsigned livereload:1;
     } _hfflags;
 }
 
@@ -328,17 +329,6 @@ You create an HFController via <tt>[[HFController alloc] init]</tt>.  After that
 - (void)setShouldAntialias:(BOOL)antialias;
 //@}
 
-/*! @name Callouts
- Set and get whether bookmark callouts should be shown/ */
-//@{
-/*! Returns whether text should be antialiased. */
-- (BOOL)shouldShowCallouts;
-
-/*! Sets whether text should be antialiased. */
-- (void)setShouldShowCallouts:(BOOL)showcallouts;
-//@}
-
-
 /*! @name Byte coloring
  Set and get whether the bytes should be colorized. When enabled, characters have a background color that correlates to their byte values. */
 //@{
@@ -347,6 +337,26 @@ You create an HFController via <tt>[[HFController alloc] init]</tt>.  After that
 
 /*! Sets whether characters should be colored. */
 - (void)setShouldColorBytes:(BOOL)colorbytes;
+//@}
+
+/*! @name Callouts
+ Set and get whether bookmark callouts should be shown. */
+//@{
+/*! Returns whether bookmark callouts should be shown. */
+- (BOOL)shouldShowCallouts;
+
+/*! Sets whether bookmark callouts should be shown. */
+- (void)setShouldShowCallouts:(BOOL)showcallouts;
+//@}
+
+/*! @name Live reload
+ Set and get whether unmodified documents should be auto refreshed to their latest on disk state. */
+//@{
+/*! Returns whether live reload should occur. */
+- (BOOL)shouldLiveReload;
+
+/*! Sets whether live reload should occur. */
+- (void)setShouldLiveReload:(BOOL)livereload;
 //@}
 
 /*! Representer initiated property changes

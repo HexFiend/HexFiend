@@ -48,7 +48,11 @@ NSString * const BaseDataDocumentDidChangeStringEncodingNotification;
     BOOL saveInProgress;
     
     BOOL currentlySettingFont;
-    BOOL isTransient;    
+    BOOL isTransient;
+    
+    BOOL shouldLiveReload;
+    NSDate *liveReloadDate;
+    NSTimer *liveReloadTimer;
 }
 
 - (void)moveSelectionForwards:(NSMenuItem *)sender;
@@ -107,5 +111,9 @@ NSString * const BaseDataDocumentDidChangeStringEncodingNotification;
 + (NSString *)layoutUserDefaultIdentifier;
 
 - (BOOL)requiresOverwriteMode;
+
+- (BOOL)shouldLiveReload;
+- (void)setShouldLiveReload:(BOOL)flag;
+- (IBAction)setLiveReloadFromMenuItem:sender;
 
 @end

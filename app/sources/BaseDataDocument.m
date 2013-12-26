@@ -515,8 +515,9 @@ static inline Class preferredByteArrayClass(void) {
     
     controller = [[HFController alloc] init];
     [controller setShouldAntialias:[defs boolForKey:@"AntialiasText"]];
-    [controller setShouldShowCallouts:[defs boolForKey:@"ShowCallouts"]];
     [controller setShouldColorBytes:[defs boolForKey:@"ColorBytes"]];
+    [controller setShouldShowCallouts:[defs boolForKey:@"ShowCallouts"]];
+    [controller setShouldLiveReload:[defs boolForKey:@"LiveReload"]];
     [controller setUndoManager:[self undoManager]];
     [controller setBytesPerColumn:[defs integerForKey:@"BytesPerColumn"]];
     [controller addRepresenter:layoutRepresenter];
@@ -565,6 +566,10 @@ static inline Class preferredByteArrayClass(void) {
     }
     [containerView release];
     [bannerDividerThumb release];
+    
+    [liveReloadDate release];
+    [liveReloadTimer release];
+
     [super dealloc];
 }
 
@@ -823,12 +828,16 @@ static inline Class preferredByteArrayClass(void) {
         [item setState:[controller shouldAntialias]];
         return YES;
     }
+    else if (action == @selector(setColorBytesFromMenuItem:)) {
+        [item setState:[controller shouldColorBytes]];
+        return YES;
+    }
     else if (action == @selector(setShowCalloutsFromMenuItem:)) {
         [item setState:[controller shouldShowCallouts]];
         return YES;
     }
-    else if (action == @selector(setColorBytesFromMenuItem:)) {
-        [item setState:[controller shouldColorBytes]];
+    else if (action == @selector(setLiveReloadFromMenuItem:)) {
+        [item setState:[controller shouldLiveReload]];
         return YES;
     }
     else if (action == @selector(setOverwriteMode:)) {
@@ -1822,6 +1831,98 @@ cancelled:;
 - (BOOL)requiresOverwriteMode
 {
     return NO;
+}
+
+- (BOOL)shouldLiveReload {
+    return shouldLiveReload;
+}
+
+- (void)setShouldLiveReload:(BOOL)flag {
+    shouldLiveReload = flag;
+    if(flag) [self pollLiveReload];
+}
+
+- (IBAction)setLiveReloadFromMenuItem:(id)sender {
+    USE(sender);
+    BOOL newVal = ![controller shouldLiveReload];
+    [controller setShouldLiveReload:newVal];
+    [[NSUserDefaults standardUserDefaults] setBool:newVal forKey:@"LiveReload"];
+    [self setShouldLiveReload:newVal];
+}
+
+@end
+
+// Let the compiler know about the 10.9 -[NSTimer setTolerance:] selector
+// even though we're targeting several versions behind that.
+@protocol MyNSTimerSetToleranceProtocol
+- (void)setTolerance:(NSTimeInterval)tolerance;
+@end
+
+@implementation BaseDataDocument(LiveReloading)
+
+// TODO: Some of the other NSFilePresenter methods could be used to make a
+// more versitle live-updating option.
+
+// Also, there may be a race conditon here: if a file being operated on
+// is swapped with another file during the live reload and just before the
+// live reload actually starts reverting, it may be that we revert to the
+// swapped in file rather than the actual file. I'm dubious that the use
+// of NSFileCoordinator here saves us from this, but it might. Even with
+// the race, there's no strong data loss concern; it just might happen that,
+// in extreme conditions, an unmodified document becomes a different document.
+// TODO: Investigate this.
+
+#define LiveReloadTimeTolerance 1.0 // Allow Cab some slack.
+#define LiveReloadTimeThrottle 1.0  // Auto reload at most every second.
+
+- (void)presentedItemDidChange {
+    // Stay in sync with changes if there are no outstanding edits and an
+    // update check is not already scheduled.
+    [self pollLiveReload];
+}
+
+- (void)pollLiveReload {
+    if(!shouldLiveReload) return;
+    if([self isDocumentEdited]) return; // Don't clobber changes.
+    if(liveReloadTimer && [liveReloadTimer isValid]) return; // A live reload is already scheduled.
+
+    NSDate *nextDate;
+    if(liveReloadDate && [liveReloadDate timeIntervalSinceNow] > -LiveReloadTimeThrottle) {
+        // Happened recently, throttle a bit.
+        nextDate = [liveReloadDate dateByAddingTimeInterval:LiveReloadTimeThrottle];
+    } else {
+        // Did not update recently, update soon.
+        nextDate = [NSDate date];
+    }
+    
+    [liveReloadTimer release];
+    liveReloadTimer = [[NSTimer alloc] initWithFireDate:nextDate interval:0 target:self selector:@selector(tryLiveReload) userInfo:nil repeats:NO];
+    
+    if([liveReloadTimer respondsToSelector:@selector(setTolerance:)]) {
+        [(id<MyNSTimerSetToleranceProtocol>)liveReloadTimer setTolerance:LiveReloadTimeTolerance];
+    }
+    [[NSRunLoop mainRunLoop] addTimer:liveReloadTimer forMode:NSDefaultRunLoopMode];
+}
+
+- (BOOL)tryLiveReload {
+    if(!shouldLiveReload) return NO;
+    if([self isDocumentEdited]) return NO; // Don't clobber changes.
+    
+    NSError *error = nil;
+    NSError **errorp = &error;
+    
+    [[[NSFileCoordinator alloc] initWithFilePresenter:self] coordinateReadingItemAtURL:[self fileURL] options:0 error:errorp byAccessor:^ (NSURL *url) {
+        NSDictionary *attrs = [[NSFileManager defaultManager] attributesOfItemAtPath:[[url filePathURL] path] error:errorp];
+        if(!attrs || *errorp) return;
+        if([[attrs objectForKey:NSFileModificationDate] isGreaterThan:[self fileModificationDate]]) {
+            [self revertToContentsOfURL:url ofType:[self fileType] error:errorp];
+        }
+    }];
+    
+    [liveReloadDate release];
+    liveReloadDate = [[NSDate date] retain];
+    
+    return error ? NO : YES;
 }
 
 @end

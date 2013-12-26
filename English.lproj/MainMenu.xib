@@ -245,6 +245,12 @@
                                     </items>
                                 </menu>
                             </menuItem>
+                            <menuItem title="Reload Unmodified" id="bpc-ky-jvV">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="setLiveReloadFromMenuItem:" target="-1" id="HRn-F2-u4k"/>
+                                </connections>
+                            </menuItem>
                             <menuItem isSeparatorItem="YES" id="214">
                                 <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                             </menuItem>
