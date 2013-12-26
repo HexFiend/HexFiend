@@ -590,8 +590,8 @@ static void removeFromDictionaryOfSets(NSMutableDictionary *dictionary, NSString
 - (void)removeAttribute:(NSString *)attributeName range:(HFRange)range {
     /* Get the nodes that we will delete */
     NSMutableArray *nodesToDelete = [[NSMutableArray alloc] init];
-    [self walkNodesInRange:range withBlock:^(HFByteRangeAttributeArrayNode *node, HFRange range){
-        USE(range);
+    [self walkNodesInRange:range withBlock:^(HFByteRangeAttributeArrayNode *node, HFRange rng){
+        USE(rng);
         if ([attributeName isEqualToString:node->attribute]) {
             [nodesToDelete addObject:node];
         }
@@ -699,8 +699,8 @@ static void removeFromDictionaryOfSets(NSMutableDictionary *dictionary, NSString
 
 - (NSSet *)attributesInRange:(HFRange)range {
     NSMutableSet *result = [NSMutableSet set];
-    [self walkNodesInRange:range withBlock:^BOOL(HFByteRangeAttributeArrayNode *node, HFRange range) {
-        USE(range);
+    [self walkNodesInRange:range withBlock:^BOOL(HFByteRangeAttributeArrayNode *node, HFRange rng) {
+        USE(rng);
         [result addObject:[node attribute]];
         return YES; /* continue fetching */
     }];

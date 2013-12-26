@@ -54,20 +54,20 @@ static BOOL parseSuffixMultiplier(const char *multiplier, unsigned long long *mu
     return NO;
 }
 
-BOOL parseNumericStringWithSuffix(NSString *stringValue, unsigned long long *resultValue, unsigned int *signBit) {
+BOOL parseNumericStringWithSuffix(NSString *stringValue, unsigned long long *resultValue, BOOL *isNegative) {
     const char *string = [stringValue UTF8String];
     if (string == NULL) goto invalidString;
     /* Parse the string with strtoull */
     unsigned long long amount = -1;
     unsigned long long suffixMultiplier = 1;
     int err = 0;
-    BOOL isNegative = NO;
+    BOOL isNeg = NO;
     char *endPtr = NULL;
     for (;;) {
         while (isspace(*string)) string++;
         if (*string == '-') {
-            if (isNegative) goto invalidString;
-            isNegative = YES;
+            if (isNeg) goto invalidString;
+            isNeg = YES;
             string++;
         }
         else {
@@ -84,7 +84,7 @@ BOOL parseNumericStringWithSuffix(NSString *stringValue, unsigned long long *res
     amount *= suffixMultiplier;
     
     *resultValue = amount;
-    *signBit = isNegative ? -1 : 0;
+    if(isNegative) *isNegative = isNeg;
     return YES;
 invalidString:;
     return NO;

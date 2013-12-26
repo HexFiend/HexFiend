@@ -328,7 +328,6 @@ static BOOL returnFTruncateError(NSError **error) {
     @try {
         if (S_ISCHR(fileMode) && blockSize) {
             // We have to make sure all accesses are aligned
-            void *tempBuf = NULL;
             unsigned prePad = (unsigned)(offset % blockSize);
             if (prePad) {
                 // Deal with the first unaligned block

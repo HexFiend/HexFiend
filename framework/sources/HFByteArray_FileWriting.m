@@ -520,7 +520,7 @@ static HFByteArray *constructNewSlices(HFByteSlice *slice, HFRange rangeInFile, 
         HFRangeWrapper *rangeWrapper;
         while ((rangeWrapper = [keyEnumerator nextObject])) {
             HFRange replacementRange = [rangeWrapper HFRange];
-            HFByteSlice *slice = [rangesToOldSlices objectForKey:rangeWrapper];
+            slice = [rangesToOldSlices objectForKey:rangeWrapper];
             HFASSERT(slice != nil);
             HFByteArray *replacementSlices = (id)CFDictionaryGetValue(sliceToNewSlicesDictionary, slice);
             HFASSERT(replacementSlices != nil);

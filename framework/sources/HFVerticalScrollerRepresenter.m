@@ -100,7 +100,7 @@
         else {
             long double availableLines = HFULToFP([controller totalLineCount]);
             long double consumedLines = MAX(1., lineRange.length);
-            proportion = ld2f(lineRange.length / HFULToFP(availableLines));
+            proportion = ld2f(lineRange.length / availableLines);
             
             long double maxScroll = availableLines - consumedLines;
             HFASSERT(maxScroll >= lineRange.location);

@@ -155,7 +155,7 @@ static void generateGlyphs(NSFont *baseFont, NSMutableArray *fonts, struct HFGly
                     
                     /* Now make the glyph */
                     HFASSERT(fontIndex < UINT16_MAX);
-                    outGlyphs[substitutionGlyphIndex] = (struct HFGlyph_t){.fontIndex = fontIndex, .glyph = glyph};
+                    outGlyphs[substitutionGlyphIndex] = (struct HFGlyph_t){.fontIndex = (uint16_t)fontIndex, .glyph = glyph};
                 }
                 
                 /* We're done with this */

@@ -188,7 +188,7 @@ LocalIndex_t match_forwards(const unsigned char * restrict a, const unsigned cha
         __m128i cmpVec = _mm_cmpeq_epi8(aVec, bVec);
         /* cmpVec now has -1 anywhere aVec and bVec differ */
         
-        short cmpRes = _mm_movemask_epi8(cmpVec);
+        short cmpRes = 0xFFFF & (unsigned)_mm_movemask_epi8(cmpVec);
         /* cmpRes's low 16 bits correspond to the upper bit of each byte in cmpVec */
         
         if (cmpRes != (short)0xFFFF) {

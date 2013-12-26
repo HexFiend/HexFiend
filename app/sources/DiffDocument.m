@@ -333,7 +333,7 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
         //[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(synchronizeControllers:) name:HFControllerDidChangePropertiesNotification object:controller];
         
         /* Initially, the scrolling is just synchronized */
-        totalAbstractLength = HFMax([leftBytes length], [rightBytes length]);
+        totalAbstractLength = HFMaxULL([leftBytes length], [rightBytes length]);
         
         /* We haven't receieved a scroll event */
         timeOfLastScrollEvent = -DBL_MAX;
@@ -1031,7 +1031,7 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
     else {
         long double availableLines = HFULToFP([self totalLineCount]);
         long double consumedLines = MAX(1., lineRange.length);
-        proportion = ld2f(lineRange.length / HFULToFP(availableLines));
+        proportion = ld2f(lineRange.length / availableLines);
         
         long double maxScroll = availableLines - consumedLines;
         HFASSERT(maxScroll >= lineRange.location);

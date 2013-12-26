@@ -53,8 +53,7 @@
 
 static unsigned long long unsignedLongLongValue(NSString *s) {
     unsigned long long result = 0;
-    unsigned signBit;
-    parseNumericStringWithSuffix(s, &result, &signBit);
+    parseNumericStringWithSuffix(s, &result, NULL);
     return result;
 }
 

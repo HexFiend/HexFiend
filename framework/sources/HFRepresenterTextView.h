@@ -33,8 +33,6 @@
     CGFloat verticalOffset;
     CGFloat horizontalContainerInset;
     CGFloat defaultLineHeight;
-    CFAbsoluteTime pulseStartTime;
-    NSTimer *pulseTimer;
     NSTimer *caretTimer;
     NSWindow *pulseWindow;
     NSRect pulseWindowBaseFrameInScreenCoordinates;

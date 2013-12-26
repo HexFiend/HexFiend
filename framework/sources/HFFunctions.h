@@ -107,6 +107,13 @@ static inline unsigned long long HFSum(unsigned long long a, unsigned long long 
 }
 
 /*!
+ Returns a + b as an unsigned long long.  This asserts on overflow, unless NDEBUG is defined.
+ */
+static inline unsigned long long HFMaxULL(unsigned long long a, unsigned long long b) {
+    return a < b ? b : a;
+}
+
+/*!
   Returns a - b as an unsigned long long.  This asserts on underflow (if b > a), unless NDEBUG is defined.
 */
 static inline unsigned long long HFSubtract(unsigned long long a, unsigned long long b) {

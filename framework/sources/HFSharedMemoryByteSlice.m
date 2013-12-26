@@ -59,7 +59,8 @@
     offset = off;
     length = len;
     data = [dat retain];
-    inlineTailLength = tailLen;
+    HFASSERT(tailLen <= UCHAR_MAX);
+    inlineTailLength = (unsigned char)tailLen;
     memcpy(inlineTail, tail, tailLen);
     HFASSERT([self length] == tailLen + len);
     return self;

@@ -26,11 +26,6 @@ enum {
     HFSaveError
 };
 
-
-static BOOL isRunningOnLeopardOrLater(void) {
-    return NSAppKitVersionNumber >= 860.;
-}
-
 static inline Class preferredByteArrayClass(void) {
     return [HFAttributedByteArray class];
 }
@@ -42,16 +37,6 @@ static inline Class preferredByteArrayClass(void) {
 
 /* Subclass to display custom window title that shows progress */
 @interface MyDocumentWindowController : NSWindowController
-
-@end
-
-@interface UndoRedoByteArrayReference : NSObject {
-@public
-    HFByteArray *byteArray;
-}
-@end
-
-@implementation UndoRedoByteArrayReference
 
 @end
 
@@ -617,13 +602,13 @@ static inline Class preferredByteArrayClass(void) {
     bannerIsShown = YES;
     bannerGrowing = YES;
     targetFirstResponderInBanner = targetFirstResponder;
-    if (isRunningOnLeopardOrLater()) {
-        if (! bannerDividerThumb) bannerDividerThumb = [[HFBannerDividerThumb alloc] initWithFrame:NSMakeRect(0, 0, 14, 14)];
-        [bannerDividerThumb setAutoresizingMask:0];
-        [bannerDividerThumb setFrameOrigin:NSMakePoint(3, 0)];
-        [bannerDividerThumb removeFromSuperview];
-        [bannerView addSubview:bannerDividerThumb];
-    }
+    
+    if(!bannerDividerThumb)
+        bannerDividerThumb = [[HFBannerDividerThumb alloc] initWithFrame:NSMakeRect(0, 0, 14, 14)];
+    [bannerDividerThumb setAutoresizingMask:0];
+    [bannerDividerThumb setFrameOrigin:NSMakePoint(3, 0)];
+    [bannerDividerThumb removeFromSuperview];
+    [bannerView addSubview:bannerDividerThumb];
     if (newSubview) {
         NSSize newSubviewSize = [newSubview frame].size;
         if (newSubviewSize.width != NSWidth(containerBounds)) {
@@ -1544,7 +1529,7 @@ cancelled:;
     USE(sender);
     BOOL success = NO;
     unsigned long long value;
-    unsigned isNegative;
+    BOOL isNegative;
     if (parseNumericStringWithSuffix([(NSTextField*)[jumpToOffsetView viewNamed:@"moveSelectionByTextField"] stringValue], &value, &isNegative)) {
         unsigned long long length = [controller contentsLength];
         if (length >= value) {
@@ -1563,7 +1548,7 @@ cancelled:;
     USE(sender);
     BOOL success = NO;
     unsigned long long value;
-    unsigned isNegative;
+    BOOL isNegative;
     if (parseNumericStringWithSuffix([(NSTextField*)[moveSelectionByView viewNamed:@"moveSelectionByTextField"] stringValue], &value, &isNegative)) {
         if ([self movingRanges:[controller selectedContentsRanges] byAmount:value isNegative:isNegative isValidForLength:[controller contentsLength]]) {
             BOOL extendSelection = !![(NSTextField*)[moveSelectionByView viewNamed:@"extendSelectionByCheckbox"] intValue];

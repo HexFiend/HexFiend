@@ -26,10 +26,6 @@
 
 #define kDataInspectorUserDefaultsKey @"DataInspectorDefaults"
 
-static BOOL isRunningOnLeopardOrLater(void) {
-    return NSAppKitVersionNumber >= 860.;
-}
-
 NSString * const DataInspectorDidChangeRowCount = @"DataInspectorDidChangeRowCount";
 NSString * const DataInspectorDidDeleteAllRows = @"DataInspectorDidDeleteAllRows";
 
@@ -827,10 +823,9 @@ static BOOL stringRangeIsNullBytes(NSString *string, NSRange range) {
 /* Prevent all row selection */
 
 - (BOOL)tableView:(NSTableView *)tableView shouldSelectRow:(NSInteger)row {
-    /* since shouldTrackCell is only available on 10.5, fall back to crappier behavior on 10.4 */
     USE(tableView);
     USE(row);
-    return ! isRunningOnLeopardOrLater();
+    return NO;
 }
 
 - (BOOL)tableView:(NSTableView *)tableView shouldTrackCell:(NSCell *)cell forTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row {

@@ -31,7 +31,7 @@ static NSData *createPearsonTable(void) {
     for (uint32_t i=1; i < 256; i++) {
         uint32_t j = my_random_uniform(i+1); //returns a value in the range [0, i]
         result[i] = result[j];
-        result[j] = i;
+        result[j] = (unsigned char)i;
     }
     return [[NSData alloc] initWithBytes:result length:sizeof result];
 }

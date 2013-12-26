@@ -1156,9 +1156,11 @@ static size_t unionAndCleanLists(NSRect *rectList, id *valueList, size_t count) 
 - (void)drawByteColoringBackground:(NSRange)range inRect:(NSRect)rect {
     if(!byteColoring) return;
     
+    size_t width = (size_t)rect.size.width;
+    
     // A rgba, 8-bit, single row image.
     // +1 in case messing around with floats makes us overshoot a bit.
-    uint32_t *buffer = calloc(rect.size.width+1, 4);
+    uint32_t *buffer = calloc(width+1, 4);
     
     const uint8_t *bytes = [data bytes];
     bytes += range.location;
@@ -1180,9 +1182,9 @@ static size_t unionAndCleanLists(NSRect *rectList, id *valueList, size_t count) 
     }
     
     // Do a CGImage dance to draw the buffer
-    CGDataProviderRef provider = CGDataProviderCreateWithData(NULL, buffer, 4 * rect.size.width, NULL);
+    CGDataProviderRef provider = CGDataProviderCreateWithData(NULL, buffer, 4 * width, NULL);
     CGColorSpaceRef cgcolorspace = CGColorSpaceCreateWithName(kCGColorSpaceGenericRGB);
-    CGImageRef image = CGImageCreate(rect.size.width, 1, 8, 32, 4 * rect.size.width, cgcolorspace,
+    CGImageRef image = CGImageCreate(width, 1, 8, 32, 4 * width, cgcolorspace,
                                      (CGBitmapInfo)kCGImageAlphaLast, provider, NULL, false, kCGRenderingIntentDefault);
     CGContextDrawImage([[NSGraphicsContext currentContext] graphicsPort], rect, image);
     CGColorSpaceRelease(cgcolorspace);
@@ -1299,7 +1301,7 @@ static size_t unionAndCleanLists(NSRect *rectList, id *valueList, size_t count) 
     
     /* Clean up */
     for (propertyIndex = 0; propertyIndex < propertyInfoCount; propertyIndex++) {
-        struct PropertyInfo_t *p = propertyInfos + propertyIndex;
+        p = propertyInfos + propertyIndex;
         free(p->rectList);
         free(p->propertyValueList);
     }    
@@ -1569,9 +1571,7 @@ static size_t unionAndCleanLists(NSRect *rectList, id *valueList, size_t count) 
         /* Figure out which callouts we're going to draw */
         NSRect allCalloutsRect = NSZeroRect;
         NSMutableArray *localCallouts = [[NSMutableArray alloc] initWithCapacity:[callouts count]];
-        NSEnumerator *enumer = [callouts objectEnumerator];
-        HFRepresenterTextViewCallout *callout;
-        while ((callout = [enumer nextObject])) {
+        FOREACH(HFRepresenterTextViewCallout *, callout, localCallouts) {
             NSRect calloutRect = [callout rect];
             if (NSIntersectsRect(clip, calloutRect)) {
                 [localCallouts addObject:callout];
@@ -1768,7 +1768,7 @@ static size_t unionAndCleanLists(NSRect *rectList, id *valueList, size_t count) 
     NSUInteger bytesPerColumn = [self _effectiveBytesPerColumn], bytesPerCharacter = [self bytesPerCharacter];    
     if (bytesPerColumn == 0) {
         /* No columns */
-        NSUInteger numChars = availableSpace / [self advancePerCharacter];
+        NSUInteger numChars = (NSUInteger)(availableSpace / [self advancePerCharacter]);
         /* Return it, except it's at least one character */
         return MAX(numChars, 1) * bytesPerCharacter;
     }
@@ -1892,9 +1892,9 @@ static size_t unionAndCleanLists(NSRect *rectList, id *valueList, size_t count) 
     NSPoint autoscrollLocation = mouseDownLocation;
     while (! _hftvflags.receivedMouseUp) {
         NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-        NSEvent *event = [NSApp nextEventMatchingMask: NSLeftMouseUpMask | NSLeftMouseDraggedMask | NSPeriodicMask untilDate:endDate inMode:NSEventTrackingRunLoopMode dequeue:YES];
+        NSEvent *ev = [NSApp nextEventMatchingMask: NSLeftMouseUpMask | NSLeftMouseDraggedMask | NSPeriodicMask untilDate:endDate inMode:NSEventTrackingRunLoopMode dequeue:YES];
         
-        if ([event type] == NSPeriodic) {
+        if ([ev type] == NSPeriodic) {
             // autoscroll if drag is out of view bounds
             CGFloat amountToScroll = 0;
             NSRect bounds = [self bounds];
@@ -1906,16 +1906,16 @@ static size_t unionAndCleanLists(NSRect *rectList, id *valueList, size_t count) 
             }
             if (amountToScroll != 0.) {
                 [[[self representer] controller] scrollByLines:amountToScroll];
-                NSUInteger characterIndex = [self characterAtPointForSelection:autoscrollLocation];
+                characterIndex = [self characterAtPointForSelection:autoscrollLocation];
                 characterIndex = MIN(characterIndex, [self maximumCharacterIndex]);
-                [[self representer] continueSelectionWithEvent:event forCharacterIndex:characterIndex];
+                [[self representer] continueSelectionWithEvent:ev forCharacterIndex:characterIndex];
             }
         }
-        else if ([event type] == NSLeftMouseDragged) {
-            autoscrollLocation = [self convertPoint:[event locationInWindow] fromView:nil];
+        else if ([ev type] == NSLeftMouseDragged) {
+            autoscrollLocation = [self convertPoint:[ev locationInWindow] fromView:nil];
         }
         
-        [NSApp sendEvent:event]; 
+        [NSApp sendEvent:ev]; 
         [pool drain];
     }
     

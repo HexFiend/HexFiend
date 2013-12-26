@@ -12,10 +12,6 @@
 
 void * refSelf;
 
-static inline BOOL isRunningOnLeopardOrLater(void) {
-    return NSAppKitVersionNumber >= 949;
-}
-
 /* The key used to store the last "open path" path in userdefs */
 #define kOpenPathDialogPathKey @"OpenPathDialogPathKey"
 
