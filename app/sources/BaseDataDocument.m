@@ -70,6 +70,11 @@ static inline Class preferredByteArrayClass(void) {
 
 @end
 
+@interface BaseDataDocument(LiveReloading)
+- (void)pollLiveReload; //!< Queue up a live reload attempt. No actual polling involved.
+- (BOOL)tryLiveReload;  //!< Attempt a live reload right now.
+@end
+
 @implementation BaseDataDocument
 
 + (NSString *)userDefKeyForRepresenterWithName:(const char *)repName {
@@ -521,6 +526,8 @@ static inline Class preferredByteArrayClass(void) {
     [controller setUndoManager:[self undoManager]];
     [controller setBytesPerColumn:[defs integerForKey:@"BytesPerColumn"]];
     [controller addRepresenter:layoutRepresenter];
+    
+    [self setShouldLiveReload:[controller shouldLiveReload]];
     
     NSString *fontName = [defs stringForKey:@"DefaultFontName"];
     CGFloat fontSize = [defs floatForKey:@"DefaultFontSize"];
@@ -1847,7 +1854,7 @@ cancelled:;
     BOOL newVal = ![controller shouldLiveReload];
     [controller setShouldLiveReload:newVal];
     [[NSUserDefaults standardUserDefaults] setBool:newVal forKey:@"LiveReload"];
-    [self setShouldLiveReload:newVal];
+    [self setShouldLiveReload:[controller shouldLiveReload]];
 }
 
 @end
@@ -1915,6 +1922,7 @@ cancelled:;
         NSDictionary *attrs = [[NSFileManager defaultManager] attributesOfItemAtPath:[[url filePathURL] path] error:errorp];
         if(!attrs || *errorp) return;
         if([[attrs objectForKey:NSFileModificationDate] isGreaterThan:[self fileModificationDate]]) {
+            // Perhaps find a way to make this revert part of the undo buffer.
             [self revertToContentsOfURL:url ofType:[self fileType] error:errorp];
         }
     }];
