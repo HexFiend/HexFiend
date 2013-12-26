@@ -172,7 +172,10 @@ static BOOL naiveSearch(HFObjectGraph *self, id start, id goal, id *visitedSet, 
         NEW_ARRAY(id, dependencyObjects, max);
         CFSetGetValues(dependencies, (const void **)dependencyObjects);
         for (i=0; i < max; i++) {
-            if (naiveSearch(self, dependencyObjects[i], goal, visitedSet, visitedSetCount)) return YES;
+            if (naiveSearch(self, dependencyObjects[i], goal, visitedSet, visitedSetCount)) {
+                FREE_ARRAY(dependencyObjects);
+                return YES;
+            }
         }
         FREE_ARRAY(dependencyObjects);
     }

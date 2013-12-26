@@ -598,6 +598,7 @@ static HFByteArray *byteArrayForFile(NSString *path) {
         NSDate *startDate = [NSDate date];
         HFTEST([arrayHash isEqual:HFHashFile(fileURL)]);	
         NSTimeInterval diff = [startDate timeIntervalSinceNow];
+        (void)diff;
         
         [[NSFileManager defaultManager] removeItemAtURL:fileURL error:NULL];
         

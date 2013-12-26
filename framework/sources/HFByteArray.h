@@ -41,6 +41,17 @@ HFByteArray is an abstract class.  It will raise an exception if you attempt to 
     NSUInteger changeGenerationCount;
 }
 
+/*! @name Initialization
+ */
+//@{
+/*! Initialize to a byte array containing only the given slice. */
+- (id)initWithByteSlice:(HFByteSlice *)slice;
+
+/*! Initialize to a byte array containing the slices of the given array. */
+- (id)initWithByteArray:(HFByteArray *)array;
+//@}
+
+
 /*! @name Accessing raw data
 */
 //@{

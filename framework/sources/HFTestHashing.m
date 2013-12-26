@@ -9,48 +9,46 @@
 
 #import <HexFiend/HFTestHashing.h>
 #import <HexFiend/HFByteArray.h>
-#include <openssl/sha.h>
+#include <CommonCrypto/CommonDigest.h>
 
 NSData *HFHashFile(NSURL *url) {
-    NSMutableData *data = [NSMutableData dataWithLength:SHA_DIGEST_LENGTH];
-    SHA_CTX ctx;
-    memset(&ctx, 0, sizeof ctx);
-    SHA1_Init(&ctx);
+    NSMutableData *data = [NSMutableData dataWithLength:CC_SHA1_DIGEST_LENGTH];
+    CC_SHA1_CTX ctx;
+    CC_SHA1_Init(&ctx);
     
     REQUIRE_NOT_NULL(url);
     HFASSERT([url isFileURL]);
-    const NSUInteger bufferSize = 1024 * 1024 * 4;
+    const CC_LONG bufferSize = 1024 * 1024 * 4;
     unsigned char *buffer = malloc(bufferSize);
-    NSInteger amount;
+    CC_LONG amount;
     NSInputStream *stream = [[[NSInputStream alloc] initWithFileAtPath:[url path]] autorelease];
     [stream open];
-    while ((amount = [stream read:buffer maxLength:bufferSize]) > 0) {
-        SHA1_Update(&ctx, buffer, amount);
+    while ((amount = (CC_LONG)[stream read:buffer maxLength:bufferSize]) > 0) {
+        CC_SHA1_Update(&ctx, buffer, amount);
     }
     [stream close];
-    SHA1_Final([data mutableBytes], &ctx);
+    CC_SHA1_Final([data mutableBytes], &ctx);
     free(buffer);
     return data;
 }
 
 NSData *HFHashByteArray(HFByteArray *array) {
     REQUIRE_NOT_NULL(array);
-    NSMutableData *data = [NSMutableData dataWithLength:SHA_DIGEST_LENGTH];
-    SHA_CTX ctx;
-    memset(&ctx, 0, sizeof ctx);
-    SHA1_Init(&ctx);
+    NSMutableData *data = [NSMutableData dataWithLength:CC_SHA1_DIGEST_LENGTH];
+    CC_SHA1_CTX ctx;
+    CC_SHA1_Init(&ctx);
     
-    const NSUInteger bufferSize = 1024 * 1024 * 4;
+    const CC_LONG bufferSize = 1024 * 1024 * 4;
     unsigned char *buffer = malloc(bufferSize);
     unsigned long long offset = 0, length = [array length];
     while (offset < length) {
-        NSUInteger amount = bufferSize;
-        if (amount > (length - offset)) amount = ll2l(length - offset);
+        CC_LONG amount = bufferSize;
+        if (amount > (length - offset)) amount = (CC_LONG)ll2l(length - offset);
         [array copyBytes:buffer range:HFRangeMake(offset, amount)];
-        SHA1_Update(&ctx, buffer, amount);
+        CC_SHA1_Update(&ctx, buffer, amount);
         offset += amount;
     }
-    SHA1_Final([data mutableBytes], &ctx);
+    CC_SHA1_Final([data mutableBytes], &ctx);
     free(buffer);
     return data;
 }

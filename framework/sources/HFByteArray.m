@@ -18,6 +18,23 @@
     return [super init];
 }
 
+- (id)initWithByteSlice:(HFByteSlice *)slice {
+    if(!(self = [self init])) return nil;
+    self = [self init];
+    [self insertByteSlice:slice inRange:HFRangeMake(0, 0)];
+    return self;
+}
+
+- (id)initWithByteArray:(HFByteArray *)array {
+    if(!(self = [self init])) return nil;
+    NSEnumerator *e = [array byteSliceEnumerator];
+    HFByteSlice *slice;
+    while((slice = [e nextObject])) {
+        [self insertByteSlice:slice inRange:HFRangeMake([self length], 0)];
+    }
+    return self;
+}
+
 - (NSArray *)byteSlices { UNIMPLEMENTED(); }
 - (unsigned long long)length { UNIMPLEMENTED(); }
 - (void)copyBytes:(unsigned char *)dst range:(HFRange)range { USE(dst); USE(range); UNIMPLEMENTED_VOID(); }
