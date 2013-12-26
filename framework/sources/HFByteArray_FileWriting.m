@@ -431,79 +431,39 @@ static HFRange dirtyRangeToSliceRange(HFRange rangeInFile, HFRange proposedFileS
 /* Given an HFByteSlice occupying the given range in a file, construct an array of new byte slices that do not intersect the dirty ranges, or return nil if we can't */
 static HFByteArray *constructNewSlices(HFByteSlice *slice, HFRange rangeInFile, NSArray *dirtyRanges, NSUInteger *inoutMemoryRemainingForCopying) {
     HFASSERT(rangeInFile.length == [slice length]);
-    HFByteArray *resultByteArray = [[[HFBTreeByteArray alloc] init] autorelease];
     
-#define TO_SLICE_RANGE(x) dirtyRangeToSliceRange(rangeInFile, (x))
-    
-    NSUInteger dirtyRangeCount = [dirtyRanges count];
-    if (! dirtyRangeCount) return [NSArray arrayWithObject:slice];
-    
-    NSUInteger rangeIndex = 0;
-    unsigned long long * const rangeIndexes = malloc(dirtyRangeCount * 2 * sizeof *rangeIndexes);
-    if (! rangeIndexes) return nil;
-    
+    // Count how much memory is needed to copy
     unsigned long long memoryRequiredForCopying = 0;
-    
-    //see how much we will need to copy, while simultaneously getting the range posts (beginning and ending)
-    FOREACH(HFRangeWrapper *, dirtyRangeWrapper, dirtyRanges) {
-        HFRange dirtyRange = [dirtyRangeWrapper HFRange];
-        memoryRequiredForCopying = HFSum(memoryRequiredForCopying, HFIntersectionRange(dirtyRange, rangeInFile).length);
-        rangeIndexes[rangeIndex++] = dirtyRange.location;
-        rangeIndexes[rangeIndex++] = HFMaxRange(dirtyRange);
+    FOREACH(HFRangeWrapper *, rangeWrapper, dirtyRanges) {
+        memoryRequiredForCopying = HFSum(memoryRequiredForCopying, HFIntersectionRange([rangeWrapper HFRange], rangeInFile).length);
     }
     
-    /* Do we have too much memory? */    
-    if (memoryRequiredForCopying > *inoutMemoryRemainingForCopying) {
-        free(rangeIndexes);
-        return NO;
+    if(memoryRequiredForCopying == 0) {
+        // Easy, there weren't actually any intersected dirty ranges.
+        return [[[HFBTreeByteArray alloc] initWithByteSlice:slice] autorelease];
     }
     
-    /* We will need this much memory */
-    *inoutMemoryRemainingForCopying = (*inoutMemoryRemainingForCopying) - ll2l(memoryRequiredForCopying);
-    
-    /* Add any file range before the first dirty range */
-    if (rangeIndexes[0] > rangeInFile.location) {
-        HFRange proposedFileSubrange = HFRangeMake(rangeInFile.location, rangeIndexes[0] - rangeInFile.location);;		
-        [resultByteArray insertByteSlice:[slice subsliceWithRange:TO_SLICE_RANGE(proposedFileSubrange)] inRange:HFRangeMake([resultByteArray length], 0)];
+    if(memoryRequiredForCopying > *inoutMemoryRemainingForCopying) {
+        // Too much memory required, give up.
+        return nil;
     }
     
-    /* Add any file range after the last dirty range */
-    unsigned long long lastDirtyIndex = rangeIndexes[2*dirtyRangeCount - 1];
-    if (lastDirtyIndex < HFMaxRange(rangeInFile)) {
-        HFRange proposedFileSubrange = HFRangeMake(lastDirtyIndex, HFMaxRange(rangeInFile) - lastDirtyIndex);
-        [resultByteArray insertByteSlice:[slice subsliceWithRange:TO_SLICE_RANGE(proposedFileSubrange)] inRange:HFRangeMake([resultByteArray length], 0)];
-    }
+    // Subtract off the memory we need.
+    *inoutMemoryRemainingForCopying -= ll2l(memoryRequiredForCopying);
     
-    /* Now iterate over the range indexes, alternating parity between dirty and clean, starting with dirty */
-    for (rangeIndex = 0; rangeIndex + 1 < dirtyRangeCount * 2; rangeIndex++) {
-        /* Pull out the next range */
-        unsigned long long thisIndex = rangeIndexes[rangeIndex], nextIndex = rangeIndexes[rangeIndex + 1];
-        HFASSERT(thisIndex < nextIndex);
-        HFRange proposedFileSubrange = HFRangeMake(thisIndex, nextIndex - thisIndex);
-        HFRange sliceSubrange = TO_SLICE_RANGE(proposedFileSubrange);
-        if (sliceSubrange.length > 0) {
-            HFByteSlice *newSlice;
-            BOOL rangeIsClean = (rangeIndex & 1); //first range is dirty, next range is clean...
-            if (rangeIsClean) {
-                /* Make a file subslice */
-                newSlice = [slice subsliceWithRange:sliceSubrange];
-            }
-            else {
-                /* Make a shared memory slice */
-                HFASSERT(sliceSubrange.length <= NSUIntegerMax);
-                NSMutableData *data = [[NSMutableData alloc] initWithLength:ll2l(sliceSubrange.length)];
-                [slice copyBytes:[data mutableBytes] range:sliceSubrange];
-                newSlice = [[[HFSharedMemoryByteSlice alloc] initWithData:data] autorelease];
-                [data release];
-            }
-            [resultByteArray insertByteSlice:newSlice inRange:HFRangeMake([resultByteArray length], 0)];
-        }
+    // Start with the slice, then replace dirty chunks with shared memory copies.
+    HFByteArray *resultByteArray = [[[HFBTreeByteArray alloc] initWithByteSlice:slice] autorelease];
+    FOREACH(HFRangeWrapper *, rangeWrapper, dirtyRanges) {
+        HFRange subRange = dirtyRangeToSliceRange(rangeInFile, [rangeWrapper HFRange]);
+
+        NSMutableData *data = [[NSMutableData alloc] initWithLength:ll2l(subRange.length)];
+        [slice copyBytes:[data mutableBytes] range:subRange];
+        HFByteSlice *newSlice = [[[HFSharedMemoryByteSlice alloc] initWithData:data] autorelease];
+        [data release];
+        [resultByteArray insertByteSlice:newSlice inRange:subRange];
     }
-    free(rangeIndexes);
-    
+
     HFASSERT([resultByteArray length] == rangeInFile.length);
-    
-#undef TO_SLICE_RANGE
     return resultByteArray;
 }
 
