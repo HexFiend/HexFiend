@@ -29,18 +29,26 @@
 NSString * const DataInspectorDidChangeRowCount = @"DataInspectorDidChangeRowCount";
 NSString * const DataInspectorDidDeleteAllRows = @"DataInspectorDidDeleteAllRows";
 
-/* Inspector types */
+// Inspector types
+// Needs to match menu order in DataInspectorView.xib
 enum InspectorType_t {
     eInspectorTypeSignedInteger,
     eInspectorTypeUnsignedInteger,
     eInspectorTypeFloatingPoint,
-    eInspectorTypeUTF8Text
+    eInspectorTypeUTF8Text,
+    
+    // Total number of inspector types.
+    eInspectorTypeCount
 };
 
+// Needs to match menu order in DataInspectorView.xib
 enum Endianness_t {
+    eEndianLittle, // (Endianness_t)0 is the default endianness.
     eEndianBig,
-    eEndianLittle,
 
+    // Total number of endiannesses.
+    eEndianCount,
+    
 #if __BIG_ENDIAN__
     eNativeEndianness = eEndianBig
 #else
@@ -53,6 +61,9 @@ enum Endianness_t {
     enum InspectorType_t inspectorType;
     enum Endianness_t endianness;
 }
+
+/* A data inspector that is different from the given inspectors, if possible. */
++ (DataInspector*)dataInspectorSupplementing:(NSArray*)inspectors;
 
 - (enum InspectorType_t)type;
 - (void)setType:(enum InspectorType_t)type;
@@ -67,9 +78,6 @@ enum Endianness_t {
 /* Returns YES if we can replace the given number of bytes with this string value */
 - (BOOL)acceptStringValue:(NSString *)value replacingByteCount:(NSUInteger)count intoData:(unsigned char *)outData;
 
-/* returns YES if types wrapped around */
-- (BOOL)incrementToNextType;
-
 /* Get and set a property list representation, for persisting to user defaults */
 - (id)propertyListRepresentation;
 - (void)setPropertyListRepresentation:(id)plist;
@@ -77,6 +85,40 @@ enum Endianness_t {
 @end
 
 @implementation DataInspector
+
++ (DataInspector*)dataInspectorSupplementing:(NSArray*)inspectors {
+    DataInspector *ret = [[[DataInspector alloc] init] autorelease];
+
+    enum Endianness_t preferredEndian; // Prefer the most popular endianness among inspectors
+    uint32_t present = 0; // Bit set of all inspector types that are already present.
+    
+    _Static_assert(eEndianCount <= 2, "This part of the code assumes only two supported endianesses.");
+    int endianessVote = 0; // +1 for enum == 0, -1 enum != 0.
+    for(DataInspector *di in inspectors) {
+        endianessVote += !di->endianness ? 1 : -1;
+        present |= 1 << di->inspectorType << di->endianness*eInspectorTypeCount;
+    }
+    preferredEndian = endianessVote < 0;
+    
+    uint32_t pref = (~present >> preferredEndian*eInspectorTypeCount) & ((1<<eInspectorTypeCount)-1);
+    if(pref) { // There is a missing inspector type for preffered endianness, pick that one.
+        ret->endianness = preferredEndian;
+        ret->inspectorType = __builtin_ffs(pref)-1;
+        return ret;
+    }
+    
+    // Pick an absent inspector type.
+    int x = __builtin_ffs(~present)-1;
+    enum Endianness_t y = x/eInspectorTypeCount;
+    enum InspectorType_t z = x % eInspectorTypeCount;
+    
+    if(x < 0 || y >= eEndianCount || z >= eInspectorTypeCount) // No absent inspector type
+        return ret;
+    
+    ret->endianness = y;
+    ret->inspectorType = z;
+    return ret;
+}
 
 - (void)encodeWithCoder:(NSCoder *)coder {
     HFASSERT([coder allowsKeyedCoding]);
@@ -236,6 +278,7 @@ static NSString * const InspectionErrorNoData =  @"(select some data)";
 static NSString * const InspectionErrorTooMuch = @"(select less data)";
 static NSString * const InspectionErrorTooLittle = @"(select more data)";
 static NSString * const InspectionErrorNonPwr2 = @"(select a power of 2 bytes)";
+static NSString * const InspectionErrorInternal = @"(internal error)";
 
 static NSAttributedString *inspectionError(NSString *s) {
     NSMutableParagraphStyle *paragraphStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
@@ -281,7 +324,7 @@ static NSAttributedString *inspectionError(NSString *s) {
             break;
         default:
             if(outIsError) *outIsError = YES;
-            return inspectionError(@"(internal error)");
+            return inspectionError(InspectionErrorInternal);
     }
     
     return [self valueForData:[controller dataForRange:range] isError:outIsError];
@@ -333,26 +376,8 @@ static NSAttributedString *inspectionError(NSString *s) {
         }
         
         default:
-            return inspectionError(@"(internal error)");
+            return inspectionError(InspectionErrorInternal);
     }
-}
-
-- (BOOL)incrementToNextType {
-    BOOL wrapped = NO;
-    if (endianness == eEndianBig) {
-        endianness = eEndianLittle;
-    }
-    else {
-        endianness = eEndianBig;
-        inspectorType++;
-        
-        // Loop after the basic types.
-        if (inspectorType > eInspectorTypeFloatingPoint) {
-            inspectorType = eInspectorTypeUnsignedInteger;
-            wrapped = YES;
-        }
-    }
-    return wrapped;
 }
 
 static BOOL valueCanFitInByteCount(unsigned long long unsignedValue, NSUInteger count) {
@@ -763,18 +788,8 @@ static BOOL stringRangeIsNullBytes(NSString *string, NSRange range) {
 
 - (void)addRow:(id)sender {
     USE(sender);
-    DataInspector *ins = [[DataInspector alloc] init];
-    /* Try to add an inspector that we don't already have */
-    NSMutableSet *existingInspectors = [[NSMutableSet alloc] initWithArray:inspectors];
-    while ([existingInspectors containsObject:ins]) {
-	BOOL wrapped = [ins incrementToNextType];
-	if (wrapped) break;
-    }
-    [existingInspectors release];
-    
-    NSInteger clickedRow = [table clickedRow];
-    [inspectors insertObject:ins atIndex:clickedRow + 1];
-    [ins release];
+    DataInspector *x = [DataInspector dataInspectorSupplementing:inspectors];
+    [inspectors insertObject:x atIndex:[table clickedRow]+1];
     [self saveDefaultInspectors];
     [self resizeTableViewAfterChangingRowCount];
 }

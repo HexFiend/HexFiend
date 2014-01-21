@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="4510" systemVersion="12F45" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="4514" systemVersion="13B42" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
-        <deployment version="1080" defaultVersion="1070" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="4510"/>
+        <deployment version="1080" defaultVersion="1080" identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="4514"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="DataInspectorRepresenter">
@@ -33,12 +33,12 @@
                                     <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" white="0.33333299" alpha="1" colorSpace="calibratedWhite"/>
                                 </tableHeaderCell>
-                                <popUpButtonCell key="dataCell" type="roundRect" title="Signed Int" bezelStyle="roundedRect" alignment="left" controlSize="small" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" preferredEdge="maxY" id="66">
+                                <popUpButtonCell key="dataCell" type="roundRect" bezelStyle="roundedRect" alignment="left" controlSize="small" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" preferredEdge="maxY" id="66">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="smallSystem"/>
                                     <menu key="menu" title="OtherViews" id="67">
                                         <items>
-                                            <menuItem title="Signed Int" state="on" id="70"/>
+                                            <menuItem title="Signed Int" id="70"/>
                                             <menuItem title="Unsigned Int" id="93">
                                                 <modifierMask key="keyEquivalentModifierMask"/>
                                             </menuItem>
@@ -59,13 +59,13 @@
                                     <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
                                 </tableHeaderCell>
-                                <popUpButtonCell key="dataCell" type="roundRect" title="big" bezelStyle="roundedRect" alignment="left" controlSize="small" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" preferredEdge="maxY" id="81">
+                                <popUpButtonCell key="dataCell" type="roundRect" bezelStyle="roundedRect" alignment="left" controlSize="small" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" preferredEdge="maxY" id="81">
                                     <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="smallSystem"/>
                                     <menu key="menu" title="OtherViews" id="82">
                                         <items>
-                                            <menuItem title="big" state="on" id="83"/>
                                             <menuItem title="little" id="84"/>
+                                            <menuItem title="big" id="83"/>
                                         </items>
                                     </menu>
                                 </popUpButtonCell>
@@ -123,11 +123,11 @@
                 </subviews>
                 <color key="backgroundColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
             </clipView>
-            <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" id="60">
+            <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="60">
                 <rect key="frame" x="-100" y="-100" width="485" height="15"/>
                 <autoresizingMask key="autoresizingMask"/>
             </scroller>
-            <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" id="61">
+            <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="NO" id="61">
                 <rect key="frame" x="-100" y="-100" width="15" height="61"/>
                 <autoresizingMask key="autoresizingMask"/>
             </scroller>
