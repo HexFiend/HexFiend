@@ -68,6 +68,18 @@ static BOOL getGlyphs(CGGlyph *glyphs, NSString *string, NSFont *inputFont) {
     [string getCharacters:chars range:NSMakeRange(0, length)];
     bool result = CTFontGetGlyphsForCharacters((CTFontRef)inputFont, chars, glyphs, length);
     /* A NO return means some or all characters were not mapped.  This is OK.  We'll use the replacement glyph.  Unless we're calculating the replacement glyph!  Hmm...maybe we should have a series of replacement glyphs that we try? */
+    
+    ////////////////////////
+    // Workaround for a weird Mavericks bug.
+    // TODO: Delete me
+    if(!result) for(NSUInteger i = 0; i < length; i+=15) {
+        CFIndex x = length-i;
+        if(x > 15) x = 15;
+        result = CTFontGetGlyphsForCharacters((CTFontRef)inputFont, chars+i, glyphs+i, x);
+        if(!result) break;
+    }
+    ////////////////////////
+    
     FREE_ARRAY(chars);
     return result;
 }
