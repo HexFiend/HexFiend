@@ -33,6 +33,10 @@ NSString *const HFPrivateByteArrayPboardType = @"HFPrivateByteArrayPboardType";
     // get notified when we're about to write a file, so that if they're overwriting a file backing part of our byte array, we can properly clear or preserve our pasteboard
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changeInFileNotification:) name:HFPrepareForChangeInFileNotification object:nil];
     
+    // No background copies in progress when we start.
+    progressTracker = nil;
+    progressTrackingWindow = nil;
+    
     return self;
 }
 
@@ -113,15 +117,6 @@ NSString *const HFPrivateByteArrayPboardType = @"HFPrivateByteArrayPboardType";
     [super dealloc];
 }
 
-- (void)moveDataToPasteboardWithProgressReporting:(SEL)commandToPerform userInfo:(id)userInfo {
-    REQUIRE_NOT_NULL(commandToPerform);
-    HFProgressTracker *tracker = [[HFProgressTracker alloc] init];
-    typedef void (*FuncPtr_t)(id, SEL, id, id);
-    const FuncPtr_t func = (FuncPtr_t)objc_msgSend;
-    func(self, commandToPerform, userInfo, tracker);
-    [tracker release];
-}
-
 - (void)writeDataInBackgroundToPasteboard:(NSPasteboard *)pboard ofLength:(unsigned long long)length forType:(NSString *)type trackingProgress:(HFProgressTracker *)tracker {
     USE(length);
     USE(pboard);
@@ -164,15 +159,37 @@ NSString *const HFPrivateByteArrayPboardType = @"HFPrivateByteArrayPboardType";
 }
 
 - (BOOL)moveDataWithProgressReportingToPasteboard:(NSPasteboard *)pboard forType:(NSString *)type {
+    // The -[NSRunLoop runMode:beforeDate:] call in the middle of this function can cause it to be
+    // called reentrantly, which was previously causing leaks and use-after-free crashes. For
+    // some reason this happens basically always when copying lots of data into VMware Fusion.
+    // I'm not even sure what the ideal behavior would be here, but am fairly certain that this
+    // is the best that can be done without rewriting a portion of the background copying code.
+    // TODO: Figure out what the ideal behavior should be here.
+    if(progressTracker) {
+        while(!backgroundCopyOperationFinished) {
+            [[NSRunLoop currentRunLoop] runMode:NSModalPanelRunLoopMode beforeDate:[NSDate distantFuture]];
+        }
+        // Reentrant calls will complete this loop (or, in the case of the first call, the similar
+        // loop below) in LIFO order. The first call is the only one that changes progressTracker,
+        // so progressTracker never changes in the other calls. (If that's not true then there
+        // is still a bug here).
+        HFASSERT(progressTracker);
+        return !progressTracker->cancelRequested;
+    }
+    
     HFASSERT(pboard == pasteboard);
     BOOL result = NO;
     [self retain]; //resolving the pasteboard may release us, which deallocates us, which deallocates our tracker...make sure we survive through this function
-    progressTracker = [[HFProgressTracker alloc] init];
     /* Give the user a chance to request a smaller amount if it's really big */
     unsigned long long availableAmount = [byteArray length];
     unsigned long long amountToCopy = [self amountToCopyForDataLength:availableAmount stringLength:[self stringLengthForDataLength:availableAmount]];
     if (amountToCopy > 0) {
-        if (! [NSBundle loadNibNamed:@"HFModalProgress" owner:self] || ! progressTrackingWindow) {
+        HFASSERT(!progressTracker);
+        HFASSERT(!progressTrackingWindow);
+
+        progressTracker = [[HFProgressTracker alloc] init];
+
+        if(![NSBundle loadNibNamed:@"HFModalProgress" owner:self] || !progressTrackingWindow) {
             [NSException raise:NSInternalInconsistencyException format:@"Unable to load nib named %@", @"HFModalProgress"];
         }
         backgroundCopyOperationFinished = NO;
@@ -191,9 +208,9 @@ NSString *const HFPrivateByteArrayPboardType = @"HFPrivateByteArrayPboardType";
         [progressTrackingWindow close];
         [progressTrackingWindow release];
         progressTrackingWindow = nil;
-        result = ! progressTracker->cancelRequested;
+        result = !progressTracker->cancelRequested;
         [progressTracker release];
-        progressTracker = nil;
+        progressTracker = nil; // Used to detect reentrancy; zero this last.
     }
     [self release];
     return result;
