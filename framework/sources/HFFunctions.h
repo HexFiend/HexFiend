@@ -487,6 +487,59 @@ NSString *HFDescribeByteCount(unsigned long long count);
 
 @end
 
+/*! @brief A set of HFRanges. HFRangeSet takes the interpetation that all zero-length ranges are identical.
+ 
+ Essentially, a mutable array of ranges that is maintained to be sorted and minimized (i.e. merged with overlapping neighbors).
+ 
+ TODO: The HexFiend codebase currently uses arrays of HFRangeWrappers that have been run through organizeAndMergeRanges:, and not HFRangeSet. The advantage of HFRangeSet is that the sorting & merging is implied by the type, instead of just tacitly assumed. This should lead to less confusion and fewer extra applications of organizeAndMergeRanges.
+ 
+ TODO: HFRangeSet needs to be tested! I guarantee it has bugs! (Which doesn't matter right now because it's all dead code...)
+ */
+@interface HFRangeSet : NSObject <NSCopying, NSSecureCoding, NSFastEnumeration> {
+    @private
+    CFMutableArrayRef array;
+}
+
+/*! Create a range set with just one range. */
++ (HFRangeSet *)withRange:(HFRange)range;
+
+/*! Create a range set with a C array of ranges. No prior sorting is necessary. */
++ (HFRangeSet *)withRanges:(const HFRange *)ranges count:(NSUInteger)count;
+
+/*! Create a range set with an array of HFRangeWrappers. No prior sorting is necessary. */
++ (HFRangeSet *)withRangeWrappers:(NSArray *)ranges;
+
+/*! Create a range set as a copy of another. */
++ (HFRangeSet *)withRangeSet:(HFRangeSet *)rangeSet;
+
+/*! Equivalent to HFRangeSet *x = [HFRangeSet withRange:range]; [x removeRange:rangeSet]; */
++ (HFRangeSet *)complementOfRangeSet:(HFRangeSet *)rangeSet inRange:(HFRange)range;
+
+- (void)addRange:(HFRange)range;    /*!< Union with range */
+- (void)removeRange:(HFRange)range; /*!< Subtract range */
+- (void)clipToRange:(HFRange)range; /*!< Intersect with range */
+- (void)toggleRange:(HFRange)range; /*!< Symmetric difference with range */
+
+- (void)addRangeSet:(HFRangeSet *)rangeSet;    /*!< Union with range set */
+- (void)removeRangeSet:(HFRangeSet *)rangeSet; /*!< Subtract range set */
+- (void)clipToRangeSet:(HFRangeSet *)rangeSet; /*!< Intersect with range set */
+- (void)toggleRangeSet:(HFRangeSet *)rangeSet; /*!< Symmetric difference with range set */
+
+
+- (BOOL)isEqualToRangeSet:(HFRangeSet *)rangeSet; /*!< Test if two range sets are equivalent. */
+- (BOOL)isEmpty;                                  /*!< Test if range set is empty. */
+
+- (BOOL)containsAllRange:(HFRange)range;             /*!< Check if the range set covers all of a range. Always true if 'range' is zero length. */
+- (BOOL)overlapsAnyRange:(HFRange)range;             /*!< Check if the range set covers any of a range. Never true if 'range' is zero length. */
+- (BOOL)containsAllRangeSet:(HFRangeSet *)rangeSet;  /*!< Check if this range is a superset of another. */
+- (BOOL)overlapsAnyRangeSet:(HFRangeSet *)rangeSet;  /*!< Check if this range has a nonempty intersection with another. */
+
+- (HFRange)spanningRange;  /*!< Return a single range that covers the entire range set */
+
+- (void)assertIntegrity;
+
+@end
+
 #ifndef NDEBUG
 void HFStartTiming(const char *name);
 void HFStopTiming(void);

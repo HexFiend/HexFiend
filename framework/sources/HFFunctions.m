@@ -123,6 +123,483 @@ static int hfrange_compare(const void *ap, const void *bp) {
 
 @end
 
+@implementation HFRangeSet
+// HFRangeSet is implemented as a CFMutableArray of uintptr_t "fenceposts". The array
+// is even in length, sorted, duplicate free, and considered to include the ranges
+// [array[0], array[1]), [array[2], array[3]), ..., [array[2n], array[2n+1])
+
+CFComparisonResult uintptrComparator(const void *val1, const void *val2, void *context) {
+    (void)context;
+    uintptr_t a = (uintptr_t)val1;
+    uintptr_t b = (uintptr_t)val2;
+    if(a < b) return kCFCompareLessThan;
+    if(a > b) return kCFCompareGreaterThan;
+    return kCFCompareEqualTo;
+}
+
+static void HFRangeSetAddRange(CFMutableArrayRef array, uintptr_t a, uintptr_t b) {
+    CFIndex count = CFArrayGetCount(array);
+    assert(a < b); assert(count % 2 == 0);
+    CFIndex idxa = CFArrayBSearchValues(array, CFRangeMake(0, count), (void*)a, uintptrComparator, NULL);
+    CFIndex idxb = CFArrayBSearchValues(array, CFRangeMake(0, count), (void*)b, uintptrComparator, NULL);
+
+    const void *x[2] = { (void*)a, (void*)b };
+    if(idxa >= count) {
+        CFArrayReplaceValues(array, CFRangeMake(count, 0), x, 2);
+        return;
+    }
+    if(idxb == 0) {
+        CFArrayReplaceValues(array, CFRangeMake(0, 0), x, 2);
+        return;
+    }
+
+    // Clear fenceposts strictly between 'a' and 'b', and then possibly
+    // add 'a' or 'b' as fenceposts.
+    CFIndex cutloc = (uintptr_t)CFArrayGetValueAtIndex(array, idxa) == a ? idxa+1 : idxa;
+    CFIndex cutlen = idxb - cutloc;
+    
+    bool inca = cutloc % 2 == 0; // Include 'a' if it would begin an included range
+    bool incb = (count - cutlen + inca) % 2 == 1; // The set must be even, which tells us about 'b'.
+    
+    CFArrayReplaceValues(array, CFRangeMake(cutloc, cutlen), x+inca, inca+incb);
+    assert(CFArrayGetCount(array) % 2 == 0);
+}
+
+static void HFRangeSetRemoveRange(CFMutableArrayRef array, uintptr_t a, uintptr_t b) {
+    CFIndex count = CFArrayGetCount(array);
+    assert(a < b); assert(count % 2 == 0);
+    CFIndex idxa = CFArrayBSearchValues(array, CFRangeMake(0, count), (void*)a, uintptrComparator, NULL);
+    CFIndex idxb = CFArrayBSearchValues(array, CFRangeMake(0, count), (void*)b, uintptrComparator, NULL);
+    if(idxa >= count || idxb == 0) return;
+
+    // Remove fenceposts strictly between 'a' and 'b', and then possibly
+    // add 'a' or 'b' as fenceposts.
+    CFIndex cutloc = (uintptr_t)CFArrayGetValueAtIndex(array, idxa) == a ? idxa+1 : idxa;
+    CFIndex cutlen = idxb - cutloc;
+    
+    bool inca = cutloc % 2 == 1; // Include 'a' if it would end an included range
+    bool incb = (count - cutlen + inca) % 2 == 1; // The set must be even, which tells us about 'b'.
+    
+    const void *x[2] = { (void*)a, (void*)b };
+    CFArrayReplaceValues(array, CFRangeMake(cutloc, cutlen), x+inca, inca+incb);
+    assert(CFArrayGetCount(array) % 2 == 0);
+}
+
+static void HFRangeSetToggleRange(CFMutableArrayRef array, uintptr_t a, uintptr_t b) {
+    CFIndex count = CFArrayGetCount(array);
+    assert(a < b); assert(count % 2 == 0);
+    
+    // In the fencepost representation, simply toggling the existence of
+    // fenceposts 'a' and 'b' achieves symmetric difference.
+    
+    CFIndex idxa = CFArrayBSearchValues(array, CFRangeMake(0, count), (void*)a, uintptrComparator, NULL);
+    if((uintptr_t)CFArrayGetValueAtIndex(array, idxa) == a) {
+        CFArrayRemoveValueAtIndex(array, idxa);
+    } else {
+        CFArrayInsertValueAtIndex(array, idxa, (void*)a);
+    }
+
+    CFIndex idxb = CFArrayBSearchValues(array, CFRangeMake(0, count), (void*)b, uintptrComparator, NULL);
+    if((uintptr_t)CFArrayGetValueAtIndex(array, idxb) == b) {
+        CFArrayRemoveValueAtIndex(array, idxb);
+    } else {
+        CFArrayInsertValueAtIndex(array, idxb, (void*)b);
+    }
+    
+    assert(CFArrayGetCount(array) % 2 == 0);
+}
+
+static BOOL HFRangeSetContainsAllRange(CFMutableArrayRef array, uintptr_t a, uintptr_t b) {
+    CFIndex count = CFArrayGetCount(array);
+    assert(a < b); assert(count % 2 == 0);
+    CFIndex idxa = CFArrayBSearchValues(array, CFRangeMake(0, count), (void*)a, uintptrComparator, NULL);
+    CFIndex idxb = CFArrayBSearchValues(array, CFRangeMake(0, count), (void*)b, uintptrComparator, NULL);
+    if(idxa >= count || idxb == 0) return NO;
+
+    // The first fencepost >= 'b' must end an include range, a must be in the same range.
+    return idxb%2 == 1 && idxa == ((uintptr_t)CFArrayGetValueAtIndex(array, idxa) == a ? idxb-1 : idxb);
+}
+
+static BOOL HFRangeSetOverlapsAnyRange(CFMutableArrayRef array, uintptr_t a, uintptr_t b) {
+    CFIndex count = CFArrayGetCount(array);
+    assert(a < b); assert(count % 2 == 0);
+    CFIndex idxa = CFArrayBSearchValues(array, CFRangeMake(0, count), (void*)a, uintptrComparator, NULL);
+    CFIndex idxb = CFArrayBSearchValues(array, CFRangeMake(0, count), (void*)b, uintptrComparator, NULL);
+    if(idxa >= count || idxb == 0) return NO;
+    
+    // If the indexes are far enough apart, then we know immediatley that there's overlap
+    // Note that they later checks would be correct even without this.
+    if(idxb - idxa >= 2) return YES;
+    
+    if((uintptr_t)CFArrayGetValueAtIndex(array, idxa) == a) {
+        // 'a' is an included fencepost, or instead 'b' makes it past an included fencepost.
+        return idxa % 2 == 0 || b > (uintptr_t)CFArrayGetValueAtIndex(array, idxa+1);
+    } else {
+        // 'a' lies in an included range, or instead 'b' makes it past an included fencepost.
+        return  idxa % 2 == 1 || b > (uintptr_t)CFArrayGetValueAtIndex(array, idxa);
+    }
+}
+
+- (id)init {
+    if(!(self = [super init])) return nil;
+    array = CFArrayCreateMutable(kCFAllocatorDefault, 0, NULL);
+    return self;
+}
+
+- (void)dealloc {
+    CFRelease(array);
+    [super dealloc];
+}
+
++ (HFRangeSet *)withRange:(HFRange)range {
+    HFRangeSet *newSet = [[[HFRangeSet alloc] init] autorelease];
+    if(range.length > 0) {
+        CFArrayAppendValue(newSet->array, (void*)ll2p(range.location));
+        CFArrayAppendValue(newSet->array, (void*)ll2p(HFMaxRange(range)));
+    }
+    return newSet;
+}
+
++ (HFRangeSet *)withRanges:(const HFRange *)ranges count:(NSUInteger)count {
+    // FIXME: Stub. Don't rely on the thing we're replacing!
+    return [HFRangeSet withRangeWrappers:[HFRangeWrapper withRanges:ranges count:count]];
+}
+
++ (HFRangeSet *)withRangeWrappers:(NSArray *)ranges {
+    HFRangeSet *newSet = [[[HFRangeSet alloc] init] autorelease];
+    FOREACH(HFRangeWrapper *, wrapper, [HFRangeWrapper organizeAndMergeRanges:ranges]) {
+        if(wrapper->range.length > 0) {
+            CFArrayAppendValue(newSet->array, (void*)ll2p(wrapper->range.location));
+            CFArrayAppendValue(newSet->array, (void*)ll2p(HFMaxRange(wrapper->range)));
+        }
+    }
+    return newSet;
+}
+
++ (HFRangeSet *)withRangeSet:(HFRangeSet *)rangeSet {
+    return [[rangeSet copy] autorelease];
+}
+
++ (HFRangeSet *)complementOfRangeSet:(HFRangeSet *)rangeSet inRange:(HFRange)range {
+    if(range.length <= 0) {
+        // Complement in empty is... empty!
+        return [HFRangeSet withRange:HFZeroRange];
+    }
+    uintptr_t a = ll2p(range.location);
+    uintptr_t b = ll2p(HFMaxRange(range));
+    CFIndex count = CFArrayGetCount(rangeSet->array);
+    CFIndex idxa = CFArrayBSearchValues(rangeSet->array, CFRangeMake(0, count), (void*)a, uintptrComparator, NULL);
+    CFIndex idxb = CFArrayBSearchValues(rangeSet->array, CFRangeMake(0, count), (void*)b, uintptrComparator, NULL);
+    if(idxa >= count || idxb == 0)
+        return [HFRangeSet withRange:range];
+    
+    // Alright, the trivial responses are past. We'll need to build a new set.
+    // Given the fencepost representation of sets, we can efficiently produce an
+    // inverted set by just copying the fenceposts between 'a' and 'b', and then
+    // maybe including 'a' and 'b'.
+    
+    HFRangeSet *newSet = [[[HFRangeSet alloc] init] autorelease];
+
+    // newSet must contain all the fenceposts strictly between 'a' and 'b'
+    CFIndex copyloc = (uintptr_t)CFArrayGetValueAtIndex(rangeSet->array, idxa) == a ? idxa+1 : idxa;
+    CFIndex copylen = idxb - copyloc;
+    
+    // Include 'a' if it's needed to invert the parity of the copy.
+    if(copyloc % 2 == 0) CFArrayAppendValue(newSet->array, &a);
+    
+    CFArrayAppendArray(newSet->array, rangeSet->array, CFRangeMake(copyloc, copylen));
+    
+    // Include 'b' if it's needed to close off the set.
+    if(CFArrayGetCount(newSet->array) % 2 == 1)
+        CFArrayAppendValue(newSet->array, &b);
+
+    assert(CFArrayGetCount(newSet->array) % 2 == 0);
+    return newSet;
+}
+
+
+- (void)addRange:(HFRange)range {
+    if(range.length == 0) return;
+    HFRangeSetAddRange(array, ll2p(range.location), ll2p(HFMaxRange(range)));
+}
+- (void)removeRange:(HFRange)range {
+    if(range.length == 0) return;
+    HFRangeSetRemoveRange(array, ll2p(range.location), ll2p(HFMaxRange(range)));
+}
+- (void)toggleRange:(HFRange)range {
+    if(range.length == 0) return;
+    HFRangeSetToggleRange(array, ll2p(range.location), ll2p(HFMaxRange(range)));
+}
+
+- (void)clipToRange:(HFRange)range {
+    if(range.length <= 0) {
+        CFArrayRemoveAllValues(array);
+        return;
+    }
+    uintptr_t a = ll2p(range.location);
+    uintptr_t b = ll2p(HFMaxRange(range));
+    CFIndex count = CFArrayGetCount(array);
+    CFIndex idxa = CFArrayBSearchValues(array, CFRangeMake(0, count), (void*)a, uintptrComparator, NULL);
+    CFIndex idxb = CFArrayBSearchValues(array, CFRangeMake(0, count), (void*)b, uintptrComparator, NULL);
+    if(idxa >= count || idxb == 0) {
+        CFArrayRemoveAllValues(array);
+        return;
+    }
+    
+    // Keep only fenceposts strictly between 'a' and 'b', and then possibly
+    // add 'a' or 'b' as fenceposts.
+    CFIndex keeploc = (uintptr_t)CFArrayGetValueAtIndex(array, idxa) == a ? idxa+1 : idxa;
+    CFIndex keeplen = idxb - keeploc;
+    
+    // Include 'a' if it's needed to keep the parity straight.
+    if(keeploc % 2 == 1) {
+        keeploc--; keeplen++;
+        CFArraySetValueAtIndex(array, keeploc, (void*)a);
+    }
+    
+    if(keeploc > 0)
+        CFArrayReplaceValues(array, CFRangeMake(0, keeploc), NULL, 0);
+    if(keeploc+keeplen < count)
+        CFArrayReplaceValues(array, CFRangeMake(0, keeplen), NULL, 0);
+    
+    // Include 'b' if it's needed to keep the length even.
+    if(keeplen % 2 == 1) {
+        CFArrayAppendValue(array, (void*)b);
+    }
+    
+    assert(CFArrayGetCount(array) % 2 == 0);
+}
+
+
+- (void)addRangeSet:(HFRangeSet *)rangeSet {
+    CFArrayRef a = rangeSet->array;
+    CFIndex c = CFArrayGetCount(a);
+    for(CFIndex i2 = 0; i2 < c; i2 += 2) {
+        HFRangeSetAddRange(array, (uintptr_t)CFArrayGetValueAtIndex(a, i2), (uintptr_t)CFArrayGetValueAtIndex(a, i2+1));
+    }
+}
+- (void)removeRangeSet:(HFRangeSet *)rangeSet {
+    CFArrayRef a = rangeSet->array;
+    CFIndex c = CFArrayGetCount(a);
+    for(CFIndex i2 = 0; i2 < c; i2 += 2) {
+        HFRangeSetRemoveRange(array, (uintptr_t)CFArrayGetValueAtIndex(a, i2), (uintptr_t)CFArrayGetValueAtIndex(a, i2+1));
+    }
+}
+- (void)toggleRangeSet:(HFRangeSet *)rangeSet {
+    CFArrayRef a = rangeSet->array;
+    CFIndex c = CFArrayGetCount(a);
+    for(CFIndex i2 = 0; i2 < c; i2 += 2) {
+        HFRangeSetToggleRange(array, (uintptr_t)CFArrayGetValueAtIndex(a, i2), (uintptr_t)CFArrayGetValueAtIndex(a, i2+1));
+    }
+}
+
+- (void)clipToRangeSet:(HFRangeSet *)rangeSet {
+    HFRange span = [rangeSet spanningRange];
+    [self clipToRange:span];
+    [self removeRangeSet:[HFRangeSet complementOfRangeSet:rangeSet inRange:span]];
+}
+
+- (BOOL)isEqualToRangeSet:(HFRangeSet *)rangeSet {
+    // Because our arrays are fully normalized, this just checks for array equality.
+    CFArrayRef a = rangeSet->array;
+    CFIndex c = CFArrayGetCount(a);
+    if(c != CFArrayGetCount(array))
+        return NO;
+    
+    // Optimization: For long arrays, check the last few first,
+    // since appending to ranges is probably a common usage pattern.
+    const CFIndex opt_end = 10;
+    if(c > 2*opt_end) {
+        for(CFIndex i = c - 2*opt_end; i < c; i++) {
+            if(CFArrayGetValueAtIndex(a, i) != CFArrayGetValueAtIndex(array, i))
+                return NO;
+        }
+        c -= 2*opt_end;
+    }
+    
+    for(CFIndex i = 0; i < c; i++) {
+        if(CFArrayGetValueAtIndex(a, i) != CFArrayGetValueAtIndex(array, i))
+            return NO;
+    }
+    
+    return YES;
+}
+
+- (BOOL)isEmpty {
+    return CFArrayGetCount(array) == 0;
+}
+
+- (BOOL)containsAllRange:(HFRange)range {
+    if(range.length == 0) return YES;
+    return HFRangeSetContainsAllRange(array, ll2p(range.location), ll2p(HFMaxRange(range)));
+}
+
+- (BOOL)overlapsAnyRange:(HFRange)range {
+    if(range.length == 0) return NO;
+    return HFRangeSetOverlapsAnyRange(array, ll2p(range.location), ll2p(HFMaxRange(range)));
+}
+
+- (BOOL)containsAllRangeSet:(HFRangeSet *)rangeSet {
+    CFArrayRef a = rangeSet->array;
+    CFIndex c = CFArrayGetCount(a);
+    
+    // Optimization: check if containment is possible.
+    if(!HFRangeIsSubrangeOfRange([rangeSet spanningRange], [self spanningRange])) {
+        return NO;
+    }
+    
+    for(CFIndex i2 = 0; i2 < c; i2 += 2) {
+        uintptr_t x = (uintptr_t)CFArrayGetValueAtIndex(a, i2);
+        uintptr_t y = (uintptr_t)CFArrayGetValueAtIndex(a, i2+1);
+        if(!HFRangeSetContainsAllRange(array, x, y)) return NO;
+    }
+    return YES;
+}
+
+- (BOOL)overlapsAnyRangeSet:(HFRangeSet *)rangeSet {
+    CFArrayRef a = rangeSet->array;
+    CFIndex c = CFArrayGetCount(a);
+
+    // Optimization: check if overlap is possible.
+    if(!HFIntersectsRange([rangeSet spanningRange], [self spanningRange])) {
+        return NO;
+    }
+
+    for(CFIndex i2 = 0; i2 < c; i2 += 2) {
+        uintptr_t x = (uintptr_t)CFArrayGetValueAtIndex(a, i2);
+        uintptr_t y = (uintptr_t)CFArrayGetValueAtIndex(a, i2+1);
+        if(!HFRangeSetOverlapsAnyRange(array, x, y)) return YES;
+    }
+    return NO;
+}
+
+
+- (HFRange)spanningRange {
+    CFIndex count = CFArrayGetCount(array);
+    if(count == 0) return HFZeroRange;
+    
+    uintptr_t a = (uintptr_t)CFArrayGetValueAtIndex(array, 0);
+    uintptr_t b = (uintptr_t)CFArrayGetValueAtIndex(array, count-2) + (uintptr_t)CFArrayGetValueAtIndex(array, count-1);
+    
+    return HFRangeMake(a, b-a);
+}
+
+- (void)assertIntegrity {
+    CFIndex count = CFArrayGetCount(array);
+    HFASSERT(count % 2 == 0);
+    if(count == 0) return;
+    
+    uintptr_t prev = (uintptr_t)CFArrayGetValueAtIndex(array, 0);
+    for(CFIndex i = 1; i < count; i++) {
+        uintptr_t val = (uintptr_t)CFArrayGetValueAtIndex(array, i);
+        HFASSERT(val > prev);
+        prev = val;
+    }
+}
+
+- (BOOL)isEqual:(id)object {
+    if(![object isKindOfClass:[HFRangeSet class]])
+        return false;
+    return [self isEqualToRangeSet:object];
+}
+
+- (NSUInteger)hash {
+    CFIndex count = CFArrayGetCount(array);
+    NSUInteger x = 0;
+    for(CFIndex i2 = 0; i2 < count; i2 += 2) {
+        uintptr_t a = (uintptr_t)CFArrayGetValueAtIndex(array, i2);
+        uintptr_t b = (uintptr_t)CFArrayGetValueAtIndex(array, i2+1);
+#if 6364136223846793005 < NSUIntegerMax
+        x = (6364136223846793005 * (uint64_t)x + a);
+#else
+        x = (1103515245 * (uint64_t)x + a);
+#endif
+        x ^= (NSUInteger)b;
+    }
+    return x;
+}
+
+- (id)copyWithZone:(NSZone *)zone {
+    HFRangeSet *newSet = [[HFRangeSet allocWithZone:zone] init];
+    CFRelease(newSet->array);
+    newSet->array = (CFMutableArrayRef)[[NSMutableArray allocWithZone:zone] initWithArray:(NSArray*)array copyItems:NO];
+    return newSet;
+}
+
+- (void)encodeWithCoder:(NSCoder *)aCoder {
+    NSUInteger count = CFArrayGetCount(array);
+    NEW_ARRAY(uint64_t, values, count);
+    
+    // Fill array with 64-bit, little endian bytes.
+    if(sizeof(const void *) == sizeof(uint64_t)) {
+        // Hooray, we can just use CFArrayGetValues
+        CFArrayGetValues(array, CFRangeMake(0, count), (const void **)&values);
+#if __LITTLE_ENDIAN__
+#else
+        // Boo, we have to swap everything.
+        for(NSUInteger i = 0; i < count; i++) {
+            values[i] = CFSwapInt64HostToLittle(values[i]);
+        }
+#endif
+    } else {
+        // Boo, we have to iterate through the array.
+        NSUInteger i = 0;
+        FOREACH(id, val, (NSArray*)array) {
+            values[i++] = CFSwapInt64HostToLittle((uint64_t)(const void *)val);
+        }
+    }
+    [aCoder encodeBytes:values length:count * sizeof(*values)];
+}
+
+- (id)initWithCoder:(NSCoder *)aDecoder {
+    if(!(self = [super init])) return nil;
+    
+    NSUInteger count;
+    uint64_t *values = [aDecoder decodeBytesWithReturnedLength:&count];
+    array = CFArrayCreateMutable(kCFAllocatorDefault, count+1, NULL);
+    
+    for(NSUInteger i = 0; i < count; i++) {
+        uint64_t x = CFSwapInt64LittleToHost(values[i]);
+        if(x > UINTPTR_MAX)
+            goto fail;
+        CFArrayAppendValue(array, (const void *)(uintptr_t)x);
+    }
+    if(CFArrayGetCount(array)%2 != 0)
+        goto fail;
+    return self;
+    
+fail:
+    CFRelease(array);
+    [super release];
+    return nil;
+}
+
++ (BOOL)supportsSecureCoding {
+    return YES;
+}
+
+- (NSUInteger)countByEnumeratingWithState:(NSFastEnumerationState *)state objects:(id *)stackbuf count:(NSUInteger)len {
+    NSUInteger base = state->state;
+    NSUInteger length = CFArrayGetCount(array)/2;
+    NSUInteger i = 0;
+    
+    while(i < len && base + i < length) {
+        uintptr_t a = (uintptr_t)CFArrayGetValueAtIndex(array, 2*i);
+        uintptr_t b = (uintptr_t)CFArrayGetValueAtIndex(array, 2*i+1);
+        stackbuf[i] = [HFRangeWrapper withRange:HFRangeMake(a, b-a)];
+    }
+    
+    state->state = base + i;
+    state->itemsPtr = stackbuf;
+    state->mutationsPtr = &state->extra[0]; // Use simple mutation checking.
+    state->extra[0] = length;
+    
+    return i;
+}
+
+@end
+
+
 BOOL HFStringEncodingIsSupersetOfASCII(NSStringEncoding encoding) {
     switch (CFStringConvertNSStringEncodingToEncoding(encoding)) {
 	case kCFStringEncodingMacRoman: return YES;
