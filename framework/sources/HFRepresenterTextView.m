@@ -1571,7 +1571,7 @@ static size_t unionAndCleanLists(NSRect *rectList, id *valueList, size_t count) 
         /* Figure out which callouts we're going to draw */
         NSRect allCalloutsRect = NSZeroRect;
         NSMutableArray *localCallouts = [[NSMutableArray alloc] initWithCapacity:[callouts count]];
-        FOREACH(HFRepresenterTextViewCallout *, callout, localCallouts) {
+        FOREACH(HFRepresenterTextViewCallout *, callout, [callouts objectEnumerator]) {
             NSRect calloutRect = [callout rect];
             if (NSIntersectsRect(clip, calloutRect)) {
                 [localCallouts addObject:callout];
