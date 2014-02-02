@@ -160,7 +160,7 @@ static NSComparisonResult compareFontDisplayNames(NSFont *a, NSFont *b, void *un
         
         // Remove any old bookmark menu items
         if(bookmarksMenuItems) {
-            for(NSMenuItem *bm in bookmarksMenuItems) {
+            FOREACH(NSMenuItem *, bm, bookmarksMenuItems) {
                 [bookmarksMenu removeItem:bm];
             }
             [bookmarksMenuItems release];
@@ -171,7 +171,7 @@ static NSComparisonResult compareFontDisplayNames(NSFont *a, NSFont *b, void *un
             bookmarksMenuItems = [currentDocument performSelector:@selector(copyBookmarksMenuItems)];
             if(bookmarksMenuItems) {
                 NSInteger index = [bookmarksMenu indexOfItem:noBookmarksMenuItem];
-                for(NSMenuItem *bm in bookmarksMenuItems) {
+                FOREACH(NSMenuItem *, bm, bookmarksMenuItems) {
                     [bookmarksMenu insertItem:bm atIndex:index++];
                 }
             }

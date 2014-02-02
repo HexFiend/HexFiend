@@ -103,7 +103,7 @@ static NSView *searchForViewWithIdentifier(NSView *view, NSString *identifier) {
     
     if (! result) {
         /* Try subviews */
-        for (NSView *subview in [view subviews]) {
+        FOREACH(NSView *, subview, [view subviews]) {
             if ((result = searchForViewWithIdentifier(subview, identifier))) break;
         }
     }

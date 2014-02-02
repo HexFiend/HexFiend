@@ -626,7 +626,7 @@ static inline Class preferredByteArrayClass(void) {
 
 - (BOOL)performDragOperation:(id <NSDraggingInfo>)sender {
     NSArray *files = [sender.draggingPasteboard propertyListForType:NSFilenamesPboardType];
-    for (NSString *filename in files) {
+    FOREACH(NSString *, filename, files) {
         NSURL *fileURL = [NSURL fileURLWithPath:filename];
         [[NSDocumentController sharedDocumentController] openDocumentWithContentsOfURL:fileURL display:YES error:nil];
     }

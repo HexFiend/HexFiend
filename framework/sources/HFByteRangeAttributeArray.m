@@ -639,7 +639,7 @@ static void removeFromDictionaryOfSets(NSMutableDictionary *dictionary, NSString
     /* We can just remove everything in attributesToNodes */
     NSMutableSet *matchingNodes = [attributesToNodes objectForKey:attributeName];
     if (matchingNodes) {
-        for (HFByteRangeAttributeArrayNode *node in matchingNodes) {
+        FOREACH(HFByteRangeAttributeArrayNode *, node, matchingNodes) {
             [atree removeNode:node];
         }
         /* We can just remove the entire set */
@@ -649,7 +649,7 @@ static void removeFromDictionaryOfSets(NSMutableDictionary *dictionary, NSString
 
 - (void)removeAttributes:(NSSet *)attributeNames {
     /* This may be more efficient by walking the tree */
-    for (NSString *name in attributeNames) {
+    FOREACH(NSString *, name, attributeNames) {
         [self removeAttribute:name];
     }
 }
