@@ -552,11 +552,7 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
     HFController *changedController = [note object];
     HFASSERT(changedController == [leftTextView controller] || changedController == [rightTextView controller]);
     BOOL controllerIsLeft = (changedController == [leftTextView controller]);
-#if __LP64__
     HFControllerPropertyBits propertyMask = [propertyNumber unsignedIntegerValue];
-#else
-    HFControllerPropertyBits propertyMask = [propertyNumber unsignedIntValue];
-#endif
     
     /* Update the overlay view to react to things like the bytes per line changing. */
     if (propertyMask & [self propertiesAffectingOverlayView]) {
@@ -618,11 +614,7 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
 
 - (void)updateOverlayViewForChangedLeftScroller:(NSNotification *)note {
     NSNumber *propertyNumber = [[note userInfo] objectForKey:HFControllerChangedPropertiesKey];
-#if __LP64__
     HFControllerPropertyBits propertyMask = [propertyNumber unsignedIntegerValue];
-#else
-    HFControllerPropertyBits propertyMask = [propertyNumber unsignedIntValue];
-#endif
     if (propertyMask & [self propertiesAffectingOverlayView]) {
         [self updateInstructionOverlayView];
     }

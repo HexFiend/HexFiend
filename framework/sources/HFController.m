@@ -172,11 +172,7 @@ static inline Class preferredByteArrayClass(void) {
     }
     
     /* Post the HFControllerDidChangePropertiesNotification */
-#if __LP64__
     NSNumber *number = [[NSNumber alloc] initWithUnsignedInteger:bits];
-#else
-    NSNumber *number = [[NSNumber alloc] initWithUnsignedInt:bits];
-#endif
     NSDictionary *userInfo = [[NSDictionary alloc] initWithObjects:&number forKeys:(id *)&HFControllerChangedPropertiesKey count:1];
     [number release];
     [[NSNotificationCenter defaultCenter] postNotificationName:HFControllerDidChangePropertiesNotification object:self userInfo:userInfo];
@@ -192,11 +188,7 @@ static inline Class preferredByteArrayClass(void) {
     if (pendingTransactionCount > 0 || propertiesToUpdate != 0) {
         BEGIN_TRANSACTION();
         while (pendingTransactionCount--) {
-#if __LP64__
             HFControllerPropertyBits propertiesInThisTransaction = [[pendingTransactions objectAtIndex:0] unsignedIntegerValue];
-#else
-            HFControllerPropertyBits propertiesInThisTransaction = [[pendingTransactions objectAtIndex:0] unsignedIntValue];
-#endif
             [pendingTransactions removeObjectAtIndex:0];
             HFASSERT(propertiesInThisTransaction != 0);
             [self notifyRepresentersOfChanges:propertiesInThisTransaction];

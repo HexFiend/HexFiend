@@ -317,7 +317,7 @@ static inline BOOL HFFPRangeEqualsRange(HFFPRange a, HFFPRange b) {
 
 /*! copysign() for a CGFloat */
 static inline CGFloat HFCopysign(CGFloat a, CGFloat b) {
-#if __LP64__
+#if CGFLOAT_IS_DOUBLE
     return copysign(a, b);
 #else
     return copysignf(a, b);
@@ -419,7 +419,10 @@ BOOL HFStringEncodingIsSupersetOfASCII(NSStringEncoding encoding);
 uint8_t HFStringEncodingCharacterLength(NSStringEncoding encoding);
 
 /*! Converts an unsigned long long to NSUInteger.  The unsigned long long should be no more than ULONG_MAX. */
-static inline unsigned long ll2l(unsigned long long val) { assert(val <= ULONG_MAX); return (unsigned long)val; }
+static inline NSUInteger ll2l(unsigned long long val) { assert(val <= ULONG_MAX); return (unsigned long)val; }
+
+/*! Converts an unsigned long long to uintptr_t.  The unsigned long long should be no more than UINTPTR_MAX. */
+static inline uintptr_t ll2p(unsigned long long val) { assert(val <= UINTPTR_MAX); return (uintptr_t)val; }
 
 /*! Returns an unsigned long long, which must be no more than ULLONG_MAX, as an unsigned long. */
 static inline CGFloat ld2f(long double val) {

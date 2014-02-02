@@ -29,12 +29,8 @@
 }
 
 - (void)_HFControllerDidChangeProperties:(NSNotification *)note {
-        NSNumber *propertyNumber = [[note userInfo] objectForKey:HFControllerChangedPropertiesKey];
-#if __LP64__
-        NSUInteger propertyMask = [propertyNumber unsignedIntegerValue];
-#else
-        NSUInteger propertyMask = [propertyNumber unsignedIntValue];
-#endif
+    NSNumber *propertyNumber = [[note userInfo] objectForKey:HFControllerChangedPropertiesKey];
+    NSUInteger propertyMask = [propertyNumber unsignedIntegerValue];
     if (propertyMask & (HFControllerContentValue | HFControllerContentLength)) {
         /* Note that this isn't quite right.  If we don't have any cached data, then we can't provide the "before" data for this change.  In practice, this is likely harmless, but it's still something that should be fixed at some point.
         */

@@ -447,7 +447,7 @@ static inline Class preferredByteArrayClass(void) {
         windowWidthChange = (windowWidthChange < 0 ? HFFloor(windowWidthChange) : HFCeil(windowWidthChange));
         
         /* convertSize: has a nasty habit of stomping on negatives.  Make our window width change negative if our view-space horizontal change was negative. */
-#if __LP64__
+#if CGFLOAT_IS_DOUBLE
         windowWidthChange = copysign(windowWidthChange, widthChange);
 #else
         windowWidthChange = copysignf(windowWidthChange, widthChange);
