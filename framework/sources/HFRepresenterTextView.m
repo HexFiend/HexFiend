@@ -1186,7 +1186,7 @@ static size_t unionAndCleanLists(NSRect *rectList, id *valueList, size_t count) 
     CGColorSpaceRef cgcolorspace = CGColorSpaceCreateWithName(kCGColorSpaceGenericRGB);
     CGImageRef image = CGImageCreate(width, 1, 8, 32, 4 * width, cgcolorspace,
                                      (CGBitmapInfo)kCGImageAlphaLast, provider, NULL, false, kCGRenderingIntentDefault);
-    CGContextDrawImage([[NSGraphicsContext currentContext] graphicsPort], rect, image);
+    CGContextDrawImage([[NSGraphicsContext currentContext] graphicsPort], NSRectToCGRect(rect), image);
     CGColorSpaceRelease(cgcolorspace);
     CGImageRelease(image);
     CGDataProviderRelease(provider);

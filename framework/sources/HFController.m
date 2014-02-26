@@ -2143,7 +2143,7 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
 
 + (void)initialize {
     if (self == [HFController class]) {
-        objc_msgSend(objc_getClass("HFUnitTests"), @selector(runAllTests));
+        objc_msgSend(objc_getClass("HFUnitTests"), sel_registerName("runAllTests"));
     }
 }
 #endif

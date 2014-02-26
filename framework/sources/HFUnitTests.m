@@ -79,7 +79,7 @@ static NSData *randomDataOfLength(NSUInteger length) {
         memcpy(stored, buff + baseOffset, sizeof stored);
         for (unsigned int mask = 0; mask <= USHRT_MAX; mask++) {
             /* For each bit set in mask, set the corresponding byte to searchChar */
-            unsigned short tempMask = mask;
+            unsigned short tempMask = (unsigned short)mask;
             while (tempMask != 0) {
                 int lsb = __builtin_ffs(tempMask) - 1;
                 buff[baseOffset + lsb] = searchChar;

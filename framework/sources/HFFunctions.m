@@ -512,7 +512,7 @@ static BOOL HFRangeSetOverlapsAnyRange(CFMutableArrayRef array, uintptr_t a, uin
 #if 6364136223846793005 < NSUIntegerMax
         x = (6364136223846793005 * (uint64_t)x + a);
 #else
-        x = (1103515245 * (uint64_t)x + a);
+        x = (NSUInteger)(1103515245 * (uint64_t)x + a);
 #endif
         x ^= (NSUInteger)b;
     }

@@ -1864,7 +1864,7 @@ cancelled:;
 // in extreme conditions, an unmodified document becomes a different document.
 // TODO: Investigate this.
 
-#define LiveReloadTimeTolerance 1.0 // Allow Cab some slack.
+#define LiveReloadTimeTolerance 1.0 // Allow the timer lots of slack.
 #define LiveReloadTimeThrottle 1.0  // Auto reload at most every second.
 
 - (void)presentedItemDidChange {
