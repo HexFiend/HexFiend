@@ -17,6 +17,9 @@
 /* Macro to "use" a variable to prevent unused variable warnings. */
 #define USE(x) (void)(x)
 
+/* Macro to specify functions and function parameters as unused. */
+#define UNUSED __attribute__((unused))
+
 #ifndef MISSING_FAST_ENUMERATION
 #define FOREACH(type, var, exp) for (type var in (exp))
 #else

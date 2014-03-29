@@ -164,7 +164,7 @@
     textViewBoundData = data;
 }
 
-- (void)applicationDidFinishLaunching:(NSNotification *)note {
+- (void)applicationDidFinishLaunching:(__attribute__((unused)) NSNotification *)note {
     [self willChangeValueForKey:@"examples"];
     examples = [[NSMutableArray alloc] init];
     
