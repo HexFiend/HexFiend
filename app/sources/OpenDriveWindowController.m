@@ -33,15 +33,20 @@ enum {
     NSString * returnString = nil;
     if([temp isEqualToString:@"BSD Name"])
     {
-        returnString = [tempDrive objectForKey:(NSString*)kDADiskDescriptionMediaBSDNameKey];
+        returnString = [tempDrive objectForKey:(id)kDADiskDescriptionMediaBSDNameKey];
     }
     else if([temp isEqualToString:@"Bus"])
     {
-        returnString = (NSString*)[tempDrive objectForKey:(NSString*)kDADiskDescriptionBusNameKey];
+        returnString = [tempDrive objectForKey:(id)kDADiskDescriptionBusNameKey];
     }
     else if([temp isEqualToString:@"Label"])
     {
-         returnString = (NSString*)[tempDrive objectForKey:(NSString*)kDADiskDescriptionVolumeNameKey];
+        NSNumber *whole = [tempDrive objectForKey:(id)kDADiskDescriptionMediaWholeKey];
+        if (whole && [whole boolValue]) {
+            returnString = [tempDrive objectForKey:(id)kDADiskDescriptionMediaNameKey];
+        } else {
+            returnString = [tempDrive objectForKey:(id)kDADiskDescriptionVolumeNameKey];
+        }
     }
     return returnString;
 }
