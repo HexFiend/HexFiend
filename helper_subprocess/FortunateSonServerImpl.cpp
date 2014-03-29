@@ -29,16 +29,6 @@ extern "C" INDENT_HIDDEN_FROM_XCODE
 
 static AuthorizationRef authRef;
 
-static void print_error(const char *fmt, ...) __attribute__ ((format (printf, 1, 2)));
-static void print_error(const char *fmt, ...) {
-    va_list argp;
-    va_start(argp, fmt);
-    vfprintf(stderr, fmt, argp);
-    va_end(argp);
-    fputc('\n', stderr);
-    fflush(stderr);
-}
-
 static void *allocate_mach_memory(vm_size_t *size) {
     vm_size_t localSize = mach_vm_round_page(*size);
     void *localAddress = NULL;
@@ -51,22 +41,13 @@ static void *allocate_mach_memory(vm_size_t *size) {
     return (void *)localAddress;
 }
 
-static void free_mach_memory(void *ptr, vm_size_t size) {
-    kern_return_t kr = vm_deallocate(mach_task_self(), (vm_address_t)ptr, size);
-    if (kr != KERN_SUCCESS) {
-	fprintf(stdout, "failed to vm_deallocate(%p)\nmach error: %s\n", ptr, (char*) mach_error_string(kr));
-	exit(-1);
-    }    
-}
-
-
-kern_return_t _FortunateSonSayHey(mach_port_t server, FilePath path, int *result) {
+kern_return_t _FortunateSonSayHey(mach_port_t, FilePath path, int *result) {
     printf("Hey guys this is my function %s\n", path);
     *result = 12345;
     return KERN_SUCCESS;
 }
 
-kern_return_t _FortunateSonOpenFile(mach_port_t server, FilePath path, int writable, fileport_t *fd_port, int *err) {
+kern_return_t _FortunateSonOpenFile(mach_port_t, FilePath path, int writable, fileport_t *fd_port, int *err) {
 	char *right_name;
 	asprintf(&right_name, "sys.openfile.%s.%s",
 			 writable ? "readwritecreate" : "readonly",
@@ -159,7 +140,7 @@ static mach_port_name_t check_task_for_pid(pid_t pid) {
     return task;
 }
 
-kern_return_t _FortunateSonReadProcess(mach_port_t server, int pid, mach_vm_address_t offset, mach_vm_size_t requestedLength, VarData_t* result, mach_msg_type_number_t *resultCnt) {
+kern_return_t _FortunateSonReadProcess(mach_port_t, int pid, mach_vm_address_t offset, mach_vm_size_t requestedLength, VarData_t* result, mach_msg_type_number_t *resultCnt) {
     printf("Reading %p, %llu\n", (void *)(long)offset, requestedLength);
     mach_port_name_t task = check_task_for_pid(pid);
     mach_vm_address_t startPage = mach_vm_trunc_page(offset);
@@ -174,14 +155,14 @@ kern_return_t _FortunateSonReadProcess(mach_port_t server, int pid, mach_vm_addr
         void *localAddress = allocate_mach_memory(&localSize);
         bzero(localAddress, localSize); //probably not necessary
         *result = (VarData_t)localAddress;
-        *resultCnt = localSize;
+        *resultCnt = (mach_msg_type_number_t)localSize;
     }
     else if (kr == KERN_INVALID_ADDRESS) {
         vm_size_t localSize = requestedLength;
         void *localAddress = allocate_mach_memory(&localSize);
         bzero(localAddress, localSize); //probably not necessary
         *result = (VarData_t)localAddress;
-        *resultCnt = localSize;
+        *resultCnt = (mach_msg_type_number_t)localSize;
     }
     else if (kr == KERN_SUCCESS) {
         if (startPage == offset) {
@@ -196,7 +177,7 @@ kern_return_t _FortunateSonReadProcess(mach_port_t server, int pid, mach_vm_addr
             memcpy(localAddress, (offset - startPage) + (const unsigned char *)data, requestedLength);
             vm_deallocate(mach_task_self(), data, dataLen);
             *result = (unsigned char *)localAddress;
-            *resultCnt = localSize;
+            *resultCnt = (mach_msg_type_number_t)localSize;
         }
     }
     else {
@@ -205,18 +186,18 @@ kern_return_t _FortunateSonReadProcess(mach_port_t server, int pid, mach_vm_addr
         void *localAddress = allocate_mach_memory(&localSize);
         bzero(localAddress, localSize); //probably not necessary
         *result = (VarData_t)localAddress;
-        *resultCnt = localSize;
+        *resultCnt = (mach_msg_type_number_t)localSize;
     }
     
     return KERN_SUCCESS;
 }
 
-kern_return_t _FortunateSonAttributesForAddress(mach_port_t server, int pid, mach_vm_address_t offset, VMRegionAttributes *result, mach_vm_size_t *applicableLength) {
+kern_return_t _FortunateSonAttributesForAddress(mach_port_t, int pid, mach_vm_address_t offset, VMRegionAttributes *result, mach_vm_size_t *applicableLength) {
     printf("Reading attributes for %p\n", (void *)(long)offset);
     mach_port_name_t task = check_task_for_pid(pid);
     mach_vm_address_t regionAddress = offset;
     mach_vm_size_t regionSize = 0;
-    struct vm_region_basic_info_64 info = {0};
+    struct vm_region_basic_info_64 info = {};
     mach_msg_type_number_t infoCount = VM_REGION_BASIC_INFO_COUNT_64;
     mach_port_t unused_object_name;
     kern_return_t kr = mach_vm_region(task, &regionAddress, &regionSize, VM_REGION_BASIC_INFO_64, (vm_region_info_t)&info, &infoCount, &unused_object_name);
@@ -248,7 +229,7 @@ kern_return_t _FortunateSonAttributesForAddress(mach_port_t server, int pid, mac
     return KERN_SUCCESS;
 }
 
-kern_return_t _FortunateSonProcessInfo(mach_port_t server, int pid, uint8_t *outBitSize) {
+kern_return_t _FortunateSonProcessInfo(mach_port_t, int pid, uint8_t *outBitSize) {
 
     cpu_type_t  cpuType;
     size_t      cpuTypeSize;
@@ -265,7 +246,7 @@ kern_return_t _FortunateSonProcessInfo(mach_port_t server, int pid, uint8_t *out
         mibLen += 1;
         
         cpuTypeSize = sizeof(cpuType);
-        err = sysctl(mib, mibLen, &cpuType, &cpuTypeSize, 0, 0);
+        err = sysctl(mib, (u_int)mibLen, &cpuType, &cpuTypeSize, 0, 0);
         if (err == 0) {
             switch (cpuType) {
                 case CPU_TYPE_X86:
@@ -288,7 +269,7 @@ kern_return_t _FortunateSonProcessInfo(mach_port_t server, int pid, uint8_t *out
     return KERN_SUCCESS;
 }
 
-kern_return_t _FortunateSonSetAuthorization(mach_port_t server, AuthorizationExternalForm authExt) {
+kern_return_t _FortunateSonSetAuthorization(mach_port_t, AuthorizationExternalForm authExt) {
 	AuthorizationCreateFromExternalForm(&authExt, &authRef);
 	return KERN_SUCCESS;
 }

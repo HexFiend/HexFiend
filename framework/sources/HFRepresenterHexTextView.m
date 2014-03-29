@@ -33,7 +33,7 @@
         HFASSERT([layoutManager numberOfGlyphs] == 1);
         glyphCount = [layoutManager getGlyphs:glyphs range:NSMakeRange(0, 1)];
         HFASSERT(glyphCount == 1); //How should I handle multiple glyphs for characters in [0-9A-Z]?  Are there any fonts that have them?  Doesn't seem likely.
-        glyphTable[nybbleValue] = glyphs[0];
+        glyphTable[nybbleValue] = (CGGlyph)glyphs[0];
         glyphAdvancement = HFMax(glyphAdvancement, [font advancementForGlyph:glyphs[0]].width);
     }
     

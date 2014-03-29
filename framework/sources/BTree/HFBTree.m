@@ -37,10 +37,14 @@ static TreeEntry *btree_search(HFBTree *tree, HFBTreeIndex offset, HFBTreeIndex 
 static id btree_insert_returning_retained_value_for_parent(HFBTree *tree, TreeEntry *entry, HFBTreeIndex offset);
 static BOOL btree_remove(HFBTree *tree, HFBTreeIndex offset);
 static void btree_recursive_check_integrity(HFBTree *tree, HFBTreeNode *branchOrLeaf, TreeDepth_t depth, HFBTreeNode **linkHelper);
+#if FIXUP_LENGTHS
 static HFBTreeIndex btree_recursive_fixup_cached_lengths(HFBTree *tree, HFBTreeNode *branchOrLeaf);
+#endif
 static HFBTreeIndex btree_recursive_check_integrity_of_cached_lengths(HFBTreeNode *branchOrLeaf);
 static BOOL btree_are_cached_lengths_correct(HFBTreeNode *branchOrLeaf, HFBTreeIndex *outLength);
+#if FIXUP_LENGTHS
 static NSUInteger btree_entry_count(HFBTreeNode *branchOrLeaf);
+#endif
 static ChildIndex_t count_node_values(HFBTreeNode *node);
 static HFBTreeIndex sum_child_lengths(const id *children, const BOOL isLeaf);
 static HFBTreeNode *mutable_copy_node(HFBTreeNode *node, TreeDepth_t depth, HFBTreeNode **linkingHelper);
@@ -976,6 +980,7 @@ static BOOL btree_are_cached_lengths_correct(HFBTreeNode *branchOrLeaf, HFBTreeI
     return length == branchOrLeaf->subtreeLength;
 }
 
+#if FIXUP_LENGTHS
 static NSUInteger btree_entry_count(HFBTreeNode *branchOrLeaf) {
     NSUInteger result = 0;
     if (branchOrLeaf == nil) {
@@ -1018,6 +1023,7 @@ static HFBTreeIndex btree_recursive_fixup_cached_lengths(HFBTree *tree, HFBTreeN
     branchOrLeaf->subtreeLength = result;
     return result;
 }
+#endif
 
 FORCE_STATIC_INLINE void btree_apply_function_to_entries(HFBTree *tree, HFBTreeIndex offset, BOOL (*func)(id, HFBTreeIndex, void *), void *userInfo) {
     struct LeafInfo_t leafInfo = btree_find_leaf(tree, offset);

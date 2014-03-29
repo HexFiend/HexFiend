@@ -15,23 +15,7 @@ static inline void derive_ipc_name(char buff[256], pid_t pid) {
 
 #define kPrivilegedHelperLaunchdLabel "com.ridiculousfish.HexFiend.PrivilegedHelper"
 
-static int setup_recv_port (mach_port_t *recv_port) {
-    kern_return_t       err;
-    mach_port_t         port = MACH_PORT_NULL;
-    err = mach_port_allocate (mach_task_self (),
-                              MACH_PORT_RIGHT_RECEIVE, &port);
-    CHECK_MACH_ERROR (err);
-    err = mach_port_insert_right (mach_task_self(),
-                                  port,
-                                  port,
-                                  MACH_MSG_TYPE_MAKE_SEND);
-    CHECK_MACH_ERROR (err);
-
-    *recv_port = port;
-    return 0;
-}
-
-static int
+__attribute__((used)) static int
 send_port (mach_port_t remote_port, mach_port_t port, mach_msg_type_name_t send_type)
 {
     struct {
