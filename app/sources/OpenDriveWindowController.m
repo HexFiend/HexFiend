@@ -97,7 +97,11 @@ void addDisk(DADiskRef disk, void * context)
     CFDictionaryRef diskDesc = DADiskCopyDescription(disk);
 	if(diskDesc)
 	{
-        [(id)refSelf addToDriveList:(NSDictionary*)diskDesc];
+        // Don't add disks that represent a network volume
+        CFBooleanRef isNetwork = CFDictionaryGetValue(diskDesc, kDADiskDescriptionVolumeNetworkKey);
+        if (!isNetwork || CFEqual(isNetwork, kCFBooleanFalse)) {
+            [(id)refSelf addToDriveList:(NSDictionary*)diskDesc];
+        }
         CFRelease(diskDesc);
 	}
 }
