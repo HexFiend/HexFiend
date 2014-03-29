@@ -269,6 +269,8 @@ static CFURLRef copyCharacterDevicePathForPossibleBlockDevice(NSURL *url)
 - (void) addToDriveList:(NSDictionary*)dict
 {
 	[driveList addObject:dict];
+    NSSortDescriptor *sorter = [[[NSSortDescriptor alloc] initWithKey:(NSString*)kDADiskDescriptionMediaBSDNameKey ascending:YES] autorelease];
+    [driveList sortUsingDescriptors:[NSArray arrayWithObject:sorter]];
     [table reloadData];
 }
 
