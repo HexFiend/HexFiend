@@ -215,6 +215,9 @@ static BOOL HFRangeSetContainsAllRange(CFMutableArrayRef array, uintptr_t a, uin
     CFIndex idxa = CFArrayBSearchValues(array, CFRangeMake(0, count), (void*)a, uintptrComparator, NULL);
     CFIndex idxb = CFArrayBSearchValues(array, CFRangeMake(0, count), (void*)b, uintptrComparator, NULL);
     if(idxa >= count || idxb == 0) return NO;
+    
+    // Optimization: if the indexes are far enough apart, then obviouly there's a gap.
+    if(idxb - idxa >= 2) return NO;
 
     // The first fencepost >= 'b' must end an include range, a must be in the same range.
     return idxb%2 == 1 && idxa == ((uintptr_t)CFArrayGetValueAtIndex(array, idxa) == a ? idxb-1 : idxb);
@@ -227,8 +230,7 @@ static BOOL HFRangeSetOverlapsAnyRange(CFMutableArrayRef array, uintptr_t a, uin
     CFIndex idxb = CFArrayBSearchValues(array, CFRangeMake(0, count), (void*)b, uintptrComparator, NULL);
     if(idxa >= count || idxb == 0) return NO;
     
-    // If the indexes are far enough apart, then we know immediatley that there's overlap
-    // Note that they later checks would be correct even without this.
+    // Optimization: if the indexes are far enough apart, then obviouly there's overlap.
     if(idxb - idxa >= 2) return YES;
     
     if((uintptr_t)CFArrayGetValueAtIndex(array, idxa) == a) {
