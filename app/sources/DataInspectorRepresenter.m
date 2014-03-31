@@ -319,7 +319,7 @@ static id floatingPointDescription(const unsigned char *bytes, NSUInteger length
             _Static_assert(sizeof temp.f == sizeof temp.i, "sizeof(float) is not 4!");
             temp.i = *(const uint32_t *)bytes;
             if (endianness != eNativeEndianness) temp.i = (uint32_t)reverse(temp.i, sizeof(float));
-            return [NSString stringWithFormat:@"%g", temp.f];
+            return [NSString stringWithFormat:@"%.15g", temp.f];
         }
         case sizeof(double):
         {
@@ -330,7 +330,7 @@ static id floatingPointDescription(const unsigned char *bytes, NSUInteger length
             _Static_assert(sizeof temp.f == sizeof temp.i, "sizeof(double) is not 8!");
             temp.i = *(const uint64_t *)bytes;
             if (endianness != eNativeEndianness) temp.i = reverse(temp.i, sizeof(double));
-            return [NSString stringWithFormat:@"%g", temp.f];
+            return [NSString stringWithFormat:@"%.15g", temp.f];
         }
         case 10:
         {
@@ -346,7 +346,7 @@ static id floatingPointDescription(const unsigned char *bytes, NSUInteger length
                     temp.i[9 - i] = bytes[i];
                 }
             }
-            return [NSString stringWithFormat:@"%Lg", (long double)temp.f];
+            return [NSString stringWithFormat:@"%.15Lg", (long double)temp.f];
         }
         case 16:
         {
@@ -359,7 +359,7 @@ static id floatingPointDescription(const unsigned char *bytes, NSUInteger length
                 temp[0] = reverse(temp[1], 8);
                 temp[1] = reverse(t, 8);
             }
-            return [NSString stringWithFormat:@"%Lg", ieeeToLD(temp, 15, 112)];
+            return [NSString stringWithFormat:@"%.15Lg", ieeeToLD(temp, 15, 112)];
         }
         default: return nil;
     }
