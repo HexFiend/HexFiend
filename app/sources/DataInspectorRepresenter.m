@@ -209,6 +209,20 @@ static id signedIntegerDescription(const unsigned char *bytes, NSUInteger length
             FLIP(8)
             FORMAT(@"%qi")
         }
+        case 16:
+        {
+            FETCH(__int128_t)
+            FLIP(16)
+            BOOL neg = s < 0 ? (s=-s), YES : NO;
+            char buf[50], *b = buf;
+            while(s) {
+                *(b++) = (char)(s%10)+'0';
+                s /= 10;
+            }
+            *b = 0;
+            flip(buf, b-buf);
+            return [NSString stringWithFormat:@"%s%s", (neg?"-":""), buf];
+        }
         default: return nil;
     }
 }
@@ -238,6 +252,19 @@ static id unsignedIntegerDescription(const unsigned char *bytes, NSUInteger leng
             FLIP(8)
             FORMAT(@"%qu")
         }
+        case 16:
+        {
+            FETCH(__uint128_t)
+            FLIP(16)
+            char buf[50], *b = buf;
+            while(s) {
+                *(b++) = (char)(s%10)+'0';
+                s /= 10;
+            }
+            *b = 0;
+            flip(buf, b-buf);
+            return [NSString stringWithFormat:@"%s", buf];
+        }
         default: return nil;
     }
 }
@@ -245,6 +272,41 @@ static id unsignedIntegerDescription(const unsigned char *bytes, NSUInteger leng
 #undef FLIP
 #undef FORMAT
 
+static long double ieeeToLD(const void *bytes, unsigned exp, unsigned man) {
+    __uint128_t b = 0;
+    memcpy(&b, bytes, (1 + exp + man + 7)/8);
+    
+    __uint128_t m = b << (1+exp) >> (128 - man);
+    int64_t e = (uint64_t)(b << 1 >> (128 - exp));
+    unsigned s = b >> 127;
+    
+    if(e) {
+        if(e ^ ((1ULL<<exp)-1)) {
+            // normal
+            int64_t e2 = e + 1 - (1ULL<<(exp-1));
+            long double t = ldexpl(m, (int)(e2-man)) + ldexpl(1, (int)e2);
+            return s ? -t : t;
+        } else {
+            if(m) {
+                // nan
+                return __builtin_nanl(""); // No attempt to translate codes.
+            } {
+                // infinity
+                return s ? __builtin_infl() : -__builtin_infl();
+            }
+        }
+    } else {
+        if(m) {
+            // subnormal
+            int64_t e2 = 2 - (1ULL<<(exp-1));
+            long double t = ldexpl(m, (int)(e2-man));
+            return s ? -t : t;
+        } else {
+            // zero
+            return s ? -0.0L : 0.0L;
+        }
+    }
+}
 
 static id floatingPointDescription(const unsigned char *bytes, NSUInteger length, enum Endianness_t endianness) {
     switch (length) {
@@ -254,10 +316,10 @@ static id floatingPointDescription(const unsigned char *bytes, NSUInteger length
                 uint32_t i;
                 float f;
             } temp;
-            assert(sizeof temp.f == sizeof temp.i);
+            _Static_assert(sizeof temp.f == sizeof temp.i, "sizeof(float) is not 4!");
             temp.i = *(const uint32_t *)bytes;
             if (endianness != eNativeEndianness) temp.i = (uint32_t)reverse(temp.i, sizeof(float));
-            return [NSString stringWithFormat:@"%f", temp.f];
+            return [NSString stringWithFormat:@"%g", temp.f];
         }
         case sizeof(double):
         {
@@ -265,10 +327,39 @@ static id floatingPointDescription(const unsigned char *bytes, NSUInteger length
                 uint64_t i;
                 double f;
             } temp;
-            assert(sizeof temp.f == sizeof temp.i);
+            _Static_assert(sizeof temp.f == sizeof temp.i, "sizeof(double) is not 8!");
             temp.i = *(const uint64_t *)bytes;
             if (endianness != eNativeEndianness) temp.i = reverse(temp.i, sizeof(double));
-            return [NSString stringWithFormat:@"%e", temp.f];
+            return [NSString stringWithFormat:@"%g", temp.f];
+        }
+        case 10:
+        {
+            typedef float __attribute__((mode(XF))) float80;
+            union {
+                uint8_t i[10];
+                float80 f;
+            } temp;
+            if (endianness == eNativeEndianness) {
+                memcpy(temp.i, bytes, 10);
+            } else {
+                for(unsigned i = 0; i < 10; i++) {
+                    temp.i[9 - i] = bytes[i];
+                }
+            }
+            return [NSString stringWithFormat:@"%Lg", (long double)temp.f];
+        }
+        case 16:
+        {
+            //typedef float __attribute__((mode(TF))) float128; // Here's to hoping clang support comes one day.
+            uint64_t temp[2];
+            temp[0] = ((uint64_t*)bytes)[0];
+            temp[1] = ((uint64_t*)bytes)[1];
+            if (endianness != eNativeEndianness) {
+                uint64_t t = temp[0];
+                temp[0] = reverse(temp[1], 8);
+                temp[1] = reverse(t, 8);
+            }
+            return [NSString stringWithFormat:@"%Lg", ieeeToLD(temp, 15, 112)];
         }
         default: return nil;
     }
@@ -317,10 +408,7 @@ static NSAttributedString *inspectionError(NSString *s) {
             }
             break;
         case eInspectorTypeUTF8Text:
-            if(range.length > MAX_EDITABLE_BYTE_COUNT) {
-                if(outIsError) *outIsError = YES;
-                return inspectionError(InspectionErrorTooMuch);
-            }
+            // MAX_EDITABLE_BYTE_COUNT already checked above
             break;
         default:
             if(outIsError) *outIsError = YES;
@@ -359,11 +447,11 @@ static NSAttributedString *inspectionError(NSString *s) {
                     return inspectionError(InspectionErrorNoData);
                 case 1: case 2: case 3:
                     return inspectionError(InspectionErrorTooLittle);
-                case 4: case 8:
+                case 4: case 8: case 10: case 16:
                     if(outIsError) *outIsError = NO;
                     return floatingPointDescription(bytes, length, endianness);
                 default:
-                    return length > 8 ? inspectionError(InspectionErrorTooMuch) : inspectionError(InspectionErrorNonPwr2);
+                    return length > 16 ? inspectionError(InspectionErrorTooMuch) : inspectionError(InspectionErrorNonPwr2);
             }
                 
         case eInspectorTypeUTF8Text: {
@@ -421,107 +509,98 @@ static BOOL stringRangeIsNullBytes(NSString *string, NSRange range) {
 
 - (BOOL)acceptStringValue:(NSString *)value replacingByteCount:(NSUInteger)count intoData:(unsigned char *)outData {
     if (inspectorType == eInspectorTypeUnsignedInteger || inspectorType == eInspectorTypeSignedInteger) {
-	if (! (count == 1 || count == 2 || count == 4 || count == 8)) return NO;
+        char buffer[256];
+        BOOL success = [value getCString:buffer maxLength:sizeof buffer encoding:NSASCIIStringEncoding];
+        if (! success) return NO;
+
+        if (! (count == 1 || count == 2 || count == 4 || count == 8)) return NO;
 	
-	char buffer[256];
-	BOOL success = [value getCString:buffer maxLength:sizeof buffer encoding:NSASCIIStringEncoding];
-	if (! success) return NO;
+        errno = 0;
+        char *endPtr = NULL;
+        /* note that strtoull handles negative values */
+        unsigned long long unsignedValue = strtoull(buffer, &endPtr, 0);
+        int resultError = errno;
+        
+        /* Make sure we consumed some of the string */
+        if (endPtr == buffer) return NO;
+        
+        /* Check for conversion errors (overflow, etc.) */
+        if (resultError != 0) return NO;
+        
+        /* Now check to make sure we fit */
+        if (! valueCanFitInByteCount(unsignedValue, count)) return NO;
+        
+        if (outData == NULL) return YES; // No need to continue if we're not outputting
+
+        /* Get all 8 bytes in big-endian form */
+        unsigned long long consumableValue = unsignedValue;
+        unsigned char bytes[8];
+        unsigned i = 8;
+        while (i--) {
+            bytes[i] = consumableValue & 0xFF;
+            consumableValue >>= 8;
+        }
     
+        /* Now copy the last (least significant) 'count' bytes to outData in the requested endianness */
+        for (i=0; i < count; i++) {
+            unsigned char byte = bytes[(8 - count + i)];
+            if (endianness == eEndianBig) {
+                outData[i] = byte;
+            }
+            else {
+                outData[count - i - 1] = byte;
+            }
+        }
 	
-	errno = 0;
-	char *endPtr = NULL;
-	/* note that strtoull handles negative values */
-	unsigned long long unsignedValue = strtoull(buffer, &endPtr, 0);
-	int resultError = errno;
-	
-	/* Make sure we consumed some of the string */
-	if (endPtr == buffer) return NO;
-	
-	/* Check for conversion errors (overflow, etc.) */
-	if (resultError != 0) return NO;
-	
-	/* Now check to make sure we fit */
-	if (! valueCanFitInByteCount(unsignedValue, count)) return NO;
-	
-	/* Actually return the bytes if requested */
-	if (outData != NULL) {
-	    /* Get all 8 bytes in big-endian form */
-	    unsigned long long consumableValue = unsignedValue;
-	    unsigned char bytes[8];
-	    unsigned i = 8;
-	    while (i--) {
-		bytes[i] = consumableValue & 0xFF;
-		consumableValue >>= 8;
-	    }
-	    
-	    /* Now copy the last (least significant) 'count' bytes to outData in the requested endianness */
-	    for (i=0; i < count; i++) {
-		unsigned char byte = bytes[(8 - count + i)];
-		if (endianness == eEndianBig) {
-		    outData[i] = byte;
-		}
-		else {
-		    outData[count - i - 1] = byte;
-		}
-	    }
-	}
-	
-	/* Victory */
-	return YES;
+        /* Victory */
+        return YES;
     }
     else if (inspectorType == eInspectorTypeFloatingPoint) {
-	if (! (count == 4 || count == 8)) return NO;
-	assert(sizeof(float) == 4);
-	assert(sizeof(double) == 8);
-	
-	BOOL useFloat = (count == 4);
-	
-	char buffer[256];
-	BOOL success = [value getCString:buffer maxLength:sizeof buffer encoding:NSASCIIStringEncoding];
-	if (! success) return NO;
-	
-	double doubleValue = 0;
-	float floatValue = 0;
-	
-	errno = 0;
-	char *endPtr = NULL;
-	if (useFloat) {
-	    floatValue = strtof(buffer, &endPtr);
-	}
-	else {
-	    doubleValue = strtod(buffer, &endPtr);
-	}
-	int resultError = errno;
-	
-	/* Make sure we consumed some of the string */
-	if (endPtr == buffer) return NO;
-	
-	/* Check for conversion errors (overflow, etc.) */
-	if (resultError != 0) return NO;
-	
-	if (outData != NULL) {
-	    unsigned char bytes[8];
-	    if (useFloat) {
-		memcpy(bytes, &floatValue, sizeof floatValue);
-	    }
-	    else {
-		memcpy(bytes, &doubleValue, sizeof doubleValue);
-	    }
+        char buffer[256];
+        BOOL success = [value getCString:buffer maxLength:sizeof buffer encoding:NSASCIIStringEncoding];
+        if (! success) return NO;
+
+        union {
+            float  f;
+            double d;
+            float __attribute__((mode(XF))) x;
+            __uint128_t t; // Maybe clang will support mode(TF) one day.
+        } val;
+
+        char *endPtr = NULL;
+        errno = 0;
+        
+        switch(count) {
+            case 4: val.f = strtof(buffer, &endPtr); break;
+            case 8: val.d = strtod(buffer, &endPtr); break;
+            case 10: val.x = strtold(buffer, &endPtr); break;
+            case 16: {
+                val.x = strtold(buffer, &endPtr);
+                val.t = (val.t >> 64 << 112) | (val.t << 48 << 17 >> 16);
+                break;
+            }
+            default: return NO;
+        }
+        
+        if (errno != 0) return NO; // Check for conversion errors (overflow, etc.)
+        if (endPtr == buffer) return NO; // Make sure we consumed some of the string
+
+        if (outData == NULL) return YES; // No need to continue if we're not outputting
+        
+        unsigned char bytes[sizeof(val)];
+        memcpy(bytes, &val, count);
 	    
 	    /* Now copy the first 'count' bytes to outData in the requested endianness.  This is different from the integer case - there we always work big-endian because we support more different byteCounts, but here we work in the native endianness because there's no simple way to convert a float or double to big endian form */
-	    NSUInteger i;
-	    for (i=0; i < count; i++) {
-		if (endianness == eNativeEndianness) {
-		    outData[i] = bytes[i];
-		}
-		else {
-		    outData[count - i - 1] = bytes[i];
-		}
+	    for (NSUInteger i = 0; i < count; i++) {
+            if (endianness == eNativeEndianness) {
+                outData[i] = bytes[i];
+            } else {
+                outData[count - i - 1] = bytes[i];
+            }
 	    }
-	}
-	
-	/* Return triumphantly! */
-	return YES;
+        
+        /* Return triumphantly! */
+        return YES;
     }
     else if (inspectorType == eInspectorTypeUTF8Text) {
         /*
@@ -571,8 +650,8 @@ static BOOL stringRangeIsNullBytes(NSString *string, NSRange range) {
         return ret;
     }
     else {
-	/* Unknown inspector type */
-	return NO;
+        /* Unknown inspector type */
+        return NO;
     }
 }
 
