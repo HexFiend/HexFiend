@@ -189,8 +189,20 @@ NSString *const HFPrivateByteArrayPboardType = @"HFPrivateByteArrayPboardType";
 
         progressTracker = [[HFProgressTracker alloc] init];
 
-        if(![NSBundle loadNibNamed:@"HFModalProgress" owner:self] || !progressTrackingWindow) {
-            [NSException raise:NSInternalInconsistencyException format:@"Unable to load nib named %@", @"HFModalProgress"];
+        NSMutableArray *topLevelObjects = [NSMutableArray array];
+        if ([[NSBundle mainBundle] respondsToSelector:@selector(loadNibNamed:owner:topLevelObjects:)]) {
+            /* for Mac OS X 10.8 or higher */
+            // unlike -loadNibNamed:owner: which is deprecated in 10.8, this method does
+            // not retain top level objects automatically, so objects must be set retain
+            if (![[NSBundle mainBundle] loadNibNamed:@"HFModalProgress" owner:self topLevelObjects:&topLevelObjects] || !progressTrackingWindow) {
+                [NSException raise:NSInternalInconsistencyException format:@"Unable to load nib named %@", @"HFModalProgress"];
+            }
+            [topLevelObjects retain];
+        } else {
+            /* for Mac OS X 10.7 or lower */
+            if(![NSBundle loadNibNamed:@"HFModalProgress" owner:self] || !progressTrackingWindow) {
+                [NSException raise:NSInternalInconsistencyException format:@"Unable to load nib named %@", @"HFModalProgress"];
+            }
         }
         backgroundCopyOperationFinished = NO;
         didStartModalSessionForBackgroundCopyOperation = NO;

@@ -742,9 +742,23 @@ static BOOL stringRangeIsNullBytes(NSString *string, NSRange range) {
 }
 
 - (NSView *)createView {
-    BOOL loaded = [NSBundle loadNibNamed:@"DataInspectorView" owner:self];
-    if (! loaded || ! outletView) {
-        [NSException raise:NSInternalInconsistencyException format:@"Unable to load nib named DataInspectorView"];
+    BOOL loaded = NO;
+    NSMutableArray *topLevelObjects = [NSMutableArray array];
+    if ([[NSBundle mainBundle] respondsToSelector:@selector(loadNibNamed:owner:topLevelObjects:)]) {
+        /* for Mac OS X 10.8 or higher */
+        // unlike -loadNibNamed:owner: which is deprecated in 10.8, this method does
+        // not retain top level objects automatically, so objects must be set retain
+        loaded = [[NSBundle mainBundle] loadNibNamed:@"DataInspectorView" owner:self topLevelObjects:&topLevelObjects];
+        if (! loaded || ! outletView) {
+            [NSException raise:NSInternalInconsistencyException format:@"Unable to load nib named DataInspectorView"];
+        }
+        [topLevelObjects retain];
+    } else {
+        /* for Mac OS X 10.7 or lower */
+        loaded = [NSBundle loadNibNamed:@"DataInspectorView" owner:self];
+        if (! loaded || ! outletView) {
+            [NSException raise:NSInternalInconsistencyException format:@"Unable to load nib named DataInspectorView"];
+        }
     }
     NSView *resultView = outletView; //want to inherit its retain here
     outletView = nil;
