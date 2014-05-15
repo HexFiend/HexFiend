@@ -1956,7 +1956,7 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
 
 - (void)deleteDirection:(HFControllerMovementDirection)direction {
     HFASSERT(direction == HFControllerDirectionLeft || direction == HFControllerDirectionRight);
-    if ([self editMode] != HFInsertMode) {
+    if ([self editMode] != HFInsertMode || ! [self editable]) {
         NSBeep();
         return;
     }
