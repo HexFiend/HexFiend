@@ -1577,7 +1577,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				OTHER_CODE_SIGN_FLAGS = "--deep";
-				SDKROOT = macosx10.8;
+				SDKROOT = macosx;
 				VALID_ARCHS = "armv6 armv7 i386 x86_64";
 				WARNING_CFLAGS = (
 					"-W",
@@ -1714,7 +1714,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				OTHER_CODE_SIGN_FLAGS = "--deep";
-				SDKROOT = macosx10.8;
+				SDKROOT = macosx;
 				VALID_ARCHS = "armv6 armv7 i386 x86_64";
 				WARNING_CFLAGS = (
 					"-W",
@@ -1851,7 +1851,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				OTHER_CODE_SIGN_FLAGS = "--deep";
-				SDKROOT = macosx10.8;
+				SDKROOT = macosx;
 				VALID_ARCHS = "armv6 armv7 i386 x86_64";
 				WARNING_CFLAGS = (
 					"-W",
@@ -2016,7 +2016,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				OTHER_CODE_SIGN_FLAGS = "--deep";
-				SDKROOT = macosx10.8;
+				SDKROOT = macosx;
 				VALID_ARCHS = "armv6 armv7 i386 x86_64";
 				WARNING_CFLAGS = (
 					"-W",
@@ -2153,7 +2153,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CODE_SIGN_FLAGS = "--deep";
-				SDKROOT = macosx10.8;
+				SDKROOT = macosx;
 				VALID_ARCHS = "armv6 armv7 i386 x86_64";
 				WARNING_CFLAGS = (
 					"-W",
