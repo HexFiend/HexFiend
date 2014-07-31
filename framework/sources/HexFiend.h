@@ -10,11 +10,11 @@
  * Both the framework and the app are open source under a BSD-style license.  In summary, you may use Hex Fiend in any project as long as you include the copyright notice somewhere in the documentation.
  *
  * @section requirements Requirements
- * Hex Fiend is only available on Mac OS X, and supported on SnowLeopard and later.  It is compiled "hybrid" (works with both garbage collection and reference counting) and 2-way fat (64 bit and 32 bit, Intel only).  Support for 64 bits worth of data is available in both 32 bit and 64 bit - there is no functional difference between the 32 bit and 64 bit versions.
+ * Hex Fiend is only available on Mac OS X, and supported on Mountain Lion and later.
  *
  * @section getting_started Getting Started
  *
- * The Hex Fiend source code is available at http://ridiculousfish.com/hexfiend/
+ * The Hex Fiend source code is available at http://ridiculousfish.com/hexfiend/ and on GitHub at https://github.com/ridiculousfish/HexFiend
  *
  * Hex Fiend comes with some sample code ("HexFiendling"), distributed as part of the project.  And of course the Hex Fiend application itself is open source, acting as a more sophisticated sample code.
 */

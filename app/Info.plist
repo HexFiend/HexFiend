@@ -73,7 +73,7 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>2.2.0</string>
+	<string>2.3.0</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
@@ -87,7 +87,7 @@
 	<key>SUPublicDSAKeyFile</key>
 	<string>dsa_pub.pem</string>
 	<key>SUFeedURL</key>
-	<string>https://raw.github.com/ridiculousfish/HexFiend/master/app/appcast.xml</string>
+	<string>https://raw.githubusercontent.com/ridiculousfish/HexFiend/master/app/appcast.xml</string>
 	<key>NSSupportsSuddenTermination</key>
 	<string>YES</string>
 	<key>SMPrivilegedExecutables</key>
