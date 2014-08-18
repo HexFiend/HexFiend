@@ -19,6 +19,17 @@ enum {
     eCancel
 };
 
+@interface NSDictionary (DiskArbHelpers)
+- (NSString *)bsdName;
+@end
+
+@implementation NSDictionary (DiskArbHelpers)
+- (NSString *)bsdName
+{
+    return [self objectForKey:(id)kDADiskDescriptionMediaBSDNameKey];
+}
+@end
+
 @implementation OpenDriveWindowController (TableView)
 
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)UNUSED tableView
@@ -33,7 +44,7 @@ enum {
     NSString * returnString = nil;
     if([temp isEqualToString:@"BSD Name"])
     {
-        returnString = [tempDrive objectForKey:(id)kDADiskDescriptionMediaBSDNameKey];
+        returnString = [tempDrive bsdName];
     }
     else if([temp isEqualToString:@"Bus"])
     {
@@ -56,7 +67,7 @@ enum {
 @interface OpenDriveWindowController (Private)
 
 - (void) addToDriveList:(NSDictionary*)dict;
-- (void)removeDrive:(NSDictionary*)dict;
+- (void)removeDrive:(NSString *)bsdName;
 
 - (void) refreshDriveList;
 - (void) selectDrive;
@@ -104,9 +115,10 @@ static void addDisk(DADiskRef disk, UNUSED void * context)
 static void removeDisk(DADiskRef disk, void * context)
 {
     @autoreleasepool {
-        NSDictionary *diskDesc = [(NSDictionary*)DADiskCopyDescription(disk) autorelease];
+        const char *bsdName = DADiskGetBSDName(disk);
+        NSString *nsbsdName = bsdName ? [NSString stringWithUTF8String:bsdName] : @"";
         dispatch_async(dispatch_get_main_queue(), ^{
-            [(OpenDriveWindowController*)context removeDrive:diskDesc];
+            [(OpenDriveWindowController*)context removeDrive:nsbsdName];
         });
     }
 }
@@ -279,9 +291,15 @@ static CFURLRef copyCharacterDevicePathForPossibleBlockDevice(NSURL *url)
     [table reloadData];
 }
 
-- (void)removeDrive:(NSDictionary*)dict
+- (void)removeDrive:(NSString *)bsdName
 {
-    [driveList removeObject:dict];
+    NSMutableArray *drivesToRemove = [NSMutableArray array];
+    for (NSDictionary *dict in driveList) {
+        if ([[dict bsdName] isEqualToString:bsdName]) {
+            [drivesToRemove addObject:dict];
+        }
+    }
+    [driveList removeObjectsInArray:drivesToRemove];
     [table reloadData];
 }
 
