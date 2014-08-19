@@ -14,7 +14,7 @@
     const unsigned char data[] = {
         0x7B, 0x5C, 0x72, 0x74, 0x66, 0x31, 0x5C, 0x61, 0x6E, 0x73, 0x69, 0x5C, 0x61, 0x6E, 0x73, 0x69, 0x63, 0x70, 0x67, 0x31, 0x32, 0x35, 0x32, 0x5C, 0x63, 0x6F, 0x63, 0x6F, 0x61, 0x72, 0x74, 0x66, 0x31, 0x30, 0x33, 0x38, 0x5C, 0x63, 0x6F, 0x63, 0x6F, 0x61, 0x73, 0x75, 0x62, 0x72, 0x74, 0x66, 0x33, 0x36, 0x30, 0x0A, 0x7B, 0x5C, 0x66, 0x6F, 0x6E, 0x74, 0x74, 0x62, 0x6C, 0x5C, 0x66, 0x30, 0x5C, 0x66, 0x73, 0x77, 0x69, 0x73, 0x73, 0x5C, 0x66, 0x63, 0x68, 0x61, 0x72, 0x73, 0x65, 0x74, 0x30, 0x20, 0x48, 0x65, 0x6C, 0x76, 0x65, 0x74, 0x69, 0x63, 0x61, 0x3B, 0x7D, 0x0A, 0x7B, 0x5C, 0x63, 0x6F, 0x6C, 0x6F, 0x72, 0x74, 0x62, 0x6C, 0x3B, 0x5C, 0x72, 0x65, 0x64, 0x32, 0x35, 0x35, 0x5C, 0x67, 0x72, 0x65, 0x65, 0x6E, 0x32, 0x35, 0x35, 0x5C, 0x62, 0x6C, 0x75, 0x65, 0x32, 0x35, 0x35, 0x3B, 0x7D, 0x0A, 0x5C, 0x70, 0x61, 0x72, 0x64, 0x5C, 0x74, 0x78, 0x35, 0x36, 0x30, 0x5C, 0x74, 0x78, 0x31, 0x31, 0x32, 0x30, 0x5C, 0x74, 0x78, 0x31, 0x36, 0x38, 0x30, 0x5C, 0x74, 0x78, 0x32, 0x32, 0x34, 0x30, 0x5C, 0x74, 0x78, 0x32, 0x38, 0x30, 0x30, 0x5C, 0x74, 0x78, 0x33, 0x33, 0x36, 0x30, 0x5C, 0x74, 0x78, 0x33, 0x39, 0x32, 0x30, 0x5C, 0x74, 0x78, 0x34, 0x34, 0x38, 0x30, 0x5C, 0x74, 0x78, 0x35, 0x30, 0x34, 0x30, 0x5C, 0x74, 0x78, 0x35, 0x36, 0x30, 0x30, 0x5C, 0x74, 0x78, 0x36, 0x31, 0x36, 0x30, 0x5C, 0x74, 0x78, 0x36, 0x37, 0x32, 0x30, 0x5C, 0x71, 0x6C, 0x5C, 0x71, 0x6E, 0x61, 0x74, 0x75, 0x72, 0x61, 0x6C, 0x5C, 0x70, 0x61, 0x72, 0x64, 0x69, 0x72, 0x6E, 0x61, 0x74, 0x75, 0x72, 0x61, 0x6C, 0x0A, 0x0A, 0x5C, 0x66, 0x30, 0x5C, 0x66, 0x73, 0x33, 0x36, 0x20, 0x5C, 0x63, 0x66, 0x30, 0x20, 0x54, 0x72, 0x79, 0x20, 0x74, 0x79, 0x70, 0x69, 0x6E, 0x67, 0x20, 0x69, 0x6E, 0x20, 0x68, 0x65, 0x72, 0x65, 0x21, 0x7D
     };
-    return [[[NSData alloc] initWithBytesNoCopy:(void *)data length:sizeof data freeWhenDone:NO] autorelease];
+    return [[NSData alloc] initWithBytesNoCopy:(void *)data length:sizeof data freeWhenDone:NO];
 }
 
 - (void)setUpBoundDataHexView {
@@ -36,13 +36,13 @@
     [inMemoryController setBytesPerColumn:4];
     
     /* Put that data in a byte slice.  Here we use initWithData:, which causes the byte slice to take ownership of the data (and may modify it).  If we want to prevent our data from being modified, we would use initWithUnsharedData: */
-    HFSharedMemoryByteSlice *byteSlice = [[[HFSharedMemoryByteSlice alloc] initWithData:data] autorelease];
-    HFByteArray *byteArray = [[[HFBTreeByteArray alloc] init] autorelease];
+    HFSharedMemoryByteSlice *byteSlice = [[HFSharedMemoryByteSlice alloc] initWithData:data];
+    HFByteArray *byteArray = [[HFBTreeByteArray alloc] init];
     [byteArray insertByteSlice:byteSlice inRange:HFRangeMake(0, 0)];
     [inMemoryController setByteArray:byteArray];
     
     /* Make an HFHexTextRepresenter. */
-    HFHexTextRepresenter *hexRep = [[[HFHexTextRepresenter alloc] init] autorelease];
+    HFHexTextRepresenter *hexRep = [[HFHexTextRepresenter alloc] init];
     [hexRep setRowBackgroundColors:[NSArray array]]; //An empty array means don't draw a background.
     [inMemoryController addRepresenter:hexRep];
     
@@ -55,23 +55,23 @@
 
 - (void)setUpFileMultipleViewIntoView:(NSView *)containerView {
     /* We're going to show the contents of mach_kernel */
-    HFFileReference *reference = [[[HFFileReference alloc] initWithPath:@"/mach_kernel" error:NULL] autorelease];
+    HFFileReference *reference = [[HFFileReference alloc] initWithPath:@"/mach_kernel" error:NULL];
     
     /* Make a controller to hook everything up, and then configure it a bit. */
     fileController = [[HFController alloc] init];
     [fileController setBytesPerColumn:1];
     
     /* Put our data in a byte slice. */
-    HFFileByteSlice *byteSlice = [[[HFFileByteSlice alloc] initWithFile:reference] autorelease];
-    HFByteArray *byteArray = [[[HFBTreeByteArray alloc] init] autorelease];
+    HFFileByteSlice *byteSlice = [[HFFileByteSlice alloc] initWithFile:reference];
+    HFByteArray *byteArray = [[HFBTreeByteArray alloc] init];
     [byteArray insertByteSlice:byteSlice inRange:HFRangeMake(0, 0)];
     [fileController setByteArray:byteArray];
     
     /* Here we're going to make three representers - one for the hex, one for the ASCII, and one for the scrollbar.  To lay these all out properly, we'll use a fourth HFLayoutRepresenter. */
-    HFLayoutRepresenter *layoutRep = [[[HFLayoutRepresenter alloc] init] autorelease];
-    HFHexTextRepresenter *hexRep = [[[HFHexTextRepresenter alloc] init] autorelease];
-    HFStringEncodingTextRepresenter *asciiRep = [[[HFStringEncodingTextRepresenter alloc] init] autorelease];
-    HFVerticalScrollerRepresenter *scrollRep = [[[HFVerticalScrollerRepresenter alloc] init] autorelease];
+    HFLayoutRepresenter *layoutRep = [[HFLayoutRepresenter alloc] init];
+    HFHexTextRepresenter *hexRep = [[HFHexTextRepresenter alloc] init];
+    HFStringEncodingTextRepresenter *asciiRep = [[HFStringEncodingTextRepresenter alloc] init];
+    HFVerticalScrollerRepresenter *scrollRep = [[HFVerticalScrollerRepresenter alloc] init];
     
     /* Add all our reps to the controller. */
     [fileController addRepresenter:layoutRep];
@@ -95,15 +95,15 @@
     externalDataController = [[HFController alloc] init];
     [externalDataController setBytesPerColumn:1];
     
-    HFByteArray *byteArray = [[[HFBTreeByteArray alloc] init] autorelease];
+    HFByteArray *byteArray = [[HFBTreeByteArray alloc] init];
     [externalDataController setByteArray:byteArray];
     [externalDataController setEditable:NO];
     
     /* Here we're going to make three representers - one for the hex, one for the ASCII, and one for the scrollbar.  To lay these all out properly, we'll use a fourth HFLayoutRepresenter. */
-    HFLayoutRepresenter *layoutRep = [[[HFLayoutRepresenter alloc] init] autorelease];
-    HFHexTextRepresenter *hexRep = [[[HFHexTextRepresenter alloc] init] autorelease];
-    HFStringEncodingTextRepresenter *asciiRep = [[[HFStringEncodingTextRepresenter alloc] init] autorelease];
-    HFVerticalScrollerRepresenter *scrollRep = [[[HFVerticalScrollerRepresenter alloc] init] autorelease];
+    HFLayoutRepresenter *layoutRep = [[HFLayoutRepresenter alloc] init];
+    HFHexTextRepresenter *hexRep = [[HFHexTextRepresenter alloc] init];
+    HFStringEncodingTextRepresenter *asciiRep = [[HFStringEncodingTextRepresenter alloc] init];
+    HFVerticalScrollerRepresenter *scrollRep = [[HFVerticalScrollerRepresenter alloc] init];
     
     /* Add all our reps to the controller. */
     [externalDataController addRepresenter:layoutRep];
@@ -134,17 +134,13 @@
 
 
 - (void)setExternalData:(NSData *)data {
-    NSData *oldData = externalData;
     externalData = [data copy];
-    [oldData release];
     HFByteArray *newByteArray = [[HFBTreeByteArray alloc] init];
     if (externalData) {
         HFFullMemoryByteSlice *byteSlice = [[HFFullMemoryByteSlice alloc] initWithData:externalData];
         [newByteArray insertByteSlice:byteSlice inRange:HFRangeMake(0, 0)];
-        [byteSlice release];
     }
     [externalDataController replaceByteArray:newByteArray];
-    [newByteArray release];
 }
 
 
@@ -159,8 +155,6 @@
 
 
 - (void)setTextViewBoundData:(NSData *)data {
-    [data retain];
-    [textViewBoundData release];
     textViewBoundData = data;
 }
 
@@ -196,13 +190,7 @@
     FiendlingExample *example = [[self  alloc] init];
     example->label = [someLabel copy];
     example->explanation = [someExplanation copy];
-    return [example autorelease];
-}
-
-- (void)dealloc {
-    [label release];
-    [explanation release];
-    [super dealloc];
+    return example;
 }
 
 @end
