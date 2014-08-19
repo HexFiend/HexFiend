@@ -121,8 +121,8 @@ static const HFRange kEntireRange = {0, ULLONG_MAX};
     NSUInteger amt = 0;
     int num = 0;
     const BOOL log = NO;
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     while (remaining.length > 0) {
+        @autoreleasepool {
         unsigned long long applied1, applied2;
         NSSet *atts1 = [self attributesAtIndex:remaining.location length:&applied1];
         NSSet *atts2 = [array attributesAtIndex:remaining.location length:&applied2];
@@ -152,10 +152,8 @@ static const HFRange kEntireRange = {0, ULLONG_MAX};
         remaining.length -= applied1;
         remaining.location += applied1;
         amt++;
-        [pool drain];
-        pool = [[NSAutoreleasePool alloc] init];
+        } // @autoreleasepool
     }
-    [pool drain];
     return result;
 }
 
@@ -719,7 +717,7 @@ static void removeFromDictionaryOfSets(NSMutableDictionary *dictionary, NSString
 }
 
 - (void)byteRange:(HFRange)dyingRange wasReplacedByBytesOfLength:(unsigned long long)replacementLength {
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    @autoreleasepool {
     
     NSMapTable *nodesToReplace;
     // strongToStrongObjectsMapTable requires 10.8+
@@ -812,7 +810,7 @@ static void removeFromDictionaryOfSets(NSMutableDictionary *dictionary, NSString
         }
     }
     
-    [pool drain];
+    } // @autoreleasepool
 }
 
 - (id)mutableCopyWithZone:(NSZone *)zone {

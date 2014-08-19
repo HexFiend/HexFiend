@@ -990,10 +990,10 @@ static inline Class preferredByteArrayClass(void) {
         [self restoreFirstResponderToSavedResponder];
     }
     while (bannerIsShown) {
-        NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+        @autoreleasepool {
         [self animateBanner:nil];
         [window displayIfNeeded];
-        [pool drain];
+        }
     }
 }
 
@@ -1565,7 +1565,7 @@ cancelled:;
 
 - (NSArray *)copyBookmarksMenuItems {
     NSMutableArray *items = [[NSMutableArray alloc] init];
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    @autoreleasepool {
     
     /* Get a list of the bookmarks. */
     NSIndexSet *bookmarks = [controller bookmarksInRange:HFRangeMake(0, [controller contentsLength])];
@@ -1608,7 +1608,7 @@ cancelled:;
         [item release];
     }
     
-    [pool drain];
+    } // @autoreleasepool
     return items;
 }
 

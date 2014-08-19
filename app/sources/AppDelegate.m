@@ -48,7 +48,7 @@ static NSComparisonResult compareFontDisplayNames(NSFont *a, NSFont *b, void *un
 
 - (void)buildFontMenu:unused {
     USE(unused);
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    @autoreleasepool {
     NSFontManager *manager = [NSFontManager sharedFontManager];
     NSCharacterSet *minimumRequiredCharacterSet;
     NSMutableCharacterSet *minimumCharacterSetMutable = [[NSMutableCharacterSet alloc] init];
@@ -73,7 +73,8 @@ static NSComparisonResult compareFontDisplayNames(NSFont *a, NSFont *b, void *un
     }
     [fonts sortUsingFunction:compareFontDisplayNames context:NULL];
     [self performSelectorOnMainThread:@selector(receiveFonts:) withObject:fonts waitUntilDone:NO modes:[NSArray arrayWithObjects:NSDefaultRunLoopMode, NSEventTrackingRunLoopMode, nil]];
-    [pool drain];
+    } // @autoreleasepool
+    
 }
 
 - (void)receiveFonts:(NSArray *)fonts {

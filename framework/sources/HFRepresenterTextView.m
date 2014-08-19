@@ -1891,7 +1891,7 @@ static size_t unionAndCleanLists(NSRect *rectList, id *valueList, size_t count) 
     
     NSPoint autoscrollLocation = mouseDownLocation;
     while (! _hftvflags.receivedMouseUp) {
-        NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+        @autoreleasepool {
         NSEvent *ev = [NSApp nextEventMatchingMask: NSLeftMouseUpMask | NSLeftMouseDraggedMask | NSPeriodicMask untilDate:endDate inMode:NSEventTrackingRunLoopMode dequeue:YES];
         
         if ([ev type] == NSPeriodic) {
@@ -1915,8 +1915,8 @@ static size_t unionAndCleanLists(NSRect *rectList, id *valueList, size_t count) 
             autoscrollLocation = [self convertPoint:[ev locationInWindow] fromView:nil];
         }
         
-        [NSApp sendEvent:ev]; 
-        [pool drain];
+        [NSApp sendEvent:ev];
+        } // @autoreleasepool
     }
     
     [NSEvent stopPeriodicEvents];

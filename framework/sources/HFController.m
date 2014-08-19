@@ -2053,7 +2053,7 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
     unsigned long long expectedLength = 0;
     unsigned i;
     for (i=1; i <= opCount; i++) {
-        NSAutoreleasePool* pool=[[NSAutoreleasePool alloc] init];
+        @autoreleasepool {
         NSUInteger op;
         const unsigned long long length = [first length];
         unsigned long long offset;
@@ -2079,7 +2079,7 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
                 break;
             }
         }
-        [pool drain];
+        } // @autoreleasepool
     }
 }
 

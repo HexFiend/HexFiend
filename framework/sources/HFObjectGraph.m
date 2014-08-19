@@ -243,7 +243,7 @@ static NSSet *arraysToSets(NSArray *array, NSUInteger depth) {
 + (void)runTests {
     NSUInteger outer;
     for (outer = 0; outer < 100; outer++) {
-        NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+        @autoreleasepool {
         HFObjectGraph *graph = [[self alloc] init];
         NSUInteger i, objectCount = 2 + (random() % (100 - 2));
         NSUInteger connectionCount = random() % (objectCount * 2);
@@ -266,7 +266,7 @@ static NSSet *arraysToSets(NSArray *array, NSUInteger depth) {
         }
         
         [graph release];
-        [pool drain];
+        } // @autoreleasepool
     }
 }
 

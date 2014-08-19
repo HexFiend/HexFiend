@@ -192,7 +192,7 @@ static NSUInteger random_upto(unsigned long long val) {
     NSUInteger i, opCount = 5000;
     unsigned long long coalescerActionPoint = ULLONG_MAX;
     for (i=1; i <= opCount; i++) {
-        NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+        @autoreleasepool {
         const NSUInteger length = ll2l([controller contentsLength]);
         
         NSRange replacementRange = {0, 0};
@@ -228,7 +228,7 @@ static NSUInteger random_upto(unsigned long long val) {
         
         if (! expectedCoalesced) [undoer endUndoGrouping];
         
-        [pool drain];
+        } // @autoreleasepool
         
         coalescerActionPoint = HFSum(replacementRange.location, replacementDataLength);
     }
@@ -238,7 +238,7 @@ static NSUInteger random_upto(unsigned long long val) {
     HFTEST([[controller byteArray] _debugIsEqualToData:[expectations objectAtIndex:expectationIndex]]);
     
     for (i=1; i <= opCount; i++) {
-        NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+        @autoreleasepool {
         
         NSInteger expectationIndexChange;
         if (expectationIndex == [expectations count] - 1) {
@@ -265,7 +265,7 @@ static NSUInteger random_upto(unsigned long long val) {
         DEBUG printf("Index %lu %lu\n", (unsigned long)i, (unsigned long)expectationIndex);
         HFTEST([[controller byteArray] _debugIsEqualToData:[expectations objectAtIndex:expectationIndex]]);
         
-        [pool drain];
+        } // @autoreleasepool
     }
     
     DEBUG puts("Done!");
@@ -283,7 +283,7 @@ static NSUInteger random_upto(unsigned long long val) {
     unsigned long long expectedLength = 0;
     unsigned i;
     for (i=1; i <= opCount; i++) {
-        NSAutoreleasePool* pool=[[NSAutoreleasePool alloc] init];
+        @autoreleasepool {
         NSUInteger op;
         const unsigned long long length = [first length];
         unsigned long long offset;
@@ -313,7 +313,7 @@ static NSUInteger random_upto(unsigned long long val) {
                 break;
             }
         }
-        [pool drain];
+        } // @autoreleasepool
         fflush(NULL);
         if ([first _debugIsEqual:second]) {
             DEBUG printf("OK! Length: %llu\t%s\n", [second length], [[second description] UTF8String]);
@@ -350,7 +350,7 @@ static HFByteArray *byteArrayForFile(NSString *path) {
     unsigned long long baseLength = [base length];
     
     for (i=1; i < arrayCount; i++) {
-        NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
+        @autoreleasepool {
         HFByteArray *modified = [base mutableCopy];
         unsigned long long length = baseLength;
         
@@ -388,7 +388,7 @@ static HFByteArray *byteArrayForFile(NSString *path) {
         [byteArrays addObject:modified];
         [modified release];
         
-        [pool drain];        
+        } // @autoreleasepool
     }
     
     for (i=0; i < arrayCount; i++) {
@@ -420,7 +420,7 @@ static HFByteArray *byteArrayForFile(NSString *path) {
 
 + (void)_testRandomOperationFileWriting {
     const BOOL should_debug = NO;
-    NSAutoreleasePool* pool=[[NSAutoreleasePool alloc] init];
+    @autoreleasepool {
     NSData *data = randomDataOfLength(1 << 16);
     NSURL *fileURL = [NSURL fileURLWithPath:@"/tmp/HexFiendTestFile.data"];
     NSURL *asideFileURL = [NSURL fileURLWithPath:@"/tmp/HexFiendTestFile_External.data"];
@@ -484,11 +484,11 @@ static HFByteArray *byteArrayForFile(NSString *path) {
     HFTEST([arrayHash isEqual:HFHashFile(fileURL)]);
     
     [[NSFileManager defaultManager] removeItemAtURL:fileURL error:NULL];
-    [pool drain];
+    } // @autoreleasepool
 }
 
 + (void)_testBadPermissionsFileWriting {
-    NSAutoreleasePool* pool=[[NSAutoreleasePool alloc] init];
+    @autoreleasepool {
     NSString *pathObj = @"/tmp/HexFiendErroneousData_Permissions.data";
     const char *path = [pathObj fileSystemRepresentation];
     NSURL *url = [NSURL fileURLWithPath:pathObj isDirectory:NO];
@@ -519,11 +519,11 @@ static HFByteArray *byteArrayForFile(NSString *path) {
     unlink(path);
     
     [pathObj self]; //make sure this sticks around under GC for its filesystemRepresentation
-    [pool drain];
+    } // @autoreleasepool
 }
 
 + (void)_testBadLengthFileWriting {
-    NSAutoreleasePool* pool=[[NSAutoreleasePool alloc] init];
+    @autoreleasepool {
     NSString *pathObj = @"/tmp/HexFiendErroneousData_Length.data";
     const char *path = [pathObj fileSystemRepresentation];
     NSURL *url = [NSURL fileURLWithPath:pathObj isDirectory:NO];
@@ -544,7 +544,7 @@ static HFByteArray *byteArrayForFile(NSString *path) {
     unlink(path);
     
     [pathObj self]; //make sure this sticks around under GC for its filesystemRepresentation
-    [pool drain];
+    } // @autoreleasepool
 }
 
 
@@ -554,7 +554,7 @@ static HFByteArray *byteArrayForFile(NSString *path) {
     NSUInteger iteration = 10;
     
     while (iteration--) {
-        NSAutoreleasePool* pool=[[NSAutoreleasePool alloc] init];
+        @autoreleasepool {
         
 #define BLOCK_SIZE (16 * 1024)
 #define BLOCK_COUNT 64
@@ -602,14 +602,14 @@ static HFByteArray *byteArrayForFile(NSString *path) {
         
         [[NSFileManager defaultManager] removeItemAtURL:fileURL error:NULL];
         
-        [pool drain];
+        } // @autoreleasepool
     }
 }
 
 + (void)_testByteSearching {
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     NSUInteger round;
     for (round = 0; round < 24; round++) {
+        @autoreleasepool {
         HFByteArray *byteArray = [[[preferredByteArrayClass() alloc] init] autorelease];
         HFByteSlice *rootSlice = [[[HFRepeatingDataByteSlice alloc] initWithRepeatingDataLength: 1 << 20] autorelease];
         [byteArray insertByteSlice:rootSlice inRange:HFRangeMake(0, 0)];
@@ -627,14 +627,12 @@ static HFByteArray *byteArrayForFile(NSString *path) {
         [byteArray insertByteSlice:needleSlice inRange:HFRangeMake([byteArray length] - random_upto(1 << 15), 0)];
         [HFByteArray _testSearchAlgorithmsLookingForArray:needle inArray:byteArray];
         
-        [pool drain];
-        pool = [[NSAutoreleasePool alloc] init];
+        } // @autoreleasepool
     }
-    [pool drain];
 }
 
 + (void)_testIndexSet {
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    @autoreleasepool {
     NSMutableIndexSet *nsindexset = [[NSMutableIndexSet alloc] init];
     HFMutableIndexSet *hfindexset = [[HFMutableIndexSet alloc] init];
     unsigned long round, roundCount = 4096 * 4;
@@ -685,7 +683,7 @@ static HFByteArray *byteArrayForFile(NSString *path) {
         
         HFASSERT([hfindexset isEqualToNSIndexSet:nsindexset]);
     }
-    [pool drain];
+    } // @autoreleasepool
 }
 
 static HFRange randomRange(uint32_t max) {
@@ -763,9 +761,9 @@ static void exception_thrown(const char *methodName, NSException *exception) {
     fflush(0);
     CFAbsoluteTime start = CFAbsoluteTimeGetCurrent();
     @try {
-        NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+        @autoreleasepool {
         [self performSelector:sel_registerName(test)];
-        [pool drain];
+        }
     }
     @catch (NSException *localException) {
         exception_thrown(test, localException);

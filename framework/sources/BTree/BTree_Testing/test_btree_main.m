@@ -53,7 +53,7 @@ static void test_trees(NaiveArray *naiveArray, HFBTree *btree) {
 }
 
 int main (int argc, const char * argv[]) {
-    NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
+    @autoreleasepool {
     
     BOOL runForShark = NO;
     if (argc >= 2) {
@@ -61,7 +61,6 @@ int main (int argc, const char * argv[]) {
     }
     if (runForShark) {
         run_for_shark();
-        [pool drain];
         return 0;
     }
     
@@ -70,9 +69,11 @@ int main (int argc, const char * argv[]) {
     NaiveArray *naiveArray = [[NaiveArray alloc] init];
     HFBTree *btree = [[HFBTree alloc] init];
     
+    @autoreleasepool {
+    
     //insertion
-    NSUInteger i, max = 6000;
-    for (i=0; i < max; i++) {
+    NSUInteger max = 6000;
+    for (NSUInteger i=0; i < max; i++) {
         HFBTreeIndex entryLength = random_value(10000);
         char buff[32];
         sprintf(buff, "%lu", (unsigned long)i);
@@ -97,7 +98,7 @@ int main (int argc, const char * argv[]) {
     }
     
     //deletion
-    for (i=0; i < max; i++) {
+    for (NSUInteger i=0; i < max; i++) {
         HFBTreeIndex offset = [naiveArray randomOffsetExcludingLast];
         [naiveArray removeEntryAtOffset:offset];
         [btree removeEntryAtOffset:offset];
@@ -110,13 +111,13 @@ int main (int argc, const char * argv[]) {
         [copiedTree release];
     }
     
-    [pool drain];
-    pool = [[NSAutoreleasePool alloc] init];
+    }
+    @autoreleasepool {
     
     puts("Testing randomized insertion/deletion");
     //both
     NSUInteger nodeCount = 0;
-    for (i=0; i < 50000; i++) {
+    for (NSUInteger i=0; i < 50000; i++) {
         BOOL insert;
         if (nodeCount == 0) {
             insert = YES;
@@ -146,11 +147,12 @@ int main (int argc, const char * argv[]) {
         test_trees(naiveArray, btree);
     }
     
-    
-    [pool drain];
+    }
     
     CFAbsoluteTime endTime = CFAbsoluteTimeGetCurrent();
     printf("TIME: %f\n", endTime - startTime);
     
     return 0;
+
+    }
 }
