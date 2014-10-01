@@ -194,14 +194,14 @@ NSString *const HFPrivateByteArrayPboardType = @"HFPrivateByteArrayPboardType";
             /* for Mac OS X 10.8 or higher */
             // unlike -loadNibNamed:owner: which is deprecated in 10.8, this method does
             // not retain top level objects automatically, so objects must be set retain
-            if (![[NSBundle mainBundle] loadNibNamed:@"HFModalProgress" owner:self topLevelObjects:&topLevelObjects] || !progressTrackingWindow) {
-                [NSException raise:NSInternalInconsistencyException format:@"Unable to load nib named %@", @"HFModalProgress"];
+            if (![[NSBundle bundleForClass:[self class]] loadNibNamed:@"HFModalProgress" owner:self topLevelObjects:&topLevelObjects] || !progressTrackingWindow) {
+                NSLog(@"Unable to load nib named HFModalProgress!");
             }
             [topLevelObjects retain];
         } else {
             /* for Mac OS X 10.7 or lower */
             if(![NSBundle loadNibNamed:@"HFModalProgress" owner:self] || !progressTrackingWindow) {
-                [NSException raise:NSInternalInconsistencyException format:@"Unable to load nib named %@", @"HFModalProgress"];
+                NSLog(@"Unable to load nib named HFModalProgress!");
             }
         }
         backgroundCopyOperationFinished = NO;
