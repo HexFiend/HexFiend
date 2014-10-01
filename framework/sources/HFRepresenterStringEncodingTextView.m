@@ -70,7 +70,8 @@ static BOOL getGlyphs(CGGlyph *glyphs, NSString *string, NSFont *inputFont) {
     /* A NO return means some or all characters were not mapped.  This is OK.  We'll use the replacement glyph.  Unless we're calculating the replacement glyph!  Hmm...maybe we should have a series of replacement glyphs that we try? */
     
     ////////////////////////
-    // Workaround for a Mavericks bug. Still present as of 10.9.2
+    // Workaround for a Mavericks bug. Still present as of 10.9.5
+    // TODO: Hmm, still? Should look into this again, either it's not a bug or Apple needs a poke.
     if(!result) for(NSUInteger i = 0; i < length; i+=15) {
         CFIndex x = length-i;
         if(x > 15) x = 15;
