@@ -1,6 +1,6 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
-import sys, os, subprocess
+import sys, os, subprocess, distutils.spawn
 
 env = os.getenv
 norm = os.path.normpath
@@ -16,10 +16,15 @@ if not os.path.isfile(config_path):
     print "Doxygen config file does not exist at " + config_path
     sys.exit(1)
 
-doxygen = norm(src_root + "/documentation_tools/doxygen")
-if not os.path.isfile(doxygen):
-    print "The doxygen binary does not exist at " + doxygen
-    sys.exit(1)
+# Silently take advantage of MacPorts or Homebrew.
+doxygen_search = os.pathsep.join((os.environ['PATH'],'/usr/local/bin','/opt/local/bin'))
+doxygen_path = os.getenv("DOXYGEN_PATH") or distutils.spawn.find_executable("doxygen", path=doxygen_search)
+if not doxygen_path or not os.path.isfile(doxygen_path):
+    if os.getenv("DOXYGEN_PATH"):
+        print "Could not find doxygen at DOXYGEN_PATH=", doxygen_path
+    else:
+        print "Could not find doxygen: install doxygen to your PATH, or add a DOXYGEN_PATH"
+        sys.exit(1)
 
 headers = norm(env("BUILT_PRODUCTS_DIR") + "/HexFiend.framework/Headers")
 if not os.path.isdir(headers):
@@ -40,7 +45,7 @@ sys.stdout.flush()
 
 new_wd = norm(src_root + "/documentation_tools/")
 
-proc = subprocess.Popen([doxygen, '-'], shell=False, cwd=new_wd, stdin=subprocess.PIPE)
+proc = subprocess.Popen([doxygen_path, '-'], shell=False, cwd=new_wd, stdin=subprocess.PIPE)
 
 conf_file = open(config_path, 'r')
 for line in conf_file:
@@ -53,4 +58,3 @@ proc.stdin.close()
 proc.wait()
 
 sys.exit(0)
-
