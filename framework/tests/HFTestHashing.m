@@ -5,8 +5,6 @@
 //  Copyright 2008 ridiculous_fish. All rights reserved.
 //
 
-#if HFUNIT_TESTS
-
 #import <HexFiend/HFTestHashing.h>
 #import <HexFiend/HFByteArray.h>
 #include <CommonCrypto/CommonDigest.h>
@@ -52,6 +50,3 @@ NSData *HFHashByteArray(HFByteArray *array) {
     free(buffer);
     return data;
 }
-
-
-#endif

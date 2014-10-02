@@ -2139,13 +2139,4 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
 
 #endif
 
-#if HFUNIT_TESTS
-
-+ (void)initialize {
-    if (self == [HFController class]) {
-        objc_msgSend(objc_getClass("HFUnitTests"), sel_registerName("runAllTests"));
-    }
-}
-#endif
-
 @end

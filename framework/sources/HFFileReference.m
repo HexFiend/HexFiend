@@ -16,8 +16,6 @@
 #import "HFPrivilegedHelperConnection.h"
 #endif
 
-#define USE_STAT64 0
-
 /* The return code is just to quiet the static analyzer */
 static BOOL returnReadError(NSError **error) {
     if (! error) return NO;
@@ -219,17 +217,14 @@ static BOOL returnFTruncateError(NSError **error) {
         returnReadError(error);
         return NO;
     }
-#if USE_STAT64
-    struct stat64 sb;
-    result = fstat64(fileDescriptor, &sb);
-#else
+
     struct stat sb;
     result = fstat(fileDescriptor, &sb);
-#endif
+
     if (result != 0) {
         int err = errno;
         returnReadError(error);
-        NSLog(@"Unable to fstat64 file %@. %s.", path, strerror(err));
+        NSLog(@"Unable to fstat file %@. %s.", path, strerror(err));
         return NO;
     }
 

@@ -472,34 +472,5 @@ cancelled:
     return ULLONG_MAX;
 }
 
-#if HFUNIT_TESTS
-
-#define HFTEST(a) do { if (! (a)) { printf("Test failed on line %u of file %s: %s\n", __LINE__, __FILE__, #a); exit(0); } } while (0)
-
-+ (void)_testSearchAlgorithmsLookingForArray:(HFByteArray *)needle inArray:(HFByteArray *)haystack {
-    HFRange fullRange = HFRangeMake(0, [haystack length]);
-    HFRange partialRange = HFRangeMake(fullRange.location + 10, fullRange.length - 10);
-    unsigned long long result1, result2;
-    
-    result1 = [haystack _byteSearchBoyerMoore:needle inRange:fullRange forwards:YES trackingProgress:nil];
-    result2 = [haystack _byteSearchRollingHash:needle inRange:fullRange forwards:YES trackingProgress:nil];
-    HFTEST(result1 == result2);
-    
-    result1 = [haystack _byteSearchBoyerMoore:needle inRange:fullRange forwards:NO trackingProgress:nil];
-    result2 = [haystack _byteSearchRollingHash:needle inRange:fullRange forwards:NO trackingProgress:nil];
-    HFTEST(result1 == result2);    
-    
-    result1 = [haystack _byteSearchBoyerMoore:needle inRange:partialRange forwards:YES trackingProgress:nil];
-    result2 = [haystack _byteSearchRollingHash:needle inRange:partialRange forwards:YES trackingProgress:nil];
-    HFTEST(result1 == result2);
-    
-    result1 = [haystack _byteSearchBoyerMoore:needle inRange:partialRange forwards:NO trackingProgress:nil];
-    result2 = [haystack _byteSearchRollingHash:needle inRange:partialRange forwards:NO trackingProgress:nil];
-    HFTEST(result1 == result2);    
-    
-}
-
-#endif
-
 @end
 

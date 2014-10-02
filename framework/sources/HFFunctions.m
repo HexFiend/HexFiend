@@ -1,6 +1,8 @@
 #import <HexFiend/HFFunctions.h>
 #import <HexFiend/HFController.h>
 
+#import "HFFunctions_Private.h"
+
 #ifndef NDEBUG
 //#define USE_CHUD 1
 #endif
