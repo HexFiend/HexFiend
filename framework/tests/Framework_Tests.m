@@ -241,35 +241,31 @@ static NSUInteger random_upto(unsigned long long val) {
     
     HFTEST([[controller byteArray] _debugIsEqualToData:[expectations objectAtIndex:expectationIndex]]);
     
-    for (i=1; i <= opCount; i++) {
-        @autoreleasepool {
-            
-            NSInteger expectationIndexChange;
-            if (expectationIndex == [expectations count] - 1) {
-                expectationIndexChange = -1;
-            }
-            else if (expectationIndex == 0) {
-                expectationIndexChange = 1;
-            }
-            else {
-                expectationIndexChange = ((random() & 1) ? -1 : 1);
-            }
-            expectationIndex += expectationIndexChange;
-            if (expectationIndexChange > 0) {
-                dbg_printf("About to redo %lu %lu\n", (unsigned long)i, (unsigned long)expectationIndex);
-                HFTEST([undoer canRedo]);
-                [undoer redo];
-            }
-            else {
-                dbg_printf("About to undo %lu %ld=u\n", (unsigned long)i, (unsigned long)expectationIndex);
-                HFTEST([undoer canUndo]);
-                [undoer undo];
-            }
-            
-            dbg_printf("Index %lu %lu\n", (unsigned long)i, (unsigned long)expectationIndex);
-            HFTEST([[controller byteArray] _debugIsEqualToData:[expectations objectAtIndex:expectationIndex]]);
-            
-        } // @autoreleasepool
+    for (i=1; i <= opCount; i++) @autoreleasepool {
+        NSInteger expectationIndexChange;
+        if (expectationIndex == [expectations count] - 1) {
+            expectationIndexChange = -1;
+        }
+        else if (expectationIndex == 0) {
+            expectationIndexChange = 1;
+        }
+        else {
+            expectationIndexChange = ((random() & 1) ? -1 : 1);
+        }
+        expectationIndex += expectationIndexChange;
+        if (expectationIndexChange > 0) {
+            dbg_printf("About to redo %lu %lu\n", (unsigned long)i, (unsigned long)expectationIndex);
+            HFTEST([undoer canRedo]);
+            [undoer redo];
+        }
+        else {
+            dbg_printf("About to undo %lu %ld=u\n", (unsigned long)i, (unsigned long)expectationIndex);
+            HFTEST([undoer canUndo]);
+            [undoer undo];
+        }
+        
+        dbg_printf("Index %lu %lu\n", (unsigned long)i, (unsigned long)expectationIndex);
+        HFTEST([[controller byteArray] _debugIsEqualToData:[expectations objectAtIndex:expectationIndex]]);
     }
     
     dbg_printf("Done!\n");
@@ -283,37 +279,35 @@ static NSUInteger random_upto(unsigned long long val) {
     unsigned opCount = 50000;
     unsigned long long expectedLength = 0;
     unsigned i;
-    for (i=1; i <= opCount; i++) {
-        @autoreleasepool {
-            NSUInteger op;
-            const unsigned long long length = [first length];
-            unsigned long long offset;
-            unsigned long long number;
-            switch ((op = (random()%2))) {
-                case 0: { //insert
-                    NSData *data = randomDataOfLength(1 + random()%1000);
-                    offset = random() % (1 + length);
-                    HFByteSlice* slice = [[HFFullMemoryByteSlice alloc] initWithData:data];
-                    dbg_printf("%u)\tInserting %llu bytes at %llu...", i, [slice length], offset);
-                    [first insertByteSlice:slice inRange:HFRangeMake(offset, 0)];
-                    [second insertByteSlice:slice inRange:HFRangeMake(offset, 0)];
-                    expectedLength += [data length];
-                    break;
-                }
-                case 1: { //delete
-                    if (length > 0) {
-                        offset = random() % length;
-                        number = 1 + random() % (length - offset);
-                        dbg_printf("%u)\tDeleting at %llu for %llu...", i, offset, number);
-                        [first deleteBytesInRange:HFRangeMake(offset, number)];
-                        [second deleteBytesInRange:HFRangeMake(offset, number)];
-                        expectedLength -= number;
-                    }
-                    else dbg_printf("%u)\tLength of zero, no delete...", i);
-                    break;
-                }
+    for (i=1; i <= opCount; i++) @autoreleasepool {
+        NSUInteger op;
+        const unsigned long long length = [first length];
+        unsigned long long offset;
+        unsigned long long number;
+        switch ((op = (random()%2))) {
+            case 0: { //insert
+                NSData *data = randomDataOfLength(1 + random()%1000);
+                offset = random() % (1 + length);
+                HFByteSlice* slice = [[HFFullMemoryByteSlice alloc] initWithData:data];
+                dbg_printf("%u)\tInserting %llu bytes at %llu...", i, [slice length], offset);
+                [first insertByteSlice:slice inRange:HFRangeMake(offset, 0)];
+                [second insertByteSlice:slice inRange:HFRangeMake(offset, 0)];
+                expectedLength += [data length];
+                break;
             }
-        } // @autoreleasepool
+            case 1: { //delete
+                if (length > 0) {
+                    offset = random() % length;
+                    number = 1 + random() % (length - offset);
+                    dbg_printf("%u)\tDeleting at %llu for %llu...", i, offset, number);
+                    [first deleteBytesInRange:HFRangeMake(offset, number)];
+                    [second deleteBytesInRange:HFRangeMake(offset, number)];
+                    expectedLength -= number;
+                }
+                else dbg_printf("%u)\tLength of zero, no delete...", i);
+                break;
+            }
+        }
         fflush(NULL);
         if ([first _debugIsEqual:second]) {
             dbg_printf("OK! Length: %llu\t%s\n", [second length], [[second description] UTF8String]);
@@ -345,43 +339,41 @@ static HFByteArray *byteArrayForFile(NSString *path) {
     [base insertByteSlice:slice inRange:HFRangeMake(0, 0)];
     unsigned long long baseLength = [base length];
     
-    for (i=1; i < arrayCount; i++) {
-        @autoreleasepool {
-            HFByteArray *modified = [base mutableCopy];
-            unsigned long long length = baseLength;
-            
-            NSUInteger j, opCount = 256;
-            for (j=0; j < opCount; j++) {
-                unsigned long long offset;
-                unsigned long long number;
-                NSUInteger op;
-                switch ((op = (random()%2))) {
-                    case 0: { //insert
-                        number = 1 + random() % 64;
-                        offset = random() % (1 + length);
-                        HFByteSlice* mslice = [[HFRandomDataByteSlice alloc] initWithRandomDataLength:number];
-                        dbg_printf("%lu)\tInserting %llu bytes at %llu...", i, [mslice length], offset);
-                        [modified insertByteSlice:mslice inRange:HFRangeMake(offset, 0)];
-                        length += number;
-                        
-                        break;
+    for (i=1; i < arrayCount; i++) @autoreleasepool {
+        HFByteArray *modified = [base mutableCopy];
+        unsigned long long length = baseLength;
+        
+        NSUInteger j, opCount = 256;
+        for (j=0; j < opCount; j++) {
+            unsigned long long offset;
+            unsigned long long number;
+            NSUInteger op;
+            switch ((op = (random()%2))) {
+                case 0: { //insert
+                    number = 1 + random() % 64;
+                    offset = random() % (1 + length);
+                    HFByteSlice* mslice = [[HFRandomDataByteSlice alloc] initWithRandomDataLength:number];
+                    dbg_printf("%lu)\tInserting %llu bytes at %llu...", i, [mslice length], offset);
+                    [modified insertByteSlice:mslice inRange:HFRangeMake(offset, 0)];
+                    length += number;
+                    
+                    break;
+                }
+                case 1: { //delete
+                    if (length > 0) {
+                        offset = random() % length;
+                        number = 1 + (unsigned long long)sqrt(random() % (length - offset));
+                        dbg_printf("%lu)\tDeleting at %llu for %llu...", i, offset, number);
+                        [modified deleteBytesInRange:HFRangeMake(offset, number)];
+                        length -= number;
                     }
-                    case 1: { //delete
-                        if (length > 0) {
-                            offset = random() % length;
-                            number = 1 + (unsigned long long)sqrt(random() % (length - offset));
-                            dbg_printf("%lu)\tDeleting at %llu for %llu...", i, offset, number);
-                            [modified deleteBytesInRange:HFRangeMake(offset, number)];
-                            length -= number;
-                        }
-                        else dbg_printf("%lu)\tLength of zero, no delete...", i);
-                        break;
-                    }
+                    else dbg_printf("%lu)\tLength of zero, no delete...", i);
+                    break;
                 }
             }
-            
-            [byteArrays addObject:modified];
-        } // @autoreleasepool
+        }
+        
+        [byteArrays addObject:modified];
     }
     
     for (i=0; i < arrayCount; i++) {
@@ -410,8 +402,144 @@ static HFByteArray *byteArrayForFile(NSString *path) {
 
 
 - (void)testRandomOperationFileWriting {
-    @autoreleasepool {
-        NSData *data = randomDataOfLength(1 << 16);
+    NSData *data = randomDataOfLength(1 << 16);
+    NSURL *fileURL = [NSURL fileURLWithPath:@"/tmp/HexFiendTestFile.data"];
+    NSURL *asideFileURL = [NSURL fileURLWithPath:@"/tmp/HexFiendTestFile_External.data"];
+    if (! [data writeToURL:fileURL atomically:NO]) {
+        [NSException raise:NSGenericException format:@"Unable to write test data to %@", fileURL];
+    }
+    HFFileReference *ref = [[HFFileReference alloc] initWithPath:[fileURL path] error:NULL];
+    HFTEST([ref length] == [data length]);
+    
+    HFByteArray *array = [[preferredByteArrayClass() alloc] init];
+    [array insertByteSlice:[[HFFileByteSlice alloc] initWithFile:ref] inRange:HFRangeMake(0, 0)];
+    HFTEST([HFHashByteArray(array) isEqual:HFHashFile(fileURL)]);
+    
+    NSUInteger i, op, opCount = 20;
+    unsigned long long expectedLength = [data length];
+    for (i=0; i < opCount; i++) {
+        HFTEST([array length] == expectedLength);
+        HFRange replacementRange;
+        replacementRange.location = random_upto(expectedLength);
+        replacementRange.length = random_upto(expectedLength - replacementRange.location);
+        switch (op = (random() % 8)) {
+            case 0: {
+                /* insert */
+                HFByteSlice *slice = [[HFSharedMemoryByteSlice alloc] initWithUnsharedData:randomDataOfLength(random_upto(1000))];
+                [array insertByteSlice:slice inRange:replacementRange];
+                expectedLength = expectedLength + [slice length] - replacementRange.length;
+                dbg_printf("%lu inserting %llu in {%llu, %llu}\n", (unsigned long)i, [slice length], replacementRange.location, replacementRange.length);
+                break;
+            }
+            case 1: {
+                /* delete */
+                [array deleteBytesInRange:replacementRange];
+                expectedLength -= replacementRange.length;
+                dbg_printf("%lu deleting in {%llu, %llu}\n", (unsigned long)i, replacementRange.location, replacementRange.length);
+                break;
+            }
+            default: {
+                /* transfer/delete */
+                HFRange sourceRange;
+                sourceRange.location = random_upto(expectedLength);
+                sourceRange.length = random_upto(expectedLength - sourceRange.location);
+                HFByteArray *subarray = [array subarrayWithRange:sourceRange];
+                [array insertByteArray:subarray inRange:replacementRange];
+                expectedLength = expectedLength + sourceRange.length - replacementRange.length;
+                dbg_printf("%lu moving {%llu, %llu} to {%llu, %llu}\n", (unsigned long)i, sourceRange.location, sourceRange.length, replacementRange.location, replacementRange.length);
+                break;
+            }
+        }
+    }
+    
+    //[array insertByteSlice:[[[HFSharedMemoryByteSlice alloc] initWithUnsharedData:[NSData dataWithBytes:"Z" length:1]] autorelease] inRange:HFRangeMake(0, 0)];
+    
+    NSData *arrayHash = HFHashByteArray(array);
+    
+    HFTEST([array writeToFile:asideFileURL trackingProgress:NULL error:NULL]);
+    HFTEST([arrayHash isEqual:HFHashFile(asideFileURL)]);
+    
+    HFTEST([array writeToFile:fileURL trackingProgress:NULL error:NULL]);
+    HFTEST([arrayHash isEqual:HFHashFile(fileURL)]);
+    
+    [[NSFileManager defaultManager] removeItemAtURL:fileURL error:NULL];
+}
+
+- (void)testBadPermissionsFileWriting {
+    NSString *pathObj = [NSString stringWithFormat:@"/tmp/HexFiendErroneousData_Permissions%u.data", arc4random()];
+    const char *path = [pathObj fileSystemRepresentation];
+    NSURL *url = [NSURL fileURLWithPath:pathObj isDirectory:NO];
+    NSData *data = randomDataOfLength(4 * 1024);
+    [data writeToURL:url atomically:NO];
+    chmod(path, 0400); //set permissions to read only, and only for owner
+    
+    // Try doubling the file.  Writing this should fail because it is read only.
+    HFFileReference *ref = [[HFFileReference alloc] initWithPath:pathObj error:NULL];
+    HFByteSlice *slice = [[HFFileByteSlice alloc] initWithFile:ref];
+    HFByteArray *array = [[HFBTreeByteArray alloc] init];
+    [array insertByteSlice:slice inRange:HFRangeMake(0, 0)];
+    [array insertByteSlice:slice inRange:HFRangeMake(0, 0)];
+    
+    NSError *error = nil;
+    BOOL writeResult = [array writeToFile:url trackingProgress:NULL error:&error];
+    HFTEST(writeResult == NO);
+    HFTEST(error != nil);
+    HFTEST([[error domain] isEqual:NSCocoaErrorDomain]);
+    HFTEST([error code] == NSFileReadNoPermissionError);
+    
+    chmod(path, 0644);
+    error = nil;
+    writeResult = [array writeToFile:url trackingProgress:NULL error:&error];
+    HFTEST(writeResult == YES);
+    HFTEST(error == nil);
+    
+    unlink(path);
+    
+    [pathObj self]; //make sure this sticks around under GC for its filesystemRepresentation
+}
+
+- (void)testBadLengthFileWriting {
+    NSString *pathObj = @"/tmp/HexFiendErroneousData_Length.data";
+    const char *path = [pathObj fileSystemRepresentation];
+    NSURL *url = [NSURL fileURLWithPath:pathObj isDirectory:NO];
+    NSData *data = randomDataOfLength(4 * 1024);
+    [data writeToURL:url atomically:NO];
+    
+    HFByteSlice *slice = [[HFRandomDataByteSlice alloc] initWithRandomDataLength:(1ULL << 42 /* 4 terabytes*/)];
+    HFByteArray *array = [[HFBTreeByteArray alloc] init];
+    [array insertByteSlice:slice inRange:HFRangeMake(0, 0)];
+    
+    NSError *error = nil;
+    BOOL writeResult = [array writeToFile:url trackingProgress:NULL error:&error];
+    HFTEST(writeResult == NO);
+    HFTEST(error != nil);
+    HFTEST([[error domain] isEqual:NSCocoaErrorDomain]);
+    HFTEST([error code] == NSFileWriteOutOfSpaceError);
+    
+    unlink(path);
+}
+
+
+- (void)testPermutationFileWriting {
+    NSUInteger iteration = 10;
+    
+    while (iteration--) @autoreleasepool {
+#define BLOCK_SIZE (16 * 1024)
+#define BLOCK_COUNT 64
+
+        /* Construct an enumeration */
+        NSUInteger permutation[BLOCK_COUNT];
+        NSUInteger p;
+        for (p=0; p < BLOCK_COUNT; p++) permutation[p] = p;
+        while (p > 1) {
+            p--;
+            NSUInteger k = random() % (p + 1);
+            NSUInteger tmp = permutation[k];
+            permutation[k] = permutation[p];
+            permutation[p] = tmp;
+        }
+        
+        NSData *data = randomDataOfLength(BLOCK_COUNT * BLOCK_SIZE);
         NSURL *fileURL = [NSURL fileURLWithPath:@"/tmp/HexFiendTestFile.data"];
         NSURL *asideFileURL = [NSURL fileURLWithPath:@"/tmp/HexFiendTestFile_External.data"];
         if (! [data writeToURL:fileURL atomically:NO]) {
@@ -420,49 +548,15 @@ static HFByteArray *byteArrayForFile(NSString *path) {
         HFFileReference *ref = [[HFFileReference alloc] initWithPath:[fileURL path] error:NULL];
         HFTEST([ref length] == [data length]);
         
+        HFByteSlice *slice = [[HFFileByteSlice alloc] initWithFile:ref];
+        
         HFByteArray *array = [[preferredByteArrayClass() alloc] init];
-        [array insertByteSlice:[[HFFileByteSlice alloc] initWithFile:ref] inRange:HFRangeMake(0, 0)];
-        HFTEST([HFHashByteArray(array) isEqual:HFHashFile(fileURL)]);
         
-        NSUInteger i, op, opCount = 20;
-        unsigned long long expectedLength = [data length];
-        for (i=0; i < opCount; i++) {
-            HFTEST([array length] == expectedLength);
-            HFRange replacementRange;
-            replacementRange.location = random_upto(expectedLength);
-            replacementRange.length = random_upto(expectedLength - replacementRange.location);
-            switch (op = (random() % 8)) {
-                case 0: {
-                    /* insert */
-                    HFByteSlice *slice = [[HFSharedMemoryByteSlice alloc] initWithUnsharedData:randomDataOfLength(random_upto(1000))];
-                    [array insertByteSlice:slice inRange:replacementRange];
-                    expectedLength = expectedLength + [slice length] - replacementRange.length;
-                    dbg_printf("%lu inserting %llu in {%llu, %llu}\n", (unsigned long)i, [slice length], replacementRange.location, replacementRange.length);
-                    break;
-                }
-                case 1: {
-                    /* delete */
-                    [array deleteBytesInRange:replacementRange];
-                    expectedLength -= replacementRange.length;
-                    dbg_printf("%lu deleting in {%llu, %llu}\n", (unsigned long)i, replacementRange.location, replacementRange.length);
-                    break;
-                }
-                default: {
-                    /* transfer/delete */
-                    HFRange sourceRange;
-                    sourceRange.location = random_upto(expectedLength);
-                    sourceRange.length = random_upto(expectedLength - sourceRange.location);
-                    HFByteArray *subarray = [array subarrayWithRange:sourceRange];
-                    [array insertByteArray:subarray inRange:replacementRange];
-                    expectedLength = expectedLength + sourceRange.length - replacementRange.length;
-                    dbg_printf("%lu moving {%llu, %llu} to {%llu, %llu}\n", (unsigned long)i, sourceRange.location, sourceRange.length, replacementRange.location, replacementRange.length);
-                    break;
-                }
-            }
+        for (p=0; p < BLOCK_COUNT; p++) {
+            NSUInteger index = permutation[p];
+            HFByteSlice *subslice = [slice subsliceWithRange:HFRangeMake(index * BLOCK_SIZE, BLOCK_SIZE)];
+            [array insertByteSlice:subslice inRange:HFRangeMake([array length], 0)];
         }
-        
-        //[array insertByteSlice:[[[HFSharedMemoryByteSlice alloc] initWithUnsharedData:[NSData dataWithBytes:"Z" length:1]] autorelease] inRange:HFRangeMake(0, 0)];
-        
         NSData *arrayHash = HFHashByteArray(array);
         
         HFTEST([array writeToFile:asideFileURL trackingProgress:NULL error:NULL]);
@@ -472,120 +566,6 @@ static HFByteArray *byteArrayForFile(NSString *path) {
         HFTEST([arrayHash isEqual:HFHashFile(fileURL)]);
         
         [[NSFileManager defaultManager] removeItemAtURL:fileURL error:NULL];
-    } // @autoreleasepool
-}
-
-- (void)testBadPermissionsFileWriting {
-    @autoreleasepool {
-        NSString *pathObj = [NSString stringWithFormat:@"/tmp/HexFiendErroneousData_Permissions%u.data", arc4random()];
-        const char *path = [pathObj fileSystemRepresentation];
-        NSURL *url = [NSURL fileURLWithPath:pathObj isDirectory:NO];
-        NSData *data = randomDataOfLength(4 * 1024);
-        [data writeToURL:url atomically:NO];
-        chmod(path, 0400); //set permissions to read only, and only for owner
-        
-        // Try doubling the file.  Writing this should fail because it is read only.
-        HFFileReference *ref = [[HFFileReference alloc] initWithPath:pathObj error:NULL];
-        HFByteSlice *slice = [[HFFileByteSlice alloc] initWithFile:ref];
-        HFByteArray *array = [[HFBTreeByteArray alloc] init];
-        [array insertByteSlice:slice inRange:HFRangeMake(0, 0)];
-        [array insertByteSlice:slice inRange:HFRangeMake(0, 0)];
-        
-        NSError *error = nil;
-        BOOL writeResult = [array writeToFile:url trackingProgress:NULL error:&error];
-        HFTEST(writeResult == NO);
-        HFTEST(error != nil);
-        HFTEST([[error domain] isEqual:NSCocoaErrorDomain]);
-        HFTEST([error code] == NSFileReadNoPermissionError);
-        
-        chmod(path, 0644);
-        error = nil;
-        writeResult = [array writeToFile:url trackingProgress:NULL error:&error];
-        HFTEST(writeResult == YES);
-        HFTEST(error == nil);
-        
-        unlink(path);
-        
-        [pathObj self]; //make sure this sticks around under GC for its filesystemRepresentation
-    } // @autoreleasepool
-}
-
-- (void)testBadLengthFileWriting {
-    @autoreleasepool {
-        NSString *pathObj = @"/tmp/HexFiendErroneousData_Length.data";
-        const char *path = [pathObj fileSystemRepresentation];
-        NSURL *url = [NSURL fileURLWithPath:pathObj isDirectory:NO];
-        NSData *data = randomDataOfLength(4 * 1024);
-        [data writeToURL:url atomically:NO];
-        
-        HFByteSlice *slice = [[HFRandomDataByteSlice alloc] initWithRandomDataLength:(1ULL << 42 /* 4 terabytes*/)];
-        HFByteArray *array = [[HFBTreeByteArray alloc] init];
-        [array insertByteSlice:slice inRange:HFRangeMake(0, 0)];
-        
-        NSError *error = nil;
-        BOOL writeResult = [array writeToFile:url trackingProgress:NULL error:&error];
-        HFTEST(writeResult == NO);
-        HFTEST(error != nil);
-        HFTEST([[error domain] isEqual:NSCocoaErrorDomain]);
-        HFTEST([error code] == NSFileWriteOutOfSpaceError);
-        
-        unlink(path);
-        
-        [pathObj self]; //make sure this sticks around under GC for its filesystemRepresentation
-    } // @autoreleasepool
-}
-
-
-- (void)testPermutationFileWriting {
-    NSUInteger iteration = 10;
-    
-    while (iteration--) {
-        @autoreleasepool {
-            
-#define BLOCK_SIZE (16 * 1024)
-#define BLOCK_COUNT 64
-            
-            /* Construct an enumeration */
-            NSUInteger permutation[BLOCK_COUNT];
-            NSUInteger p;
-            for (p=0; p < BLOCK_COUNT; p++) permutation[p] = p;
-            while (p > 1) {
-                p--;
-                NSUInteger k = random() % (p + 1);
-                NSUInteger tmp = permutation[k];
-                permutation[k] = permutation[p];
-                permutation[p] = tmp;
-            }
-            
-            NSData *data = randomDataOfLength(BLOCK_COUNT * BLOCK_SIZE);
-            NSURL *fileURL = [NSURL fileURLWithPath:@"/tmp/HexFiendTestFile.data"];
-            NSURL *asideFileURL = [NSURL fileURLWithPath:@"/tmp/HexFiendTestFile_External.data"];
-            if (! [data writeToURL:fileURL atomically:NO]) {
-                [NSException raise:NSGenericException format:@"Unable to write test data to %@", fileURL];
-            }
-            HFFileReference *ref = [[HFFileReference alloc] initWithPath:[fileURL path] error:NULL];
-            HFTEST([ref length] == [data length]);
-            
-            HFByteSlice *slice = [[HFFileByteSlice alloc] initWithFile:ref];
-            
-            HFByteArray *array = [[preferredByteArrayClass() alloc] init];
-            
-            for (p=0; p < BLOCK_COUNT; p++) {
-                NSUInteger index = permutation[p];
-                HFByteSlice *subslice = [slice subsliceWithRange:HFRangeMake(index * BLOCK_SIZE, BLOCK_SIZE)];
-                [array insertByteSlice:subslice inRange:HFRangeMake([array length], 0)];
-            }
-            NSData *arrayHash = HFHashByteArray(array);
-            
-            HFTEST([array writeToFile:asideFileURL trackingProgress:NULL error:NULL]);
-            HFTEST([arrayHash isEqual:HFHashFile(asideFileURL)]);
-            
-            HFTEST([array writeToFile:fileURL trackingProgress:NULL error:NULL]);
-            HFTEST([arrayHash isEqual:HFHashFile(fileURL)]);
-            
-            [[NSFileManager defaultManager] removeItemAtURL:fileURL error:NULL];
-            
-        } // @autoreleasepool
     }
 }
 
@@ -613,82 +593,77 @@ static void HFByteArray_testSearchAlgorithms(XCTestCase *self, HFByteArray *need
 
 - (void)testByteSearching {
     NSUInteger round;
-    for (round = 0; round < 24; round++) {
-        @autoreleasepool {
-            HFByteArray *byteArray = [[preferredByteArrayClass() alloc] init];
-            HFByteSlice *rootSlice = [[HFRepeatingDataByteSlice alloc] initWithRepeatingDataLength: 1 << 20];
-            [byteArray insertByteSlice:rootSlice inRange:HFRangeMake(0, 0)];
-            
-            NSData *needleData = randomDataOfLength(32 + random_upto(63));
-            HFByteSlice *needleSlice = [[HFSharedMemoryByteSlice alloc] initWithUnsharedData:needleData];
-            HFByteArray *needle = [[preferredByteArrayClass() alloc] init];
-            [needle insertByteSlice:needleSlice inRange:HFRangeMake(0, 0)];
-            
-            HFByteArray_testSearchAlgorithms(self, needle, byteArray);
-            
-            [byteArray insertByteSlice:needleSlice inRange:HFRangeMake(random_upto(1 << 15), 0)];
-            HFByteArray_testSearchAlgorithms(self, needle, byteArray);
-            
-            [byteArray insertByteSlice:needleSlice inRange:HFRangeMake([byteArray length] - random_upto(1 << 15), 0)];
-            HFByteArray_testSearchAlgorithms(self, needle, byteArray);
-            
-        } // @autoreleasepool
+    for (round = 0; round < 24; round++) @autoreleasepool {
+        HFByteArray *byteArray = [[preferredByteArrayClass() alloc] init];
+        HFByteSlice *rootSlice = [[HFRepeatingDataByteSlice alloc] initWithRepeatingDataLength: 1 << 20];
+        [byteArray insertByteSlice:rootSlice inRange:HFRangeMake(0, 0)];
+        
+        NSData *needleData = randomDataOfLength(32 + random_upto(63));
+        HFByteSlice *needleSlice = [[HFSharedMemoryByteSlice alloc] initWithUnsharedData:needleData];
+        HFByteArray *needle = [[preferredByteArrayClass() alloc] init];
+        [needle insertByteSlice:needleSlice inRange:HFRangeMake(0, 0)];
+        
+        HFByteArray_testSearchAlgorithms(self, needle, byteArray);
+        
+        [byteArray insertByteSlice:needleSlice inRange:HFRangeMake(random_upto(1 << 15), 0)];
+        HFByteArray_testSearchAlgorithms(self, needle, byteArray);
+        
+        [byteArray insertByteSlice:needleSlice inRange:HFRangeMake([byteArray length] - random_upto(1 << 15), 0)];
+        HFByteArray_testSearchAlgorithms(self, needle, byteArray);
     }
 }
 
 - (void)testIndexSet {
-    @autoreleasepool {
-        NSMutableIndexSet *nsindexset = [[NSMutableIndexSet alloc] init];
-        HFMutableIndexSet *hfindexset = [[HFMutableIndexSet alloc] init];
-        unsigned long round, roundCount = 4096 * 4;
-        const NSUInteger supportedIndexEnd = NSNotFound;
-        for (round = 0; round < 4096 * 4; round++) {
-            if (round % (roundCount / 8) == 0) printf("Index set test %lu / %lu\n", round, roundCount);
-            BOOL insert = ([nsindexset count] == 0 || (random() % 2));
-            NSUInteger end = 1 + (random() % supportedIndexEnd);
-            NSUInteger start = 1 + (random() % supportedIndexEnd);
-            if (end < start) {
-                NSUInteger temp = end;
-                end = start;
-                start = temp;
-            }
-            if (insert) {
-                [nsindexset addIndexesInRange:NSMakeRange(start, end - start)];
-                [hfindexset addIndexesInRange:HFRangeMake(start, end - start)];
-            }
-            else {
-                [nsindexset removeIndexesInRange:NSMakeRange(start, end - start)];
-                [hfindexset removeIndexesInRange:HFRangeMake(start, end - start)];
-            }
-            
-            [hfindexset verifyIntegrity];
-            HFASSERT([hfindexset isEqualToNSIndexSet:nsindexset]);
-            
-            if ([nsindexset count] > 0) {
-                NSInteger amountToShift;
-                NSUInteger indexToShift;
-                if (random() % 2 && [nsindexset firstIndex] > 0) {
-                    /* Shift left */
-                    amountToShift = (1 + random() % [nsindexset firstIndex]);
-                    indexToShift = amountToShift + (random() % (supportedIndexEnd - amountToShift));
-                    
-                    [nsindexset shiftIndexesStartingAtIndex:indexToShift by:-amountToShift];
-                    [hfindexset shiftValuesLeftByAmount:amountToShift startingAtValue:indexToShift];
-                }
-                else if ([nsindexset lastIndex] + 1 < supportedIndexEnd) {
-                    /* Shift right */
-                    NSUInteger maxAmountToShift = (supportedIndexEnd - 1 - [nsindexset lastIndex]);
-                    amountToShift = (1 + random() % maxAmountToShift);
-                    indexToShift = random() % (1 + [nsindexset lastIndex]);
-                    
-                    [nsindexset shiftIndexesStartingAtIndex:indexToShift by:amountToShift];
-                    [hfindexset shiftValuesRightByAmount:amountToShift startingAtValue:indexToShift];
-                }
-            }
-            
-            HFASSERT([hfindexset isEqualToNSIndexSet:nsindexset]);
+    NSMutableIndexSet *nsindexset = [[NSMutableIndexSet alloc] init];
+    HFMutableIndexSet *hfindexset = [[HFMutableIndexSet alloc] init];
+    unsigned long round, roundCount = 4096 * 4;
+    const NSUInteger supportedIndexEnd = NSNotFound;
+    for (round = 0; round < 4096 * 4; round++) {
+        if (round % (roundCount / 8) == 0) printf("Index set test %lu / %lu\n", round, roundCount);
+        BOOL insert = ([nsindexset count] == 0 || (random() % 2));
+        NSUInteger end = 1 + (random() % supportedIndexEnd);
+        NSUInteger start = 1 + (random() % supportedIndexEnd);
+        if (end < start) {
+            NSUInteger temp = end;
+            end = start;
+            start = temp;
         }
-    } // @autoreleasepool
+        if (insert) {
+            [nsindexset addIndexesInRange:NSMakeRange(start, end - start)];
+            [hfindexset addIndexesInRange:HFRangeMake(start, end - start)];
+        }
+        else {
+            [nsindexset removeIndexesInRange:NSMakeRange(start, end - start)];
+            [hfindexset removeIndexesInRange:HFRangeMake(start, end - start)];
+        }
+        
+        [hfindexset verifyIntegrity];
+        HFASSERT([hfindexset isEqualToNSIndexSet:nsindexset]);
+        
+        if ([nsindexset count] > 0) {
+            NSInteger amountToShift;
+            NSUInteger indexToShift;
+            if (random() % 2 && [nsindexset firstIndex] > 0) {
+                /* Shift left */
+                amountToShift = (1 + random() % [nsindexset firstIndex]);
+                indexToShift = amountToShift + (random() % (supportedIndexEnd - amountToShift));
+                
+                [nsindexset shiftIndexesStartingAtIndex:indexToShift by:-amountToShift];
+                [hfindexset shiftValuesLeftByAmount:amountToShift startingAtValue:indexToShift];
+            }
+            else if ([nsindexset lastIndex] + 1 < supportedIndexEnd) {
+                /* Shift right */
+                NSUInteger maxAmountToShift = (supportedIndexEnd - 1 - [nsindexset lastIndex]);
+                amountToShift = (1 + random() % maxAmountToShift);
+                indexToShift = random() % (1 + [nsindexset lastIndex]);
+                
+                [nsindexset shiftIndexesStartingAtIndex:indexToShift by:amountToShift];
+                [hfindexset shiftValuesRightByAmount:amountToShift startingAtValue:indexToShift];
+            }
+        }
+        
+        HFASSERT([hfindexset isEqualToNSIndexSet:nsindexset]);
+    }
 }
 
 static HFRange randomRange(uint32_t max) {

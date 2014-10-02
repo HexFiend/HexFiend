@@ -41,7 +41,7 @@ struct HFEditInstruction_t {
     
     int32_t concurrentProcesses;
     dispatch_queue_t insnQueue;
-    __strong struct HFEditInstruction_t *insns;
+    struct HFEditInstruction_t *insns;
     size_t insnCount, insnCapacity;
 }
 

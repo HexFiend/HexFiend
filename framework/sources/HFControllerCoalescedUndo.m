@@ -23,10 +23,6 @@
     byteArrayWasCopied = NO;
     anchorPoint = anchor;
     actionPoint = anchor;
-    
-    //under GC, hashOrRC is the hash value, and we're an identity hash.  Under retain/release, it's the retain count (minus one).
-    if (objc_collectingEnabled()) self->hashOrRC = (uint32_t)((intptr_t)self >> 2);
-    
     return self;
 }
 
@@ -37,10 +33,6 @@
     byteArrayWasCopied = NO;
     anchorPoint = anchor;
     actionPoint = HFSum(anchor, [overwrittenData length]);
-    
-    //under GC, hashOrRC is the hash value, and we're an identity hash.  Under retain/release, it's the retain count (minus one).
-    if (objc_collectingEnabled()) self->hashOrRC = (uint32_t)((intptr_t)self >> 2);
-    
     return self;
 }
 
@@ -170,25 +162,6 @@
     else return [deletedData clearDependenciesOnRanges:ranges inFile:reference hint:hint];
 }
 
-- (NSUInteger)hash {
-    return objc_collectingEnabled() ? (NSUInteger)hashOrRC : (NSUInteger)((intptr_t)self >> 2);
-}
-
-- (id)retain {
-    OSAtomicIncrement32((int32_t *)&hashOrRC);
-    return self;
-}
-
-- (oneway void)release {
-    if (OSAtomicDecrement32((int32_t *)&hashOrRC) == -1) {
-        [self dealloc];
-    }
-}
-
-- (NSUInteger)retainCount {
-    return 1 + hashOrRC;
-}
-
 - (void)invalidate {
     [deletedData release];
     deletedData = nil;
@@ -212,8 +185,6 @@
     self->byteArrays = [arrays retain];
     self->replacementRanges = [ranges retain];
     self->selectionAction = action;
-    //under GC, hashOrRC is the hash value, and we're an identity hash.  Under retain/release, it's the retain count (minus one).
-    if (objc_collectingEnabled()) self->hashOrRC = (uint32_t)((intptr_t)self >> 2);
     return self;
 
 }
@@ -239,25 +210,6 @@
         }
     }
     return result;
-}
-
-- (NSUInteger)hash {
-    return objc_collectingEnabled() ? (NSUInteger)hashOrRC : (NSUInteger)((intptr_t)self >> 2);
-}
-
-- (id)retain {
-    OSAtomicIncrement32((int32_t *)&hashOrRC);
-    return self;
-}
-
-- (oneway void)release {
-    if (OSAtomicDecrement32((int32_t *)&hashOrRC) == -1) {
-        [self dealloc];
-    }
-}
-
-- (NSUInteger)retainCount {
-    return 1 + hashOrRC;
 }
 
 - (void)invalidate {

@@ -137,6 +137,7 @@ static BOOL nsindexset_containsIndexesInRange(NSIndexSet *indexSet, NSRange rang
 
 - (void)dealloc {
     free(multipleRanges);
+    multipleRanges = NULL;
     [super dealloc];
 }
 
@@ -153,7 +154,8 @@ static BOOL nsindexset_containsIndexesInRange(NSIndexSet *indexSet, NSRange rang
     else {
         /* Multiple ranges */
         size_t size = rangeCount * sizeof *multipleRanges;
-        multipleRanges = NSAllocateCollectable(size, 0); //unscanned, collectable
+        if(multipleRanges) free(multipleRanges);
+        multipleRanges = malloc(size);
         memcpy(multipleRanges, otherSet->multipleRanges, size);
     }
     return self;
@@ -283,18 +285,19 @@ static BOOL nsindexset_containsIndexesInRange(NSIndexSet *indexSet, NSRange rang
     if (rangeCapacity == newCapacity) return;
     if (rangeCapacity == 0) {
         /* Go multi */
-        multipleRanges = NSAllocateCollectable(newCapacity * sizeof *multipleRanges, 0); //unscanned, collectable
+        if(multipleRanges) free(multipleRanges);
+        multipleRanges = malloc(newCapacity * sizeof(*multipleRanges));
         multipleRanges[0] = singleRange;
     }
     else if (newCapacity == 0) {
         /* Go singular */
         if (rangeCount > 0) singleRange = [self rangeAtIndex:0];
-        if (! objc_collectingEnabled()) free(multipleRanges);
+        free(multipleRanges);
         multipleRanges = NULL;
     }
     else {
         /* Reallocate */
-        multipleRanges = NSReallocateCollectable(multipleRanges, newCapacity * sizeof *multipleRanges, 0);
+        multipleRanges = realloc(multipleRanges, newCapacity * sizeof(*multipleRanges));
     }
     rangeCapacity = newCapacity;
 }

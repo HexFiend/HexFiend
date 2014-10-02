@@ -15,7 +15,6 @@
     unsigned long long anchorPoint;
     unsigned long long actionPoint;
     HFByteArray *deletedData;
-    uint32_t hashOrRC;
     BOOL byteArrayWasCopied;
 }
 
@@ -47,7 +46,6 @@
     NSArray *byteArrays; //retained
     NSArray *replacementRanges; //retained
     int selectionAction;
-    uint32_t hashOrRC;    
 }
 
 - (id)initForInsertingByteArrays:(NSArray *)arrays inRanges:(NSArray *)ranges withSelectionAction:(int)selectionAction;

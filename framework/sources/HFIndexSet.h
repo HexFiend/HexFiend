@@ -16,7 +16,7 @@
     NSUInteger rangeCount;
     NSUInteger rangeCapacity;
     HFRange singleRange;
-    __strong HFRange *multipleRanges;
+    HFRange *multipleRanges;
 }
 
 /*! Initializes the receiver as empty. */

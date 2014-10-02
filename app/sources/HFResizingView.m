@@ -14,7 +14,7 @@
     if (! hasAwokenFromNib) {
         hasAwokenFromNib = YES;
         defaultSize = [self frame].size;
-        viewsToInitialFrames = (__strong CFMutableDictionaryRef)CFMakeCollectable(CFDictionaryCreateMutable(NULL, 0, NULL, &kCFTypeDictionaryValueCallBacks));
+        viewsToInitialFrames = CFDictionaryCreateMutable(NULL, 0, NULL, &kCFTypeDictionaryValueCallBacks);
         
         FOREACH(NSView *, subview, [self subviews]) {
             CFDictionarySetValue(viewsToInitialFrames, subview, [NSValue valueWithRect:[subview frame]]);

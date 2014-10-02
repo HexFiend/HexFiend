@@ -338,7 +338,7 @@ void append_snake_to_instructions(__unsafe_unretained HFByteArrayEditScript *sel
                 if (self->insnCount == self->insnCapacity) {
                     size_t desiredCapacity = ((self->insnCount + 1) * 8) / 5;
                     size_t newBufferByteCount = malloc_good_size(desiredCapacity * insnSize);
-                    self->insns = NSReallocateCollectable(self->insns, newBufferByteCount, 0); //not scanned, not collectable
+                    self->insns = realloc(self->insns, newBufferByteCount);
                     self->insnCapacity = newBufferByteCount / insnSize;
                 }
                 HFASSERT(self->insnCount < self->insnCapacity);
@@ -1312,7 +1312,8 @@ static inline enum HFEditInstructionType HFByteArrayInstructionType(struct HFEdi
     
     /* Make an initial "everything replaces everything" instruction */
     insnCapacity = 128;
-    insns = NSAllocateCollectable(insnCapacity * sizeof *insns, 0);
+    if(insns) free(insns);
+    insns = malloc(insnCapacity * sizeof(*insns));
     insns[0].src = HFRangeMake(0, sourceLength);
     insns[0].dst = HFRangeMake(0, destLength);
     insnCount = 1;
@@ -1421,6 +1422,7 @@ static inline enum HFEditInstructionType HFByteArrayInstructionType(struct HFEdi
     [source release];
     [destination release];
     free(insns);
+    insns = NULL;
     [super dealloc];
 }
 
