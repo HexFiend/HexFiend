@@ -177,7 +177,7 @@ static const CGFloat HFTeardropRadius = 12;
         NSRunLoop *loop = [NSRunLoop currentRunLoop];
         [loop addTimer:caretTimer forMode:NSDefaultRunLoopMode];
         [loop addTimer:caretTimer forMode:NSModalPanelRunLoopMode];
-        if (HFIsRunningOnLeopardOrLater() && [self enclosingMenuItem] != NULL) {
+        if ([self enclosingMenuItem] != NULL) {
             [loop addTimer:caretTimer forMode:NSEventTrackingRunLoopMode];            
         }
     }
@@ -407,18 +407,13 @@ enum LineCoverage_t {
 
 - (void)drawPulseBackgroundInRect:(NSRect)pulseRect {
     [[NSColor yellowColor] set];
-    if (HFIsRunningOnLeopardOrLater()) {
-        CGContextRef ctx = [[NSGraphicsContext currentContext] graphicsPort];
-        CGContextSaveGState(ctx);
-        [[NSBezierPath bezierPathWithRoundedRect:pulseRect xRadius:25 yRadius:25] addClip];
-        NSGradient *gradient = [[NSGradient alloc] initWithStartingColor:[NSColor yellowColor] endingColor:[NSColor colorWithCalibratedRed:(CGFloat)1. green:(CGFloat).75 blue:0 alpha:1]];
-        [gradient drawInRect:pulseRect angle:90];
-        [gradient release];
-        CGContextRestoreGState(ctx);
-    }
-    else {
-        NSRectFill(pulseRect);
-    }
+    CGContextRef ctx = [[NSGraphicsContext currentContext] graphicsPort];
+    CGContextSaveGState(ctx);
+    [[NSBezierPath bezierPathWithRoundedRect:pulseRect xRadius:25 yRadius:25] addClip];
+    NSGradient *gradient = [[NSGradient alloc] initWithStartingColor:[NSColor yellowColor] endingColor:[NSColor colorWithCalibratedRed:(CGFloat)1. green:(CGFloat).75 blue:0 alpha:1]];
+    [gradient drawInRect:pulseRect angle:90];
+    [gradient release];
+    CGContextRestoreGState(ctx);
 }
 
 - (void)fadePulseWindowTimer:(NSTimer *)timer {

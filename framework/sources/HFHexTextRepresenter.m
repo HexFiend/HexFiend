@@ -15,7 +15,7 @@
 }
 @end
 
-static unsigned char hex2char(NSUInteger c) {
+static inline unsigned char hex2char(NSUInteger c) {
     HFASSERT(c < 16);
     return "0123456789ABCDEF"[c];
 }
