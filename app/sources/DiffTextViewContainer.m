@@ -41,7 +41,7 @@
     }
 
     /* Compute BPL */
-    NSUInteger bpl = MAX(maxKnownGood, 1) * granularity;
+    NSUInteger bpl = MAX(maxKnownGood, 1u) * granularity;
     
     /* Return what we've discovered */
     *leftWidth = [leftLayout minimumViewWidthForBytesPerLine:bpl] + textViewToLayoutView;

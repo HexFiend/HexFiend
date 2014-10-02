@@ -18,7 +18,6 @@
 @interface HFTextView : NSControl {
     HFController *dataController;
     HFLayoutRepresenter *layoutRepresenter;
-    NSArray *backgroundColors;
     BOOL bordered;
     IBOutlet id delegate;
     NSData *cachedData;
@@ -28,13 +27,13 @@
 */
 //@{
 
-/*! The HFController for the receiver.  Useful for adding or removing HFRepresenters from the text view at runtime.  An HFTextView comes with its own HFController, but you can replace it. */
+/// The HFController for the receiver.  Useful for adding or removing HFRepresenters from the text view at runtime.  An HFTextView comes with its own HFController, but you can replace it.
 @property (nonatomic, strong) HFController *controller;
 
-/*! The HFLayoutRepresenter for the receiver.  An HFTextView comes with its own HFLayoutRepresenter, but you can use this to replace it. */
+/// The HFLayoutRepresenter for the receiver.  An HFTextView comes with its own HFLayoutRepresenter, but you can replace it.
 @property (nonatomic, strong) HFLayoutRepresenter *layoutRepresenter;
 
-/*! Returns the HFByteArray for the receiver.  This is equivalent to `[[self controller] byteArray]`. */
+/// Returns the HFByteArray for the receiver.  This is equivalent to `[[self controller] byteArray]`.
 @property (nonatomic, strong) HFByteArray *byteArray;
 
 //@}
@@ -44,14 +43,14 @@
 //@{
 /*! Sets the arry of background colors for the receiver. The background colors are used in sequence to draw each row. */
 
-/*! The array of background colors for the receiver. */
+/// The array of background colors for the receiver.
 @property (nonatomic, copy) NSArray *backgroundColors;
 
-/*! Whether the receiver draws a border. */
+/// Whether the receiver draws a border.
 @property (nonatomic) BOOL bordered;
 //@}
 
-/*! The delegate, which may implement the methods in HFTextViewDelegate. Initially nil. */
+/// The delegate, which may implement the methods in HFTextViewDelegate. Initially nil.
 @property (nonatomic, assign) id delegate;
 
 /*! Access the contents of the HFTextView's HFByteArray as an NSData.

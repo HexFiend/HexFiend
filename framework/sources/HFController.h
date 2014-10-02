@@ -102,7 +102,6 @@ You create an HFController via <tt>[[HFController alloc] init]</tt>.  After that
     HFFPRange displayedLineRange;
     NSUInteger bytesPerLine;
     NSUInteger bytesPerColumn;
-    NSFont *font;
     CGFloat lineHeight;
     
     NSUInteger currentPropertyChangeToken;

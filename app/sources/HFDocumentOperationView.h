@@ -11,7 +11,6 @@
 
 @interface HFDocumentOperationView : HFResizingView {
     NSString *nibName;
-    NSString *displayName;
     BOOL awokenFromNib;
     id threadResult;
     dispatch_group_t waitGroup;

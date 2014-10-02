@@ -106,8 +106,6 @@ static Wedge_t wedgeUnion(Wedge_t wedge1, Wedge_t wedge2) {
     return result;
 }
 
-@synthesize byteOffset = byteOffset, representedObject = representedObject, color = color, label = label;
-
 - (instancetype)init {
     self = [super init];
     if (self) {
@@ -118,14 +116,14 @@ static Wedge_t wedgeUnion(Wedge_t wedge1, Wedge_t wedge2) {
 }
 
 - (void)dealloc {
-    [representedObject release];
-    [color release];
-    [label release];
+    [_representedObject release];
+    [_color release];
+    [_label release];
     [super dealloc];
 }
 
 - (NSComparisonResult)compare:(HFRepresenterTextViewCallout *)callout {
-    return [representedObject compare:[callout representedObject]];
+    return [_representedObject compare:callout.representedObject];
 }
 
 static Wedge_t computeForbiddenAngle(double distanceFromEdge, double angleToEdge) {
@@ -382,9 +380,9 @@ static double distanceMod1(double a, double b) {
         [(NSFont *)ctfont set];
             
         // Get characters
-        NSUInteger labelLength = MIN([label length], kHFRepresenterTextViewCalloutMaxGlyphCount);
+        NSUInteger labelLength = MIN([_label length], kHFRepresenterTextViewCalloutMaxGlyphCount);
         UniChar calloutUniLabel[kHFRepresenterTextViewCalloutMaxGlyphCount];
-        [label getCharacters:calloutUniLabel range:NSMakeRange(0, labelLength)];
+        [_label getCharacters:calloutUniLabel range:NSMakeRange(0, labelLength)];
         
         // Get our glyphs and advances
         CGGlyph glyphs[kHFRepresenterTextViewCalloutMaxGlyphCount];
@@ -399,7 +397,7 @@ static double distanceMod1(double a, double b) {
         }
                 
         // Set our color.
-        [color set];
+        [_color set];
         
         // Draw the pin first
         if (! NSEqualPoints(pinStart, pinEnd)) {
@@ -442,7 +440,7 @@ static double distanceMod1(double a, double b) {
         // Compute the vertical offset
         CGFloat textYOffset = (glyphCount == 1 ? 4 : 5);                
         // LOL
-        if ([label isEqualToString:@"6"] || [label isEqualToString:@"7"] == 7) textYOffset -= 1;
+        if ([_label isEqualToString:@"6"] || [_label isEqualToString:@"7"] == 7) textYOffset -= 1;
         
         
         // Apply this text matrix

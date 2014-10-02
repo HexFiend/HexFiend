@@ -26,7 +26,7 @@
 #define UNIMPLEMENTED() UNIMPLEMENTED_VOID(); return 0
 
 /* Macro to "use" a variable to prevent unused variable warnings. */
-#define USE(x) (void)(x)
+#define USE(x) ((void)(x))
 
 #define check_malloc(x) ({ size_t _count = (x); void *_result = malloc(_count); if(!_result) { fprintf(stderr, "Out of memory allocating %lu bytes\n", (unsigned long)_count); exit(EXIT_FAILURE); } _result; })
 #define check_calloc(x) ({ size_t _count = (x); void *_result = calloc(_count, 1); if(!_result) { fprintf(stderr, "Out of memory allocating %lu bytes\n", (unsigned long)_count); exit(EXIT_FAILURE); } _result; })

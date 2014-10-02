@@ -100,7 +100,7 @@ static inline Class preferredByteArrayClass(void) {
     _hfflags.showcallouts = YES;
     _hfflags.selectable = YES;
     representers = [[NSMutableArray alloc] init];
-    [self setFont:[NSFont fontWithName:HFDEFAULT_FONT size:HFDEFAULT_FONTSIZE]];
+    _font = [[NSFont fontWithName:HFDEFAULT_FONT size:HFDEFAULT_FONTSIZE] retain];
     return self;
 }
 
@@ -113,7 +113,7 @@ static inline Class preferredByteArrayClass(void) {
     [undoOperations release];
     [undoManager release];
     [undoCoalescer release];
-    [font release];
+    [_font release];
     [byteArray removeObserver:self forKeyPath:@"changesAreLocked"];
     [byteArray release];
     [cachedData release];
@@ -126,7 +126,7 @@ static inline Class preferredByteArrayClass(void) {
     [coder encodeObject:representers forKey:@"HFRepresenters"];
     [coder encodeInt64:bytesPerLine forKey:@"HFBytesPerLine"];
     [coder encodeInt64:bytesPerColumn forKey:@"HFBytesPerColumn"];
-    [coder encodeObject:font forKey:@"HFFont"];
+    [coder encodeObject:_font forKey:@"HFFont"];
     [coder encodeDouble:lineHeight forKey:@"HFLineHeight"];
     [coder encodeBool:_hfflags.antialias forKey:@"HFAntialias"];
     [coder encodeBool:_hfflags.colorbytes forKey:@"HFColorBytes"];
@@ -143,7 +143,7 @@ static inline Class preferredByteArrayClass(void) {
     [self _sharedInit];
     bytesPerLine = (NSUInteger)[coder decodeInt64ForKey:@"HFBytesPerLine"];
     bytesPerColumn = (NSUInteger)[coder decodeInt64ForKey:@"HFBytesPerColumn"];
-    font = [[coder decodeObjectForKey:@"HFFont"] retain];
+    _font = [[coder decodeObjectForKey:@"HFFont"] retain];
     lineHeight = (CGFloat)[coder decodeDoubleForKey:@"HFLineHeight"];
     _hfflags.antialias = [coder decodeBoolForKey:@"HFAntialias"];
     _hfflags.colorbytes = [coder decodeBoolForKey:@"HFColorBytes"];
@@ -163,7 +163,7 @@ static inline Class preferredByteArrayClass(void) {
 }
 
 - (NSArray *)representers {
-    return [NSArray arrayWithArray:representers];
+    return [representers copy];
 }
 
 - (void)notifyRepresentersOfChanges:(HFControllerPropertyBits)bits {
@@ -299,19 +299,15 @@ static inline Class preferredByteArrayClass(void) {
     return lineHeight;
 }
 
-- (NSFont *)font {
-    return font;
-}
-
 - (void)setFont:(NSFont *)val {
-    if (val != font) {
+    if (val != _font) {
         CGFloat priorLineHeight = [self lineHeight];
         
-        [font release];
-        font = [val copy];
+        [_font release];
+        _font = [val copy];
         
         NSLayoutManager *manager = [[NSLayoutManager alloc] init];
-        lineHeight = [manager defaultLineHeightForFont:font];
+        lineHeight = [manager defaultLineHeightForFont:_font];
         [manager release];
         
         HFControllerPropertyBits bits = HFControllerFont;
@@ -1344,7 +1340,7 @@ static inline Class preferredByteArrayClass(void) {
     
     /* Figure out how big a word is.  By default, it's the column width, unless we have no columns, in which case it's the bytes per line. */
     NSUInteger wordGranularity = [self bytesPerColumn];
-    if (wordGranularity == 0) wordGranularity = MAX(1, [self bytesPerLine]);
+    if (wordGranularity == 0) wordGranularity = MAX(1u, [self bytesPerLine]);
     if (selectionAnchor == NO_SELECTION) {
         /* Pick the anchor inline with the choice of direction */
         if (direction == HFControllerDirectionLeft) locationToConsider = [self _minimumSelectionLocation];

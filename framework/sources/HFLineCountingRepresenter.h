@@ -27,38 +27,35 @@ typedef NS_ENUM(NSUInteger, HFLineNumberFormat) {
     NSUInteger minimumDigitCount;
     HFLineNumberFormat lineNumberFormat;
     NSInteger interiorShadowEdge;
-    NSInteger borderedEdges;
     CGFloat preferredWidth;
     CGFloat digitAdvance;
-    NSColor * backgroundColor;
-    NSColor * borderColor;
 }
 
-/*! The minimum digit count.  The receiver will always ensure it is big enough to display at least the minimum digit count.  The default is 2. */
+/// The minimum digit count.  The receiver will always ensure it is big enough to display at least the minimum digit count.  The default is 2.
 @property (nonatomic) NSUInteger minimumDigitCount;
 
-/*! Returns the number of digits we are making space for. */
+/// Returns the number of digits we are making space for.
 - (NSUInteger)digitCount;
 
-/*! Returns the current width that the HFRepresenter prefers to be laid out with. */
+/// Returns the current width that the HFRepresenter prefers to be laid out with.
 - (CGFloat)preferredWidth;
 
-/*! The line number format. */
+/// The line number format.
 @property (nonatomic) HFLineNumberFormat lineNumberFormat;
 
-/*! Switches to the next line number format.  This is called from the view. */
+/// Switches to the next line number format.  This is called from the view.
 - (void)cycleLineNumberFormat;
 
-/*! The edge (as an NSRectEdge) on which the view draws an interior shadow. -1 means no edge. */
+/// The edge (as an NSRectEdge) on which the view draws an interior shadow. -1 means no edge.
 @property (nonatomic) NSInteger interiorShadowEdge;
 
-/*! The border color used at the edges specified by -borderedEdges. */
+/// The border color used at the edges specified by -borderedEdges.
 @property (nonatomic, copy) NSColor *borderColor;
 
 /*! The edges on which borders are drawn. The edge returned by interiorShadowEdge always has a border drawn. The edges are specified by a bitwise or of 1 left shifted by the NSRectEdge values. For example, to draw a border on the min x and max y edges use: (1 << NSMinXEdge) | (1 << NSMaxYEdge). 0 (or -1) specfies no edges. */
 @property (nonatomic) NSInteger borderedEdges;
 
-/*! The background color */
+/// The background color
 @property (nonatomic, copy) NSColor *backgroundColor;
 
 @end

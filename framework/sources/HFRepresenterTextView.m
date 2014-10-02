@@ -492,7 +492,7 @@ enum LineCoverage_t {
                 CGContextClearRect(ctx, *(CGRect *)&imageRect);
                 [self drawPulseBackgroundInRect:imageRect];
                 [[NSColor blackColor] set];
-                [[font screenFont] set];
+                [[self.font screenFont] set];
                 if (! [self shouldAntialias]) CGContextSetShouldAntialias(ctx, NO);
                 CGContextScaleCTM(ctx, imageScale, imageScale);
                 CGContextTranslateCTM(ctx, -windowFrameInBoundsCoords.origin.x, -windowFrameInBoundsCoords.origin.y);
@@ -631,8 +631,8 @@ enum LineCoverage_t {
     HFASSERT([coder allowsKeyedCoding]);
     [super encodeWithCoder:coder];
     [coder encodeObject:representer forKey:@"HFRepresenter"];
-    [coder encodeObject:font forKey:@"HFFont"];
-    [coder encodeObject:data forKey:@"HFData"];
+    [coder encodeObject:_font forKey:@"HFFont"];
+    [coder encodeObject:_data forKey:@"HFData"];
     [coder encodeDouble:verticalOffset forKey:@"HFVerticalOffset"];
     [coder encodeDouble:horizontalContainerInset forKey:@"HFHorizontalContainerOffset"];
     [coder encodeDouble:defaultLineHeight forKey:@"HFDefaultLineHeight"];
@@ -648,8 +648,8 @@ enum LineCoverage_t {
     HFASSERT([coder allowsKeyedCoding]);
     self = [super initWithCoder:coder];
     representer = [coder decodeObjectForKey:@"HFRepresenter"];
-    font = [[coder decodeObjectForKey:@"HFFont"] retain];
-    data = [[coder decodeObjectForKey:@"HFData"] retain];
+    _font = [[coder decodeObjectForKey:@"HFFont"] retain];
+    _data = [[coder decodeObjectForKey:@"HFData"] retain];
     verticalOffset = (CGFloat)[coder decodeDoubleForKey:@"HFVerticalOffset"];
     horizontalContainerInset = (CGFloat)[coder decodeDoubleForKey:@"HFHorizontalContainerOffset"];
     defaultLineHeight = (CGFloat)[coder decodeDoubleForKey:@"HFDefaultLineHeight"];
@@ -680,11 +680,11 @@ enum LineCoverage_t {
 
 
 - (void)setFont:(NSFont *)val {
-    if (val != font) {
-        [font release];
-        font = [val retain];
+    if (val != _font) {
+        [_font release];
+        _font = [val retain];
         NSLayoutManager *manager = [[NSLayoutManager alloc] init];
-        defaultLineHeight = [manager defaultLineHeightForFont:font];
+        defaultLineHeight = [manager defaultLineHeightForFont:_font];
         [manager release];
         [self setNeedsDisplay:YES];
     }
@@ -694,15 +694,11 @@ enum LineCoverage_t {
     return defaultLineHeight;
 }
 
-- (NSFont *)font {
-    return font;
-}
-
 /* The base implementation does not support font substitution, so we require that it be the base font. */
 - (NSFont *)fontAtSubstitutionIndex:(uint16_t)idx {
     HFASSERT(idx == 0);
     USE(idx);
-    return font;
+    return _font;
 }
 
 - (NSRange)roundPartialByteRange:(NSRange)byteRange {
@@ -720,10 +716,6 @@ enum LineCoverage_t {
     
 }
 
-- (NSData *)data {
-    return data;
-}
-
 - (void)setNeedsDisplayForLinesInRange:(NSRange)lineRange {
     // redisplay the lines in the given range
     if (lineRange.length == 0) return;
@@ -738,10 +730,10 @@ enum LineCoverage_t {
 }
 
 - (void)setData:(NSData *)val {
-    if (val != data) {
-        NSUInteger oldLength = [data length];
+    if (val != _data) {
+        NSUInteger oldLength = [_data length];
         NSUInteger newLength = [val length];
-        const unsigned char *oldBytes = (const unsigned char *)[data bytes];
+        const unsigned char *oldBytes = (const unsigned char *)[_data bytes];
         const unsigned char *newBytes = (const unsigned char *)[val bytes];
         NSUInteger firstDifferingIndex = HFIndexOfFirstByteThatDiffers(oldBytes, oldLength, newBytes, newLength);
         if (firstDifferingIndex == NSUIntegerMax) {
@@ -765,21 +757,17 @@ enum LineCoverage_t {
                 [self setNeedsDisplayForLinesInRange:NSMakeRange(firstLine, lastDifferingLine - firstLine)];
             }
         }
-        [data release];
-        data = [val copy];
+        [_data release];
+        _data = [val copy];
         [self _updateCaretTimer];
     }
 }
 
-- (NSArray *)styles {
-    return styles; 
-}
-
 - (void)setStyles:(NSArray *)newStyles {
-    if (! [styles isEqual:newStyles]) {
+    if (! [_styles isEqual:newStyles]) {
         
         /* Figure out which styles changed - that is, we want to compute those objects that are not in oldStyles or newStyles, but not both. */
-        NSMutableSet *changedStyles = styles ? [[NSMutableSet alloc] initWithArray:styles] : [[NSMutableSet alloc] init];
+        NSMutableSet *changedStyles = _styles ? [[NSMutableSet alloc] initWithArray:_styles] : [[NSMutableSet alloc] init];
         FOREACH(HFTextVisualStyleRun *, run, newStyles) {
             if ([changedStyles containsObject:run]) {
                 [changedStyles removeObject:run];
@@ -816,8 +804,8 @@ enum LineCoverage_t {
         }
         
         /* Do the usual Cocoa thing */
-        [styles release];
-        styles = [newStyles retain];
+        [_styles release];
+        _styles = [newStyles copy];
     }
 }
 
@@ -852,9 +840,9 @@ enum LineCoverage_t {
     HFUnregisterViewForWindowAppearanceChanges(self, _hftvflags.registeredForAppNotifications /* appToo */);
     [caretTimer invalidate];
     [caretTimer release];
-    [font release];
-    [data release];
-    [styles release];
+    [_font release];
+    [_data release];
+    [_styles release];
     [cachedSelectedRanges release];
     [callouts release];
     if(byteColoring) Block_release(byteColoring);
@@ -917,13 +905,13 @@ enum LineCoverage_t {
 }
 
 - (HFTextVisualStyleRun *)styleRunForByteAtIndex:(NSUInteger)byteIndex {
-    if (! styles) return nil;
-    FOREACH(HFTextVisualStyleRun *, run, styles) {
+    if (! _styles) return nil;
+    FOREACH(HFTextVisualStyleRun *, run, _styles) {
         if (NSLocationInRange(byteIndex, [run range])) {
             return run;
         }
     }
-    [NSException raise:NSInvalidArgumentException format:@"Byte index %lu not present in runs %@", (unsigned long)byteIndex, styles];
+    [NSException raise:NSInvalidArgumentException format:@"Byte index %lu not present in runs %@", (unsigned long)byteIndex, _styles];
     return nil;
 }
 
@@ -1157,7 +1145,7 @@ static size_t unionAndCleanLists(NSRect *rectList, id *valueList, size_t count) 
     // +1 in case messing around with floats makes us overshoot a bit.
     uint32_t *buffer = calloc(width+1, 4);
     
-    const uint8_t *bytes = [data bytes];
+    const uint8_t *bytes = [_data bytes];
     bytes += range.location;
     
     NSUInteger bytesPerColumn = [self _effectiveBytesPerColumn];
@@ -1601,7 +1589,7 @@ static size_t unionAndCleanLists(NSRect *rectList, id *valueList, size_t count) 
     BOOL antialias = [self shouldAntialias];
     CGContextRef ctx = [[NSGraphicsContext currentContext] graphicsPort];
     
-    [[font screenFont] set];
+    [[self.font screenFont] set];
     
     if ([self showsFocusRing]) {
         NSWindow *window = [self window];
@@ -1612,7 +1600,7 @@ static size_t unionAndCleanLists(NSRect *rectList, id *valueList, size_t count) 
     
     NSUInteger bytesPerLine = [self bytesPerLine];
     if (bytesPerLine == 0) return;
-    NSUInteger byteCount = [data length];
+    NSUInteger byteCount = [_data length];
     
     [self _drawDefaultLineBackgrounds:clip withLineHeight:[self lineHeight] maxLines:ll2l(HFRoundUpToNextMultipleSaturate(byteCount, bytesPerLine) / bytesPerLine)];
     [self drawSelectionIfNecessaryWithClip:clip];
@@ -1765,7 +1753,7 @@ static size_t unionAndCleanLists(NSRect *rectList, id *valueList, size_t count) 
         /* No columns */
         NSUInteger numChars = (NSUInteger)(availableSpace / [self advancePerCharacter]);
         /* Return it, except it's at least one character */
-        return MAX(numChars, 1) * bytesPerCharacter;
+        return MAX(numChars, 1u) * bytesPerCharacter;
     }
     else {
         /* We have some columns */

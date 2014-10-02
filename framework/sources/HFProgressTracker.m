@@ -77,7 +77,7 @@
     [progressTimer invalidate];
     [progressTimer release];
     progressTimer = nil;
-    [userInfo release];
+    [_userInfo release];
     [super dealloc];
 }
 
@@ -100,16 +100,6 @@
             }
         }
     }
-}
-
-- (void)setUserInfo:(NSDictionary *)info {
-    [info retain];
-    [userInfo release];
-    userInfo = info;
-}
-
-- (NSDictionary *)userInfo {
-    return userInfo;
 }
 
 @end

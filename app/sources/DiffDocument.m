@@ -65,8 +65,8 @@
     
     // launch diff window
     DiffDocument *doc = [[DiffDocument alloc] initWithLeftByteArray:leftBytes rightByteArray:rightBytes range:range];
-    [doc setLeftFileName:[document displayName]];
-    [doc setRightFileName:[otherDocument displayName]];
+    doc.leftFileName = [document displayName];
+    doc.rightFileName = [otherDocument displayName];
     [[NSDocumentController sharedDocumentController] addDocument:doc];
     [doc makeWindowControllers];
     [doc showWindows];
@@ -89,7 +89,7 @@
         format = [NSString stringWithFormat:@"(%llu:%llu) %@", range_.location, range_.length, format];
     }
     
-    return [NSString stringWithFormat:format, leftFileName, rightFileName];
+    return [NSString stringWithFormat:format, _leftFileName, _rightFileName];
 }
 
 - (void)showInstructionsFromEditScript {
@@ -352,8 +352,8 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
     [[NSNotificationCenter defaultCenter] removeObserver:self name:HFControllerDidChangePropertiesNotification object:[leftTextView controller]];
     [leftBytes release];
     [rightBytes release];
-    [leftFileName release];
-    [rightFileName release];
+    [_leftFileName release];
+    [_rightFileName release];
     [diffComputationView removeObserver:self forKeyPath:@"progress"];
     [diffComputationView release];
     [super dealloc];
@@ -760,28 +760,6 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
     [super setFont:font registeringUndo:undo];
     [[leftTextView controller] setFont:font];
     [[self window] enableFlushWindow];
-}
-
-- (void)setLeftFileName:(NSString *)val {
-    if (val != leftFileName) {
-        [leftFileName release];
-        leftFileName = [val copy];
-    }
-}
-
-- (NSString *)leftFileName {
-    return leftFileName;
-}
-
-- (void)setRightFileName:(NSString *)val {
-    if (val != rightFileName) {
-        [rightFileName release];
-        rightFileName = [val copy];
-    }    
-}
-
-- (NSString *)rightFileName {
-    return rightFileName;
 }
 
 #pragma mark NSTableView methods

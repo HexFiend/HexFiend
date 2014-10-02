@@ -50,7 +50,7 @@
 
 - (void)dealloc {
     HFUnregisterViewForWindowAppearanceChanges(self, registeredForAppNotifications);
-    [font release];
+    [_font release];
     [layoutManager release];
     [textContainer release];
     [textStorage release];
@@ -61,7 +61,7 @@
 - (void)encodeWithCoder:(NSCoder *)coder {
     HFASSERT([coder allowsKeyedCoding]);
     [super encodeWithCoder:coder];
-    [coder encodeObject:font forKey:@"HFFont"];
+    [coder encodeObject:_font forKey:@"HFFont"];
     [coder encodeDouble:lineHeight forKey:@"HFLineHeight"];
     [coder encodeObject:representer forKey:@"HFRepresenter"];
     [coder encodeInt64:bytesPerLine forKey:@"HFBytesPerLine"];
@@ -73,7 +73,7 @@
     HFASSERT([coder allowsKeyedCoding]);
     self = [super initWithCoder:coder];
     [self _sharedInitLineCountingView];
-    font = [[coder decodeObjectForKey:@"HFFont"] retain];
+    _font = [[coder decodeObjectForKey:@"HFFont"] retain];
     lineHeight = (CGFloat)[coder decodeDoubleForKey:@"HFLineHeight"];
     representer = [coder decodeObjectForKey:@"HFRepresenter"];
     bytesPerLine = (NSUInteger)[coder decodeInt64ForKey:@"HFBytesPerLine"];
@@ -267,7 +267,7 @@ static inline int common_prefix_length(const char *a, const char *b) {
             NSUInteger glyphCount;
             [textStorage replaceCharactersInRange:replacementRange withString:replacementCharacters];
             if (previousTextStorageCharacterCount == 0) {
-                NSDictionary *atts = [[NSDictionary alloc] initWithObjectsAndKeys:font, NSFontAttributeName, [NSColor colorWithCalibratedWhite:(CGFloat).1 alpha:(CGFloat).8], NSForegroundColorAttributeName, nil];
+                NSDictionary *atts = [[NSDictionary alloc] initWithObjectsAndKeys:_font, NSFontAttributeName, [NSColor colorWithCalibratedWhite:(CGFloat).1 alpha:(CGFloat).8], NSForegroundColorAttributeName, nil];
                 [textStorage setAttributes:atts range:NSMakeRange(0, newStringLength)];
                 [atts release];
             }
@@ -305,7 +305,7 @@ static inline int common_prefix_length(const char *a, const char *b) {
         [mutableStyle setAlignment:NSRightTextAlignment];
         NSParagraphStyle *paragraphStyle = [mutableStyle copy];
         [mutableStyle release];
-        textAttributes = [[NSDictionary alloc] initWithObjectsAndKeys:font, NSFontAttributeName, [NSColor colorWithCalibratedWhite:(CGFloat).1 alpha:(CGFloat).8], NSForegroundColorAttributeName, paragraphStyle, NSParagraphStyleAttributeName, nil];
+        textAttributes = [[NSDictionary alloc] initWithObjectsAndKeys:_font, NSFontAttributeName, [NSColor colorWithCalibratedWhite:(CGFloat).1 alpha:(CGFloat).8], NSForegroundColorAttributeName, paragraphStyle, NSParagraphStyleAttributeName, nil];
         [paragraphStyle release];
     }
     
@@ -461,7 +461,7 @@ static inline int common_prefix_length(const char *a, const char *b) {
         [mutableStyle setAlignment:NSRightTextAlignment];
         NSParagraphStyle *paragraphStyle = [mutableStyle copy];
         [mutableStyle release];
-        textAttributes = [[NSDictionary alloc] initWithObjectsAndKeys:font, NSFontAttributeName, [NSColor colorWithCalibratedWhite:(CGFloat).1 alpha:(CGFloat).8], NSForegroundColorAttributeName, paragraphStyle, NSParagraphStyleAttributeName, nil];
+        textAttributes = [[NSDictionary alloc] initWithObjectsAndKeys:_font, NSFontAttributeName, [NSColor colorWithCalibratedWhite:(CGFloat).1 alpha:(CGFloat).8], NSForegroundColorAttributeName, paragraphStyle, NSParagraphStyleAttributeName, nil];
         [paragraphStyle release];
         [textStorage setAttributes:textAttributes range:NSMakeRange(0, [textStorage length])];
     }
@@ -502,7 +502,7 @@ static inline int common_prefix_length(const char *a, const char *b) {
         [mutableStyle setMaximumLineHeight:lineHeight];
         NSParagraphStyle *paragraphStyle = [mutableStyle copy];
         [mutableStyle release];
-        textAttributes = [[NSDictionary alloc] initWithObjectsAndKeys:font, NSFontAttributeName, [NSColor colorWithCalibratedWhite:(CGFloat).1 alpha:(CGFloat).8], NSForegroundColorAttributeName, paragraphStyle, NSParagraphStyleAttributeName, nil];
+        textAttributes = [[NSDictionary alloc] initWithObjectsAndKeys:_font, NSFontAttributeName, [NSColor colorWithCalibratedWhite:(CGFloat).1 alpha:(CGFloat).8], NSForegroundColorAttributeName, paragraphStyle, NSParagraphStyleAttributeName, nil];
         [paragraphStyle release];
     }    
     
@@ -533,7 +533,7 @@ static inline int common_prefix_length(const char *a, const char *b) {
         [mutableStyle setMaximumLineHeight:lineHeight];
         NSParagraphStyle *paragraphStyle = [mutableStyle copy];
         [mutableStyle release];
-        textAttributes = [[NSDictionary alloc] initWithObjectsAndKeys:font, NSFontAttributeName, [NSColor colorWithCalibratedWhite:(CGFloat).1 alpha:(CGFloat).8], NSForegroundColorAttributeName, paragraphStyle, NSParagraphStyleAttributeName, nil];
+        textAttributes = [[NSDictionary alloc] initWithObjectsAndKeys:_font, NSFontAttributeName, [NSColor colorWithCalibratedWhite:(CGFloat).1 alpha:(CGFloat).8], NSForegroundColorAttributeName, paragraphStyle, NSParagraphStyleAttributeName, nil];
         [paragraphStyle release];
     }
     
@@ -648,24 +648,21 @@ static inline int common_prefix_length(const char *a, const char *b) {
 
 - (BOOL)canUseStringDrawingPathForFont:(NSFont *)testFont {
     NSString *name = [testFont fontName];
+    // No, Menlo does not work here.
     return [name isEqualToString:@"Monaco"] || [name isEqualToString:@"Courier"] || [name isEqualToString:@"Consolas"];
 }
 
 - (void)setFont:(NSFont *)val {
-    if (val != font) {
-        [font release];
-        font = [val retain];
+    if (val != _font) {
+        [_font release];
+        _font = [val copy];
         [textStorage deleteCharactersInRange:NSMakeRange(0, [textStorage length])]; //delete the characters so we know to set the font next time we render
         [textAttributes release];
         textAttributes = nil;
         storedLineCount = INVALID_LINE_COUNT;
-        useStringDrawingPath = [self canUseStringDrawingPathForFont:font];
+        useStringDrawingPath = [self canUseStringDrawingPathForFont:_font];
         [self setNeedsDisplay:YES];
     }
-}
-
-- (NSFont *)font {
-    return font;
 }
 
 - (void)setLineHeight:(CGFloat)height {

@@ -14,9 +14,9 @@
 #include <pthread.h>
 #include <stdbool.h>
 
-#define READ_AMOUNT (1024 * 32)
+#define READ_AMOUNT (1024u * 32u)
 #define CONCURRENT_PROCESS_COUNT 16
-#define MAX_RECURSION_DEPTH 64
+#define MAX_RECURSION_DEPTH 64u
 
 #if NDEBUG
 #define BYTEARRAY_RELEASE_INLINE __attribute__((always_inline)) static
@@ -34,8 +34,8 @@ enum {
     NUM_CACHES
 };
 
-#define HEURISTIC_THRESHOLD (1024)
-#define SQUARE_CACHE_SIZE (1024)
+#define HEURISTIC_THRESHOLD (1024u)
+#define SQUARE_CACHE_SIZE (1024u)
 
 // This is the type of an abstract index in some local LCS problem
 typedef int32_t LocalIndex_t;

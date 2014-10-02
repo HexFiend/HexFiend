@@ -9,7 +9,6 @@
 #import <HexFiend/HFLineCountingRepresenter.h>
 
 @interface HFLineCountingView : NSView {
-    NSFont *font;
     CGFloat lineHeight;
     HFFPRange lineRangeToDraw;
     NSLayoutManager *layoutManager;

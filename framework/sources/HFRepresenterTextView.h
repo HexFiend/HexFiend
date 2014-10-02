@@ -27,9 +27,6 @@
 @private;
     HFTextRepresenter *representer;
     NSArray *cachedSelectedRanges;
-    NSFont *font;
-    NSData *data;
-    NSArray *styles;
     CGFloat verticalOffset;
     CGFloat horizontalContainerInset;
     CGFloat defaultLineHeight;

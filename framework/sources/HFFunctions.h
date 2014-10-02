@@ -328,43 +328,27 @@ static inline CGFloat HFCopysign(CGFloat a, CGFloat b) {
 }
 
 /*! Atomically increments an NSUInteger, returning the new value.  Optionally invokes a memory barrier. */
-static inline NSUInteger HFAtomicIncrement(NSUInteger *ptr, BOOL barrier) {
-#if __LP64__
-    
-    // clang doesn't like the change made to the function declaration in the 10.9 SDK.
-    // It now has "inline __attribute__" which combined with the ternary version of this statement
-    // yields linking errors, so we have to expand it:
-    //return (barrier ? OSAtomicIncrement64Barrier : OSAtomicIncrement64)((volatile int64_t *)ptr);
-    
-    if (barrier) {
-        return OSAtomicIncrement64Barrier((volatile int64_t *)ptr);
-    } else {
-        return OSAtomicIncrement64((volatile int64_t *)ptr);
-    }
-    
+static inline NSUInteger HFAtomicIncrement(volatile NSUInteger *ptr, BOOL barrier) {
+    return _Generic(ptr,
+        volatile unsigned *:           (barrier ? OSAtomicIncrement32Barrier : OSAtomicIncrement32)((volatile int32_t *)ptr),
+#if ULONG_MAX == UINT32_MAX
+        volatile unsigned long *:      (barrier ? OSAtomicIncrement32Barrier : OSAtomicIncrement32)((volatile int32_t *)ptr),
 #else
-    return (barrier ? OSAtomicIncrement32Barrier : OSAtomicIncrement32)((volatile int32_t *)ptr);
+        volatile unsigned long *:      (barrier ? OSAtomicIncrement64Barrier : OSAtomicIncrement64)((volatile int64_t *)ptr),
 #endif
+        volatile unsigned long long *: (barrier ? OSAtomicIncrement64Barrier : OSAtomicIncrement64)((volatile int64_t *)ptr));
 }
 
 /*! Atomically decrements an NSUInteger, returning the new value.  Optionally invokes a memory barrier. */
-static inline NSUInteger HFAtomicDecrement(NSUInteger *ptr, BOOL barrier) {
-#if __LP64__
-    
-    // clang doesn't like the change made to the function declaration in the 10.9 SDK.
-    // It now has "inline __attribute__" which combined with the ternary version of this statement
-    // yields linking errors, so we have to expand it:
-    //return (barrier ? OSAtomicIncrement64Barrier : OSAtomicIncrement64)((volatile int64_t *)ptr);
-    
-    if (barrier) {
-        return OSAtomicDecrement64Barrier((volatile int64_t *)ptr);
-    } else {
-        return OSAtomicDecrement64((volatile int64_t *)ptr);
-    }
-    
+static inline NSUInteger HFAtomicDecrement(volatile NSUInteger *ptr, BOOL barrier) {
+    return _Generic(ptr,
+        volatile unsigned *:           (barrier ? OSAtomicDecrement32Barrier : OSAtomicDecrement32)((volatile int32_t *)ptr),
+#if ULONG_MAX == UINT32_MAX
+        volatile unsigned long *:      (barrier ? OSAtomicDecrement32Barrier : OSAtomicDecrement32)((volatile int32_t *)ptr),
 #else
-    return (barrier ? OSAtomicDecrement32Barrier : OSAtomicDecrement32)((volatile int32_t *)ptr);
+        volatile unsigned long *:      (barrier ? OSAtomicDecrement64Barrier : OSAtomicDecrement64)((volatile int64_t *)ptr),
 #endif
+        volatile unsigned long long *: (barrier ? OSAtomicDecrement64Barrier : OSAtomicDecrement64)((volatile int64_t *)ptr));
 }
 
 /*! Converts a long double to unsigned long long.  Assumes that val is already an integer - use floorl or ceill */

@@ -35,7 +35,6 @@
     NSProgressIndicator *progressIndicator;
     NSTimer *progressTimer;
     double lastSetValue;
-    NSDictionary *userInfo;
     id delegate;
 }
 

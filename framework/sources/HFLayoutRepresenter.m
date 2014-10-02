@@ -158,7 +158,7 @@ static NSInteger sortByLayoutPosition(id a, id b, void *self) {
         }
         newNumGranules = maxKnownGood;
     }
-    return MAX(1, newNumGranules) * granularity;
+    return MAX(1u, newNumGranules) * granularity;
 }
 
 - (BOOL)_anyLayoutInfoIsVerticallyResizable:(NSArray *)vals {

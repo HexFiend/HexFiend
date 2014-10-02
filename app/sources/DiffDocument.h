@@ -7,8 +7,6 @@
 @interface DiffDocument : BaseDataDocument {
     HFByteArray *leftBytes, *rightBytes;
     HFByteArrayEditScript *editScript;
-    NSString *leftFileName;
-    NSString *rightFileName;
     IBOutlet HFTextView *leftTextView;
     IBOutlet HFTextView *rightTextView;
     IBOutlet NSTableView *diffTable;

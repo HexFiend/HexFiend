@@ -77,17 +77,6 @@ static NSString *sNibName;
     [super awakeFromNib];
 }
 
-- (NSString *)displayName {
-    return displayName;
-}
-
-- (void)setDisplayName:(NSString *)name {
-    name = [name copy];
-    [displayName release];
-    displayName = name;
-}
-
-
 - (instancetype)initWithFrame:(NSRect)frame {
     self = [super initWithFrame:frame];
     defaultSize = frame.size;
@@ -99,7 +88,7 @@ static NSString *sNibName;
 - (void)dealloc {
     [otherTopLevelObjects release];
     [nibName release];
-    [displayName release];
+    [_displayName release];
     [super dealloc];
 }
 

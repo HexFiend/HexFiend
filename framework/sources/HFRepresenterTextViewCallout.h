@@ -9,14 +9,9 @@
 
 @class HFRepresenterTextView;
 
-#define kHFRepresenterTextViewCalloutMaxGlyphCount 2
+#define kHFRepresenterTextViewCalloutMaxGlyphCount 2u
 
 @interface HFRepresenterTextViewCallout : NSObject {
-    NSInteger byteOffset;
-    id representedObject;
-    NSColor *color;
-    NSString *label;
-    
     CGFloat rotation;
     NSPoint tipOrigin;
     NSPoint pinStart, pinEnd;

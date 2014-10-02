@@ -1,6 +1,6 @@
 #import <HexFiend/HFRepresenterTextView.h>
 
-#define GLYPH_BUFFER_SIZE 16
+#define GLYPH_BUFFER_SIZE 16u
 
 @interface HFRepresenterTextView (HFInternal)
 

@@ -1688,7 +1688,7 @@ cancelled:;
     if ([ranges count] > 0) {
         HFRange range = [ranges[0] HFRange];
         /* We always set a bookmark on at least one byte */
-        range.length = MAX(range.length, 1);
+        range.length = MAX(range.length, 1u);
         NSIndexSet *usedBookmarks = [controller bookmarksInRange:HFRangeMake(0, [controller contentsLength])];
         
         /* Find the first index that bookmarks does not contain, excepting 0 */

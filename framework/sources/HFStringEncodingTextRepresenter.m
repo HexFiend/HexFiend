@@ -32,7 +32,7 @@
     unsigned char * restrict const stringBuffer = check_malloc(stringLength);
     while (remaining > 0) {
 	if (tracker->cancelRequested) break;
-	NSUInteger amountToCopy = MIN(32 * 1024, remaining);
+	NSUInteger amountToCopy = MIN(32u * 1024u, remaining);
 	[byteArray copyBytes:stringBuffer + offset range:HFRangeMake(offset, amountToCopy)];
 	offset += amountToCopy;
 	remaining -= amountToCopy;

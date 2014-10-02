@@ -7,16 +7,7 @@
 
 #import <Cocoa/Cocoa.h>
 
-@interface HFTextVisualStyleRun : NSObject {
-    NSColor *foregroundColor;
-    NSColor *backgroundColor;
-    NSRange range;
-    CGFloat scale;
-    BOOL shouldDraw;
-    NSIndexSet *bookmarkStarts;
-    NSIndexSet *bookmarkExtents;
-    NSIndexSet *bookmarkEnds;
-}
+@interface HFTextVisualStyleRun : NSObject {}
 
 @property (nonatomic, copy) NSColor *foregroundColor;
 @property (nonatomic, copy) NSColor *backgroundColor;
