@@ -191,8 +191,7 @@ static NSUInteger random_upto(unsigned long long val) {
     NSMutableArray *expectations = [NSMutableArray arrayWithObject:[NSData data]];
     NSUInteger i, opCount = 5000;
     unsigned long long coalescerActionPoint = ULLONG_MAX;
-    for (i=1; i <= opCount; i++) {
-        @autoreleasepool {
+    for (i=1; i <= opCount; i++) @autoreleasepool {
         const NSUInteger length = ll2l([controller contentsLength]);
         
         NSRange replacementRange = {0, 0};
@@ -227,8 +226,6 @@ static NSUInteger random_upto(unsigned long long val) {
         [expectations addObject:[[expectedData copy] autorelease]];
         
         if (! expectedCoalesced) [undoer endUndoGrouping];
-        
-        } // @autoreleasepool
         
         coalescerActionPoint = HFSum(replacementRange.location, replacementDataLength);
     }

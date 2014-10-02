@@ -587,7 +587,8 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
         [self synchronizeController:[rightTextView controller] properties:propertyMask];
     }
 #endif
-    if (0 && propertyMask & HFControllerDisplayedLineRange) {
+#if 0
+    if (propertyMask & HFControllerDisplayedLineRange) {
         /* Scroll our table view to show the instruction.  If our focused instruction is not visible, scroll to it; otherwise scroll to the first visible one. */
         NSRange visibleInstructions = [self visibleInstructionRangeInController:changedController];
         
@@ -600,6 +601,7 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
         }
         
     }
+#endif
 
     synchronizingControllers = NO;
 }

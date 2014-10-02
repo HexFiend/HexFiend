@@ -274,13 +274,9 @@ static BOOL validate_instructions(const struct HFEditInstruction_t *insns, size_
 
 /* The entry point for appending a snake to the instruction list (that is, splitting instructions that contain the snake) */
 BYTEARRAY_RELEASE_INLINE
-void append_snake_to_instructions(HFByteArrayEditScript *self, unsigned long long srcOffset, unsigned long long dstOffset, unsigned long long snakeLength) {
+void append_snake_to_instructions(__unsafe_unretained HFByteArrayEditScript *self, unsigned long long srcOffset, unsigned long long dstOffset, unsigned long long snakeLength) {
     HFASSERT(snakeLength > 0);
-    void * const selfP = self; //no need to retain self in the block
-    
     dispatch_async(self->insnQueue, ^{
-        HFByteArrayEditScript * const self = selfP;
-        
         /* Bail if we cancelled */
         if (*self->cancelRequested) return;
         
