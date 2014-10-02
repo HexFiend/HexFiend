@@ -69,6 +69,15 @@ static NSData *randomDataOfLength(NSUInteger length) {
     return [NSData dataWithBytesNoCopy:buff length:length freeWhenDone:YES];
 }
 
+static NSString *randTmpFileName(NSString *name) {
+    NSUInteger dot = [name rangeOfString:@"." options:NSBackwardsSearch].location;
+    if(dot == NSNotFound) {
+        return [NSString stringWithFormat:@"/tmp/HexFiendTest_%@_%x", name, arc4random()];
+    } else {
+        return [NSString stringWithFormat:@"/tmp/HexFiendTest_%@_%x", [name substringToIndex:dot], arc4random(), [name substringFromIndex:dot+1]];
+    }
+}
+
 - (void)testFastMemchr {
     unsigned char searchChar = 0xAE;
     unsigned char fillerChar = 0x23;
@@ -403,8 +412,8 @@ static HFByteArray *byteArrayForFile(NSString *path) {
 
 - (void)testRandomOperationFileWriting {
     NSData *data = randomDataOfLength(1 << 16);
-    NSURL *fileURL = [NSURL fileURLWithPath:@"/tmp/HexFiendTestFile.data"];
-    NSURL *asideFileURL = [NSURL fileURLWithPath:@"/tmp/HexFiendTestFile_External.data"];
+    NSURL *fileURL = [NSURL fileURLWithPath:randTmpFileName(@"File.data")];
+    NSURL *asideFileURL = [NSURL fileURLWithPath:randTmpFileName(@"External.data")];
     if (! [data writeToURL:fileURL atomically:NO]) {
         [NSException raise:NSGenericException format:@"Unable to write test data to %@", fileURL];
     }
@@ -466,7 +475,7 @@ static HFByteArray *byteArrayForFile(NSString *path) {
 }
 
 - (void)testBadPermissionsFileWriting {
-    NSString *pathObj = [NSString stringWithFormat:@"/tmp/HexFiendErroneousData_Permissions%u.data", arc4random()];
+    NSString *pathObj = [NSString stringWithFormat:randTmpFileName(@"BadPerms.data")];
     const char *path = [pathObj fileSystemRepresentation];
     NSURL *url = [NSURL fileURLWithPath:pathObj isDirectory:NO];
     NSData *data = randomDataOfLength(4 * 1024);
@@ -499,7 +508,7 @@ static HFByteArray *byteArrayForFile(NSString *path) {
 }
 
 - (void)testBadLengthFileWriting {
-    NSString *pathObj = @"/tmp/HexFiendErroneousData_Length.data";
+    NSString *pathObj = randTmpFileName(@"BadLength.data");
     const char *path = [pathObj fileSystemRepresentation];
     NSURL *url = [NSURL fileURLWithPath:pathObj isDirectory:NO];
     NSData *data = randomDataOfLength(4 * 1024);
@@ -540,8 +549,8 @@ static HFByteArray *byteArrayForFile(NSString *path) {
         }
         
         NSData *data = randomDataOfLength(BLOCK_COUNT * BLOCK_SIZE);
-        NSURL *fileURL = [NSURL fileURLWithPath:@"/tmp/HexFiendTestFile.data"];
-        NSURL *asideFileURL = [NSURL fileURLWithPath:@"/tmp/HexFiendTestFile_External.data"];
+        NSURL *fileURL = [NSURL fileURLWithPath:randTmpFileName(@"File.data"];
+        NSURL *asideFileURL = [NSURL fileURLWithPath:randTmpFileName(@"External.data")];
         if (! [data writeToURL:fileURL atomically:NO]) {
             [NSException raise:NSGenericException format:@"Unable to write test data to %@", fileURL];
         }
