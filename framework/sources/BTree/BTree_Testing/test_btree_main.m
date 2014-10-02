@@ -1,30 +1,31 @@
 #import <Foundation/Foundation.h>
+#import <XCTest/XCTest.h>
+
 #import "NaiveArray.h"
 #import "HFBTree.h"
 #import "TreeEntry.h"
 
-static inline HFBTreeIndex random_value(NSUInteger max) {
-    unsigned int result;
-    while ((result = ((unsigned)random() % max)) == 0)
-        ;
-    return result;
+#import "HFTest.h"
+
+@interface HFBTreeTests : XCTestCase
+@end
+
+@implementation HFBTreeTests
+
+- (void)testPerformance {
+    [self measureBlock:^{
+        @autoreleasepool {
+            HFBTree *btree = [[HFBTree alloc] init];
+            const NSUInteger max = 5000000;
+            for (NSUInteger i = 0; i < max; i++) {
+                TreeEntry *entry = [[TreeEntry alloc] initWithLength:1 value:@"yay"];
+                [btree insertEntry:entry atOffset: ((unsigned)random() % (i + 1))];
+            }
+        }
+    }];
 }
 
-static void run_for_shark(void) {
-    HFBTree *btree = [[HFBTree alloc] init];
-    const NSUInteger max = 5000000;
-    CFAbsoluteTime start = CFAbsoluteTimeGetCurrent();
-    for (NSUInteger i = 0; i < max; i++) {
-        TreeEntry *entry = [[TreeEntry alloc] initWithLength:1 value:@"yay"];
-        [btree insertEntry:entry atOffset: ((unsigned)random() % (i + 1))];
-        [entry release];
-    }
-    CFAbsoluteTime end = CFAbsoluteTimeGetCurrent();
-    printf("Time: %.04f\n", end - start);
-    [btree release];
-}
-
-static void test_trees(NaiveArray *naiveArray, HFBTree *btree) {
+static void test_trees(XCTestCase *self, NaiveArray *naiveArray, HFBTree *btree) {
     [btree checkIntegrityOfCachedLengths];
     [btree checkIntegrityOfBTreeStructure];
     
@@ -34,67 +35,51 @@ static void test_trees(NaiveArray *naiveArray, HFBTree *btree) {
     for (;;) {
         TreeEntry *naiveEntry = [naiveEnumerator nextObject];
         TreeEntry *btreeEntry = [btreeEnumerator nextObject];
-        HFASSERT(naiveEntry == btreeEntry);
+        XCTAssert(naiveEntry == btreeEntry);
         if (naiveEntry == nil || btreeEntry == nil) break;
         HFBTreeIndex randomOffsetWithinEntry = enumeratedOffset + ((unsigned)random() % [btreeEntry length]);
         HFBTreeIndex beginningOffset = (HFBTreeIndex)-1;
-#if 0
-        TreeEntry *naiveFoundEntry = [naiveArray entryContainingOffset:randomOffsetWithinEntry beginningOffset:&beginningOffset];
-        HFASSERT(naiveFoundEntry == naiveEntry);
-        HFASSERT(beginningOffset == enumeratedOffset);
-#endif        
+
+        if(q % 100 == 0) {
+            TreeEntry *naiveFoundEntry = [naiveArray entryContainingOffset:randomOffsetWithinEntry beginningOffset:&beginningOffset];
+            XCTAssert(naiveFoundEntry == naiveEntry);
+            XCTAssert(beginningOffset == enumeratedOffset);
+        }
         
         TreeEntry *btreeFoundEntry = [btree entryContainingOffset:randomOffsetWithinEntry beginningOffset:&beginningOffset];
-        HFASSERT(btreeFoundEntry == btreeEntry);
-        HFASSERT(beginningOffset == enumeratedOffset);
+        XCTAssert(btreeFoundEntry == btreeEntry);
+        XCTAssert(beginningOffset == enumeratedOffset);
         enumeratedOffset += [btreeEntry length];
         q++;
     }
 }
 
-int main (int argc, const char * argv[]) {
-    @autoreleasepool {
-    
-    BOOL runForShark = NO;
-    if (argc >= 2) {
-        runForShark = ! strcmp(argv[1], "-shark");
-    }
-    if (runForShark) {
-        run_for_shark();
-        return 0;
-    }
-    
-    CFAbsoluteTime startTime = CFAbsoluteTimeGetCurrent();
-    
+- (void)testFillUnfill {
     NaiveArray *naiveArray = [[NaiveArray alloc] init];
     HFBTree *btree = [[HFBTree alloc] init];
-    
-    @autoreleasepool {
     
     //insertion
     NSUInteger max = 6000;
     for (NSUInteger i=0; i < max; i++) {
-        HFBTreeIndex entryLength = random_value(10000);
+        HFBTreeIndex entryLength = random(10000)+1;
         char buff[32];
         sprintf(buff, "%lu", (unsigned long)i);
         NSString *string = [[NSString alloc] initWithCString:buff encoding:NSMacOSRomanStringEncoding];
         TreeEntry *entry = [TreeEntry entryWithLength:entryLength value:string];
-        [string release];
         
         HFBTreeIndex offset = [naiveArray randomOffset];
         
-//        printf("%s:\t%llu, %llu\n", buff, offset, entryLength);
+        dbg_printf("%s:\t%llu, %llu\n", buff, offset, entryLength);
         
         [naiveArray insertEntry:entry atOffset:offset];
         [btree insertEntry:entry atOffset:offset];
         
-        test_trees(naiveArray, btree);
+        test_trees(self, naiveArray, btree);
         
         /* Test a copy of the tree too */
         HFBTree *copiedTree = [btree mutableCopy];
         [copiedTree checkIntegrityOfBTreeStructure];
         [copiedTree checkIntegrityOfCachedLengths];
-        [copiedTree release];
     }
     
     //deletion
@@ -102,20 +87,20 @@ int main (int argc, const char * argv[]) {
         HFBTreeIndex offset = [naiveArray randomOffsetExcludingLast];
         [naiveArray removeEntryAtOffset:offset];
         [btree removeEntryAtOffset:offset];
-        test_trees(naiveArray, btree);
+        test_trees(self, naiveArray, btree);
         
         /* Test a copy of the tree too */
         HFBTree *copiedTree = [btree mutableCopy];
         [copiedTree checkIntegrityOfBTreeStructure];
         [copiedTree checkIntegrityOfCachedLengths];
-        [copiedTree release];
     }
     
-    }
-    @autoreleasepool {
-    
-    puts("Testing randomized insertion/deletion");
-    //both
+}
+
+-(void)testRandom {
+    NaiveArray *naiveArray = [[NaiveArray alloc] init];
+    HFBTree *btree = [[HFBTree alloc] init];
+
     NSUInteger nodeCount = 0;
     for (NSUInteger i=0; i < 50000; i++) {
         BOOL insert;
@@ -125,14 +110,13 @@ int main (int argc, const char * argv[]) {
         else {
             insert = ((random() % 5) >= 2);
         }
-        if (i % 100 == 0) printf("%lu -> %lu nodes\n", (unsigned long)i, (unsigned long)nodeCount);
+        if (i % 100 == 0) dbg_printf("%lu -> %lu nodes\n", (unsigned long)i, (unsigned long)nodeCount);
         if (insert) {
-            HFBTreeIndex entryLength = random_value(10000);
+            HFBTreeIndex entryLength = random(10000)+1;
             char buff[32];
             sprintf(buff, "%lu", (unsigned long)i);
             NSString *string = [[NSString alloc] initWithCString:buff encoding:NSMacOSRomanStringEncoding];
             TreeEntry *entry = [TreeEntry entryWithLength:entryLength value:string];
-            [string release];            
             HFBTreeIndex offset = [naiveArray randomOffset];
             [naiveArray insertEntry:entry atOffset:offset];
             [btree insertEntry:entry atOffset:offset];            
@@ -144,15 +128,17 @@ int main (int argc, const char * argv[]) {
             [btree removeEntryAtOffset:offset];            
             nodeCount--;
         }
-        test_trees(naiveArray, btree);
-    }
-    
-    }
-    
-    CFAbsoluteTime endTime = CFAbsoluteTimeGetCurrent();
-    printf("TIME: %f\n", endTime - startTime);
-    
-    return 0;
-
+        test_trees(self, naiveArray, btree);
     }
 }
+
+- (void)setUp {
+    [super setUp];
+    srandom(0xBEBAFECA);
+}
+
+- (void)tearDown {
+    [super tearDown];
+}
+
+@end

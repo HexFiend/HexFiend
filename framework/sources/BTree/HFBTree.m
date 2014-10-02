@@ -176,7 +176,7 @@ static HFBTreeNode *mutable_copy_node(HFBTreeNode *node, TreeDepth_t depth, HFBT
     [super dealloc];
 }
 
-#if HFTEST_BTREES
+#if HFUNIT_TESTS
 - (void)checkIntegrityOfCachedLengths {
     if (root == nil) {
         /* nothing */

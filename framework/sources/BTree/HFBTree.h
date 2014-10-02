@@ -24,7 +24,7 @@ typedef unsigned long long HFBTreeIndex;
 - (void)removeEntryAtOffset:(HFBTreeIndex)offset;
 - (void)removeAllEntries;
 
-#if HFTEST_BTREES
+#if HFUNIT_TESTS
 - (void)checkIntegrityOfCachedLengths;
 - (void)checkIntegrityOfBTreeStructure;
 #endif

@@ -7,6 +7,7 @@
 
 #import <Cocoa/Cocoa.h>
 #import <XCTest/XCTest.h>
+#include <sys/stat.h>
 
 #import "HexFiend_2_Framework_Prefix.pch"
 #import <HexFiend/HexFiend.h>
@@ -16,19 +17,8 @@
 #import <HexFiend/HFByteArrayEditScript.h>
 #import "HFRandomDataByteSlice.h"
 #import "HFPrivilegedHelperConnection.h"
-#include <sys/stat.h>
 
-#define HFTEST(a) XCTAssert((a))
-
-#if 0 && DEBUG && ! NDEBUG
-#define dbg_printf(...) fprintf(stderr, __VA_ARGS__)
-#else
-#define dbg_printf(...) (void)0
-#endif
-
-@interface NSObject (HFUnitTests)
-+ (void)runHFUnitTests:(void (^)(const char *file, NSUInteger line, NSString *expr, NSString *msg))registerFailure;
-@end
+#import "HFTest.h"
 
 @interface HFFrameworkTests : XCTestCase
 @end
@@ -93,7 +83,7 @@ static NSString *randTmpFileName(NSString *name) {
     const NSUInteger baseOffsets[] = {0, 16, 32, 57, 93, 128, 255, 1017, 2297, 3000, 3152, 4092, 4094, 4095};
     const NSUInteger buffLen = 4099;
     unsigned char *buff = malloc(buffLen);
-    HFTEST(buff != NULL);
+    XCTAssert(buff != NULL);
     [randomDataOfLength(buffLen) getBytes:buff];
     /* Replace instances of searchChar with fillerChar */
     for (NSUInteger i=0; i < buffLen; i++) {
@@ -112,7 +102,7 @@ static NSString *randTmpFileName(NSString *name) {
                 buff[baseOffset + lsb] = searchChar;
                 tempMask &= (tempMask - 1);
             }
-            HFTEST(memchr(buff, searchChar, buffLen) == HFFastMemchr(buff, searchChar, buffLen));
+            XCTAssert(memchr(buff, searchChar, buffLen) == HFFastMemchr(buff, searchChar, buffLen));
             memcpy(buff + baseOffset, stored, sizeof stored);
         }
     }
@@ -120,65 +110,65 @@ static NSString *randTmpFileName(NSString *name) {
     NSUInteger remaining = buffLen;
     while (remaining--) {
         buff[remaining] = searchChar;
-        HFTEST(memchr(buff, searchChar, buffLen) == HFFastMemchr(buff, searchChar, buffLen));
+        XCTAssert(memchr(buff, searchChar, buffLen) == HFFastMemchr(buff, searchChar, buffLen));
     }
     remaining = buffLen;
     while (remaining--) {
         buff[remaining] = fillerChar;
-        HFTEST(memchr(buff, searchChar, buffLen) == HFFastMemchr(buff, searchChar, buffLen));
+        XCTAssert(memchr(buff, searchChar, buffLen) == HFFastMemchr(buff, searchChar, buffLen));
     }
 }
 
 - (void)testRangeFunctions {
     HFRange range = HFRangeMake(UINT_MAX + 573ULL, UINT_MAX * 2ULL);
-    HFTEST(range.location == UINT_MAX + 573ULL && range.length == UINT_MAX * 2ULL);
-    HFTEST(range.location == UINT_MAX + 573ULL && range.length == UINT_MAX * 2ULL);
-    HFTEST(HFRangeIsSubrangeOfRange(range, range));
-    HFTEST(HFRangeIsSubrangeOfRange(HFRangeMake(range.location, 0), range));
-    HFTEST(HFRangeIsSubrangeOfRange(HFRangeMake(range.location + range.length, 0), range));
-    HFTEST(HFRangeIsSubrangeOfRange(HFRangeMake(range.location, 0), HFRangeMake(range.location, 0)));
-    HFTEST(! HFRangeIsSubrangeOfRange(HFRangeMake(range.location, 0), HFRangeMake(range.location + 1, 0)));
-    HFTEST(HFRangeIsSubrangeOfRange(HFRangeMake(range.location + 6, 0), range));
-    HFTEST(HFRangeIsSubrangeOfRange(HFRangeMake(range.location + range.length, 0), range));
-    HFTEST(! HFRangeIsSubrangeOfRange(HFRangeMake(range.location + range.length + 1, 0), range));
-    HFTEST(! HFRangeIsSubrangeOfRange(range, HFRangeMake(34, 0)));
-    HFTEST(HFRangeIsSubrangeOfRange(range, HFRangeMake(range.location - 32, range.length + 54)));
-    HFTEST(HFRangeIsSubrangeOfRange(range, HFRangeMake(0, ULLONG_MAX)));
-    HFTEST(! HFRangeIsSubrangeOfRange(HFRangeMake(ULLONG_MAX - 2, 23), HFRangeMake(ULLONG_MAX - 3, 23)));
-    HFTEST(HFRangeIsSubrangeOfRange(HFRangeMake(ULLONG_MAX - 2, 22), HFRangeMake(ULLONG_MAX - 3, 23)));
+    XCTAssert(range.location == UINT_MAX + 573ULL && range.length == UINT_MAX * 2ULL);
+    XCTAssert(range.location == UINT_MAX + 573ULL && range.length == UINT_MAX * 2ULL);
+    XCTAssert(HFRangeIsSubrangeOfRange(range, range));
+    XCTAssert(HFRangeIsSubrangeOfRange(HFRangeMake(range.location, 0), range));
+    XCTAssert(HFRangeIsSubrangeOfRange(HFRangeMake(range.location + range.length, 0), range));
+    XCTAssert(HFRangeIsSubrangeOfRange(HFRangeMake(range.location, 0), HFRangeMake(range.location, 0)));
+    XCTAssert(! HFRangeIsSubrangeOfRange(HFRangeMake(range.location, 0), HFRangeMake(range.location + 1, 0)));
+    XCTAssert(HFRangeIsSubrangeOfRange(HFRangeMake(range.location + 6, 0), range));
+    XCTAssert(HFRangeIsSubrangeOfRange(HFRangeMake(range.location + range.length, 0), range));
+    XCTAssert(! HFRangeIsSubrangeOfRange(HFRangeMake(range.location + range.length + 1, 0), range));
+    XCTAssert(! HFRangeIsSubrangeOfRange(range, HFRangeMake(34, 0)));
+    XCTAssert(HFRangeIsSubrangeOfRange(range, HFRangeMake(range.location - 32, range.length + 54)));
+    XCTAssert(HFRangeIsSubrangeOfRange(range, HFRangeMake(0, ULLONG_MAX)));
+    XCTAssert(! HFRangeIsSubrangeOfRange(HFRangeMake(ULLONG_MAX - 2, 23), HFRangeMake(ULLONG_MAX - 3, 23)));
+    XCTAssert(HFRangeIsSubrangeOfRange(HFRangeMake(ULLONG_MAX - 2, 22), HFRangeMake(ULLONG_MAX - 3, 23)));
     
-    HFTEST(HFRangeEqualsRange(range, HFRangeMake(UINT_MAX + 573ULL, UINT_MAX * 2ULL)));
-    HFTEST(! HFRangeEqualsRange(range, HFRangeMake(UINT_MAX + 573ULL, UINT_MAX * 2ULL + 1)));
+    XCTAssert(HFRangeEqualsRange(range, HFRangeMake(UINT_MAX + 573ULL, UINT_MAX * 2ULL)));
+    XCTAssert(! HFRangeEqualsRange(range, HFRangeMake(UINT_MAX + 573ULL, UINT_MAX * 2ULL + 1)));
     
-    HFTEST(HFIntersectsRange(range, HFRangeMake(UINT_MAX + 3ULL, UINT_MAX * 2ULL + 1)));
-    HFTEST(! HFIntersectsRange(HFRangeMake(3, 3), HFRangeMake(3, 0)));
-    HFTEST(! HFIntersectsRange(HFRangeMake(3, 0), HFRangeMake(3, 0)));
-    HFTEST(HFIntersectsRange(HFRangeMake(3, 3), HFRangeMake(3, 3)));
-    HFTEST(! HFIntersectsRange(HFRangeMake(3, 3), HFRangeMake(6, 0)));
+    XCTAssert(HFIntersectsRange(range, HFRangeMake(UINT_MAX + 3ULL, UINT_MAX * 2ULL + 1)));
+    XCTAssert(! HFIntersectsRange(HFRangeMake(3, 3), HFRangeMake(3, 0)));
+    XCTAssert(! HFIntersectsRange(HFRangeMake(3, 0), HFRangeMake(3, 0)));
+    XCTAssert(HFIntersectsRange(HFRangeMake(3, 3), HFRangeMake(3, 3)));
+    XCTAssert(! HFIntersectsRange(HFRangeMake(3, 3), HFRangeMake(6, 0)));
     
-    HFTEST(HFRangeEqualsRange(HFIntersectionRange(range, range), range));
-    HFTEST(HFRangeEqualsRange(HFIntersectionRange(HFRangeMake(0, 25), HFRangeMake(10, 11)), HFRangeMake(10, 11)));
-    HFTEST(HFRangeEqualsRange(HFIntersectionRange(HFRangeMake(10, 11), HFRangeMake(15, 10)), HFRangeMake(15, 6)));
-    HFTEST(HFRangeEqualsRange(HFIntersectionRange(HFRangeMake(10, 11), HFRangeMake(150, 10)), HFRangeMake(0, 0)));
-    HFTEST(HFRangeEqualsRange(HFIntersectionRange(HFRangeMake(0, 25), HFRangeMake(10, 11)), HFIntersectionRange(HFRangeMake(10, 11), HFRangeMake(0, 25))));
-    HFTEST(HFRangeEqualsRange(HFIntersectionRange(HFRangeMake(10, 11), HFRangeMake(15, 10)), HFIntersectionRange(HFRangeMake(15, 10), HFRangeMake(10, 11))));
-    HFTEST(HFRangeEqualsRange(HFIntersectionRange(HFRangeMake(10, 11), HFRangeMake(150, 10)), HFIntersectionRange(HFRangeMake(150, 10), HFRangeMake(10, 11))));
+    XCTAssert(HFRangeEqualsRange(HFIntersectionRange(range, range), range));
+    XCTAssert(HFRangeEqualsRange(HFIntersectionRange(HFRangeMake(0, 25), HFRangeMake(10, 11)), HFRangeMake(10, 11)));
+    XCTAssert(HFRangeEqualsRange(HFIntersectionRange(HFRangeMake(10, 11), HFRangeMake(15, 10)), HFRangeMake(15, 6)));
+    XCTAssert(HFRangeEqualsRange(HFIntersectionRange(HFRangeMake(10, 11), HFRangeMake(150, 10)), HFRangeMake(0, 0)));
+    XCTAssert(HFRangeEqualsRange(HFIntersectionRange(HFRangeMake(0, 25), HFRangeMake(10, 11)), HFIntersectionRange(HFRangeMake(10, 11), HFRangeMake(0, 25))));
+    XCTAssert(HFRangeEqualsRange(HFIntersectionRange(HFRangeMake(10, 11), HFRangeMake(15, 10)), HFIntersectionRange(HFRangeMake(15, 10), HFRangeMake(10, 11))));
+    XCTAssert(HFRangeEqualsRange(HFIntersectionRange(HFRangeMake(10, 11), HFRangeMake(150, 10)), HFIntersectionRange(HFRangeMake(150, 10), HFRangeMake(10, 11))));
     
-    HFTEST(HFRangeEqualsRange(HFUnionRange(HFRangeMake(1, 3), HFRangeMake(2, 3)), HFRangeMake(1, 4)));
-    HFTEST(HFRangeEqualsRange(HFUnionRange(HFRangeMake(1, 3), HFRangeMake(4, 4)), HFRangeMake(1, 7)));
+    XCTAssert(HFRangeEqualsRange(HFUnionRange(HFRangeMake(1, 3), HFRangeMake(2, 3)), HFRangeMake(1, 4)));
+    XCTAssert(HFRangeEqualsRange(HFUnionRange(HFRangeMake(1, 3), HFRangeMake(4, 4)), HFRangeMake(1, 7)));
     
-    HFTEST(HFSumDoesNotOverflow(ULLONG_MAX, 0));
-    HFTEST(! HFSumDoesNotOverflow(ULLONG_MAX, 1));
-    HFTEST(HFSumDoesNotOverflow(ULLONG_MAX / 2, ULLONG_MAX / 2));
-    HFTEST(HFSumDoesNotOverflow(0, 0));
-    HFTEST(ll2l((unsigned long long)UINT_MAX) == UINT_MAX);
+    XCTAssert(HFSumDoesNotOverflow(ULLONG_MAX, 0));
+    XCTAssert(! HFSumDoesNotOverflow(ULLONG_MAX, 1));
+    XCTAssert(HFSumDoesNotOverflow(ULLONG_MAX / 2, ULLONG_MAX / 2));
+    XCTAssert(HFSumDoesNotOverflow(0, 0));
+    XCTAssert(ll2l((unsigned long long)UINT_MAX) == UINT_MAX);
     
-    HFTEST(HFRoundUpToNextMultipleSaturate(0, 2) == 2);
-    HFTEST(HFRoundUpToNextMultipleSaturate(2, 2) == 4);
-    HFTEST(HFRoundUpToNextMultipleSaturate(200, 200) == 400);
-    HFTEST(HFRoundUpToNextMultipleSaturate(1304, 600) == 1800);
-    HFTEST(HFRoundUpToNextMultipleSaturate(ULLONG_MAX - 13, 100) == ULLONG_MAX);
-    HFTEST(HFRoundUpToNextMultipleSaturate(ULLONG_MAX, 100) == ULLONG_MAX);
+    XCTAssert(HFRoundUpToNextMultipleSaturate(0, 2) == 2);
+    XCTAssert(HFRoundUpToNextMultipleSaturate(2, 2) == 4);
+    XCTAssert(HFRoundUpToNextMultipleSaturate(200, 200) == 400);
+    XCTAssert(HFRoundUpToNextMultipleSaturate(1304, 600) == 1800);
+    XCTAssert(HFRoundUpToNextMultipleSaturate(ULLONG_MAX - 13, 100) == ULLONG_MAX);
+    XCTAssert(HFRoundUpToNextMultipleSaturate(ULLONG_MAX, 100) == ULLONG_MAX);
     
     const HFRange dirtyRanges1[] = { {4, 6}, {6, 2}, {7, 3} };
     const HFRange cleanedRanges1[] = { {4, 6} };
@@ -235,7 +225,7 @@ static NSUInteger random_upto(unsigned long long val) {
         BOOL shouldCoalesceInsert = (replacementRange.length == 0 && selectedRange.location == coalescerActionPoint);
         
         [controller setSelectedContentsRanges:[HFRangeWrapper withRanges:&selectedRange count:1]];
-        HFTEST([[controller selectedContentsRanges] isEqual:[HFRangeWrapper withRanges:&selectedRange count:1]]);
+        XCTAssert([[controller selectedContentsRanges] isEqual:[HFRangeWrapper withRanges:&selectedRange count:1]]);
         
         BOOL expectedCoalesced = (shouldCoalesceInsert || shouldCoalesceDelete);
         HFControllerCoalescedUndo *previousUndoCoalescer = [controller valueForKey:@"undoCoalescer"];
@@ -244,9 +234,9 @@ static NSUInteger random_upto(unsigned long long val) {
         
         [controller insertData:replacementData replacingPreviousBytes:0 allowUndoCoalescing:YES];
         BOOL wasCoalesced = ([controller valueForKey:@"undoCoalescer"] == previousUndoCoalescer);
-        HFTEST(expectedCoalesced == wasCoalesced);
+        XCTAssert(expectedCoalesced == wasCoalesced);
         
-        HFTEST([[controller byteArray] _debugIsEqualToData:expectedData]);
+        XCTAssert([[controller byteArray] _debugIsEqualToData:expectedData]);
         if (wasCoalesced) [expectations removeLastObject];
         [expectations addObject:[expectedData copy]];
         
@@ -257,7 +247,7 @@ static NSUInteger random_upto(unsigned long long val) {
     
     NSUInteger expectationIndex = [expectations count] - 1;
     
-    HFTEST([[controller byteArray] _debugIsEqualToData:expectations[expectationIndex]]);
+    XCTAssert([[controller byteArray] _debugIsEqualToData:expectations[expectationIndex]]);
     
     for (i=1; i <= opCount; i++) @autoreleasepool {
         NSInteger expectationIndexChange;
@@ -273,17 +263,17 @@ static NSUInteger random_upto(unsigned long long val) {
         expectationIndex += expectationIndexChange;
         if (expectationIndexChange > 0) {
             dbg_printf("About to redo %lu %lu\n", (unsigned long)i, (unsigned long)expectationIndex);
-            HFTEST([undoer canRedo]);
+            XCTAssert([undoer canRedo]);
             [undoer redo];
         }
         else {
             dbg_printf("About to undo %lu %ld=u\n", (unsigned long)i, (unsigned long)expectationIndex);
-            HFTEST([undoer canUndo]);
+            XCTAssert([undoer canUndo]);
             [undoer undo];
         }
         
         dbg_printf("Index %lu %lu\n", (unsigned long)i, (unsigned long)expectationIndex);
-        HFTEST([[controller byteArray] _debugIsEqualToData:expectations[expectationIndex]]);
+        XCTAssert([[controller byteArray] _debugIsEqualToData:expectations[expectationIndex]]);
     }
     
     dbg_printf("Done!\n");
@@ -396,7 +386,7 @@ static NSUInteger random_upto(unsigned long long val) {
             
             if (i == j) {
                 /* Comparing an array to itself should always produce a 0 length script */
-                HFTEST([script numberOfInstructions] == 0);
+                XCTAssert([script numberOfInstructions] == 0);
             }
         }
     }
@@ -413,13 +403,13 @@ static NSUInteger random_upto(unsigned long long val) {
     
     HFFileReference *ref;
     HFByteArray *array =  byteArrayForFile([fileURL path], &ref);
-    HFTEST([ref length] == [data length]);
-    HFTEST([HFHashByteArray(array) isEqual:HFHashFile(fileURL)]);
+    XCTAssert([ref length] == [data length]);
+    XCTAssert([HFHashByteArray(array) isEqual:HFHashFile(fileURL)]);
     
     NSUInteger i, op, opCount = 20;
     unsigned long long expectedLength = [data length];
     for (i=0; i < opCount; i++) {
-        HFTEST([array length] == expectedLength);
+        XCTAssert([array length] == expectedLength);
         HFRange replacementRange;
         replacementRange.location = random_upto(expectedLength);
         replacementRange.length = random_upto(expectedLength - replacementRange.location);
@@ -457,11 +447,11 @@ static NSUInteger random_upto(unsigned long long val) {
     
     NSData *arrayHash = HFHashByteArray(array);
     
-    HFTEST([array writeToFile:asideFileURL trackingProgress:NULL error:NULL]);
-    HFTEST([arrayHash isEqual:HFHashFile(asideFileURL)]);
+    XCTAssert([array writeToFile:asideFileURL trackingProgress:NULL error:NULL]);
+    XCTAssert([arrayHash isEqual:HFHashFile(asideFileURL)]);
     
-    HFTEST([array writeToFile:fileURL trackingProgress:NULL error:NULL]);
-    HFTEST([arrayHash isEqual:HFHashFile(fileURL)]);
+    XCTAssert([array writeToFile:fileURL trackingProgress:NULL error:NULL]);
+    XCTAssert([arrayHash isEqual:HFHashFile(fileURL)]);
     
     [[NSFileManager defaultManager] removeItemAtURL:fileURL error:NULL];
 }
@@ -483,16 +473,16 @@ static NSUInteger random_upto(unsigned long long val) {
     
     NSError *error = nil;
     BOOL writeResult = [array writeToFile:url trackingProgress:NULL error:&error];
-    HFTEST(writeResult == NO);
-    HFTEST(error != nil);
-    HFTEST([[error domain] isEqual:NSCocoaErrorDomain]);
-    HFTEST([error code] == NSFileReadNoPermissionError);
+    XCTAssert(writeResult == NO);
+    XCTAssert(error != nil);
+    XCTAssert([[error domain] isEqual:NSCocoaErrorDomain]);
+    XCTAssert([error code] == NSFileReadNoPermissionError);
     
     chmod(path, 0644);
     error = nil;
     writeResult = [array writeToFile:url trackingProgress:NULL error:&error];
-    HFTEST(writeResult == YES);
-    HFTEST(error == nil);
+    XCTAssert(writeResult == YES);
+    XCTAssert(error == nil);
     
     unlink(path);
     
@@ -512,10 +502,10 @@ static NSUInteger random_upto(unsigned long long val) {
     
     NSError *error = nil;
     BOOL writeResult = [array writeToFile:url trackingProgress:NULL error:&error];
-    HFTEST(writeResult == NO);
-    HFTEST(error != nil);
-    HFTEST([[error domain] isEqual:NSCocoaErrorDomain]);
-    HFTEST([error code] == NSFileWriteOutOfSpaceError);
+    XCTAssert(writeResult == NO);
+    XCTAssert(error != nil);
+    XCTAssert([[error domain] isEqual:NSCocoaErrorDomain]);
+    XCTAssert([error code] == NSFileWriteOutOfSpaceError);
     
     unlink(path);
 }
@@ -547,7 +537,7 @@ static NSUInteger random_upto(unsigned long long val) {
             [NSException raise:NSGenericException format:@"Unable to write test data to %@", fileURL];
         }
         HFFileReference *ref = [[HFFileReference alloc] initWithPath:[fileURL path] error:NULL];
-        HFTEST([ref length] == [data length]);
+        XCTAssert([ref length] == [data length]);
         
         HFByteSlice *slice = [[HFFileByteSlice alloc] initWithFile:ref];
         HFByteArray *array = [[preferredByteArrayClass() alloc] init];
@@ -559,11 +549,11 @@ static NSUInteger random_upto(unsigned long long val) {
         }
         NSData *arrayHash = HFHashByteArray(array);
         
-        HFTEST([array writeToFile:asideFileURL trackingProgress:NULL error:NULL]);
-        HFTEST([arrayHash isEqual:HFHashFile(asideFileURL)]);
+        XCTAssert([array writeToFile:asideFileURL trackingProgress:NULL error:NULL]);
+        XCTAssert([arrayHash isEqual:HFHashFile(asideFileURL)]);
         
-        HFTEST([array writeToFile:fileURL trackingProgress:NULL error:NULL]);
-        HFTEST([arrayHash isEqual:HFHashFile(fileURL)]);
+        XCTAssert([array writeToFile:fileURL trackingProgress:NULL error:NULL]);
+        XCTAssert([arrayHash isEqual:HFHashFile(fileURL)]);
         
         [[NSFileManager defaultManager] removeItemAtURL:fileURL error:NULL];
     }
@@ -576,19 +566,19 @@ static void HFByteArray_testSearchAlgorithms(XCTestCase *self, HFByteArray *need
     
     result1 = [haystack _byteSearchBoyerMoore:needle inRange:fullRange forwards:YES trackingProgress:nil];
     result2 = [haystack _byteSearchRollingHash:needle inRange:fullRange forwards:YES trackingProgress:nil];
-    HFTEST(result1 == result2);
+    XCTAssert(result1 == result2);
     
     result1 = [haystack _byteSearchBoyerMoore:needle inRange:fullRange forwards:NO trackingProgress:nil];
     result2 = [haystack _byteSearchRollingHash:needle inRange:fullRange forwards:NO trackingProgress:nil];
-    HFTEST(result1 == result2);
+    XCTAssert(result1 == result2);
     
     result1 = [haystack _byteSearchBoyerMoore:needle inRange:partialRange forwards:YES trackingProgress:nil];
     result2 = [haystack _byteSearchRollingHash:needle inRange:partialRange forwards:YES trackingProgress:nil];
-    HFTEST(result1 == result2);
+    XCTAssert(result1 == result2);
     
     result1 = [haystack _byteSearchBoyerMoore:needle inRange:partialRange forwards:NO trackingProgress:nil];
     result2 = [haystack _byteSearchRollingHash:needle inRange:partialRange forwards:NO trackingProgress:nil];
-    HFTEST(result1 == result2);
+    XCTAssert(result1 == result2);
 }
 
 - (void)testByteSearching {

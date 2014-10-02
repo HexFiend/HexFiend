@@ -6,7 +6,7 @@
 //
 
 #import <HexFiend/HFObjectGraph.h>
-
+#import "HFTest.h"
 
 @implementation HFObjectGraph
 
@@ -240,8 +240,7 @@ static NSSet *arraysToSets(NSArray *array, NSUInteger depth) {
     return result;
 }
 
-#define HFTEST(a, ...) if(!(a)) registerFailure(__FILE__, __LINE__, @#a, [NSString stringWithFormat: @"" __VA_ARGS__])
-+ (void)runHFUnitTests:(void (^)(const char *file, NSUInteger line, NSString *expr, NSString *msg))registerFailure {
++ (void)runHFUnitTests:(HFRegisterTestFailure_b)registerFailure {
     NSUInteger outer;
     for (outer = 0; outer < 100; outer++) @autoreleasepool {
         HFObjectGraph *graph = [[self alloc] init];
