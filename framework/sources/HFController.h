@@ -169,11 +169,9 @@ You create an HFController via <tt>[[HFController alloc] init]</tt>.  After that
 /*! @name Byte array
    Set and get the byte array. */
 //@{ 
-/*! Sets the byte array for the HFController.  The byte array must be non-nil. */
-- (void)setByteArray:(HFByteArray *)val;
 
-/*! Returns the byte array for the HFController.  In general, HFRepresenters should not use this to determine what bytes to display.  Instead they should use copyBytes:range: or dataForRange: below. */
-- (HFByteArray *)byteArray;
+/*! The byte array must be non-nil.  In general, HFRepresenters should not use this to determine what bytes to display.  Instead they should use copyBytes:range: or dataForRange: below. */
+@property (nonatomic, strong) HFByteArray *byteArray;
 
 /*! Replaces the entire byte array with a new one, preserving as much of the selection as possible.  Unlike setByteArray:, this method is undoable, and intended to be used from representers that make a global change (such as Replace All). */
 - (void)replaceByteArray:(HFByteArray *)newArray;
@@ -211,16 +209,14 @@ You create an HFController via <tt>[[HFController alloc] init]</tt>.  After that
 */
 //{@
 
-/*! Returns an array of HFRangeWrappers, representing the selected ranges.  This method always contains at least one range.  If there is no selection, then the result will contain a single range of length 0, with the location equal to the position of the cursor. */
-- (NSArray *)selectedContentsRanges;
+/*! An array of HFRangeWrappers, representing the selected ranges.  It satisfies the following:
+ The array is non-nil.
+ There always is at least one selected range.
+ If any range has length 0, that range is the only range.
+ No range extends beyond the contentsLength, with the exception of a single zero-length range at the end.
 
-/*! Explicitly set the selected contents ranges.  Pass an array of HFRangeWrappers that meets the following criteria:
- The array must not be NULL.
- There always must be at least one selected range.
- If any range has length 0, there must be exactly one selected range.
- No range may extend beyond the contentsLength, with the exception of a single zero-length range, which may be at the end.
-*/
-- (void)setSelectedContentsRanges:(NSArray *)selectedRanges;
+ When setting, the setter MUST obey the above criteria. A zero length range when setting or getting represents the cursor position. */
+@property (nonatomic, copy) NSArray *selectedContentsRanges;
 
 /*! Selects the entire contents. */
 - (IBAction)selectAll:(id)sender;
@@ -235,25 +231,12 @@ You create an HFController via <tt>[[HFController alloc] init]</tt>.  After that
 - (HFByteArray *)byteArrayForSelectedContentsRanges;
 //@}
 
-/*! @name Bytes per column
-   Set and get the number of bytes per column. */
-//@{ 
-/* Sets the number of bytes used in each column for a text-style representer. */
-- (void)setBytesPerColumn:(NSUInteger)val;
-
-/* Returns the number of bytes used in each column for a text-style representer. */
-- (NSUInteger)bytesPerColumn;
-//@}
+/* Number of bytes used in each column for a text-style representer. */
+@property (nonatomic) NSUInteger bytesPerColumn;
 
 /*! @name Edit Mode
    Determines what mode we're in, read-only, overwrite or insert. */
-//@{
-
-- (HFEditMode)editMode;
-
-- (void)setEditMode:(HFEditMode)val;
-
-//@}
+@property (nonatomic) HFEditMode editMode;
 
 /*! @name Displayed line range
     Methods for setting and getting the current range of displayed lines. 
@@ -261,13 +244,12 @@ You create an HFController via <tt>[[HFController alloc] init]</tt>.  After that
 //{@
 /*! Get the current displayed line range.  The displayed line range is an HFFPRange (range of long doubles) containing the lines that are currently displayed.
 
-  The values may be fractional.  That is, if only the bottom half of line 4 through the top two thirds of line 8 is shown, then the displayedLineRange.location will be 4.5 and the displayedLineRange.length will be 3.17 ( = 7.67 - 4.5).  Representers are expected to be able to handle such fractional values. 
+  The values may be fractional.  That is, if only the bottom half of line 4 through the top two thirds of line 8 is shown, then the displayedLineRange.location will be 4.5 and the displayedLineRange.length will be 3.17 ( = 7.67 - 4.5).  Representers are expected to be able to handle such fractional values.
+ 
+  When setting the displayed line range, the given range must be nonnegative, and the maximum of the range must be no larger than the total line count.
   
 */
-- (HFFPRange)displayedLineRange;
-
-/*! Sets the displayed line range.  When setting the displayed line range, the given range must be nonnegative, and the maximum of the range must be no larger than the total line count.  See the -displayedLineRange method for more information. */
-- (void)setDisplayedLineRange:(HFFPRange)range;
+@property (nonatomic) HFFPRange displayedLineRange;
 
 /*! Modify the displayedLineRange so that as much of the given range as can fit is visible. If possible, moves by as little as possible so that the visible ranges before and afterward intersect with each other. */
 - (void)maximizeVisibilityOfContentsRange:(HFRange)range;
@@ -277,79 +259,27 @@ You create an HFController via <tt>[[HFController alloc] init]</tt>.  After that
 
 //@}
 
-/*! @name Font
-    Get and set the current font.
+/*! The current font. */
+@property (nonatomic, copy) NSFont *font;
+
+/*! The undo manager. If no undo manager is set, then undo is not supported. By default the undo manager is nil.
 */
-//@{
-/*! Get the current font. */
-- (NSFont *)font;
+@property (nonatomic, strong) NSUndoManager *undoManager;
 
-/*! Set the current font. */
-- (void)setFont:(NSFont *)font;
+/*! Whether the user can edit the document. */
+@property (nonatomic) BOOL editable;
 
-/*! @name Undo management
-    Get and set the undo manager.  If no undo manager is set, then undo is not supported.
-*/
-//@{
+/*! Whether the text should be antialiased. Note that Mac OS X settings may prevent antialiasing text below a certain point size. */
+@property (nonatomic) BOOL shouldAntialias;
 
-/*! Set the undo manager for this HFController.  By default the undo manager for an HFController is nil.  If one is not set, undo does not occur.  This retains the undo manager. */
-- (void)setUndoManager:(NSUndoManager *)manager;
+/*! When enabled, characters have a background color that correlates to their byte values. */
+@property (nonatomic) BOOL shouldColorBytes;
 
-/*! Gets the undo manager for this HFController.  By default the undo manager is nil.  Undo will not be supported unless an undo manager is set. */
-- (NSUndoManager *)undoManager;
+/*! When enabled, byte bookmarks display callout-style labels attached to them. */
+@property (nonatomic) BOOL shouldShowCallouts;
 
-//@}
-
-/*! @name Editability
-   Set and get whether representers should allow editing the data.
-*/
-//@{
-/*! Get the editable property, which determines whether the user can edit the document. */
-- (BOOL)editable;
-
-/*! Set the editable property, which determines whether the user can edit the document. */
-- (void)setEditable:(BOOL)flag;
-//@}
-
-/*! @name Antialiasing
-  Set and get whether the text should be antialiased. Note that Mac OS X settings may prevent antialiasing text below a certain point size. */
-//@{
-/*! Returns whether text should be antialiased. */
-- (BOOL)shouldAntialias;
-
-/*! Sets whether text should be antialiased. */
-- (void)setShouldAntialias:(BOOL)antialias;
-//@}
-
-/*! @name Byte coloring
- Set and get whether the bytes should be colorized. When enabled, characters have a background color that correlates to their byte values. */
-//@{
-/*! Returns whether characters should be colored. */
-- (BOOL)shouldColorBytes;
-
-/*! Sets whether characters should be colored. */
-- (void)setShouldColorBytes:(BOOL)colorbytes;
-//@}
-
-/*! @name Callouts
- Set and get whether bookmark callouts should be shown. */
-//@{
-/*! Returns whether bookmark callouts should be shown. */
-- (BOOL)shouldShowCallouts;
-
-/*! Sets whether bookmark callouts should be shown. */
-- (void)setShouldShowCallouts:(BOOL)showcallouts;
-//@}
-
-/*! @name Live reload
- Set and get whether unmodified documents should be auto refreshed to their latest on disk state. */
-//@{
-/*! Returns whether live reload should occur. */
-- (BOOL)shouldLiveReload;
-
-/*! Sets whether live reload should occur. */
-- (void)setShouldLiveReload:(BOOL)livereload;
-//@}
+/*! When enabled, unmodified documents are auto refreshed to their latest on disk state. */
+@property (nonatomic) BOOL shouldLiveReload;
 
 /*! Representer initiated property changes
     Called from a representer to indicate when some internal property of the representer has changed which requires that some properties be recalculated.

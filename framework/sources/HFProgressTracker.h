@@ -42,20 +42,17 @@
 /*!
   HFProgressTracker determines the progress as an unsigned long long, but passes the progress to the delegate as a double, which is computed as the current progress divided by the max progress.
 */
-- (void)setMaxProgress:(unsigned long long)max;
-- (unsigned long long)maxProgress;
+@property (nonatomic) unsigned long long maxProgress;
 
 /*!
   The userInfo property is a convenience to allow passing information to the thread.  The property is not thread safe - the expectation is that the main thread will set it before the operation starts, and the background thread will read it once after the operation starts.
 */
-- (void)setUserInfo:(NSDictionary *)info;
-- (NSDictionary *)userInfo;
+@property (nonatomic, copy) NSDictionary *userInfo;
 
 /*!
   The progressIndicator property allows an NSProgressIndicator to be associated with the HFProgressTracker.  The progress indicator should have values in the range 0 to 1, and it will be updated with the fraction currentProgress / maxProgress.
 */
-- (void)setProgressIndicator:(NSProgressIndicator *)indicator;
-- (NSProgressIndicator *)progressIndicator;
+@property (nonatomic, strong) NSProgressIndicator *progressIndicator;
 
 /*!
   Called to indicate you want to begin tracking the progress, which means that the progress indicator will be updated, and the delegate callbacks may fire.
@@ -80,8 +77,7 @@
 /*!
   Set and get the delegate, which may implement the optional methods below.
 */
-- (void)setDelegate:(id)delegate;
-- (id)delegate;
+@property (nonatomic, assign) id delegate;
 
 @end
 

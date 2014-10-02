@@ -65,11 +65,8 @@ enum Endianness_t {
 /* A data inspector that is different from the given inspectors, if possible. */
 + (DataInspector*)dataInspectorSupplementing:(NSArray*)inspectors;
 
-- (enum InspectorType_t)type;
-- (void)setType:(enum InspectorType_t)type;
-
-- (enum Endianness_t)endianness;
-- (void)setEndianness:(enum Endianness_t)endianness;
+@property (nonatomic) enum InspectorType_t type;
+@property (nonatomic) enum Endianness_t endianness;
 
 - (id)valueForController:(HFController *)controller ranges:(NSArray*)ranges isError:(BOOL *)outIsError;
 - (id)valueForData:(NSData *)data isError:(BOOL *)outIsError;
@@ -79,8 +76,7 @@ enum Endianness_t {
 - (BOOL)acceptStringValue:(NSString *)value replacingByteCount:(NSUInteger)count intoData:(unsigned char *)outData;
 
 /* Get and set a property list representation, for persisting to user defaults */
-- (id)propertyListRepresentation;
-- (void)setPropertyListRepresentation:(id)plist;
+@property (nonatomic, strong) id propertyListRepresentation;
 
 @end
 

@@ -19,9 +19,8 @@
 }
 
 /*! Get the string encoding for this representer.  The default encoding is <tt>[NSString defaultCStringEncoding]</tt>. */
-- (NSStringEncoding)encoding;
+@property (nonatomic) NSStringEncoding encoding;
 
 /*! Set the string encoding for this representer. */
-- (void)setEncoding:(NSStringEncoding)encoding;
 
 @end

@@ -28,20 +28,14 @@
 */
 //@{
 
-/*! Returns the HFController for the receiver.  You may want to access this to add or remove HFRepresenters from the text view at runtime. */
-- (HFController *)controller;
+/*! The HFController for the receiver.  Useful for adding or removing HFRepresenters from the text view at runtime.  An HFTextView comes with its own HFController, but you can replace it. */
+@property (nonatomic, strong) HFController *controller;
 
-/*! Sets the HFController for the receiver.  An HFTextView comes with its own HFController, but you can use this to replace it. */
-- (void)setController:(HFController *)controller;
+/*! The HFLayoutRepresenter for the receiver.  An HFTextView comes with its own HFLayoutRepresenter, but you can use this to replace it. */
+@property (nonatomic, strong) HFLayoutRepresenter *layoutRepresenter;
 
-/*! Returns the HFLayoutRepresenter for the receiver.  You may want to access this to add or remove HFRepresenters from the text view at runtime. */
-- (HFLayoutRepresenter *)layoutRepresenter;
-
-/*! Sets the HFLayoutRepresenter for the receiver.  An HFTextView comes with its own HFLayoutRepresenter, but you can use this to replace it. */
-- (void)setLayoutRepresenter:(HFLayoutRepresenter *)layoutRepresenter;
-
-/*! Returns the HFByteArray for the receiver.  This is equivalent to <tt>[[self controller] byteArray]</tt>. */
-- (HFByteArray *)byteArray;
+/*! Returns the HFByteArray for the receiver.  This is equivalent to `[[self controller] byteArray]`. */
+@property (nonatomic, strong) HFByteArray *byteArray;
 
 //@}
 
@@ -49,41 +43,25 @@
 */
 //@{
 /*! Sets the arry of background colors for the receiver. The background colors are used in sequence to draw each row. */
-- (void)setBackgroundColors:(NSArray *)colors;
 
-/*! Returns the array of background colors for the receiver. */
-- (NSArray *)backgroundColors;
+/*! The array of background colors for the receiver. */
+@property (nonatomic, copy) NSArray *backgroundColors;
 
-/*! Sets whether the receiver draws a border. */
-- (void)setBordered:(BOOL)val;
-
-/*! Returns whether the receiver draws a border. */
-- (BOOL)bordered;
+/*! Whether the receiver draws a border. */
+@property (nonatomic) BOOL bordered;
 //@}
 
-/*! @name Delegate handling
-*/
-//@{
-/*! Sets the delegate, which may implement the methods in HFTextViewDelegate */
-- (void)setDelegate:(id)delegate;
+/*! The delegate, which may implement the methods in HFTextViewDelegate. Initially nil. */
+@property (nonatomic, assign) id delegate;
 
-/*! Returns the delegate, which is initially nil. */
-- (id)delegate;
-//@}
+/*! Access the contents of the HFTextView's HFByteArray as an NSData.
+    When setting, the data is copied via the `-copy` message, so prefer to pass an immutable `NSData` when possible.
+    When getting, the NSData proxies an HFByteArray, and therefore it is usually more efficient than naively copying all of the bytes.   However, access to the `-byte` method will necessitate copying, a potentially expensive operation.  Furthermore, the NSData API is inherently 32 bit in a 32 bit process.  Lastly, there is no protection if the backing file for the data disappears.
 
-/*! @name Accessing contents as NSData
+   For those reasons, this should only be used when its convenience outweighs the downside (e.g. some bindings scenarios).  For most use cases, it is better to use the `-byteArray` method above.
 */
-//@{
-/*! Returns the contents of the HFTextView's HFByteArray as an NSData This NSData proxies an HFByteArray, and therefore it is usually more efficient than naively copying all of the bytes.   However, access to the \c -byte method will necessitate copying, a potentially expensive operation.  Furthermore, the NSData API is inherently 32 bit in a 32 bit process.  Lastly, there is no protection if the backing file for the data disappears.
+@property (nonatomic, copy) NSData *data;
 
-   For those reasons, this should only be used when its convenience outweighs the downside (e.g. some bindings scenarios).  For most use cases, it is better to use the \c -byteArray method above.
-*/
-- (NSData *)data;
-
-/*! Sets the contents of the HFTextView's HFByteArray to an \c NSData.  Note that the data is copied via the \c -copy message, so prefer to pass an immutable \c NSData when possible.
-*/
-- (void)setData:(NSData *)data;
-//@}
 
 @end
 

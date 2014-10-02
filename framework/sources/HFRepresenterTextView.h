@@ -61,27 +61,15 @@
 
 - (HFTextRepresenter *)representer;
 
-- (NSFont *)font;
-- (void)setFont:(NSFont *)font;
+@property (nonatomic, copy) NSFont *font;
 
 /* Set and get data.  setData: will invalidate the correct regions (perhaps none) */
-- (NSData *)data;
-- (void)setData:(NSData *)data;
-
-- (CGFloat)verticalOffset;
-- (void)setVerticalOffset:(CGFloat)val;
-
-- (NSUInteger)startingLineBackgroundColorIndex;
-- (void)setStartingLineBackgroundColorIndex:(NSUInteger)val;
-
-- (BOOL)isEditable;
-- (void)setEditable:(BOOL)val;
-
-- (NSArray *)styles;
-- (void)setStyles:(NSArray *)theStyles;
-
-- (BOOL)shouldAntialias;
-- (void)setShouldAntialias:(BOOL)val;
+@property (nonatomic, copy) NSData *data;
+@property (nonatomic) CGFloat verticalOffset;
+@property (nonatomic) NSUInteger startingLineBackgroundColorIndex;
+@property (nonatomic, getter=isEditable) BOOL editable;
+@property (nonatomic, copy) NSArray *styles;
+@property (nonatomic) BOOL shouldAntialias;
 
 - (BOOL)behavesAsTextField;
 - (BOOL)showsFocusRing;
@@ -90,8 +78,7 @@
 - (NSRect)caretRect;
 
 - (void)setBookmarks:(NSDictionary *)bookmarks;
-- (BOOL)shouldDrawCallouts;
-- (void)setShouldDrawCallouts:(BOOL)val;
+@property (nonatomic) BOOL shouldDrawCallouts;
 
 - (void)setByteColoring:(void (^)(uint8_t byte, uint8_t *r, uint8_t *g, uint8_t *b, uint8_t *a))coloring;
 
@@ -99,12 +86,10 @@
 - (NSUInteger)indexOfCharacterAtPoint:(NSPoint)point;
 
 /* The amount of padding space to inset from the left and right side. */
-- (CGFloat)horizontalContainerInset;
-- (void)setHorizontalContainerInset:(CGFloat)inset;
+@property (nonatomic) CGFloat horizontalContainerInset;
 
-/* Set the number of bytes between vertical guides.  Pass 0 to not draw the guides. */
-- (void)setBytesBetweenVerticalGuides:(NSUInteger)val;
-- (NSUInteger)bytesBetweenVerticalGuides;
+/* The number of bytes between vertical guides. 0 means no drawing of guides. */
+@property (nonatomic) NSUInteger bytesBetweenVerticalGuides;
 
 /* To be invoked from drawRect:. */
 - (void)drawCaretIfNecessaryWithClip:(NSRect)clipRect;

@@ -36,11 +36,8 @@
 
 - (CGFloat)defaultHeight;
 
-- (BOOL)isFixedHeight;
-- (void)setIsFixedHeight:(BOOL)val;
-
-- (NSString *)displayName;
-- (void)setDisplayName:(NSString *)name;
+@property (nonatomic) BOOL isFixedHeight;
+@property (nonatomic, copy) NSString *displayName;
 
 - (IBAction)cancelViewOperation:sender;
 

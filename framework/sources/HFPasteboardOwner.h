@@ -38,8 +38,7 @@ extern NSString *const HFPrivateByteArrayPboardType;
 - (void)pasteboardChangedOwner:(NSPasteboard *)pboard;
 
 /* Useful property that several pasteboard types want to know */
-- (void)setBytesPerLine:(NSUInteger)bytesPerLine;
-- (NSUInteger)bytesPerLine;
+@property (nonatomic) NSUInteger bytesPerLine;
 
 /* For efficiency, Hex Fiend writes pointers to HFByteArrays into pasteboards.  In the case that the user quits and relaunches Hex Fiend, we don't want to read a pointer from the old process, so each process we generate a UUID.  This is constant for the lifetime of the process. */
 + (NSString *)uuid;

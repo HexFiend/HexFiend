@@ -32,18 +32,12 @@
  */
 - (NSPoint)locationOfCharacterAtByteIndex:(unsigned long long)byteIndex;
 
-/*! Returns the per-row background colors.  The default is <tt>-[NSControl controlAlternatingRowBackgroundColors]</tt>. */
-- (NSArray *)rowBackgroundColors;
+/*! The per-row background colors. Each row is drawn with the next color in turn, cycling back to the beginning when the array is exhausted.  Any empty space is filled with the first color in the array.  If the array is empty, then the background is drawn with \c clearColor.
+    The default is `-[NSControl controlAlternatingRowBackgroundColors]`. */
+@property (nonatomic, copy) NSArray *rowBackgroundColors;
 
-/*! Sets the per-row background colors.  Each row is drawn with the next color in turn, cycling back to the beginning when the array is exhausted.  Any empty space is filled with the first color in the array.  If the array is empty, then the background is drawn with \c clearColor. */
-- (void)setRowBackgroundColors:(NSArray *)colors;
-
-/*! Set whether the text view behaves like a text field (YES) or a text view (NO).  Currently this determines whether it draws a focus ring when it is the first responder.
+/*! Whether the text view behaves like a text field (YES) or a text view (NO).  Currently this determines whether it draws a focus ring when it is the first responder.
 */
-- (void)setBehavesAsTextField:(BOOL)val;
-
-/*! Returns whether the text view behaves like a text field (YES) or a text view (NO).
-*/
-- (BOOL)behavesAsTextField;
+@property (nonatomic) BOOL behavesAsTextField;
 
 @end

@@ -31,8 +31,7 @@
     NSOperationQueue *glyphLoader;
 }
 
-/* Set and get the NSStringEncoding that is used */
-- (void)setEncoding:(NSStringEncoding)val;
-- (NSStringEncoding)encoding;
+/// Set and get the NSStringEncoding that is used
+@property (nonatomic) NSStringEncoding encoding;
 
 @end

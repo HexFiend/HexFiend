@@ -26,23 +26,12 @@
     BOOL registeredForAppNotifications;
 }
 
-- (void)setFont:(NSFont *)val;
-- (NSFont *)font;
-
-- (void)setLineHeight:(CGFloat)height;
-- (CGFloat)lineHeight;
-
-- (void)setLineRangeToDraw:(HFFPRange)range;
-- (HFFPRange)lineRangeToDraw;
-
-- (void)setBytesPerLine:(NSUInteger)val;
-- (NSUInteger)bytesPerLine;
-
-- (void)setLineNumberFormat:(HFLineNumberFormat)format;
-- (HFLineNumberFormat)lineNumberFormat;
-
-- (void)setRepresenter:(HFLineCountingRepresenter *)rep;
-- (HFLineCountingRepresenter *)representer;
+@property (nonatomic, copy) NSFont *font;
+@property (nonatomic) CGFloat lineHeight;
+@property (nonatomic) HFFPRange lineRangeToDraw;
+@property (nonatomic) NSUInteger bytesPerLine;
+@property (nonatomic) HFLineNumberFormat lineNumberFormat;
+@property (nonatomic, strong) HFLineCountingRepresenter *representer;
 
 + (NSUInteger)digitsRequiredToDisplayLineNumber:(unsigned long long)lineNumber inFormat:(HFLineNumberFormat)format;
 

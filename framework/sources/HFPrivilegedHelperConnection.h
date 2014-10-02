@@ -17,7 +17,7 @@ struct HFProcessInfo_t {
     NSMachPort *childReceiveMachPort;
 }
 
-@property(readwrite) BOOL disabled; ///< When set, fail all requests as if the connection failed.
+@property BOOL disabled; ///< When set, fail all requests as if the connection failed.
 
 + (instancetype)sharedConnection;
 - (BOOL)launchAndConnect:(NSError **)error;

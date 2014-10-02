@@ -13,8 +13,7 @@
 @interface HFStringEncodingPasteboardOwner : HFPasteboardOwner {
     NSStringEncoding encoding;
 }
-- (void)setEncoding:(NSStringEncoding)val;
-- (NSStringEncoding)encoding;
+@property (nonatomic) NSStringEncoding encoding;
 @end
 
 @implementation HFStringEncodingPasteboardOwner

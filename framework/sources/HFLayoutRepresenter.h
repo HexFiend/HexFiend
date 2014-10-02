@@ -57,15 +57,8 @@
 - (void)removeRepresenter:(HFRepresenter *)representer;
 //@}
 
-/*! @name Configuration
-*/
-//@{
-/*! Sets whether the receiver will attempt to maximize the bytes per line so as to consume as much as possible of the bounds rect.  If this is YES, then upon relayout, the receiver will recalculate the maximum number of bytes per line that can fit in its boundsRectForLayout.  If this is NO, then the receiver will not change the bytes per line. */
-- (void)setMaximizesBytesPerLine:(BOOL)val;
-
-/*! Returns whether the receiver maximizes the bytes per line. */
-- (BOOL)maximizesBytesPerLine;
-//@}
+/*! When enabled, the receiver will attempt to maximize the bytes per line so as to consume as much as possible of the bounds rect.  If this is YES, then upon relayout, the receiver will recalculate the maximum number of bytes per line that can fit in its boundsRectForLayout.  If this is NO, then the receiver will not change the bytes per line. */
+@property (nonatomic) BOOL maximizesBytesPerLine;
 
 /*! @name Layout
     Methods to get information about layout, and to explicitly trigger it.

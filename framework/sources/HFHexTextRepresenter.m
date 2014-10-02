@@ -13,7 +13,7 @@
 @interface HFHexPasteboardOwner : HFPasteboardOwner {
     NSUInteger _bytesPerColumn;
 }
-@property (readwrite) NSUInteger bytesPerColumn;
+@property (nonatomic) NSUInteger bytesPerColumn;
 @end
 
 static inline unsigned char hex2char(NSUInteger c) {

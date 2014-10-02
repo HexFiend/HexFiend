@@ -18,29 +18,14 @@
     NSIndexSet *bookmarkEnds;
 }
 
-- (NSColor *)foregroundColor;
-- (void)setForegroundColor:(NSColor *)theForegroundColor;
-
-- (NSColor *)backgroundColor;
-- (void)setBackgroundColor:(NSColor *)theBackgroundColor;
-
-- (NSRange)range;
-- (void)setRange:(NSRange)theRange;
-
-- (BOOL)shouldDraw;
-- (void)setShouldDraw:(BOOL)val;
-
-- (CGFloat)scale;
-- (void)setScale:(CGFloat)val;
-
-- (NSIndexSet *)bookmarkStarts;
-- (void)setBookmarkStarts:(NSIndexSet *)starts;
-
-- (NSIndexSet *)bookmarkExtents;
-- (void)setBookmarkExtents:(NSIndexSet *)val;
-
-- (NSIndexSet *)bookmarkEnds;
-- (void)setBookmarkEnds:(NSIndexSet *)ends;
+@property (nonatomic, copy) NSColor *foregroundColor;
+@property (nonatomic, copy) NSColor *backgroundColor;
+@property (nonatomic) NSRange range;
+@property (nonatomic) BOOL shouldDraw;
+@property (nonatomic) CGFloat scale;
+@property (nonatomic, copy) NSIndexSet *bookmarkStarts;
+@property (nonatomic, copy) NSIndexSet *bookmarkExtents;
+@property (nonatomic, copy) NSIndexSet *bookmarkEnds;
 
 - (void)set;
 

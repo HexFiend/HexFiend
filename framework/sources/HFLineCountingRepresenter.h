@@ -34,11 +34,8 @@ typedef NS_ENUM(NSUInteger, HFLineNumberFormat) {
     NSColor * borderColor;
 }
 
-/*! Sets the minimum digit count.  The receiver will always ensure it is big enough to display at least the minimum digit count.  The default is 2. */
-- (void)setMinimumDigitCount:(NSUInteger)count;
-
-/*! Gets the minimum digit count. */
-- (NSUInteger)minimumDigitCount;
+/*! The minimum digit count.  The receiver will always ensure it is big enough to display at least the minimum digit count.  The default is 2. */
+@property (nonatomic) NSUInteger minimumDigitCount;
 
 /*! Returns the number of digits we are making space for. */
 - (NSUInteger)digitCount;
@@ -46,39 +43,23 @@ typedef NS_ENUM(NSUInteger, HFLineNumberFormat) {
 /*! Returns the current width that the HFRepresenter prefers to be laid out with. */
 - (CGFloat)preferredWidth;
 
-/*! Returns the current line number format. */
-- (HFLineNumberFormat)lineNumberFormat;
-
-/*! Sets the current line number format to a new format. */
-- (void)setLineNumberFormat:(HFLineNumberFormat)format;
+/*! The line number format. */
+@property (nonatomic) HFLineNumberFormat lineNumberFormat;
 
 /*! Switches to the next line number format.  This is called from the view. */
 - (void)cycleLineNumberFormat;
 
-/*! Sets on which edge (as an NSRectEdge) the view draws an interior shadow.  Pass -1 to mean no edge. */
-- (void)setInteriorShadowEdge:(NSInteger)interiorShadowEdge;
+/*! The edge (as an NSRectEdge) on which the view draws an interior shadow. -1 means no edge. */
+@property (nonatomic) NSInteger interiorShadowEdge;
 
-/*! Returns the edge (as an NSRectEdge) on which the view draws a shadow, or -1 if no edge. */
-- (NSInteger)interiorShadowEdge;
+/*! The border color used at the edges specified by -borderedEdges. */
+@property (nonatomic, copy) NSColor *borderColor;
 
-/*! Sets the border color to use at the edges specified by -borderedEdges. */
-- (void)setBorderColor:(NSColor *)color;
-- (NSColor *)borderColor;
+/*! The edges on which borders are drawn. The edge returned by interiorShadowEdge always has a border drawn. The edges are specified by a bitwise or of 1 left shifted by the NSRectEdge values. For example, to draw a border on the min x and max y edges use: (1 << NSMinXEdge) | (1 << NSMaxYEdge). 0 (or -1) specfies no edges. */
+@property (nonatomic) NSInteger borderedEdges;
 
-/*! Sets the edges on which to draw borders. The edge returned by interiorShadowEdge always has a border drawn. The edges are specified by a bitwise or of 1 left shifted by the NSRectEdge values. For example, to draw a border on the min x and max y edges use: (1 << NSMinXEdge) | (1 << NSMaxYEdge). 0 (or -1) specfies no edges. */
-- (void)setBorderedEdges:(NSInteger)edges;
-
-/*! Returns the edges on which borders will be drawn. The edge returned by interiorShadowEdge always has a border drawn. 0 (or -1) specfies no edges. */
-- (NSInteger)borderedEdges;
-
-/*! Sets the background color */
-- (void)setBackgroundColor:(NSColor *)color;
-
-/*! Returns the background color */
-- (NSColor *)backgroundColor;
-
-
-
+/*! The background color */
+@property (nonatomic, copy) NSColor *backgroundColor;
 
 @end
 

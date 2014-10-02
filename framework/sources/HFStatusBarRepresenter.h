@@ -26,7 +26,6 @@ typedef NS_ENUM(NSUInteger, HFStatusBarMode) {
     HFStatusBarMode statusMode;
 }
 
-- (HFStatusBarMode)statusMode;
-- (void)setStatusMode:(HFStatusBarMode)mode;
+@property (nonatomic) HFStatusBarMode statusMode;
 
 @end
