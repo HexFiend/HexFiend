@@ -1401,9 +1401,7 @@ static inline enum HFEditInstructionType HFByteArrayInstructionType(struct HFEdi
     [tracker release];
     
     CFAbsoluteTime end = CFAbsoluteTimeGetCurrent();
-    
-    printf("Diffs computed in %.2f seconds\n", end - start);
-    
+    fprintf(stderr, "Diffs computed in %.2f seconds\n", end - start);
     return result;
 }
 

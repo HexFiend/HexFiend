@@ -39,6 +39,15 @@ static inline Class preferredByteArrayClass(void) {
     return [HFBTreeByteArray class];
 }
 
+static HFByteArray *byteArrayForFile(NSString *path, HFFileReference **outref) {
+    HFFileReference *ref = [[HFFileReference alloc] initWithPath:path error:NULL];
+    HFFileByteSlice *slice = [[HFFileByteSlice alloc] initWithFile:ref];
+    HFByteArray *array = [[preferredByteArrayClass() alloc] init];
+    [array insertByteSlice:slice inRange:HFRangeMake(0, 0)];
+    if(outref) *outref = ref;
+    return array;
+}
+
 static NSData *randomDataOfLength(NSUInteger length) {
     if (! length) return [NSData data];
     
@@ -74,7 +83,7 @@ static NSString *randTmpFileName(NSString *name) {
     if(dot == NSNotFound) {
         return [NSString stringWithFormat:@"/tmp/HexFiendTest_%@_%x", name, arc4random()];
     } else {
-        return [NSString stringWithFormat:@"/tmp/HexFiendTest_%@_%x", [name substringToIndex:dot], arc4random(), [name substringFromIndex:dot+1]];
+        return [NSString stringWithFormat:@"/tmp/HexFiendTest_%@_%x.%@", [name substringToIndex:dot], arc4random(), [name substringFromIndex:dot+1]];
     }
 }
 
@@ -318,24 +327,11 @@ static NSUInteger random_upto(unsigned long long val) {
             }
         }
         fflush(NULL);
-        if ([first _debugIsEqual:second]) {
-            dbg_printf("OK! Length: %llu\t%s\n", [second length], [[second description] UTF8String]);
-        }
-        else {
-            dbg_printf("Error! expected length: %llu mem length: %llu tavl length:%llu desc: %s\n", expectedLength, [first length], [second length], [[second description] UTF8String]);
-            exit(EXIT_FAILURE);
-        }
+        XCTAssert([first _debugIsEqual:second], @"Expected length: %llu mem length: %llu tavl length:%llu desc: %s\n", expectedLength, [first length], [second length], [[second description] UTF8String]);
+        dbg_printf("Pass, length: %llu\t%s\n", [second length], [[second description] UTF8String]);
     }
     dbg_printf("Done!\n");
     dbg_printf("%s\n", [[second description] UTF8String]);
-}
-
-static HFByteArray *byteArrayForFile(NSString *path) {
-    HFFileReference *ref = [[HFFileReference alloc] initWithPath:path error:NULL];
-    HFFileByteSlice *slice = [[HFFileByteSlice alloc] initWithFile:ref];
-    HFByteArray *array = [[HFBTreeByteArray alloc] init];
-    [array insertByteSlice:slice inRange:HFRangeMake(0, 0)];
-    return array;
 }
 
 - (void)testByteArrayEditScripts {
@@ -390,17 +386,14 @@ static HFByteArray *byteArrayForFile(NSString *path) {
         NSUInteger j;
         for (j=0; j < arrayCount; j++) {
             HFByteArray *dst = [byteArrays objectAtIndex:j];
-            printf("Tested %lu / %lu (lengths are %llu, %llu)\n", i * arrayCount + j, arrayCount * arrayCount, [src length], [dst length]);
+            dbg_printf("Tested %lu / %lu (lengths are %llu, %llu)\n", i * arrayCount + j, arrayCount * arrayCount, [src length], [dst length]);
             HFByteArrayEditScript *script = [[HFByteArrayEditScript alloc] initWithDifferenceFromSource:src toDestination:dst trackingProgress:nil];
             HFByteArray *guineaPig = [src mutableCopy];
             [script applyToByteArray:guineaPig];
-            if ([dst _debugIsEqual:guineaPig]) {
-                dbg_printf("Edit script success with length %llu\n", [dst length]);
-            }
-            else {
-                dbg_printf("Error! Edit script failure with length %llu\n", [dst length]);
-                exit(EXIT_FAILURE);
-            }
+
+            XCTAssert([dst _debugIsEqual:guineaPig], @"Edit script failure with length %llu\n", [dst length]);
+            dbg_printf("Edit script success with length %llu\n", [dst length]);
+            
             if (i == j) {
                 /* Comparing an array to itself should always produce a 0 length script */
                 HFTEST([script numberOfInstructions] == 0);
@@ -417,11 +410,10 @@ static HFByteArray *byteArrayForFile(NSString *path) {
     if (! [data writeToURL:fileURL atomically:NO]) {
         [NSException raise:NSGenericException format:@"Unable to write test data to %@", fileURL];
     }
-    HFFileReference *ref = [[HFFileReference alloc] initWithPath:[fileURL path] error:NULL];
-    HFTEST([ref length] == [data length]);
     
-    HFByteArray *array = [[preferredByteArrayClass() alloc] init];
-    [array insertByteSlice:[[HFFileByteSlice alloc] initWithFile:ref] inRange:HFRangeMake(0, 0)];
+    HFFileReference *ref;
+    HFByteArray *array =  byteArrayForFile([fileURL path], &ref);
+    HFTEST([ref length] == [data length]);
     HFTEST([HFHashByteArray(array) isEqual:HFHashFile(fileURL)]);
     
     NSUInteger i, op, opCount = 20;
@@ -475,7 +467,7 @@ static HFByteArray *byteArrayForFile(NSString *path) {
 }
 
 - (void)testBadPermissionsFileWriting {
-    NSString *pathObj = [NSString stringWithFormat:randTmpFileName(@"BadPerms.data")];
+    NSString *pathObj = randTmpFileName(@"BadPerms.data");
     const char *path = [pathObj fileSystemRepresentation];
     NSURL *url = [NSURL fileURLWithPath:pathObj isDirectory:NO];
     NSData *data = randomDataOfLength(4 * 1024);
@@ -549,7 +541,7 @@ static HFByteArray *byteArrayForFile(NSString *path) {
         }
         
         NSData *data = randomDataOfLength(BLOCK_COUNT * BLOCK_SIZE);
-        NSURL *fileURL = [NSURL fileURLWithPath:randTmpFileName(@"File.data"];
+        NSURL *fileURL = [NSURL fileURLWithPath:randTmpFileName(@"File.data")];
         NSURL *asideFileURL = [NSURL fileURLWithPath:randTmpFileName(@"External.data")];
         if (! [data writeToURL:fileURL atomically:NO]) {
             [NSException raise:NSGenericException format:@"Unable to write test data to %@", fileURL];
@@ -558,7 +550,6 @@ static HFByteArray *byteArrayForFile(NSString *path) {
         HFTEST([ref length] == [data length]);
         
         HFByteSlice *slice = [[HFFileByteSlice alloc] initWithFile:ref];
-        
         HFByteArray *array = [[preferredByteArrayClass() alloc] init];
         
         for (p=0; p < BLOCK_COUNT; p++) {
@@ -628,7 +619,7 @@ static void HFByteArray_testSearchAlgorithms(XCTestCase *self, HFByteArray *need
     unsigned long round, roundCount = 4096 * 4;
     const NSUInteger supportedIndexEnd = NSNotFound;
     for (round = 0; round < 4096 * 4; round++) {
-        if (round % (roundCount / 8) == 0) printf("Index set test %lu / %lu\n", round, roundCount);
+        if (round % (roundCount / 8) == 0) dbg_printf("Index set test %lu / %lu\n", round, roundCount);
         BOOL insert = ([nsindexset count] == 0 || (random() % 2));
         NSUInteger end = 1 + (random() % supportedIndexEnd);
         NSUInteger start = 1 + (random() % supportedIndexEnd);
