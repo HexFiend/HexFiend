@@ -1,15 +1,5 @@
 #!/usr/bin/python
 
-# In Cocoa, we use this pattern
-# enum
-# {
-#    FirstValue,
-#    SecondValue,
-#    ThirdValue
-# }
-# typedef NSUInteger TheEnumName
-# This fixes up this pattern so that Doxygen can handle it
-
 import sys, re
 
 if len(sys.argv) > 1:
@@ -18,25 +8,7 @@ else:
 	file_to_read = sys.stdin
 
 all_text = file_to_read.read()
-
-pattern =   r"""enum 			# enum at start of string
-			    \ *				# some spaces
-			    \n?				# optional newline
-			    {				# open bracket
-			    (.+?)			# some junk.  Note that . must be able to match newlines
-			    ^};				# end of junk
-			    \n				# newline
-			    ^typedef\ 		# typedef
-			    NS(U?)Integer	# the type
-			    \ +				# space
-				(\w+)			# the enum name
-			    ;				# terminated by semicolon
-			 """
-
-replacement = r"enum \3\n{\1};\n"
-
-expr = re.compile(pattern, re.MULTILINE | re.VERBOSE | re.DOTALL)
-massaged_text = expr.sub(replacement, all_text)
+massaged_text = all_text
 
 # Next, remove the ivars of every class so that Doxygen doesn't try to document them (grr...)
 pattern =   r"""^@interface 		# start with @interface at the beginning of a line

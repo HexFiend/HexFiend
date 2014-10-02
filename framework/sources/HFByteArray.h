@@ -9,12 +9,10 @@
 
 @class HFByteSlice, HFProgressTracker, HFFileReference, HFByteRangeAttributeArray;
 
-enum
-{
+typedef NS_ENUM(NSUInteger, HFByteArrayDataStringType) {
     HFHexDataStringType,
     HFASCIIDataStringType
 };
-typedef NSUInteger HFByteArrayDataStringType;
 
 
 /*! @class HFByteArray

@@ -244,11 +244,11 @@
     [[self view] setString:string];
 }
 
-- (NSUInteger)statusMode {
+- (HFStatusBarMode)statusMode {
     return statusMode;
 }
 
-- (void)setStatusMode:(NSUInteger)mode {
+- (void)setStatusMode:(HFStatusBarMode)mode {
     statusMode = mode;
     [self updateString];
 }

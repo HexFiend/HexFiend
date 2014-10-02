@@ -10,13 +10,11 @@
 /*! @enum HFLineNumberFormat
     HFLineNumberFormat is a simple enum used to determine whether line numbers are in decimal or hexadecimal format.
 */
-enum
-{
+typedef NS_ENUM(NSUInteger, HFLineNumberFormat) {
     HFLineNumberFormatDecimal, //!< Decimal line numbers
     HFLineNumberFormatHexadecimal, //!< Hexadecimal line numbers
     HFLineNumberFormatMAXIMUM //!< One more than the maximum valid line number format, so that line number formats can be cycled through easily
 };
-typedef NSUInteger HFLineNumberFormat;
 
 /*! @class HFLineCountingRepresenter
     @brief The HFRepresenter used to show the "line number gutter."

@@ -9,10 +9,10 @@
 
 @class HFByteSlice, HFFileReference, HFProgressTracker;
 
-typedef enum {
+typedef NS_ENUM(NSInteger, HFByteSliceWriteError) {
 	HFWriteSuccess,
 	HFWriteCancelled
-} HFByteSliceWriteError;
+};
 
 @interface HFByteSliceFileOperation : NSObject {
     HFRange targetRange;

@@ -18,8 +18,7 @@
 /*! @enum HFControllerPropertyBits
     The HFControllerPropertyBits bitmask is used to inform the HFRepresenters of a change in the current state that they may need to react to.  A bitmask of the changed properties is passed to representerChangedProperties:.  It is common for multiple properties to be included in such a bitmask.        
 */
-enum
-{
+typedef NS_OPTIONS(NSUInteger, HFControllerPropertyBits) {
     HFControllerContentValue = 1 << 0,		/*!< Indicates that the contents of the ByteArray has changed within the document.  There is no indication as to what the change is.  If redisplaying everything is expensive, Representers should cache their displayed data and compute any changes manually. */
     HFControllerContentLength = 1 << 1,		/*!< Indicates that the length of the ByteArray has changed. */
     HFControllerDisplayedLineRange = 1 << 2,	/*!< Indicates that the displayedLineRange property of the document has changed (e.g. the user scrolled). */
@@ -38,54 +37,47 @@ enum
     HFControllerColorBytes = 1 << 15,   /*!< Indicates that the shouldColorBytes property has changed. */
     HFControllerShowCallouts = 1 << 16, /*!< Indicates that the shouldShowCallouts property has changed. */
 };
-typedef NSUInteger HFControllerPropertyBits;
 
 /*! @enum HFControllerMovementDirection
     
 The HFControllerMovementDirection enum is used to specify a direction (either left or right) in various text editing APIs.  HexFiend does not support left-to-right languages.
 */
-enum
-{
+typedef NS_ENUM(NSInteger, HFControllerMovementDirection) {
     HFControllerDirectionLeft,
     HFControllerDirectionRight
 };
-typedef NSInteger HFControllerMovementDirection;
 
 /*! @enum HFControllerSelectionTransformation
     
 The HFControllerSelectionTransformation enum is used to specify what happens to the selection in various APIs.  This is mainly interesting for text-editing style Representers.
 */
-enum
-{
+typedef NS_ENUM(NSInteger, HFControllerSelectionTransformation) {
     HFControllerDiscardSelection,   /*!< The selection should be discarded. */
     HFControllerShiftSelection,	    /*!< The selection should be moved, without changing its length. */
     HFControllerExtendSelection	    /*!< The selection should be extended, changing its length. */
 };
-typedef NSInteger HFControllerSelectionTransformation;
 
 /*! @enum HFControllerMovementGranularity
     
 The HFControllerMovementGranularity enum is used to specify the granularity of text movement in various APIs.  This is mainly interesting for text-editing style Representers.
 */
-enum
-{
+typedef NS_ENUM(NSInteger, HFControllerMovementGranularity) {
     HFControllerMovementByte, /*!< Move by individual bytes */
     HFControllerMovementColumn, /*!< Move by a column */
     HFControllerMovementLine, /*!< Move by lines */
     HFControllerMovementPage, /*!< Move by pages */
     HFControllerMovementDocument /*!< Move by the whole document */
 };
-typedef NSInteger HFControllerMovementGranularity;
 
 /*! @enum HFEditMode
  
 HFEditMode enumerates the different edit modes that a document might be in.
  */
-typedef enum {
+typedef NS_ENUM(NSInteger, HFEditMode) {
     HFInsertMode,
     HFOverwriteMode,
     HFReadOnlyMode,
-} HFEditMode;
+} ;
 
 /*! @class HFController
 @brief A central class that acts as the controller layer for HexFiend.framework

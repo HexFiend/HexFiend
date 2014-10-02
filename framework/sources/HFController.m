@@ -52,19 +52,19 @@ NSString * const HFControllerDidChangePropertiesNotification = @"HFControllerDid
 NSString * const HFControllerChangedPropertiesKey = @"HFControllerChangedPropertiesKey";
 
 
-typedef enum {
+typedef NS_ENUM(NSInteger, HFControllerSelectAction) {
     eSelectResult,
     eSelectAfterResult,
     ePreserveSelection,
     NUM_SELECTION_ACTIONS
-} SelectionAction_t;
+};
 
 @interface HFController (ForwardDeclarations)
-- (void)_commandInsertByteArrays:(NSArray *)byteArrays inRanges:(NSArray *)ranges withSelectionAction:(SelectionAction_t)selectionAction;
+- (void)_commandInsertByteArrays:(NSArray *)byteArrays inRanges:(NSArray *)ranges withSelectionAction:(HFControllerSelectAction)selectionAction;
 - (void)_endTypingUndoCoalescingIfActive;
 - (void)_removeUndoManagerNotifications;
 - (void)_removeAllUndoOperations;
-- (void)_registerUndoOperationForInsertingByteArrays:(NSArray *)byteArrays inRanges:(NSArray *)ranges withSelectionAction:(SelectionAction_t)selectionAction;
+- (void)_registerUndoOperationForInsertingByteArrays:(NSArray *)byteArrays inRanges:(NSArray *)ranges withSelectionAction:(HFControllerSelectAction)selectionAction;
 
 - (void)_updateBytesPerLine;
 - (void)_updateDisplayedRange;
@@ -797,7 +797,7 @@ static inline Class preferredByteArrayClass(void) {
     [undoer release];
 }
 
-- (void)_registerUndoOperationForInsertingByteArrays:(NSArray *)byteArrays inRanges:(NSArray *)ranges withSelectionAction:(SelectionAction_t)selectionAction {
+- (void)_registerUndoOperationForInsertingByteArrays:(NSArray *)byteArrays inRanges:(NSArray *)ranges withSelectionAction:(HFControllerSelectAction)selectionAction {
     if (undoManager) {
         HFControllerMultiRangeUndo *undoer = [[HFControllerMultiRangeUndo alloc] initForInsertingByteArrays:byteArrays inRanges:ranges withSelectionAction:selectionAction];
         HFASSERT(undoOperations != nil);
@@ -1485,7 +1485,7 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
     }
 }
 
-- (void)_commandInsertByteArrays:(NSArray *)byteArrays inRanges:(NSArray *)ranges withSelectionAction:(SelectionAction_t)selectionAction {
+- (void)_commandInsertByteArrays:(NSArray *)byteArrays inRanges:(NSArray *)ranges withSelectionAction:(HFControllerSelectAction)selectionAction {
     HFASSERT(selectionAction < NUM_SELECTION_ACTIONS);
     REQUIRE_NOT_NULL(byteArrays);
     REQUIRE_NOT_NULL(ranges);
