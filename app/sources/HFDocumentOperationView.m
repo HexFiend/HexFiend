@@ -39,7 +39,7 @@ static NSString *sNibName;
         [topLevelObjects retain];
     } else {
         /* for Mac OS X 10.7 or lower */
-        if (! [NSBundle loadNibFile:path externalNameTable:[NSDictionary dictionaryWithObjectsAndKeys:topLevelObjects, @"NSTopLevelObjects", owner, @"NSOwner", nil] withZone:NULL]) {
+        if (! [NSBundle loadNibFile:path externalNameTable:@{@"NSTopLevelObjects": topLevelObjects, @"NSOwner": owner} withZone:NULL]) {
             [NSException raise:NSInvalidArgumentException format:@"Unable to load nib at path %@", path];
         }
     }
@@ -162,7 +162,7 @@ static NSView *searchForViewWithIdentifier(NSView *view, NSString *identifier) {
         NSColor *startColor = [NSColor colorWithCalibratedWhite:1. alpha:1.];
         NSColor *midColor = [NSColor colorWithCalibratedWhite:.85 alpha:1.];
         NSColor *endColor = [NSColor colorWithCalibratedWhite:.9 alpha:1.];
-        sGradient = [[NSGradient alloc] initWithColors:[NSArray arrayWithObjects:startColor, midColor, endColor, nil]];
+        sGradient = [[NSGradient alloc] initWithColors:@[startColor, midColor, endColor]];
     }
     [sGradient drawInRect:[self bounds] angle:-90];
 }

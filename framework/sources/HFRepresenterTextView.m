@@ -73,7 +73,7 @@ static const CGFloat HFTeardropRadius = 12;
     if (! _hftvflags.editable) return NO;
     NSArray *ranges = [self displayedSelectedContentsRanges];
     if ([ranges count] != 1) return NO;
-    NSRange range = [[ranges objectAtIndex:0] rangeValue];
+    NSRange range = [ranges[0] rangeValue];
     if (range.length != 0) return NO;
     return YES;
 }
@@ -148,7 +148,7 @@ static const CGFloat HFTeardropRadius = 12;
 - (NSRect)caretRect {
     NSArray *ranges = [self displayedSelectedContentsRanges];
     HFASSERT([ranges count] == 1);
-    NSRange range = [[ranges objectAtIndex:0] rangeValue];
+    NSRange range = [ranges[0] rangeValue];
     HFASSERT(range.length == 0);
     
     NSPoint caretBaseline = [self originForCharacterAtByteIndex:range.location];
@@ -451,7 +451,7 @@ enum LineCoverage_t {
             NSArray *ranges = [self displayedSelectedContentsRanges];
             if ([ranges count] > 0) {
                 NSWindow *thisWindow = [self window];
-                NSRange firstRange = [[ranges objectAtIndex:0] rangeValue];
+                NSRange firstRange = [ranges[0] rangeValue];
                 NSRange lastRange = [[ranges lastObject] rangeValue];
                 NSPoint startPoint = [self originForCharacterAtByteIndex:firstRange.location];
                 // don't just use originForCharacterAtByteIndex:NSMaxRange(lastRange), because if the last selected character is at the end of the line, this will cause us to highlight the next line.  Instead, get the last selected character, and add an advance to it.
@@ -864,7 +864,7 @@ enum LineCoverage_t {
 - (NSColor *)backgroundColorForEmptySpace {
     NSArray *colors = [[self representer] rowBackgroundColors];
     if (! [colors count]) return [NSColor clearColor]; 
-    else return [colors objectAtIndex:0];
+    else return colors[0];
 }
 
 - (NSColor *)backgroundColorForLine:(NSUInteger)line {
@@ -873,7 +873,7 @@ enum LineCoverage_t {
     if (colorCount == 0) return [NSColor clearColor];
     NSUInteger colorIndex = (line + startingLineBackgroundColorIndex) % colorCount;
     if (colorIndex == 0) return nil; //will be drawn by empty space
-    else return [colors objectAtIndex:colorIndex]; 
+    else return colors[colorIndex]; 
 }
 
 - (NSUInteger)bytesPerLine {
@@ -1382,7 +1382,7 @@ static size_t unionAndCleanLists(NSRect *rectList, id *valueList, size_t count) 
     NSUInteger bytesPerLine = [self bytesPerLine];
     NSUInteger restrictionRangeCount = [restrictingToRanges count];
     for (NSUInteger rangeIndex = 0; rangeIndex < restrictionRangeCount; rangeIndex++) {
-        NSRange inclusionRange = [[restrictingToRanges objectAtIndex:rangeIndex] rangeValue];
+        NSRange inclusionRange = [restrictingToRanges[rangeIndex] rangeValue];
         NSRange intersectionRange = NSIntersectionRange(inclusionRange, byteRange);
         if (intersectionRange.length == 0) continue;
         
@@ -1524,8 +1524,8 @@ static size_t unionAndCleanLists(NSRect *rectList, id *valueList, size_t count) 
     /* Invalidate any bookmarks we're losing */
     NSArray *existingKeys = [callouts allKeys];
     FOREACH(NSNumber *, key, existingKeys) {
-        if (! [bookmarks objectForKey:key]) {
-            HFRepresenterTextViewCallout *callout = [callouts objectForKey:key];
+        if (! bookmarks[key]) {
+            HFRepresenterTextViewCallout *callout = callouts[key];
             [self setNeedsDisplayInRect:[callout rect]];
             [callouts removeObjectForKey:key];
         }
@@ -1534,17 +1534,17 @@ static size_t unionAndCleanLists(NSRect *rectList, id *valueList, size_t count) 
     /* Add any bookmarks we're missing */
     NSArray *newKeys = [bookmarks allKeys];
     FOREACH(NSNumber *, newKey, newKeys) {
-        HFRepresenterTextViewCallout *callout = [callouts objectForKey:newKey];
+        HFRepresenterTextViewCallout *callout = callouts[newKey];
         if (! callout) {
             NSUInteger bookmark = [newKey unsignedIntegerValue];
             callout = [[HFRepresenterTextViewCallout alloc] init];
             [callout setColor:[self colorForBookmark:bookmark]];
             [callout setLabel:[NSString stringWithFormat:@"%lu", [newKey unsignedLongValue]]];
             [callout setRepresentedObject:newKey];
-            [callouts setObject:callout forKey:newKey];
+            callouts[newKey] = callout;
             [callout release];
         }
-        NSInteger byteOffset = [[bookmarks objectForKey:newKey] integerValue];
+        NSInteger byteOffset = [bookmarks[newKey] integerValue];
         [callout setByteOffset:byteOffset];
     }
     
@@ -1939,7 +1939,7 @@ static size_t unionAndCleanLists(NSRect *rectList, id *valueList, size_t count) 
 
 - (void)keyDown:(NSEvent *)event {
     HFASSERT(event != NULL);
-    [self interpretKeyEvents:[NSArray arrayWithObject:event]];
+    [self interpretKeyEvents:@[event]];
 }
 
 - (void)scrollWheel:(NSEvent *)event {

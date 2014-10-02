@@ -89,7 +89,7 @@ static int hfrange_compare(const void *ap, const void *bp) {
 + (NSArray *)organizeAndMergeRanges:(NSArray *)inputRanges {
     HFASSERT(inputRanges != NULL);
     NSUInteger leading = 0, trailing = 0, length = [inputRanges count];
-    if (length == 0) return [NSArray array];
+    if (length == 0) return @[];
     else if (length == 1) return [NSArray arrayWithArray:inputRanges];
     
     NEW_ARRAY(HFRange, ranges, length);

@@ -362,7 +362,7 @@
             
             NSNumber *key = [[NSNumber alloc] initWithUnsignedInteger:mark];
             NSNumber *value = [[NSNumber alloc] initWithInteger:(long)(bookmarkRange.location - displayedRange.location)];
-            [result setObject:value forKey:key];
+            result[key] = value;
             [key release];
             [value release];
         }
@@ -414,7 +414,7 @@
     REQUIRE_NOT_NULL(pb);
     if ([[self controller] editable]) {
         // we can paste if the pboard contains text or contains an HFByteArray
-        return [HFPasteboardOwner unpackByteArrayFromPasteboard:pb] || [pb availableTypeFromArray:[NSArray arrayWithObject:NSStringPboardType]];
+        return [HFPasteboardOwner unpackByteArrayFromPasteboard:pb] || [pb availableTypeFromArray:@[NSStringPboardType]];
     }
     return NO;
 }
@@ -440,7 +440,7 @@
         result = YES;
     }
     else {
-        NSString *stringType = [pb availableTypeFromArray:[NSArray arrayWithObject:NSStringPboardType]];
+        NSString *stringType = [pb availableTypeFromArray:@[NSStringPboardType]];
         if (stringType) {
             NSString *stringValue = [pb stringForType:stringType];
             if (stringValue) {

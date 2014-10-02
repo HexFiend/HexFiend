@@ -220,7 +220,7 @@
         NSArray *ranges = [controller selectedContentsRanges];
         NSUInteger rangeCount = [ranges count];
         if (rangeCount == 1) {
-            HFRange range = [[ranges objectAtIndex:0] HFRange];
+            HFRange range = [ranges[0] HFRange];
             if (range.length == 0) {
                 string = [self stringForEmptySelectionAtOffset:range.location length:length];
             }

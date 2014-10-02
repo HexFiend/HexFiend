@@ -72,7 +72,7 @@ static NSComparisonResult compareFontDisplayNames(NSFont *a, NSFont *b, void *un
         [fonts addObject:font];
     }
     [fonts sortUsingFunction:compareFontDisplayNames context:NULL];
-    [self performSelectorOnMainThread:@selector(receiveFonts:) withObject:fonts waitUntilDone:NO modes:[NSArray arrayWithObjects:NSDefaultRunLoopMode, NSEventTrackingRunLoopMode, nil]];
+    [self performSelectorOnMainThread:@selector(receiveFonts:) withObject:fonts waitUntilDone:NO modes:@[NSDefaultRunLoopMode, NSEventTrackingRunLoopMode]];
     } // @autoreleasepool
     
 }
@@ -116,8 +116,8 @@ static NSComparisonResult compareFontDisplayNames(NSFont *a, NSFont *b, void *un
     else if (sel == @selector(diffFrontDocuments:)) {
         NSArray *docs = [DiffDocument getFrontTwoDocumentsForDiffing];
         if (docs) {
-            NSString *firstTitle = [[docs objectAtIndex:0] displayName];
-            NSString *secondTitle = [[docs objectAtIndex:1] displayName];
+            NSString *firstTitle = [docs[0] displayName];
+            NSString *secondTitle = [docs[1] displayName];
             [item setTitle:[NSString stringWithFormat:@"Compare \u201C%@\u201D and \u201C%@\u201D", firstTitle, secondTitle]];
             return YES;
         }
@@ -129,8 +129,8 @@ static NSComparisonResult compareFontDisplayNames(NSFont *a, NSFont *b, void *un
     } else if (sel == @selector(diffFrontDocumentsByRange:)) {
         NSArray *docs = [DiffDocument getFrontTwoDocumentsForDiffing];
         if (docs) {
-            NSString *firstTitle = [[docs objectAtIndex:0] displayName];
-            NSString *secondTitle = [[docs objectAtIndex:1] displayName];
+            NSString *firstTitle = [docs[0] displayName];
+            NSString *secondTitle = [docs[1] displayName];
             [item setTitle:[NSString stringWithFormat:@"Compare Range of \u201C%@\u201D and \u201C%@\u201D", firstTitle, secondTitle]];
             return YES;
         }

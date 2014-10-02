@@ -102,7 +102,7 @@ static void tarjan(HFObjectGraph *self, id node, CFMutableDictionaryRef vIndexes
     tarjan(self, magicStartNode, vIndexes, vLowlinks, stack, &index, objects, result);
     
     /* Remove the one array containing magicStartNode */
-    HFASSERT([[result lastObject] count] == 1 && [[result lastObject] objectAtIndex:0] == magicStartNode);
+    HFASSERT([[result lastObject] count] == 1 && [result lastObject][0] == magicStartNode);
     [result removeLastObject];
     
     [magicStartNode release];

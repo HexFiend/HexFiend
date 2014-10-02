@@ -68,7 +68,7 @@ static BOOL returnUnsupportedFileTypeError(NSError **error, mode_t mode) {
         fileType = [NSString stringWithFormat:@"unknown type (mode 0x%lx)", (long)mode];
     }
     NSString *errorDescription = [NSString stringWithFormat:@"The file is a %@ which is not a supported type.", fileType];
-    NSDictionary *errorDict = [NSDictionary dictionaryWithObjectsAndKeys:errorDescription, NSLocalizedDescriptionKey, nil];
+    NSDictionary *errorDict = @{NSLocalizedDescriptionKey: errorDescription};
     *error = [NSError errorWithDomain:NSCocoaErrorDomain code:NSFileReadUnknownError userInfo:errorDict];
     return NO;
 }
@@ -76,7 +76,7 @@ static BOOL returnUnsupportedFileTypeError(NSError **error, mode_t mode) {
 static BOOL returnFortunateSonError(NSError **error) {
     if (! error) return NO;
     NSString *errorDescription = @"There was an error communicating with the privileged helper process.";
-    NSDictionary *errorDict = [NSDictionary dictionaryWithObjectsAndKeys:errorDescription, NSLocalizedDescriptionKey, nil];
+    NSDictionary *errorDict = @{NSLocalizedDescriptionKey: errorDescription};
     *error = [NSError errorWithDomain:NSCocoaErrorDomain code:NSFileReadUnknownError userInfo:errorDict];    
     return NO;
 }

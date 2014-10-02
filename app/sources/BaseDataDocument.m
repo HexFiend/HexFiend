@@ -89,8 +89,8 @@ static inline Class preferredByteArrayClass(void) {
                               yes, @"AntialiasText",
                               yes, @"ShowCallouts",
                               @"Monaco", @"DefaultFontName",
-                              [NSNumber numberWithDouble:10.], @"DefaultFontSize",
-                              [NSNumber numberWithInteger:4], @"BytesPerColumn",
+                              @10., @"DefaultFontSize",
+                              @4, @"BytesPerColumn",
                               [NSNumber numberWithInteger:[NSString defaultCStringEncoding]], @"DefaultStringEncoding",
                               nil];
         [[NSUserDefaults standardUserDefaults] registerDefaults:defs];
@@ -121,13 +121,13 @@ static inline Class preferredByteArrayClass(void) {
 
 + (void)initialize {
     if (self == [BaseDataDocument class]) {
-        NSNumber *yes = [NSNumber numberWithBool:YES];
+        NSNumber *yes = @YES;
         NSDictionary *defs = [[NSDictionary alloc] initWithObjectsAndKeys:
                               yes, @"AntialiasText",
                               yes, @"ShowCallouts",
                               @"Monaco", @"DefaultFontName",
-                              [NSNumber numberWithDouble:10.], @"DefaultFontSize",
-                              [NSNumber numberWithInt:4], @"BytesPerColumn",
+                              @10., @"DefaultFontSize",
+                              @4, @"BytesPerColumn",
                               yes, USERDEFS_KEY_FOR_REP(lineCountingRepresenter),
                               yes, USERDEFS_KEY_FOR_REP(hexRepresenter),
                               yes, USERDEFS_KEY_FOR_REP(asciiRepresenter),
@@ -154,11 +154,11 @@ static inline Class preferredByteArrayClass(void) {
 - (NSWindow *)window {
     NSArray *windowControllers = [self windowControllers];
     HFASSERT([windowControllers count] == 1);
-    return [[windowControllers objectAtIndex:0] window];
+    return [windowControllers[0] window];
 }
 
 - (NSArray *)representers {
-    return [NSArray arrayWithObjects:lineCountingRepresenter, hexRepresenter, asciiRepresenter, scrollRepresenter, dataInspectorRepresenter, statusBarRepresenter, textDividerRepresenter, nil];
+    return @[lineCountingRepresenter, hexRepresenter, asciiRepresenter, scrollRepresenter, dataInspectorRepresenter, statusBarRepresenter, textDividerRepresenter];
 }
 
 - (HFByteArray *)byteArray {
@@ -409,7 +409,7 @@ static inline Class preferredByteArrayClass(void) {
     NSView *contentView = [window contentView];
     NSArray *contentSubviews = [contentView subviews];
     NSAssert1([contentSubviews count] == 1, @"Unable to adopt transient window controller %@", windowController);
-    NSSplitView *splitView = [contentSubviews objectAtIndex:0];
+    NSSplitView *splitView = contentSubviews[0];
     NSAssert1([splitView isKindOfClass:[NSSplitView class]], @"Unable to adopt transient window controller %@", windowController);
     
     /* Remove all of its subviews */
@@ -471,7 +471,7 @@ static inline Class preferredByteArrayClass(void) {
 /* Called when our data inspector changes its size (number of rows) */
 - (void)dataInspectorChangedRowCount:(NSNotification *)note {
     DataInspectorRepresenter *inspector = [note object];
-    CGFloat newHeight = (CGFloat)[[[note userInfo] objectForKey:@"height"] doubleValue];
+    CGFloat newHeight = (CGFloat)[[note userInfo][@"height"] doubleValue];
     NSView *dataInspectorView = [inspector view];
     NSSize size = [dataInspectorView frame].size;
     size.height = newHeight;
@@ -661,7 +661,7 @@ static inline Class preferredByteArrayClass(void) {
         NSBeep();
     }
     else {
-        HFRepresenter *rep = [representers objectAtIndex:arrayIndex];
+        HFRepresenter *rep = representers[arrayIndex];
         if ([self representerIsShown:rep]) {
             [self hideViewForRepresenter:rep];
             [self showOrHideDividerRepresenter];
@@ -771,7 +771,7 @@ static inline Class preferredByteArrayClass(void) {
     NSInteger result = NSNotFound;
     NSArray *ranges = [controller selectedContentsRanges];
     if ([ranges count] > 0) {
-        HFRange range = [[ranges objectAtIndex:0] HFRange];
+        HFRange range = [ranges[0] HFRange];
         if (range.length == 0 && range.location < [controller contentsLength]) range.length = 1;
         NSEnumerator *attributeEnumerator = [[controller attributesForBytesInRange:range] attributeEnumerator];
         NSString *attribute;
@@ -794,7 +794,7 @@ static inline Class preferredByteArrayClass(void) {
             return NO;
         }
         else {
-            HFRepresenter *rep = [representers objectAtIndex:arrayIndex];
+            HFRepresenter *rep = representers[arrayIndex];
             [item setState:[[controller representers] containsObject:rep]];
             return YES;
         }
@@ -1179,7 +1179,7 @@ static inline Class preferredByteArrayClass(void) {
     /* If our operation view is fixed height, then don't allow it to grow beyond its initial height */
     if (operationView != nil && [operationView isFixedHeight]) {
         /* Make sure it's actually our view */
-        if (dividerIndex == 0 && [[splitView subviews] objectAtIndex:0] == bannerView) {
+        if (dividerIndex == 0 && [splitView subviews][0] == bannerView) {
             CGFloat maxHeight = [operationView defaultHeight];
             if (maxHeight > 0 && maxHeight < proposedMaximumPosition) {
                 result = maxHeight;
@@ -1202,7 +1202,7 @@ static inline Class preferredByteArrayClass(void) {
     /* If the user drags the banner so that it is very small, we want it to shrink to nothing when it is released.  We handle this by checking if we are in live resize, and setting a timer to fire in NSDefaultRunLoopMode to remove the banner. */
     if (willRemoveBannerIfSufficientlyShortAfterDrag == NO && bannerResizeTimer == nil && [containerView inLiveResize]) {
         willRemoveBannerIfSufficientlyShortAfterDrag = YES;
-        [self performSelector:@selector(removeBannerIfSufficientlyShort:) withObject:nil afterDelay:0. inModes:[NSArray arrayWithObject:NSDefaultRunLoopMode]];
+        [self performSelector:@selector(removeBannerIfSufficientlyShort:) withObject:nil afterDelay:0. inModes:@[NSDefaultRunLoopMode]];
     }
 }
 
@@ -1220,9 +1220,9 @@ static inline Class preferredByteArrayClass(void) {
     HFByteArray *byteArray = [controller byteArray];
     BOOL result = [byteArray writeToFile:targetURL trackingProgress:tracker error:error];
     [tracker noteFinished:self];
-    if (tracker->cancelRequested) return [NSNumber numberWithInt:HFSaveCancelled];
-    else if (! result) return [NSNumber numberWithInt:HFSaveError];
-    else return [NSNumber numberWithInt:HFSaveSuccessful];    
+    if (tracker->cancelRequested) return @(HFSaveCancelled);
+    else if (! result) return @(HFSaveError);
+    else return @(HFSaveSuccessful);    
 }
 
 - (id)threadedFindBytes:(HFByteArray *)needle inBytes:(HFByteArray *)haystack inRange1:(HFRange)range1 range2:(HFRange)range2 forwards:(BOOL)forwards trackingProgress:(HFProgressTracker *)tracker {
@@ -1233,18 +1233,18 @@ static inline Class preferredByteArrayClass(void) {
         searchResult = [haystack indexOfBytesEqualToBytes:needle inRange:range2 searchingForwards:forwards trackingProgress:tracker];
     }
     if (tracker->cancelRequested) return nil;
-    else return [NSNumber numberWithUnsignedLongLong:searchResult];
+    else return @(searchResult);
 }
 
 - (id)threadedStartFind:(HFProgressTracker *)tracker {
     HFASSERT(tracker != NULL);
     unsigned long long searchResult;
     NSDictionary *userInfo = [tracker userInfo];
-    HFByteArray *needle = [userInfo objectForKey:@"needle"];
-    HFByteArray *haystack = [userInfo objectForKey:@"haystack"];
-    BOOL forwards = [[userInfo objectForKey:@"forwards"] boolValue];
-    HFRange searchRange1 = [[userInfo objectForKey:@"range1"] HFRange];
-    HFRange searchRange2 = [[userInfo objectForKey:@"range2"] HFRange];
+    HFByteArray *needle = userInfo[@"needle"];
+    HFByteArray *haystack = userInfo[@"haystack"];
+    BOOL forwards = [userInfo[@"forwards"] boolValue];
+    HFRange searchRange1 = [userInfo[@"range1"] HFRange];
+    HFRange searchRange2 = [userInfo[@"range2"] HFRange];
     
     [tracker setMaxProgress:[haystack length]];
     
@@ -1258,13 +1258,13 @@ static inline Class preferredByteArrayClass(void) {
     }
     
     if (tracker->cancelRequested) return nil;
-    else return [NSNumber numberWithUnsignedLongLong:searchResult];
+    else return @(searchResult);
 }
 
 - (void)findEnded:(NSNumber *)val {
     NSDictionary *userInfo = [[findReplaceView progressTracker] userInfo];
-    HFByteArray *needle = [userInfo objectForKey:@"needle"];
-    HFByteArray *haystack = [userInfo objectForKey:@"haystack"];
+    HFByteArray *needle = userInfo[@"needle"];
+    HFByteArray *haystack = userInfo[@"haystack"];
     /* nil val means cancelled */
     if (val) {
         unsigned long long searchResult = [val unsignedLongLongValue];
@@ -1535,7 +1535,7 @@ cancelled:;
         if (length >= value) {
             const unsigned long long offset = (isNegative ? length - value : value);
             const HFRange contentsRange = HFRangeMake(offset, 0);
-            [controller setSelectedContentsRanges:[NSArray arrayWithObject:[HFRangeWrapper withRange:contentsRange]]];
+            [controller setSelectedContentsRanges:@[[HFRangeWrapper withRange:contentsRange]]];
             [controller maximizeVisibilityOfContentsRange:contentsRange];
             [controller pulseSelection];
             success = YES;
@@ -1555,7 +1555,7 @@ cancelled:;
             HFControllerMovementDirection direction = (isNegative ? HFControllerDirectionLeft : HFControllerDirectionRight);
             HFControllerSelectionTransformation transformation = (extendSelection ? HFControllerExtendSelection : HFControllerShiftSelection);
             [controller moveInDirection:direction byByteCount:value withSelectionTransformation:transformation usingAnchor:NO];
-            [controller maximizeVisibilityOfContentsRange:[[[controller selectedContentsRanges] objectAtIndex:0] HFRange]];
+            [controller maximizeVisibilityOfContentsRange:[[controller selectedContentsRanges][0] HFRange]];
             [controller pulseSelection];
             success = YES;
         }
@@ -1677,7 +1677,7 @@ cancelled:;
     BOOL result = NO;
     NSArray *ranges = [controller selectedContentsRanges];
     if ([ranges count] > 0) {
-        HFRange range = [[ranges objectAtIndex:0] HFRange];
+        HFRange range = [ranges[0] HFRange];
         result = (range.length != 0 || range.location < [controller contentsLength]);
     }
     return result;
@@ -1691,7 +1691,7 @@ cancelled:;
     }
     NSArray *ranges = [controller selectedContentsRanges];
     if ([ranges count] > 0) {
-        HFRange range = [[ranges objectAtIndex:0] HFRange];
+        HFRange range = [ranges[0] HFRange];
         /* We always set a bookmark on at least one byte */
         range.length = MAX(range.length, 1);
         NSIndexSet *usedBookmarks = [controller bookmarksInRange:HFRangeMake(0, [controller contentsLength])];
@@ -1757,12 +1757,12 @@ cancelled:;
     HFFileReference *fileReference = [note object];
     NSDictionary *userInfo = [note userInfo];
     
-    BOOL *cancellationPointer = [[userInfo objectForKey:HFChangeInFileShouldCancelKey] pointerValue];
+    BOOL *cancellationPointer = [userInfo[HFChangeInFileShouldCancelKey] pointerValue];
     if (*cancellationPointer) return; //don't do anything if someone requested cancellation
     
-    HFByteArray *byteArray = [userInfo objectForKey:HFChangeInFileByteArrayKey];
-    NSMutableDictionary *hint = [userInfo objectForKey:HFChangeInFileHintKey];
-    NSArray *modifiedRanges = [userInfo objectForKey:HFChangeInFileModifiedRangesKey];
+    HFByteArray *byteArray = userInfo[HFChangeInFileByteArrayKey];
+    NSMutableDictionary *hint = userInfo[HFChangeInFileHintKey];
+    NSArray *modifiedRanges = userInfo[HFChangeInFileModifiedRangesKey];
     NSArray *allDocuments = [[[NSDocumentController sharedDocumentController] documents] copy]; //we copy this because we may need to close them
     
     /* Determine which document contains this byte array so we can make a nice dialog */
@@ -1906,7 +1906,7 @@ cancelled:;
     [[[NSFileCoordinator alloc] initWithFilePresenter:self] coordinateReadingItemAtURL:[self fileURL] options:0 error:errorp byAccessor:^ (NSURL *url) {
         NSDictionary *attrs = [[NSFileManager defaultManager] attributesOfItemAtPath:[[url filePathURL] path] error:errorp];
         if(!attrs || *errorp) return;
-        if([[attrs objectForKey:NSFileModificationDate] isGreaterThan:[self fileModificationDate]]) {
+        if([attrs[NSFileModificationDate] isGreaterThan:[self fileModificationDate]]) {
             // Perhaps find a way to make this revert part of the undo buffer.
             [self revertToContentsOfURL:url ofType:[self fileType] error:errorp];
         }

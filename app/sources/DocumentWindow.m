@@ -13,7 +13,7 @@
 @dynamic delegate;
 
 - (void)awakeFromNib {
-    [self registerForDraggedTypes:[NSArray arrayWithObject:NSFilenamesPboardType]];
+    [self registerForDraggedTypes:@[NSFilenamesPboardType]];
 }
 
 - (NSDragOperation)draggingEntered:(id <NSDraggingInfo>)sender {

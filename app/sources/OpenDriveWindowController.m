@@ -26,7 +26,7 @@ enum {
 @implementation NSDictionary (DiskArbHelpers)
 - (NSString *)bsdName
 {
-    return [self objectForKey:(id)kDADiskDescriptionMediaBSDNameKey];
+    return self[(id)kDADiskDescriptionMediaBSDNameKey];
 }
 @end
 
@@ -40,7 +40,7 @@ enum {
 - (id)tableView:(NSTableView *)UNUSED tableView objectValueForTableColumn:(NSTableColumn *)col row:(int)rowIndex
 {
     NSString * temp = [col identifier];
-    NSDictionary * tempDrive = [driveList objectAtIndex:rowIndex];
+    NSDictionary * tempDrive = driveList[rowIndex];
     NSString * returnString = nil;
     if([temp isEqualToString:@"BSD Name"])
     {
@@ -48,15 +48,15 @@ enum {
     }
     else if([temp isEqualToString:@"Bus"])
     {
-        returnString = [tempDrive objectForKey:(id)kDADiskDescriptionBusNameKey];
+        returnString = tempDrive[(id)kDADiskDescriptionBusNameKey];
     }
     else if([temp isEqualToString:@"Label"])
     {
-        NSNumber *whole = [tempDrive objectForKey:(id)kDADiskDescriptionMediaWholeKey];
+        NSNumber *whole = tempDrive[(id)kDADiskDescriptionMediaWholeKey];
         if (whole && [whole boolValue]) {
-            returnString = [tempDrive objectForKey:(id)kDADiskDescriptionMediaNameKey];
+            returnString = tempDrive[(id)kDADiskDescriptionMediaNameKey];
         } else {
-            returnString = [tempDrive objectForKey:(id)kDADiskDescriptionVolumeNameKey];
+            returnString = tempDrive[(id)kDADiskDescriptionVolumeNameKey];
         }
     }
     return returnString;
@@ -102,7 +102,7 @@ static void addDisk(DADiskRef disk, UNUSED void * context)
         NSDictionary *diskDesc = [(NSDictionary*)DADiskCopyDescription(disk) autorelease];
         if (diskDesc) {
             // Don't add disks that represent a network volume
-            NSNumber *isNetwork = [diskDesc objectForKey:(id)kDADiskDescriptionVolumeNetworkKey];
+            NSNumber *isNetwork = diskDesc[(id)kDADiskDescriptionVolumeNetworkKey];
             if (!isNetwork || ![isNetwork boolValue]) {
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [(OpenDriveWindowController*)context addToDriveList:diskDesc];
@@ -116,7 +116,7 @@ static void removeDisk(DADiskRef disk, void * context)
 {
     @autoreleasepool {
         const char *bsdName = DADiskGetBSDName(disk);
-        NSString *nsbsdName = bsdName ? [NSString stringWithUTF8String:bsdName] : @"";
+        NSString *nsbsdName = bsdName ? @(bsdName) : @"";
         dispatch_async(dispatch_get_main_queue(), ^{
             [(OpenDriveWindowController*)context removeDrive:nsbsdName];
         });
@@ -191,7 +191,7 @@ static CFURLRef copyCharacterDevicePathForPossibleBlockDevice(NSURL *url)
     
     NSString *description = [NSString stringWithFormat:descriptionFormatString, [url path]];
     NSString *recoverySuggestion = [NSString stringWithFormat:recoverySuggestionFormatString, [newURL path]];
-    NSArray *recoveryOptions = [NSArray arrayWithObjects:recoveryOption, cancel, nil];
+    NSArray *recoveryOptions = @[recoveryOption, cancel];
     NSDictionary *userInfo = [[[NSDictionary alloc] initWithObjectsAndKeys:
                               description, NSLocalizedDescriptionKey,
                               failureReason, NSLocalizedFailureReasonErrorKey,
@@ -211,8 +211,8 @@ static CFURLRef copyCharacterDevicePathForPossibleBlockDevice(NSURL *url)
 	if([table numberOfSelectedRows] == 1)
 	{
         NSMutableString * path = [NSMutableString stringWithString:@"/dev/"];
-        NSDictionary * tempDrive = (NSDictionary*)[driveList objectAtIndex:[table selectedRow]];
-        [path appendString:(NSString*)[tempDrive objectForKey:(NSString*)kDADiskDescriptionMediaBSDNameKey]];
+        NSDictionary * tempDrive = (NSDictionary*)driveList[[table selectedRow]];
+        [path appendString:(NSString*)tempDrive[(NSString*)kDADiskDescriptionMediaBSDNameKey]];
         if ([path length] > 0) 
         {
             /* Try making the document */
@@ -247,7 +247,7 @@ static CFURLRef copyCharacterDevicePathForPossibleBlockDevice(NSURL *url)
             break;
         case eOpenCharacterFile:
         {
-            NSURL *newURL = [[error userInfo] objectForKey:kNewURLErrorKey];
+            NSURL *newURL = [error userInfo][kNewURLErrorKey];
             if (newURL) {
                 NSError *anotherError = nil;
                 NSDocument *newDocument = [self openURL:newURL error:&anotherError];
@@ -287,7 +287,7 @@ static CFURLRef copyCharacterDevicePathForPossibleBlockDevice(NSURL *url)
 {
 	[driveList addObject:dict];
     NSSortDescriptor *sorter = [[[NSSortDescriptor alloc] initWithKey:(NSString*)kDADiskDescriptionMediaBSDNameKey ascending:YES] autorelease];
-    [driveList sortUsingDescriptors:[NSArray arrayWithObject:sorter]];
+    [driveList sortUsingDescriptors:@[sorter]];
     [table reloadData];
 }
 

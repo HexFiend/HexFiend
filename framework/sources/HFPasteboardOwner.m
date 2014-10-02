@@ -59,9 +59,9 @@ NSString *const HFPrivateByteArrayPboardType = @"HFPrivateByteArrayPboardType";
 + (HFByteArray *)_unpackByteArrayFromDictionary:(NSDictionary *)byteArrayDictionary {
     HFByteArray *result = nil;
     if (byteArrayDictionary) {
-        NSString *uuid = [byteArrayDictionary objectForKey:@"HFUUID"];
+        NSString *uuid = byteArrayDictionary[@"HFUUID"];
         if ([uuid isEqual:[self uuid]]) {
-            result = (HFByteArray *)[[byteArrayDictionary objectForKey:@"HFByteArray"] unsignedLongValue];
+            result = (HFByteArray *)[byteArrayDictionary[@"HFByteArray"] unsignedLongValue];
         }
     }
     return result;
@@ -75,13 +75,13 @@ NSString *const HFPrivateByteArrayPboardType = @"HFPrivateByteArrayPboardType";
 
 /* Try to fix up commonly named pasteboards when a file is about to be saved */
 + (void)prepareCommonPasteboardsForChangeInFileNotification:(NSNotification *)notification {
-    const BOOL *cancellationPointer = [[[notification userInfo] objectForKey:HFChangeInFileShouldCancelKey] pointerValue];
+    const BOOL *cancellationPointer = [[notification userInfo][HFChangeInFileShouldCancelKey] pointerValue];
     if (*cancellationPointer) return; //don't do anything if someone requested cancellation
     
     NSDictionary *userInfo = [notification userInfo];
-    NSArray *changedRanges = [userInfo objectForKey:HFChangeInFileModifiedRangesKey];
+    NSArray *changedRanges = userInfo[HFChangeInFileModifiedRangesKey];
     HFFileReference *fileReference = [notification object];
-    NSMutableDictionary *hint = [userInfo objectForKey:HFChangeInFileHintKey];
+    NSMutableDictionary *hint = userInfo[HFChangeInFileHintKey];
     
     NSString * const names[] = {NSGeneralPboard, NSFindPboard, NSDragPboard};
     NSUInteger i;
@@ -90,7 +90,7 @@ NSString *const HFPrivateByteArrayPboardType = @"HFPrivateByteArrayPboardType";
         HFByteArray *byteArray = [self unpackByteArrayFromPasteboard:pboard];
         if (byteArray && ! [byteArray clearDependenciesOnRanges:changedRanges inFile:fileReference hint:hint]) {
             /* This pasteboard no longer works */
-            [pboard declareTypes:[NSArray array] owner:nil];
+            [pboard declareTypes:@[] owner:nil];
         }
     }
 }
@@ -99,11 +99,11 @@ NSString *const HFPrivateByteArrayPboardType = @"HFPrivateByteArrayPboardType";
     HFASSERT(pasteboard != nil);
     HFASSERT(byteArray != nil);
     NSDictionary *userInfo = [notification userInfo];
-    const BOOL *cancellationPointer = [[userInfo objectForKey:HFChangeInFileShouldCancelKey] pointerValue];
+    const BOOL *cancellationPointer = [userInfo[HFChangeInFileShouldCancelKey] pointerValue];
     if (*cancellationPointer) return; //don't do anything if someone requested cancellation
-    NSMutableDictionary *hint = [userInfo objectForKey:HFChangeInFileHintKey];
+    NSMutableDictionary *hint = userInfo[HFChangeInFileHintKey];
     
-    NSArray *changedRanges = [[notification userInfo] objectForKey:HFChangeInFileModifiedRangesKey];
+    NSArray *changedRanges = [notification userInfo][HFChangeInFileModifiedRangesKey];
     HFFileReference *fileReference = [notification object];
     if (! [byteArray clearDependenciesOnRanges:changedRanges inFile:fileReference hint:hint]) {
         /* We can't do it */
@@ -212,7 +212,7 @@ NSString *const HFPrivateByteArrayPboardType = @"HFPrivateByteArrayPboardType";
         [progressTracker setProgressIndicator:progressTrackingIndicator];
         [progressTracker beginTrackingProgress];
         [NSThread detachNewThreadSelector:@selector(backgroundMoveDataToPasteboard:) toTarget:self withObject:type];
-        [self performSelector:@selector(beginModalSessionForBackgroundCopyOperation:) withObject:nil afterDelay:1.0 inModes:[NSArray arrayWithObject:NSModalPanelRunLoopMode]];
+        [self performSelector:@selector(beginModalSessionForBackgroundCopyOperation:) withObject:nil afterDelay:1.0 inModes:@[NSModalPanelRunLoopMode]];
         while (! backgroundCopyOperationFinished) {
             [[NSRunLoop currentRunLoop] runMode:NSModalPanelRunLoopMode beforeDate:[NSDate distantFuture]];
         }
@@ -252,10 +252,8 @@ NSString *const HFPrivateByteArrayPboardType = @"HFPrivateByteArrayPboardType";
             retainedSelfOnBehalfOfPboard = YES;
             CFRetain(self);
         }
-        NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
-                              [NSNumber numberWithUnsignedLong:(unsigned long)byteArray], @"HFByteArray",
-                              [[self class] uuid], @"HFUUID",
-                              nil];
+        NSDictionary *dict = @{@"HFByteArray": @((unsigned long)byteArray),
+                              @"HFUUID": [[self class] uuid]};
         [pboard setPropertyList:dict forType:type];
     }
     else {

@@ -195,7 +195,7 @@ static double distanceMod1(double a, double b) {
     
     while ([remainingCallouts count] > 0) {
         /* Get the next callout to lay out */
-        const NSInteger byteLoc = [[remainingCallouts objectAtIndex:0] byteOffset];
+        const NSInteger byteLoc = [remainingCallouts[0] byteOffset];
         
         /* Get all the callouts that share that byteLoc */
         NSMutableArray *sharedCallouts = [NSMutableArray array];

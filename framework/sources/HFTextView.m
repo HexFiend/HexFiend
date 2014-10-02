@@ -29,7 +29,7 @@
 }
 
 - (void)_HFControllerDidChangeProperties:(NSNotification *)note {
-    NSNumber *propertyNumber = [[note userInfo] objectForKey:HFControllerChangedPropertiesKey];
+    NSNumber *propertyNumber = [note userInfo][HFControllerChangedPropertiesKey];
     NSUInteger propertyMask = [propertyNumber unsignedIntegerValue];
     if (propertyMask & (HFControllerContentValue | HFControllerContentLength)) {
         /* Note that this isn't quite right.  If we don't have any cached data, then we can't provide the "before" data for this change.  In practice, this is likely harmless, but it's still something that should be fixed at some point.
@@ -47,9 +47,9 @@
     NSDictionary *bindingInfo = [self infoForBinding:@"data"];
     if (bindingInfo != nil) {
         NSData *valueToSet = [self data];
-        id observedObject = [bindingInfo objectForKey:NSObservedObjectKey];
-        NSString *keyPath = [bindingInfo objectForKey:NSObservedKeyPathKey];
-        NSValueTransformer *transformer = [[bindingInfo objectForKey:NSOptionsKey] objectForKey:NSValueTransformerBindingOption];
+        id observedObject = bindingInfo[NSObservedObjectKey];
+        NSString *keyPath = bindingInfo[NSObservedKeyPathKey];
+        NSValueTransformer *transformer = bindingInfo[NSOptionsKey][NSValueTransformerBindingOption];
         if ([transformer isKindOfClass:[NSValueTransformer class]] && [[transformer class] allowsReverseTransformation]) { //often the transformer is NSNull :(
             valueToSet = [transformer reverseTransformedValue:valueToSet];
         }

@@ -80,7 +80,7 @@
 + (void)compareFrontTwoDocumentsUsingRange:(HFRange)range {
     NSArray *docs = [DiffDocument getFrontTwoDocumentsForDiffing];
     if (!docs) return;
-    [DiffDocument compareDocument:[docs objectAtIndex:0] againstDocument:[docs objectAtIndex:1] usingRange:range];
+    [DiffDocument compareDocument:docs[0] againstDocument:docs[1] usingRange:range];
 }
 
 - (NSString *)displayName {
@@ -529,7 +529,7 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
         /* Remove all zero length ranges */
         NSUInteger i = count;
         while (i--) {
-            HFRange testRange = [[correspondingRanges objectAtIndex:i] HFRange];
+            HFRange testRange = [correspondingRanges[i] HFRange];
             if (testRange.length == 0) [correspondingRanges removeObjectAtIndex:i];
         }
     } else if (hasZeroLengthRange && count > 1) {
@@ -548,7 +548,7 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
     /* Set and check synchronizingControllers to avoid recursive invocations */
     if (synchronizingControllers) return;
     synchronizingControllers = YES;
-    NSNumber *propertyNumber = [[note userInfo] objectForKey:HFControllerChangedPropertiesKey];
+    NSNumber *propertyNumber = [note userInfo][HFControllerChangedPropertiesKey];
     HFController *changedController = [note object];
     HFASSERT(changedController == [leftTextView controller] || changedController == [rightTextView controller]);
     BOOL controllerIsLeft = (changedController == [leftTextView controller]);
@@ -566,7 +566,7 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
         /* If the user clicks on a range containing a diff, jump to that in the table */
         NSArray *ranges = [changedController selectedContentsRanges];
         if ([ranges count] == 1) {
-            HFRange selectedRange = [[ranges objectAtIndex:0] HFRange];
+            HFRange selectedRange = [ranges[0] HFRange];
             if (selectedRange.length == 0) {
                 NSUInteger insnIndex = [self indexOfInstructionContainingOrAfterIndex:selectedRange.location onLeft:controllerIsLeft];
                 if (insnIndex != NSNotFound) {
@@ -615,7 +615,7 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
 }
 
 - (void)updateOverlayViewForChangedLeftScroller:(NSNotification *)note {
-    NSNumber *propertyNumber = [[note userInfo] objectForKey:HFControllerChangedPropertiesKey];
+    NSNumber *propertyNumber = [note userInfo][HFControllerChangedPropertiesKey];
     HFControllerPropertyBits propertyMask = [propertyNumber unsignedIntegerValue];
     if (propertyMask & [self propertiesAffectingOverlayView]) {
         [self updateInstructionOverlayView];

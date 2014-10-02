@@ -1046,7 +1046,7 @@ FORCE_STATIC_INLINE void btree_apply_function_to_entries(HFBTree *tree, HFBTreeI
 }
 
 - (NSEnumerator *)entryEnumerator {
-    if (! root) return [[NSArray array] objectEnumerator];
+    if (! root) return [@[] objectEnumerator];
     HFBTreeLeaf *leaf = btree_find_leaf(self, 0).leaf;
     return [[[HFBTreeEnumerator alloc] initWithLeaf:leaf] autorelease];
 }
@@ -1058,7 +1058,7 @@ static BOOL add_to_array(id entry, HFBTreeIndex offset __attribute__((unused)), 
 }
 
 - (NSArray *)allEntries {
-    if (! root) return [NSArray array];
+    if (! root) return @[];
     NSUInteger treeCapacity = 1;
     unsigned int depthIndex = depth;
     while (depthIndex--) treeCapacity *= BTREE_ORDER;

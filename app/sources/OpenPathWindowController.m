@@ -67,7 +67,7 @@ static CFURLRef copyCharacterDevicePathForPossibleBlockDevice(NSURL *url) {
             break;
         case eOpenCharacterFile:
         {
-            NSURL *newURL = [[error userInfo] objectForKey:kNewURLErrorKey];
+            NSURL *newURL = [error userInfo][kNewURLErrorKey];
             if (newURL) {
                 NSError *anotherError = nil;
                 NSDocument *newDocument = [self openURL:newURL error:&anotherError];
@@ -101,7 +101,7 @@ static CFURLRef copyCharacterDevicePathForPossibleBlockDevice(NSURL *url) {
     
     NSString *description = [NSString stringWithFormat:descriptionFormatString, [url path]];
     NSString *recoverySuggestion = [NSString stringWithFormat:recoverySuggestionFormatString, [newURL path]];
-    NSArray *recoveryOptions = [NSArray arrayWithObjects:recoveryOption, cancel, nil];
+    NSArray *recoveryOptions = @[recoveryOption, cancel];
     NSDictionary *userInfo = [[NSDictionary alloc] initWithObjectsAndKeys:
                               description, NSLocalizedDescriptionKey,
                               failureReason, NSLocalizedFailureReasonErrorKey,
@@ -192,7 +192,7 @@ static CFURLRef copyCharacterDevicePathForPossibleBlockDevice(NSURL *url) {
 - (void)windowDidLoad {
     [super windowDidLoad];
     NSUserDefaults *defs = [NSUserDefaults standardUserDefaults];
-    [defs registerDefaults:[NSDictionary dictionaryWithObject:@"/dev/disk0s1" forKey:kOpenPathDialogPathKey]];
+    [defs registerDefaults:@{kOpenPathDialogPathKey: @"/dev/disk0s1"}];
     [okButton setEnabled:[[pathField stringValue] length] > 0];
     NSString *value = [defs stringForKey:kOpenPathDialogPathKey];
     if (value) [pathField setStringValue:value];

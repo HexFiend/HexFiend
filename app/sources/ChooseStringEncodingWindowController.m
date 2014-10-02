@@ -13,7 +13,7 @@
 
 - (void)awakeFromNib {
     NSString *title = [self title];
-    NSDictionary *attributes = [[NSDictionary alloc] initWithObjectsAndKeys:[NSColor blueColor], NSForegroundColorAttributeName, [NSNumber numberWithInt:NSUnderlineStyleSingle], NSUnderlineStyleAttributeName, [self font], NSFontAttributeName, nil];
+    NSDictionary *attributes = [[NSDictionary alloc] initWithObjectsAndKeys:[NSColor blueColor], NSForegroundColorAttributeName, @(NSUnderlineStyleSingle), NSUnderlineStyleAttributeName, [self font], NSFontAttributeName, nil];
     NSAttributedString *attributedTitle = [[NSAttributedString alloc] initWithString:title attributes:attributes];
     [self setAttributedTitle:attributedTitle];
     [attributes release];
@@ -31,7 +31,7 @@
 - (IBAction)OKButtonClicked:(id)sender {
     USE(sender);
     NSString *title = [encodingField stringValue];
-    NSNumber *selectedEncoding = title ? [keysToEncodings objectForKey:title] : nil;
+    NSNumber *selectedEncoding = title ? keysToEncodings[title] : nil;
     if (! selectedEncoding) {
         NSBeep();
     } else {

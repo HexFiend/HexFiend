@@ -30,7 +30,7 @@
     BaseDataDocument *result = nil;
     NSArray *documents = [self documents];
     if ([documents count] == 1) {
-        BaseDataDocument *potentialResult = [documents objectAtIndex:0];
+        BaseDataDocument *potentialResult = documents[0];
         if ([potentialResult respondsToSelector:@selector(isTransientAndCanBeReplaced)] && [potentialResult isTransientAndCanBeReplaced]) {
             result = potentialResult;
         }
@@ -51,7 +51,7 @@
 - (void)replaceTransientDocument:(NSArray *)documents {
     // Transient document must be replaced on the main thread, since it may undergo automatic display on the main thread.
     if ([NSThread isMainThread]) {
-        BaseDataDocument *transientDoc = [documents objectAtIndex:0], *doc = [documents objectAtIndex:1];
+        BaseDataDocument *transientDoc = documents[0], *doc = documents[1];
         NSArray *controllersToTransfer = [[transientDoc windowControllers] copy];
         FOREACH(NSWindowController *, controller, controllersToTransfer) {
             [doc addWindowController:controller];
@@ -74,7 +74,7 @@
     if (result) {
         if ([result isKindOfClass:[BaseDataDocument class]] && transientDoc) {
             [transientDoc setTransient:NO];
-            [self replaceTransientDocument:[NSArray arrayWithObjects:transientDoc, result, nil]];
+            [self replaceTransientDocument:@[transientDoc, result]];
         }
         if (displayDocument) [self displayDocument:result];
     }

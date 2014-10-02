@@ -99,7 +99,7 @@ static inline unsigned char hex2char(NSUInteger c) {
         HFController *controller = [self controller];
         NSArray *selectedRanges = [controller selectedContentsRanges];
         if ([selectedRanges count] == 1) {
-            HFRange selectedRange = [[selectedRanges objectAtIndex:0] HFRange];
+            HFRange selectedRange = [selectedRanges[0] HFRange];
             result = (selectedRange.length == 0 && selectedRange.location > 0 && selectedRange.location - 1 == omittedNybbleLocation);
         }
     }
@@ -137,7 +137,7 @@ static inline unsigned char hex2char(NSUInteger c) {
         [data getBytes:&unpartneredLastNybble range:NSMakeRange([data length] - 1, 1)];
         NSArray *selectedRanges = [controller selectedContentsRanges];
         HFASSERT([selectedRanges count] >= 1);
-        HFRange selectedRange = [[selectedRanges objectAtIndex:0] HFRange];
+        HFRange selectedRange = [selectedRanges[0] HFRange];
         HFASSERT(selectedRange.location > 0);
         omittedNybbleLocation = HFSubtract(selectedRange.location, 1);
     }
@@ -166,7 +166,7 @@ static inline unsigned char hex2char(NSUInteger c) {
         NSBeep();
     }
     else {
-        HFHexPasteboardOwner *owner = [HFHexPasteboardOwner ownPasteboard:pb forByteArray:selection withTypes:[NSArray arrayWithObjects:HFPrivateByteArrayPboardType, NSStringPboardType, nil]];
+        HFHexPasteboardOwner *owner = [HFHexPasteboardOwner ownPasteboard:pb forByteArray:selection withTypes:@[HFPrivateByteArrayPboardType, NSStringPboardType]];
         [owner setBytesPerLine:[self bytesPerLine]];
     }
 }
