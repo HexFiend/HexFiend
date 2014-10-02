@@ -240,10 +240,10 @@ static NSSet *arraysToSets(NSArray *array, NSUInteger depth) {
     return result;
 }
 
-+ (void)runTests {
+#define HFTEST(a, ...) if(!(a)) registerFailure(__FILE__, __LINE__, @#a, [NSString stringWithFormat: @"" __VA_ARGS__])
++ (void)runHFUnitTests:(void (^)(const char *file, NSUInteger line, NSString *expr, NSString *msg))registerFailure {
     NSUInteger outer;
-    for (outer = 0; outer < 100; outer++) {
-        @autoreleasepool {
+    for (outer = 0; outer < 100; outer++) @autoreleasepool {
         HFObjectGraph *graph = [[self alloc] init];
         NSUInteger i, objectCount = 2 + (random() % (100 - 2));
         NSUInteger connectionCount = random() % (objectCount * 2);
@@ -260,19 +260,9 @@ static NSSet *arraysToSets(NSArray *array, NSUInteger depth) {
         id naive = [graph naiveStronglyConnectedComponentsForObjects:objects];
         id tarjan = [graph stronglyConnectedComponentsForObjects:objects];
         
-        if (! [arraysToSets(naive, 2) isEqual:arraysToSets(tarjan, 2)]) {
-            printf("Error in HFObjectGraph tests!\n\tnaive: %s\n\ttarjan: %s\n", [[naive description] UTF8String], [[tarjan description] UTF8String]);
-            exit(EXIT_FAILURE);
-        }
+        HFTEST([arraysToSets(naive, 2) isEqual:arraysToSets(tarjan, 2)], @"Error in HFObjectGraph tests!\n\tnaive: %@\n\ttarjan: %@\n", naive, tarjan);
         
         [graph release];
-        } // @autoreleasepool
-    }
-}
-
-+ (void)initialize {
-    if (self == [HFObjectGraph class]) {
-        [self runTests];
     }
 }
 #endif

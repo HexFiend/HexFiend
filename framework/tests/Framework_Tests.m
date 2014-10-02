@@ -26,6 +26,10 @@
 #define dbg_printf(...) (void)0
 #endif
 
+@interface NSObject (HFUnitTests)
++ (void)runHFUnitTests:(void (^)(const char *file, NSUInteger line, NSString *expr, NSString *msg))registerFailure;
+@end
+
 @interface HFFrameworkTests : XCTestCase
 @end
 
@@ -605,7 +609,6 @@ static void HFByteArray_testSearchAlgorithms(XCTestCase *self, HFByteArray *need
     result1 = [haystack _byteSearchBoyerMoore:needle inRange:partialRange forwards:NO trackingProgress:nil];
     result2 = [haystack _byteSearchRollingHash:needle inRange:partialRange forwards:NO trackingProgress:nil];
     HFTEST(result1 == result2);
-    
 }
 
 - (void)testByteSearching {
@@ -745,7 +748,9 @@ static HFRange randomRange(uint32_t max) {
 
 - (void)testObjectGraph {
     /* HFObjectGraph runs its own tests */
-    [NSClassFromString(@"HFObjectGraph") self];
+    [NSClassFromString(@"HFObjectGraph") runHFUnitTests:^(const char *file, NSUInteger line, NSString *expr, NSString *msg) {
+        _XCTPreformattedFailureHandler(self, YES, [NSString stringWithUTF8String: file], line, expr, msg);
+    }];
 }
 
 - (void)setUp {
