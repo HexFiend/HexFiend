@@ -338,7 +338,7 @@ void append_snake_to_instructions(__unsafe_unretained HFByteArrayEditScript *sel
                 if (self->insnCount == self->insnCapacity) {
                     size_t desiredCapacity = ((self->insnCount + 1) * 8) / 5;
                     size_t newBufferByteCount = malloc_good_size(desiredCapacity * insnSize);
-                    self->insns = realloc(self->insns, newBufferByteCount);
+                    self->insns = check_realloc(self->insns, newBufferByteCount);
                     self->insnCapacity = newBufferByteCount / insnSize;
                 }
                 HFASSERT(self->insnCount < self->insnCapacity);
@@ -1355,7 +1355,7 @@ static inline enum HFEditInstructionType HFByteArrayInstructionType(struct HFEdi
     return success;
 }
 
-- (id)initWithSource:(HFByteArray *)src toDestination:(HFByteArray *)dst { 
+- (instancetype)initWithSource:(HFByteArray *)src toDestination:(HFByteArray *)dst { 
     self = [super init];
     NSParameterAssert(src != nil);
     NSParameterAssert(dst != nil);
@@ -1405,7 +1405,7 @@ static inline enum HFEditInstructionType HFByteArrayInstructionType(struct HFEdi
     return result;
 }
 
-- (id)initWithDifferenceFromSource:(HFByteArray *)src toDestination:(HFByteArray *)dst trackingProgress:(HFProgressTracker *)progressTracker {
+- (instancetype)initWithDifferenceFromSource:(HFByteArray *)src toDestination:(HFByteArray *)dst trackingProgress:(HFProgressTracker *)progressTracker {
     self = [self initWithSource:src toDestination:dst];
     BOOL success = [self computeDifferencesTrackingProgress:progressTracker];
     if (! success) {

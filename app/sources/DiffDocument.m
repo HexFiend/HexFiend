@@ -326,7 +326,7 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
     return handled;
 }
 
-- (id)initWithLeftByteArray:(HFByteArray *)left rightByteArray:(HFByteArray *)right {
+- (instancetype)initWithLeftByteArray:(HFByteArray *)left rightByteArray:(HFByteArray *)right {
     if ((self = [super init])) {
         leftBytes = [left mutableCopy];
         rightBytes = [right mutableCopy];
@@ -342,7 +342,7 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
     return self;
 }
 
-- (id)initWithLeftByteArray:(HFByteArray *)left rightByteArray:(HFByteArray *)right range:(HFRange)range {
+- (instancetype)initWithLeftByteArray:(HFByteArray *)left rightByteArray:(HFByteArray *)right range:(HFRange)range {
     range_ = range;
     return [self initWithLeftByteArray:left rightByteArray:right];
 }

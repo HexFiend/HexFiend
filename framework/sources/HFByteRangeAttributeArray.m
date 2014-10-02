@@ -32,14 +32,14 @@ static const HFRange kEntireRange = {0, ULLONG_MAX};
     HFRange range;
 }
 
-- (id)initWithName:(NSString *)nameParameter range:(HFRange)rangeParameter;
+- (instancetype)initWithName:(NSString *)nameParameter range:(HFRange)rangeParameter;
 
 @end
 
 /* These guys are immutable! */
 @implementation HFByteRangeAttributeRun
 
-- (id)initWithName:(NSString *)nameParameter range:(HFRange)rangeParameter {
+- (instancetype)initWithName:(NSString *)nameParameter range:(HFRange)rangeParameter {
     HFASSERT(nameParameter != nil);
     self = [super init];
     name = [nameParameter copy];
@@ -64,7 +64,7 @@ static const HFRange kEntireRange = {0, ULLONG_MAX};
 
 @implementation HFByteRangeAttributeArray
 
-- (id)init {
+- (instancetype)init {
     if ([self class] == [HFByteRangeAttributeArray class]) {
         [self release];
         return [[HFAnnotatedTreeByteRangeAttributeArray alloc] init];
@@ -169,7 +169,7 @@ static const HFRange kEntireRange = {0, ULLONG_MAX};
     return [NSString stringWithFormat:@"<%@: %p %@>", [self class], self, attributeRuns];
 }
 
-- (id)init {
+- (instancetype)init {
     self = [super init];
     attributeRuns = [[NSMutableArray alloc] init];
     return self;
@@ -394,7 +394,7 @@ static const HFRange kEntireRange = {0, ULLONG_MAX};
     HFRange range;
 }
 
-- (id)initWithAttribute:(NSString *)attribute range:(HFRange)val;
+- (instancetype)initWithAttribute:(NSString *)attribute range:(HFRange)val;
 - (NSString *)attribute;
 - (HFRange)range;
 
@@ -410,7 +410,7 @@ static const HFRange kEntireRange = {0, ULLONG_MAX};
     return result;
 }
 
-- (id)initWithAttribute:(NSString *)attr range:(HFRange)val {
+- (instancetype)initWithAttribute:(NSString *)attr range:(HFRange)val {
     self = [super init];
     attribute = [attr copy];
     range = val;
@@ -502,7 +502,7 @@ static BOOL applyHandlerForNodesInRange(HFByteRangeAttributeArrayNode *node, HFR
     HFByteRangeAttributeArrayNode *node;
 }
 
-- (id)initWithNode:(HFByteRangeAttributeArrayNode *)val;
+- (instancetype)initWithNode:(HFByteRangeAttributeArrayNode *)val;
 
 @end
 
@@ -512,7 +512,7 @@ static BOOL applyHandlerForNodesInRange(HFByteRangeAttributeArrayNode *node, HFR
     return applyHandlerForNodesInRange([self->atree rootNode], range, handler, YES /* isRoot */);
 }
 
-- (id)init {
+- (instancetype)init {
     self = [super init];
     atree = [[HFAnnotatedTree alloc] initWithAnnotater:node_max_range];
     attributesToNodes = [[NSMutableDictionary alloc] init];
@@ -835,7 +835,7 @@ static void removeFromDictionaryOfSets(NSMutableDictionary *dictionary, NSString
 
 @implementation HFAnnotatedTreeByteRangeAttributeArrayEnumerator
 
-- (id)initWithNode:(HFByteRangeAttributeArrayNode *)val {
+- (instancetype)initWithNode:(HFByteRangeAttributeArrayNode *)val {
     self = [super init];
     node = val;
     return self;

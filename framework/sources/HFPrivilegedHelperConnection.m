@@ -136,7 +136,10 @@ static NSString *read_line(FILE *file) {
 }
 
 - (BOOL)launchAndConnect:(NSError **)error {
-    if (self.disabled) return *error = nil, NO;
+    if (self.disabled) {
+        if(error) *error = nil;
+        return NO;
+    }
     
     /* If we're already connected, we're done */
     if ([childReceiveMachPort isValid]) return YES;

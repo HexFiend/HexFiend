@@ -43,10 +43,10 @@ HFByteArray is an abstract class.  It will raise an exception if you attempt to 
  */
 //@{
 /*! Initialize to a byte array containing only the given slice. */
-- (id)initWithByteSlice:(HFByteSlice *)slice;
+- (instancetype)initWithByteSlice:(HFByteSlice *)slice;
 
 /*! Initialize to a byte array containing the slices of the given array. */
-- (id)initWithByteArray:(HFByteArray *)array;
+- (instancetype)initWithByteArray:(HFByteArray *)array;
 //@}
 
 

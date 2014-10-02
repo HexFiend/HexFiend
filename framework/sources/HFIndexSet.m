@@ -19,24 +19,24 @@
 @interface HFIndexSet (HFPrivateStuff)
 
 - (NSUInteger)bsearchOnValue:(unsigned long long)idx;
-- (HFRange *)pointerToRangeAtIndex:(NSUInteger)idx;
+- (HFRange *)pointerToRangeAtIndex:(NSUInteger)idx NS_RETURNS_INNER_POINTER;
 
 @end
 
 @implementation HFIndexSet
 
-- (id)init {
+- (instancetype)init {
     return [super init];
 }
 
-- (id)initWithValue:(unsigned long long)value {
+- (instancetype)initWithValue:(unsigned long long)value {
     self = [self init];
     rangeCount = 1;
     singleRange = HFRangeMake(value, 1);
     return self;
 }
 
-- (id)initWithValuesInRange:(HFRange)range {
+- (instancetype)initWithValuesInRange:(HFRange)range {
     self = [self init];
     rangeCount = 1;
     singleRange = range;
@@ -141,7 +141,7 @@ static BOOL nsindexset_containsIndexesInRange(NSIndexSet *indexSet, NSRange rang
     [super dealloc];
 }
 
-- (id)initWithIndexSet:(HFIndexSet *)otherSet {
+- (instancetype)initWithIndexSet:(HFIndexSet *)otherSet {
     HFASSERT(otherSet != nil);
     rangeCount = otherSet->rangeCount;
     if (rangeCount == 0) {
@@ -155,7 +155,7 @@ static BOOL nsindexset_containsIndexesInRange(NSIndexSet *indexSet, NSRange rang
         /* Multiple ranges */
         size_t size = rangeCount * sizeof *multipleRanges;
         if(multipleRanges) free(multipleRanges);
-        multipleRanges = malloc(size);
+        multipleRanges = check_malloc(size);
         memcpy(multipleRanges, otherSet->multipleRanges, size);
     }
     return self;
@@ -286,7 +286,7 @@ static BOOL nsindexset_containsIndexesInRange(NSIndexSet *indexSet, NSRange rang
     if (rangeCapacity == 0) {
         /* Go multi */
         if(multipleRanges) free(multipleRanges);
-        multipleRanges = malloc(newCapacity * sizeof(*multipleRanges));
+        multipleRanges = check_malloc(newCapacity * sizeof(*multipleRanges));
         multipleRanges[0] = singleRange;
     }
     else if (newCapacity == 0) {
@@ -297,7 +297,7 @@ static BOOL nsindexset_containsIndexesInRange(NSIndexSet *indexSet, NSRange rang
     }
     else {
         /* Reallocate */
-        multipleRanges = realloc(multipleRanges, newCapacity * sizeof(*multipleRanges));
+        multipleRanges = check_realloc(multipleRanges, newCapacity * sizeof(*multipleRanges));
     }
     rangeCapacity = newCapacity;
 }

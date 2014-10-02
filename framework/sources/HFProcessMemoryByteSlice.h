@@ -15,7 +15,7 @@
     HFRange memoryRange;
 }
 
-- (id)initWithAddressSpaceOfPID:(pid_t)pid;
-- (id)initWithPID:(pid_t)pid range:(HFRange)memoryRange;
+- (instancetype)initWithAddressSpaceOfPID:(pid_t)pid;
+- (instancetype)initWithPID:(pid_t)pid range:(HFRange)memoryRange;
 
 @end

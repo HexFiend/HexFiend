@@ -20,6 +20,6 @@
     NSUInteger length;
 }
 
-- (id)initWithByteArray:(HFByteArray *)array;
+- (instancetype)initWithByteArray:(HFByteArray *)array;
 
 @end

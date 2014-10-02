@@ -22,20 +22,20 @@ enum {
 #define LOG_IO if (SHOULD_LOG_IO) 
 
 @interface HFByteSliceFileOperation (HFForwardDeclares)
-- (id)initWithTargetRange:(HFRange)range;
+- (instancetype)initWithTargetRange:(HFRange)range;
 @end
 
 @interface HFByteSliceFileOperationSimple : HFByteSliceFileOperation {
     HFByteSlice *slice;
 }
 
-- (id)initWithByteSlice:(HFByteSlice *)val targetRange:(HFRange)range;
+- (instancetype)initWithByteSlice:(HFByteSlice *)val targetRange:(HFRange)range;
 
 @end
 
 @implementation HFByteSliceFileOperationSimple
 
-- (id)initWithByteSlice:(HFByteSlice *)val targetRange:(HFRange)range {
+- (instancetype)initWithByteSlice:(HFByteSlice *)val targetRange:(HFRange)range {
     self = [super initWithTargetRange:range];
     REQUIRE_NOT_NULL(val);
     HFASSERT([val length] == range.length);
@@ -114,7 +114,7 @@ bail:;
     HFRange sourceRange;
 }
 
-- (id)initWithByteSlice:(HFByteSlice *)val sourceRange:(HFRange)source targetRange:(HFRange)target;
+- (instancetype)initWithByteSlice:(HFByteSlice *)val sourceRange:(HFRange)source targetRange:(HFRange)target;
 
 - (BOOL)hasRemainingTargetRange;
 - (HFByteSliceFileOperationQueueEntry *)createQueueEntryWithBuffer:(unsigned char *)buffer ofLength:(NSUInteger)length forFile:(HFFileReference *)file trackingProgress:(HFProgressTracker *)progressTracker NS_RETURNS_RETAINED;
@@ -131,7 +131,7 @@ bail:;
     return [NSString stringWithFormat:@"<%@: %p (%@ -> %@)>", NSStringFromClass([self class]), self, HFRangeToString([self sourceRange]), HFRangeToString([self targetRange])];
 }
 
-- (id)initWithByteSlice:(HFByteSlice *)val sourceRange:(HFRange)source targetRange:(HFRange)target {
+- (instancetype)initWithByteSlice:(HFByteSlice *)val sourceRange:(HFRange)source targetRange:(HFRange)target {
     self = [super initWithTargetRange:target];
     REQUIRE_NOT_NULL(val);
     HFASSERT([val length] == source.length);
@@ -333,13 +333,13 @@ bail:;
     NSUInteger maximumAllocatedMemory;
 }
 
-- (id)initWithInternalOperations:(NSArray *)ops;
+- (instancetype)initWithInternalOperations:(NSArray *)ops;
 
 @end
 
 @implementation HFByteSliceFileOperationChained
 
-- (id)initWithInternalOperations:(NSArray *)ops {
+- (instancetype)initWithInternalOperations:(NSArray *)ops {
     REQUIRE_NOT_NULL(ops);
     self = [super initWithTargetRange:HFRangeMake(ULLONG_MAX, ULLONG_MAX)];
     maximumAllocatedMemory = 1024 * 1024 * 4;
@@ -464,7 +464,7 @@ bail:;
     return [[[HFByteSliceFileOperationChained alloc] initWithInternalOperations:internalOperations] autorelease];
 }
 
-- (id)initWithTargetRange:(HFRange)range {
+- (instancetype)initWithTargetRange:(HFRange)range {
     self = [super init];
     HFASSERT(! [self isMemberOfClass:[HFByteSliceFileOperation class]]);
     targetRange = range;

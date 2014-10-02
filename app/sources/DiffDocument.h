@@ -37,8 +37,8 @@
 + (void)compareFrontTwoDocuments;
 + (void)compareFrontTwoDocumentsUsingRange:(HFRange)range;
 
-- (id)initWithLeftByteArray:(HFByteArray *)left rightByteArray:(HFByteArray *)right;
-- (id)initWithLeftByteArray:(HFByteArray *)left rightByteArray:(HFByteArray *)right range:(HFRange)range;
+- (instancetype)initWithLeftByteArray:(HFByteArray *)left rightByteArray:(HFByteArray *)right;
+- (instancetype)initWithLeftByteArray:(HFByteArray *)left rightByteArray:(HFByteArray *)right range:(HFRange)range;
 - (BOOL)handleEvent:(NSEvent *)event;
 
 - (void)setLeftFileName:(NSString *)leftName;

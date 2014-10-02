@@ -16,7 +16,7 @@
     return [HFPrivilegedHelperConnection sharedConnection];
 }
 
-- (id)initWithAddressSpaceOfPID:(pid_t)pid {
+- (instancetype)initWithAddressSpaceOfPID:(pid_t)pid {
     self = [super init];
     struct HFProcessInfo_t info = {0};
     BOOL success = [[self connection] getInfo:&info forProcess:pid];
@@ -36,7 +36,7 @@
     return [self initWithPID:pid range:HFRangeMake(0, length)];
 }
 
-- (id)initWithPID:(pid_t)pid range:(HFRange)range {
+- (instancetype)initWithPID:(pid_t)pid range:(HFRange)range {
     self = [super init];
     processIdentifier = pid;
     memoryRange = range;

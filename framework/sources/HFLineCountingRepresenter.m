@@ -50,7 +50,7 @@ static CGFloat maximumDigitAdvanceForFont(NSFont *font) {
 
 @implementation HFLineCountingRepresenter
 
-- (id)init {
+- (instancetype)init {
     if ((self = [super init])) {
         minimumDigitCount = 2;
         digitsToRepresentContentsLength = minimumDigitCount;
@@ -74,7 +74,7 @@ static CGFloat maximumDigitAdvanceForFont(NSFont *font) {
     [coder encodeInt64:borderedEdges forKey:@"HFBorderedEdges"];
 }
 
-- (id)initWithCoder:(NSCoder *)coder {
+- (instancetype)initWithCoder:(NSCoder *)coder {
     HFASSERT([coder allowsKeyedCoding]);
     self = [super initWithCoder:coder];
     lineHeight = (CGFloat)[coder decodeDoubleForKey:@"HFLineHeight"];
@@ -128,9 +128,9 @@ static CGFloat maximumDigitAdvanceForFont(NSFont *font) {
 - (void)updateFontAndLineHeight {
     HFLineCountingView *view = [self view];
     HFController *controller = [self controller];
-    NSFont *font = controller ? [controller font] : [NSFont fontWithName:@"Monaco" size:(CGFloat)10.];
+    NSFont *font = controller ? [controller font] : [NSFont fontWithName:HFDEFAULT_FONT size:HFDEFAULT_FONTSIZE];
     [view setFont:font];
-    [view setLineHeight: controller ? [controller lineHeight] : (CGFloat)10.];
+    [view setLineHeight: controller ? [controller lineHeight] : HFDEFAULT_FONTSIZE];
     [self updateDigitAdvanceWithFont:font];
 }
 

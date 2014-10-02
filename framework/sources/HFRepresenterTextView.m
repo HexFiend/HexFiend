@@ -614,7 +614,7 @@ enum LineCoverage_t {
     return result;
 }
 
-- (id)initWithRepresenter:(HFTextRepresenter *)rep {
+- (instancetype)initWithRepresenter:(HFTextRepresenter *)rep {
     self = [super initWithFrame:NSMakeRect(0, 0, 1, 1)];
     horizontalContainerInset = 4;
     representer = rep;
@@ -644,7 +644,7 @@ enum LineCoverage_t {
     [coder encodeBool:_hftvflags.editable forKey:@"HFEditable"];
 }
 
-- (id)initWithCoder:(NSCoder *)coder {
+- (instancetype)initWithCoder:(NSCoder *)coder {
     HFASSERT([coder allowsKeyedCoding]);
     self = [super initWithCoder:coder];
     representer = [coder decodeObjectForKey:@"HFRepresenter"];
@@ -1731,7 +1731,7 @@ static size_t unionAndCleanLists(NSRect *rectList, id *valueList, size_t count) 
     UNIMPLEMENTED();
 }
 
-- (CGFloat)advancePerColumn  {
+- (CGFloat)advancePerColumn {
     NSUInteger bytesPerColumn = [self _effectiveBytesPerColumn];
     if (bytesPerColumn == 0) {
         return 0;

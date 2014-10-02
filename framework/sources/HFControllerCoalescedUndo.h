@@ -19,9 +19,9 @@
 }
 
 /* replacedData may be nil if it should be considered empty */
-- (id)initWithReplacedData:(HFByteArray *)replacedData atAnchorLocation:(unsigned long long)anchor;
+- (instancetype)initWithReplacedData:(HFByteArray *)replacedData atAnchorLocation:(unsigned long long)anchor;
 
-- (id)initWithOverwrittenData:(HFByteArray *)overwrittenData atAnchorLocation:(unsigned long long)anchor;
+- (instancetype)initWithOverwrittenData:(HFByteArray *)overwrittenData atAnchorLocation:(unsigned long long)anchor;
 
 - (BOOL)canCoalesceAppendInRange:(HFRange)range;
 - (BOOL)canCoalesceDeleteInRange:(HFRange)range;
@@ -48,7 +48,7 @@
     int selectionAction;
 }
 
-- (id)initForInsertingByteArrays:(NSArray *)arrays inRanges:(NSArray *)ranges withSelectionAction:(int)selectionAction;
+- (instancetype)initForInsertingByteArrays:(NSArray *)arrays inRanges:(NSArray *)ranges withSelectionAction:(int)selectionAction;
 
 - (NSArray *)byteArrays;
 - (NSArray *)replacementRanges;

@@ -17,7 +17,7 @@
 
 @implementation HFCancelButton
 
-- (id)initWithFrame:(NSRect)frameRect {
+- (instancetype)initWithFrame:(NSRect)frameRect {
     self = [super initWithFrame:frameRect];
     if ([self respondsToSelector:@selector(setIdentifier:)]) {
         [self setIdentifier:kHFCancelButtonIdentifier];
@@ -27,7 +27,7 @@
     return self;
 }
 
-- (id)initWithCoder:(NSCoder *)coder {
+- (instancetype)initWithCoder:(NSCoder *)coder {
     if ((self = [super initWithCoder:coder])) {
 	NSImage *stopImage = [NSImage imageNamed:@"NSStopProgressTemplate"];
 	if (stopImage) {

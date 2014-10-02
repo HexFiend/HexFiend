@@ -33,10 +33,10 @@
 @property (readonly) BOOL isFixedLength;
 
 /*! Open a file for reading and writing at the given path.  The permissions mode of any newly created file is 0744.  Returns nil if the file could not be opened, in which case the error parameter (if not nil) will be set. */
-- (id)initWritableWithPath:(NSString *)path error:(NSError **)error;
+- (instancetype)initWritableWithPath:(NSString *)path error:(NSError **)error;
 
 /*! Open a file for reading only at the given path.  Returns nil if the file could not be opened, in which case the error parameter (if not nil) will be set. */
-- (id)initWithPath:(NSString *)path error:(NSError **)error;
+- (instancetype)initWithPath:(NSString *)path error:(NSError **)error;
 
 /*! Closes the file. */
 - (void)close;

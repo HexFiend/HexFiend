@@ -82,19 +82,17 @@ static inline Class preferredByteArrayClass(void) {
     static OSSpinLock sLock = OS_SPINLOCK_INIT;
     OSSpinLockLock(&sLock); //use a spinlock to be safe, but contention should be very low because we only expect to make these on the main thread
     static BOOL sRegisteredGlobalDefaults = NO;
-    const id yes = (id)kCFBooleanTrue;
     if (! sRegisteredGlobalDefaults) {
         /* Defaults common to all subclasses */
-        NSDictionary *defs = [[NSDictionary alloc] initWithObjectsAndKeys:
-                              yes, @"AntialiasText",
-                              yes, @"ShowCallouts",
-                              @"Monaco", @"DefaultFontName",
-                              @10., @"DefaultFontSize",
-                              @4, @"BytesPerColumn",
-                              [NSNumber numberWithInteger:[NSString defaultCStringEncoding]], @"DefaultStringEncoding",
-                              nil];
+        NSDictionary *defs = @{
+            @"AntialiasText"   : @YES,
+            @"ShowCallouts"    : @YES,
+            @"DefaultFontName" : HFDEFAULT_FONT,
+            @"DefaultFontSize" : @(HFDEFAULT_FONTSIZE),
+            @"BytesPerColumn"  : @4,
+            @"DefaultStringEncoding" : @([NSString defaultCStringEncoding]),
+        };
         [[NSUserDefaults standardUserDefaults] registerDefaults:defs];
-        [defs release];
         sRegisteredGlobalDefaults = YES;
     }
     
@@ -105,41 +103,38 @@ static inline Class preferredByteArrayClass(void) {
         if (! sRegisteredDefaultsByIdentifier) sRegisteredDefaultsByIdentifier = [[NSMutableArray alloc] init];
         [sRegisteredDefaultsByIdentifier addObject:ident];
         
-        NSDictionary *defs = [[NSDictionary alloc] initWithObjectsAndKeys:
-                              yes, USERDEFS_KEY_FOR_REP(lineCountingRepresenter),
-                              yes, USERDEFS_KEY_FOR_REP(hexRepresenter),
-                              yes, USERDEFS_KEY_FOR_REP(asciiRepresenter),
-                              yes, USERDEFS_KEY_FOR_REP(dataInspectorRepresenter),
-                              yes, USERDEFS_KEY_FOR_REP(statusBarRepresenter),
-                              yes, USERDEFS_KEY_FOR_REP(scrollRepresenter),
-                              nil];
+        NSDictionary *defs = @{
+            USERDEFS_KEY_FOR_REP(lineCountingRepresenter) : @YES,
+            USERDEFS_KEY_FOR_REP(hexRepresenter) : @YES,
+            USERDEFS_KEY_FOR_REP(asciiRepresenter) : @YES,
+            USERDEFS_KEY_FOR_REP(dataInspectorRepresenter) : @YES,
+            USERDEFS_KEY_FOR_REP(statusBarRepresenter) : @YES,
+            USERDEFS_KEY_FOR_REP(scrollRepresenter) : @YES,
+        };
         [[NSUserDefaults standardUserDefaults] registerDefaults:defs];
-        [defs release];
     }
     OSSpinLockUnlock(&sLock);
 }
 
 + (void)initialize {
     if (self == [BaseDataDocument class]) {
-        NSNumber *yes = @YES;
-        NSDictionary *defs = [[NSDictionary alloc] initWithObjectsAndKeys:
-                              yes, @"AntialiasText",
-                              yes, @"ShowCallouts",
-                              @"Monaco", @"DefaultFontName",
-                              @10., @"DefaultFontSize",
-                              @4, @"BytesPerColumn",
-                              yes, USERDEFS_KEY_FOR_REP(lineCountingRepresenter),
-                              yes, USERDEFS_KEY_FOR_REP(hexRepresenter),
-                              yes, USERDEFS_KEY_FOR_REP(asciiRepresenter),
-                              yes, USERDEFS_KEY_FOR_REP(dataInspectorRepresenter),
-                              yes, USERDEFS_KEY_FOR_REP(statusBarRepresenter),
-                              yes, USERDEFS_KEY_FOR_REP(scrollRepresenter),
+        NSDictionary *defs = @{
+            @"AntialiasText" : @YES,
+            @"ShowCallouts" : @YES,
+            @"DefaultFontName" : HFDEFAULT_FONT,
+            @"DefaultFontSize" : @(HFDEFAULT_FONTSIZE),
+            @"BytesPerColumn" : @4,
+            USERDEFS_KEY_FOR_REP(lineCountingRepresenter) : @YES,
+            USERDEFS_KEY_FOR_REP(hexRepresenter) : @YES,
+            USERDEFS_KEY_FOR_REP(asciiRepresenter) : @YES,
+            USERDEFS_KEY_FOR_REP(dataInspectorRepresenter) : @YES,
+            USERDEFS_KEY_FOR_REP(statusBarRepresenter) : @YES,
+            USERDEFS_KEY_FOR_REP(scrollRepresenter) : @YES,
 #if ! NDEBUG
-                              yes, @"NSApplicationShowExceptions",
+            @"NSApplicationShowExceptions" : @YES,
 #endif
-                              nil];
+        };
         [[NSUserDefaults standardUserDefaults] registerDefaults:defs];
-        [defs release];
         
         // Get notified when we are about to save a document, so we can try to break dependencies on the file in other documents
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(prepareForChangeInFileByBreakingFileDependencies:) name:HFPrepareForChangeInFileNotification object:nil];
@@ -479,7 +474,7 @@ static inline Class preferredByteArrayClass(void) {
     [layoutRepresenter performLayout];
 }
 
-- (id)init {
+- (instancetype)init {
     self = [super init];
     
     /* Make sure we register our defaults for this class */

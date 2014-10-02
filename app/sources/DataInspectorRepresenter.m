@@ -57,7 +57,7 @@ enum Endianness_t {
 };
 
 /* A class representing a single row of the data inspector */
-@interface DataInspector : NSObject {
+@interface DataInspector : NSObject<NSCoding> {
     enum InspectorType_t inspectorType;
     enum Endianness_t endianness;
 }
@@ -126,7 +126,7 @@ enum Endianness_t {
     [coder encodeInt32:endianness forKey:@"Endianness"];
 }
 
-- (id)initWithCoder:(NSCoder *)coder {
+- (instancetype)initWithCoder:(NSCoder *)coder {
     HFASSERT([coder allowsKeyedCoding]);
     self = [super init];
     inspectorType = [coder decodeInt32ForKey:@"InspectorType"];
@@ -656,7 +656,7 @@ static BOOL stringRangeIsNullBytes(NSString *string, NSRange range) {
 }
 
 - (id)propertyListRepresentation {
-    return @{@"InspectorType": [NSNumber numberWithInt:inspectorType], @"Endianness": [NSNumber numberWithInt:endianness]};
+    return @{@"InspectorType": @(inspectorType), @"Endianness": @(endianness)};
 }
 
 - (void)setPropertyListRepresentation:(id)plist {
@@ -686,7 +686,7 @@ static BOOL stringRangeIsNullBytes(NSString *string, NSRange range) {
 
 @implementation DataInspectorRepresenter
 
-- (id)init {
+- (instancetype)init {
     self = [super init];
     inspectors = [[NSMutableArray alloc] init];
     [self loadDefaultInspectors];
@@ -704,7 +704,7 @@ static BOOL stringRangeIsNullBytes(NSString *string, NSRange range) {
     [coder encodeObject:inspectors forKey:@"HFInspectors"];
 }
 
-- (id)initWithCoder:(NSCoder *)coder {
+- (instancetype)initWithCoder:(NSCoder *)coder {
     HFASSERT([coder allowsKeyedCoding]);
     self = [super initWithCoder:coder];
     inspectors = [[coder decodeObjectForKey:@"HFInspectors"] retain];
@@ -808,10 +808,10 @@ static BOOL stringRangeIsNullBytes(NSString *string, NSRange range) {
     DataInspector *inspector = inspectors[row];
     NSString *ident = [tableColumn identifier];
     if ([ident isEqualToString:kInspectorTypeColumnIdentifier]) {
-        return [NSNumber numberWithInt:[inspector type]];
+        return @([inspector type]);
     }
     else if ([ident isEqualToString:kInspectorSubtypeColumnIdentifier]) {
-        return [NSNumber numberWithInt:[inspector endianness]];
+        return @([inspector endianness]);
     }
     else if ([ident isEqualToString:kInspectorValueColumnIdentifier]) {
         return [self valueFromInspector:inspector isError:NULL];
@@ -960,7 +960,7 @@ static BOOL stringRangeIsNullBytes(NSString *string, NSRange range) {
 
 @implementation DataInspectorPlusMinusButtonCell
 
-- (id)initWithCoder:(NSCoder *)coder {
+- (instancetype)initWithCoder:(NSCoder *)coder {
     self = [super initWithCoder:coder];
     [self setBezelStyle:NSRoundRectBezelStyle];
     return self;

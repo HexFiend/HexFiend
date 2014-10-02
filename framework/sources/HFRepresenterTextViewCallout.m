@@ -108,7 +108,7 @@ static Wedge_t wedgeUnion(Wedge_t wedge1, Wedge_t wedge2) {
 
 @synthesize byteOffset = byteOffset, representedObject = representedObject, color = color, label = label;
 
-- (id)init {
+- (instancetype)init {
     self = [super init];
     if (self) {
         // Initialization code here.

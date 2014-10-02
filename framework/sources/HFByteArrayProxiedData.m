@@ -27,7 +27,7 @@ static NSData *newDataFromByteArray(HFByteArray *array) {
 
 @implementation HFByteArrayProxiedData
 
-- (id)initWithByteArray:(HFByteArray *)array {
+- (instancetype)initWithByteArray:(HFByteArray *)array {
     HFASSERT(array != nil);
     HFASSERT([array length] <= NSIntegerMax);
     NSUInteger dataLength = ll2l([array length]);

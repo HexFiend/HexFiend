@@ -10,7 +10,7 @@
 
 @implementation HFByteSlice
 
-- (id)init {
+- (instancetype)init {
     if ([self class] == [HFByteSlice class]) {
         [NSException raise:NSInvalidArgumentException format:@"init sent to HFByteArray, but HFByteArray is an abstract class.  Instantiate one of its subclasses instead."];
     }

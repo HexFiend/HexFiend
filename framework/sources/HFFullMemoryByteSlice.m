@@ -10,7 +10,7 @@
 
 @implementation HFFullMemoryByteSlice
 
-- (id)initWithData:(NSData *)val {
+- (instancetype)initWithData:(NSData *)val {
     REQUIRE_NOT_NULL(val);
     self = [super init];
     data = [val copy];
@@ -24,7 +24,7 @@
 
 - (unsigned long long)length { return [data length]; }
 
-- (void)copyBytes:(unsigned char *)dst range:(HFRange)lrange  {
+- (void)copyBytes:(unsigned char *)dst range:(HFRange)lrange {
     NSRange range;
     HFASSERT(lrange.location <= NSUIntegerMax);
     HFASSERT(lrange.length <= NSUIntegerMax);

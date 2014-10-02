@@ -88,7 +88,7 @@ static NSString *sNibName;
 }
 
 
-- (id)initWithFrame:(NSRect)frame {
+- (instancetype)initWithFrame:(NSRect)frame {
     self = [super initWithFrame:frame];
     defaultSize = frame.size;
     nibName = [sNibName copy];

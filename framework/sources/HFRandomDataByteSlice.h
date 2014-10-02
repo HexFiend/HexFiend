@@ -18,7 +18,7 @@
     NSData *pearsonTable;
 }
 
-- (id)initWithRandomDataLength:(unsigned long long)length;
+- (instancetype)initWithRandomDataLength:(unsigned long long)length;
 
 @end
 
@@ -27,7 +27,7 @@
     unsigned long long length;
 }
 
-- (id)initWithRepeatingDataLength:(unsigned long long)length;
+- (instancetype)initWithRepeatingDataLength:(unsigned long long)length;
 
 @end
 

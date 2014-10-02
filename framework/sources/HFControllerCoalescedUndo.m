@@ -17,7 +17,7 @@
 
 @implementation HFControllerCoalescedUndo
 
-- (id)initWithReplacedData:(HFByteArray *)replacedData atAnchorLocation:(unsigned long long)anchor  {
+- (instancetype)initWithReplacedData:(HFByteArray *)replacedData atAnchorLocation:(unsigned long long)anchor {
     self = [super init];
     deletedData = [replacedData retain];
     byteArrayWasCopied = NO;
@@ -26,7 +26,7 @@
     return self;
 }
 
-- (id)initWithOverwrittenData:(HFByteArray *)overwrittenData atAnchorLocation:(unsigned long long)anchor {
+- (instancetype)initWithOverwrittenData:(HFByteArray *)overwrittenData atAnchorLocation:(unsigned long long)anchor {
     self = [super init];
     HFASSERT([overwrittenData length] > 0);
     deletedData = [overwrittenData retain];
@@ -178,7 +178,7 @@
 
 @implementation HFControllerMultiRangeUndo
 
-- (id)initForInsertingByteArrays:(NSArray *)arrays inRanges:(NSArray *)ranges withSelectionAction:(int)action {
+- (instancetype)initForInsertingByteArrays:(NSArray *)arrays inRanges:(NSArray *)ranges withSelectionAction:(int)action {
     REQUIRE_NOT_NULL(arrays);
     REQUIRE_NOT_NULL(ranges);
     self = [super init];

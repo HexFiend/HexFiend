@@ -16,6 +16,6 @@
 }
 
 /*! Init with a given NSData, which is copied via the \c -copy message. */
-- (id)initWithData:(NSData *)val;
+- (instancetype)initWithData:(NSData *)val;
 
 @end

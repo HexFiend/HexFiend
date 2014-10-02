@@ -90,7 +90,7 @@ static inline Class preferredByteArrayClass(void) {
     undoOperations = [[NSMutableSet alloc] init];
 }
 
-- (id)init {
+- (instancetype)init {
     self = [super init];
     [self _sharedInit];
     bytesPerLine = 16;
@@ -100,7 +100,7 @@ static inline Class preferredByteArrayClass(void) {
     _hfflags.showcallouts = YES;
     _hfflags.selectable = YES;
     representers = [[NSMutableArray alloc] init];
-    [self setFont:[NSFont fontWithName:@"Monaco" size:10.f]];
+    [self setFont:[NSFont fontWithName:HFDEFAULT_FONT size:HFDEFAULT_FONTSIZE]];
     return self;
 }
 
@@ -137,7 +137,7 @@ static inline Class preferredByteArrayClass(void) {
     [coder encodeBool:_hfflags.selectable forKey:@"HFSelectable"];
 }
 
-- (id)initWithCoder:(NSCoder *)coder {
+- (instancetype)initWithCoder:(NSCoder *)coder {
     HFASSERT([coder allowsKeyedCoding]);
     self = [super init];
     [self _sharedInit];
@@ -1916,7 +1916,7 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
     if (previousBytes > 0) {
         NSArray *selectedRanges = [self selectedContentsRanges];
         HFASSERT([selectedRanges count] == 1);
-        HFRange selectedRange = [[selectedRanges objectAtIndex:0] HFRange];
+        HFRange selectedRange = [selectedRanges[0] HFRange];
         HFASSERT(selectedRange.location >= previousBytes); //don't try to delete more trailing bytes than we actually have!
     }
 #endif

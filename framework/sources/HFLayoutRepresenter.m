@@ -256,7 +256,7 @@ static NSInteger sortByLayoutPosition(id a, id b, void *self) {
     return representers ? [NSArray arrayWithArray:representers] : @[];
 }
 
-- (id)init {
+- (instancetype)init {
     self = [super init];
     maximizesBytesPerLine = YES;
     return self;
@@ -275,7 +275,7 @@ static NSInteger sortByLayoutPosition(id a, id b, void *self) {
     [coder encodeBool:maximizesBytesPerLine forKey:@"HFMaximizesBytesPerLine"];
 }
 
-- (id)initWithCoder:(NSCoder *)coder {
+- (instancetype)initWithCoder:(NSCoder *)coder {
     HFASSERT([coder allowsKeyedCoding]);
     self = [super initWithCoder:coder];
     representers = [[coder decodeObjectForKey:@"HFRepresenters"] retain];

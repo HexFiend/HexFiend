@@ -25,7 +25,7 @@
     
 }
 
-- (id)init {
+- (instancetype)init {
     self = [super init];
     [self setLayoutPosition:[[self class] defaultLayoutPosition]];
     return self;
@@ -43,7 +43,7 @@
     [coder encodeObject:view forKey:@"HFRepresenterView"];
 }
 
-- (id)initWithCoder:(NSCoder *)coder {
+- (instancetype)initWithCoder:(NSCoder *)coder {
     HFASSERT([coder allowsKeyedCoding]);
     self = [super init];
     layoutPosition = [coder decodePointForKey:@"HFLayoutPosition"];   

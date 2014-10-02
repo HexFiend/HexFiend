@@ -224,10 +224,10 @@ static void verifyDependencies(HFByteArray *self, HFObjectGraph *graph, NSArray 
     NSUInteger ind1, ind2, count = [targetSortedOperations count];
     HFByteSliceFileOperation *op1, *op2;
     for (ind1 = 0; ind1 < count; ind1++) {
-        op1 = [targetSortedOperations objectAtIndex:ind1];
+        op1 = targetSortedOperations[ind1];
         for (ind2 = 0; ind2 < count; ind2++) {
             // op1 = A, op2 = B
-            op2 = [targetSortedOperations objectAtIndex:ind2];
+            op2 = targetSortedOperations[ind2];
             BOOL shouldDepend = HFIntersectsRange([op1 targetRange], [op2 sourceRange]);
             BOOL doesDepend = ([[graph dependenciesForObject:op1] containsObject:op2]);
             if (shouldDepend != doesDepend) {
@@ -543,7 +543,7 @@ static HFByteArray *constructNewSlices(HFByteSlice *slice, HFRange rangeInFile, 
             if (! invalidRange(rangeInFile)) {
                 NSUInteger i;
                 for (i=0; i < dirtyRangeCount; i++) {
-                    HFRange dirtyRange = [[ranges objectAtIndex:i] HFRange];
+                    HFRange dirtyRange = [ranges[i] HFRange];
                     HFASSERT(! HFIntersectsRange(dirtyRange, rangeInFile));
                 }
             }

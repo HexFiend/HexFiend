@@ -43,7 +43,7 @@ typedef unsigned long long (*HFAnnotatedTreeAnnotaterFunction_t)(id left, id rig
     HFAnnotatedTreeNode *root;
 }
 
-- (id)initWithAnnotater:(HFAnnotatedTreeAnnotaterFunction_t)annotater;
+- (instancetype)initWithAnnotater:(HFAnnotatedTreeAnnotaterFunction_t)annotater;
 - (void)insertNode:(HFAnnotatedTreeNode *)node;
 - (void)removeNode:(HFAnnotatedTreeNode *)node;
 - (id)rootNode;

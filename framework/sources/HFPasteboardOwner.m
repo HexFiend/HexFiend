@@ -21,7 +21,7 @@ NSString *const HFPrivateByteArrayPboardType = @"HFPrivateByteArrayPboardType";
     }
 }
 
-- (id)initWithPasteboard:(NSPasteboard *)pboard forByteArray:(HFByteArray *)array withTypes:(NSArray *)types {
+- (instancetype)initWithPasteboard:(NSPasteboard *)pboard forByteArray:(HFByteArray *)array withTypes:(NSArray *)types {
     REQUIRE_NOT_NULL(pboard);
     REQUIRE_NOT_NULL(array);
     REQUIRE_NOT_NULL(types);

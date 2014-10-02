@@ -79,7 +79,7 @@ static HFBTreeNode *mutable_copy_node(HFBTreeNode *node, TreeDepth_t depth, HFBT
     ChildIndex_t childIndex;
 }
 
-- (id)initWithLeaf:(HFBTreeLeaf *)leaf;
+- (instancetype)initWithLeaf:(HFBTreeLeaf *)leaf;
 
 @end
 
@@ -164,7 +164,7 @@ static HFBTreeNode *mutable_copy_node(HFBTreeNode *node, TreeDepth_t depth, HFBT
 
 @implementation HFBTree
 
-- (id)init {
+- (instancetype)init {
     self = [super init];
     depth = BAD_DEPTH;
     root = nil;
@@ -1078,7 +1078,7 @@ static BOOL add_to_array(id entry, HFBTreeIndex offset __attribute__((unused)), 
 
 @implementation HFBTreeEnumerator
 
-- (id)initWithLeaf:(HFBTreeLeaf *)leaf {
+- (instancetype)initWithLeaf:(HFBTreeLeaf *)leaf {
     NSParameterAssert(leaf != nil);
     ASSERT_IS_LEAF(leaf);
     currentLeaf = leaf;

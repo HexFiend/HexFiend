@@ -244,7 +244,7 @@ static BOOL HFRangeSetOverlapsAnyRange(CFMutableArrayRef array, uintptr_t a, uin
     }
 }
 
-- (id)init {
+- (instancetype)init {
     if(!(self = [super init])) return nil;
     array = CFArrayCreateMutable(kCFAllocatorDefault, 0, NULL);
     return self;
@@ -555,7 +555,7 @@ static BOOL HFRangeSetOverlapsAnyRange(CFMutableArrayRef array, uintptr_t a, uin
     [aCoder encodeBytes:values length:count * sizeof(*values)];
 }
 
-- (id)initWithCoder:(NSCoder *)aDecoder {
+- (instancetype)initWithCoder:(NSCoder *)aDecoder {
     if(!(self = [super init])) return nil;
     
     NSUInteger count;

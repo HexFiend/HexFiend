@@ -124,7 +124,7 @@ You create an HFController via <tt>[[HFController alloc] init]</tt>.  After that
     NSData *cachedData;
     NSUInteger cachedGenerationIndex;
     
-    struct  {
+    struct {
         unsigned antialias:1;
         unsigned colorbytes:1;
         unsigned showcallouts:1;

@@ -3,6 +3,9 @@
 #import <HexFiend/HFTypes.h>
 #import <libkern/OSAtomic.h>
 
+#define HFDEFAULT_FONT (@"Monaco")
+#define HFDEFAULT_FONTSIZE ((CGFloat)10.)
+
 #define HFZeroRange (HFRange){0, 0}
 
 /*!

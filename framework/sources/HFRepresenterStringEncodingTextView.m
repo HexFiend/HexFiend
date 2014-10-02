@@ -375,7 +375,7 @@ static int compareGlyphFontIndexes(const void *p1, const void *p2) {
     [super setFont:font];
 }
 
-- (id)initWithCoder:(NSCoder *)coder {
+- (instancetype)initWithCoder:(NSCoder *)coder {
     HFASSERT([coder allowsKeyedCoding]);
     self = [super initWithCoder:coder];
     encoding = (NSStringEncoding)[coder decodeInt64ForKey:@"HFStringEncoding"];
@@ -384,7 +384,7 @@ static int compareGlyphFontIndexes(const void *p1, const void *p2) {
     return self;
 }
 
-- (id)initWithFrame:(NSRect)frameRect {
+- (instancetype)initWithFrame:(NSRect)frameRect {
     self = [super initWithFrame:frameRect];
     encoding = NSMacOSRomanStringEncoding;
     bytesPerChar = HFStringEncodingCharacterLength(encoding);

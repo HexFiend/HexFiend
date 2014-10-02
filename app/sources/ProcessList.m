@@ -202,7 +202,7 @@ static NSInteger compareMenuItems(id item1, id item2, void *unused) {
 	    NSString *title = [name stringByAppendingFormat:@" (%ld)", (long)pid];
 	    NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:title action:@selector(openProcessByProcessMenuItem:) keyEquivalent:@""];
             [item setTarget:self];
-	    [item setRepresentedObject:[NSNumber numberWithLong:pid]];
+	    [item setRepresentedObject:@(pid)];
 	    NSImage *image = [[runningAppClass runningApplicationWithProcessIdentifier:pid] icon];
 	    if (image) {
 		NSImage *icon = [image copy];

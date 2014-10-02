@@ -58,13 +58,13 @@
 
 @implementation HFStringEncodingTextRepresenter
 
-- (id)init {
+- (instancetype)init {
     self = [super init];
     stringEncoding = [NSString defaultCStringEncoding];
     return self;
 }
 
-- (id)initWithCoder:(NSCoder *)coder {
+- (instancetype)initWithCoder:(NSCoder *)coder {
     HFASSERT([coder allowsKeyedCoding]);
     self = [super initWithCoder:coder];
     stringEncoding = (NSStringEncoding)[coder decodeInt64ForKey:@"HFStringEncoding"];
@@ -107,7 +107,7 @@
     }
 }
 
-- (NSData *)dataFromPasteboardString:(NSString *)string  {
+- (NSData *)dataFromPasteboardString:(NSString *)string {
     REQUIRE_NOT_NULL(string);
     return [string dataUsingEncoding:[self encoding] allowLossyConversion:NO];
 }

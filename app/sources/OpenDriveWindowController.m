@@ -76,7 +76,7 @@ enum {
 
 @implementation OpenDriveWindowController
 
--(id)init
+-(instancetype)init
 {	
 	if ((self = [super initWithWindowNibName:@"OpenDriveDialog"]) != nil) {
         driveList = [[NSMutableArray alloc] init];

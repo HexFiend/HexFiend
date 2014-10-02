@@ -70,7 +70,7 @@ static CGFloat norm(unsigned char x) {
 - (void)startAnimation:(id)sender { USE(sender); }
 - (void)stopAnimation:(id)sender { USE(sender); }
 
-- (id)initWithFrame:(NSRect)frame {
+- (instancetype)initWithFrame:(NSRect)frame {
     self = [super initWithFrame:frame];
     
     if ([self respondsToSelector:@selector(setIdentifier:)]) {

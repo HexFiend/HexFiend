@@ -146,7 +146,7 @@ static inline unsigned char hex2char(NSUInteger c) {
     }
 }
 
-- (NSData *)dataFromPasteboardString:(NSString *)string  {
+- (NSData *)dataFromPasteboardString:(NSString *)string {
     REQUIRE_NOT_NULL(string);
     return HFDataFromHexString(string, NULL);
 }

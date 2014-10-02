@@ -25,6 +25,6 @@ Create an HFBTreeByteArray via \c -init.  It has no methods other than those on 
 
 /*! Designated initializer for HFBTreeByteArray.
 */
-- (id)init;
+- (instancetype)init;
 
 @end

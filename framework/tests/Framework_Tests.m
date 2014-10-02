@@ -257,7 +257,7 @@ static NSUInteger random_upto(unsigned long long val) {
     
     NSUInteger expectationIndex = [expectations count] - 1;
     
-    HFTEST([[controller byteArray] _debugIsEqualToData:[expectations objectAtIndex:expectationIndex]]);
+    HFTEST([[controller byteArray] _debugIsEqualToData:expectations[expectationIndex]]);
     
     for (i=1; i <= opCount; i++) @autoreleasepool {
         NSInteger expectationIndexChange;
@@ -283,7 +283,7 @@ static NSUInteger random_upto(unsigned long long val) {
         }
         
         dbg_printf("Index %lu %lu\n", (unsigned long)i, (unsigned long)expectationIndex);
-        HFTEST([[controller byteArray] _debugIsEqualToData:[expectations objectAtIndex:expectationIndex]]);
+        HFTEST([[controller byteArray] _debugIsEqualToData:expectations[expectationIndex]]);
     }
     
     dbg_printf("Done!\n");
@@ -382,10 +382,10 @@ static NSUInteger random_upto(unsigned long long val) {
     }
     
     for (i=0; i < arrayCount; i++) {
-        HFByteArray *src = [byteArrays objectAtIndex:i];
+        HFByteArray *src = byteArrays[i];
         NSUInteger j;
         for (j=0; j < arrayCount; j++) {
-            HFByteArray *dst = [byteArrays objectAtIndex:j];
+            HFByteArray *dst = byteArrays[j];
             dbg_printf("Tested %lu / %lu (lengths are %llu, %llu)\n", i * arrayCount + j, arrayCount * arrayCount, [src length], [dst length]);
             HFByteArrayEditScript *script = [[HFByteArrayEditScript alloc] initWithDifferenceFromSource:src toDestination:dst trackingProgress:nil];
             HFByteArray *guineaPig = [src mutableCopy];
@@ -724,7 +724,7 @@ static HFRange randomRange(uint32_t max) {
 - (void)testObjectGraph {
     /* HFObjectGraph runs its own tests */
     [NSClassFromString(@"HFObjectGraph") runHFUnitTests:^(const char *file, NSUInteger line, NSString *expr, NSString *msg) {
-        _XCTPreformattedFailureHandler(self, YES, [NSString stringWithUTF8String: file], line, expr, msg);
+        _XCTPreformattedFailureHandler(self, YES, @(file), line, expr, msg);
     }];
 }
 

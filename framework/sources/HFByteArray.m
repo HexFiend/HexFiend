@@ -11,21 +11,21 @@
 
 @implementation HFByteArray
 
-- (id)init {
+- (instancetype)init {
     if ([self class] == [HFByteArray class]) {
         [NSException raise:NSInvalidArgumentException format:@"init sent to HFByteArray, but HFByteArray is an abstract class.  Instantiate one of its subclasses instead, like HFBTreeByteArray."];
     }
     return [super init];
 }
 
-- (id)initWithByteSlice:(HFByteSlice *)slice {
+- (instancetype)initWithByteSlice:(HFByteSlice *)slice {
     if(!(self = [self init])) return nil;
     self = [self init];
     [self insertByteSlice:slice inRange:HFRangeMake(0, 0)];
     return self;
 }
 
-- (id)initWithByteArray:(HFByteArray *)array {
+- (instancetype)initWithByteArray:(HFByteArray *)array {
     if(!(self = [self init])) return nil;
     NSEnumerator *e = [array byteSliceEnumerator];
     HFByteSlice *slice;

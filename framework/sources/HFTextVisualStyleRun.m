@@ -10,7 +10,7 @@
 
 @implementation HFTextVisualStyleRun
 
-- (id)init {
+- (instancetype)init {
     self = [super init];
     scale = 1.;
     shouldDraw = YES;

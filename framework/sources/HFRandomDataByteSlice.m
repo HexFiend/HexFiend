@@ -54,7 +54,7 @@ static inline unsigned char munge(unsigned long long val64, const unsigned char 
 
 @implementation HFRandomDataByteSlice
 
-- (id)initWithLength:(unsigned long long)len pearsonTable:(NSData *)table {
+- (instancetype)initWithLength:(unsigned long long)len pearsonTable:(NSData *)table {
     self = [super init];
     start = 0;
     length = len;
@@ -62,7 +62,7 @@ static inline unsigned char munge(unsigned long long val64, const unsigned char 
     return self;
 }
 
-- (id)initWithRandomDataLength:(unsigned long long)len {
+- (instancetype)initWithRandomDataLength:(unsigned long long)len {
     NSData *table = createPearsonTable();
     self = [self initWithLength:len pearsonTable:table];
     [table release];
@@ -136,7 +136,7 @@ static unsigned char *kRepeatingData;
     }
 }
 
-- (id)initWithRepeatingDataLength:(unsigned long long)len {
+- (instancetype)initWithRepeatingDataLength:(unsigned long long)len {
     self = [super init];
     start = 0;
     length = len;

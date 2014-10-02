@@ -10,7 +10,7 @@
 
 @implementation HFObjectGraph
 
-- (id)init {
+- (instancetype)init {
     self = [super init];
     graph = (__strong CFMutableDictionaryRef)CFMakeCollectable(CFDictionaryCreateMutable(NULL, 0, NULL, &kCFTypeDictionaryValueCallBacks));
     containedObjects = [[NSMutableArray alloc] init]; //containedObjects is necessary to make sure that our key objects are strongly referenced, since we use a NULL-callback dictionary
@@ -248,10 +248,10 @@ static NSSet *arraysToSets(NSArray *array, NSUInteger depth) {
         NSUInteger i, objectCount = 2 + (random() % (100 - 2));
         NSUInteger connectionCount = random() % (objectCount * 2);
         NSMutableArray *objects = [NSMutableArray array];
-        for (i=0; i < objectCount; i++) [objects addObject:[NSNumber numberWithUnsignedLong:i]];
+        for (i=0; i < objectCount; i++) [objects addObject:@(i)];
         for (i=0; i < connectionCount; i++) {
-            id object1 = [objects objectAtIndex: random() % objectCount];
-            id object2 = [objects objectAtIndex: random() % objectCount];
+            id object1 = objects[random() % objectCount];
+            id object2 = objects[random() % objectCount];
             if (! [graph object:object1 hasDependency:object2]) {
                 [graph addDependency:object2 forObject:object1];
             }

@@ -20,16 +20,16 @@
 }
 
 /*! Initializes the receiver as empty. */
-- (id)init;
+- (instancetype)init;
 
 /*! Initializes the receiver with a single index. */
-- (id)initWithValue:(unsigned long long)value;
+- (instancetype)initWithValue:(unsigned long long)value;
 
 /*! Initializes the receiver with the indexes in a single range. */
-- (id)initWithValuesInRange:(HFRange)range;
+- (instancetype)initWithValuesInRange:(HFRange)range;
 
 /*! Initializes the receiver with the indexes in an NSIndexSet. */
-- (id)initWithIndexSet:(HFIndexSet *)otherSet;
+- (instancetype)initWithIndexSet:(HFIndexSet *)otherSet;
 
 /*! Returns the number of ranges in the set. */
 - (NSUInteger)numberOfRanges;

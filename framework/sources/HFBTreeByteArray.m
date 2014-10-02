@@ -13,7 +13,7 @@
 
 @implementation HFBTreeByteArray
 
-- (id)init {
+- (instancetype)init {
     if ((self = [super init])) {
         btree = [[HFBTree alloc] init];
     }

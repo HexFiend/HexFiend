@@ -13,14 +13,14 @@
 
 @implementation HFAttributedByteArray
 
-- (id)initWithImplementingByteArray:(HFByteArray *)newImpl attributes:(HFByteRangeAttributeArray *)newAttrs {
+- (instancetype)initWithImplementingByteArray:(HFByteArray *)newImpl attributes:(HFByteRangeAttributeArray *)newAttrs {
     self = [super init];
     impl = [newImpl retain];
     attributes = [newAttrs retain];
     return self;
 }
 
-- (id)init {
+- (instancetype)init {
     HFBTreeByteArray *arr = [[HFBTreeByteArray alloc] init];
     HFByteRangeAttributeArray *attr = [[HFByteRangeAttributeArray alloc] init];
     self = [self initWithImplementingByteArray:arr attributes:attr];

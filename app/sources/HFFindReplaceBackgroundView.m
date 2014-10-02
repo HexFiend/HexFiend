@@ -88,7 +88,7 @@ static CGFloat roundTowardsInfinity(CGFloat x) {
     return cancelButton;
 }
 
-- (id)initWithFrame:(NSRect)rect {
+- (instancetype)initWithFrame:(NSRect)rect {
     self = [super initWithFrame:rect];
     defaultHeight = NSHeight(rect);
     return self;

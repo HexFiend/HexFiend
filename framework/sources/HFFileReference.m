@@ -153,7 +153,7 @@ static BOOL returnFTruncateError(NSError **error) {
     
 }
 
-- (id)initWithPath:(NSString *)path error:(NSError **)error {
+- (instancetype)initWithPath:(NSString *)path error:(NSError **)error {
     self = [super init];
     isWritable = NO;
     fileDescriptor = -1;
@@ -165,7 +165,7 @@ static BOOL returnFTruncateError(NSError **error) {
     return self;
 }
 
-- (id)initWritableWithPath:(NSString *)path error:(NSError **)error{
+- (instancetype)initWritableWithPath:(NSString *)path error:(NSError **)error{
     self = [super init];
     isWritable = YES;
     fileDescriptor = -1;

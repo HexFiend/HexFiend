@@ -14,7 +14,7 @@
 
 @implementation HFSharedMemoryByteSlice
 
-- (id)initWithUnsharedData:(NSData *)unsharedData {
+- (instancetype)initWithUnsharedData:(NSData *)unsharedData {
     self = [super init];
     REQUIRE_NOT_NULL(unsharedData);
     NSUInteger dataLength = [unsharedData length];
@@ -33,12 +33,12 @@
 }
 
 // retains, does not copy
-- (id)initWithData:(NSMutableData *)dat {
+- (instancetype)initWithData:(NSMutableData *)dat {
     REQUIRE_NOT_NULL(dat);
     return [self initWithData:dat offset:0 length:[dat length]];
 }
 
-- (id)initWithData:(NSMutableData *)dat offset:(NSUInteger)off length:(NSUInteger)len {
+- (instancetype)initWithData:(NSMutableData *)dat offset:(NSUInteger)off length:(NSUInteger)len {
     self = [super init];
     REQUIRE_NOT_NULL(dat);
     HFASSERT(off + len >= off); //check for overflow
@@ -49,7 +49,7 @@
     return self;
 }
 
-- (id)initWithSharedData:(NSMutableData *)dat offset:(NSUInteger)off length:(NSUInteger)len tail:(const void *)tail tailLength:(NSUInteger)tailLen {
+- (instancetype)initWithSharedData:(NSMutableData *)dat offset:(NSUInteger)off length:(NSUInteger)len tail:(const void *)tail tailLength:(NSUInteger)tailLen {
     self = [super init];
     if (off || len) REQUIRE_NOT_NULL(dat);
     if (tailLen) REQUIRE_NOT_NULL(tail);
@@ -75,7 +75,7 @@
     return length + inlineTailLength;
 }
 
-- (void)copyBytes:(unsigned char *)dst range:(HFRange)lrange  {
+- (void)copyBytes:(unsigned char *)dst range:(HFRange)lrange {
     HFASSERT(HFSum(length, inlineTailLength) >= HFMaxRange(lrange));
     NSRange requestedRange = NSMakeRange(ll2l(lrange.location), ll2l(lrange.length));
     NSRange dataRange = NSMakeRange(0, length);

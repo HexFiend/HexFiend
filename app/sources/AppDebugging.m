@@ -20,7 +20,7 @@
     [NSApp stopModalWithCode:NSRunAbortedResponse];
 }
 
-- (id)initWithPromptText:(NSString *)text {
+- (instancetype)initWithPromptText:(NSString *)text {
     self = [super initWithWindowNibName:@"GenericPrompt"];
     promptText = [text copy];
     return self;

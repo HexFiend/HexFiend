@@ -63,7 +63,7 @@
     return result;
 }
 
-- (id)initWithCoder:(NSCoder *)coder {
+- (instancetype)initWithCoder:(NSCoder *)coder {
     HFASSERT([coder allowsKeyedCoding]);
     self = [super initWithCoder:coder];
     dataController = [[coder decodeObjectForKey:@"HFController"] retain];
@@ -97,7 +97,7 @@
     }
 }
 
-- (id)initWithFrame:(NSRect)frame {
+- (instancetype)initWithFrame:(NSRect)frame {
     self = [super initWithFrame:frame];
     
     backgroundColors = [[NSColor controlAlternatingRowBackgroundColors] copy];

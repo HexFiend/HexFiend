@@ -23,10 +23,10 @@
 }
 
 // copies the data
-- (id)initWithUnsharedData:(NSData *)data;
+- (instancetype)initWithUnsharedData:(NSData *)data;
 
 // retains, does not copy
-- (id)initWithData:(NSMutableData *)data;
-- (id)initWithData:(NSMutableData *)data offset:(NSUInteger)offset length:(NSUInteger)length;
+- (instancetype)initWithData:(NSMutableData *)data;
+- (instancetype)initWithData:(NSMutableData *)data offset:(NSUInteger)offset length:(NSUInteger)length;
 
 @end

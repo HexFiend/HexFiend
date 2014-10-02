@@ -19,7 +19,7 @@
     UNIMPLEMENTED();
 }
 
-- (id)init {
+- (instancetype)init {
     self = [super init];
     
     /* SnowLeopard controlAlternatingRowBackgroundColors were:
@@ -51,7 +51,7 @@
     [coder encodeObject:rowBackgroundColors forKey:@"HFRowBackgroundColors"];
 }
 
-- (id)initWithCoder:(NSCoder *)coder {
+- (instancetype)initWithCoder:(NSCoder *)coder {
     HFASSERT([coder allowsKeyedCoding]);
     self = [super initWithCoder:coder];
     behavesAsTextField = [coder decodeBoolForKey:@"HFBehavesAsTextField"];
@@ -224,7 +224,7 @@
         [self updateText];
     }
     else {
-        [view setFont:[NSFont fontWithName:@"Monaco" size:(CGFloat)10.]];
+        [view setFont:[NSFont fontWithName:HFDEFAULT_FONT size:HFDEFAULT_FONTSIZE]];
     }
 }
 

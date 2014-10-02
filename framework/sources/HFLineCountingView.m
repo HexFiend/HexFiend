@@ -40,7 +40,7 @@
     [layoutManager addTextContainer:textContainer];
 }
 
-- (id)initWithFrame:(NSRect)frame {
+- (instancetype)initWithFrame:(NSRect)frame {
     self = [super initWithFrame:frame];
     if (self) {
         [self _sharedInitLineCountingView];
@@ -69,7 +69,7 @@
     [coder encodeBool:useStringDrawingPath forKey:@"HFUseStringDrawingPath"];
 }
 
-- (id)initWithCoder:(NSCoder *)coder {
+- (instancetype)initWithCoder:(NSCoder *)coder {
     HFASSERT([coder allowsKeyedCoding]);
     self = [super initWithCoder:coder];
     [self _sharedInitLineCountingView];
@@ -648,7 +648,7 @@ static inline int common_prefix_length(const char *a, const char *b) {
 
 - (BOOL)canUseStringDrawingPathForFont:(NSFont *)testFont {
     NSString *name = [testFont fontName];
-    return [name isEqualToString:@"Monaco"] || [name isEqualToString:@"Courier"];
+    return [name isEqualToString:@"Monaco"] || [name isEqualToString:@"Courier"] || [name isEqualToString:@"Consolas"];
 }
 
 - (void)setFont:(NSFont *)val {
