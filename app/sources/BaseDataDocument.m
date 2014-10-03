@@ -162,7 +162,7 @@ static inline Class preferredByteArrayClass(void) {
 
 - (BOOL)representerIsShown:(HFRepresenter *)representer {
     NSParameterAssert(representer);
-    return [[layoutRepresenter representers] containsObject:representer];
+    return [layoutRepresenter.representers containsObject:representer];
 }
 
 - (void)showViewForRepresenter:(HFRepresenter *)rep {
@@ -173,7 +173,7 @@ static inline Class preferredByteArrayClass(void) {
 
 - (void)hideViewForRepresenter:(HFRepresenter *)rep {
     HFASSERT(rep != NULL);
-    HFASSERT([[layoutRepresenter representers] indexOfObjectIdenticalTo:rep] != NSNotFound);
+    HFASSERT([layoutRepresenter.representers indexOfObjectIdenticalTo:rep] != NSNotFound);
     [controller removeRepresenter:rep];
     [layoutRepresenter removeRepresenter:rep];
 }
@@ -651,7 +651,7 @@ static inline Class preferredByteArrayClass(void) {
 - (IBAction)toggleVisibleControllerView:(id)sender {
     USE(sender);
     NSUInteger arrayIndex = [sender tag] - 1;
-    NSArray *representers = [self representers];
+    NSArray *representers = self.representers;
     if (arrayIndex >= [representers count]) {
         NSBeep();
     }
@@ -784,13 +784,13 @@ static inline Class preferredByteArrayClass(void) {
     SEL action = [item action];
     if (action == @selector(toggleVisibleControllerView:)) {
         NSUInteger arrayIndex = [item tag] - 1;
-        NSArray *representers = [self representers];
+        NSArray *representers = self.representers;
         if (arrayIndex >= [representers count]) {
             return NO;
         }
         else {
             HFRepresenter *rep = representers[arrayIndex];
-            [item setState:[[controller representers] containsObject:rep]];
+            [item setState:[controller.representers containsObject:rep]];
             return YES;
         }
     }
@@ -891,7 +891,7 @@ static inline Class preferredByteArrayClass(void) {
 - (void)restoreFirstResponderToSavedResponder {
     NSWindow *window = [self window];
     NSMutableArray *views = [NSMutableArray array];
-    FOREACH(HFRepresenter *, rep, [self representers]) {
+    FOREACH(HFRepresenter *, rep, self.representers) {
         NSView *view = [rep view];
         if ([view window] == window) {
             /* If we're the saved first responder, try it first */

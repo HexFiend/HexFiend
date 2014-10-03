@@ -57,8 +57,8 @@ static CGFloat maximumDigitAdvanceForFont(NSFont *font) {
         interiorShadowEdge = NSMaxXEdge;
         
         _borderedEdges = (1 << NSMaxXEdge);
-        _borderColor = [NSColor darkGrayColor];
-        _backgroundColor = [NSColor colorWithCalibratedWhite:(CGFloat).87 alpha:1];
+        _borderColor = [[NSColor darkGrayColor] retain];
+        _backgroundColor = [[NSColor colorWithCalibratedWhite:(CGFloat).87 alpha:1] retain];
     }
     return self;
 }
@@ -233,7 +233,7 @@ static CGFloat maximumDigitAdvanceForFont(NSFont *font) {
 
 - (void)setBorderColor:(NSColor *)color {
     [_borderColor autorelease];
-    _borderColor = [color retain];
+    _borderColor = [color copy];
     if ([self isViewLoaded]) {
         [[self view] setNeedsDisplay:YES];
     }
@@ -241,7 +241,7 @@ static CGFloat maximumDigitAdvanceForFont(NSFont *font) {
 
 - (void)setBackgroundColor:(NSColor *)color {
     [_backgroundColor autorelease];
-    _backgroundColor = [color retain];
+    _backgroundColor = [color copy];
     if ([self isViewLoaded]) {
         [[self view] setNeedsDisplay:YES];
     }

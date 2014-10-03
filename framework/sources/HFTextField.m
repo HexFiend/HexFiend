@@ -127,7 +127,7 @@
     REQUIRE_NOT_NULL(rep);
     HFASSERT(rep == hexRepresenter || rep == textRepresenter);
     BOOL result = NO;
-    NSArray *reps = [dataController representers];
+    NSArray *reps = dataController.representers;
     if (reps) {
         result = ([reps indexOfObjectIdenticalTo:rep] != NSNotFound);
     }

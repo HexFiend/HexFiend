@@ -35,6 +35,10 @@ static inline unsigned char hex2char(NSUInteger c) {
 
 - (void)writeDataInBackgroundToPasteboard:(NSPasteboard *)pboard ofLength:(unsigned long long)length forType:(NSString *)type trackingProgress:(HFProgressTracker *)tracker {
     HFASSERT([type isEqual:NSStringPboardType]);
+    if(length == 0) {
+        [pboard setString:@"" forType:type];
+        return;
+    }
     HFByteArray *byteArray = [self byteArray];
     HFASSERT(length <= NSUIntegerMax);
     NSUInteger dataLength = ll2l(length);
@@ -88,8 +92,7 @@ static inline unsigned char hex2char(NSUInteger c) {
     if (tracker->cancelRequested) {
         [pboard setString:@"" forType:type];
         free(stringBuffer);
-    }
-    else {
+    } else {
         NSString *string = [[NSString alloc] initWithBytesNoCopy:stringBuffer length:stringLength encoding:NSASCIIStringEncoding freeWhenDone:YES];
         [pboard setString:string forType:type];
         [string release];

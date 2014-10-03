@@ -253,7 +253,7 @@ static NSInteger sortByLayoutPosition(id a, id b, void *self) {
 }
 
 - (NSArray *)representers {
-    return representers ? [NSArray arrayWithArray:representers] : @[];
+    return representers ? [[representers copy] autorelease] : @[];
 }
 
 - (instancetype)init {

@@ -47,8 +47,8 @@
     Managing the list of representers laid out by the receiver
 */
 //@{
-/*! Return the array of representers managed by the receiver. */
-- (NSArray *)representers;
+/// Return the array of representers managed by the receiver. */
+@property (readonly, copy) NSArray *representers;
 
 /*! Adds a new representer to the receiver, triggering relayout. */
 - (void)addRepresenter:(HFRepresenter *)representer;

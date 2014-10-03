@@ -23,10 +23,10 @@
 
     /* Compute byte granularity */
     NSUInteger granularity = 1;
-    FOREACH(HFRepresenter *, rep, [[leftView layoutRepresenter] representers]) {
+    FOREACH(HFRepresenter *, rep, [leftView layoutRepresenter].representers) {
         granularity = HFLeastCommonMultiple(granularity, [rep byteGranularity]);
     }
-    FOREACH(HFRepresenter *, rep2, [[rightView layoutRepresenter] representers]) {
+    FOREACH(HFRepresenter *, rep2, [rightView layoutRepresenter].representers) {
         granularity = HFLeastCommonMultiple(granularity, [rep2 byteGranularity]);
     }
     

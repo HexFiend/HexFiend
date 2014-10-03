@@ -131,7 +131,7 @@
 }
 
 - (HFTextRepresenter *)textRepresenterFromTextView:(HFTextView *)textView {
-    FOREACH(HFRepresenter *, rep, [[textView controller] representers]) {
+    FOREACH(HFRepresenter *, rep, [textView controller].representers) {
         if ([rep isKindOfClass:[HFTextRepresenter class]]) {
             return (HFTextRepresenter *)rep;
         }
@@ -636,7 +636,7 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
     [[textView layoutRepresenter] setMaximizesBytesPerLine:YES];
     
     /* Remove the representers we don't want */
-    FOREACH(HFRepresenter *, rep, [[textView layoutRepresenter] representers]) {
+    FOREACH(HFRepresenter *, rep, [textView layoutRepresenter].representers) {
         if ([rep isKindOfClass:[HFVerticalScrollerRepresenter class]] || [rep isKindOfClass:[HFStringEncodingTextRepresenter class]] || [rep isKindOfClass:[HFStatusBarRepresenter class]] || [rep isKindOfClass:[DataInspectorRepresenter class]]) {
             [[textView layoutRepresenter] removeRepresenter:rep];
             [[textView controller] removeRepresenter:rep];

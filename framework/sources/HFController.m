@@ -163,7 +163,7 @@ static inline Class preferredByteArrayClass(void) {
 }
 
 - (NSArray *)representers {
-    return [representers copy];
+    return [[representers copy] autorelease];
 }
 
 - (void)notifyRepresentersOfChanges:(HFControllerPropertyBits)bits {

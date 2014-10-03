@@ -170,7 +170,7 @@
         [_backgroundColors release];
         _backgroundColors = [colors copy];
         id rep;
-        NSEnumerator *enumer = [[[self controller] representers] objectEnumerator];
+        NSEnumerator *enumer = [[self controller].representers objectEnumerator];
         while ((rep = [enumer nextObject])) {
             if ([rep isKindOfClass:[HFTextRepresenter class]]) {
                 ((HFTextRepresenter*)rep).rowBackgroundColors = colors;

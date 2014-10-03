@@ -141,13 +141,13 @@ You create an HFController via <tt>[[HFController alloc] init]</tt>.  After that
    Methods for modifying the list of HFRepresenters attached to a controller.  Attached representers receive the controllerDidChange: message when various properties of the controller change.  A representer may only be attached to one controller at a time.  Representers are retained by the controller.
 */
 //@{ 
-/*! Gets the current array of representers attached to this controller. */
-- (NSArray *)representers;
+/// Gets the current array of representers attached to this controller.
+@property (readonly, copy) NSArray *representers;
 
-/*! Adds a new representer to this controller. */
+/// Adds a new representer to this controller.
 - (void)addRepresenter:(HFRepresenter *)representer;
 
-/*! Removes an existing representer from this controller.  The representer must be present in the array of representers. */
+/// Removes an existing representer from this controller.  The representer must be present in the array of representers.
 - (void)removeRepresenter:(HFRepresenter *)representer;
 
 //@}
