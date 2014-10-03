@@ -21,7 +21,7 @@ static const char *const kProgressContext = "context";
 NSString * const BaseDataDocumentDidChangeStringEncodingNotification = @"BaseDataDocumentDidChangeStringEncodingNotification";
 
 enum {
-    HFSaveSuccessful,
+    HFSaveSuccessful = 0,
     HFSaveCancelled,
     HFSaveError
 };
@@ -643,6 +643,7 @@ static inline Class preferredByteArrayClass(void) {
         HFByteArray *byteArray = [[[preferredByteArrayClass() alloc] init] autorelease];
         [byteArray insertByteSlice:byteSlice inRange:HFRangeMake(0, 0)];
         [controller setByteArray:byteArray];
+        cleanGenerationCount = [byteArray changeGenerationCount];
         result = YES;
     }
     return result;
@@ -674,13 +675,13 @@ static inline Class preferredByteArrayClass(void) {
 - (void)setFont:(NSFont *)font registeringUndo:(BOOL)undo {
     HFASSERT(font != nil);
     
-    /* If we should register undo, do so, but do it behind NSDocument's back so it doesn't think the document was edited.  I tried temporarily clearing our undo manager, but that resulted in some wacky infinite loop, so do it this way instead. */
-    if (undo) {
-        NSFont *existingFont = [self font];
-        NSUndoManager *undoer = [self undoManager];
-        [[undoer prepareWithInvocationTarget:self] setFont:existingFont registeringUndo:YES];
-    }
-    
+//    TODO: Figure out how to use undo manager without dirtying document
+//    if (undo) {
+//        NSFont *existingFont = [self font];
+//        NSUndoManager *undoer = [self undoManager];
+//        [[undoer prepareWithInvocationTarget:self] setFont:existingFont registeringUndo:YES];
+//    }
+
     NSWindow *window = [self window];
     NSDisableScreenUpdates();
     NSUInteger bytesPerLine = [controller bytesPerLine];
@@ -694,6 +695,10 @@ static inline Class preferredByteArrayClass(void) {
     NSUserDefaults *defs = [NSUserDefaults standardUserDefaults];
     [defs setDouble:[font pointSize] forKey:@"DefaultFontSize"];
     [defs setObject:[font fontName] forKey:@"DefaultFontName"];
+}
+
+- (void)setFont:(NSFont *)val {
+    [self setFont:val registeringUndo:NO];
 }
 
 - (NSFont *)font {
@@ -1061,7 +1066,8 @@ static inline Class preferredByteArrayClass(void) {
      
      Note that this is actually quite wrong.  It's entirely possible that e.g. there was an error after the file was touched, e.g. when writing to the file.  In that case, we do want to just reference the file again.
      
-     What we really need to know is "has a backing file been touched by this operation."  But we don't have access to that information yet.
+     TODO:
+ What we really need to know is "has a backing file been touched by this operation."  But we don't have access to that information yet.
      */
     if ((saveResult != HFSaveError) && (saveOperation == NSSaveOperation || saveOperation == NSSaveAsOperation)) {
         HFFileReference *fileReference = [[[HFFileReference alloc] initWithPath:[inAbsoluteURL path] error:NULL] autorelease];
@@ -1080,6 +1086,7 @@ static inline Class preferredByteArrayClass(void) {
                 [newAttributes transferAttributesFromAttributeArray:oldAttributes range:range baseOffset:0 validator:NULL];
             }            
             [controller setByteArray:newByteArray];
+            cleanGenerationCount = [newByteArray changeGenerationCount];
         }
     }
     

@@ -53,6 +53,8 @@ NSString * const BaseDataDocumentDidChangeStringEncodingNotification;
     BOOL shouldLiveReload;
     NSDate *liveReloadDate;
     NSTimer *liveReloadTimer;
+    
+    NSUInteger cleanGenerationCount;
 }
 
 - (void)moveSelectionForwards:(NSMenuItem *)sender;
@@ -61,8 +63,8 @@ NSString * const BaseDataDocumentDidChangeStringEncodingNotification;
 
 - (IBAction)moveSelectionByAction:(id)sender;
 
+@property (nonatomic, copy) NSFont *font;
 - (void)setFont:(NSFont *)font registeringUndo:(BOOL)undo;
-- (NSFont *)font;
 
 - (IBAction)increaseFontSize:(id)sender;
 - (IBAction)decreaseFontSize:(id)sender;
