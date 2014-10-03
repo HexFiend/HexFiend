@@ -7,6 +7,7 @@
 //
 
 #import "NaiveArray.h"
+#import "HFFunctions.h"
 #import "TreeEntry.h"
 
 #define HFBTreeLength_Fast(a) (((TreeEntry *)(a))->length)
@@ -20,11 +21,6 @@
     self = [super init];
     entries = [[NSMutableArray alloc] init];
     return self;
-}
-
-- (void)dealloc {
-    [entries release];
-    [super dealloc];
 }
 
 - (void)insertEntry:(TreeEntry *)entry atOffset:(HFBTreeIndex)offset {

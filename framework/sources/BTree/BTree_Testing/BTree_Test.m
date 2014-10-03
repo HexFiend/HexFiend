@@ -16,7 +16,7 @@
     [self measureBlock:^{
         @autoreleasepool {
             HFBTree *btree = [[HFBTree alloc] init];
-            const NSUInteger max = 5000000;
+            const NSUInteger max = 1234567;
             for (NSUInteger i = 0; i < max; i++) {
                 TreeEntry *entry = [[TreeEntry alloc] initWithLength:1 value:@"yay"];
                 [btree insertEntry:entry atOffset: ((unsigned)random() % (i + 1))];
@@ -59,9 +59,9 @@ static void test_trees(XCTestCase *self, NaiveArray *naiveArray, HFBTree *btree)
     HFBTree *btree = [[HFBTree alloc] init];
     
     //insertion
-    NSUInteger max = 6000;
+    NSUInteger max = 4321;
     for (NSUInteger i=0; i < max; i++) {
-        HFBTreeIndex entryLength = random(10000)+1;
+        HFBTreeIndex entryLength = random()%10000+1;
         char buff[32];
         sprintf(buff, "%lu", (unsigned long)i);
         NSString *string = [[NSString alloc] initWithCString:buff encoding:NSMacOSRomanStringEncoding];
@@ -94,7 +94,6 @@ static void test_trees(XCTestCase *self, NaiveArray *naiveArray, HFBTree *btree)
         [copiedTree checkIntegrityOfBTreeStructure];
         [copiedTree checkIntegrityOfCachedLengths];
     }
-    
 }
 
 -(void)testRandom {
@@ -102,17 +101,11 @@ static void test_trees(XCTestCase *self, NaiveArray *naiveArray, HFBTree *btree)
     HFBTree *btree = [[HFBTree alloc] init];
 
     NSUInteger nodeCount = 0;
-    for (NSUInteger i=0; i < 50000; i++) {
-        BOOL insert;
-        if (nodeCount == 0) {
-            insert = YES;
-        }
-        else {
-            insert = ((random() % 5) >= 2);
-        }
+    for (NSUInteger i=0; i < 23456; i++) {
+        BOOL insert = nodeCount == 0 ? YES : ((random() % 5) >= 2);
         if (i % 100 == 0) dbg_printf("%lu -> %lu nodes\n", (unsigned long)i, (unsigned long)nodeCount);
         if (insert) {
-            HFBTreeIndex entryLength = random(10000)+1;
+            HFBTreeIndex entryLength = random()%10000+1;
             char buff[32];
             sprintf(buff, "%lu", (unsigned long)i);
             NSString *string = [[NSString alloc] initWithCString:buff encoding:NSMacOSRomanStringEncoding];
@@ -121,8 +114,7 @@ static void test_trees(XCTestCase *self, NaiveArray *naiveArray, HFBTree *btree)
             [naiveArray insertEntry:entry atOffset:offset];
             [btree insertEntry:entry atOffset:offset];            
             nodeCount++;
-        }
-        else {
+        } else {
             HFBTreeIndex offset = [naiveArray randomOffsetExcludingLast];
             [naiveArray removeEntryAtOffset:offset];
             [btree removeEntryAtOffset:offset];            

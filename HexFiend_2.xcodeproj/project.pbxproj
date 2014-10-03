@@ -37,7 +37,9 @@
 		94548A4D19DC5218006EFA29 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 94548A4219DC51FF006EFA29 /* Sparkle.framework */; };
 		94548A4E19DC5218006EFA29 /* Sparkle.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 94548A4219DC51FF006EFA29 /* Sparkle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		9483479019DE188E0086A732 /* HFTest.h in Headers */ = {isa = PBXBuildFile; fileRef = 9483478F19DE188E0086A732 /* HFTest.h */; };
-		9483479219DE19A40086A732 /* test_btree_main.m in Sources */ = {isa = PBXBuildFile; fileRef = D06D60A50FA7E980002376EE /* test_btree_main.m */; };
+		9483479319DE1C8E0086A732 /* NaiveArray.m in Sources */ = {isa = PBXBuildFile; fileRef = D06D60A40FA7E980002376EE /* NaiveArray.m */; };
+		9483479419DE1C920086A732 /* TreeEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = D06D60BC0FA7EA23002376EE /* TreeEntry.m */; };
+		9483479519DE1C950086A732 /* BTree_Test.m in Sources */ = {isa = PBXBuildFile; fileRef = D06D60A50FA7E980002376EE /* BTree_Test.m */; };
 		D00122E30D48A8D400540B10 /* HFFindReplaceBackgroundView.m in Sources */ = {isa = PBXBuildFile; fileRef = D00122E20D48A8D400540B10 /* HFFindReplaceBackgroundView.m */; };
 		D00C16760FF4925A006D021F /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = D00C166F0FF4925A006D021F /* InfoPlist.strings */; };
 		D00C16790FF4925A006D021F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D00C16750FF4925A006D021F /* main.m */; };
@@ -115,9 +117,6 @@
 		D0621CF0102ED78900DAEB4D /* FortunateSon.defs in Sources */ = {isa = PBXBuildFile; fileRef = D047E33F1022CFA800EF307B /* FortunateSon.defs */; };
 		D06D60070FA69AFA002376EE /* HFBTree.h in Headers */ = {isa = PBXBuildFile; fileRef = D06D60050FA69AFA002376EE /* HFBTree.h */; };
 		D06D60080FA69AFA002376EE /* HFBTree.m in Sources */ = {isa = PBXBuildFile; fileRef = D06D60060FA69AFA002376EE /* HFBTree.m */; };
-		D06D60190FA69B3E002376EE /* HFBTree.m in Sources */ = {isa = PBXBuildFile; fileRef = D06D60060FA69AFA002376EE /* HFBTree.m */; };
-		D06D60A60FA7E980002376EE /* NaiveArray.m in Sources */ = {isa = PBXBuildFile; fileRef = D06D60A40FA7E980002376EE /* NaiveArray.m */; };
-		D06D60BD0FA7EA23002376EE /* TreeEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = D06D60BC0FA7EA23002376EE /* TreeEntry.m */; };
 		D06D61EE0FA7FA7C002376EE /* HFBTreeByteArray.h in Headers */ = {isa = PBXBuildFile; fileRef = D06D61EC0FA7FA7C002376EE /* HFBTreeByteArray.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D06D61EF0FA7FA7C002376EE /* HFBTreeByteArray.m in Sources */ = {isa = PBXBuildFile; fileRef = D06D61ED0FA7FA7C002376EE /* HFBTreeByteArray.m */; };
 		D0713920146F7898004D3792 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = D071391E146F7897004D3792 /* MainMenu.xib */; };
@@ -441,12 +440,11 @@
 		D0621CAC102ED50D00DAEB4D /* FortunateSonServerImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FortunateSonServerImpl.cpp; path = helper_subprocess/FortunateSonServerImpl.cpp; sourceTree = "<group>"; };
 		D06D60050FA69AFA002376EE /* HFBTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFBTree.h; path = sources/BTree/HFBTree.h; sourceTree = "<group>"; };
 		D06D60060FA69AFA002376EE /* HFBTree.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFBTree.m; path = sources/BTree/HFBTree.m; sourceTree = "<group>"; };
-		D06D60100FA69B26002376EE /* Test_BTree */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Test_BTree; sourceTree = BUILT_PRODUCTS_DIR; };
-		D06D60A30FA7E980002376EE /* NaiveArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NaiveArray.h; sourceTree = "<group>"; };
-		D06D60A40FA7E980002376EE /* NaiveArray.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NaiveArray.m; sourceTree = "<group>"; };
-		D06D60A50FA7E980002376EE /* test_btree_main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = test_btree_main.m; sourceTree = "<group>"; };
-		D06D60BB0FA7EA23002376EE /* TreeEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TreeEntry.h; sourceTree = "<group>"; };
-		D06D60BC0FA7EA23002376EE /* TreeEntry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TreeEntry.m; sourceTree = "<group>"; };
+		D06D60A30FA7E980002376EE /* NaiveArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NaiveArray.h; path = ../sources/BTree/BTree_Testing/NaiveArray.h; sourceTree = "<group>"; };
+		D06D60A40FA7E980002376EE /* NaiveArray.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NaiveArray.m; path = ../sources/BTree/BTree_Testing/NaiveArray.m; sourceTree = "<group>"; };
+		D06D60A50FA7E980002376EE /* BTree_Test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BTree_Test.m; path = ../sources/BTree/BTree_Testing/BTree_Test.m; sourceTree = "<group>"; };
+		D06D60BB0FA7EA23002376EE /* TreeEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TreeEntry.h; path = ../sources/BTree/BTree_Testing/TreeEntry.h; sourceTree = "<group>"; };
+		D06D60BC0FA7EA23002376EE /* TreeEntry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TreeEntry.m; path = ../sources/BTree/BTree_Testing/TreeEntry.m; sourceTree = "<group>"; };
 		D06D61EC0FA7FA7C002376EE /* HFBTreeByteArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFBTreeByteArray.h; path = sources/HFBTreeByteArray.h; sourceTree = "<group>"; };
 		D06D61ED0FA7FA7C002376EE /* HFBTreeByteArray.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFBTreeByteArray.m; path = sources/HFBTreeByteArray.m; sourceTree = "<group>"; };
 		D071391F146F7898004D3792 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainMenu.xib; sourceTree = "<group>"; };
@@ -600,13 +598,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		D06D600E0FA69B26002376EE /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -615,7 +606,6 @@
 			children = (
 				8D1107320486CEB800E47090 /* Hex Fiend.app */,
 				D01E7BB80CDC530C00943F9E /* HexFiend.framework */,
-				D06D60100FA69B26002376EE /* Test_BTree */,
 				D00C15E50FF091FF006D021F /* HexFiendling.app */,
 				D047E3151022CEFE00EF307B /* com.ridiculousfish.HexFiend.PrivilegedHelper */,
 				9408FBFA19DD72DE004F800E /* HexFiend_Framework Tests.xctest */,
@@ -690,6 +680,11 @@
 		9408FC0D19DD7360004F800E /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				D06D60BB0FA7EA23002376EE /* TreeEntry.h */,
+				D06D60BC0FA7EA23002376EE /* TreeEntry.m */,
+				D06D60A30FA7E980002376EE /* NaiveArray.h */,
+				D06D60A40FA7E980002376EE /* NaiveArray.m */,
+				D06D60A50FA7E980002376EE /* BTree_Test.m */,
 				9483478F19DE188E0086A732 /* HFTest.h */,
 				D0D1492F0D8A37580018296B /* HFTestHashing.h */,
 				D0D149300D8A37580018296B /* HFTestHashing.m */,
@@ -971,22 +966,8 @@
 			children = (
 				D06D60050FA69AFA002376EE /* HFBTree.h */,
 				D06D60060FA69AFA002376EE /* HFBTree.m */,
-				D06D60A20FA7E980002376EE /* BTree_Testing */,
 			);
 			name = BTree;
-			sourceTree = "<group>";
-		};
-		D06D60A20FA7E980002376EE /* BTree_Testing */ = {
-			isa = PBXGroup;
-			children = (
-				D06D60BB0FA7EA23002376EE /* TreeEntry.h */,
-				D06D60BC0FA7EA23002376EE /* TreeEntry.m */,
-				D06D60A30FA7E980002376EE /* NaiveArray.h */,
-				D06D60A40FA7E980002376EE /* NaiveArray.m */,
-				D06D60A50FA7E980002376EE /* test_btree_main.m */,
-			);
-			name = BTree_Testing;
-			path = sources/BTree/BTree_Testing;
 			sourceTree = "<group>";
 		};
 		D0826F190D4883A80006FB7D /* FileByteSlice */ = {
@@ -1272,22 +1253,6 @@
 			productReference = D047E3151022CEFE00EF307B /* com.ridiculousfish.HexFiend.PrivilegedHelper */;
 			productType = "com.apple.product-type.tool";
 		};
-		D06D600F0FA69B26002376EE /* Test_BTree */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = D06D601F0FA69B69002376EE /* Build configuration list for PBXNativeTarget "Test_BTree" */;
-			buildPhases = (
-				D06D600D0FA69B26002376EE /* Sources */,
-				D06D600E0FA69B26002376EE /* Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = Test_BTree;
-			productName = Test_BTree;
-			productReference = D06D60100FA69B26002376EE /* Test_BTree */;
-			productType = "com.apple.product-type.tool";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -1327,7 +1292,6 @@
 				8D1107260486CEB800E47090 /* HexFiend_2 */,
 				D01E7BB70CDC530C00943F9E /* HexFiend_Framework */,
 				D047E3141022CEFE00EF307B /* FortunateSon (PrivilegedHelper) */,
-				D06D600F0FA69B26002376EE /* Test_BTree */,
 				D00C15E40FF091FF006D021F /* HexFiendling */,
 				D0F6FE0A0FFF679200C609F0 /* Documentation Generation */,
 				9408FBF919DD72DE004F800E /* HexFiend_Framework Tests */,
@@ -1480,7 +1444,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9483479519DE1C950086A732 /* BTree_Test.m in Sources */,
 				9408FBFF19DD72DF004F800E /* Framework_Tests.m in Sources */,
+				9483479419DE1C920086A732 /* TreeEntry.m in Sources */,
+				9483479319DE1C8E0086A732 /* NaiveArray.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1559,17 +1526,6 @@
 				D047E3401022CFA800EF307B /* FortunateSon.defs in Sources */,
 				D047E48C1022E09300EF307B /* main.cpp in Sources */,
 				D0621CAD102ED50D00DAEB4D /* FortunateSonServerImpl.cpp in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		D06D600D0FA69B26002376EE /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				D06D60190FA69B3E002376EE /* HFBTree.m in Sources */,
-				9483479219DE19A40086A732 /* test_btree_main.m in Sources */,
-				D06D60A60FA7E980002376EE /* NaiveArray.m in Sources */,
-				D06D60BD0FA7EA23002376EE /* TreeEntry.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1732,6 +1688,8 @@
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = framework/sources/HexFiend_2_Framework_Prefix.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -1766,6 +1724,8 @@
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = framework/sources/HexFiend_2_Framework_Prefix.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -1800,6 +1760,8 @@
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = framework/sources/HexFiend_2_Framework_Prefix.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -1834,6 +1796,8 @@
 					"$(inherited)",
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = framework/sources/HexFiend_2_Framework_Prefix.pch;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				INFOPLIST_FILE = "framework/tests/Framework_Tests-Info.plist";
@@ -1863,6 +1827,8 @@
 					"$(inherited)",
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = framework/sources/HexFiend_2_Framework_Prefix.pch;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				INFOPLIST_FILE = "framework/tests/Framework_Tests-Info.plist";
@@ -1985,17 +1951,6 @@
 					"helper_subprocess/FortunateSon-Launchd.plist",
 				);
 				PRODUCT_NAME = com.ridiculousfish.HexFiend.PrivilegedHelper;
-			};
-			name = Release;
-		};
-		D022256D146F5D3900646C27 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = framework/sources/HexFiend_2_Framework_Prefix.pch;
-				INSTALL_PATH = /usr/local/bin;
-				OTHER_CFLAGS = "-DHFTEST_BTREES=1";
-				PRODUCT_NAME = Test_BTree;
 			};
 			name = Release;
 		};
@@ -2123,17 +2078,6 @@
 			};
 			name = "Debug+UnitTests";
 		};
-		D02225A2146F629E00646C27 /* Debug+UnitTests */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = framework/sources/HexFiend_2_Framework_Prefix.pch;
-				INSTALL_PATH = /usr/local/bin;
-				OTHER_CFLAGS = "-DHFTEST_BTREES=1";
-				PRODUCT_NAME = Test_BTree;
-			};
-			name = "Debug+UnitTests";
-		};
 		D02225A3146F629E00646C27 /* Debug+UnitTests */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -2258,17 +2202,6 @@
 			};
 			name = "Release+CodeSign";
 		};
-		D039DC1514835A1400364FA6 /* Release+CodeSign */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = framework/sources/HexFiend_2_Framework_Prefix.pch;
-				INSTALL_PATH = /usr/local/bin;
-				OTHER_CFLAGS = "-DHFTEST_BTREES=1";
-				PRODUCT_NAME = Test_BTree;
-			};
-			name = "Release+CodeSign";
-		};
 		D039DC1614835A1400364FA6 /* Release+CodeSign */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -2302,17 +2235,6 @@
 					"helper_subprocess/FortunateSon-Launchd.plist",
 				);
 				PRODUCT_NAME = com.ridiculousfish.HexFiend.PrivilegedHelper;
-			};
-			name = Debug;
-		};
-		D06D60170FA69B27002376EE /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = framework/sources/HexFiend_2_Framework_Prefix.pch;
-				INSTALL_PATH = /usr/local/bin;
-				OTHER_CFLAGS = "-DHFTEST_BTREES=1";
-				PRODUCT_NAME = Test_BTree;
 			};
 			name = Debug;
 		};
@@ -2418,17 +2340,6 @@
 					"helper_subprocess/FortunateSon-Launchd.plist",
 				);
 				PRODUCT_NAME = com.ridiculousfish.HexFiend.PrivilegedHelper;
-			};
-			name = "Debug+CodeSign";
-		};
-		D075E209148196B00010D9AE /* Debug+CodeSign */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = framework/sources/HexFiend_2_Framework_Prefix.pch;
-				INSTALL_PATH = /usr/local/bin;
-				OTHER_CFLAGS = "-DHFTEST_BTREES=1";
-				PRODUCT_NAME = Test_BTree;
 			};
 			name = "Debug+CodeSign";
 		};
@@ -2616,18 +2527,6 @@
 				D02225A1146F629E00646C27 /* Debug+UnitTests */,
 				D022256C146F5D3900646C27 /* Release */,
 				D039DC1414835A1400364FA6 /* Release+CodeSign */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		D06D601F0FA69B69002376EE /* Build configuration list for PBXNativeTarget "Test_BTree" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				D06D60170FA69B27002376EE /* Debug */,
-				D075E209148196B00010D9AE /* Debug+CodeSign */,
-				D02225A2146F629E00646C27 /* Debug+UnitTests */,
-				D022256D146F5D3900646C27 /* Release */,
-				D039DC1514835A1400364FA6 /* Release+CodeSign */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

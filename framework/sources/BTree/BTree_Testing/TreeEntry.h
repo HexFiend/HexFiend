@@ -12,7 +12,6 @@
     @public
     HFBTreeIndex length;
     NSString *value;
-    NSUInteger rc;
 }
 
 + (id)entryWithLength:(HFBTreeIndex)len value:(NSString *)val;

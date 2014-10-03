@@ -17,7 +17,7 @@
 }
 
 + (id)entryWithLength:(HFBTreeIndex)len value:(NSString *)val {
-    TreeEntry *result = [[[self alloc] init] autorelease];
+    TreeEntry *result = [[self alloc] init];
     result->length = len;
     result->value = [val copy];
     return result;
@@ -27,29 +27,8 @@
     return length;
 }
 
-- (void)dealloc {
-    [value release];
-    [super dealloc];
-}
-
 - (NSString *)description {
     return [NSString stringWithFormat:@"<%@: %p (%@)>", NSStringFromClass([self class]), self, value];
-}
-
-- (id)retain {
-    HFAtomicIncrement(&rc, NO);
-    return self;
-}
-
-- (oneway void)release {
-    NSUInteger result = HFAtomicDecrement(&rc, NO);
-    if (result == (NSUInteger)(-1)) {
-        [self dealloc];
-    }
-}
-
-- (NSUInteger)retainCount {
-    return 1 + rc;
 }
 
 @end
