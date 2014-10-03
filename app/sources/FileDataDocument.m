@@ -23,8 +23,7 @@ static inline Class preferredByteArrayClass(void) {
     HFFileReference *fileReference = [[[HFFileReference alloc] initWithPath:path error:&localError] autorelease];
     if (fileReference == nil) {
         if (outError) *outError = localError;
-    }
-    else {
+    } else {
         HFFileByteSlice *byteSlice = [[[HFFileByteSlice alloc] initWithFile:fileReference] autorelease];
         HFByteArray *byteArray = [[[preferredByteArrayClass() alloc] init] autorelease];
         [byteArray insertByteSlice:byteSlice inRange:HFRangeMake(0, 0)];
@@ -34,8 +33,8 @@ static inline Class preferredByteArrayClass(void) {
         if ([fileReference isPrivileged])
             [controller setEditMode:HFReadOnlyMode];
         else {
-            // If the file is > 64 MB in size, default to starting in overwrite mode
-            if ([fileReference length] > 64 * 1024 * 1024)
+            // If the file is >= 2K in size, default to starting in overwrite mode
+            if ([fileReference length] >= (2<<10))
                 [controller setEditMode:HFOverwriteMode];
         }
     }
