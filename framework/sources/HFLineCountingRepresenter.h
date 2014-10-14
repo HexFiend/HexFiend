@@ -34,11 +34,11 @@ typedef NS_ENUM(NSUInteger, HFLineNumberFormat) {
 /// The minimum digit count.  The receiver will always ensure it is big enough to display at least the minimum digit count.  The default is 2.
 @property (nonatomic) NSUInteger minimumDigitCount;
 
-/// Returns the number of digits we are making space for.
-- (NSUInteger)digitCount;
+/// The number of digits we are making space for.
+@property (readonly) NSUInteger digitCount;
 
-/// Returns the current width that the HFRepresenter prefers to be laid out with.
-- (CGFloat)preferredWidth;
+/// The current width that the HFRepresenter prefers to be laid out with.
+@property (readonly) CGFloat preferredWidth;
 
 /// The line number format.
 @property (nonatomic) HFLineNumberFormat lineNumberFormat;

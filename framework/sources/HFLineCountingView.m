@@ -36,7 +36,7 @@
     [textStorage addLayoutManager:layoutManager];
     textContainer = [[NSTextContainer alloc] init];
     [textContainer setLineFragmentPadding:(CGFloat)5];
-    [textContainer setContainerSize:NSMakeSize([self bounds].size.width, [textContainer containerSize].height)];
+    [textContainer setContainerSize:NSMakeSize(self.bounds.size.width, [textContainer containerSize].height)];
     [layoutManager addTextContainer:textContainer];
 }
 
@@ -62,10 +62,10 @@
     HFASSERT([coder allowsKeyedCoding]);
     [super encodeWithCoder:coder];
     [coder encodeObject:_font forKey:@"HFFont"];
-    [coder encodeDouble:lineHeight forKey:@"HFLineHeight"];
-    [coder encodeObject:representer forKey:@"HFRepresenter"];
-    [coder encodeInt64:bytesPerLine forKey:@"HFBytesPerLine"];
-    [coder encodeInt64:lineNumberFormat forKey:@"HFLineNumberFormat"];
+    [coder encodeDouble:_lineHeight forKey:@"HFLineHeight"];
+    [coder encodeObject:_representer forKey:@"HFRepresenter"];
+    [coder encodeInt64:_bytesPerLine forKey:@"HFBytesPerLine"];
+    [coder encodeInt64:_lineNumberFormat forKey:@"HFLineNumberFormat"];
     [coder encodeBool:useStringDrawingPath forKey:@"HFUseStringDrawingPath"];
 }
 
@@ -74,10 +74,10 @@
     self = [super initWithCoder:coder];
     [self _sharedInitLineCountingView];
     _font = [[coder decodeObjectForKey:@"HFFont"] retain];
-    lineHeight = (CGFloat)[coder decodeDoubleForKey:@"HFLineHeight"];
-    representer = [coder decodeObjectForKey:@"HFRepresenter"];
-    bytesPerLine = (NSUInteger)[coder decodeInt64ForKey:@"HFBytesPerLine"];
-    lineNumberFormat = (NSUInteger)[coder decodeInt64ForKey:@"HFLineNumberFormat"];
+    _lineHeight = (CGFloat)[coder decodeDoubleForKey:@"HFLineHeight"];
+    _representer = [coder decodeObjectForKey:@"HFRepresenter"];
+    _bytesPerLine = (NSUInteger)[coder decodeInt64ForKey:@"HFBytesPerLine"];
+    _lineNumberFormat = (NSUInteger)[coder decodeInt64ForKey:@"HFLineNumberFormat"];
     useStringDrawingPath = [coder decodeBoolForKey:@"HFUseStringDrawingPath"];
     return self;
 }
@@ -85,17 +85,17 @@
 - (BOOL)isFlipped { return YES; }
 
 - (void)getLineNumberFormatString:(char *)outString length:(NSUInteger)length {
-    HFLineNumberFormat format = [self lineNumberFormat];
+    HFLineNumberFormat format = self.lineNumberFormat;
     if (format == HFLineNumberFormatDecimal) {
         strlcpy(outString, "%llu", length);
     }
     else if (format == HFLineNumberFormatHexadecimal) {
 #if HEX_LINE_NUMBERS_HAVE_0X_PREFIX
         // we want a format string like 0x%08llX
-        snprintf(outString, length, "0x%%0%lullX", (unsigned long)[[self representer] digitCount] - 2);
+        snprintf(outString, length, "0x%%0%lullX", (unsigned long)self.representer.digitCount - 2);
 #else
         // we want a format string like %08llX
-        snprintf(outString, length, "%%0%lullX", (unsigned long)[[self representer] digitCount]);
+        snprintf(outString, length, "%%0%lullX", (unsigned long)self.representer.digitCount);
 #endif
     }
     else {
@@ -120,16 +120,16 @@
 }
 
 - (void)drawGradientWithClip:(NSRect)clip {
-    [[representer backgroundColor] set];
+    [_representer.backgroundColor set];
     NSRectFill(clip);
     
-    NSInteger shadowEdge = [representer interiorShadowEdge];
+    NSInteger shadowEdge = _representer.interiorShadowEdge;
     
     if (shadowEdge >= 0) {
         const CGFloat shadowWidth = 6;
-        NSWindow *window = [self window];
+        NSWindow *window = self.window;
         BOOL drawActive = (window == nil || [window isKeyWindow] || [window isMainWindow]);
-        HFDrawShadow([[NSGraphicsContext currentContext] graphicsPort], [self bounds], shadowWidth, shadowEdge, drawActive, clip);
+        HFDrawShadow([[NSGraphicsContext currentContext] graphicsPort], self.bounds, shadowWidth, shadowEdge, drawActive, clip);
     }
 }
 
@@ -138,8 +138,8 @@
     
 
 #if 1    
-    NSInteger edges = [representer borderedEdges];
-    NSRect bounds = [self bounds];
+    NSInteger edges = _representer.borderedEdges;
+    NSRect bounds = self.bounds;
     
     
     // -1 means to draw no edges
@@ -147,7 +147,7 @@
         edges = 0;
     }
     
-    [[representer borderColor] set];
+    [_representer.borderColor set];
     
     if ((edges & (1 << NSMinXEdge)) > 0) {
         NSRect lineRect = bounds;
@@ -190,7 +190,7 @@
     
     NSRect lineRect = bounds;
     lineRect.size.width = 1;
-    NSInteger shadowEdge = [representer interiorShadowEdge];
+    NSInteger shadowEdge = _representer.interiorShadowEdge;
     if (shadowEdge == NSMaxXEdge) {
         lineRect.origin.x = NSMaxX(bounds) - lineRect.size.width;
     } else if (shadowEdge == NSMinXEdge) {
@@ -209,7 +209,7 @@
     if (NSIntersectsRect(lineRect, clipRect)) {
         // this looks better when we have no shadow
         [[NSColor lightGrayColor] set];
-        NSRect bounds = [self bounds];
+        NSRect bounds = self.bounds;
         NSRect lineRect = bounds;
         lineRect.origin.x += lineRect.size.width - 2;
         lineRect.size.width = 1;
@@ -238,13 +238,13 @@ static inline int common_prefix_length(const char *a, const char *b) {
 #endif
     NSUInteger previousTextStorageCharacterCount = [textStorage length];
     
-    CGFloat verticalOffset = ld2f(lineRangeToDraw.location - floorl(lineRangeToDraw.location));
-    NSRect textRect = [self bounds];
-    textRect.size.height = lineHeight;
-    textRect.origin.y -= verticalOffset * lineHeight;
-    unsigned long long lineIndex = HFFPToUL(floorl(lineRangeToDraw.location));
-    unsigned long long lineValue = lineIndex * bytesPerLine;
-    NSUInteger linesRemaining = ll2l(HFFPToUL(ceill(lineRangeToDraw.length + lineRangeToDraw.location) - floorl(lineRangeToDraw.location)));
+    CGFloat verticalOffset = ld2f(_lineRangeToDraw.location - floorl(_lineRangeToDraw.location));
+    NSRect textRect = self.bounds;
+    textRect.size.height = _lineHeight;
+    textRect.origin.y -= verticalOffset * _lineHeight;
+    unsigned long long lineIndex = HFFPToUL(floorl(_lineRangeToDraw.location));
+    unsigned long long lineValue = lineIndex * _bytesPerLine;
+    NSUInteger linesRemaining = ll2l(HFFPToUL(ceill(_lineRangeToDraw.length + _lineRangeToDraw.location) - floorl(_lineRangeToDraw.location)));
     char previousBuff[256];
     int previousStringLength = (int)previousTextStorageCharacterCount;
     BOOL conversionResult = [[textStorage string] getCString:previousBuff maxLength:sizeof previousBuff encoding:NSASCIIStringEncoding];
@@ -281,9 +281,9 @@ static inline int common_prefix_length(const char *a, const char *b) {
             memcpy(previousBuff, buff, newStringLength + 1);
             previousStringLength = newStringLength;
         }
-        textRect.origin.y += lineHeight;
+        textRect.origin.y += _lineHeight;
         lineIndex++;
-        lineValue = HFSum(lineValue, bytesPerLine);
+        lineValue = HFSum(lineValue, _bytesPerLine);
     }
 #if TIME_LINE_NUMBERS
     CFAbsoluteTime endTime = CFAbsoluteTimeGetCurrent();
@@ -292,14 +292,14 @@ static inline int common_prefix_length(const char *a, const char *b) {
 }
 
 - (void)drawLineNumbersWithClipStringDrawing:(NSRect)clipRect {
-    CGFloat verticalOffset = ld2f(lineRangeToDraw.location - floorl(lineRangeToDraw.location));
-    NSRect textRect = [self bounds];
-    textRect.size.height = lineHeight;
+    CGFloat verticalOffset = ld2f(_lineRangeToDraw.location - floorl(_lineRangeToDraw.location));
+    NSRect textRect = self.bounds;
+    textRect.size.height = _lineHeight;
     textRect.size.width -= 5;
-    textRect.origin.y -= verticalOffset * lineHeight + 1;
-    unsigned long long lineIndex = HFFPToUL(floorl(lineRangeToDraw.location));
-    unsigned long long lineValue = lineIndex * bytesPerLine;
-    NSUInteger linesRemaining = ll2l(HFFPToUL(ceill(lineRangeToDraw.length + lineRangeToDraw.location) - floorl(lineRangeToDraw.location)));
+    textRect.origin.y -= verticalOffset * _lineHeight + 1;
+    unsigned long long lineIndex = HFFPToUL(floorl(_lineRangeToDraw.location));
+    unsigned long long lineValue = lineIndex * _bytesPerLine;
+    NSUInteger linesRemaining = ll2l(HFFPToUL(ceill(_lineRangeToDraw.length + _lineRangeToDraw.location) - floorl(_lineRangeToDraw.location)));
     if (! textAttributes) {
         NSMutableParagraphStyle *mutableStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
         [mutableStyle setAlignment:NSRightTextAlignment];
@@ -321,9 +321,9 @@ static inline int common_prefix_length(const char *a, const char *b) {
             [string drawInRect:textRect withAttributes:textAttributes];
             [string release];
         }
-        textRect.origin.y += lineHeight;
+        textRect.origin.y += _lineHeight;
         lineIndex++;
-        if (linesRemaining > 0) lineValue = HFSum(lineValue, bytesPerLine); //we could do this unconditionally, but then we risk overflow
+        if (linesRemaining > 0) lineValue = HFSum(lineValue, _bytesPerLine); //we could do this unconditionally, but then we risk overflow
     }
 }
 
@@ -332,11 +332,11 @@ static inline int common_prefix_length(const char *a, const char *b) {
     NSUInteger characterCount;
     
     NSUInteger lineCount = ll2l(range.length);
-    const NSUInteger stride = bytesPerLine;
-    HFLineCountingRepresenter *rep = [self representer];
-    HFLineNumberFormat format = [self lineNumberFormat];
+    const NSUInteger stride = _bytesPerLine;
+    HFLineCountingRepresenter *rep = self.representer;
+    HFLineNumberFormat format = self.lineNumberFormat;
     if (format == HFLineNumberFormatDecimal) {
-        unsigned long long lineValue = HFProductULL(range.location, bytesPerLine);
+        unsigned long long lineValue = HFProductULL(range.location, _bytesPerLine);
         characterCount = lineCount /* newlines */;
         while (lineCount--) {
             characterCount += HFCountDigitsBase10(lineValue);
@@ -358,8 +358,8 @@ static inline int common_prefix_length(const char *a, const char *b) {
         return [[NSString alloc] init]; // Placate the analyzer.
     
     NSUInteger lineCount = ll2l(range.length);
-    const NSUInteger stride = bytesPerLine;
-    unsigned long long lineValue = HFProductULL(range.location, bytesPerLine);
+    const NSUInteger stride = _bytesPerLine;
+    unsigned long long lineValue = HFProductULL(range.location, _bytesPerLine);
     NSUInteger characterCount = [self characterCountForLineRange:range];
     char *buffer = check_malloc(characterCount);
     NSUInteger bufferIndex = 0;
@@ -485,12 +485,12 @@ static inline int common_prefix_length(const char *a, const char *b) {
 
 - (void)drawLineNumbersWithClipSingleStringDrawing:(NSRect)clipRect {
     USE(clipRect);
-    unsigned long long lineIndex = HFFPToUL(floorl(lineRangeToDraw.location));
-    NSUInteger linesRemaining = ll2l(HFFPToUL(ceill(lineRangeToDraw.length + lineRangeToDraw.location) - floorl(lineRangeToDraw.location)));
+    unsigned long long lineIndex = HFFPToUL(floorl(_lineRangeToDraw.location));
+    NSUInteger linesRemaining = ll2l(HFFPToUL(ceill(_lineRangeToDraw.length + _lineRangeToDraw.location) - floorl(_lineRangeToDraw.location)));
     
-    CGFloat linesToVerticallyOffset = ld2f(lineRangeToDraw.location - floorl(lineRangeToDraw.location));
-    CGFloat verticalOffset = linesToVerticallyOffset * lineHeight + 1;
-    NSRect textRect = [self bounds];
+    CGFloat linesToVerticallyOffset = ld2f(_lineRangeToDraw.location - floorl(_lineRangeToDraw.location));
+    CGFloat verticalOffset = linesToVerticallyOffset * _lineHeight + 1;
+    NSRect textRect = self.bounds;
     textRect.size.width -= 5;
     textRect.origin.y -= verticalOffset;
     textRect.size.height += verticalOffset;
@@ -498,8 +498,8 @@ static inline int common_prefix_length(const char *a, const char *b) {
     if (! textAttributes) {
         NSMutableParagraphStyle *mutableStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
         [mutableStyle setAlignment:NSRightTextAlignment];
-        [mutableStyle setMinimumLineHeight:lineHeight];
-        [mutableStyle setMaximumLineHeight:lineHeight];
+        [mutableStyle setMinimumLineHeight:_lineHeight];
+        [mutableStyle setMaximumLineHeight:_lineHeight];
         NSParagraphStyle *paragraphStyle = [mutableStyle copy];
         [mutableStyle release];
         textAttributes = [[NSDictionary alloc] initWithObjectsAndKeys:_font, NSFontAttributeName, [NSColor colorWithCalibratedWhite:(CGFloat).1 alpha:(CGFloat).8], NSForegroundColorAttributeName, paragraphStyle, NSParagraphStyleAttributeName, nil];
@@ -515,12 +515,12 @@ static inline int common_prefix_length(const char *a, const char *b) {
 - (void)drawLineNumbersWithClipSingleStringCellDrawing:(NSRect)clipRect {
     USE(clipRect);
     const CGFloat cellTextContainerPadding = 2.f;
-    unsigned long long lineIndex = HFFPToUL(floorl(lineRangeToDraw.location));
-    NSUInteger linesRemaining = ll2l(HFFPToUL(ceill(lineRangeToDraw.length + lineRangeToDraw.location) - floorl(lineRangeToDraw.location)));
+    unsigned long long lineIndex = HFFPToUL(floorl(_lineRangeToDraw.location));
+    NSUInteger linesRemaining = ll2l(HFFPToUL(ceill(_lineRangeToDraw.length + _lineRangeToDraw.location) - floorl(_lineRangeToDraw.location)));
     
-    CGFloat linesToVerticallyOffset = ld2f(lineRangeToDraw.location - floorl(lineRangeToDraw.location));
-    CGFloat verticalOffset = linesToVerticallyOffset * lineHeight + 1;
-    NSRect textRect = [self bounds];
+    CGFloat linesToVerticallyOffset = ld2f(_lineRangeToDraw.location - floorl(_lineRangeToDraw.location));
+    CGFloat verticalOffset = linesToVerticallyOffset * _lineHeight + 1;
+    NSRect textRect = self.bounds;
     textRect.size.width -= 5;
     textRect.origin.y -= verticalOffset;
     textRect.origin.x += cellTextContainerPadding;
@@ -529,8 +529,8 @@ static inline int common_prefix_length(const char *a, const char *b) {
     if (! textAttributes) {
         NSMutableParagraphStyle *mutableStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
         [mutableStyle setAlignment:NSRightTextAlignment];
-        [mutableStyle setMinimumLineHeight:lineHeight];
-        [mutableStyle setMaximumLineHeight:lineHeight];
+        [mutableStyle setMinimumLineHeight:_lineHeight];
+        [mutableStyle setMaximumLineHeight:_lineHeight];
         NSParagraphStyle *paragraphStyle = [mutableStyle copy];
         [mutableStyle release];
         textAttributes = [[NSDictionary alloc] initWithObjectsAndKeys:_font, NSFontAttributeName, [NSColor colorWithCalibratedWhite:(CGFloat).1 alpha:(CGFloat).8], NSForegroundColorAttributeName, paragraphStyle, NSParagraphStyleAttributeName, nil];
@@ -551,16 +551,16 @@ static inline int common_prefix_length(const char *a, const char *b) {
 
 - (void)drawLineNumbersWithClipFullLayoutManager:(NSRect)clipRect {
     USE(clipRect);
-    unsigned long long lineIndex = HFFPToUL(floorl(lineRangeToDraw.location));
-    NSUInteger linesRemaining = ll2l(HFFPToUL(ceill(lineRangeToDraw.length + lineRangeToDraw.location) - floorl(lineRangeToDraw.location)));
+    unsigned long long lineIndex = HFFPToUL(floorl(_lineRangeToDraw.location));
+    NSUInteger linesRemaining = ll2l(HFFPToUL(ceill(_lineRangeToDraw.length + _lineRangeToDraw.location) - floorl(_lineRangeToDraw.location)));
     if (lineIndex != storedLineIndex || linesRemaining != storedLineCount) {
         [self updateLayoutManagerWithLineIndex:lineIndex lineCount:linesRemaining];
     }
     
-    CGFloat verticalOffset = ld2f(lineRangeToDraw.location - floorl(lineRangeToDraw.location));
+    CGFloat verticalOffset = ld2f(_lineRangeToDraw.location - floorl(_lineRangeToDraw.location));
     
-    NSPoint textPoint = [self bounds].origin;
-    textPoint.y -= verticalOffset * lineHeight;
+    NSPoint textPoint = self.bounds.origin;
+    textPoint.y -= verticalOffset * _lineHeight;
     [layoutManager drawGlyphsForGlyphRange:NSMakeRange(0, [layoutManager numberOfGlyphs]) atPoint:textPoint];
 }
 
@@ -612,38 +612,26 @@ static inline int common_prefix_length(const char *a, const char *b) {
 }
 
 - (void)setLineRangeToDraw:(HFFPRange)range {
-    if (! HFFPRangeEqualsRange(range, lineRangeToDraw)) {
-        lineRangeToDraw = range;
+    if (! HFFPRangeEqualsRange(range, _lineRangeToDraw)) {
+        _lineRangeToDraw = range;
         [self setNeedsDisplay:YES];
     }
-}
-
-- (HFFPRange)lineRangeToDraw {
-    return lineRangeToDraw;
 }
 
 - (void)setBytesPerLine:(NSUInteger)val {
-    if (bytesPerLine != val) {
-        bytesPerLine = val;
+    if (_bytesPerLine != val) {
+        _bytesPerLine = val;
         storedLineCount = INVALID_LINE_COUNT;
         [self setNeedsDisplay:YES];
     }
-}
-
-- (NSUInteger)bytesPerLine {
-    return bytesPerLine;
 }
 
 - (void)setLineNumberFormat:(HFLineNumberFormat)format {
-    if (format != lineNumberFormat) {
-        lineNumberFormat = format;
+    if (format != _lineNumberFormat) {
+        _lineNumberFormat = format;
         storedLineCount = INVALID_LINE_COUNT;
         [self setNeedsDisplay:YES];
     }
-}
-
-- (HFLineNumberFormat)lineNumberFormat {
-    return lineNumberFormat;
 }
 
 - (BOOL)canUseStringDrawingPathForFont:(NSFont *)testFont {
@@ -666,36 +654,24 @@ static inline int common_prefix_length(const char *a, const char *b) {
 }
 
 - (void)setLineHeight:(CGFloat)height {
-    if (lineHeight != height) {
-        lineHeight = height;
+    if (_lineHeight != height) {
+        _lineHeight = height;
         [self setNeedsDisplay:YES];
     }
 }
 
-- (CGFloat)lineHeight {
-    return lineHeight;
-}
-
 - (void)setFrameSize:(NSSize)size {
     [super setFrameSize:size];
-    [textContainer setContainerSize:NSMakeSize([self bounds].size.width, [textContainer containerSize].height)];
+    [textContainer setContainerSize:NSMakeSize(self.bounds.size.width, [textContainer containerSize].height)];
 }
 
 - (void)mouseDown:(NSEvent *)event {
     USE(event);
-    [representer cycleLineNumberFormat];
+    [_representer cycleLineNumberFormat];
 }
 
 - (void)scrollWheel:(NSEvent *)scrollEvent {
-    [[representer controller] scrollWithScrollEvent:scrollEvent];
-}
-
-- (void)setRepresenter:(HFLineCountingRepresenter *)rep {
-    representer = rep;
-}
-
-- (HFLineCountingRepresenter *)representer {
-    return representer;
+    [_representer.controller scrollWithScrollEvent:scrollEvent];
 }
 
 + (NSUInteger)digitsRequiredToDisplayLineNumber:(unsigned long long)lineNumber inFormat:(HFLineNumberFormat)format {

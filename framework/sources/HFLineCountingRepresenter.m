@@ -70,7 +70,7 @@ static CGFloat maximumDigitAdvanceForFont(NSFont *font) {
     [coder encodeInt64:minimumDigitCount forKey:@"HFMinimumDigitCount"];
     [coder encodeInt64:lineNumberFormat forKey:@"HFLineNumberFormat"];
     [coder encodeObject:self.backgroundColor forKey:@"HFBackgroundColor"];
-    [coder encodeObject:self.borderColor forKey:@"HFBackgroundColor"];
+    [coder encodeObject:self.borderColor forKey:@"HFBorderColor"];
     [coder encodeInt64:self.borderedEdges forKey:@"HFBorderedEdges"];
 }
 
