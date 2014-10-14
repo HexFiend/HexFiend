@@ -486,8 +486,7 @@ enum LineCoverage_t {
                 NSRect imageRect = (NSRect){NSZeroPoint, NSMakeSize(windowFrameInBoundsCoords.size.width * imageScale, windowFrameInBoundsCoords.size.height * imageScale)};
                 NSImage *image = [[NSImage alloc] initWithSize:imageRect.size];
                 [image setCacheMode:NSImageCacheNever];
-                [image setFlipped:YES];
-                [image lockFocus];
+                [image lockFocusFlipped:YES];
                 CGContextRef ctx = [[NSGraphicsContext currentContext] graphicsPort];
                 CGContextClearRect(ctx, *(CGRect *)&imageRect);
                 [self drawPulseBackgroundInRect:imageRect];
