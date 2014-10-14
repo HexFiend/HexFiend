@@ -12,6 +12,7 @@
 #import "TextDividerRepresenter.h"
 #import "AppDebugging.h"
 #import "AppUtilities.h"
+#import "AppDelegate.h"
 #import <HexFiend/HexFiend.h>
 #include <pthread.h>
 #include <objc/runtime.h>
@@ -739,7 +740,7 @@ static inline Class preferredByteArrayClass(void) {
     [self setStringEncoding:[item tag]];
     
     /* Call to the delegate so it sets the default */
-    [[NSApp delegate] setStringEncodingFromMenuItem:item];
+    [(AppDelegate*)[NSApp delegate] setStringEncodingFromMenuItem:item];
 }
 
 

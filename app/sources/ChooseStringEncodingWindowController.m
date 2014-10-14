@@ -41,7 +41,7 @@
         if ([document respondsToSelector:@selector(setStringEncoding:)]) {
             [document setStringEncoding:encodingValue];
         }
-        [[NSApp delegate] setStringEncoding:encodingValue];
+        [(AppDelegate*)[NSApp delegate] setStringEncoding:encodingValue];
     }
     
 }
