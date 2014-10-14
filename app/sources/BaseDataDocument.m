@@ -1911,7 +1911,8 @@ cancelled:;
     NSError *error = nil;
     NSError **errorp = &error;
     
-    [[[NSFileCoordinator alloc] initWithFilePresenter:self] coordinateReadingItemAtURL:[self fileURL] options:0 error:errorp byAccessor:^ (NSURL *url) {
+    NSFileCoordinator *filecoord = [[[NSFileCoordinator alloc] initWithFilePresenter:self] autorelease];
+    [filecoord coordinateReadingItemAtURL:[self fileURL] options:0 error:errorp byAccessor:^ (NSURL *url) {
         NSDictionary *attrs = [[NSFileManager defaultManager] attributesOfItemAtPath:[[url filePathURL] path] error:errorp];
         if(!attrs || *errorp) return;
         if([attrs[NSFileModificationDate] isGreaterThan:[self fileModificationDate]]) {
