@@ -20,11 +20,4 @@
 /* Macro to specify functions and function parameters as unused. */
 #define UNUSED __attribute__((unused))
 
-#ifndef MISSING_FAST_ENUMERATION
 #define FOREACH(type, var, exp) for (type var in (exp))
-#else
-/* Helper macros used by FOREACH */
-#define FOREACH_LINE(type, var, exp, line) NSEnumerator *enum_ ## var ## line = [exp objectEnumerator]; type var ; while ((var = [enum_ ## var ## line nextObject]))
-#define FOREACH_TEMP(type, var, exp, line) FOREACH_LINE(type, var, exp, line)
-#define FOREACH(type, var, exp) FOREACH_TEMP(type, var, exp, __LINE__)
-#endif

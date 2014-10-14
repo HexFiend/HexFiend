@@ -52,14 +52,7 @@
 #define EXPECT_CLASS(e, c) USE(e)
 #endif
 
-#ifndef MISSING_FAST_ENUMERATION
-#define FOREACH(type, var, exp) for (type var in (exp)) 
-#else
-/* Helper macros used by FOREACH */
-#define FOREACH_LINE(type, var, exp, line) NSEnumerator *enum_ ## var ## line = [exp objectEnumerator]; type var ; while ((var = [enum_ ## var ## line nextObject]))
-#define FOREACH_TEMP(type, var, exp, line) FOREACH_LINE(type, var, exp, line)
-#define FOREACH(type, var, exp) FOREACH_TEMP(type, var, exp, __LINE__)
-#endif
+#define FOREACH(type, var, exp) for (type var in (exp))
 
 #define NEW_ARRAY(type, name, number) \
     type name ## static_ [256];\
