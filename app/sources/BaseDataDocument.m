@@ -677,11 +677,7 @@ static inline Class preferredByteArrayClass(void) {
     HFASSERT(font != nil);
     
 //    TODO: Figure out how to use undo manager without dirtying document
-//    if (undo) {
-//        NSFont *existingFont = [self font];
-//        NSUndoManager *undoer = [self undoManager];
-//        [[undoer prepareWithInvocationTarget:self] setFont:existingFont registeringUndo:YES];
-//    }
+    USE(undo);
 
     NSWindow *window = [self window];
     NSDisableScreenUpdates();
