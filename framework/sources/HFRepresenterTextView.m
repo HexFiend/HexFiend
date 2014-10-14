@@ -453,23 +453,23 @@ enum LineCoverage_t {
                 NSWindow *thisWindow = [self window];
                 NSRange firstRange = [ranges[0] rangeValue];
                 NSRange lastRange = [[ranges lastObject] rangeValue];
+                BOOL emptySelection = [ranges count] == 1 && firstRange.length == 0;
                 NSPoint startPoint = [self originForCharacterAtByteIndex:firstRange.location];
                 // don't just use originForCharacterAtByteIndex:NSMaxRange(lastRange), because if the last selected character is at the end of the line, this will cause us to highlight the next line.  Instead, get the last selected character, and add an advance to it.
-                //                HFASSERT(lastRange.length > 0);
-                NSPoint endPoint;
-                if (! NSEqualRanges(firstRange, lastRange)) {
-                    endPoint = [self originForCharacterAtByteIndex:NSMaxRange(lastRange) - 1];
-                }
-                else {
-                    endPoint = startPoint;
-                }
+                NSPoint endPoint = [self originForCharacterAtByteIndex:NSMaxRange(lastRange) - 1];
                 endPoint.x += [self advancePerCharacter];
                 HFASSERT(endPoint.y >= startPoint.y);
                 NSRect bounds = [self bounds];
                 NSRect windowFrameInBoundsCoords;
-                windowFrameInBoundsCoords.origin.x = bounds.origin.x;
+                if (emptySelection) {
+                    CGFloat w = (CGFloat)fmax([self advancePerColumn], [self advancePerCharacter]);
+                    windowFrameInBoundsCoords.origin.x = startPoint.x - w/2;
+                    windowFrameInBoundsCoords.size.width = w;
+                } else {
+                    windowFrameInBoundsCoords.origin.x = bounds.origin.x;
+                    windowFrameInBoundsCoords.size.width = bounds.size.width;
+                }
                 windowFrameInBoundsCoords.origin.y = startPoint.y;
-                windowFrameInBoundsCoords.size.width = bounds.size.width;
                 windowFrameInBoundsCoords.size.height = endPoint.y - startPoint.y + [self lineHeight];
                 
                 pulseWindowBaseFrameInScreenCoordinates = [self convertRect:windowFrameInBoundsCoords toView:nil];
@@ -508,7 +508,7 @@ enum LineCoverage_t {
         }
         
         if (pulseWindow) {
-            CGFloat scale = (CGFloat)(selectionPulseAmount * .25 + 1.);
+            CGFloat scale = (CGFloat)(1. + .08 * selectionPulseAmount);
             NSRect scaledWindowFrame;
             scaledWindowFrame.size.width = HFRound(pulseWindowBaseFrameInScreenCoordinates.size.width * scale);
             scaledWindowFrame.size.height = HFRound(pulseWindowBaseFrameInScreenCoordinates.size.height * scale);

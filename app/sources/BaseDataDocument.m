@@ -1509,7 +1509,11 @@ cancelled:;
         return;
     }
     if (! jumpToOffsetView) jumpToOffsetView = [self newOperationViewForNibName:@"JumpToOffsetBanner" displayName:@"Jumping to Offset" fixedHeight:YES];
-    [self prepareBannerWithView:jumpToOffsetView withTargetFirstResponder:[jumpToOffsetView viewNamed:@"moveSelectionByTextField"]];
+    if (operationView == jumpToOffsetView) {
+        [self saveFirstResponderIfNotInBannerAndThenSetItTo:[jumpToOffsetView viewNamed:@"moveSelectionByTextField"]];
+    } else {
+        [self prepareBannerWithView:jumpToOffsetView withTargetFirstResponder:[jumpToOffsetView viewNamed:@"moveSelectionByTextField"]];
+    }
 }
 
 - (BOOL)movingRanges:(NSArray *)ranges byAmount:(unsigned long long)value isNegative:(BOOL)isNegative isValidForLength:(unsigned long long)length {
@@ -1544,6 +1548,7 @@ cancelled:;
         }
     }
     if (! success) NSBeep();
+    else [self restoreFirstResponderToSavedResponder];
 }
 
 - (IBAction)moveSelectionByAction:(id)sender {
@@ -1563,6 +1568,7 @@ cancelled:;
         }
     }
     if (! success) NSBeep();
+    else [self restoreFirstResponderToSavedResponder];
 }
 
 - (NSArray *)copyBookmarksMenuItems {
