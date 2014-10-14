@@ -10,14 +10,6 @@
 
 @implementation HFTextSelectionPulseView
 
-- (instancetype)initWithFrame:(NSRect)frame {
-    self = [super initWithFrame:frame];
-    if (self) {
-        // Initialization code here.
-    }
-    return self;
-}
-
 - (void)drawRect:(NSRect)rect {
     USE(rect);
     CGContextSetInterpolationQuality([[NSGraphicsContext currentContext] graphicsPort], kCGInterpolationHigh);
@@ -25,10 +17,18 @@
 }
 
 - (void)setImage:(NSImage *)val {
-    [val retain];
-    [image release];
-    image = val;
+    if (val != image) {
+        [val retain];
+        [image release];
+        image = val;
+    }
     [self setNeedsDisplay:YES];
+}
+
+- (void)dealloc
+{
+    [image release];
+    [super dealloc];
 }
 
 @end
