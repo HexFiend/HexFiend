@@ -33,9 +33,9 @@ static CGFloat norm(unsigned char x) {
     double percent = [self doubleValue];
     NSRect rectToFill = bounds;
     rectToFill.size.width *= percent;
-    NSRect baseRectToFill = [self convertRectToBase:rectToFill];
+    NSRect baseRectToFill = [self convertRectToBacking:rectToFill];
     baseRectToFill.size.width = round(baseRectToFill.size.width);
-    rectToFill = [self convertRectFromBase:baseRectToFill];
+    rectToFill = [self convertRectFromBacking:baseRectToFill];
     
     
     [NSBezierPath clipRect:rectToFill];
@@ -51,7 +51,7 @@ static CGFloat norm(unsigned char x) {
     /* Draw right edge line */
     [[NSColor colorWithCalibratedRed:0. green:0. blue:1. alpha:.15] set];
     NSRect baseRightEdge = NSMakeRect(ceil(NSMaxX(baseRectToFill) - EDGE_WIDTH), NSMinY(baseRectToFill), EDGE_WIDTH, NSHeight(baseRectToFill));
-    NSRect localRightEdge = [self convertRectFromBase:baseRightEdge];
+    NSRect localRightEdge = [self convertRectFromBacking:baseRightEdge];
     NSRectFillUsingOperation(localRightEdge, NSCompositeSourceOver);
 }
 

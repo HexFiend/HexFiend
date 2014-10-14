@@ -473,7 +473,7 @@ enum LineCoverage_t {
                 windowFrameInBoundsCoords.size.height = endPoint.y - startPoint.y + [self lineHeight];
                 
                 pulseWindowBaseFrameInScreenCoordinates = [self convertRect:windowFrameInBoundsCoords toView:nil];
-                pulseWindowBaseFrameInScreenCoordinates.origin = [[self window] convertBaseToScreen:pulseWindowBaseFrameInScreenCoordinates.origin];
+                pulseWindowBaseFrameInScreenCoordinates.origin = [[self window] convertRectToScreen:pulseWindowBaseFrameInScreenCoordinates].origin;
                 
                 pulseWindow = [[NSWindow alloc] initWithContentRect:pulseWindowBaseFrameInScreenCoordinates styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:NO];
                 [pulseWindow setOpaque:NO];
