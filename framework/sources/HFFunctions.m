@@ -32,7 +32,6 @@ NSImage *HFImageNamed(NSString *name) {
             }
             else {
                 [image setName:name];
-                [image setScalesWhenResized:YES];
             }
         }
     }
