@@ -15,7 +15,7 @@
 /* No special NSCoding support needed */
 
 - (NSView *)createView {
-    NSScroller *scroller = [[NSScroller alloc] initWithFrame:NSMakeRect(0, 0, [NSScroller scrollerWidthForControlSize:NSRegularControlSize], 64)];
+    NSScroller *scroller = [[NSScroller alloc] initWithFrame:NSMakeRect(0, 0, [NSScroller scrollerWidthForControlSize:NSRegularControlSize scrollerStyle:NSScrollerStyleLegacy], 64)];
     [scroller setTarget:self];
     [scroller setContinuous:YES];
     [scroller setEnabled:YES];
@@ -120,7 +120,7 @@
 
 - (CGFloat)minimumViewWidthForBytesPerLine:(NSUInteger)bytesPerLine {
     USE(bytesPerLine);
-    return [NSScroller scrollerWidthForControlSize:[[self view] controlSize]];
+    return [NSScroller scrollerWidthForControlSize:[[self view] controlSize] scrollerStyle:NSScrollerStyleLegacy];
 }
 
 - (void)controllerDidChange:(HFControllerPropertyBits)bits {
