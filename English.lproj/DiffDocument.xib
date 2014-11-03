@@ -2,13 +2,13 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="8.00">
 	<data>
 		<int key="IBDocument.SystemTarget">1070</int>
-		<string key="IBDocument.SystemVersion">13E28</string>
-		<string key="IBDocument.InterfaceBuilderVersion">5056</string>
-		<string key="IBDocument.AppKitVersion">1265.21</string>
-		<string key="IBDocument.HIToolboxVersion">698.00</string>
+		<string key="IBDocument.SystemVersion">14A389</string>
+		<string key="IBDocument.InterfaceBuilderVersion">6250</string>
+		<string key="IBDocument.AppKitVersion">1343.14</string>
+		<string key="IBDocument.HIToolboxVersion">755.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
-			<string key="NS.object.0">5056</string>
+			<string key="NS.object.0">6250</string>
 		</object>
 		<array key="IBDocument.IntegratedClassDependencies">
 			<string>NSCustomObject</string>
@@ -49,7 +49,7 @@
 				<nil key="NSViewClass"/>
 				<nil key="NSUserInterfaceItemIdentifier"/>
 				<object class="NSView" key="NSWindowView" id="289469928">
-					<reference key="NSNextResponder"/>
+					<nil key="NSNextResponder"/>
 					<int key="NSvFlags">256</int>
 					<array class="NSMutableArray" key="NSSubviews">
 						<object class="NSSplitView" id="363543920">
@@ -63,9 +63,8 @@
 										<object class="NSCustomView" id="235064224">
 											<reference key="NSNextResponder" ref="816158475"/>
 											<int key="NSvFlags">275</int>
-											<string key="NSFrame">{{332, 0}, {320.99999990054044, 356}}</string>
+											<string key="NSFrame">{{331.99999986780369, 0}, {321, 356}}</string>
 											<reference key="NSSuperview" ref="816158475"/>
-											<reference key="NSWindow"/>
 											<string key="NSClassName">HFTextView</string>
 										</object>
 										<object class="NSCustomView" id="197733408">
@@ -73,13 +72,11 @@
 											<int key="NSvFlags">278</int>
 											<string key="NSFrameSize">{321, 356}</string>
 											<reference key="NSSuperview" ref="816158475"/>
-											<reference key="NSWindow"/>
 											<string key="NSClassName">HFTextView</string>
 										</object>
 									</array>
 									<string key="NSFrameSize">{655, 356}</string>
 									<reference key="NSSuperview" ref="363543920"/>
-									<reference key="NSWindow"/>
 									<bool key="NSDoNotTranslateAutoresizingMask">YES</bool>
 									<string key="NSClassName">DiffTextViewContainer</string>
 								</object>
@@ -96,7 +93,6 @@
 													<int key="NSvFlags">4352</int>
 													<string key="NSFrameSize">{655, 167}</string>
 													<reference key="NSSuperview" ref="1024853822"/>
-													<reference key="NSWindow"/>
 													<bool key="NSEnabled">YES</bool>
 													<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
 													<bool key="NSControlAllowsExpansionToolTips">YES</bool>
@@ -115,7 +111,7 @@
 																<int key="NSCellFlags2">2048</int>
 																<string key="NSContents"/>
 																<object class="NSFont" key="NSSupport">
-																	<string key="NSName">.LucidaGrandeUI</string>
+																	<bool key="IBIsSystemFont">YES</bool>
 																	<double key="NSSize">11</double>
 																	<int key="NSfFlags">3100</int>
 																</object>
@@ -138,9 +134,9 @@
 																<int key="NSCellFlags2">2048</int>
 																<string key="NSContents">Text Cell</string>
 																<object class="NSFont" key="NSSupport">
-																	<string key="NSName">.LucidaGrandeUI</string>
+																	<bool key="IBIsSystemFont">YES</bool>
 																	<double key="NSSize">12</double>
-																	<int key="NSfFlags">4883</int>
+																	<int key="NSfFlags">787</int>
 																</object>
 																<reference key="NSControlView" ref="557753826"/>
 																<object class="NSColor" key="NSBackgroundColor" id="299849709">
@@ -194,19 +190,20 @@
 											</array>
 											<string key="NSFrameSize">{655, 167}</string>
 											<reference key="NSSuperview" ref="568291137"/>
-											<reference key="NSWindow"/>
 											<reference key="NSNextKeyView" ref="557753826"/>
 											<reference key="NSDocView" ref="557753826"/>
 											<reference key="NSBGColor" ref="299849709"/>
 											<int key="NScvFlags">4</int>
+											<bool key="NSAutomaticallyAdjustsContentInsets">YES</bool>
 										</object>
 										<object class="NSScroller" id="983659787">
 											<reference key="NSNextResponder" ref="568291137"/>
 											<int key="NSvFlags">-2147483392</int>
 											<string key="NSFrame">{{0, 151}, {654.99999999999989, 16}}</string>
 											<reference key="NSSuperview" ref="568291137"/>
-											<reference key="NSWindow"/>
 											<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
+											<string key="NSControlAction">_doScroller:</string>
+											<reference key="NSControlTarget" ref="568291137"/>
 											<int key="NSsFlags">1</int>
 											<reference key="NSTarget" ref="568291137"/>
 											<string key="NSAction">_doScroller:</string>
@@ -216,15 +213,15 @@
 											<int key="NSvFlags">-2147483392</int>
 											<string key="NSFrame">{{-100, -100}, {15, 167}}</string>
 											<reference key="NSSuperview" ref="568291137"/>
-											<reference key="NSWindow"/>
 											<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
+											<string key="NSControlAction">_doScroller:</string>
+											<reference key="NSControlTarget" ref="568291137"/>
 											<reference key="NSTarget" ref="568291137"/>
 											<string key="NSAction">_doScroller:</string>
 										</object>
 									</array>
 									<string key="NSFrame">{{0, 366}, {655, 167}}</string>
 									<reference key="NSSuperview" ref="363543920"/>
-									<reference key="NSWindow"/>
 									<reference key="NSNextKeyView" ref="1024853822"/>
 									<bool key="NSDoNotTranslateAutoresizingMask">YES</bool>
 									<int key="NSsFlags">133664</int>
@@ -239,7 +236,6 @@
 							</array>
 							<string key="NSFrameSize">{655, 533}</string>
 							<reference key="NSSuperview" ref="289469928"/>
-							<reference key="NSWindow"/>
 							<int key="NSDividerStyle">3</int>
 						</object>
 						<object class="NSCustomView" id="1047462855">
@@ -247,22 +243,19 @@
 							<int key="NSvFlags">273</int>
 							<string key="NSFrame">{{655, 0}, {15, 533}}</string>
 							<reference key="NSSuperview" ref="289469928"/>
-							<reference key="NSWindow"/>
 							<string key="NSClassName">NSScroller</string>
 						</object>
 					</array>
 					<string key="NSFrameSize">{670, 533}</string>
-					<reference key="NSSuperview"/>
-					<reference key="NSWindow"/>
 				</object>
-				<string key="NSScreenRect">{{0, 0}, {2560, 1418}}</string>
+				<string key="NSScreenRect">{{0, 0}, {1440, 877}}</string>
 				<string key="NSMaxSize">{10000000000000, 10000000000000}</string>
 				<bool key="NSWindowIsRestorable">YES</bool>
 			</object>
 		</array>
 		<object class="IBObjectContainer" key="IBDocument.Objects">
 			<bool key="usesAutoincrementingIDs">NO</bool>
-			<array class="NSMutableArray" key="connectionRecords">
+			<array key="connectionRecords">
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
 						<string key="label">containerView</string>
@@ -541,358 +534,10 @@
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
 		</object>
-		<object class="IBClassDescriber" key="IBDocument.Classes">
-			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
-				<object class="IBPartialClassDescription">
-					<string key="className">BaseDataDocument</string>
-					<string key="superclassName">NSDocument</string>
-					<dictionary class="NSMutableDictionary" key="actions">
-						<string key="decreaseFontSize:">id</string>
-						<string key="deleteBookmark:">id</string>
-						<string key="findNext:">id</string>
-						<string key="findPrevious:">id</string>
-						<string key="increaseFontSize:">id</string>
-						<string key="modifyByteGrouping:">id</string>
-						<string key="moveSelectionByAction:">id</string>
-						<string key="moveSelectionToAction:">id</string>
-						<string key="performFindReplaceActionFromSelectedSegment:">id</string>
-						<string key="replace:">id</string>
-						<string key="replaceAll:">id</string>
-						<string key="replaceAndFind:">id</string>
-						<string key="saveDocument:">id</string>
-						<string key="saveDocumentAs:">id</string>
-						<string key="saveDocumentTo:">id</string>
-						<string key="scrollToBookmark:">id</string>
-						<string key="selectBookmark:">id</string>
-						<string key="setAntialiasFromMenuItem:">id</string>
-						<string key="setBookmark:">id</string>
-						<string key="setColorBytesFromMenuItem:">id</string>
-						<string key="setInsertMode:">id</string>
-						<string key="setLiveReloadFromMenuItem:">id</string>
-						<string key="setOverwriteMode:">id</string>
-						<string key="setReadOnlyMode:">id</string>
-						<string key="setShowCalloutsFromMenuItem:">id</string>
-						<string key="setStringEncodingFromMenuItem:">NSMenuItem</string>
-						<string key="showFontPanel:">id</string>
-						<string key="toggleVisibleControllerView:">id</string>
-					</dictionary>
-					<dictionary class="NSMutableDictionary" key="actionInfosByName">
-						<object class="IBActionInfo" key="decreaseFontSize:">
-							<string key="name">decreaseFontSize:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="deleteBookmark:">
-							<string key="name">deleteBookmark:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="findNext:">
-							<string key="name">findNext:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="findPrevious:">
-							<string key="name">findPrevious:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="increaseFontSize:">
-							<string key="name">increaseFontSize:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="modifyByteGrouping:">
-							<string key="name">modifyByteGrouping:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="moveSelectionByAction:">
-							<string key="name">moveSelectionByAction:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="moveSelectionToAction:">
-							<string key="name">moveSelectionToAction:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="performFindReplaceActionFromSelectedSegment:">
-							<string key="name">performFindReplaceActionFromSelectedSegment:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="replace:">
-							<string key="name">replace:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="replaceAll:">
-							<string key="name">replaceAll:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="replaceAndFind:">
-							<string key="name">replaceAndFind:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="saveDocument:">
-							<string key="name">saveDocument:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="saveDocumentAs:">
-							<string key="name">saveDocumentAs:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="saveDocumentTo:">
-							<string key="name">saveDocumentTo:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="scrollToBookmark:">
-							<string key="name">scrollToBookmark:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="selectBookmark:">
-							<string key="name">selectBookmark:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="setAntialiasFromMenuItem:">
-							<string key="name">setAntialiasFromMenuItem:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="setBookmark:">
-							<string key="name">setBookmark:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="setColorBytesFromMenuItem:">
-							<string key="name">setColorBytesFromMenuItem:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="setInsertMode:">
-							<string key="name">setInsertMode:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="setLiveReloadFromMenuItem:">
-							<string key="name">setLiveReloadFromMenuItem:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="setOverwriteMode:">
-							<string key="name">setOverwriteMode:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="setReadOnlyMode:">
-							<string key="name">setReadOnlyMode:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="setShowCalloutsFromMenuItem:">
-							<string key="name">setShowCalloutsFromMenuItem:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="setStringEncodingFromMenuItem:">
-							<string key="name">setStringEncodingFromMenuItem:</string>
-							<string key="candidateClassName">NSMenuItem</string>
-						</object>
-						<object class="IBActionInfo" key="showFontPanel:">
-							<string key="name">showFontPanel:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="toggleVisibleControllerView:">
-							<string key="name">toggleVisibleControllerView:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-					</dictionary>
-					<object class="NSMutableDictionary" key="outlets">
-						<string key="NS.key.0">containerView</string>
-						<string key="NS.object.0">NSSplitView</string>
-					</object>
-					<object class="NSMutableDictionary" key="toOneOutletInfosByName">
-						<string key="NS.key.0">containerView</string>
-						<object class="IBToOneOutletInfo" key="NS.object.0">
-							<string key="name">containerView</string>
-							<string key="candidateClassName">NSSplitView</string>
-						</object>
-					</object>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/BaseDataDocument.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">DiffDocument</string>
-					<string key="superclassName">BaseDataDocument</string>
-					<object class="NSMutableDictionary" key="actions">
-						<string key="NS.key.0">scrollerDidChangeValue:</string>
-						<string key="NS.object.0">NSScroller</string>
-					</object>
-					<object class="NSMutableDictionary" key="actionInfosByName">
-						<string key="NS.key.0">scrollerDidChangeValue:</string>
-						<object class="IBActionInfo" key="NS.object.0">
-							<string key="name">scrollerDidChangeValue:</string>
-							<string key="candidateClassName">NSScroller</string>
-						</object>
-					</object>
-					<dictionary class="NSMutableDictionary" key="outlets">
-						<string key="diffTable">NSTableView</string>
-						<string key="leftTextView">HFTextView</string>
-						<string key="rightTextView">HFTextView</string>
-						<string key="scroller">NSScroller</string>
-						<string key="textViewContainer">DiffTextViewContainer</string>
-					</dictionary>
-					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
-						<object class="IBToOneOutletInfo" key="diffTable">
-							<string key="name">diffTable</string>
-							<string key="candidateClassName">NSTableView</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="leftTextView">
-							<string key="name">leftTextView</string>
-							<string key="candidateClassName">HFTextView</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="rightTextView">
-							<string key="name">rightTextView</string>
-							<string key="candidateClassName">HFTextView</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="scroller">
-							<string key="name">scroller</string>
-							<string key="candidateClassName">NSScroller</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="textViewContainer">
-							<string key="name">textViewContainer</string>
-							<string key="candidateClassName">DiffTextViewContainer</string>
-						</object>
-					</dictionary>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/DiffDocument.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">DiffDocumentWindow</string>
-					<string key="superclassName">NSWindow</string>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/DiffDocumentWindow.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">DiffTextViewContainer</string>
-					<string key="superclassName">NSView</string>
-					<dictionary class="NSMutableDictionary" key="outlets">
-						<string key="leftView">HFTextView</string>
-						<string key="rightView">HFTextView</string>
-					</dictionary>
-					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
-						<object class="IBToOneOutletInfo" key="leftView">
-							<string key="name">leftView</string>
-							<string key="candidateClassName">HFTextView</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="rightView">
-							<string key="name">rightView</string>
-							<string key="candidateClassName">HFTextView</string>
-						</object>
-					</dictionary>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/DiffTextViewContainer.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">HFTextView</string>
-					<string key="superclassName">NSControl</string>
-					<object class="NSMutableDictionary" key="outlets">
-						<string key="NS.key.0">delegate</string>
-						<string key="NS.object.0">id</string>
-					</object>
-					<object class="NSMutableDictionary" key="toOneOutletInfosByName">
-						<string key="NS.key.0">delegate</string>
-						<object class="IBToOneOutletInfo" key="NS.object.0">
-							<string key="name">delegate</string>
-							<string key="candidateClassName">id</string>
-						</object>
-					</object>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/HFTextView.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">NSDocument</string>
-					<dictionary class="NSMutableDictionary" key="actions">
-						<string key="browseDocumentVersions:">id</string>
-						<string key="duplicateDocument:">id</string>
-						<string key="lockDocument:">id</string>
-						<string key="moveDocument:">id</string>
-						<string key="moveDocumentToUbiquityContainer:">id</string>
-						<string key="printDocument:">id</string>
-						<string key="renameDocument:">id</string>
-						<string key="revertDocumentToSaved:">id</string>
-						<string key="runPageLayout:">id</string>
-						<string key="saveDocument:">id</string>
-						<string key="saveDocumentAs:">id</string>
-						<string key="saveDocumentTo:">id</string>
-						<string key="saveDocumentToPDF:">id</string>
-						<string key="unlockDocument:">id</string>
-					</dictionary>
-					<dictionary class="NSMutableDictionary" key="actionInfosByName">
-						<object class="IBActionInfo" key="browseDocumentVersions:">
-							<string key="name">browseDocumentVersions:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="duplicateDocument:">
-							<string key="name">duplicateDocument:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="lockDocument:">
-							<string key="name">lockDocument:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="moveDocument:">
-							<string key="name">moveDocument:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="moveDocumentToUbiquityContainer:">
-							<string key="name">moveDocumentToUbiquityContainer:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="printDocument:">
-							<string key="name">printDocument:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="renameDocument:">
-							<string key="name">renameDocument:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="revertDocumentToSaved:">
-							<string key="name">revertDocumentToSaved:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="runPageLayout:">
-							<string key="name">runPageLayout:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="saveDocument:">
-							<string key="name">saveDocument:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="saveDocumentAs:">
-							<string key="name">saveDocumentAs:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="saveDocumentTo:">
-							<string key="name">saveDocumentTo:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="saveDocumentToPDF:">
-							<string key="name">saveDocumentToPDF:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="unlockDocument:">
-							<string key="name">unlockDocument:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-					</dictionary>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/NSDocument.h</string>
-					</object>
-				</object>
-			</array>
-		</object>
+		<object class="IBClassDescriber" key="IBDocument.Classes"/>
 		<int key="IBDocument.localizationMode">0</int>
 		<string key="IBDocument.TargetRuntimeIdentifier">IBCocoaFramework</string>
 		<bool key="IBDocument.previouslyAttemptedUpgradeToXcode5">YES</bool>
-		<object class="NSMutableDictionary" key="IBDocument.PluginDeclaredDependencyDefaults">
-			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin.macosx</string>
-			<real value="1070" key="NS.object.0"/>
-		</object>
 		<object class="NSMutableDictionary" key="IBDocument.PluginDeclaredDevelopmentDependencies">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin.InterfaceBuilder3</string>
 			<integer value="4600" key="NS.object.0"/>
