@@ -100,7 +100,7 @@ static inline Class preferredByteArrayClass(void) {
     _hfflags.showcallouts = YES;
     _hfflags.selectable = YES;
     representers = [[NSMutableArray alloc] init];
-    _font = [[NSFont fontWithName:HFDEFAULT_FONT size:HFDEFAULT_FONTSIZE] retain];
+    [self setFont:[NSFont fontWithName:HFDEFAULT_FONT size:HFDEFAULT_FONTSIZE]];
     return self;
 }
 
