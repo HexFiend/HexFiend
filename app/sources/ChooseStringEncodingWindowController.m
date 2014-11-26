@@ -9,41 +9,10 @@
 #import "BaseDataDocument.h"
 #import "AppDelegate.h"
 
-@implementation StringEncodingLinkButton
-
-- (void)awakeFromNib {
-    NSString *title = [self title];
-    NSDictionary *attributes = [[NSDictionary alloc] initWithObjectsAndKeys:[NSColor blueColor], NSForegroundColorAttributeName, @(NSUnderlineStyleSingle), NSUnderlineStyleAttributeName, [self font], NSFontAttributeName, nil];
-    NSAttributedString *attributedTitle = [[NSAttributedString alloc] initWithString:title attributes:attributes];
-    [self setAttributedTitle:attributedTitle];
-    [attributes release];
-    [attributedTitle release];
-}
-
-@end
-
 @implementation ChooseStringEncodingWindowController
 
 - (NSString *)windowNibName {
     return @"ChooseStringEncodingDialog";
-}
-
-- (IBAction)OKButtonClicked:(id)sender {
-    USE(sender);
-    NSString *title = [encodingField stringValue];
-    NSNumber *selectedEncoding = title ? keysToEncodings[title] : nil;
-    if (! selectedEncoding) {
-        NSBeep();
-    } else {
-        /* Tell the front document (if any) and the app delegate */
-        NSStringEncoding encodingValue = [selectedEncoding integerValue];
-        id document = [[NSDocumentController sharedDocumentController] currentDocument];
-        if ([document respondsToSelector:@selector(setStringEncoding:)]) {
-            [document setStringEncoding:encodingValue];
-        }
-        [(AppDelegate*)[NSApp delegate] setStringEncoding:encodingValue];
-    }
-    
 }
 
 /* Python script to generate string encoding stuff:
@@ -97,9 +66,9 @@ static void addEncoding(NSString *name, CFStringEncoding value, NSMutableArray *
 }
 
 - (void)populateStringEncodings {
-    NSMutableArray *localKeys = [[NSMutableArray alloc] init];
-    NSMutableArray *localValues = [[NSMutableArray alloc] init];
-    NSMutableSet *usedKeys = [[NSMutableSet alloc] init];
+    NSMutableArray *localKeys = [NSMutableArray array];
+    NSMutableArray *localValues = [NSMutableArray array];
+    NSMutableSet *usedKeys = [NSMutableSet set];
 #define ENCODING(a) do { addEncoding( @ #a, (a), localKeys, localValues, usedKeys); } while (0)
     ENCODING(kCFStringEncodingMacRoman);
     ENCODING(kCFStringEncodingWindowsLatin1);
@@ -253,35 +222,45 @@ static void addEncoding(NSString *name, CFStringEncoding value, NSMutableArray *
     
 #undef ENCODING
     
-    [keysToEncodings release];
     keysToEncodings = [[NSDictionary alloc] initWithObjects:localValues forKeys:localKeys];
-    [encodingField removeAllItems];
-    [encodingField addItemsWithObjectValues:localKeys];
-    
-    [localKeys release];
-    [localValues release];
-    [usedKeys release];
+    encodings = [localKeys retain];
 }
 
-- (void)windowDidLoad {
+- (void)awakeFromNib {
     [self populateStringEncodings];
-    [super windowDidLoad];
-}
-
-/* What happens when one of the header links is clicked in the string encoding dialog. */
-- (IBAction)openCFStringHeaderClicked:(id)sender {
-    USE(sender);
-    NSString *path = [@"/System/Library/Frameworks/CoreFoundation.framework/Headers/" stringByAppendingPathComponent:[sender title]];
-    BOOL success = [[NSWorkspace sharedWorkspace] openURL:[NSURL fileURLWithPath:path isDirectory:NO]];
-    if (! success) {
-        /* It would be nice if we went to the web in this case */
-    }
+    [tableView reloadData];
 }
 
 - (void)dealloc {
     [keysToEncodings release];
+    [encodings release];
     [super dealloc];
 }
 
+- (NSInteger)numberOfRowsInTableView:(NSTableView *)__unused tableView
+{
+    return encodings.count;
+}
+
+- (id)tableView:(NSTableView *)__unused tableView objectValueForTableColumn:(NSTableColumn *)__unused tableColumn row:(NSInteger)row
+{
+    return encodings[row];
+}
+
+- (void)tableViewSelectionDidChange:(NSNotification *)__unused notification
+{
+    NSInteger row = tableView.selectedRow;
+    if (row == -1) {
+        return;
+    }
+    NSNumber *selectedEncoding = keysToEncodings[encodings[row]];
+    /* Tell the front document (if any) and the app delegate */
+    NSStringEncoding encodingValue = [selectedEncoding integerValue];
+    id document = [[NSDocumentController sharedDocumentController] currentDocument];
+    if ([document respondsToSelector:@selector(setStringEncoding:)]) {
+        [document setStringEncoding:encodingValue];
+    }
+    [(AppDelegate*)[NSApp delegate] setStringEncoding:encodingValue];
+}
 
 @end

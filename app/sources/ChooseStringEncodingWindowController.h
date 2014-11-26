@@ -7,16 +7,10 @@
 
 #import <Cocoa/Cocoa.h>
 
-@interface StringEncodingLinkButton : NSButton
-@end
-
-@interface ChooseStringEncodingWindowController : NSWindowController {
-    IBOutlet NSComboBox *encodingField;
-    IBOutlet NSButton *okButton;
+@interface ChooseStringEncodingWindowController : NSWindowController <NSTableViewDataSource, NSTableViewDelegate> {
+    IBOutlet NSTableView *tableView;
     NSDictionary *keysToEncodings;
+    NSArray *encodings;
 }
-
-- (IBAction)OKButtonClicked:(id)sender;
-- (IBAction)openCFStringHeaderClicked:(id)sender;
 
 @end
