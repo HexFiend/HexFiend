@@ -168,6 +168,8 @@ static NSView *searchForViewWithIdentifier(NSView *view, NSString *identifier) {
     [progressIndicator setHidden:YES];
     dispatch_group_wait(waitGroup, DISPATCH_TIME_FOREVER);
     completionHandler(threadResult);
+    [completionHandler release];
+    completionHandler = nil;
     [(id)threadResult release];
     [tracker release];
     tracker = nil;
@@ -217,7 +219,6 @@ static NSView *searchForViewWithIdentifier(NSView *view, NSString *identifier) {
 
 - (void)startOperation:(id (^)(HFProgressTracker *tracker))block completionHandler:(void (^)(id result))handler {
     HFASSERT(! [self operationIsRunning]);
-    startBlock = [block copy];
     completionHandler = [handler copy];
 
     tracker = [[HFProgressTracker alloc] init];
@@ -234,7 +235,7 @@ static NSView *searchForViewWithIdentifier(NSView *view, NSString *identifier) {
     waitGroup = dispatch_group_create();
     dispatch_group_async(waitGroup, dispatch_get_global_queue(0, 0), ^{
         @autoreleasepool {
-            threadResult = [startBlock(tracker) retain];
+            threadResult = [block(tracker) retain];
             [tracker noteFinished:self];
         }
     });

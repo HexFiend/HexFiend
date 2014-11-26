@@ -15,7 +15,6 @@
     id threadResult;
     dispatch_group_t waitGroup;
 
-    id (^startBlock)(HFProgressTracker *tracker);
     void (^completionHandler)(id result);
     
     IBOutlet NSProgressIndicator *progressIndicator;
