@@ -455,8 +455,8 @@ enum LineCoverage_t {
                 NSRange lastRange = [[ranges lastObject] rangeValue];
                 BOOL emptySelection = [ranges count] == 1 && firstRange.length == 0;
                 NSPoint startPoint = [self originForCharacterAtByteIndex:firstRange.location];
-                // don't just use originForCharacterAtByteIndex:NSMaxRange(lastRange), because if the last selected character is at the end of the line, this will cause us to highlight the next line.  Instead, get the last selected character, and add an advance to it.
-                NSPoint endPoint = [self originForCharacterAtByteIndex:NSMaxRange(lastRange) - 1];
+                // don't just use originForCharacterAtByteIndex:NSMaxRange(lastRange), because if the last selected character is at the end of the line, this will cause us to highlight the next line. Special case empty selections, where this would wrap to the previous line.
+                NSPoint endPoint = emptySelection ? startPoint : [self originForCharacterAtByteIndex:NSMaxRange(lastRange) - 1];
                 endPoint.x += [self advancePerCharacter];
                 HFASSERT(endPoint.y >= startPoint.y);
                 NSRect bounds = [self bounds];
