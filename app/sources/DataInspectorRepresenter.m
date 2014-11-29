@@ -856,7 +856,15 @@ static BOOL stringRangeIsNullBytes(NSString *string, NSRange range) {
     else {
         NSLog(@"Unknown column identifier %@", ident);
     }
-    
+}
+
+- (void)tableView:(NSTableView *)__unused tableView willDisplayCell:(id)cell forTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)__unused row
+{
+    NSString *ident = [tableColumn identifier];
+    if ([ident isEqualToString:kInspectorSubtypeColumnIdentifier]) {
+        DataInspector *inspector = inspectors[row];
+        [cell setEnabled:inspector.type != eInspectorTypeUTF8Text];
+    }
 }
 
 - (void)resizeTableViewAfterChangingRowCount {
