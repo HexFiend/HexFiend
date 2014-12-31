@@ -38,6 +38,7 @@ enum InspectorType_t {
     eInspectorTypeUTF8Text,
     eInspectorTypeSLEB128,
     eInspectorTypeULEB128,
+    eInspectorTypeBinary,
     
     // Total number of inspector types.
     eInspectorTypeCount
@@ -410,6 +411,11 @@ static NSAttributedString *inspectionError(NSString *s) {
             break;
         case eInspectorTypeSLEB128:
         case eInspectorTypeULEB128:
+        case eInspectorTypeBinary:
+            if(range.length > 24) {
+                if(outIsError) *outIsError = YES;
+                return inspectionError(InspectionErrorTooMuch);
+            }
             break;
         default:
             if(outIsError) *outIsError = YES;
@@ -462,6 +468,43 @@ static NSAttributedString *inspectionError(NSString *s) {
             if(ret == nil) return inspectionError(@"(bytes are not valid UTF-8)");
             if(outIsError) *outIsError = NO;
             return ret;
+        }
+        case eInspectorTypeBinary: {
+            NSString* ret = [[[NSString alloc] init] autorelease];
+            
+            for (NSUInteger i = 0; i < length; ++i) {
+                char input = bytes[i];
+
+                char binary[] = "00000000";
+                
+                if ( input & 0x80 )
+                    binary[0] = '1';
+                
+                if ( input & 0x40 )
+                    binary[1] = '1';
+                
+                if ( input & 0x20 )
+                    binary[2] = '1';
+                
+                if ( input & 0x10 )
+                    binary[3] = '1';
+                
+                if ( input & 0x08 )
+                    binary[4] = '1';
+                
+                if ( input & 0x04 )
+                    binary[5] = '1';
+                
+                if ( input & 0x02 )
+                    binary[6] = '1';
+                
+                if ( input & 0x01 )
+                    binary[7] = '1';
+
+                ret = [ret stringByAppendingFormat:@"%s ", binary ];
+            }
+            
+            return  ret;
         }
         
         case eInspectorTypeSLEB128: {
