@@ -36,6 +36,8 @@ enum InspectorType_t {
     eInspectorTypeUnsignedInteger,
     eInspectorTypeFloatingPoint,
     eInspectorTypeUTF8Text,
+    eInspectorTypeSLEB128,
+    eInspectorTypeULEB128,
     
     // Total number of inspector types.
     eInspectorTypeCount
@@ -406,6 +408,9 @@ static NSAttributedString *inspectionError(NSString *s) {
         case eInspectorTypeUTF8Text:
             // MAX_EDITABLE_BYTE_COUNT already checked above
             break;
+        case eInspectorTypeSLEB128:
+        case eInspectorTypeULEB128:
+            break;
         default:
             if(outIsError) *outIsError = YES;
             return inspectionError(InspectionErrorInternal);
@@ -459,6 +464,39 @@ static NSAttributedString *inspectionError(NSString *s) {
             return ret;
         }
         
+        case eInspectorTypeSLEB128: {
+            int64_t result = 0;
+            int shift = 0;
+            for (size_t i = 0; i < length; i++) {
+                result |= ((bytes[i] & 0x7F) << shift);
+                shift += 7;
+                
+                if ((bytes[i] & 0x80) == 0) {
+                    if (shift < 64 && (bytes[i] & 0x40)) {
+                        result |= -(1 << shift);
+                    }
+                    return [NSString stringWithFormat:@"%qd (%ld bytes)", result, i + 1];
+                }
+            }
+            
+            return inspectionError(InspectionErrorTooLittle);
+        }
+        
+        case eInspectorTypeULEB128: {
+            uint64_t result = 0;
+            int shift = 0;
+            for (size_t i = 0; i < length; i++) {
+                result |= ((bytes[i] & 0x7F) << shift);
+                shift += 7;
+                
+                if ((bytes[i] & 0x80) == 0) {
+                    return [NSString stringWithFormat:@"%qu (%ld bytes)", result, i + 1];
+                }
+            }
+            
+            return inspectionError(InspectionErrorTooLittle);
+        }
+            
         default:
             return inspectionError(InspectionErrorInternal);
     }
@@ -863,7 +901,10 @@ static BOOL stringRangeIsNullBytes(NSString *string, NSRange range) {
     NSString *ident = [tableColumn identifier];
     if ([ident isEqualToString:kInspectorSubtypeColumnIdentifier]) {
         DataInspector *inspector = inspectors[row];
-        [cell setEnabled:inspector.type != eInspectorTypeUTF8Text];
+        bool allowsEndianness = (inspector.type == eInspectorTypeSignedInteger ||
+                                 inspector.type == eInspectorTypeUnsignedInteger ||
+                                 inspector.type == eInspectorTypeFloatingPoint);
+        [cell setEnabled:allowsEndianness];
     }
 }
 
