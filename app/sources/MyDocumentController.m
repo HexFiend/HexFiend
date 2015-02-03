@@ -93,4 +93,11 @@
     return doc;
 }
 
+- (void)beginOpenPanel:(NSOpenPanel *)openPanel forTypes:(NSArray *)inTypes completionHandler:(void (^)(NSInteger result))completionHandler
+{
+    openPanel.treatsFilePackagesAsDirectories = YES;
+    openPanel.showsHiddenFiles = YES;
+    [super beginOpenPanel:openPanel forTypes:inTypes completionHandler:completionHandler];
+}
+
 @end

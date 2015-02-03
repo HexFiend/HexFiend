@@ -1924,4 +1924,11 @@ cancelled:;
     return error ? NO : YES;
 }
 
+- (BOOL)prepareSavePanel:(NSSavePanel *)savePanel
+{
+    savePanel.treatsFilePackagesAsDirectories = YES;
+    savePanel.showsHiddenFiles = YES;
+    return YES;
+}
+
 @end
