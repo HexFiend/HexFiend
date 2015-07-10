@@ -98,6 +98,7 @@ static inline Class preferredByteArrayClass(void) {
     _hfflags.editable = YES;
     _hfflags.antialias = YES;
     _hfflags.showcallouts = YES;
+    _hfflags.hideNullBytes = NO;
     _hfflags.selectable = YES;
     representers = [[NSMutableArray alloc] init];
     [self setFont:[NSFont fontWithName:HFDEFAULT_FONT size:HFDEFAULT_FONTSIZE]];
@@ -131,6 +132,7 @@ static inline Class preferredByteArrayClass(void) {
     [coder encodeBool:_hfflags.antialias forKey:@"HFAntialias"];
     [coder encodeBool:_hfflags.colorbytes forKey:@"HFColorBytes"];
     [coder encodeBool:_hfflags.showcallouts forKey:@"HFShowCallouts"];
+    [coder encodeBool:_hfflags.hideNullBytes forKey:@"HFHidesNullBytes"];
     [coder encodeBool:_hfflags.livereload forKey:@"HFLiveReload"];
     [coder encodeInt:_hfflags.editMode forKey:@"HFEditMode"];
     [coder encodeBool:_hfflags.editable forKey:@"HFEditable"];
@@ -158,6 +160,7 @@ static inline Class preferredByteArrayClass(void) {
 
     _hfflags.editable = [coder decodeBoolForKey:@"HFEditable"];
     _hfflags.selectable = [coder decodeBoolForKey:@"HFSelectable"];
+    _hfflags.hideNullBytes = [coder decodeBoolForKey:@"HFHidesNullBytes"];
     representers = [[coder decodeObjectForKey:@"HFRepresenters"] retain];
     return self;
 }
@@ -352,6 +355,19 @@ static inline Class preferredByteArrayClass(void) {
     if (showcallouts != _hfflags.showcallouts) {
         _hfflags.showcallouts = showcallouts;
         [self _addPropertyChangeBits:HFControllerShowCallouts];
+    }
+}
+
+- (BOOL)shouldHideNullBytes {
+    return _hfflags.hideNullBytes;
+}
+
+- (void)setShouldHideNullBytes:(BOOL)hideNullBytes
+{
+    hideNullBytes = !! hideNullBytes;
+    if (hideNullBytes != _hfflags.hideNullBytes) {
+        _hfflags.hideNullBytes = hideNullBytes;
+        [self _addPropertyChangeBits:HFControllerHideNullBytes];
     }
 }
 

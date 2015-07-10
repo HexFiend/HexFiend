@@ -36,6 +36,7 @@ typedef NS_OPTIONS(NSUInteger, HFControllerPropertyBits) {
     HFControllerBookmarks = 1 << 14,       /*!< Indicates that a bookmark has been added or removed. */
     HFControllerColorBytes = 1 << 15,   /*!< Indicates that the shouldColorBytes property has changed. */
     HFControllerShowCallouts = 1 << 16, /*!< Indicates that the shouldShowCallouts property has changed. */
+    HFControllerHideNullBytes = 1 << 17, /*!< Indicates that the shouldHideNullBytes property has changed. */
 };
 
 /*! @enum HFControllerMovementDirection
@@ -127,6 +128,7 @@ You create an HFController via <tt>[[HFController alloc] init]</tt>.  After that
         unsigned antialias:1;
         unsigned colorbytes:1;
         unsigned showcallouts:1;
+        unsigned hideNullBytes:1;
         HFEditMode editMode:2;
         unsigned editable:1;
         unsigned selectable:1;
@@ -276,6 +278,9 @@ You create an HFController via <tt>[[HFController alloc] init]</tt>.  After that
 
 /*! When enabled, byte bookmarks display callout-style labels attached to them. */
 @property (nonatomic) BOOL shouldShowCallouts;
+
+/*! When enabled, null bytes are hidden in the hex view. */
+@property (nonatomic) BOOL shouldHideNullBytes;
 
 /*! When enabled, unmodified documents are auto refreshed to their latest on disk state. */
 @property (nonatomic) BOOL shouldLiveReload;
