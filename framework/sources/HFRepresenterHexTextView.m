@@ -7,7 +7,7 @@
 
 #import <HexFiend/HFRepresenterHexTextView.h>
 #import <HexFiend/HFRepresenterTextView_Internal.h>
-#import <HexFiend/HFRepresenter.h>
+#import <HexFiend/HFHexTextRepresenter.h>
 
 @implementation HFRepresenterHexTextView
 
@@ -57,7 +57,7 @@
             glyphAdvancementPlusAnySpace += advanceBetweenColumns;
         }
         
-        BOOL useBlank = (byte == 0);
+        BOOL useBlank = (hidesNullBytes && byte == 0);
         advances[glyphIndex] = CGSizeMake(glyphAdvancement, 0);
         glyphs[glyphIndex++] = (struct HFGlyph_t){.fontIndex = 0, .glyph = glyphTable[(useBlank? 16: byte >> 4)]};
         advances[glyphIndex] = CGSizeMake(glyphAdvancementPlusAnySpace, 0);
@@ -77,6 +77,19 @@
 
 - (NSUInteger)maximumGlyphCountForByteCount:(NSUInteger)byteCount {
     return 2 * byteCount;
+}
+
+- (BOOL)hidesNullBytes {
+    return hidesNullBytes;
+}
+
+- (void)setHidesNullBytes:(BOOL)flag
+{
+    flag = !! flag;
+    if (hidesNullBytes != flag) {
+        hidesNullBytes = flag;
+        [self setNeedsDisplay:YES];
+    }
 }
 
 @end

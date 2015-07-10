@@ -8,7 +8,7 @@
 #import <Cocoa/Cocoa.h>
 #import "DocumentWindow.h"
 
-@class HFByteArray, HFRepresenter, HFLineCountingRepresenter, HFLayoutRepresenter, HFDocumentOperationView, DataInspectorRepresenter;
+@class HFByteArray, HFRepresenter, HFHexTextRepresenter, HFLineCountingRepresenter, HFLayoutRepresenter, HFDocumentOperationView, DataInspectorRepresenter;
 
 NSString * const BaseDataDocumentDidChangeStringEncodingNotification;
 
@@ -17,7 +17,7 @@ NSString * const BaseDataDocumentDidChangeStringEncodingNotification;
     HFController *controller;
     
     HFLineCountingRepresenter *lineCountingRepresenter;
-    HFRepresenter *hexRepresenter;
+    HFHexTextRepresenter *hexRepresenter;
     HFRepresenter *asciiRepresenter;
     HFRepresenter *scrollRepresenter;
     HFRepresenter *textDividerRepresenter;
