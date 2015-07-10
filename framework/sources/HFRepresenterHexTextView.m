@@ -20,7 +20,7 @@
     HFASSERT(t); // We don't take kindly to strange fonts around here.
     
     CGFloat maxAdv = 0.0;
-    for(int i = 0; i < 16; i++) maxAdv = HFMax(maxAdv, [font advancementForGlyph:glyphTable[0]].width);
+    for(int i = 0; i < 16; i++) maxAdv = HFMax(maxAdv, [font advancementForGlyph:glyphTable[i]].width);
     glyphAdvancement = maxAdv;
     spaceAdvancement = maxAdv;
 }
