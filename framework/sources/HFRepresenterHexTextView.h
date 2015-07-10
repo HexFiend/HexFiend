@@ -9,7 +9,7 @@
 
 
 @interface HFRepresenterHexTextView : HFRepresenterTextView {
-    CGGlyph glyphTable[16];
+    CGGlyph glyphTable[17];
     CGFloat glyphAdvancement;
     CGFloat spaceAdvancement;
 }

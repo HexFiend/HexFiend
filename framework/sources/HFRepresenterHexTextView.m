@@ -12,15 +12,15 @@
 @implementation HFRepresenterHexTextView
 
 - (void)generateGlyphTable {
-    const UniChar hexchars[16] = {'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
-    _Static_assert(sizeof(CGGlyph[16]) == sizeof(glyphTable), "glyphTable is the wrong type");
+    const UniChar hexchars[17] = {'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F',' '/* Plus a space char at the end for null bytes. */};
+    _Static_assert(sizeof(CGGlyph[17]) == sizeof(glyphTable), "glyphTable is the wrong type");
     NSFont *font = [[self font] screenFont];
     
-    bool t = CTFontGetGlyphsForCharacters((CTFontRef)font, hexchars, glyphTable, 16);
+    bool t = CTFontGetGlyphsForCharacters((CTFontRef)font, hexchars, glyphTable, 17);
     HFASSERT(t); // We don't take kindly to strange fonts around here.
     
     CGFloat maxAdv = 0.0;
-    for(int i = 0; i < 16; i++) maxAdv = HFMax(maxAdv, [font advancementForGlyph:glyphTable[i]].width);
+    for(int i = 0; i < 17; i++) maxAdv = HFMax(maxAdv, [font advancementForGlyph:glyphTable[i]].width);
     glyphAdvancement = maxAdv;
     spaceAdvancement = maxAdv;
 }
@@ -57,10 +57,11 @@
             glyphAdvancementPlusAnySpace += advanceBetweenColumns;
         }
         
+        BOOL useBlank = (byte == 0);
         advances[glyphIndex] = CGSizeMake(glyphAdvancement, 0);
-        glyphs[glyphIndex++] = (struct HFGlyph_t){.fontIndex = 0, .glyph = glyphTable[byte >> 4]};
+        glyphs[glyphIndex++] = (struct HFGlyph_t){.fontIndex = 0, .glyph = glyphTable[(useBlank? 16: byte >> 4)]};
         advances[glyphIndex] = CGSizeMake(glyphAdvancementPlusAnySpace, 0);
-        glyphs[glyphIndex++] = (struct HFGlyph_t){.fontIndex = 0, .glyph = glyphTable[byte & 0xF]};
+        glyphs[glyphIndex++] = (struct HFGlyph_t){.fontIndex = 0, .glyph = glyphTable[(useBlank? 16: byte & 0xF)]};
     }
     
     *resultGlyphCount = glyphIndex;
