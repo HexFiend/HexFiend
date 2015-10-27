@@ -32,7 +32,6 @@
 		9408FBFF19DD72DF004F800E /* Framework_Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9408FBFE19DD72DF004F800E /* Framework_Tests.m */; };
 		9408FC0E19DD7C87004F800E /* HexFiend.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D01E7BB80CDC530C00943F9E /* HexFiend.framework */; };
 		9408FC1019DD8669004F800E /* HFPrivilegedHelperConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 9408FC0F19DD8669004F800E /* HFPrivilegedHelperConnection.h */; };
-		940C4E69183C0F230009AFDA /* HexFiend.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D01E7BB80CDC530C00943F9E /* HexFiend.framework */; };
 		940C4E6A183C11E20009AFDA /* HexFiend.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D01E7BB80CDC530C00943F9E /* HexFiend.framework */; };
 		94548A4D19DC5218006EFA29 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 94548A4219DC51FF006EFA29 /* Sparkle.framework */; };
 		94548A4E19DC5218006EFA29 /* Sparkle.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 94548A4219DC51FF006EFA29 /* Sparkle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -40,6 +39,7 @@
 		9483479319DE1C8E0086A732 /* NaiveArray.m in Sources */ = {isa = PBXBuildFile; fileRef = D06D60A40FA7E980002376EE /* NaiveArray.m */; };
 		9483479419DE1C920086A732 /* TreeEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = D06D60BC0FA7EA23002376EE /* TreeEntry.m */; };
 		9483479519DE1C950086A732 /* BTree_Test.m in Sources */ = {isa = PBXBuildFile; fileRef = D06D60A50FA7E980002376EE /* BTree_Test.m */; };
+		94ECCBC01BDF7DD2007FF44E /* HexFiend.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D01E7BB80CDC530C00943F9E /* HexFiend.framework */; };
 		D00122E30D48A8D400540B10 /* HFFindReplaceBackgroundView.m in Sources */ = {isa = PBXBuildFile; fileRef = D00122E20D48A8D400540B10 /* HFFindReplaceBackgroundView.m */; };
 		D00C16760FF4925A006D021F /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = D00C166F0FF4925A006D021F /* InfoPlist.strings */; };
 		D00C16790FF4925A006D021F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D00C16750FF4925A006D021F /* main.m */; };
@@ -272,13 +272,6 @@
 			remoteInfo = Fortunate_Son;
 		};
 		D05E7A880FF615D800767D95 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = D01E7BB70CDC530C00943F9E;
-			remoteInfo = HexFiend_Framework;
-		};
-		D0A435540CDC70B3000F7550 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
 			proxyType = 1;
@@ -557,7 +550,7 @@
 			files = (
 				795F46C314BAADB600EB2F7D /* DiskArbitration.framework in Frameworks */,
 				8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */,
-				940C4E69183C0F230009AFDA /* HexFiend.framework in Frameworks */,
+				94ECCBC01BDF7DD2007FF44E /* HexFiend.framework in Frameworks */,
 				94548A4D19DC5218006EFA29 /* Sparkle.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1172,7 +1165,6 @@
 			);
 			dependencies = (
 				94548A4C19DC5213006EFA29 /* PBXTargetDependency */,
-				D0A435550CDC70B3000F7550 /* PBXTargetDependency */,
 				D039DC001481C17C00364FA6 /* PBXTargetDependency */,
 				94548A5019DC5218006EFA29 /* PBXTargetDependency */,
 			);
@@ -1556,11 +1548,6 @@
 			isa = PBXTargetDependency;
 			target = D01E7BB70CDC530C00943F9E /* HexFiend_Framework */;
 			targetProxy = D05E7A880FF615D800767D95 /* PBXContainerItemProxy */;
-		};
-		D0A435550CDC70B3000F7550 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = D01E7BB70CDC530C00943F9E /* HexFiend_Framework */;
-			targetProxy = D0A435540CDC70B3000F7550 /* PBXContainerItemProxy */;
 		};
 		D0F6FE120FFF679D00C609F0 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
