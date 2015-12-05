@@ -542,7 +542,7 @@ static inline int common_prefix_length(const char *a, const char *b) {
     [string release];
     NSCell *cell = [[NSCell alloc] initTextCell:@""];
     [cell setAttributedStringValue:attributedString];
-    [cell drawWithFrame:textRect inView:nil];
+    [cell drawWithFrame:textRect inView:self];
     [[NSColor purpleColor] set];
     NSFrameRect(textRect);
     [cell release];
