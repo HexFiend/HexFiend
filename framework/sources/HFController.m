@@ -1308,7 +1308,7 @@ static inline Class preferredByteArrayClass(void) {
     if (direction == HFControllerDirectionLeft) {
         if (minSelection >= selectionAnchor && maxSelection > minSelection) {
             unsigned long long amountToRemove = llmin(maxSelection - selectionAnchor, amountToMove);
-            unsigned long long amountToAdd = amountToMove - amountToRemove;
+            unsigned long long amountToAdd = llmin(amountToMove - amountToRemove, selectionAnchor);
             if (amountToRemove > 0) [self _removeRangeFromSelection:HFRangeMake(maxSelection - amountToRemove, amountToRemove) withCursorLocationIfAllSelectionRemoved:minSelection];
             if (amountToAdd > 0) [self _addRangeToSelection:HFRangeMake(selectionAnchor - amountToAdd, amountToAdd)];
             selectionChanged = YES;
