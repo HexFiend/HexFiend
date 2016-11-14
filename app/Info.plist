@@ -89,7 +89,7 @@
 	<key>SMPrivilegedExecutables</key>
 	<dict>
 		<key>com.ridiculousfish.HexFiend.PrivilegedHelper</key>
-		<string>identifier com.ridiculousfish.HexFiend.PrivilegedHelper and certificate leaf[subject.CN] = "Hex Fiend"</string>
+		<string>identifier com.ridiculousfish.HexFiend.PrivilegedHelper and certificate leaf[subject.CN] = &quot;Hex Fiend&quot;</string>
 	</dict>
 	<key>SUFeedURL</key>
 	<string>https://raw.githubusercontent.com/ridiculousfish/HexFiend/master/app/appcast.xml</string>
