@@ -52,16 +52,14 @@ static void addEncoding(NSString *name, CFStringEncoding value, NSMutableArray *
         
         /* Compute the title.  \u2014 is an em-dash. */
         if ([localizedName length] > 0) {
-            title = [[NSString alloc] initWithFormat:@"%@ \u2014 %@", strippedName, localizedName];
+            title = [NSString stringWithFormat:@"%@ \u2014 %@", strippedName, localizedName];
         } else {
-            title = [strippedName copy];
+            title = strippedName;
         }
         
         [localKeys addObject:title];
-        NSNumber *numberValue = [[NSNumber alloc] initWithInteger:cocoaEncoding];
+        NSNumber *numberValue = [NSNumber numberWithInteger:cocoaEncoding];
         [localValues addObject:numberValue];
-        [numberValue release];
-        [title release];
     }
 }
 
