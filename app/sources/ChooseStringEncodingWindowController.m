@@ -26,7 +26,7 @@
  print "ENCODING(" + match.group(0) + ");"
  
 
- ./script.py < /System/Library/Frameworks/CoreFoundation.framework/Headers/CFStringEncodingExt.h
+ ./script.py < /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks/CoreFoundation.framework/Versions/A/Headers/CFStringEncodingExt.h
  
 */
 
