@@ -7,21 +7,21 @@
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.ridiculousfish.HexFiend-Framework</string>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundlePackageType</key>
 	<string>FMWK</string>
+	<key>CFBundleShortVersionString</key>
+	<string>2.1.1</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>200</string>
-	<key>CFBundleShortVersionString</key>
-	<string>2.1.1</string>
 	<key>SMPrivilegedExecutables</key>
 	<dict>
 		<key>com.ridiculousfish.HexFiend.PrivilegedHelper</key>
-		<string>certificate leaf[subject.CN] = &quot;Hex Fiend&quot;</string>
+		<string>certificate leaf[subject.CN] = "Hex Fiend"</string>
 	</dict>
 </dict>
 </plist>
