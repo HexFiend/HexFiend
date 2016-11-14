@@ -1912,6 +1912,7 @@
 		D0222569146F5D3900646C27 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ENABLE_STRICT_OBJC_MSGSEND = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = app/sources/HexFiend_2_Prefix.pch;
 				INFOPLIST_FILE = app/Info.plist;
@@ -2046,6 +2047,7 @@
 		D022259E146F629E00646C27 /* Debug+UnitTests */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ENABLE_STRICT_OBJC_MSGSEND = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = app/sources/HexFiend_2_Prefix.pch;
 				INFOPLIST_FILE = app/Info.plist;
@@ -2178,6 +2180,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "Hex Fiend";
+				ENABLE_STRICT_OBJC_MSGSEND = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = app/sources/HexFiend_2_Prefix.pch;
 				INFOPLIST_FILE = app/Info.plist;
@@ -2331,6 +2334,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "Hex Fiend";
+				ENABLE_STRICT_OBJC_MSGSEND = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = app/sources/HexFiend_2_Prefix.pch;
 				INFOPLIST_FILE = app/Info.plist;
@@ -2493,6 +2497,7 @@
 		D083F7370DBCBD5F00C2B632 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ENABLE_STRICT_OBJC_MSGSEND = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = app/sources/HexFiend_2_Prefix.pch;
 				INFOPLIST_FILE = app/Info.plist;
