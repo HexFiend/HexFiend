@@ -1854,7 +1854,7 @@
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INFOPLIST_FILE = sample_code/HexFiendling/Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.yourcompany.${PRODUCT_NAME:identifier}";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculousfish.${PRODUCT_NAME:identifier}";
 				PRODUCT_NAME = HexFiendling;
 			};
 			name = Debug;
@@ -1981,7 +1981,7 @@
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INFOPLIST_FILE = sample_code/HexFiendling/Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.yourcompany.${PRODUCT_NAME:identifier}";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculousfish.${PRODUCT_NAME:identifier}";
 				PRODUCT_NAME = HexFiendling;
 			};
 			name = Release;
@@ -2118,7 +2118,7 @@
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INFOPLIST_FILE = sample_code/HexFiendling/Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.yourcompany.${PRODUCT_NAME:identifier}";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculousfish.${PRODUCT_NAME:identifier}";
 				PRODUCT_NAME = HexFiendling;
 			};
 			name = "Debug+UnitTests";
@@ -2254,7 +2254,7 @@
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INFOPLIST_FILE = sample_code/HexFiendling/Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.yourcompany.${PRODUCT_NAME:identifier}";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculousfish.${PRODUCT_NAME:identifier}";
 				PRODUCT_NAME = HexFiendling;
 			};
 			name = "Release+CodeSign";
@@ -2410,7 +2410,7 @@
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INFOPLIST_FILE = sample_code/HexFiendling/Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.yourcompany.${PRODUCT_NAME:identifier}";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculousfish.${PRODUCT_NAME:identifier}";
 				PRODUCT_NAME = HexFiendling;
 			};
 			name = "Debug+CodeSign";
