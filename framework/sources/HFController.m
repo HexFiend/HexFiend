@@ -1300,6 +1300,7 @@ static inline Class preferredByteArrayClass(void) {
     BOOL selectionChanged = NO;
     unsigned long long locationToMakeVisible = NO_SELECTION;
     unsigned long long contentsLength = [self contentsLength];
+    const unsigned long long previousSelectionAnchor = selectionAnchor;
     if (selectionAnchor == NO_SELECTION) {
         /* Pick the anchor opposite the choice of direction */
         if (direction == HFControllerDirectionLeft) selectionAnchor = maxSelection;
@@ -1352,6 +1353,8 @@ static inline Class preferredByteArrayClass(void) {
         [self _addPropertyChangeBits:HFControllerSelectedRanges];
         if (locationToMakeVisible != NO_SELECTION) [self _ensureVisibilityOfLocation:locationToMakeVisible];
         END_TRANSACTION();
+    } else {
+        selectionAnchor = previousSelectionAnchor;
     }
 }
 
