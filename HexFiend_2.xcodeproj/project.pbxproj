@@ -41,7 +41,6 @@
 		9483479519DE1C950086A732 /* BTree_Test.m in Sources */ = {isa = PBXBuildFile; fileRef = D06D60A50FA7E980002376EE /* BTree_Test.m */; };
 		94ECCBC01BDF7DD2007FF44E /* HexFiend.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D01E7BB80CDC530C00943F9E /* HexFiend.framework */; };
 		D00122E30D48A8D400540B10 /* HFFindReplaceBackgroundView.m in Sources */ = {isa = PBXBuildFile; fileRef = D00122E20D48A8D400540B10 /* HFFindReplaceBackgroundView.m */; };
-		D00C16760FF4925A006D021F /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = D00C166F0FF4925A006D021F /* InfoPlist.strings */; };
 		D00C16790FF4925A006D021F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D00C16750FF4925A006D021F /* main.m */; };
 		D00EBA730CE866D50020E2D7 /* HFVerticalScrollerRepresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = D00EBA710CE866D50020E2D7 /* HFVerticalScrollerRepresenter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D00EBA740CE866D50020E2D7 /* HFVerticalScrollerRepresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = D00EBA720CE866D50020E2D7 /* HFVerticalScrollerRepresenter.m */; };
@@ -350,8 +349,6 @@
 		D00122E10D48A8D400540B10 /* HFFindReplaceBackgroundView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFFindReplaceBackgroundView.h; path = app/sources/HFFindReplaceBackgroundView.h; sourceTree = "<group>"; };
 		D00122E20D48A8D400540B10 /* HFFindReplaceBackgroundView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFFindReplaceBackgroundView.m; path = app/sources/HFFindReplaceBackgroundView.m; sourceTree = "<group>"; };
 		D00C15E50FF091FF006D021F /* HexFiendling.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HexFiendling.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		D00C16700FF4925A006D021F /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		D00C16730FF4925A006D021F /* HexFiendling_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HexFiendling_Prefix.pch; sourceTree = "<group>"; };
 		D00C16740FF4925A006D021F /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D00C16750FF4925A006D021F /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		D00EBA710CE866D50020E2D7 /* HFVerticalScrollerRepresenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFVerticalScrollerRepresenter.h; path = sources/HFVerticalScrollerRepresenter.h; sourceTree = "<group>"; };
@@ -726,9 +723,7 @@
 				D0D110520FF602D800AE5CFB /* FiendlingAppDelegate.h */,
 				D0D110530FF602D800AE5CFB /* FiendlingAppDelegate.m */,
 				D071391E146F7897004D3792 /* MainMenu.xib */,
-				D00C16730FF4925A006D021F /* HexFiendling_Prefix.pch */,
 				D00C16740FF4925A006D021F /* Info.plist */,
-				D00C166F0FF4925A006D021F /* InfoPlist.strings */,
 			);
 			name = HexFiendling;
 			path = sample_code/HexFiendling;
@@ -1380,7 +1375,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D00C16760FF4925A006D021F /* InfoPlist.strings in Resources */,
 				D0713920146F7898004D3792 /* MainMenu.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1576,14 +1570,6 @@
 			isa = PBXVariantGroup;
 			children = (
 				089C165DFE840E0CC02AAC07 /* English */,
-			);
-			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
-		D00C166F0FF4925A006D021F /* InfoPlist.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				D00C16700FF4925A006D021F /* English */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -1851,7 +1837,6 @@
 			buildSettings = {
 				CLANG_ENABLE_OBJC_ARC = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INFOPLIST_FILE = sample_code/HexFiendling/Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculousfish.${PRODUCT_NAME:identifier}";
@@ -1978,7 +1963,6 @@
 			buildSettings = {
 				CLANG_ENABLE_OBJC_ARC = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INFOPLIST_FILE = sample_code/HexFiendling/Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculousfish.${PRODUCT_NAME:identifier}";
@@ -2115,7 +2099,6 @@
 			buildSettings = {
 				CLANG_ENABLE_OBJC_ARC = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INFOPLIST_FILE = sample_code/HexFiendling/Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculousfish.${PRODUCT_NAME:identifier}";
@@ -2251,7 +2234,6 @@
 			buildSettings = {
 				CLANG_ENABLE_OBJC_ARC = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INFOPLIST_FILE = sample_code/HexFiendling/Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculousfish.${PRODUCT_NAME:identifier}";
@@ -2407,7 +2389,6 @@
 			buildSettings = {
 				CLANG_ENABLE_OBJC_ARC = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INFOPLIST_FILE = sample_code/HexFiendling/Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculousfish.${PRODUCT_NAME:identifier}";
