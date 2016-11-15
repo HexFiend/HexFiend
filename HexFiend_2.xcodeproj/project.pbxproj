@@ -105,8 +105,6 @@
 		D05984CC1032C6D900059E72 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D05984CB1032C6D900059E72 /* Security.framework */; };
 		D059E1291311C676001493B8 /* AppDebugging.m in Sources */ = {isa = PBXBuildFile; fileRef = D059E1281311C676001493B8 /* AppDebugging.m */; };
 		D059E1421311CA71001493B8 /* GenericPrompt.xib in Resources */ = {isa = PBXBuildFile; fileRef = D059E1411311CA71001493B8 /* GenericPrompt.xib */; };
-		D05B77BA0E00856D008C45EB /* HFCancelOn.tiff in Resources */ = {isa = PBXBuildFile; fileRef = D01772B70D72E024002E03DE /* HFCancelOn.tiff */; };
-		D05B77BB0E00856D008C45EB /* HFCancelOff.tiff in Resources */ = {isa = PBXBuildFile; fileRef = D01772B80D72E024002E03DE /* HFCancelOff.tiff */; };
 		D05B77DF0E00883B008C45EB /* HFCancelButton.h in Headers */ = {isa = PBXBuildFile; fileRef = D05B77DD0E00883B008C45EB /* HFCancelButton.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D05B77E00E00883B008C45EB /* HFCancelButton.m in Sources */ = {isa = PBXBuildFile; fileRef = D05B77DE0E00883B008C45EB /* HFCancelButton.m */; };
 		D05E7A970FF6160500767D95 /* HexFiend.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = D01E7BB80CDC530C00943F9E /* HexFiend.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
@@ -359,8 +357,6 @@
 		D0114CA81006D1DF00DAF4CE /* HFByteArrayProxiedData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFByteArrayProxiedData.m; path = sources/HFByteArrayProxiedData.m; sourceTree = "<group>"; };
 		D016437113E5F7BB00294E60 /* HFRepresenterTextViewCallout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFRepresenterTextViewCallout.h; path = sources/HFRepresenterTextViewCallout.h; sourceTree = "<group>"; };
 		D016437213E5F7BC00294E60 /* HFRepresenterTextViewCallout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFRepresenterTextViewCallout.m; path = sources/HFRepresenterTextViewCallout.m; sourceTree = "<group>"; };
-		D01772B70D72E024002E03DE /* HFCancelOn.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = HFCancelOn.tiff; path = resources/HFCancelOn.tiff; sourceTree = "<group>"; };
-		D01772B80D72E024002E03DE /* HFCancelOff.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = HFCancelOff.tiff; path = resources/HFCancelOff.tiff; sourceTree = "<group>"; };
 		D01772F30D751DB1002E03DE /* HFDocumentOperationView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFDocumentOperationView.h; path = app/sources/HFDocumentOperationView.h; sourceTree = "<group>"; };
 		D01772F40D751DB1002E03DE /* HFDocumentOperationView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFDocumentOperationView.m; path = app/sources/HFDocumentOperationView.m; sourceTree = "<group>"; };
 		D01773900D7A2F32002E03DE /* HFResizingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFResizingView.h; path = app/sources/HFResizingView.h; sourceTree = "<group>"; };
@@ -758,8 +754,6 @@
 			isa = PBXGroup;
 			children = (
 				D04A6C15100EB02400704963 /* HFModalProgress.xib */,
-				D01772B70D72E024002E03DE /* HFCancelOn.tiff */,
-				D01772B80D72E024002E03DE /* HFCancelOff.tiff */,
 				D01E7BB90CDC530C00943F9E /* HexFiend_Framework-Info.plist */,
 			);
 			name = Resources;
@@ -1383,8 +1377,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D05B77BA0E00856D008C45EB /* HFCancelOn.tiff in Resources */,
-				D05B77BB0E00856D008C45EB /* HFCancelOff.tiff in Resources */,
 				D04A6C16100EB02400704963 /* HFModalProgress.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
