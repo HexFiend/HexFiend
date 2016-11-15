@@ -1329,7 +1329,12 @@ static inline Class preferredByteArrayClass(void) {
             unsigned long long amountToRemove = ll2l(llmin(maxSelection - minSelection, amountToMove));
             unsigned long long amountToAdd = amountToMove - amountToRemove;
             if (amountToRemove > 0) [self _removeRangeFromSelection:HFRangeMake(minSelection, amountToRemove) withCursorLocationIfAllSelectionRemoved:maxSelection];
-            if (amountToAdd > 0) [self _addRangeToSelection:HFRangeMake(maxSelection, amountToAdd)];
+            if (amountToAdd > 0) {
+                if (selectionAnchor + amountToAdd > contentsLength) {
+                    amountToAdd = contentsLength - selectionAnchor;
+                }
+                [self _addRangeToSelection:HFRangeMake(maxSelection, amountToAdd)];
+            }
             selectionChanged = YES;
             locationToMakeVisible = llmin(contentsLength, (amountToAdd > 0 ? maxSelection + amountToAdd : minSelection + amountToRemove));
         }
