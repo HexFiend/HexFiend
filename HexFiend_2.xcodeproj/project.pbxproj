@@ -1938,6 +1938,7 @@
 				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				INFOPLIST_FILE = "helper_subprocess/FortunateSon-Info.plist";
+				INFOPLIST_PREPROCESS = YES;
 				INSTALL_PATH = /usr/local/bin;
 				OTHER_LDFLAGS = (
 					"-sectcreate",
@@ -2074,6 +2075,7 @@
 				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				INFOPLIST_FILE = "helper_subprocess/FortunateSon-Info.plist";
+				INFOPLIST_PREPROCESS = YES;
 				INSTALL_PATH = /usr/local/bin;
 				OTHER_LDFLAGS = (
 					"-sectcreate",
@@ -2209,6 +2211,7 @@
 				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				INFOPLIST_FILE = "helper_subprocess/FortunateSon-Info.plist";
+				INFOPLIST_PREPROCESS = YES;
 				INSTALL_PATH = /usr/local/bin;
 				OTHER_LDFLAGS = (
 					"-sectcreate",
@@ -2246,6 +2249,7 @@
 				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				INFOPLIST_FILE = "helper_subprocess/FortunateSon-Info.plist";
+				INFOPLIST_PREPROCESS = YES;
 				INSTALL_PATH = /usr/local/bin;
 				OTHER_LDFLAGS = (
 					"-sectcreate",
@@ -2364,6 +2368,7 @@
 				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				INFOPLIST_FILE = "helper_subprocess/FortunateSon-Info.plist";
+				INFOPLIST_PREPROCESS = YES;
 				INSTALL_PATH = /usr/local/bin;
 				OTHER_LDFLAGS = (
 					"-sectcreate",

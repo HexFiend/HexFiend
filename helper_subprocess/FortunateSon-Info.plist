@@ -18,7 +18,7 @@
 	<string>1.0</string>
 	<key>SMAuthorizedClients</key>
 	<array>
-		<string>certificate leaf[subject.CN] = "Hex Fiend"</string>
+		<string>certificate leaf[subject.CN] = &quot;$(CODE_SIGN_IDENTITY)&quot;</string>
 	</array>
 </dict>
 </plist>
