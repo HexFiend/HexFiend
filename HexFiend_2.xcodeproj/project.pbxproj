@@ -73,7 +73,6 @@
 		D026C7BC0CDD546C0082279E /* HFRepresenterHexTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = D026C7BA0CDD546C0082279E /* HFRepresenterHexTextView.m */; };
 		D026C7C00CDD54D00082279E /* HFHexTextRepresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = D026C7BE0CDD54D00082279E /* HFHexTextRepresenter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D026C7C10CDD54D00082279E /* HFHexTextRepresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = D026C7BF0CDD54D00082279E /* HFHexTextRepresenter.m */; };
-		D02BD6CC10545E5600535EDE /* ProcessMemoryDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = D02BD6CB10545E5600535EDE /* ProcessMemoryDocument.m */; };
 		D02BD6E010545E9000535EDE /* FileDataDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = D02BD6DF10545E9000535EDE /* FileDataDocument.m */; };
 		D0315BED1225C553008C9EAB /* HFAnnotatedTree.m in Sources */ = {isa = PBXBuildFile; fileRef = D0315BEB1225C553008C9EAB /* HFAnnotatedTree.m */; };
 		D0370A3F0D68307A00B3A8C6 /* HFSharedMemoryByteSlice.h in Headers */ = {isa = PBXBuildFile; fileRef = D0370A3D0D68307A00B3A8C6 /* HFSharedMemoryByteSlice.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -170,8 +169,6 @@
 		D0A9F3FD0CFBEAD50077D577 /* HFLineCountingView.h in Headers */ = {isa = PBXBuildFile; fileRef = D0A9F3FB0CFBEAD50077D577 /* HFLineCountingView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D0A9F3FE0CFBEAD50077D577 /* HFLineCountingView.m in Sources */ = {isa = PBXBuildFile; fileRef = D0A9F3FC0CFBEAD50077D577 /* HFLineCountingView.m */; };
 		D0AFA786123C2BDF00CFC513 /* MyDocumentController.m in Sources */ = {isa = PBXBuildFile; fileRef = D0AFA785123C2BDF00CFC513 /* MyDocumentController.m */; };
-		D0B0919F10425AAB00B204AE /* HFProcessMemoryByteSlice.h in Headers */ = {isa = PBXBuildFile; fileRef = D0B0919D10425AAB00B204AE /* HFProcessMemoryByteSlice.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		D0B091A010425AAB00B204AE /* HFProcessMemoryByteSlice.m in Sources */ = {isa = PBXBuildFile; fileRef = D0B0919E10425AAB00B204AE /* HFProcessMemoryByteSlice.m */; };
 		D0B422A10FF845F800DF27E5 /* HFTextView.h in Headers */ = {isa = PBXBuildFile; fileRef = D0B4229F0FF845F800DF27E5 /* HFTextView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D0B422A20FF845F800DF27E5 /* HFTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = D0B422A00FF845F800DF27E5 /* HFTextView.m */; };
 		D0B47FEF1272427B0095120E /* DiffComputationBanner.xib in Resources */ = {isa = PBXBuildFile; fileRef = D0B47FED1272427B0095120E /* DiffComputationBanner.xib */; };
@@ -197,7 +194,6 @@
 		D0D829110CDE969F00C2AB82 /* HFByteArray.h in Headers */ = {isa = PBXBuildFile; fileRef = D08F5DEF0CDE8223007EFFE8 /* HFByteArray.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D0D8C2B012A3BE4300960FC4 /* ChooseStringEncodingDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = D0D8C2AF12A3BE4300960FC4 /* ChooseStringEncodingDialog.xib */; };
 		D0D8C2BC12A3C10100960FC4 /* ChooseStringEncodingWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D8C2BB12A3C10100960FC4 /* ChooseStringEncodingWindowController.m */; };
-		D0D8C45812A3EF3900960FC4 /* ProcessList.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D8C45712A3EF3900960FC4 /* ProcessList.m */; };
 		D8C1F92C16F278BA00A4C36E /* DiffRangeDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = D8C1F92A16F278BA00A4C36E /* DiffRangeDialog.xib */; };
 		D8EE3EFE16F26689001C7C09 /* DiffRangeWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = D8EE3EFD16F26689001C7C09 /* DiffRangeWindowController.m */; };
 		DAE8EBFE1598FFDB0008ADB9 /* DocumentWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = DAE8EBFD1598FFDB0008ADB9 /* DocumentWindow.m */; };
@@ -392,8 +388,6 @@
 		D026C7BA0CDD546C0082279E /* HFRepresenterHexTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFRepresenterHexTextView.m; path = sources/HFRepresenterHexTextView.m; sourceTree = "<group>"; };
 		D026C7BE0CDD54D00082279E /* HFHexTextRepresenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFHexTextRepresenter.h; path = sources/HFHexTextRepresenter.h; sourceTree = "<group>"; };
 		D026C7BF0CDD54D00082279E /* HFHexTextRepresenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFHexTextRepresenter.m; path = sources/HFHexTextRepresenter.m; sourceTree = "<group>"; };
-		D02BD6CA10545E5600535EDE /* ProcessMemoryDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProcessMemoryDocument.h; path = app/sources/ProcessMemoryDocument.h; sourceTree = "<group>"; };
-		D02BD6CB10545E5600535EDE /* ProcessMemoryDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ProcessMemoryDocument.m; path = app/sources/ProcessMemoryDocument.m; sourceTree = "<group>"; };
 		D02BD6DE10545E9000535EDE /* FileDataDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileDataDocument.h; path = app/sources/FileDataDocument.h; sourceTree = "<group>"; };
 		D02BD6DF10545E9000535EDE /* FileDataDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FileDataDocument.m; path = app/sources/FileDataDocument.m; sourceTree = "<group>"; };
 		D0315BEA1225C553008C9EAB /* HFAnnotatedTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFAnnotatedTree.h; path = sources/HFAnnotatedTree.h; sourceTree = "<group>"; };
@@ -499,8 +493,6 @@
 		D0A9F3FC0CFBEAD50077D577 /* HFLineCountingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFLineCountingView.m; path = sources/HFLineCountingView.m; sourceTree = "<group>"; };
 		D0AFA784123C2BDF00CFC513 /* MyDocumentController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MyDocumentController.h; path = app/sources/MyDocumentController.h; sourceTree = "<group>"; };
 		D0AFA785123C2BDF00CFC513 /* MyDocumentController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MyDocumentController.m; path = app/sources/MyDocumentController.m; sourceTree = "<group>"; };
-		D0B0919D10425AAB00B204AE /* HFProcessMemoryByteSlice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFProcessMemoryByteSlice.h; path = sources/HFProcessMemoryByteSlice.h; sourceTree = "<group>"; };
-		D0B0919E10425AAB00B204AE /* HFProcessMemoryByteSlice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFProcessMemoryByteSlice.m; path = sources/HFProcessMemoryByteSlice.m; sourceTree = "<group>"; };
 		D0B4229F0FF845F800DF27E5 /* HFTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFTextView.h; path = sources/HFTextView.h; sourceTree = "<group>"; };
 		D0B422A00FF845F800DF27E5 /* HFTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFTextView.m; path = sources/HFTextView.m; sourceTree = "<group>"; };
 		D0B47FEE1272427B0095120E /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/DiffComputationBanner.xib; sourceTree = "<group>"; };
@@ -533,8 +525,6 @@
 		D0D8C2AF12A3BE4300960FC4 /* ChooseStringEncodingDialog.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = ChooseStringEncodingDialog.xib; path = app/resources/ChooseStringEncodingDialog.xib; sourceTree = "<group>"; };
 		D0D8C2BA12A3C10100960FC4 /* ChooseStringEncodingWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ChooseStringEncodingWindowController.h; path = app/sources/ChooseStringEncodingWindowController.h; sourceTree = "<group>"; };
 		D0D8C2BB12A3C10100960FC4 /* ChooseStringEncodingWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ChooseStringEncodingWindowController.m; path = app/sources/ChooseStringEncodingWindowController.m; sourceTree = "<group>"; };
-		D0D8C45612A3EF3900960FC4 /* ProcessList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProcessList.h; path = app/sources/ProcessList.h; sourceTree = "<group>"; };
-		D0D8C45712A3EF3900960FC4 /* ProcessList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ProcessList.m; path = app/sources/ProcessList.m; sourceTree = "<group>"; };
 		D8C1F92B16F278BA00A4C36E /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/DiffRangeDialog.xib; sourceTree = "<group>"; };
 		D8EE3EFC16F26689001C7C09 /* DiffRangeWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DiffRangeWindowController.h; path = app/sources/DiffRangeWindowController.h; sourceTree = "<group>"; };
 		D8EE3EFD16F26689001C7C09 /* DiffRangeWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DiffRangeWindowController.m; path = app/sources/DiffRangeWindowController.m; sourceTree = "<group>"; };
@@ -819,8 +809,6 @@
 				D01E7C150CDC58AA00943F9E /* BaseDataDocument.m */,
 				D02BD6DE10545E9000535EDE /* FileDataDocument.h */,
 				D02BD6DF10545E9000535EDE /* FileDataDocument.m */,
-				D02BD6CA10545E5600535EDE /* ProcessMemoryDocument.h */,
-				D02BD6CB10545E5600535EDE /* ProcessMemoryDocument.m */,
 				D084E75C115DAE90004DC181 /* DiffDocument */,
 			);
 			name = DocumentTypes;
@@ -845,8 +833,6 @@
 				D08F5E220CDE843E007EFFE8 /* HFByteSlice.h */,
 				D0D179450D46F20E00684270 /* HFByteSlice_Private.h */,
 				D08F5E230CDE843E007EFFE8 /* HFByteSlice.m */,
-				D0B0919D10425AAB00B204AE /* HFProcessMemoryByteSlice.h */,
-				D0B0919E10425AAB00B204AE /* HFProcessMemoryByteSlice.m */,
 				D0826F190D4883A80006FB7D /* FileByteSlice */,
 				D0370A280D682EF200B3A8C6 /* MemoryByteSlice */,
 			);
@@ -931,8 +917,6 @@
 				D0CD51F50DA2B928006E8D1B /* AppDelegate.m */,
 				D059E1271311C675001493B8 /* AppDebugging.h */,
 				D059E1281311C676001493B8 /* AppDebugging.m */,
-				D0D8C45612A3EF3900960FC4 /* ProcessList.h */,
-				D0D8C45712A3EF3900960FC4 /* ProcessList.m */,
 				D03CFA880FC78BCD00EE79E4 /* DataInspectorRepresenter.h */,
 				D03CFA890FC78BCD00EE79E4 /* DataInspectorRepresenter.m */,
 				D01772F30D751DB1002E03DE /* HFDocumentOperationView.h */,
@@ -1135,7 +1119,6 @@
 				D061A28F10042D6A0049B8B8 /* HFTextRepresenter_Internal.h in Headers */,
 				D0114CA91006D1DF00DAF4CE /* HFByteArrayProxiedData.h in Headers */,
 				D04D90531023AAEE0013A2A1 /* HFHelperProcessSharedCode.h in Headers */,
-				D0B0919F10425AAB00B204AE /* HFProcessMemoryByteSlice.h in Headers */,
 				D08943F81042B57800AB9141 /* HFByteRangeAttribute.h in Headers */,
 				D089443C1042BA7100AB9141 /* HFByteRangeAttributeArray.h in Headers */,
 				D01D1D721489DFE5008212BB /* HFAnnotatedTree.h in Headers */,
@@ -1412,7 +1395,6 @@
 				D01773920D7A2F32002E03DE /* HFResizingView.m in Sources */,
 				D0CD51F60DA2B928006E8D1B /* AppDelegate.m in Sources */,
 				D03CFA8A0FC78BCD00EE79E4 /* DataInspectorRepresenter.m in Sources */,
-				D02BD6CC10545E5600535EDE /* ProcessMemoryDocument.m in Sources */,
 				D02BD6E010545E9000535EDE /* FileDataDocument.m in Sources */,
 				D018F153107ABAC600AE805F /* DiffDocument.m in Sources */,
 				D074B0D5115B2075002D5FA8 /* DiffDocumentWindow.m in Sources */,
@@ -1422,7 +1404,6 @@
 				D0CBB240128F78C200989C15 /* StretchableProgressIndicator.m in Sources */,
 				D0CBB32A128F906000989C15 /* DiffTextViewContainer.m in Sources */,
 				D0D8C2BC12A3C10100960FC4 /* ChooseStringEncodingWindowController.m in Sources */,
-				D0D8C45812A3EF3900960FC4 /* ProcessList.m in Sources */,
 				D059E1291311C676001493B8 /* AppDebugging.m in Sources */,
 				D01EF15413B2A0D300CC9283 /* TextDividerRepresenter.m in Sources */,
 				D0A8AF7D1467273900387627 /* AppUtilities.m in Sources */,
@@ -1502,7 +1483,6 @@
 				D0A05C0213BBE4B200553980 /* HFAttributedByteArray.m in Sources */,
 				D04D8FDF10239BB20013A2A1 /* HFPrivilegedHelperConnection.m in Sources */,
 				D0621CF0102ED78900DAEB4D /* FortunateSon.defs in Sources */,
-				D0B091A010425AAB00B204AE /* HFProcessMemoryByteSlice.m in Sources */,
 				D08943F91042B57800AB9141 /* HFByteRangeAttribute.m in Sources */,
 				D089443D1042BA7100AB9141 /* HFByteRangeAttributeArray.m in Sources */,
 				D010173710491BB200536FBC /* HFTextVisualStyleRun.m in Sources */,

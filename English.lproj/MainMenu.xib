@@ -1,9 +1,8 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="8152.3" systemVersion="15A216g" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11201" systemVersion="16B2555" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
         <deployment identifier="macosx"/>
-        <development version="5100" identifier="xcode"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="8152.3"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11201"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication"/>
@@ -93,25 +92,6 @@
                                 <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
                                 <connections>
                                     <action selector="showWindow:" target="733" id="734"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem title="Open Process" hidden="YES" enabled="NO" id="510">
-                                <modifierMask key="keyEquivalentModifierMask"/>
-                                <menu key="submenu" title="Open Process" id="511">
-                                    <items>
-                                        <menuItem title="Item" enabled="NO" id="512">
-                                            <modifierMask key="keyEquivalentModifierMask"/>
-                                        </menuItem>
-                                    </items>
-                                    <connections>
-                                        <outlet property="delegate" destination="717" id="718"/>
-                                    </connections>
-                                </menu>
-                            </menuItem>
-                            <menuItem title="Open Process by PID…" hidden="YES" enabled="NO" keyEquivalent="o" id="506">
-                                <modifierMask key="keyEquivalentModifierMask" control="YES" option="YES" command="YES"/>
-                                <connections>
-                                    <action selector="openProcess:" target="717" id="721"/>
                                 </connections>
                             </menuItem>
                             <menuItem title="Open Recent" id="124">
@@ -683,14 +663,12 @@
                 <outlet property="extendForwardsItem" destination="397" id="407"/>
                 <outlet property="fontMenuItem" destination="409" id="413"/>
                 <outlet property="noBookmarksMenuItem" destination="8Hb-Ga-nGj" id="cOn-oy-A85"/>
-                <outlet property="processListMenuItem" destination="510" id="515"/>
                 <outlet property="stringEncodingMenu" destination="684" id="716"/>
             </connections>
         </customObject>
         <customObject id="630" customClass="OpenPathWindowController"/>
         <customObject id="733" customClass="OpenDriveWindowController"/>
         <customObject id="680" customClass="ChooseStringEncodingWindowController"/>
-        <customObject id="717" customClass="ProcessList"/>
         <customObject id="744" customClass="SUUpdater"/>
     </objects>
 </document>
