@@ -1940,6 +1940,8 @@ cancelled:;
 
 - (BOOL)prepareSavePanel:(NSSavePanel *)savePanel
 {
+    savePanel.allowedFileTypes = nil;
+    savePanel.allowsOtherFileTypes = YES;
     savePanel.treatsFilePackagesAsDirectories = YES;
     savePanel.showsHiddenFiles = YES;
     return YES;
