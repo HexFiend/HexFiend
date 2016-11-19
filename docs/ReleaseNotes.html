@@ -1,21 +1,32 @@
+<!DOCTYPE html>
+<html>
 <head>
 <title>Hex Fiend Release Notes</title>
-</head><body>
+</head>
+<body>
+
+<h3>Release Notes for v2.4</h3>
+<ul>
+<li>Added binary and SLEB128 and ULEB128 int inspector</li>
+<li>Added hide null bytes option</li>
+<li>Added text encodings table</li>
+<li>Allow selecting packages and hidden files</li>
+<li>Fixed many bugs and memory leaks</li>
+<li>Update Sparkle to 1.14.0</li>
+</ul>
+
 <h3>Release Notes for v2.1.2</h3>
 <ul>
 <li>Fixed Jump to Offset</li>
 </ul>
 
-
 <h3>Release Notes for v2.1.1</h3>
-
 <ul>
 <li>Fixed a bug that caused exceptions when scrolling with a non-precise scrolling device (like a classic scroll wheel mouse).</li>
 <li>Removed an .xcconfig file that was inadvertently being copied into Resources</li>
 </ul>
 
 <h3>Release Notes for v2.1.0</h3>
-
 <ul>
 <li>Support for computing a binary diff between two files. This is a "true" LCS-based diff. Support for computing the diff lives in HexFiend.framework, while the document that presents it is in HexFiend.app.</li>
 <li>Bookmark support. Bookmarks are little balloons that point at a range of bytes. They are not saved with the document.</li>
@@ -25,5 +36,7 @@
 <li>Undo can now be preserved across saves, when doing so doesn't require too much memory.</li>
 <li>It looks more 3D. It's like you're really inside a hex editor!</li>
 <li>Many more bug fixes representing a few years of work.</li>
+</ul>
 
-</body></html>
+</body>
+</html>
