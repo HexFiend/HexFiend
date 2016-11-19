@@ -1,1 +1,157 @@
-hello world
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<style type="text/css">
+/*<![CDATA[*/
+td.right    { text-align: right; padding-right: 35px; padding-top: 25px; padding-bottom: 5px; width:40%; vertical-align: top; }
+td.left     { text-align: left; padding-left: 15px; padding-top: 5px; padding-bottom: 5px; width:60%}
+li          { margin-bottom: 4px; color: #453c3c; font: 15px Helvetica, ArialMT, Arial, sans-serif; }
+li.wide     { margin-bottom: 10px }
+li.tabhack  { margin: 0px }
+ul.tabhack	{ margin: 0 15px 0px 0; }
+a {
+	font-weight: bold;
+	color: #584D4D;
+    text-decoration: underline;
+}
+a:visited {
+    color: #666666;
+    text-decoration: underline;
+}
+a:hover {
+    color: #000000;
+    text-decoration: underline;
+}
+img {
+	border: 0;
+}
+#screenshots img {
+	border: 1px dashed #2b2b2b;
+}
+/*]]>*/
+</style>
+    <title>Hex Fiend, a fast and clever hex editor for Mac OS X</title>
+</head>
+<body style="background: white">
+    <table border="0" width="100%">
+        <tr>
+            <td class="right"><img src="images/hex_icon.png" width="190" height="215" style="position:relative; left: 10px" alt="Hex Fiend logo" /></td>
+            <td class="left">
+                <div style="position: relative; top: 10px; margin-left: 40px">
+                    <img src="images/shapeimage_1.png" alt="Hex Fiend" width="270" height="36" /><br />
+                    <img src="images/shapeimage_2.png" style="margin-top: 5px;" alt="by ridiculous_fish" width="144" height="15" /><br />
+                    <br />
+                    <span style="color: #453c3c; font: 17px ArialMT, Arial, Helvetica, sans-serif; font-weight: bold">A fast and clever open source hex editor<br />
+                    for Mac OS X.</span>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td class="right"><img src="images/shapeimage_3.png" alt="Features" /></td>
+            <td class="left">
+                <ul style="width: 70%">
+                    <li class="wide"><strong>Insert, delete, rearrange.</strong>&nbsp;&nbsp;Hex Fiend does not limit you to in-place changes like some hex editors.</li>
+                    <li class="wide"><strong>Work with huge files.</strong>&nbsp;&nbsp;Hex Fiend can handle as big a file as you’re able to create.  It’s been tested on files as large as 118 GB.</li>
+                    <li class="wide"><strong>Small footprint.</strong>&nbsp;&nbsp;Hex Fiend does not keep your files in memory.  You won’t dread launching or working with Hex Fiend even on low-RAM machines.</li>
+                    <li class="wide"><strong>Fast.</strong>&nbsp;&nbsp;Open a huge file, scroll around, copy and paste, all instantly.  Find what you’re looking for with fast searching.</li>
+					<li class="wide"><strong>Binary diff.</strong>&nbsp;&nbsp;Hex Fiend can show the differences between files, taking into account insertions or deletions.</li>
+                    <li class="wide"><strong>Smart saving.</strong>&nbsp;&nbsp;Hex Fiend knows not to waste time overwriting the parts of your files that haven’t changed, and never needs temporary disk space.</li>
+                    <li class="wide"><strong>Data inspector.</strong>&nbsp;&nbsp;Interpret data as integer or floating point, signed or unsigned, big or little endian...</li>
+                    <li class="wide"><strong>Embeddable!</strong>&nbsp;&nbsp;It’s really easy to incorporate Hex Fiend’s hex or data views into your app.  Its permissive BSD-style license won’t burden you.</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td class="right" style="padding-top: 20px" ><a href="files/HexFiend.zip"><img src="images/shapeimage_5.png" alt="Download" /></a></td>
+            <td class="left" style="vertical-align: middle"><a href="files/HexFiend.zip"><img src="images/download_square.png" alt="Download Link" style="float: left; margin-left: 15px; margin-top: -10px;" width=112 height=112 /></a><p style="padding-top: 7px; color: #666; font-size: 11pt; font-family:Menlo, Monaco, 'Courier New', Courier, monospace; letter-spacing: -0.1em;">742 KB<br>SHA1: b5f27a21f607e6fcf67e34aadf3816f35bea923d</td>
+        </tr>
+        <tr>
+            <td class="right"><img src="images/shapeimage_4.png" alt="Screenshots" /></td>
+            <td class="left" id="screenshots">
+                <table border="0" cellspacing="20">
+                    <tr>
+                        <td><a href="screenshots/Screenshot_1.html"><img src="screenshots/thumb1.png" width="195" height="122" /></a></td>
+                        <td><a href="screenshots/Screenshot_2.html"><img src="screenshots/thumb2.png" width="195" height="122" /></a></td>
+                    </tr>
+                    <tr>
+                        <td><a href="screenshots/Screenshot_3.html"><img src="screenshots/thumb3.png" width="195" height="122" /></a></td>
+                        <td><a href="screenshots/Screenshot_4.html"><img src="screenshots/thumb4.png" width="195" height="122" /></a></td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td class="right" style="padding-top: 20px" ><img src="images/shapeimage_9.png" alt="Source Code" style="position: relative; bottom: 10px;" /></td>
+            <td class="left">
+				<table style="border-style: none">
+					<tr>
+						<td style="text-align: left; padding-bottom: 6px;"><ul class="tabhack"><li class="tabhack"><b>GitHub:</b></li></ul></td>
+						<td style="padding-bottom: 6px;"><a href="http://github.com/ridiculousfish/HexFiend/">http://github.com/ridiculousfish/HexFiend/</a></td>
+					</tr>
+					<tr>
+						<td style="text-align: left; padding-bottom: 6px;"><ul class="tabhack"><li class="tabhack"><b>Tarball:</b></li></ul></td>
+						<td style="padding-bottom: 6px;"><a href="files/HexFiend_Source.tar.gz">HexFiend_Source.tar.gz</a></td>
+					</tr>
+					<tr>
+						<td style="text-align: left; padding-bottom: 6px;"><ul class="tabhack"><li class="tabhack"><b>License:</b></li></ul></td>
+						<td style="padding-bottom: 6px;"><a href="files/License.txt">Two-clause BSD License</a></td>
+					</tr>
+				</table>
+            </td>
+        </tr>
+        <tr>
+            <td class="right"><img src="images/shapeimage_14.png" alt="Developers" /></td>
+            <td class="left" id="developer_links">
+                <ul>
+	                <li>Hex Fiend is available as a framework for embedding into your apps.</li>
+	                <li>Download the source above to get the framework and sample code.</li>
+                    <li>See the <a href="docs/">API Reference</a> to get started.</li>
+					<li>Development is now hosted <a href="https://github.com/ridiculousfish/hexfiend">on GitHub</a></li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td class="right"><img src="images/shapeimage_6.png" alt="System Requirements" /></td>
+            <td class="left">
+                <table border="0" cellspacing="0">
+                    <tr>
+                        <td>
+                            <ul>
+                                <li>Mac OS X 10.6 or later.</li>
+                                <li>Intel Macs only.</li>
+                                <li>Support for Tiger and PowerPC is available with version 2.0 (below).
+                            </ul>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td class="right"><img src="images/shapeimage_7.png" alt="Version History" /></td>
+            <td class="left">
+                <ul>
+                	<li><a href="ReleaseNotes.html">Release notes for all versions</a></li>
+                	<li>Version 2.1.2, released 2/4/12</li>
+	                <li>Version 2.1.1, released 12/21/11</li>
+                	<li>Version 2.1.0, released 12/12/11</li>
+	                <li>Version 2.0, released 7/30/09, available <a href="files/HexFiend_20.dmg">here</a></li>
+	                <li>Hex Fiend 1.x is still available <a href="../hexfiend1/">here</a>.</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td class="right"><img src="images/shapeimage_8.png" alt="Contact us" /></td>
+            <td class="left">
+                <ul>
+					<li>Development is now hosted <a href="https://github.com/ridiculousfish/hexfiend">on GitHub</a></li>
+                    <li>You can reach us at
+                        <a href="javascript:location='mailto:\u0068\u0065\u0078\u005f\u0066\u0069\u0065\u006e\u0064\u0040\u0072\u0069\u0064\u0069\u0063\u0075\u006c\u006f\u0075\u0073\u0066\u0069\u0073\u0068\u002e\u0063\u006f\u006d';void 0"><script type="text/javascript">document.write('\u0068\u0065\u0078\u005f\u0066\u0069\u0065\u006e\u0064\u0040\u0072\u0069\u0064\u0069\u0063\u0075\u006c\u006f\u0075\u0073\u0066\u0069\u0073\u0068\u002e\u0063\u006f\u006d')</script></a>
+                    </li>
+                </ul>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>
