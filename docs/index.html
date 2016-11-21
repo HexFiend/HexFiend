@@ -10,6 +10,7 @@ github: 'https://github.com/ridiculousfish/HexFiend/'
 <html lang="en">
 <head>
     <meta charset="utf-8">
+<link rel="stylesheet" media="screen" href="https://fontlibrary.org/face/pixelated">
 <style>
 body {
 	font: 15px Helvetica, ArialMT, Arial, sans-serif
@@ -58,6 +59,10 @@ a:hover {
 img {
 	border: 0;
 }
+.pixelfont {
+	font-family: 'SFPixelateBold', monospace;
+	color: #404040;
+}
 .logo {
 	position: relative;
 	left: 10px;
@@ -66,13 +71,22 @@ img {
 	margin-top: 20px;
 	margin-left: 40px;
 }
+.header-title {
+	font-size: 46px;
+}
 .header-author {
 	margin-top: 5px;
 }
 .header-tagline {
-	color: #453c3c;
-	font: 17px;
+	color: #3a3a3a;
+	font-size: 15px;
 	font-weight: bold;
+}
+.section-title-link, .section-title-link:hover {
+	text-decoration: none;
+}
+.section-title {
+	font-size: 24px;
 }
 .features {
 	width: 70%;
@@ -99,10 +113,6 @@ table.screenshots {
 .right.sourcecode-section {
 	padding-top: 20px;
 }
-.sourcecode-image {
-	position: relative;
-	bottom: 10px;
-}
 .sourcecode-item-left {
 	text-align: left;
 	padding-bottom: 6px;
@@ -119,8 +129,8 @@ table.screenshots {
             <td class="right"><img src="images/hex_icon.png" width="190" height="215" alt="Hex Fiend logo" class="logo" /></td>
             <td class="left">
                 <div class="header">
-                    <img src="images/shapeimage_1.png" alt="Hex Fiend" width="270" height="36" /><br />
-                    <img src="images/shapeimage_2.png" class="header-author" alt="by ridiculous_fish" width="144" height="15" /><br />
+                    <span class="pixelfont header-title">Hex Fiend</span><br>
+                    <span class="pixelfont header-author">by ridiculous_fish</span><br>
                     <br />
                     <span class="header-tagline">A fast and clever open source hex editor<br />
                     for Mac OS X.</span>
@@ -128,7 +138,7 @@ table.screenshots {
             </td>
         </tr>
         <tr>
-            <td class="right"><img src="images/shapeimage_3.png" alt="Features" /></td>
+            <td class="right"><span class="pixelfont section-title">Features</span></td>
             <td class="left">
                 <ul class="features">
                     <li class="wide"><strong>Insert, delete, rearrange.</strong>&nbsp;&nbsp;Hex Fiend does not limit you to in-place changes like some hex editors.</li>
@@ -143,11 +153,11 @@ table.screenshots {
             </td>
         </tr>
         <tr>
-            <td class="right"><a href="{{ page.download_url }}"><img src="images/shapeimage_5.png" alt="Download" /></a></td>
+            <td class="right"><a href="{{ page.download_url }}" class="section-title-link"><span class="pixelfont section-title">Download</span></td>
             <td class="left"><a href="{{ page.download_url }}"><img src="images/download_square.png" alt="Download Link" class="download-square" width="112" height="112" /></a><p class="download-details">{{ page.download_size }}<br/>SHA1: {{ page.download_sha1 }}</p></td>
         </tr>
         <tr>
-            <td class="right"><img src="images/shapeimage_4.png" alt="Screenshots" /></td>
+            <td class="right"><span class="pixelfont section-title">Screenshots</span></td>
             <td class="left">
                 <table class="screenshots">
                     <tr>
@@ -162,7 +172,7 @@ table.screenshots {
             </td>
         </tr>
         <tr>
-            <td class="right sourcecode-section"><img src="images/shapeimage_9.png" alt="Source Code" class="sourcecode-image" /></td>
+            <td class="right sourcecode-section"><span class="pixelfont section-title">Source Code</span></td>
             <td class="left">
 				<table>
 					<tr>
@@ -181,7 +191,7 @@ table.screenshots {
             </td>
         </tr>
         <tr>
-            <td class="right"><img src="images/shapeimage_14.png" alt="Developers" /></td>
+            <td class="right"><span class="pixelfont section-title">Developers</span></td>
             <td class="left" id="developer_links">
                 <ul>
 	                <li>Hex Fiend is available as a framework for embedding into your apps.</li>
@@ -192,7 +202,7 @@ table.screenshots {
             </td>
         </tr>
         <tr>
-            <td class="right"><img src="images/shapeimage_6.png" alt="System Requirements" /></td>
+            <td class="right"><span class="pixelfont section-title">System<br>Requirements</span></td>
             <td class="left">
                 <ul>
                     <li>Mac OS X 10.7 or later.</li>
@@ -202,7 +212,7 @@ table.screenshots {
             </td>
         </tr>
         <tr>
-            <td class="right"><img src="images/shapeimage_7.png" alt="Version History" /></td>
+            <td class="right"><span class="pixelfont section-title">Version History</span></td>
             <td class="left">
                 <ul>
                 	<li><a href="ReleaseNotes.html">Release notes for all versions</a></li>
@@ -217,7 +227,7 @@ table.screenshots {
             </td>
         </tr>
         <tr>
-            <td class="right"><img src="images/shapeimage_8.png" alt="Contact us" /></td>
+            <td class="right"><span class="pixelfont section-title">Contact Us</span></td>
             <td class="left">
                 <ul>
 					<li>Development is now hosted <a href="{{ page.github }}">on GitHub</a></li>
