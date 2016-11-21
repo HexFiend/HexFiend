@@ -1,0 +1,33 @@
+---
+---
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Screenshot {{ page.number }}</title>
+		<style>
+		body {
+			background-color: white;
+			text-align: center;
+			font-family: Helvetica, "Helvetica Neue", Arial, sans-serif;
+			font-size: 12pt;
+			margin-left: 15px;
+			margin-right: 15px;
+		}
+		div.text {
+			width: 75%;
+			min-width: 150px;
+			margin-left: auto;
+			margin-right: auto;
+		}
+		a.back {
+			color: #888;
+			font-size: smaller;
+		}
+		</style>
+	</head>
+	<body>
+	<img src="screenshot{{ page.number }}.png" alt="Screenshot">
+	<div class="text">{{ page.description }}</div>
+	<p><a href="../" class="back">Back</a></p>
+</body>
+</html>
