@@ -6,13 +6,11 @@ source: 'https://github.com/ridiculousfish/HexFiend/archive/v2.4.0.tar.gz'
 source_filename: 'HexFiend-2.4.0.tar.gz'
 github: 'https://github.com/ridiculousfish/HexFiend/'
 ---
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-<style type="text/css">
-/*<![CDATA[*/
+    <meta charset="utf-8">
+<style>
 body {
 	font: 15px Helvetica, ArialMT, Arial, sans-serif
 }
@@ -60,9 +58,6 @@ a:hover {
 img {
 	border: 0;
 }
-#screenshots img {
-	border: 1px dashed #2b2b2b;
-}
 .logo {
 	position: relative;
 	left: 10px;
@@ -94,6 +89,13 @@ img {
 	font-family: Menlo, Monaco, 'Courier New', Courier, monospace;
 	letter-spacing: -0.1em;
 }
+table.screenshots {
+	padding-left: 14px;
+}
+.screenshot {
+	border: 1px dashed #2b2b2b;
+	margin: 10px;
+}
 .right.sourcecode-section {
 	padding-top: 20px;
 }
@@ -108,12 +110,11 @@ img {
 .sourcecode-item-right {
 	padding-bottom: 6px;
 }
-/*]]>*/
 </style>
     <title>Hex Fiend, a fast and clever hex editor for Mac OS X</title>
 </head>
 <body>
-    <table border="0" width="100%">
+    <table>
         <tr>
             <td class="right"><img src="images/hex_icon.png" width="190" height="215" alt="Hex Fiend logo" class="logo" /></td>
             <td class="left">
@@ -147,15 +148,15 @@ img {
         </tr>
         <tr>
             <td class="right"><img src="images/shapeimage_4.png" alt="Screenshots" /></td>
-            <td class="left" id="screenshots">
-                <table border="0" cellspacing="20">
+            <td class="left">
+                <table class="screenshots">
                     <tr>
-                        <td><a href="screenshots/Screenshot_1.html"><img src="screenshots/thumb1.png" width="195" height="122" alt="Screenshot 1 Thumbnail" /></a></td>
-                        <td><a href="screenshots/Screenshot_2.html"><img src="screenshots/thumb2.png" width="195" height="122" alt="Screenshot 2 Thumbnail" /></a></td>
+                        <td><a href="screenshots/Screenshot_1.html"><img src="screenshots/thumb1.png" width="195" height="122" alt="Screenshot 1 Thumbnail" class="screenshot" /></a></td>
+                        <td><a href="screenshots/Screenshot_2.html"><img src="screenshots/thumb2.png" width="195" height="122" alt="Screenshot 2 Thumbnail" class="screenshot" /></a></td>
                     </tr>
                     <tr>
-                        <td><a href="screenshots/Screenshot_3.html"><img src="screenshots/thumb3.png" width="195" height="122" alt="Screenshot 3 Thumbnail" /></a></td>
-                        <td><a href="screenshots/Screenshot_4.html"><img src="screenshots/thumb4.png" width="195" height="122" alt="Screenshot 4 Thumbnail" /></a></td>
+                        <td><a href="screenshots/Screenshot_3.html"><img src="screenshots/thumb3.png" width="195" height="122" alt="Screenshot 3 Thumbnail" class="screenshot" /></a></td>
+                        <td><a href="screenshots/Screenshot_4.html"><img src="screenshots/thumb4.png" width="195" height="122" alt="Screenshot 4 Thumbnail" class="screenshot" /></a></td>
                     </tr>
                 </table>
             </td>
@@ -193,17 +194,11 @@ img {
         <tr>
             <td class="right"><img src="images/shapeimage_6.png" alt="System Requirements" /></td>
             <td class="left">
-                <table border="0" cellspacing="0">
-                    <tr>
-                        <td>
-                            <ul>
-                                <li>Mac OS X 10.7 or later.</li>
-                                <li>Intel Macs only.</li>
-                                <li>Support for Tiger and PowerPC is available with version 2.0 (below).</li>
-                            </ul>
-                        </td>
-                    </tr>
-                </table>
+                <ul>
+                    <li>Mac OS X 10.7 or later.</li>
+                    <li>Intel Macs only.</li>
+                    <li>Support for Tiger and PowerPC is available with version 2.0 (below).</li>
+                </ul>
             </td>
         </tr>
         <tr>
