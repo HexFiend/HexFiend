@@ -5,6 +5,11 @@ import sys, os, subprocess, distutils.spawn, shutil
 env = os.getenv
 norm = os.path.normpath
 
+built_products_dir = env("BUILT_PRODUCTS_DIR")
+if built_products_dir == None:
+    print "Environmental variable BUILT_PRODUCTS_DIR is missing. This script should be run from within Xcode."
+    sys.exit(1)
+
 src_root = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 
 config_path= norm(src_root + "/documentation_tools/hexfiend_doxyfile.config")
