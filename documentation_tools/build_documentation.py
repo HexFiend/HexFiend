@@ -27,7 +27,8 @@ if not doxygen_path or not os.path.isfile(doxygen_path):
         print "Could not find doxygen: install doxygen to your PATH, or add a DOXYGEN_PATH"
         sys.exit(1)
 
-headers = norm(env("BUILT_PRODUCTS_DIR") + "/HexFiend.framework/Headers")
+# Headers should be a symlink, so get its real path
+headers = os.path.realpath(built_products_dir + "/HexFiend.framework/Headers")
 if not os.path.isdir(headers):
     print "The HexFiend header directory does not exist at " + headers
     sys.exit(1)
@@ -58,6 +59,10 @@ for line in conf_file:
 		line = 'INPUT = ' + headers
 	elif line.startswith('OUTPUT_DIRECTORY '):
 		line = 'OUTPUT_DIRECTORY = ' + output_dir
+	# Strip the header path as it probably contains the user name,
+	# which we don't want outputted in the html
+	elif line.startswith('STRIP_FROM_PATH '):
+		line = 'STRIP_FROM_PATH = ' + headers
 	proc.stdin.write(line)
 proc.stdin.close()
 proc.wait()
