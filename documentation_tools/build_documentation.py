@@ -1,15 +1,11 @@
 #!/usr/bin/env python
 
-import sys, os, subprocess, distutils.spawn
+import sys, os, subprocess, distutils.spawn, shutil
 
 env = os.getenv
 norm = os.path.normpath
 
-src_root = env("SOURCE_ROOT")
-if src_root == None:
-    # We've gotta figure it out ourselves
-    script_path = norm(os.getcwd() + '/' + sys.argv[0])
-    src_root = os.path.dirname(os.path.dirname(script_path))
+src_root = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 
 config_path= norm(src_root + "/documentation_tools/hexfiend_doxyfile.config")
 if not os.path.isfile(config_path):
@@ -31,7 +27,7 @@ if not os.path.isdir(headers):
     print "The HexFiend header directory does not exist at " + headers
     sys.exit(1)
 
-output_dir = norm(env("BUILT_PRODUCTS_DIR") + "/HexFiend_Documentation")
+output_dir = norm(os.path.join(src_root, 'docs'))
 try:
     os.mkdir(output_dir)
 except:
@@ -45,6 +41,10 @@ sys.stdout.flush()
 
 new_wd = norm(src_root + "/documentation_tools/")
 
+final_output_dir = norm(os.path.join(output_dir, 'docs'))
+temp_output_dir = norm(os.path.join(output_dir, 'html'))
+shutil.rmtree(final_output_dir)
+
 proc = subprocess.Popen([doxygen_path, '-'], shell=False, cwd=new_wd, stdin=subprocess.PIPE)
 
 conf_file = open(config_path, 'r')
@@ -56,5 +56,8 @@ for line in conf_file:
 	proc.stdin.write(line)
 proc.stdin.close()
 proc.wait()
+
+# Move the 'html' directory to 'docs'
+os.rename(temp_output_dir, final_output_dir)
 
 sys.exit(0)
