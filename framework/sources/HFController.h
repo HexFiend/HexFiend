@@ -125,17 +125,17 @@ You create an HFController via <tt>[[HFController alloc] init]</tt>.  After that
     NSUInteger cachedGenerationIndex;
     
     struct {
-        unsigned antialias:1;
-        unsigned colorbytes:1;
-        unsigned showcallouts:1;
-        unsigned hideNullBytes:1;
-        HFEditMode editMode:2;
-        unsigned editable:1;
-        unsigned selectable:1;
-        unsigned selectionInProgress:1;
-        unsigned shiftExtendSelection:1;
-        unsigned commandExtendSelection:1;
-        unsigned livereload:1;
+        BOOL antialias;
+        BOOL colorbytes;
+        BOOL showcallouts;
+        BOOL hideNullBytes;
+        HFEditMode editMode;
+        BOOL editable;
+        BOOL selectable;
+        BOOL selectionInProgress;
+        BOOL shiftExtendSelection;
+        BOOL commandExtendSelection;
+        BOOL livereload;
     } _hfflags;
 }
 

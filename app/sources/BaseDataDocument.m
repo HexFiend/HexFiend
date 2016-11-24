@@ -266,6 +266,9 @@ static inline Class preferredByteArrayClass(void) {
     case HFReadOnlyMode:
         [result appendString:NSLocalizedString(@" **READ-ONLY MODE**", @"Title Suffix")];
         break;
+    default:
+        HFASSERT(0); // this shouldn't happen
+        break;
     }
 
     BOOL hasAppendedProgressMarker = NO;
