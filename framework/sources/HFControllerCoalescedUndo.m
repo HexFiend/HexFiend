@@ -203,7 +203,7 @@
 
 - (BOOL)clearDependenciesOnRanges:(NSArray *)ranges inFile:(HFFileReference *)reference hint:(NSMutableDictionary *)hint {
     BOOL result = YES;
-    FOREACH(HFByteArray *, array, byteArrays) {
+    for(HFByteArray *array in byteArrays) {
         if (! [array clearDependenciesOnRanges:ranges inFile:reference hint:hint]) {
             result = NO;
             break;

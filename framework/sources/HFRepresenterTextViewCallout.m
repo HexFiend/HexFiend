@@ -197,7 +197,7 @@ static double distanceMod1(double a, double b) {
         
         /* Get all the callouts that share that byteLoc */
         NSMutableArray *sharedCallouts = [NSMutableArray array];
-        FOREACH(HFRepresenterTextViewCallout *, testCallout, remainingCallouts) {
+        for(HFRepresenterTextViewCallout *testCallout in remainingCallouts) {
             if ([testCallout byteOffset] == byteLoc) {
                 [sharedCallouts addObject:testCallout];
             }
@@ -276,7 +276,7 @@ static double distanceMod1(double a, double b) {
         
         // store it all, invalidating as necessary
         NSInteger i = 0;
-        FOREACH(HFRepresenterTextViewCallout *, callout, sharedCallouts) {
+        for(HFRepresenterTextViewCallout *callout in sharedCallouts) {
             
             /* Compute the rotation */
             double seq = (i+1)/2; //0, 1, -1, 2, -2...

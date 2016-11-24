@@ -16,7 +16,7 @@
         defaultSize = [self frame].size;
         viewsToInitialFrames = CFDictionaryCreateMutable(NULL, 0, NULL, &kCFTypeDictionaryValueCallBacks);
         
-        FOREACH(NSView *, subview, [self subviews]) {
+        for(NSView *subview in [self subviews]) {
             CFDictionarySetValue(viewsToInitialFrames, subview, [NSValue valueWithRect:[subview frame]]);
         }
     }
@@ -94,7 +94,7 @@ static Position_t computePosition(id view, CGFloat startOffset, CGFloat startWid
     USE(size);
     NSRect bounds = [self bounds];
     if (viewsToInitialFrames) {
-        FOREACH(NSView *, view, [self subviews]) {
+        for(NSView *view in [self subviews]) {
             NSValue *originalFrameValue = (NSValue *)CFDictionaryGetValue(viewsToInitialFrames, view);
             if (originalFrameValue) 
                 [self resizeView:view withOriginalFrame:[originalFrameValue rectValue] intoBounds:bounds];

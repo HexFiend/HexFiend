@@ -19,5 +19,3 @@
 
 /* Macro to specify functions and function parameters as unused. */
 #define UNUSED __attribute__((unused))
-
-#define FOREACH(type, var, exp) for (type var in (exp))

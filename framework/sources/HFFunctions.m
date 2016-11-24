@@ -95,7 +95,7 @@ static int hfrange_compare(const void *ap, const void *bp) {
 + (void)getRanges:(HFRange *)ranges fromArray:(NSArray *)array {
     HFASSERT(ranges != NULL || [array count] == 0);
     if (ranges) {
-        FOREACH(HFRangeWrapper*, wrapper, array) *ranges++ = [wrapper HFRange];
+        for(HFRangeWrapper *wrapper in array) *ranges++ = [wrapper HFRange];
     }
 }
 
@@ -247,7 +247,7 @@ static BOOL HFRangeSetOverlapsAnyRange(CFMutableArrayRef array, uintptr_t a, uin
 
 + (HFRangeSet *)withRangeWrappers:(NSArray *)ranges {
     HFRangeSet *newSet = [[[HFRangeSet alloc] init] autorelease];
-    FOREACH(HFRangeWrapper *, wrapper, [HFRangeWrapper organizeAndMergeRanges:ranges]) {
+    for(HFRangeWrapper *wrapper in [HFRangeWrapper organizeAndMergeRanges:ranges]) {
         if(wrapper->range.length > 0) {
             CFArrayAppendValue(newSet->array, (void*)ll2p(wrapper->range.location));
             CFArrayAppendValue(newSet->array, (void*)ll2p(HFMaxRange(wrapper->range)));
@@ -524,7 +524,7 @@ static BOOL HFRangeSetOverlapsAnyRange(CFMutableArrayRef array, uintptr_t a, uin
     } else {
         // Boo, we have to iterate through the array.
         NSUInteger i = 0;
-        FOREACH(id, val, (NSArray*)array) {
+        for(id val in (NSArray*)array) {
             values[i++] = CFSwapInt64HostToLittle((uint64_t)(const void *)val);
         }
     }

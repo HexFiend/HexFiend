@@ -47,7 +47,7 @@ static NSString *sNibName;
     sNibName = nil;
     HFDocumentOperationView *resultObject = nil;
     NSMutableArray *otherObjects = nil;
-    FOREACH(id, obj, topLevelObjects) {
+    for(id obj in topLevelObjects) {
         if ([obj isKindOfClass:[self class]]) {
             HFASSERT(resultObject == nil);
             resultObject = obj;
@@ -103,7 +103,7 @@ static NSView *searchForViewWithIdentifier(NSView *view, NSString *identifier) {
     
     if (! result) {
         /* Try subviews */
-        FOREACH(NSView *, subview, [view subviews]) {
+        for(NSView *subview in [view subviews]) {
             if ((result = searchForViewWithIdentifier(subview, identifier))) break;
         }
     }

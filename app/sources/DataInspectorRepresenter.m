@@ -93,7 +93,7 @@ enum Endianness_t {
     
     _Static_assert(eEndianCount <= 2, "This part of the code assumes only two supported endianesses.");
     int endianessVote = 0; // +1 for enum == 0, -1 enum != 0.
-    FOREACH(DataInspector *, di, inspectors) {
+    for(DataInspector *di in inspectors) {
         endianessVote += !di->endianness ? 1 : -1;
         present |= 1 << di->inspectorType << di->endianness*eInspectorTypeCount;
     }

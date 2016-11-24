@@ -160,7 +160,7 @@
     
     /* Process bookmarks */
     NSMutableIndexSet *bookmarkExtents = nil;
-    FOREACH(NSString *, attribute, attributes) {
+    for(NSString * attribute in attributes) {
         NSInteger bookmark = HFBookmarkFromBookmarkAttribute(attribute);
         if (bookmark != NSNotFound) {
             if (! bookmarkExtents) bookmarkExtents = [[NSMutableIndexSet alloc] init];
@@ -298,7 +298,7 @@
     HFASSERT(displayedRange.length <= NSUIntegerMax);
     NEW_ARRAY(NSValue *, clippedSelectedRanges, [selectedRanges count]);
     NSUInteger clippedRangeIndex = 0;
-    FOREACH(HFRangeWrapper *, wrapper, selectedRanges) {
+    for(HFRangeWrapper * wrapper in selectedRanges) {
         HFRange selectedRange = [wrapper HFRange];
         BOOL clippedRangeIsVisible;
         NSRange clippedSelectedRange;
@@ -418,7 +418,7 @@
     if ([controller editMode] != HFInsertMode) return NO;
     if (! [controller editable]) return NO;
     
-    FOREACH(HFRangeWrapper *, rangeWrapper, [controller selectedContentsRanges]) {
+    for(HFRangeWrapper *rangeWrapper in [controller selectedContentsRanges]) {
         if ([rangeWrapper HFRange].length > 0) return YES; //we have something selected
     }
     return NO; // we did not find anything selected

@@ -273,7 +273,7 @@ static inline Class preferredByteArrayClass(void) {
 
     BOOL hasAppendedProgressMarker = NO;
     NSArray *runningViews = [self runningOperationViews];
-    FOREACH(HFDocumentOperationView *, view, runningViews) {
+    for(HFDocumentOperationView *view in runningViews) {
         /* Skip the currently visible view */
         if (view == operationView) continue;
         
@@ -415,7 +415,7 @@ static inline Class preferredByteArrayClass(void) {
     
     /* Remove all of its subviews */
     NSArray *existingViews = [[splitView subviews] copy];
-    FOREACH(NSView *, view, existingViews) {
+    for(NSView *view in existingViews) {
         [view removeFromSuperview];
     }
     [existingViews release];
@@ -628,7 +628,7 @@ static inline Class preferredByteArrayClass(void) {
 
 - (BOOL)performDragOperation:(id <NSDraggingInfo>)sender {
     NSArray *files = [sender.draggingPasteboard propertyListForType:NSFilenamesPboardType];
-    FOREACH(NSString *, filename, files) {
+    for(NSString *filename in files) {
         NSURL *fileURL = [NSURL fileURLWithPath:filename];
         [[NSDocumentController sharedDocumentController] openDocumentWithContentsOfURL:fileURL display:YES error:nil];
     }
@@ -910,7 +910,7 @@ static inline Class preferredByteArrayClass(void) {
 - (void)restoreFirstResponderToSavedResponder {
     NSWindow *window = [self window];
     NSMutableArray *views = [NSMutableArray array];
-    FOREACH(HFRepresenter *, rep, self.representers) {
+    for(HFRepresenter *rep in self.representers) {
         NSView *view = [rep view];
         if ([view window] == window) {
             /* If we're the saved first responder, try it first */
@@ -920,7 +920,7 @@ static inline Class preferredByteArrayClass(void) {
     }
     
     /* Try each view we identified */
-    FOREACH(NSView *, view, views) {
+    for(NSView *view in views) {
         if ([window makeFirstResponder:view]) return;
     }
     
@@ -1531,7 +1531,7 @@ cancelled:;
 }
 
 - (BOOL)movingRanges:(NSArray *)ranges byAmount:(unsigned long long)value isNegative:(BOOL)isNegative isValidForLength:(unsigned long long)length {
-    FOREACH(HFRangeWrapper *, wrapper, ranges) {
+    for(HFRangeWrapper *wrapper in ranges) {
         HFRange range = [wrapper HFRange];
         if (isNegative) {
             if (value > range.location) return NO;
@@ -1756,7 +1756,7 @@ cancelled:;
     BOOL result = NO;
     if ([self isTransient]) {
         NSWindowController *controllerWithSheet = nil;
-        FOREACH(NSWindowController *, localController, [self windowControllers]) {
+        for(NSWindowController *localController in [self windowControllers]) {
             if ([[localController window] attachedSheet]) {
                 controllerWithSheet = localController;
                 break;
@@ -1789,7 +1789,7 @@ cancelled:;
     
     /* Determine which document contains this byte array so we can make a nice dialog */
     BaseDataDocument *documentForThisByteArray = nil;
-    FOREACH(BaseDataDocument *, testDocument, allDocuments) {
+    for(BaseDataDocument *testDocument in allDocuments) {
         if ([testDocument->controller byteArray] == byteArray) {
             documentForThisByteArray = testDocument;
             break;
@@ -1797,7 +1797,7 @@ cancelled:;
     }
     HFASSERT(documentForThisByteArray != nil); //for now we require that saving a ByteArray is associated with a document save
     
-    FOREACH(BaseDataDocument *, document, allDocuments) {
+    for(BaseDataDocument *document in allDocuments) {
         if (! [document isKindOfClass:[BaseDataDocument class]]) {
             /* Paranoia in case other NSDocument classes slip in */
             continue;

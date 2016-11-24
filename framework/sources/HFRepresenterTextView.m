@@ -216,7 +216,7 @@ static const CGFloat HFTeardropRadius = 12;
     NSUInteger minLine = NSUIntegerMax;
     NSUInteger maxLine = 0;
     NSUInteger bytesPerLine = [self bytesPerLine];
-    FOREACH(NSValue *, rangeValue, ranges) {
+    for(NSValue * rangeValue in ranges) {
         NSRange range = [rangeValue rangeValue];
         if (range.length > 0) {
             NSUInteger lineForRangeStart = range.location / bytesPerLine;
@@ -326,13 +326,13 @@ enum LineCoverage_t {
     NSMutableIndexSet *result = [NSMutableIndexSet indexSet];
     
     /* Extract all the ranges into a local array */
-    FOREACH(NSValue *, rangeValue1, oldSelectedRangeArray) {
+    for(NSValue * rangeValue1 in oldSelectedRangeArray) {
         NSRange range = [rangeValue1 rangeValue];
         if (range.length > 0) {
             oldRanges[oldRangeCount++] = range;
         }
     }
-    FOREACH(NSValue *, rangeValue2, newSelectedRangeArray) {
+    for(NSValue * rangeValue2 in newSelectedRangeArray) {
         NSRange range = [rangeValue2 rangeValue];
         if (range.length > 0) {
             newRanges[newRangeCount++] = range;
@@ -557,7 +557,7 @@ enum LineCoverage_t {
     NSUInteger bytesPerLine = [self bytesPerLine];
     [[self textSelectionColor] set];
     CGFloat lineHeight = [self lineHeight];
-    FOREACH(NSValue *, rangeValue, ranges) {
+    for(NSValue * rangeValue in ranges) {
         NSRange range = [rangeValue rangeValue];
         if (range.length > 0) {
             NSUInteger startByteIndex = range.location;
@@ -584,7 +584,7 @@ enum LineCoverage_t {
 }
 
 - (BOOL)hasVisibleDisplayedSelectedContentsRange {
-    FOREACH(NSValue *, rangeValue, [self displayedSelectedContentsRanges]) {
+    for(NSValue * rangeValue in [self displayedSelectedContentsRanges]) {
         NSRange range = [rangeValue rangeValue];
         if (range.length > 0) {
             return YES;
@@ -767,7 +767,7 @@ enum LineCoverage_t {
         
         /* Figure out which styles changed - that is, we want to compute those objects that are not in oldStyles or newStyles, but not both. */
         NSMutableSet *changedStyles = _styles ? [[NSMutableSet alloc] initWithArray:_styles] : [[NSMutableSet alloc] init];
-        FOREACH(HFTextVisualStyleRun *, run, newStyles) {
+        for(HFTextVisualStyleRun * run in newStyles) {
             if ([changedStyles containsObject:run]) {
                 [changedStyles removeObject:run];
             }
@@ -778,7 +778,7 @@ enum LineCoverage_t {
         
         /* Now figure out the first and last indexes of changed ranges. */
         NSUInteger firstChangedIndex = NSUIntegerMax, lastChangedIndex = 0;
-        FOREACH(HFTextVisualStyleRun *, changedRun, changedStyles) {
+        for(HFTextVisualStyleRun * changedRun in changedStyles) {
             NSRange range = [changedRun range];
             if (range.length > 0) {
                 firstChangedIndex = MIN(firstChangedIndex, range.location);
@@ -905,7 +905,7 @@ enum LineCoverage_t {
 
 - (HFTextVisualStyleRun *)styleRunForByteAtIndex:(NSUInteger)byteIndex {
     if (! _styles) return nil;
-    FOREACH(HFTextVisualStyleRun *, run, _styles) {
+    for(HFTextVisualStyleRun * run in _styles) {
         if (NSLocationInRange(byteIndex, [run range])) {
             return run;
         }
@@ -1510,7 +1510,7 @@ static size_t unionAndCleanLists(NSRect *rectList, id *valueList, size_t count) 
 
     /* Invalidate any bookmarks we're losing */
     NSArray *existingKeys = [callouts allKeys];
-    FOREACH(NSNumber *, key, existingKeys) {
+    for(NSNumber * key in existingKeys) {
         if (! bookmarks[key]) {
             HFRepresenterTextViewCallout *callout = callouts[key];
             [self setNeedsDisplayInRect:[callout rect]];
@@ -1520,7 +1520,7 @@ static size_t unionAndCleanLists(NSRect *rectList, id *valueList, size_t count) 
     
     /* Add any bookmarks we're missing */
     NSArray *newKeys = [bookmarks allKeys];
-    FOREACH(NSNumber *, newKey, newKeys) {
+    for(NSNumber * newKey in newKeys) {
         HFRepresenterTextViewCallout *callout = callouts[newKey];
         if (! callout) {
             NSUInteger bookmark = [newKey unsignedIntegerValue];
@@ -1553,7 +1553,7 @@ static size_t unionAndCleanLists(NSRect *rectList, id *valueList, size_t count) 
         /* Figure out which callouts we're going to draw */
         NSRect allCalloutsRect = NSZeroRect;
         NSMutableArray *localCallouts = [[NSMutableArray alloc] initWithCapacity:[callouts count]];
-        FOREACH(HFRepresenterTextViewCallout *, callout, [callouts objectEnumerator]) {
+        for(HFRepresenterTextViewCallout * callout in [callouts objectEnumerator]) {
             NSRect calloutRect = [callout rect];
             if (NSIntersectsRect(clip, calloutRect)) {
                 [localCallouts addObject:callout];
@@ -1566,12 +1566,12 @@ static size_t unionAndCleanLists(NSRect *rectList, id *valueList, size_t count) 
             /* Draw shadows first */
             CGContextRef ctx = [[NSGraphicsContext currentContext] graphicsPort];
             CGContextBeginTransparencyLayerWithRect(ctx, NSRectToCGRect(allCalloutsRect), NULL);
-            FOREACH(HFRepresenterTextViewCallout *, callout, localCallouts) {
+            for(HFRepresenterTextViewCallout * callout in localCallouts) {
                 [callout drawShadowWithClip:clip];
             }
             CGContextEndTransparencyLayer(ctx);
             
-            FOREACH(HFRepresenterTextViewCallout *, newCallout, localCallouts) {
+            for(HFRepresenterTextViewCallout * newCallout in localCallouts) {
                 // NSRect rect = [callout rect];
                 // [[NSColor greenColor] set];
                 // NSFrameRect(rect);
@@ -1978,7 +1978,7 @@ static size_t unionAndCleanLists(NSRect *rectList, id *valueList, size_t count) 
 /* Indicates whether at least one byte is selected */
 - (BOOL)_selectionIsNonEmpty {
     NSArray *selection = [[[self representer] controller] selectedContentsRanges];
-    FOREACH(HFRangeWrapper *, rangeWrapper, selection) {
+    for(HFRangeWrapper * rangeWrapper in selection) {
         if ([rangeWrapper HFRange].length > 0) return YES;
     }
     return NO;

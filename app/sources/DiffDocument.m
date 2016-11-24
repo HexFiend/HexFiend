@@ -37,7 +37,7 @@
 + (NSArray *)getFrontTwoDocumentsForDiffing {
     id resultDocs[2];
     NSUInteger i = 0;
-    FOREACH(NSDocument *, doc, [NSApp orderedDocuments]) {
+    for(NSDocument *doc in [NSApp orderedDocuments]) {
         if ([doc isKindOfClass:[DiffDocument class]]) continue;
         if (![doc isKindOfClass:[BaseDataDocument class]]) continue;
         resultDocs[i++] = doc;
@@ -131,7 +131,7 @@
 }
 
 - (HFTextRepresenter *)textRepresenterFromTextView:(HFTextView *)textView {
-    FOREACH(HFRepresenter *, rep, [textView controller].representers) {
+    for(HFRepresenter *rep in [textView controller].representers) {
         if ([rep isKindOfClass:[HFTextRepresenter class]]) {
             return (HFTextRepresenter *)rep;
         }
@@ -514,7 +514,7 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
     NSUInteger count = [selectedRanges count];
     NSMutableArray *correspondingRanges = [[NSMutableArray alloc] initWithCapacity:count];
     BOOL hasZeroLengthRange = NO, hasNonzeroLengthRange = NO;
-    FOREACH(HFRangeWrapper *, rangeWrapper, selectedRanges) {
+    for(HFRangeWrapper *rangeWrapper in selectedRanges) {
         HFRange range = [rangeWrapper HFRange];
         unsigned long long correspondingStartByte = [self lastCorrespondingByteBeforeByte:range.location onLeft:leftToRight];
         unsigned long long correspondingEndByte = [self lastCorrespondingByteBeforeByte:HFMaxRange(range) onLeft:leftToRight];
@@ -636,7 +636,7 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
     [[textView layoutRepresenter] setMaximizesBytesPerLine:YES];
     
     /* Remove the representers we don't want */
-    FOREACH(HFRepresenter *, rep, [textView layoutRepresenter].representers) {
+    for(HFRepresenter *rep in [textView layoutRepresenter].representers) {
         if ([rep isKindOfClass:[HFVerticalScrollerRepresenter class]] || [rep isKindOfClass:[HFStringEncodingTextRepresenter class]] || [rep isKindOfClass:[HFStatusBarRepresenter class]] || [rep isKindOfClass:[DataInspectorRepresenter class]]) {
             [[textView layoutRepresenter] removeRepresenter:rep];
             [[textView controller] removeRepresenter:rep];

@@ -170,7 +170,7 @@ static inline Class preferredByteArrayClass(void) {
 }
 
 - (void)notifyRepresentersOfChanges:(HFControllerPropertyBits)bits {
-    FOREACH(HFRepresenter*, rep, representers) {
+    for(HFRepresenter* rep in representers) {
         [rep controllerDidChange:bits];
     }
     
@@ -407,7 +407,7 @@ static inline Class preferredByteArrayClass(void) {
     
     /* Add all the ranges that are outside of selectionAnchorRange, clipping them if necessary */
     HFASSERT(HFSumDoesNotOverflow(selectionAnchorRange.location, selectionAnchorRange.length));
-    FOREACH(HFRangeWrapper*, outsideWrapper, cleanedRanges) {
+    for(HFRangeWrapper* outsideWrapper in cleanedRanges) {
         HFRange range = [outsideWrapper HFRange];
         if (range.location < selectionAnchorRange.location) {
             HFRange clippedRange;
@@ -431,7 +431,7 @@ static inline Class preferredByteArrayClass(void) {
     NSUInteger partitionCount, partitionIndex = 0;
     
     partitions[partitionIndex++] = selectionAnchorRange.location;
-    FOREACH(HFRangeWrapper*, wrapper, cleanedRanges) {
+    for(HFRangeWrapper* wrapper in cleanedRanges) {
         HFRange range = [wrapper HFRange];
         if (! HFIntersectsRange(range, selectionAnchorRange)) continue;
         
@@ -468,7 +468,7 @@ static inline Class preferredByteArrayClass(void) {
     HFASSERT(selectedContentsRanges != nil);
     HFASSERT([selectedContentsRanges count] > 0);
     BOOL onlyOneWrapper = ([selectedContentsRanges count] == 1);
-    FOREACH(HFRangeWrapper*, wrapper, selectedContentsRanges) {
+    for(HFRangeWrapper* wrapper in selectedContentsRanges) {
         EXPECT_CLASS(wrapper, HFRangeWrapper);
         HFRange range = [wrapper HFRange];
         HFASSERT(HFRangeIsSubrangeOfRange(range, HFRangeMake(0, [self contentsLength])));
@@ -591,7 +591,7 @@ static inline Class preferredByteArrayClass(void) {
         result = [NSIndexSet indexSet];
     } else {
         result = [NSMutableIndexSet indexSet];
-        FOREACH(NSString *, attribute, attributes) {
+        for(NSString * attribute in attributes) {
             NSInteger bookmark = HFBookmarkFromBookmarkAttribute(attribute);
             if (bookmark != NSNotFound) [result addIndex:bookmark];
         }
@@ -605,7 +605,7 @@ static inline Class preferredByteArrayClass(void) {
     HFRange maxRangeSet = [self _maximumDisplayedRangeSet];
     NSUInteger maxBytesForViewSize = NSUIntegerMax;
     double maxLines = DBL_MAX;
-    FOREACH(HFRepresenter*, rep, representers) {
+    for(HFRepresenter* rep in representers) {
         NSView *view = [rep view];
         double repMaxLines = [rep maximumAvailableLinesForViewHeight:NSHeight([view frame])];
         if (repMaxLines != DBL_MAX) {
@@ -875,7 +875,7 @@ static inline Class preferredByteArrayClass(void) {
 
 - (void)_updateBytesPerLine {
     NSUInteger newBytesPerLine = NSUIntegerMax;
-    FOREACH(HFRepresenter*, rep, representers) {
+    for(HFRepresenter* rep in representers) {
         NSView *view = [rep view];
         CGFloat width = [view frame].size.width;
         NSUInteger repMaxBytesPerLine = [rep maximumBytesPerLineForViewWidth:width];
@@ -921,7 +921,7 @@ static inline Class preferredByteArrayClass(void) {
     HFByteArray *result = nil;
     HFByteArray *bytes = [self byteArray];
     VALIDATE_SELECTION();
-    FOREACH(HFRangeWrapper*, wrapper, selectedContentsRanges) {
+    for(HFRangeWrapper* wrapper in selectedContentsRanges) {
         HFRange range = [wrapper HFRange];
         HFByteArray *additionalBytes = [bytes subarrayWithRange:range];
         if (! result) {
@@ -941,7 +941,7 @@ static inline Class preferredByteArrayClass(void) {
     HFRange resultRange = [selectedContentsRanges[0] HFRange];
     if ([selectedContentsRanges count] == 1) return resultRange; //already flat
     
-    FOREACH(HFRangeWrapper*, wrapper, selectedContentsRanges) {
+    for(HFRangeWrapper* wrapper in selectedContentsRanges) {
         HFRange selectedRange = [wrapper HFRange];
         if (selectedRange.location < resultRange.location) {
             /* Extend our result range backwards */
@@ -960,7 +960,7 @@ static inline Class preferredByteArrayClass(void) {
 - (unsigned long long)_minimumSelectionLocation {
     HFASSERT([selectedContentsRanges count] >= 1);
     unsigned long long minSelection = ULLONG_MAX;
-    FOREACH(HFRangeWrapper*, wrapper, selectedContentsRanges) {
+    for(HFRangeWrapper* wrapper in selectedContentsRanges) {
         HFRange range = [wrapper HFRange];
         minSelection = MIN(minSelection, range.location);
     }
@@ -970,7 +970,7 @@ static inline Class preferredByteArrayClass(void) {
 - (unsigned long long)_maximumSelectionLocation {
     HFASSERT([selectedContentsRanges count] >= 1);
     unsigned long long maxSelection = 0;
-    FOREACH(HFRangeWrapper*, wrapper, selectedContentsRanges) {
+    for(HFRangeWrapper* wrapper in selectedContentsRanges) {
         HFRange range = [wrapper HFRange];
         maxSelection = MAX(maxSelection, HFMaxRange(range));
     }
@@ -1242,7 +1242,7 @@ static inline Class preferredByteArrayClass(void) {
     NSUInteger rangeIndex = 0;
     NSArray *wrappers;
     NEW_ARRAY(HFRange, tempRanges, selectionCount * 2);
-    FOREACH(HFRangeWrapper*, wrapper, selectedContentsRanges) {
+    for(HFRangeWrapper* wrapper in selectedContentsRanges) {
         HFRange range = [wrapper HFRange];
         if (! HFIntersectsRange(range, inputRange)) {
             tempRanges[rangeIndex++] = range;
@@ -1457,7 +1457,7 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
     HFByteArray *bytes = [self byteArray];
     
     /* Enumerate the ranges in forward order so when we insert them, we insert later ranges before earlier ones, so we don't have to worry about shifting indexes */
-    FOREACH(HFRangeWrapper *, rangeWrapper, ranges) {
+    for(HFRangeWrapper * rangeWrapper in ranges) {
         HFRange range = [rangeWrapper HFRange];
         if (range.length > 0) {
             [rangesToRestore addObject:[HFRangeWrapper withRange:HFRangeMake(range.location, 0)]];
@@ -1819,7 +1819,7 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
     }    
     else {
         expectedNewLength = startLength + [data length] - previousBytes;
-        FOREACH(HFRangeWrapper*, wrapper, [self selectedContentsRanges]) expectedNewLength -= [wrapper HFRange].length;
+        for(HFRangeWrapper* wrapper in [self selectedContentsRanges]) expectedNewLength -= [wrapper HFRange].length;
     }
 #endif
     HFByteSlice *slice = [[HFSharedMemoryByteSlice alloc] initWithUnsharedData:data];
@@ -2049,7 +2049,7 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
     /* Try to clear the dependencies that undoOperations has.  If we can't, we'll have to remove them all. */
     BOOL success = YES;
     /* undoer is either a HFControllerMultiRangeUndo or a HFControllerCoalescedUndo */
-    FOREACH(id, undoer, undoOperations) {
+    for(id undoer in undoOperations) {
         if (! [undoer clearDependenciesOnRanges:ranges inFile:reference hint:hint]) {
             success = NO;
             break;

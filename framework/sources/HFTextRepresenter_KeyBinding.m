@@ -77,7 +77,7 @@
     NSArray *selection = [controller selectedContentsRanges];
     unsigned long long min = ULLONG_MAX, max = 0;
     HFASSERT([selection count] >= 1);
-    FOREACH(HFRangeWrapper *, wrapper, selection) {
+    for(HFRangeWrapper *wrapper in selection) {
 	HFRange range = [wrapper HFRange];
 	min = MIN(min, range.location);
 	max = MAX(max, HFMaxRange(range));

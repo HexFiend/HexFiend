@@ -344,7 +344,7 @@ bail:;
     self = [super initWithTargetRange:HFRangeMake(ULLONG_MAX, ULLONG_MAX)];
     maximumAllocatedMemory = 1024 * 1024 * 4;
 #if ! NDEBUG
-    FOREACH(id, op, ops) {
+    for(id op in ops) {
         HFASSERT([op isKindOfClass:[HFByteSliceFileOperationInternal class]]);
     }
 #endif
@@ -354,7 +354,7 @@ bail:;
 
 - (unsigned long long)costToWrite {
     unsigned long long result = 0;
-    FOREACH(HFByteSliceFileOperationInternal *, op, internalOperations) {
+    for(HFByteSliceFileOperationInternal *op in internalOperations) {
         result += [op costToWrite];
     }
     return result;

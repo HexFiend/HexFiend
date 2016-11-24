@@ -62,7 +62,7 @@ static NSComparisonResult compareFontDisplayNames(NSFont *a, NSFont *b, void *un
     [fontNames minusSet:[NSSet setWithArray:[manager availableFontNamesWithTraits:NSFixedPitchFontMask | NSBoldFontMask]]];
     [fontNames minusSet:[NSSet setWithArray:[manager availableFontNamesWithTraits:NSFixedPitchFontMask | NSItalicFontMask]]];
     NSMutableArray *fonts = [NSMutableArray arrayWithCapacity:[fontNames count]];
-    FOREACH(NSString *, fontName, fontNames) {
+    for(NSString *fontName in fontNames) {
         NSFont *font = [NSFont fontWithName:fontName size:0];
         NSString *displayName = [font displayName];
         if (! [displayName length]) continue;
@@ -81,7 +81,7 @@ static NSComparisonResult compareFontDisplayNames(NSFont *a, NSFont *b, void *un
     NSMenu *menu = [fontMenuItem submenu];
     [menu removeItemAtIndex:0];
     NSUInteger itemIndex = 0;
-    FOREACH(NSFont *, font, fonts) {
+    for(NSFont *font in fonts) {
         NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:[font displayName] action:@selector(setFontFromMenuItem:) keyEquivalent:@""];
         NSDictionary *attrs = @{
             NSFontAttributeName: font,
@@ -166,7 +166,7 @@ static NSComparisonResult compareFontDisplayNames(NSFont *a, NSFont *b, void *un
         
         // Remove any old bookmark menu items
         if(bookmarksMenuItems) {
-            FOREACH(NSMenuItem *, bm, bookmarksMenuItems) {
+            for(NSMenuItem *bm in bookmarksMenuItems) {
                 [bookmarksMenu removeItem:bm];
             }
             [bookmarksMenuItems release];
@@ -177,7 +177,7 @@ static NSComparisonResult compareFontDisplayNames(NSFont *a, NSFont *b, void *un
             bookmarksMenuItems = [currentDocument performSelector:@selector(copyBookmarksMenuItems)];
             if(bookmarksMenuItems) {
                 NSInteger index = [bookmarksMenu indexOfItem:noBookmarksMenuItem];
-                FOREACH(NSMenuItem *, bm, bookmarksMenuItems) {
+                for(NSMenuItem *bm in bookmarksMenuItems) {
                     [bookmarksMenu insertItem:bm atIndex:index++];
                 }
             }

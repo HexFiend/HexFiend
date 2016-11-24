@@ -233,7 +233,7 @@
         }
         else {
             unsigned long long totalSelectionLength = 0;
-            FOREACH(HFRangeWrapper *, wrapper, ranges) {
+            for(HFRangeWrapper * wrapper in ranges) {
                 HFRange range = [wrapper HFRange];
                 totalSelectionLength = HFSum(totalSelectionLength, range.length);
             }

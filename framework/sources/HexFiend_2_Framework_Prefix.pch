@@ -52,8 +52,6 @@
 #define EXPECT_CLASS(e, c) USE(e)
 #endif
 
-#define FOREACH(type, var, exp) for (type var in (exp))
-
 #define NEW_ARRAY(type, name, number) \
     type name ## static_ [256];\
     type * name = ((number) <= 256 ? name ## static_ : check_malloc((number) * sizeof(type)))

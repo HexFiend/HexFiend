@@ -262,7 +262,7 @@ static const HFRange kEntireRange = {0, ULLONG_MAX};
 - (NSSet *)attributesAtIndex:(unsigned long long)index length:(unsigned long long *)length {
     NSMutableSet *result = [NSMutableSet set];
     unsigned long long maxLocation = ULLONG_MAX;
-    FOREACH(HFByteRangeAttributeRun *, run, attributeRuns) {
+    for(HFByteRangeAttributeRun *run in attributeRuns) {
         unsigned long long runStart = run->range.location;            
         unsigned long long runEnd = HFMaxRange(run->range);        
         if (runStart > index) {
@@ -281,7 +281,7 @@ static const HFRange kEntireRange = {0, ULLONG_MAX};
 
 - (NSSet *)attributesInRange:(HFRange)range {
     NSMutableSet *result = [NSMutableSet set];
-    FOREACH(HFByteRangeAttributeRun *, run, attributeRuns) {
+    for(HFByteRangeAttributeRun *run in attributeRuns) {
         if (HFIntersectsRange(range, run->range)) {
             [result addObject:run->name];
         }
@@ -290,7 +290,7 @@ static const HFRange kEntireRange = {0, ULLONG_MAX};
 }
 
 - (HFRange)rangeOfAttribute:(NSString *)attribute {
-    FOREACH(HFByteRangeAttributeRun *, run, attributeRuns) {
+    for(HFByteRangeAttributeRun *run in attributeRuns) {
         if ([attribute isEqualToString:run->name]) return run->range;
     }
     return HFRangeMake(ULLONG_MAX, ULLONG_MAX);
@@ -300,7 +300,7 @@ static const HFRange kEntireRange = {0, ULLONG_MAX};
     HFASSERT(array != NULL);
     HFASSERT(array != self);
     EXPECT_CLASS(array, HFNaiveByteRangeAttributeArray);
-    FOREACH(HFByteRangeAttributeRun *, run, array->attributeRuns) {
+    for(HFByteRangeAttributeRun *run in array->attributeRuns) {
         if (! allowTransfer || allowTransfer(run->name)) {
             HFRange intersection = HFIntersectionRange(range, run->range);
             if (intersection.length > 0) {
@@ -315,7 +315,7 @@ static const HFRange kEntireRange = {0, ULLONG_MAX};
     /* Sort our runs by their first location, and then extract the attributes from them. */
     NSArray *sortedRuns = [attributeRuns sortedArrayUsingSelector:@selector(compare:)];
     NSMutableArray *attributes = [NSMutableArray arrayWithCapacity:[sortedRuns count]];
-    FOREACH(HFByteRangeAttributeRun *, run, sortedRuns) {
+    for(HFByteRangeAttributeRun *run in sortedRuns) {
         [attributes addObject:run->name];
     }
     return [attributes objectEnumerator];
@@ -324,7 +324,7 @@ static const HFRange kEntireRange = {0, ULLONG_MAX};
 - (void)byteRange:(HFRange)dyingRange wasReplacedByBytesOfLength:(unsigned long long)replacementLength {
     NSArray *localRuns = [attributeRuns copy];
     NSUInteger idx = 0;
-    FOREACH(HFByteRangeAttributeRun *, run, localRuns) {
+    for(HFByteRangeAttributeRun *run in localRuns) {
         const HFRange runRange = run->range;
         HFRange newRange;
         
@@ -599,7 +599,7 @@ static void removeFromDictionaryOfSets(NSMutableDictionary *dictionary, NSString
     /* We're going to remove these from the attributesToNodes set */
     NSMutableSet *allNodesWithAttribute = attributesToNodes[attributeName];
     
-    FOREACH(HFByteRangeAttributeArrayNode *, node, nodesToDelete) {
+    for(HFByteRangeAttributeArrayNode *node in nodesToDelete) {
         
         /* Remove from the corresponding attributesToNodes set */
         [allNodesWithAttribute removeObject:node];
@@ -637,7 +637,7 @@ static void removeFromDictionaryOfSets(NSMutableDictionary *dictionary, NSString
     /* We can just remove everything in attributesToNodes */
     NSMutableSet *matchingNodes = attributesToNodes[attributeName];
     if (matchingNodes) {
-        FOREACH(HFByteRangeAttributeArrayNode *, node, matchingNodes) {
+        for(HFByteRangeAttributeArrayNode *node in matchingNodes) {
             [atree removeNode:node];
         }
         /* We can just remove the entire set */
@@ -647,7 +647,7 @@ static void removeFromDictionaryOfSets(NSMutableDictionary *dictionary, NSString
 
 - (void)removeAttributes:(NSSet *)attributeNames {
     /* This may be more efficient by walking the tree */
-    FOREACH(NSString *, name, attributeNames) {
+    for(NSString *name in attributeNames) {
         [self removeAttribute:name];
     }
 }

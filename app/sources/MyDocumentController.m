@@ -53,7 +53,7 @@
     if ([NSThread isMainThread]) {
         BaseDataDocument *transientDoc = documents[0], *doc = documents[1];
         NSArray *controllersToTransfer = [[transientDoc windowControllers] copy];
-        FOREACH(NSWindowController *, controller, controllersToTransfer) {
+        for(NSWindowController *controller in controllersToTransfer) {
             [doc addWindowController:controller];
             [transientDoc removeWindowController:controller];
             [doc adoptWindowController:controller fromTransientDocument:transientDoc];

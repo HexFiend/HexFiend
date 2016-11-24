@@ -58,7 +58,7 @@ static void tarjan(HFObjectGraph *self, id node, CFMutableDictionaryRef vIndexes
     [stack addObject:node];
     
     id dependencies = (givenDependencies ? givenDependencies : [self dependenciesForObject:node]);
-    FOREACH(id, successor, dependencies) {
+    for(id successor in dependencies) {
         NSUInteger successorIndex = -1;
         BOOL successorIndexIsDefined = CFDictionaryGetValueIfPresent(vIndexes, successor, (const void **)&successorIndex);
         if (! successorIndexIsDefined) {
@@ -146,7 +146,7 @@ static void topologicallySort(HFObjectGraph *self, id object, NSMutableArray *re
     NSMutableArray *result = [NSMutableArray arrayWithCapacity:count];
     CFMutableSetRef visitedSet = CFSetCreateMutable(NULL, count, NULL);
     CFMutableSetRef pendingSet = CFSetCreateMutable(NULL, count, NULL);
-    FOREACH(id, object, objects) {
+    for(id object in objects) {
         topologicallySort(self, object, result, pendingSet, visitedSet);
     }
     CFRelease(visitedSet);
@@ -205,13 +205,13 @@ static void collectDictionaryValues(const void *key, const void *value, void *co
     NSMutableArray *result = [NSMutableArray array];
     /* A super-lame naive algorithm for finding all the strongly connected components of a graph. */
     CFMutableDictionaryRef components = CFDictionaryCreateMutable(NULL, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
-    FOREACH(id, obj1, objects) {
+    for(id obj1 in objects) {
         NSMutableArray *loop = (id)CFDictionaryGetValue(components, obj1);
         if (! loop) {
             loop = [NSMutableArray array];
             CFDictionarySetValue(components, obj1, loop);
         }
-        FOREACH(id, obj2, objects) {
+        for(id obj2 in objects) {
             if (! [loop containsObject:obj2] && [self naivePathFrom:obj1 to:obj2] && [self naivePathFrom:obj2 to:obj1]) {
                 CFDictionarySetValue(components, obj2, loop);
                 [loop addObject:obj2];
@@ -232,7 +232,7 @@ static NSSet *arraysToSets(NSArray *array, NSUInteger depth) {
     }
     else {
         result = [NSMutableSet setWithCapacity:[array count]];
-        FOREACH(id, value, array) {
+        for(id value in array) {
             [result addObject:arraysToSets(value, depth - 1)];
         }
     }
