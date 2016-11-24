@@ -18,7 +18,6 @@
                 <outlet property="explanatoryTextField" destination="911" id="913"/>
                 <outlet property="externalDataTextView" destination="868" id="871"/>
                 <outlet property="tabView" destination="826" id="842"/>
-                <outlet property="textView" destination="855" id="857"/>
             </connections>
         </customObject>
         <customObject id="373" customClass="NSFontManager"/>
@@ -601,7 +600,7 @@
                 <rect key="frame" x="0.0" y="0.0" width="754" height="668"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <tabView autoresizesSubviews="NO" type="noTabsBezelBorder" id="826">
+                    <tabView type="noTabsBezelBorder" id="826">
                         <rect key="frame" x="205" y="67" width="549" height="601"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <font key="font" metaFont="system"/>
@@ -609,14 +608,14 @@
                             <tabViewItem label="Bound HFTextView" identifier="bound_text_view" id="827">
                                 <view key="view" id="830">
                                     <rect key="frame" x="10" y="7" width="529" height="581"/>
-                                    <autoresizingMask key="autoresizingMask"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <scrollView horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" id="851">
                                             <rect key="frame" x="-3" y="286" width="532" height="294"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" heightSizable="YES"/>
                                             <clipView key="contentView" id="urA-Yf-Q15">
                                                 <rect key="frame" x="1" y="1" width="530" height="292"/>
-                                                <autoresizingMask key="autoresizingMask"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <textView importsGraphics="NO" usesFontPanel="YES" findStyle="panel" continuousSpellChecking="YES" allowsUndo="YES" usesRuler="YES" allowsNonContiguousLayout="YES" spellingCorrection="YES" smartInsertDelete="YES" id="852">
                                                         <rect key="frame" x="0.0" y="0.0" width="530" height="292"/>
@@ -717,7 +716,7 @@
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" heightSizable="YES"/>
                         <clipView key="contentView" drawsBackground="NO" id="eWs-O5-nHS">
                             <rect key="frame" x="1" y="1" width="199" height="596"/>
-                            <autoresizingMask key="autoresizingMask"/>
+                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <tableView focusRingType="none" verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" selectionHighlightStyle="sourceList" columnReordering="NO" columnSelection="YES" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" id="875">
                                     <rect key="frame" x="0.0" y="0.0" width="199" height="596"/>
