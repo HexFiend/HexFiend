@@ -83,6 +83,11 @@ static NSComparisonResult compareFontDisplayNames(NSFont *a, NSFont *b, void *un
     NSUInteger itemIndex = 0;
     FOREACH(NSFont *, font, fonts) {
         NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:[font displayName] action:@selector(setFontFromMenuItem:) keyEquivalent:@""];
+        NSDictionary *attrs = @{
+            NSFontAttributeName: font,
+        };
+        NSAttributedString *astr = [[[NSAttributedString alloc] initWithString:[font displayName] attributes:attrs] autorelease];
+        [item setAttributedTitle:astr];
         [item setRepresentedObject:font];
         [item setTarget:self];
         [menu insertItem:item atIndex:itemIndex++];
