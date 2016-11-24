@@ -21,6 +21,6 @@ VERSION="$(defaults read "${APP}/Contents/Info.plist" CFBundleShortVersionString
 DMG="$(echo "${APPNAME} ${VERSION}.dmg" | tr " " "_")"
 FOLDER="${APPNAME} ${VERSION}"
 mkdir -p "${FOLDER}"
-cp -Rp "${APP}" "ReleaseNotes.html" "License.txt" "${FOLDER}"
+cp -Rp "${APP}" "docs/ReleaseNotes.html" "License.txt" "${FOLDER}"
 hdiutil create -format UDBZ -srcfolder "${FOLDER}" -ov "${DMG}"
 rm -rf "${FOLDER}"
