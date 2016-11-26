@@ -86,7 +86,7 @@ typedef NS_ENUM(NSInteger, HFEditMode) {
 HFController acts as the controller layer in the MVC architecture of HexFiend.  The HFController plays several significant central roles, including:
  - Mediating between the data itself (in the HFByteArray) and the views of the data (the @link HFRepresenter HFRepresenters@endlink).
  - Propagating changes to the views.
- - Storing properties common to all Representers, such as the currently diplayed range, the currently selected range(s), the font, etc.
+ - Storing properties common to all Representers, such as the currently displayed range, the currently selected range(s), the font, etc.
  - Handling text editing actions, such as selection changes or insertions/deletions.
 
 An HFController is the top point of ownership for a HexFiend object graph.  It retains both its ByteArray (model) and its array of Representers (views).
