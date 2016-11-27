@@ -127,6 +127,7 @@ static inline Class preferredByteArrayClass(void) {
             @"DefaultFontName" : HFDEFAULT_FONT,
             @"DefaultFontSize" : @(HFDEFAULT_FONTSIZE),
             @"BytesPerColumn" : @4,
+            @"LineNumberFormat" : @0,
             USERDEFS_KEY_FOR_REP(lineCountingRepresenter) : @YES,
             USERDEFS_KEY_FOR_REP(hexRepresenter) : @YES,
             USERDEFS_KEY_FOR_REP(asciiRepresenter) : @YES,
@@ -503,6 +504,8 @@ static inline Class preferredByteArrayClass(void) {
     [center addObserver:self selector:@selector(dataInspectorChangedRowCount:) name:DataInspectorDidChangeRowCount object:dataInspectorRepresenter];
     [center addObserver:self selector:@selector(dataInspectorDeletedAllRows:) name:DataInspectorDidDeleteAllRows object:dataInspectorRepresenter];
     NSUserDefaults *defs = [NSUserDefaults standardUserDefaults];
+    
+    lineCountingRepresenter.lineNumberFormat = (HFLineNumberFormat)[defs integerForKey:@"LineNumberFormat"];
     
     controller = [[HFController alloc] init];
     [controller setShouldAntialias:[defs boolForKey:@"AntialiasText"]];
@@ -1682,9 +1685,11 @@ cancelled:;
 
 - (IBAction)setLineNumberFormat:(id)sender
 {
-    const HFLineNumberFormat format = (HFLineNumberFormat)((NSMenuItem*)sender).tag;
+    const NSInteger tag = ((NSMenuItem*)sender).tag;
+    const HFLineNumberFormat format = (HFLineNumberFormat)tag;
     HFASSERT(format == HFLineNumberFormatDecimal || format == HFLineNumberFormatHexadecimal);
     lineCountingRepresenter.lineNumberFormat = format;
+    [[NSUserDefaults standardUserDefaults] setInteger:tag forKey:@"LineNumberFormat"];
 }
 
 - (void)jumpToBookmarkIndex:(NSInteger)bookmark selecting:(BOOL)select {
