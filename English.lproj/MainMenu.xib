@@ -428,6 +428,25 @@
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="482"/>
+                            <menuItem title="Line Number Format" id="h60-d7-ETA">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <menu key="submenu" title="Line Number Format" id="KyC-Sy-AfC">
+                                    <items>
+                                        <menuItem title="Decimal" state="on" id="NUg-p8-VBz">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="setLineNumberFormat:" target="-1" id="P6u-XA-Rvx"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Hexadecimal" tag="1" id="qtp-0H-g1W">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="setLineNumberFormat:" target="-1" id="FUQ-zd-rLh"/>
+                                            </connections>
+                                        </menuItem>
+                                    </items>
+                                </menu>
+                            </menuItem>
                             <menuItem title="Byte Grouping" id="488">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <menu key="submenu" title="Byte Grouping" id="489">

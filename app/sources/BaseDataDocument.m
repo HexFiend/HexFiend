@@ -863,6 +863,10 @@ static inline Class preferredByteArrayClass(void) {
         [item setState:(NSUInteger)[item tag] == [controller bytesPerColumn]];
         return YES;
     }
+    else if (action == @selector(setLineNumberFormat:)) {
+        item.state = item.tag == lineCountingRepresenter.lineNumberFormat ? NSOnState : NSOffState;
+        return YES;
+    }
     else if (action == @selector(scrollToBookmark:) || action == @selector(selectBookmark:)) {
         HFRange range = [controller rangeForBookmark:[item tag]];
         return range.location != ULLONG_MAX || range.length != ULLONG_MAX;
@@ -1674,6 +1678,13 @@ cancelled:;
     USE(sender);
     [controller setEditMode:HFReadOnlyMode];
     [self updateDocumentWindowTitle];    
+}
+
+- (IBAction)setLineNumberFormat:(id)sender
+{
+    const HFLineNumberFormat format = (HFLineNumberFormat)((NSMenuItem*)sender).tag;
+    HFASSERT(format == HFLineNumberFormatDecimal || format == HFLineNumberFormatHexadecimal);
+    lineCountingRepresenter.lineNumberFormat = format;
 }
 
 - (void)jumpToBookmarkIndex:(NSInteger)bookmark selecting:(BOOL)select {

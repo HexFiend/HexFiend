@@ -86,6 +86,7 @@ extern NSString * const BaseDataDocumentDidChangeStringEncodingNotification;
 - (IBAction)setInsertMode:sender;
 - (IBAction)setReadOnlyMode:sender;
 - (IBAction)modifyByteGrouping:sender;
+- (IBAction)setLineNumberFormat:(id)sender;
 
 - (IBAction)setBookmark:sender;
 - (IBAction)deleteBookmark:sender;
