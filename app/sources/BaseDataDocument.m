@@ -1963,6 +1963,7 @@ cancelled:;
     savePanel.allowsOtherFileTypes = YES;
     savePanel.treatsFilePackagesAsDirectories = YES;
     savePanel.showsHiddenFiles = YES;
+    savePanel.accessoryView = nil; // defeat useless "File Format" accessory view
     return YES;
 }
 
