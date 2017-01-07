@@ -32,7 +32,6 @@
 		9408FC0E19DD7C87004F800E /* HexFiend.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D01E7BB80CDC530C00943F9E /* HexFiend.framework */; };
 		9408FC1019DD8669004F800E /* HFPrivilegedHelperConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 9408FC0F19DD8669004F800E /* HFPrivilegedHelperConnection.h */; };
 		940C4E6A183C11E20009AFDA /* HexFiend.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D01E7BB80CDC530C00943F9E /* HexFiend.framework */; };
-		94548A4D19DC5218006EFA29 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 94548A4219DC51FF006EFA29 /* Sparkle.framework */; };
 		94548A4E19DC5218006EFA29 /* Sparkle.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 94548A4219DC51FF006EFA29 /* Sparkle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		9483479319DE1C8E0086A732 /* NaiveArray.m in Sources */ = {isa = PBXBuildFile; fileRef = D06D60A40FA7E980002376EE /* NaiveArray.m */; };
 		9483479419DE1C920086A732 /* TreeEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = D06D60BC0FA7EA23002376EE /* TreeEntry.m */; };
@@ -110,6 +109,7 @@
 		D04C78280DC47ECF00A76FF2 /* HFTextSelectionPulseView.m in Sources */ = {isa = PBXBuildFile; fileRef = D04C78260DC47ECF00A76FF2 /* HFTextSelectionPulseView.m */; };
 		D04D8FDF10239BB20013A2A1 /* HFPrivilegedHelperConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = D04D8FCB102396FC0013A2A1 /* HFPrivilegedHelperConnection.m */; };
 		D04D90531023AAEE0013A2A1 /* HFHelperProcessSharedCode.h in Headers */ = {isa = PBXBuildFile; fileRef = D04D90521023AAEE0013A2A1 /* HFHelperProcessSharedCode.h */; };
+		D05390571E21AB4300F9AAC1 /* Sparkle.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 94548A4219DC51FF006EFA29 /* Sparkle.framework */; };
 		D05984CC1032C6D900059E72 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D05984CB1032C6D900059E72 /* Security.framework */; };
 		D059E1291311C676001493B8 /* AppDebugging.m in Sources */ = {isa = PBXBuildFile; fileRef = D059E1281311C676001493B8 /* AppDebugging.m */; };
 		D05B77DF0E00883B008C45EB /* HFCancelButton.h in Headers */ = {isa = PBXBuildFile; fileRef = D05B77DD0E00883B008C45EB /* HFCancelButton.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -310,6 +310,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D05390561E21AB2500F9AAC1 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = built_frameworks;
+			dstSubfolderSpec = 16;
+			files = (
+				D05390571E21AB4300F9AAC1 /* Sparkle.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D05E7AA50FF6160D00767D95 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -428,6 +438,9 @@
 		D04C78260DC47ECF00A76FF2 /* HFTextSelectionPulseView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFTextSelectionPulseView.m; path = sources/HFTextSelectionPulseView.m; sourceTree = "<group>"; };
 		D04D8FCB102396FC0013A2A1 /* HFPrivilegedHelperConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFPrivilegedHelperConnection.m; path = sources/HFPrivilegedHelperConnection.m; sourceTree = "<group>"; };
 		D04D90521023AAEE0013A2A1 /* HFHelperProcessSharedCode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFHelperProcessSharedCode.h; path = sources/HFHelperProcessSharedCode.h; sourceTree = "<group>"; };
+		D05390421E2192C000F9AAC1 /* HexFiendSandbox.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = HexFiendSandbox.entitlements; sourceTree = "<group>"; };
+		D05390431E2192C000F9AAC1 /* HexFiendUnsandbox.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = HexFiendUnsandbox.entitlements; sourceTree = "<group>"; };
+		D05390441E2192C000F9AAC1 /* postprocess_for_mas.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = postprocess_for_mas.sh; sourceTree = "<group>"; };
 		D05984CB1032C6D900059E72 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = /System/Library/Frameworks/Security.framework; sourceTree = "<absolute>"; };
 		D059E1271311C675001493B8 /* AppDebugging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDebugging.h; path = app/sources/AppDebugging.h; sourceTree = "<group>"; };
 		D059E1281311C676001493B8 /* AppDebugging.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDebugging.m; path = app/sources/AppDebugging.m; sourceTree = "<group>"; };
@@ -545,7 +558,6 @@
 				795F46C314BAADB600EB2F7D /* DiskArbitration.framework in Frameworks */,
 				8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */,
 				94ECCBC01BDF7DD2007FF44E /* HexFiend.framework in Frameworks */,
-				94548A4D19DC5218006EFA29 /* Sparkle.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -608,6 +620,7 @@
 				D0560B380CDC4253009D2484 /* App */,
 				D047E33B1022CF2B00EF307B /* PrivilegedHelper */,
 				D00C166E0FF4925A006D021F /* HexFiendling */,
+				D05390411E2192C000F9AAC1 /* configs */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
 				D01D1D6C1489D1F6008212BB /* Documentation Scripts */,
@@ -887,6 +900,16 @@
 			name = Utilities;
 			sourceTree = "<group>";
 		};
+		D05390411E2192C000F9AAC1 /* configs */ = {
+			isa = PBXGroup;
+			children = (
+				D05390421E2192C000F9AAC1 /* HexFiendSandbox.entitlements */,
+				D05390431E2192C000F9AAC1 /* HexFiendUnsandbox.entitlements */,
+				D05390441E2192C000F9AAC1 /* postprocess_for_mas.sh */,
+			);
+			path = configs;
+			sourceTree = "<group>";
+		};
 		D0560B350CDC4248009D2484 /* Framework */ = {
 			isa = PBXGroup;
 			children = (
@@ -1140,12 +1163,15 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = C01FCF4A08A954540054247B /* Build configuration list for PBXNativeTarget "HexFiend_2" */;
 			buildPhases = (
+				D05390561E21AB2500F9AAC1 /* CopyFiles */,
 				D01E7BDA0CDC540700943F9E /* CopyFiles */,
 				8D1107290486CEB800E47090 /* Resources */,
 				8D11072C0486CEB800E47090 /* Sources */,
 				8D11072E0486CEB800E47090 /* Frameworks */,
 				D039DC011481C18400364FA6 /* CopyFiles */,
 				A57617BB1E430C18003CF6BB /* Set Bundle Version */,
+				D05390401E2192AE00F9AAC1 /* Optionally Postprocess for Mac App Store */,
+				D05390581E21AB5800F9AAC1 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -1401,6 +1427,33 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "'documentation_tools/build_documentation.py'";
+		};
+		D05390401E2192AE00F9AAC1 /* Optionally Postprocess for Mac App Store */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Optionally Postprocess for Mac App Store";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "${SRCROOT}/configs/postprocess_for_mas.sh\n";
+		};
+		D05390581E21AB5800F9AAC1 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -1877,6 +1930,7 @@
 		D0222568146F5D3900646C27 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				BUILD_FOR_MAS = "";
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_CXX_LIBRARY = "libc++";
@@ -1920,6 +1974,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "-F$(BUILT_PRODUCTS_DIR)/built_frameworks/";
 				SDKROOT = macosx;
 				VALID_ARCHS = "armv6 armv7 i386 x86_64";
 				WARNING_CFLAGS = (
@@ -1942,6 +1997,11 @@
 				OTHER_CFLAGS = (
 					"-fblocks",
 					"$(inherited)",
+				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-framework",
+					Sparkle,
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.ridiculousfish.HexFiend;
 				PRODUCT_NAME = "Hex Fiend";
@@ -2020,6 +2080,7 @@
 		D022259D146F629E00646C27 /* Debug+UnitTests */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				BUILD_FOR_MAS = "";
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_CXX_LIBRARY = "libc++";
@@ -2066,6 +2127,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "-F$(BUILT_PRODUCTS_DIR)/built_frameworks/";
 				SDKROOT = macosx;
 				VALID_ARCHS = "armv6 armv7 i386 x86_64";
 				WARNING_CFLAGS = (
@@ -2088,6 +2150,11 @@
 				OTHER_CFLAGS = (
 					"-fblocks",
 					"$(inherited)",
+				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-framework",
+					Sparkle,
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.ridiculousfish.HexFiend;
 				PRODUCT_NAME = "Hex Fiend";
@@ -2166,6 +2233,7 @@
 		D039DC1114835A1400364FA6 /* Release+CodeSign */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				BUILD_FOR_MAS = "";
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_CXX_LIBRARY = "libc++";
@@ -2209,6 +2277,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "-F$(BUILT_PRODUCTS_DIR)/built_frameworks/";
 				SDKROOT = macosx;
 				VALID_ARCHS = "armv6 armv7 i386 x86_64";
 				WARNING_CFLAGS = (
@@ -2231,6 +2300,11 @@
 				OTHER_CFLAGS = (
 					"-fblocks",
 					"$(inherited)",
+				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-framework",
+					Sparkle,
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.ridiculousfish.HexFiend;
 				PRODUCT_NAME = "Hex Fiend";
@@ -2329,6 +2403,7 @@
 		D05390281E218CB700F9AAC1 /* Release+MAS */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				BUILD_FOR_MAS = 1;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_CXX_LIBRARY = "libc++";
@@ -2372,6 +2447,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_CFLAGS = "-DMacAppStore=1";
+				OTHER_LDFLAGS = "-F$(BUILT_PRODUCTS_DIR)/built_frameworks/";
 				SDKROOT = macosx;
 				VALID_ARCHS = "armv6 armv7 i386 x86_64";
 				WARNING_CFLAGS = (
@@ -2395,6 +2471,7 @@
 					"-fblocks",
 					"$(inherited)",
 				);
+				OTHER_LDFLAGS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = com.ridiculousfish.HexFiend;
 				PRODUCT_NAME = "Hex Fiend";
 				WRAPPER_EXTENSION = app;
@@ -2507,6 +2584,7 @@
 		D053902F1E218CD500F9AAC1 /* Debug+MAS */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				BUILD_FOR_MAS = 1;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_CXX_LIBRARY = "libc++";
@@ -2552,6 +2630,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "-DMacAppStore=1";
+				OTHER_LDFLAGS = "-F$(BUILT_PRODUCTS_DIR)/built_frameworks/";
 				SDKROOT = macosx;
 				VALID_ARCHS = "armv6 armv7 i386 x86_64";
 				WARNING_CFLAGS = (
@@ -2575,6 +2654,7 @@
 					"-fblocks",
 					"$(inherited)",
 				);
+				OTHER_LDFLAGS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = com.ridiculousfish.HexFiend;
 				PRODUCT_NAME = "Hex Fiend";
 				WRAPPER_EXTENSION = app;
@@ -2692,6 +2772,7 @@
 		D075E204148196B00010D9AE /* Debug+CodeSign */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				BUILD_FOR_MAS = "";
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_CXX_LIBRARY = "libc++";
@@ -2737,6 +2818,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "-F$(BUILT_PRODUCTS_DIR)/built_frameworks/";
 				SDKROOT = macosx;
 				VALID_ARCHS = "armv6 armv7 i386 x86_64";
 				WARNING_CFLAGS = (
@@ -2759,6 +2841,11 @@
 				OTHER_CFLAGS = (
 					"-fblocks",
 					"$(inherited)",
+				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-framework",
+					Sparkle,
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.ridiculousfish.HexFiend;
 				PRODUCT_NAME = "Hex Fiend";
@@ -2838,6 +2925,7 @@
 		D083F7350DBCBD5F00C2B632 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				BUILD_FOR_MAS = "";
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_CXX_LIBRARY = "libc++";
@@ -2883,6 +2971,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "-F$(BUILT_PRODUCTS_DIR)/built_frameworks/";
 				SDKROOT = macosx;
 				VALID_ARCHS = "armv6 armv7 i386 x86_64";
 				WARNING_CFLAGS = (
@@ -2936,6 +3025,11 @@
 				OTHER_CFLAGS = (
 					"-fblocks",
 					"$(inherited)",
+				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-framework",
+					Sparkle,
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.ridiculousfish.HexFiend;
 				PRODUCT_NAME = "Hex Fiend";
