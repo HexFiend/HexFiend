@@ -225,3 +225,28 @@ static NSComparisonResult compareFontDisplayNames(NSFont *a, NSFont *b, void *un
 }
 
 @end
+
+#if MacAppStore
+
+// define a stubby proxy, to hide the Check For Updates menu item
+// if Sparkle is not present
+@interface SUUpdater : NSObject
+@end
+
+@implementation SUUpdater
+
+- (BOOL)validateMenuItem:(NSMenuItem *)item {
+    if ([item action] == @selector(checkForUpdates:)) {
+        [item setHidden:YES];
+        return NO;
+    }
+    return YES;
+}
+
+- (IBAction)checkForUpdates:(id)sender {
+    USE(sender);
+}
+
+@end
+
+#endif
