@@ -18,8 +18,11 @@
 @implementation HFPrivilegedHelperConnection
 
 + (instancetype)sharedConnection {
-    static id shared = nil;
+    static HFPrivilegedHelperConnection *shared = nil;
     if (!shared) shared = [[self alloc] init];
+#if HF_NO_PRIVILEGED_FILE_OPERATIONS
+    shared.disabled = YES;
+#endif
     return shared;
 }
 
@@ -235,4 +238,3 @@ static NSString *read_line(FILE *file) {
 }
 
 @end
-

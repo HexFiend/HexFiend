@@ -2446,7 +2446,10 @@
 				GCC_WARN_UNUSED_VALUE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
-				OTHER_CFLAGS = "-DMacAppStore=1";
+				OTHER_CFLAGS = (
+					"-DMacAppStore=1",
+					"-DHF_NO_PRIVILEGED_FILE_OPERATIONS=1",
+				);
 				OTHER_LDFLAGS = "-F$(BUILT_PRODUCTS_DIR)/built_frameworks/";
 				SDKROOT = macosx;
 				VALID_ARCHS = "armv6 armv7 i386 x86_64";
@@ -2629,7 +2632,10 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_CFLAGS = "-DMacAppStore=1";
+				OTHER_CFLAGS = (
+					"-DMacAppStore=1",
+					"-DHF_NO_PRIVILEGED_FILE_OPERATIONS=1",
+				);
 				OTHER_LDFLAGS = "-F$(BUILT_PRODUCTS_DIR)/built_frameworks/";
 				SDKROOT = macosx;
 				VALID_ARCHS = "armv6 armv7 i386 x86_64";
