@@ -327,6 +327,8 @@ static inline CGFloat HFCopysign(CGFloat a, CGFloat b) {
 #endif
 }
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 /*! Atomically increments an NSUInteger, returning the new value.  Optionally invokes a memory barrier. */
 static inline NSUInteger HFAtomicIncrement(volatile NSUInteger *ptr, BOOL barrier) {
     return _Generic(ptr,
@@ -350,6 +352,7 @@ static inline NSUInteger HFAtomicDecrement(volatile NSUInteger *ptr, BOOL barrie
 #endif
         volatile unsigned long long *: (barrier ? OSAtomicDecrement64Barrier : OSAtomicDecrement64)((volatile int64_t *)ptr));
 }
+#pragma clang diagnostic pop
 
 /*! Converts a long double to unsigned long long.  Assumes that val is already an integer - use floorl or ceill */
 static inline unsigned long long HFFPToUL(long double val) {
