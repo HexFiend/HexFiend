@@ -21,6 +21,8 @@
 - (IBAction) selectDrive:(id) sender;
 - (IBAction) cancelDriveSelection:sender;
 
-- (NSDocument *)openURL:(NSURL *)url error:(NSError **)error;
+typedef void (^OpenURLCompletionHandler)(NSDocument *document, NSError *error);
+
+- (void)openURL:(NSURL *)url completionHandler:(OpenURLCompletionHandler)completionHandler;
 
 @end

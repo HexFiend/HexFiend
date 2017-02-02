@@ -69,10 +69,10 @@ static CFURLRef copyCharacterDevicePathForPossibleBlockDevice(NSURL *url) {
         {
             NSURL *newURL = [error userInfo][kNewURLErrorKey];
             if (newURL) {
-                NSError *anotherError = nil;
-                NSDocument *newDocument = [self openURL:newURL error:&anotherError];
-                if (anotherError) [NSApp presentError:anotherError];
-                success = !! newDocument;
+                [self openURL:newURL completionHandler:^(NSDocument * __unused document, NSError *anotherRrror) {
+                    if (anotherRrror) [NSApp presentError:anotherRrror];
+                }];
+                success = YES; // openURL is async, so we can't tell if it succeeded, so fake success
             }
         }
             break;
@@ -120,14 +120,17 @@ static CFURLRef copyCharacterDevicePathForPossibleBlockDevice(NSURL *url) {
     return [result autorelease];
 }
 
-- (NSDocument *)openURL:(NSURL *)url error:(NSError **)error {
-    /* Attempts to create an NSDocument for the given NSURL, and returns an error on failure */
-    NSDocument *result = [[NSDocumentController sharedDocumentController] openDocumentWithContentsOfURL:url display:YES error:error];
-    if (result) {
-        /* The open succeeded, so close the window */
-        [self close];
-    }
-    return result;
+typedef void (^OpenURLCompletionHandler)(NSDocument *document, NSError *error);
+
+- (void)openURL:(NSURL *)url completionHandler:(OpenURLCompletionHandler)completionHandler {
+    /* Attempts to create an NSDocument for the given NSURL */
+    [[NSDocumentController sharedDocumentController] openDocumentWithContentsOfURL:url display:YES completionHandler:^(NSDocument * _Nullable document, BOOL __unused documentWasAlreadyOpen, NSError * _Nullable error) {
+        if (document) {
+            /* The open succeeded, so close the window */
+            [self close];
+        }
+        completionHandler(document, error);
+    }];
 }
 
 - (IBAction)openPathOKButtonClicked:(id)sender {
@@ -135,20 +138,20 @@ static CFURLRef copyCharacterDevicePathForPossibleBlockDevice(NSURL *url) {
     NSString *path = [[pathField stringValue] stringByExpandingTildeInPath];
     if ([path length] > 0) {
         /* Try making the document */
-        NSError *error = nil;
         NSURL *url = [NSURL fileURLWithPath:path isDirectory:NO];
-        id document = [self openURL:url error:&error];
-        if (! document && error) {
-            if ([[error domain] isEqual:NSPOSIXErrorDomain] && [error code] == EBUSY) {
-                /* If this is a block device, try getting the corresponding character device, and offer to open that. */
-                CFURLRef newURL = copyCharacterDevicePathForPossibleBlockDevice(url);
-                if (newURL) {
-                    error = [self makeBlockToCharacterDeviceErrorForOriginalURL:url newURL:(NSURL *)newURL underlyingError:error];
-                    CFRelease(newURL);
+        [self openURL:url completionHandler:^(NSDocument *document, NSError *error) {
+            if (! document && error) {
+                if ([[error domain] isEqual:NSPOSIXErrorDomain] && [error code] == EBUSY) {
+                    /* If this is a block device, try getting the corresponding character device, and offer to open that. */
+                    CFURLRef newURL = copyCharacterDevicePathForPossibleBlockDevice(url);
+                    if (newURL) {
+                        error = [self makeBlockToCharacterDeviceErrorForOriginalURL:url newURL:(NSURL *)newURL underlyingError:error];
+                        CFRelease(newURL);
+                    }
                 }
-            }	    
-            [NSApp presentError:error];
-        }
+                [NSApp presentError:error];
+            }
+        }];
     }
 }
 

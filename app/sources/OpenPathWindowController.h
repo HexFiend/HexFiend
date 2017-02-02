@@ -18,6 +18,4 @@
 
 - (IBAction)openPathOKButtonClicked:(id)sender;
 
-- (NSDocument *)openURL:(NSURL *)url error:(NSError **)error;
-
 @end
