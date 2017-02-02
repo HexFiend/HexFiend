@@ -40,7 +40,6 @@ static BOOL returnReadError(NSError **error) {
 static BOOL returnUnsupportedFileTypeError(NSError **error, mode_t mode) {
     if (! error) return NO;
     
-    printf("TYPE: %o\n", mode);
     NSString *fileType;
     
     
