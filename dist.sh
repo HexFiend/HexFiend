@@ -11,7 +11,9 @@ fi
 BUILDDIR="$(pwd)/build"
 SCHEME="Release + CodeSign"
 CONFIG="Release+CodeSign"
-xcodebuild -scheme "${SCHEME}" \
+xcodebuild clean -scheme "${SCHEME}" \
+	"BUILD_DIR=${BUILDDIR}"
+xcodebuild build -scheme "${SCHEME}" \
 	"CODE_SIGN_IDENTITY=${CODESIGN}" \
 	"BUILD_DIR=${BUILDDIR}"
 
