@@ -493,7 +493,7 @@ static inline int common_prefix_length(const char *a, const char *b) {
     NSRect textRect = self.bounds;
     textRect.size.width -= 5;
     textRect.origin.y -= verticalOffset;
-    textRect.size.height += verticalOffset;
+    textRect.size.height += verticalOffset + _lineHeight;
     
     if (! textAttributes) {
         NSMutableParagraphStyle *mutableStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
