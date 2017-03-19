@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11201" systemVersion="16B2555" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11201" systemVersion="16D32" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
         <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11201"/>
@@ -30,6 +30,12 @@
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="checkForUpdates:" target="744" id="747"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Install Command Line Tool" id="jCS-5e-teN">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="installCommandLineTools:" target="Zzl-4N-uHo" id="bGX-FL-Dee"/>
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="143">
@@ -688,5 +694,6 @@
         <customObject id="733" customClass="OpenDriveWindowController"/>
         <customObject id="680" customClass="ChooseStringEncodingWindowController"/>
         <customObject id="744" customClass="SUUpdater"/>
+        <customObject id="Zzl-4N-uHo" userLabel="CLIController" customClass="CLIController"/>
     </objects>
 </document>
