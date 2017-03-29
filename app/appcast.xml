@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle"  xmlns:dc="http://purl.org/dc/elements/1.1/">
+<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" xmlns:dc="http://purl.org/dc/elements/1.1/">
 	<channel>
 		<title>HexFiend</title>
 		<link>https://raw.github.com/ridiculousfish/HexFiend/master/app/appcast.xml</link>
@@ -7,11 +7,11 @@
 		<language>en</language>
 		<item>
 			<title>HexFiend 2.6</title>
-			<sparkle:releaseNotesLink>
-				https://ridiculousfish.github.io/HexFiend/ReleaseNotes.html
-			</sparkle:releaseNotesLink>
+			<sparkle:releaseNotesLink>https://ridiculousfish.github.io/HexFiend/ReleaseNotes.html</sparkle:releaseNotesLink>
 			<sparkle:version>170319</sparkle:version>
+			<sparkle:shortVersionString>2.6</sparkle:shortVersionString>
 			<link>https://github.com/ridiculousfish/HexFiend/releases</link>
+			<sparkle:minimumSystemVersion>10.7</sparkle:minimumSystemVersion>
 		</item>
 	</channel>
 </rss>
