@@ -6,12 +6,12 @@
 		<description>HexFiend 2 Release Notes</description>
 		<language>en</language>
 		<item>
-			<title>HexFiend 2.2</title>
+			<title>HexFiend 2.6</title>
 			<sparkle:releaseNotesLink>
 				https://ridiculousfish.github.io/HexFiend/ReleaseNotes.html
 			</sparkle:releaseNotesLink>
-			<pubDate>Wed, 15 Jan 2013 12:00:00 +0800</pubDate>
-			<enclosure url="http://ridiculousfish.com/hexfiend/files/HexFiend.zip" sparkle:version="200" sparkle:shortVersionString="2.2" length="1986688" type="application/octet-stream" sparkle:dsaSignature="MCwCFG4GyOASB/dlAoyN0Pketk7hXeUKAhRRpoRLHlm0kiyBUezq8AaydKfz+g==" />
+			<sparkle:version>2.6</sparkle:version>
+			<link>https://github.com/ridiculousfish/HexFiend/releases</link>
 		</item>
 	</channel>
 </rss>
