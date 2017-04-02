@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11201" systemVersion="16B2555" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11201" systemVersion="16D32" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
         <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11201"/>
@@ -12,16 +12,16 @@
             </connections>
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
-        <customObject id="-3" userLabel="Application"/>
-        <scrollView borderType="groove" horizontalLineScroll="20" horizontalPageScroll="10" verticalLineScroll="20" verticalPageScroll="10" hasHorizontalScroller="NO" hasVerticalScroller="NO" usesPredominantAxisScrolling="NO" id="58" customClass="DataInspectorScrollView">
-            <rect key="frame" x="0.0" y="0.0" width="567" height="24"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <scrollView misplaced="YES" borderType="groove" horizontalLineScroll="20" horizontalPageScroll="10" verticalLineScroll="20" verticalPageScroll="10" hasHorizontalScroller="NO" hasVerticalScroller="NO" usesPredominantAxisScrolling="NO" id="58" customClass="DataInspectorScrollView">
+            <rect key="frame" x="0.0" y="0.0" width="571" height="24"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES"/>
             <clipView key="contentView" id="PBT-CY-S9h">
-                <rect key="frame" x="2" y="2" width="563" height="20"/>
+                <rect key="frame" x="2" y="2" width="567" height="20"/>
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                 <subviews>
                     <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="sequential" columnReordering="NO" multipleSelection="NO" autosaveColumns="NO" typeSelect="NO" rowHeight="18" id="59" customClass="DataInspectorTableView">
-                        <rect key="frame" x="0.0" y="0.0" width="563" height="20"/>
+                        <rect key="frame" x="0.0" y="0.0" width="567" height="20"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <size key="intercellSpacing" width="3" height="2"/>
                         <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -62,25 +62,35 @@
                                 </popUpButtonCell>
                                 <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                             </tableColumn>
-                            <tableColumn identifier="inspector_subtype" width="50" minWidth="50" maxWidth="50" id="79">
+                            <tableColumn identifier="inspector_subtype" width="55" minWidth="55" maxWidth="55" id="79">
                                 <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left">
                                     <font key="font" metaFont="smallSystem"/>
                                     <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
                                 </tableHeaderCell>
-                                <popUpButtonCell key="dataCell" type="roundRect" title="little" bezelStyle="roundedRect" alignment="left" controlSize="small" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" preferredEdge="maxY" id="81">
+                                <popUpButtonCell key="dataCell" type="roundRect" bezelStyle="roundedRect" alignment="left" controlSize="small" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" pullsDown="YES" arrowPosition="noArrow" preferredEdge="maxY" autoenablesItems="NO" id="81">
                                     <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="smallSystem"/>
-                                    <menu key="menu" title="OtherViews" id="82">
+                                    <menu key="menu" title="OtherViews" autoenablesItems="NO" id="82">
                                         <items>
-                                            <menuItem title="little" state="on" id="84"/>
+                                            <menuItem hidden="YES" id="1A2-pI-7kz">
+                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                            </menuItem>
+                                            <menuItem title="little" id="84"/>
                                             <menuItem title="big" id="83"/>
+                                            <menuItem isSeparatorItem="YES" id="XK5-IM-7oA"/>
+                                            <menuItem title="decimal" id="eCt-49-RSK">
+                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                            </menuItem>
+                                            <menuItem title="hexadecimal" id="FAh-do-3LY">
+                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                            </menuItem>
                                         </items>
                                     </menu>
                                 </popUpButtonCell>
                                 <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                             </tableColumn>
-                            <tableColumn identifier="inspected_value" width="356" minWidth="40" maxWidth="10000" id="62">
+                            <tableColumn identifier="inspected_value" width="355" minWidth="40" maxWidth="10000" id="62">
                                 <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left">
                                     <font key="font" metaFont="smallSystem"/>
                                     <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -140,6 +150,8 @@
                 <rect key="frame" x="-100" y="-100" width="15" height="61"/>
                 <autoresizingMask key="autoresizingMask"/>
             </scroller>
+            <point key="canvasLocation" x="141.5" y="169"/>
         </scrollView>
+        <menuItem isSeparatorItem="YES" id="b7H-QL-q1Y"/>
     </objects>
 </document>

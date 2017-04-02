@@ -59,10 +59,16 @@ enum Endianness_t {
 #endif
 };
 
+enum NumberBase_t {
+    eNumberBaseDecimal,
+    eNumberBaseHexadecimal,
+};
+
 /* A class representing a single row of the data inspector */
 @interface DataInspector : NSObject<NSCoding> {
     enum InspectorType_t inspectorType;
     enum Endianness_t endianness;
+    enum NumberBase_t numberBase;
 }
 
 /* A data inspector that is different from the given inspectors, if possible. */
@@ -70,6 +76,7 @@ enum Endianness_t {
 
 @property (nonatomic) enum InspectorType_t type;
 @property (nonatomic) enum Endianness_t endianness;
+@property (nonatomic) enum NumberBase_t numberBase;
 
 - (id)valueForController:(HFController *)controller ranges:(NSArray*)ranges isError:(BOOL *)outIsError;
 - (id)valueForData:(NSData *)data isError:(BOOL *)outIsError;
@@ -123,6 +130,7 @@ enum Endianness_t {
     HFASSERT([coder allowsKeyedCoding]);
     [coder encodeInt32:inspectorType forKey:@"InspectorType"];
     [coder encodeInt32:endianness forKey:@"Endianness"];
+    [coder encodeInt32:numberBase forKey:@"NumberBase"];
 }
 
 - (instancetype)initWithCoder:(NSCoder *)coder {
@@ -130,6 +138,7 @@ enum Endianness_t {
     self = [super init];
     inspectorType = [coder decodeInt32ForKey:@"InspectorType"];
     endianness = [coder decodeInt32ForKey:@"Endianness"];
+    numberBase = [coder decodeInt32ForKey:@"NumberBase"];
     return self;
 }
 
@@ -149,13 +158,21 @@ enum Endianness_t {
     return endianness;
 }
 
+- (void)setNumberBase:(enum NumberBase_t)base {
+    numberBase = base;
+}
+
+- (enum NumberBase_t)numberBase {
+    return numberBase;
+}
+
 - (NSUInteger)hash {
     return inspectorType + (endianness << 8UL);
 }
 
 - (BOOL)isEqual:(DataInspector *)him {
     if (! [him isKindOfClass:[DataInspector class]]) return NO;
-    return inspectorType == him->inspectorType && endianness == him->endianness;
+    return inspectorType == him->inspectorType && endianness == him->endianness && numberBase == him->numberBase;
 }
 
 static uint64_t reverse(uint64_t val, NSUInteger amount) {
@@ -182,31 +199,31 @@ static void flip(void *val, NSUInteger amount) {
 
 #define FETCH(type) type s = *(const type *)bytes;
 #define FLIP(amount) if (endianness != eNativeEndianness) { flip(&s, amount); }
-#define FORMAT(specifier) return [NSString stringWithFormat:specifier, s];
-static id signedIntegerDescription(const unsigned char *bytes, NSUInteger length, enum Endianness_t endianness) {
+#define FORMAT(decSpecifier, hexSpecifier) return [NSString stringWithFormat:numberBase == eNumberBaseDecimal ? decSpecifier : hexSpecifier, s];
+static id signedIntegerDescription(const unsigned char *bytes, NSUInteger length, enum Endianness_t endianness, enum NumberBase_t numberBase) {
     switch (length) {
         case 1:
         {
             FETCH(int8_t)
-            FORMAT(@"%d")
+            FORMAT(@"%" PRId8, @"0x%" PRIX8);
         }
         case 2:
         {
             FETCH(int16_t)
             FLIP(2)
-            FORMAT(@"%hi")
+            FORMAT(@"%" PRId16, @"0x%" PRIX16)
         }
         case 4:
         {
             FETCH(int32_t)
             FLIP(4)
-            FORMAT(@"%d")
+            FORMAT(@"%" PRId32, @"0x%" PRIX32)
         }
         case 8:
         {
             FETCH(int64_t)
             FLIP(8)
-            FORMAT(@"%qi")
+            FORMAT(@"%" PRId64, @"0x%" PRIX64)
         }
         case 16:
         {
@@ -226,30 +243,30 @@ static id signedIntegerDescription(const unsigned char *bytes, NSUInteger length
     }
 }
 
-static id unsignedIntegerDescription(const unsigned char *bytes, NSUInteger length, enum Endianness_t endianness) {
+static id unsignedIntegerDescription(const unsigned char *bytes, NSUInteger length, enum Endianness_t endianness, enum NumberBase_t numberBase) {
     switch (length) {
         case 1:
         {
             FETCH(uint8_t)
-            FORMAT(@"%u")
+            FORMAT(@"%" PRIu8, @"0x%" PRIX8);
         }
         case 2:
         {
             FETCH(uint16_t)
             FLIP(2)
-            FORMAT(@"%hu")
+            FORMAT(@"%" PRIu16, @"0x%" PRIX16)
         }
         case 4:
         {
             FETCH(uint32_t)
             FLIP(4)
-            FORMAT(@"%u")
+            FORMAT(@"%" PRIu32, @"0x%" PRIX32)
         }
         case 8:
         {
             FETCH(uint64_t)
             FLIP(8)
-            FORMAT(@"%qu")
+            FORMAT(@"%" PRIu64, @"0x%" PRIX64)
         }
         case 16:
         {
@@ -441,9 +458,9 @@ static NSAttributedString *inspectionError(NSString *s) {
                 case 1: case 2: case 4: case 8:
                     if(outIsError) *outIsError = NO;
                     if(inspectorType == eInspectorTypeSignedInteger)
-                        return signedIntegerDescription(bytes, length, endianness);
+                        return signedIntegerDescription(bytes, length, endianness, numberBase);
                     else
-                        return unsignedIntegerDescription(bytes, length, endianness);
+                        return unsignedIntegerDescription(bytes, length, endianness, numberBase);
                 default:
                     return length > 8 ? inspectionError(InspectionErrorTooMuch) : inspectionError(InspectionErrorNonPwr2);
             }
@@ -586,6 +603,16 @@ static BOOL stringRangeIsNullBytes(NSString *string, NSRange range) {
 
 - (BOOL)acceptStringValue:(NSString *)value replacingByteCount:(NSUInteger)count intoData:(unsigned char *)outData {
     if (inspectorType == eInspectorTypeUnsignedInteger || inspectorType == eInspectorTypeSignedInteger) {
+        if (numberBase == eNumberBaseHexadecimal) {
+            NSScanner *scanner = [NSScanner scannerWithString:value];
+            unsigned long long unsignedHexValue = 0;
+            if (![scanner scanHexLongLong:&unsignedHexValue]) {
+                NSLog(@"Invalid hex value %@", value);
+                return NO;
+            }
+            value = [NSString stringWithFormat:@"%llu", unsignedHexValue];
+        }
+        
         char buffer[256];
         BOOL success = [value getCString:buffer maxLength:sizeof buffer encoding:NSASCIIStringEncoding];
         if (! success) return NO;
@@ -733,12 +760,17 @@ static BOOL stringRangeIsNullBytes(NSString *string, NSRange range) {
 }
 
 - (id)propertyListRepresentation {
-    return @{@"InspectorType": @(inspectorType), @"Endianness": @(endianness)};
+    return @{
+        @"InspectorType": @(inspectorType),
+        @"Endianness": @(endianness),
+        @"NumberBase": @(numberBase),
+    };
 }
 
 - (void)setPropertyListRepresentation:(id)plist {
     inspectorType = [plist[@"InspectorType"] intValue];
     endianness = [plist[@"Endianness"] intValue];
+    numberBase = [plist[@"NumberBase"] intValue];
 }
 
 @end
@@ -888,7 +920,7 @@ static BOOL stringRangeIsNullBytes(NSString *string, NSRange range) {
         return @([inspector type]);
     }
     else if ([ident isEqualToString:kInspectorSubtypeColumnIdentifier]) {
-        return @([inspector endianness]);
+        return nil; // cell customized in willDisplayCell:
     }
     else if ([ident isEqualToString:kInspectorValueColumnIdentifier]) {
         return [self valueFromInspector:inspector isError:NULL];
@@ -913,8 +945,15 @@ static BOOL stringRangeIsNullBytes(NSString *string, NSRange range) {
         [tableView reloadData];
     }
     else if ([ident isEqualToString:kInspectorSubtypeColumnIdentifier]) {
-        [inspector setEndianness:[object intValue]];
+        const NSInteger index = [object integerValue];
+        HFASSERT(index >= -1 && index <= 5 && index != 3); // 3 is the separator
+        if (index == 1 || index == 2) {
+            inspector.endianness = index == 1 ? eEndianLittle : eEndianBig;
+        } else if (index == 4 || index == 5) {
+            inspector.numberBase = index == 4 ? eNumberBaseDecimal : eNumberBaseHexadecimal;
+        }
         [tableView reloadData];
+        [self saveDefaultInspectors];
     }
     else if ([ident isEqualToString:kInspectorValueColumnIdentifier]) {
         NSUInteger byteCount = [self selectedByteCountForEditing];
@@ -943,11 +982,58 @@ static BOOL stringRangeIsNullBytes(NSString *string, NSRange range) {
 {
     NSString *ident = [tableColumn identifier];
     if ([ident isEqualToString:kInspectorSubtypeColumnIdentifier]) {
-        DataInspector *inspector = inspectors[row];
-        bool allowsEndianness = (inspector.type == eInspectorTypeSignedInteger ||
+        const DataInspector *inspector = inspectors[row];
+        const bool allowsEndianness = (inspector.type == eInspectorTypeSignedInteger ||
                                  inspector.type == eInspectorTypeUnsignedInteger ||
                                  inspector.type == eInspectorTypeFloatingPoint);
-        [cell setEnabled:allowsEndianness];
+        const bool allowsNumberBase = (inspector.type == eInspectorTypeSignedInteger ||
+                                 inspector.type == eInspectorTypeUnsignedInteger);
+        [cell setEnabled:allowsEndianness || allowsNumberBase];
+        NSPopUpButtonCell *popUpCell = (NSPopUpButtonCell*)cell;
+        HFASSERT(popUpCell.numberOfItems == 6);
+        [popUpCell itemAtIndex:1].state = NSOffState;
+        [popUpCell itemAtIndex:2].state = NSOffState;
+        [popUpCell itemAtIndex:4].state = NSOffState;
+        [popUpCell itemAtIndex:5].state = NSOffState;
+        [popUpCell itemAtIndex:1].enabled = false;
+        [popUpCell itemAtIndex:2].enabled = false;
+        [popUpCell itemAtIndex:4].enabled = false;
+        [popUpCell itemAtIndex:5].enabled = false;
+        NSMutableArray *titleItems = [NSMutableArray array];
+        if (allowsEndianness) {
+            NSInteger endianIndex;
+            if (inspector.endianness == eEndianLittle) {
+                endianIndex = 1;
+                [titleItems addObject:@"le"];
+            } else {
+                endianIndex = 2;
+                [titleItems addObject:@"be"];
+            }
+            [popUpCell itemAtIndex:endianIndex].state = NSOnState;
+            [popUpCell itemAtIndex:1].enabled = true;
+            [popUpCell itemAtIndex:2].enabled = true;
+        }
+        if (allowsNumberBase) {
+            NSInteger numberBaseIndex;
+            if (inspector.numberBase == eNumberBaseDecimal) {
+                numberBaseIndex = 4;
+                [titleItems addObject:@"dec"];
+            } else {
+                numberBaseIndex = 5;
+                [titleItems addObject:@"hex"];
+            }
+            [popUpCell itemAtIndex:numberBaseIndex].state = NSOnState;
+            [popUpCell itemAtIndex:4].enabled = true;
+            [popUpCell itemAtIndex:5].enabled = true;
+        }
+        NSMenuItem* titleMenuItem = [popUpCell itemAtIndex:0];
+        if (titleItems.count > 1) {
+            titleMenuItem.title = [titleItems componentsJoinedByString:@", "];
+        } else if (titleItems.count == 1) {
+            titleMenuItem.title = [titleItems objectAtIndex:0];
+        } else {
+            titleMenuItem.title = @"";
+        }
     }
 }
 
