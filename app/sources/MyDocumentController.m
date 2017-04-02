@@ -5,6 +5,10 @@
 //  Copyright 2010 ridiculous_fish. All rights reserved.
 //
 
+#if !__has_feature(objc_arc)
+#error ARC required
+#endif
+
 #import "MyDocumentController.h"
 #import "BaseDataDocument.h"
 #include <sys/stat.h>
@@ -59,8 +63,6 @@
             [doc adoptWindowController:controller fromTransientDocument:transientDoc];
         }
         [transientDoc close];
-        [controllersToTransfer release];
-        
     } else {
         [self performSelectorOnMainThread:_cmd withObject:documents waitUntilDone:YES];
     }

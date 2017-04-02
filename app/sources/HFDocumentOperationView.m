@@ -5,6 +5,10 @@
 //  Copyright 2008 ridiculous_fish. All rights reserved.
 //
 
+#if !__has_feature(objc_arc)
+#error ARC required
+#endif
+
 #import "HFDocumentOperationView.h"
 #import <HexFiend/HFProgressTracker.h>
 #include <dispatch/dispatch.h>
@@ -36,14 +40,12 @@ static NSString *sNibName;
         if (! [[NSBundle mainBundle] loadNibNamed:name owner:owner topLevelObjects:&topLevelObjects]) {
             [NSException raise:NSInvalidArgumentException format:@"Unable to load nib at path %@", path];
         }
-        [topLevelObjects retain];
     } else {
         /* for Mac OS X 10.7 or lower */
         if (! [NSBundle loadNibFile:path externalNameTable:@{@"NSTopLevelObjects": topLevelObjects, @"NSOwner": owner} withZone:NULL]) {
             [NSException raise:NSInvalidArgumentException format:@"Unable to load nib at path %@", path];
         }
     }
-    [sNibName release];
     sNibName = nil;
     HFDocumentOperationView *resultObject = nil;
     NSMutableArray *otherObjects = nil;
@@ -56,8 +58,6 @@ static NSString *sNibName;
             if (! otherObjects) otherObjects = [NSMutableArray array];
             [otherObjects addObject:obj];
         }
-        /* Balance the retain acquired by virtue of being a top level object in a nib.  Call objc_msgSend directly so that the static analyzer can't see it, because the static analyzer doesn't know about top level objects from nibs. */
-        objc_msgSend(obj, @selector(autorelease));
     }
     HFASSERT(resultObject != nil);
     if (otherObjects != nil) [resultObject setOtherTopLevelObjects:otherObjects];
@@ -68,7 +68,6 @@ static NSString *sNibName;
 
 - (void)setOtherTopLevelObjects:(NSArray *)objects {
     objects = [objects copy];
-    [otherTopLevelObjects release];
     otherTopLevelObjects = objects;
 }
 
@@ -83,13 +82,6 @@ static NSString *sNibName;
     nibName = [sNibName copy];
     progress = NO_TRACKING_PERCENTAGE;
     return self;
-}
-
-- (void)dealloc {
-    [otherTopLevelObjects release];
-    [nibName release];
-    [_displayName release];
-    [super dealloc];
 }
 
 static NSView *searchForViewWithIdentifier(NSView *view, NSString *identifier) {
@@ -168,19 +160,14 @@ static NSView *searchForViewWithIdentifier(NSView *view, NSString *identifier) {
     [progressIndicator setHidden:YES];
     dispatch_group_wait(waitGroup, DISPATCH_TIME_FOREVER);
     completionHandler(threadResult);
-    [completionHandler release];
     completionHandler = nil;
-    [(id)threadResult release];
-    [tracker release];
     tracker = nil;
     [self willChangeValueForKey:@"operationIsRunning"];
     dispatch_release(waitGroup);
     waitGroup = NULL;
     [self didChangeValueForKey:@"operationIsRunning"];
     [cancelButton setHidden: ! [self operationIsRunning]];
-    [tracker release];
     tracker = nil;
-    [self release];
 }
 
 - (void)progressTrackerDidFinish:(HFProgressTracker *)track {
@@ -230,12 +217,11 @@ static NSView *searchForViewWithIdentifier(NSView *view, NSString *identifier) {
     [tracker setProgressIndicator:progressIndicator];
     [tracker beginTrackingProgress];
     
-    [self retain];
     [self willChangeValueForKey:@"operationIsRunning"];
     waitGroup = dispatch_group_create();
     dispatch_group_async(waitGroup, dispatch_get_global_queue(0, 0), ^{
         @autoreleasepool {
-            threadResult = [block(tracker) retain];
+            threadResult = block(tracker);
             [tracker noteFinished:self];
         }
     });

@@ -6,6 +6,10 @@
 //  Copyright (c) 2012 ridiculous_fish. All rights reserved.
 //
 
+#if !__has_feature(objc_arc)
+#error ARC required
+#endif
+
 #import "OpenDriveWindowController.h"
 #include <sys/stat.h>
 #include <objc/message.h>
@@ -85,13 +89,7 @@ enum {
     return self;
 }
 
-- (void)dealloc
-{
-    [driveList release];
-    [super dealloc];
-}
-
-- (NSString *)windowNibName 
+- (NSString *)windowNibName
 {
     return @"OpenDriveDialog";
 }
@@ -99,13 +97,13 @@ enum {
 static void addDisk(DADiskRef disk, UNUSED void * context)
 {
     @autoreleasepool {
-        NSDictionary *diskDesc = [(NSDictionary*)DADiskCopyDescription(disk) autorelease];
+        NSDictionary *diskDesc = (__bridge_transfer NSDictionary*)DADiskCopyDescription(disk);
         if (diskDesc) {
             // Don't add disks that represent a network volume
             NSNumber *isNetwork = diskDesc[(id)kDADiskDescriptionVolumeNetworkKey];
             if (!isNetwork || ![isNetwork boolValue]) {
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    [(OpenDriveWindowController*)context addToDriveList:diskDesc];
+                    [(__bridge OpenDriveWindowController*)context addToDriveList:diskDesc];
                 });
             }
         }
@@ -118,7 +116,7 @@ static void removeDisk(DADiskRef disk, void * context)
         const char *bsdName = DADiskGetBSDName(disk);
         NSString *nsbsdName = bsdName ? @(bsdName) : @"";
         dispatch_async(dispatch_get_main_queue(), ^{
-            [(OpenDriveWindowController*)context removeDrive:nsbsdName];
+            [(__bridge OpenDriveWindowController*)context removeDrive:nsbsdName];
         });
     }
 }
@@ -128,13 +126,13 @@ static void removeDisk(DADiskRef disk, void * context)
     @autoreleasepool {
         CFRunLoopRef runLoop = CFRunLoopGetCurrent();
         DASessionRef session = DASessionCreate(kCFAllocatorDefault);
-        DARegisterDiskAppearedCallback(session, NULL, addDisk, self);
-        DARegisterDiskDisappearedCallback(session, NULL, removeDisk, self);
+        DARegisterDiskAppearedCallback(session, NULL, addDisk, (__bridge void*)self);
+        DARegisterDiskDisappearedCallback(session, NULL, removeDisk, (__bridge void*)self);
         DASessionScheduleWithRunLoop(session, runLoop, kCFRunLoopDefaultMode);
         CFRunLoopRun();
         DASessionUnscheduleFromRunLoop(session, runLoop, kCFRunLoopDefaultMode);
-        DAUnregisterCallback(session, removeDisk, self);
-        DAUnregisterCallback(session, addDisk, self);
+        DAUnregisterCallback(session, removeDisk, (__bridge void*)self);
+        DAUnregisterCallback(session, addDisk, (__bridge void*)self);
         CFRelease(session);
     }
 }
@@ -192,7 +190,7 @@ static CFURLRef copyCharacterDevicePathForPossibleBlockDevice(NSURL *url)
     NSString *description = [NSString stringWithFormat:descriptionFormatString, [url path]];
     NSString *recoverySuggestion = [NSString stringWithFormat:recoverySuggestionFormatString, [newURL path]];
     NSArray *recoveryOptions = @[recoveryOption, cancel];
-    NSDictionary *userInfo = [[[NSDictionary alloc] initWithObjectsAndKeys:
+    NSDictionary *userInfo = [[NSDictionary alloc] initWithObjectsAndKeys:
                               description, NSLocalizedDescriptionKey,
                               failureReason, NSLocalizedFailureReasonErrorKey,
                               recoverySuggestion, NSLocalizedRecoverySuggestionErrorKey,
@@ -202,7 +200,7 @@ static CFURLRef copyCharacterDevicePathForPossibleBlockDevice(NSURL *url)
                               url, NSURLErrorKey,
                               [url path], NSFilePathErrorKey,
                               newURL, kNewURLErrorKey,
-                              nil] autorelease];
+                              nil];
     return [NSError errorWithDomain:NSPOSIXErrorDomain code:EBUSY userInfo:userInfo];
 }
 
@@ -226,7 +224,7 @@ static CFURLRef copyCharacterDevicePathForPossibleBlockDevice(NSURL *url)
                         CFURLRef newURL = copyCharacterDevicePathForPossibleBlockDevice(url);
                         if (newURL) 
                         {
-                            error = [self makeBlockToCharacterDeviceErrorForOriginalURL:url newURL:(NSURL *)newURL underlyingError:error];
+                            error = [self makeBlockToCharacterDeviceErrorForOriginalURL:url newURL:(__bridge NSURL *)newURL underlyingError:error];
                             CFRelease(newURL);
                         }
                     }	    
@@ -287,7 +285,7 @@ static CFURLRef copyCharacterDevicePathForPossibleBlockDevice(NSURL *url)
 - (void) addToDriveList:(NSDictionary*)dict
 {
 	[driveList addObject:dict];
-    NSSortDescriptor *sorter = [[[NSSortDescriptor alloc] initWithKey:(NSString*)kDADiskDescriptionMediaBSDNameKey ascending:YES] autorelease];
+    NSSortDescriptor *sorter = [[NSSortDescriptor alloc] initWithKey:(NSString*)kDADiskDescriptionMediaBSDNameKey ascending:YES];
     [driveList sortUsingDescriptors:@[sorter]];
     [table reloadData];
 }

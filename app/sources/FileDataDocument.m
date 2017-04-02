@@ -5,6 +5,10 @@
 //  Copyright 2009 ridiculous_fish. All rights reserved.
 //
 
+#if !__has_feature(objc_arc)
+#error ARC required
+#endif
+
 #import "FileDataDocument.h"
 
 static inline Class preferredByteArrayClass(void) {
@@ -20,12 +24,12 @@ static inline Class preferredByteArrayClass(void) {
     HFASSERT([absoluteURL isFileURL]);
     NSError *localError = nil;
     NSString *path = [absoluteURL path];
-    HFFileReference *fileReference = [[[HFFileReference alloc] initWithPath:path error:&localError] autorelease];
+    HFFileReference *fileReference = [[HFFileReference alloc] initWithPath:path error:&localError];
     if (fileReference == nil) {
         if (outError) *outError = localError;
     } else {
-        HFFileByteSlice *byteSlice = [[[HFFileByteSlice alloc] initWithFile:fileReference] autorelease];
-        HFByteArray *byteArray = [[[preferredByteArrayClass() alloc] init] autorelease];
+        HFFileByteSlice *byteSlice = [[HFFileByteSlice alloc] initWithFile:fileReference];
+        HFByteArray *byteArray = [[preferredByteArrayClass() alloc] init];
         [byteArray insertByteSlice:byteSlice inRange:HFRangeMake(0, 0)];
         [controller setByteArray:byteArray];
         result = YES;

@@ -5,6 +5,10 @@
 //  Copyright 2010 ridiculous_fish. All rights reserved.
 //
 
+#if !__has_feature(objc_arc)
+#error ARC required
+#endif
+
 #import "ChooseStringEncodingWindowController.h"
 #import "BaseDataDocument.h"
 #import "AppDelegate.h"
@@ -221,18 +225,12 @@ static void addEncoding(NSString *name, CFStringEncoding value, NSMutableArray *
 #undef ENCODING
     
     keysToEncodings = [[NSDictionary alloc] initWithObjects:localValues forKeys:localKeys];
-    encodings = [localKeys retain];
+    encodings = localKeys;
 }
 
 - (void)awakeFromNib {
     [self populateStringEncodings];
     [tableView reloadData];
-}
-
-- (void)dealloc {
-    [keysToEncodings release];
-    [encodings release];
-    [super dealloc];
 }
 
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)__unused tableView

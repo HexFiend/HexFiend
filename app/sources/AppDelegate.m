@@ -5,6 +5,10 @@
 //  Copyright 2008 ridiculous_fish. All rights reserved.
 //
 
+#if !__has_feature(objc_arc)
+#error ARC required
+#endif
+
 #import "AppDelegate.h"
 #import "BaseDataDocument.h"
 #import "DiffDocument.h"
@@ -55,8 +59,7 @@ static NSComparisonResult compareFontDisplayNames(NSFont *a, NSFont *b, void *un
     [minimumCharacterSetMutable addCharactersInRange:NSMakeRange('0', 10)];
     [minimumCharacterSetMutable addCharactersInRange:NSMakeRange('a', 26)];
     [minimumCharacterSetMutable addCharactersInRange:NSMakeRange('A', 26)];
-    minimumRequiredCharacterSet = [[minimumCharacterSetMutable copy] autorelease];
-    [minimumCharacterSetMutable release];
+    minimumRequiredCharacterSet = [minimumCharacterSetMutable copy];
     
     NSMutableSet *fontNames = [NSMutableSet setWithArray:[manager availableFontNamesWithTraits:NSFixedPitchFontMask]];
     [fontNames minusSet:[NSSet setWithArray:[manager availableFontNamesWithTraits:NSFixedPitchFontMask | NSBoldFontMask]]];
@@ -86,14 +89,13 @@ static NSComparisonResult compareFontDisplayNames(NSFont *a, NSFont *b, void *un
         NSDictionary *attrs = @{
             NSFontAttributeName: font,
         };
-        NSAttributedString *astr = [[[NSAttributedString alloc] initWithString:[font displayName] attributes:attrs] autorelease];
+        NSAttributedString *astr = [[NSAttributedString alloc] initWithString:[font displayName] attributes:attrs];
         [item setAttributedTitle:astr];
         [item setRepresentedObject:font];
         [item setTarget:self];
         [menu insertItem:item atIndex:itemIndex++];
         /* Validate the menu item in case the menu is currently open, so it gets the right check */
         [self validateMenuItem:item];
-        [item release];
     }
 }
 
@@ -157,7 +159,6 @@ static NSComparisonResult compareFontDisplayNames(NSFont *a, NSFont *b, void *un
     USE(sender);
     DiffRangeWindowController* range = [[DiffRangeWindowController alloc] initWithWindowNibName:@"DiffRangeDialog"];
     [range showWindow:self];
-    [range release];
 }
 
 - (void)menuNeedsUpdate:(NSMenu *)menu {
@@ -169,12 +170,11 @@ static NSComparisonResult compareFontDisplayNames(NSFont *a, NSFont *b, void *un
             for(NSMenuItem *bm in bookmarksMenuItems) {
                 [bookmarksMenu removeItem:bm];
             }
-            [bookmarksMenuItems release];
             bookmarksMenuItems = nil;
         }
         
         if ([currentDocument respondsToSelector:@selector(copyBookmarksMenuItems)]) {
-            bookmarksMenuItems = [currentDocument performSelector:@selector(copyBookmarksMenuItems)];
+            bookmarksMenuItems = [(BaseDataDocument*)currentDocument copyBookmarksMenuItems];
             if(bookmarksMenuItems) {
                 NSInteger index = [bookmarksMenu indexOfItem:noBookmarksMenuItem];
                 for(NSMenuItem *bm in bookmarksMenuItems) {

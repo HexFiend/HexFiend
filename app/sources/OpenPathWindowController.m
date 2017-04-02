@@ -5,6 +5,10 @@
 //  Copyright 2010 ridiculous_fish. All rights reserved.
 //
 
+#if !__has_feature(objc_arc)
+#error ARC required
+#endif
+
 #import "OpenPathWindowController.h"
 #include <sys/stat.h>
 #include <objc/message.h>
@@ -114,10 +118,8 @@ static CFURLRef copyCharacterDevicePathForPossibleBlockDevice(NSURL *url) {
                               newURL, kNewURLErrorKey,
                               nil];
     result = [[NSError alloc] initWithDomain:NSPOSIXErrorDomain code:EBUSY userInfo:userInfo];
-    
-    [userInfo release];
     }
-    return [result autorelease];
+    return result;
 }
 
 typedef void (^OpenURLCompletionHandler)(NSDocument *document, NSError *error);
@@ -145,7 +147,7 @@ typedef void (^OpenURLCompletionHandler)(NSDocument *document, NSError *error);
                     /* If this is a block device, try getting the corresponding character device, and offer to open that. */
                     CFURLRef newURL = copyCharacterDevicePathForPossibleBlockDevice(url);
                     if (newURL) {
-                        error = [self makeBlockToCharacterDeviceErrorForOriginalURL:url newURL:(NSURL *)newURL underlyingError:error];
+                        error = [self makeBlockToCharacterDeviceErrorForOriginalURL:url newURL:(__bridge NSURL *)newURL underlyingError:error];
                         CFRelease(newURL);
                     }
                 }
@@ -180,7 +182,6 @@ typedef void (^OpenURLCompletionHandler)(NSDocument *document, NSError *error);
         [operationQueue cancelAllOperations];
         NSOperation *fetchIconOp = [[NSInvocationOperation alloc] initWithTarget:self selector:@selector(fetchIconOp:) object:[pathField stringValue]];
         [operationQueue addOperation:fetchIconOp];
-        [fetchIconOp release];
     }
 }
 
@@ -204,12 +205,6 @@ typedef void (^OpenURLCompletionHandler)(NSDocument *document, NSError *error);
         [operationQueue setMaxConcurrentOperationCount:1];
     }
     [self updateIconAndOKButtonEnabledState];
-}
-
-- (void)dealloc {
-    [operationQueue release];
-    operationQueue = nil;
-    [super dealloc];
 }
 
 @end

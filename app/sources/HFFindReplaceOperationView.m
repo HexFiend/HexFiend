@@ -5,6 +5,10 @@
 //  Copyright (c) 2011 ridiculous_fish. All rights reserved.
 //
 
+#if !__has_feature(objc_arc)
+#error ARC required
+#endif
+
 #import "HFFindReplaceOperationView.h"
 #import "BaseDataDocument.h"
 
@@ -17,16 +21,12 @@
 }
 
 - (void)setFindField:(HFTextField *)field {
-    [field retain];
-    [findField release];
     findField = field;
     [findField setUsesHexArea: ! fieldTypeIsASCII];
     [findField setUsesTextArea: fieldTypeIsASCII];
 }
 
 - (void)setReplaceField:(HFTextField *)field {
-    [field retain];
-    [replaceField release];
     replaceField = field;
     [replaceField setUsesHexArea: ! fieldTypeIsASCII];
     [replaceField setUsesTextArea: fieldTypeIsASCII];
@@ -116,7 +116,6 @@
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [self removeObserver:self forKeyPath:@"operationIsRunning"];
-    [super dealloc];
 }
 
 @end

@@ -5,6 +5,10 @@
 //  Copyright 2010 ridiculous_fish. All rights reserved.
 //
 
+#if !__has_feature(objc_arc)
+#error ARC required
+#endif
+
 #import "StretchableProgressIndicator.h"
 
 static CGFloat norm(unsigned char x) {
@@ -95,11 +99,6 @@ static CGFloat norm(unsigned char x) {
     /* We always have a value in [0, 1] */
     [self setMaxValue:1.];
     return self;
-}
-
-- (void)dealloc {
-    [gradient release];
-    [super dealloc];
 }
 
 @end
