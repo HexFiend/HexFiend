@@ -5,6 +5,10 @@
 //  Copyright 2008 ridiculous_fish. All rights reserved.
 //
 
+#if !__has_feature(objc_arc)
+#error ARC required
+#endif
+
 #import <HexFiend/HFFileReference.h>
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -158,7 +162,6 @@ static BOOL returnFTruncateError(NSError **error) {
     fileDescriptor = -1;
     if (! ([self initSharedWithPath:path error:error] && [self validateWithError:error])) {
         [self close];
-        [self release];
         self = nil;
     }
     return self;
@@ -170,7 +173,6 @@ static BOOL returnFTruncateError(NSError **error) {
     fileDescriptor = -1;
     if (! ([self initSharedWithPath:path error:error] && [self validateWithError:error])) {
         [self close];
-        [self release];
         self = nil;
     }
     return self;
@@ -178,7 +180,6 @@ static BOOL returnFTruncateError(NSError **error) {
 
 - (void)dealloc {
     [self close];
-    [super dealloc];
 }
 
 @end

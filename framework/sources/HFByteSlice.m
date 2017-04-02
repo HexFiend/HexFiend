@@ -5,6 +5,10 @@
 //  Copyright 2007 ridiculous_fish. All rights reserved.
 //
 
+#if !__has_feature(objc_arc)
+#error ARC required
+#endif
+
 #import <HexFiend/HFByteSlice.h>
 
 
@@ -65,21 +69,6 @@
 - (HFRange)sourceRangeForFile:(HFFileReference *)reference {
     USE(reference);
     return HFRangeMake(ULLONG_MAX, ULLONG_MAX);
-}
-
-- (id)retain {
-    HFAtomicIncrement(&retainCount, NO);
-    return self;
-}
-
-- (oneway void)release {
-    if (HFAtomicDecrement(&retainCount, NO) == (NSUInteger)(-1)) {
-        [self dealloc];
-    }
-}
-
-- (NSUInteger)retainCount {
-    return 1 + retainCount;
 }
 
 @end

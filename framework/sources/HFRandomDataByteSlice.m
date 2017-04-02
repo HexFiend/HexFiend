@@ -6,6 +6,10 @@
 //  Copyright 2009 ridiculous_fish. All rights reserved.
 //
 
+#if !__has_feature(objc_arc)
+#error ARC required
+#endif
+
 /* NOTE - THIS FILE IS COMPILED -O3 EVEN IN DEBUG BUILDS BECAUSE OF THE MUNGE LOOP (extra build flags for this file in Xcode) */
 
 #import <HexFiend/HFRandomDataByteSlice.h>
@@ -65,7 +69,6 @@ static inline unsigned char munge(unsigned long long val64, const unsigned char 
 - (instancetype)initWithRandomDataLength:(unsigned long long)len {
     NSData *table = createPearsonTable();
     self = [self initWithLength:len pearsonTable:table];
-    [table release];
     return self;
 }
 
@@ -111,7 +114,7 @@ static inline unsigned char munge(unsigned long long val64, const unsigned char 
 
 - (HFByteSlice *)subsliceWithRange:(HFRange)range {
     HFASSERT(HFRangeIsSubrangeOfRange(range, HFRangeMake(0, length)));
-    HFRandomDataByteSlice *result = [[[[self class] alloc] initWithLength:range.length pearsonTable:pearsonTable] autorelease];
+    HFRandomDataByteSlice *result = [[[self class] alloc] initWithLength:range.length pearsonTable:pearsonTable];
     result->start = self->start + range.location;
     return result;
 }
@@ -164,7 +167,7 @@ static unsigned char *kRepeatingData;
 
 - (HFByteSlice *)subsliceWithRange:(HFRange)range {
     HFASSERT(HFRangeIsSubrangeOfRange(range, HFRangeMake(0, length)));
-    HFRepeatingDataByteSlice *result = [[[[self class] alloc] initWithRepeatingDataLength:range.length] autorelease];
+    HFRepeatingDataByteSlice *result = [[[self class] alloc] initWithRepeatingDataLength:range.length];
     result->start = range.location;
     return result;
 }

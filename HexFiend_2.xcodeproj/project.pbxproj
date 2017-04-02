@@ -78,7 +78,7 @@
 		D02BD6E010545E9000535EDE /* FileDataDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = D02BD6DF10545E9000535EDE /* FileDataDocument.m */; };
 		D0315BED1225C553008C9EAB /* HFAnnotatedTree.m in Sources */ = {isa = PBXBuildFile; fileRef = D0315BEB1225C553008C9EAB /* HFAnnotatedTree.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		D0370A3F0D68307A00B3A8C6 /* HFSharedMemoryByteSlice.h in Headers */ = {isa = PBXBuildFile; fileRef = D0370A3D0D68307A00B3A8C6 /* HFSharedMemoryByteSlice.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		D0370A400D68307A00B3A8C6 /* HFSharedMemoryByteSlice.m in Sources */ = {isa = PBXBuildFile; fileRef = D0370A3E0D68307A00B3A8C6 /* HFSharedMemoryByteSlice.m */; };
+		D0370A400D68307A00B3A8C6 /* HFSharedMemoryByteSlice.m in Sources */ = {isa = PBXBuildFile; fileRef = D0370A3E0D68307A00B3A8C6 /* HFSharedMemoryByteSlice.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		D039DC031482DCD000364FA6 /* com.ridiculousfish.HexFiend.PrivilegedHelper in CopyFiles */ = {isa = PBXBuildFile; fileRef = D047E3151022CEFE00EF307B /* com.ridiculousfish.HexFiend.PrivilegedHelper */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		D03BD7D3146F676600881576 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 29B97325FDCFA39411CA2CEA /* Foundation.framework */; };
 		D03BD7D4146F676D00881576 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 29B97324FDCFA39411CA2CEA /* AppKit.framework */; };
@@ -124,11 +124,11 @@
 		D078CF550D50491100492F46 /* HFBannerDividerThumb.h in Headers */ = {isa = PBXBuildFile; fileRef = D078CF530D50491100492F46 /* HFBannerDividerThumb.h */; };
 		D078D0520D50492F00492F46 /* HFBannerDividerThumb.m in Sources */ = {isa = PBXBuildFile; fileRef = D078CF540D50491100492F46 /* HFBannerDividerThumb.m */; };
 		D081DDAA0F0E75FB00F66150 /* HFRandomDataByteSlice.h in Headers */ = {isa = PBXBuildFile; fileRef = D081DDA80F0E75FB00F66150 /* HFRandomDataByteSlice.h */; settings = {ATTRIBUTES = (); }; };
-		D081DDAB0F0E75FB00F66150 /* HFRandomDataByteSlice.m in Sources */ = {isa = PBXBuildFile; fileRef = D081DDA90F0E75FB00F66150 /* HFRandomDataByteSlice.m */; settings = {COMPILER_FLAGS = "-O3"; }; };
+		D081DDAB0F0E75FB00F66150 /* HFRandomDataByteSlice.m in Sources */ = {isa = PBXBuildFile; fileRef = D081DDA90F0E75FB00F66150 /* HFRandomDataByteSlice.m */; settings = {COMPILER_FLAGS = "-O3 -fobjc-arc"; }; };
 		D0826EAB0D4855900006FB7D /* HFFileReference.h in Headers */ = {isa = PBXBuildFile; fileRef = D0826EA90D4855900006FB7D /* HFFileReference.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		D0826EAC0D4855900006FB7D /* HFFileReference.m in Sources */ = {isa = PBXBuildFile; fileRef = D0826EAA0D4855900006FB7D /* HFFileReference.m */; };
+		D0826EAC0D4855900006FB7D /* HFFileReference.m in Sources */ = {isa = PBXBuildFile; fileRef = D0826EAA0D4855900006FB7D /* HFFileReference.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		D0826EF10D487A000006FB7D /* HFFileByteSlice.h in Headers */ = {isa = PBXBuildFile; fileRef = D0826EEF0D487A000006FB7D /* HFFileByteSlice.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		D0826EF20D487A000006FB7D /* HFFileByteSlice.m in Sources */ = {isa = PBXBuildFile; fileRef = D0826EF00D487A000006FB7D /* HFFileByteSlice.m */; };
+		D0826EF20D487A000006FB7D /* HFFileByteSlice.m in Sources */ = {isa = PBXBuildFile; fileRef = D0826EF00D487A000006FB7D /* HFFileByteSlice.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		D082AB440CDE97DC00554EB7 /* HFFullMemoryByteArray.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D828FF0CDE8ABE00C2AB82 /* HFFullMemoryByteArray.m */; };
 		D082ABCF0CDEB3F800554EB7 /* HFRepresenter_Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = D0A4360B0CDC7B65000F7550 /* HFRepresenter_Internal.h */; };
 		D082ABD40CDEB40F00554EB7 /* HFFullMemoryByteArray.h in Headers */ = {isa = PBXBuildFile; fileRef = D0D828FE0CDE8ABE00C2AB82 /* HFFullMemoryByteArray.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -145,8 +145,8 @@
 		D08B2B2B12B0547E004995A2 /* HFGlyphTrie.h in Headers */ = {isa = PBXBuildFile; fileRef = D08B2AC912B03C86004995A2 /* HFGlyphTrie.h */; };
 		D08B2B9B12B06835004995A2 /* HFGlyphTrie.m in Sources */ = {isa = PBXBuildFile; fileRef = D08B2ACA12B03C86004995A2 /* HFGlyphTrie.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		D08F5E4F0CDE872C007EFFE8 /* HFByteArray.m in Sources */ = {isa = PBXBuildFile; fileRef = D08F5DF00CDE8223007EFFE8 /* HFByteArray.m */; };
-		D08F5E500CDE872C007EFFE8 /* HFByteSlice.m in Sources */ = {isa = PBXBuildFile; fileRef = D08F5E230CDE843E007EFFE8 /* HFByteSlice.m */; };
-		D08F5E510CDE872C007EFFE8 /* HFFullMemoryByteSlice.m in Sources */ = {isa = PBXBuildFile; fileRef = D08F5E380CDE84F4007EFFE8 /* HFFullMemoryByteSlice.m */; };
+		D08F5E500CDE872C007EFFE8 /* HFByteSlice.m in Sources */ = {isa = PBXBuildFile; fileRef = D08F5E230CDE843E007EFFE8 /* HFByteSlice.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
+		D08F5E510CDE872C007EFFE8 /* HFFullMemoryByteSlice.m in Sources */ = {isa = PBXBuildFile; fileRef = D08F5E380CDE84F4007EFFE8 /* HFFullMemoryByteSlice.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		D09163CA123857BB009D7D47 /* OpenPathDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = D09163C9123857BB009D7D47 /* OpenPathDialog.xib */; };
 		D09163D4123857E5009D7D47 /* OpenPathWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = D09163D3123857E5009D7D47 /* OpenPathWindowController.m */; };
 		D0A05C0113BBE48800553980 /* HFAttributedByteArray.h in Headers */ = {isa = PBXBuildFile; fileRef = D0A05BFE13BBE40100553980 /* HFAttributedByteArray.h */; settings = {ATTRIBUTES = (Public, ); }; };
