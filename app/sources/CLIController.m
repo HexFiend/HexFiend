@@ -6,10 +6,6 @@
 //  Copyright © 2017 ridiculous_fish. All rights reserved.
 //
 
-#if !__has_feature(objc_arc)
-#error ARC required
-#endif
-
 #import "CLIController.h"
 
 @implementation CLIController

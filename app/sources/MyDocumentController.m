@@ -5,10 +5,6 @@
 //  Copyright 2010 ridiculous_fish. All rights reserved.
 //
 
-#if !__has_feature(objc_arc)
-#error ARC required
-#endif
-
 #import "MyDocumentController.h"
 #import "BaseDataDocument.h"
 #include <sys/stat.h>

@@ -6,10 +6,6 @@
 //  Copyright (c) 2013 ridiculous_fish. All rights reserved.
 //
 
-#if !__has_feature(objc_arc)
-#error ARC required
-#endif
-
 #import "DiffRangeWindowController.h"
 
 #import "DiffDocument.h"

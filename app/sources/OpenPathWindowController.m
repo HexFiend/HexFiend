@@ -5,10 +5,6 @@
 //  Copyright 2010 ridiculous_fish. All rights reserved.
 //
 
-#if !__has_feature(objc_arc)
-#error ARC required
-#endif
-
 #import "OpenPathWindowController.h"
 #include <sys/stat.h>
 #include <objc/message.h>
