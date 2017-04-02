@@ -5,6 +5,10 @@
 //  Copyright 2008 ridiculous_fish. All rights reserved.
 //
 
+#if !__has_feature(objc_arc)
+#error ARC required
+#endif
+
 #import "HFResizingView.h"
 
 
@@ -14,17 +18,12 @@
     if (! hasAwokenFromNib) {
         hasAwokenFromNib = YES;
         defaultSize = [self frame].size;
-        viewsToInitialFrames = CFDictionaryCreateMutable(NULL, 0, NULL, &kCFTypeDictionaryValueCallBacks);
+        viewsToInitialFrames = [NSMapTable weakToStrongObjectsMapTable];
         
         for(NSView *subview in [self subviews]) {
-            CFDictionarySetValue(viewsToInitialFrames, subview, [NSValue valueWithRect:[subview frame]]);
+            [viewsToInitialFrames setObject:[NSValue valueWithRect:[subview frame]] forKey:subview];
         }
     }
-}
-
-- (void)dealloc {
-    CFRelease(viewsToInitialFrames);
-    [super dealloc];
 }
 
 typedef struct { CGFloat offset; CGFloat length; } Position_t;
@@ -95,7 +94,7 @@ static Position_t computePosition(id view, CGFloat startOffset, CGFloat startWid
     NSRect bounds = [self bounds];
     if (viewsToInitialFrames) {
         for(NSView *view in [self subviews]) {
-            NSValue *originalFrameValue = (NSValue *)CFDictionaryGetValue(viewsToInitialFrames, view);
+            NSValue *originalFrameValue = [viewsToInitialFrames objectForKey:view];
             if (originalFrameValue) 
                 [self resizeView:view withOriginalFrame:[originalFrameValue rectValue] intoBounds:bounds];
         }

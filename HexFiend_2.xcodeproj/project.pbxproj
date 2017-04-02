@@ -53,7 +53,7 @@
 		D016437313E5F7BC00294E60 /* HFRepresenterTextViewCallout.h in Headers */ = {isa = PBXBuildFile; fileRef = D016437113E5F7BB00294E60 /* HFRepresenterTextViewCallout.h */; };
 		D016437413E5F7BC00294E60 /* HFRepresenterTextViewCallout.m in Sources */ = {isa = PBXBuildFile; fileRef = D016437213E5F7BC00294E60 /* HFRepresenterTextViewCallout.m */; };
 		D01772F50D751DB1002E03DE /* HFDocumentOperationView.m in Sources */ = {isa = PBXBuildFile; fileRef = D01772F40D751DB1002E03DE /* HFDocumentOperationView.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
-		D01773920D7A2F32002E03DE /* HFResizingView.m in Sources */ = {isa = PBXBuildFile; fileRef = D01773910D7A2F32002E03DE /* HFResizingView.m */; };
+		D01773920D7A2F32002E03DE /* HFResizingView.m in Sources */ = {isa = PBXBuildFile; fileRef = D01773910D7A2F32002E03DE /* HFResizingView.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		D018F139107AB64900AE805F /* DiffDocument.xib in Resources */ = {isa = PBXBuildFile; fileRef = D018F137107AB64900AE805F /* DiffDocument.xib */; };
 		D018F153107ABAC600AE805F /* DiffDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = D018F152107ABAC600AE805F /* DiffDocument.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		D019B8C00D83E8D5005789AA /* HFByteArray_FileWriting.m in Sources */ = {isa = PBXBuildFile; fileRef = D019B8BE0D83E8D5005789AA /* HFByteArray_FileWriting.m */; };
