@@ -529,8 +529,3 @@ NSString *HFDescribeByteCount(unsigned long long count);
 - (void)assertIntegrity;
 
 @end
-
-#ifndef NDEBUG
-void HFStartTiming(const char *name);
-void HFStopTiming(void);
-#endif

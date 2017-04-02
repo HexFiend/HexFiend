@@ -3,18 +3,6 @@
 
 #import "HFFunctions_Private.h"
 
-#ifndef NDEBUG
-//#define USE_CHUD 1
-#endif
-
-#ifndef USE_CHUD
-#define USE_CHUD 0
-#endif
-
-#if USE_CHUD
-#import <CHUD/CHUD.h>
-#endif
-
 @implementation HFRangeWrapper
 
 - (HFRange)HFRange { return range; }
@@ -1126,24 +1114,3 @@ void HFUnregisterViewForWindowAppearanceChanges(NSView *self, BOOL appToo) {
         [center removeObserver:self name:NSApplicationDidResignActiveNotification object:nil];
     }    
 }
-
-#if USE_CHUD
-void HFStartTiming(const char *name) {
-    static BOOL inited;
-    if (! inited) {
-        inited = YES;
-        chudInitialize();
-        chudSetErrorLogFile(stderr);
-        chudAcquireRemoteAccess();
-    }
-    chudStartRemotePerfMonitor(name);
-    
-}
-
-void HFStopTiming(void) {
-    chudStopRemotePerfMonitor();
-}
-#else
-void HFStartTiming(const char *name) { USE(name); }
-void HFStopTiming(void) { }
-#endif
