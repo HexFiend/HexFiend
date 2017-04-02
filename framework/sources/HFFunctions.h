@@ -402,9 +402,6 @@ static inline NSUInteger HFCountDigitsBase16(unsigned long long val) {
     return 1 + logBase2/4;
 }
 
-/*! Returns YES if the given string encoding is a superset of ASCII. */
-BOOL HFStringEncodingIsSupersetOfASCII(NSStringEncoding encoding);
-
 /*! Returns the "granularity" of an encoding, in bytes.  ASCII is 1, UTF-16 is 2, etc.  Variable width encodings return the smallest (e.g. Shift-JIS returns 1). */
 uint8_t HFStringEncodingCharacterLength(NSStringEncoding encoding);
 
