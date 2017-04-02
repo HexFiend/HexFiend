@@ -5,6 +5,10 @@
 //  Copyright 2010 ridiculous_fish. All rights reserved.
 //
 
+#if !__has_feature(objc_arc)
+#error ARC required
+#endif
+
 #import "DiffTextViewContainer.h"
 #import <HexFiend/HFTextView.h>
 
@@ -190,7 +194,6 @@
 
 - (void)dealloc {
     HFUnregisterViewForWindowAppearanceChanges(self, registeredForAppNotifications);
-    [super dealloc];
 }
 
 @end

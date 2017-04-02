@@ -6,6 +6,10 @@
 //  Copyright © 2017 ridiculous_fish. All rights reserved.
 //
 
+#if !__has_feature(objc_arc)
+#error ARC required
+#endif
+
 #import "CLIController.h"
 
 @implementation CLIController
@@ -37,7 +41,7 @@
         [[NSDocumentController sharedDocumentController] presentError:err];
         return;
     }
-    NSAlert *successAlert = [[[NSAlert alloc] init] autorelease];
+    NSAlert *successAlert = [[NSAlert alloc] init];
     successAlert.messageText = [NSString stringWithFormat:NSLocalizedString(@"The %@ tool has been successfully installed.", ""), [srcFile lastPathComponent]];
     [successAlert runModal];
 }
