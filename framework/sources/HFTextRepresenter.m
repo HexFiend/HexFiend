@@ -5,6 +5,10 @@
 //  Copyright 2007 ridiculous_fish. All rights reserved.
 //
 
+#if !__has_feature(objc_arc)
+#error ARC required
+#endif
+
 #import <HexFiend/HFTextRepresenter_Internal.h>
 #import <HexFiend/HFRepresenterTextView.h>
 #import <HexFiend/HFPasteboardOwner.h>
@@ -24,7 +28,7 @@
     
     NSColor *color1 = [NSColor colorWithCalibratedWhite:1.0 alpha:1.0];
     NSColor *color2 = [NSColor colorWithCalibratedRed:.87 green:.89 blue:1. alpha:1.];
-    _rowBackgroundColors = [@[color1, color2] retain];
+    _rowBackgroundColors = @[color1, color2];
     
     return self;
 }
@@ -33,8 +37,6 @@
     if ([self isViewLoaded]) {
         [[self view] clearRepresenter];
     }
-    [_rowBackgroundColors release];
-    [super dealloc];
 }
 
 - (void)encodeWithCoder:(NSCoder *)coder {
@@ -48,7 +50,7 @@
     HFASSERT([coder allowsKeyedCoding]);
     self = [super initWithCoder:coder];
     _behavesAsTextField = [coder decodeBoolForKey:@"HFBehavesAsTextField"];
-    _rowBackgroundColors = [[coder decodeObjectForKey:@"HFRowBackgroundColors"] retain];
+    _rowBackgroundColors = [coder decodeObjectForKey:@"HFRowBackgroundColors"];
     return self;
 }
 
@@ -127,7 +129,7 @@
 }
 
 - (HFTextVisualStyleRun *)styleForAttributes:(NSSet *)attributes range:(NSRange)range {
-    HFTextVisualStyleRun *run = [[[HFTextVisualStyleRun alloc] init] autorelease];
+    HFTextVisualStyleRun *run = [[HFTextVisualStyleRun alloc] init];
     [run setRange:range];
     if ([attributes containsObject:kHFAttributeMagic]) {
         [run setForegroundColor:[NSColor blueColor]];
@@ -170,7 +172,6 @@
     
     if (bookmarkExtents) {
         [run setBookmarkExtents:bookmarkExtents];
-        [bookmarkExtents release];
     }
     return run;
 }
@@ -296,7 +297,7 @@
     HFRange displayedRange = [self entireDisplayedRange];
     
     HFASSERT(displayedRange.length <= NSUIntegerMax);
-    NEW_ARRAY(NSValue *, clippedSelectedRanges, [selectedRanges count]);
+    NEW_OBJ_ARRAY(NSValue *, clippedSelectedRanges, [selectedRanges count]);
     NSUInteger clippedRangeIndex = 0;
     for(HFRangeWrapper * wrapper in selectedRanges) {
         HFRange selectedRange = [wrapper HFRange];
@@ -325,7 +326,7 @@
         if (clippedRangeIsVisible) clippedSelectedRanges[clippedRangeIndex++] = [NSValue valueWithRange:clippedSelectedRange];
     }
     result = [NSArray arrayWithObjects:clippedSelectedRanges count:clippedRangeIndex];
-    FREE_ARRAY(clippedSelectedRanges);
+    FREE_OBJ_ARRAY(clippedSelectedRanges, [selectedRanges count]);
     return result;
 }
 
@@ -356,8 +357,6 @@
             NSNumber *key = [[NSNumber alloc] initWithUnsignedInteger:mark];
             NSNumber *value = [[NSNumber alloc] initWithInteger:(long)(bookmarkRange.location - displayedRange.location)];
             result[key] = value;
-            [key release];
-            [value release];
         }
     }
     return result;

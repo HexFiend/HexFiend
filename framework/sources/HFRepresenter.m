@@ -5,6 +5,10 @@
 //  Copyright 2007 ridiculous_fish. All rights reserved.
 //
 
+#if !__has_feature(objc_arc)
+#error ARC required
+#endif
+
 #import "HFRepresenter.h"
 
 @implementation HFRepresenter
@@ -31,11 +35,6 @@
     return self;
 }
 
-- (void)dealloc {
-    [view release];
-    [super dealloc];
-}
-
 - (void)encodeWithCoder:(NSCoder *)coder {
     HFASSERT([coder allowsKeyedCoding]);
     [coder encodeObject:controller forKey:@"HFController"];
@@ -48,7 +47,7 @@
     self = [super init];
     layoutPosition = [coder decodePointForKey:@"HFLayoutPosition"];   
     controller = [coder decodeObjectForKey:@"HFController"]; // not retained
-    view = [[coder decodeObjectForKey:@"HFRepresenterView"] retain];
+    view = [coder decodeObjectForKey:@"HFRepresenterView"];
     return self;
 }
 
