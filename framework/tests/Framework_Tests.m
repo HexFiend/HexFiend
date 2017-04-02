@@ -607,61 +607,6 @@ static void HFByteArray_testSearchAlgorithms(XCTestCase *self, HFByteArray *need
     }
 }
 
-- (void)testIndexSet {
-    for (int repetition = 0; repetition < 3; repetition++) @autoreleasepool {
-        NSMutableIndexSet *nsindexset = [[NSMutableIndexSet alloc] init];
-        HFMutableIndexSet *hfindexset = [[HFMutableIndexSet alloc] init];
-        unsigned long round, roundCount = 4096 * 4;
-        const NSUInteger supportedIndexEnd = NSNotFound;
-        for (round = 0; round < 4096 * 2; round++) {
-            if (round % (roundCount / 8) == 0) dbg_printf("Index set test %lu / %lu\n", round, roundCount);
-            BOOL insert = ([nsindexset count] == 0 || (random() % 2));
-            NSUInteger end = 1 + (random() % supportedIndexEnd);
-            NSUInteger start = 1 + (random() % supportedIndexEnd);
-            if (end < start) {
-                NSUInteger temp = end;
-                end = start;
-                start = temp;
-            }
-            if (insert) {
-                [nsindexset addIndexesInRange:NSMakeRange(start, end - start)];
-                [hfindexset addIndexesInRange:HFRangeMake(start, end - start)];
-            }
-            else {
-                [nsindexset removeIndexesInRange:NSMakeRange(start, end - start)];
-                [hfindexset removeIndexesInRange:HFRangeMake(start, end - start)];
-            }
-            
-            [hfindexset verifyIntegrity];
-            HFASSERT([hfindexset isEqualToNSIndexSet:nsindexset]);
-            
-            if ([nsindexset count] > 0) {
-                NSInteger amountToShift;
-                NSUInteger indexToShift;
-                if (random() % 2 && [nsindexset firstIndex] > 0) {
-                    /* Shift left */
-                    amountToShift = (1 + random() % [nsindexset firstIndex]);
-                    indexToShift = amountToShift + (random() % (supportedIndexEnd - amountToShift));
-                    
-                    [nsindexset shiftIndexesStartingAtIndex:indexToShift by:-amountToShift];
-                    [hfindexset shiftValuesLeftByAmount:amountToShift startingAtValue:indexToShift];
-                }
-                else if ([nsindexset lastIndex] + 1 < supportedIndexEnd) {
-                    /* Shift right */
-                    NSUInteger maxAmountToShift = (supportedIndexEnd - 1 - [nsindexset lastIndex]);
-                    amountToShift = (1 + random() % maxAmountToShift);
-                    indexToShift = random() % (1 + [nsindexset lastIndex]);
-                    
-                    [nsindexset shiftIndexesStartingAtIndex:indexToShift by:amountToShift];
-                    [hfindexset shiftValuesRightByAmount:amountToShift startingAtValue:indexToShift];
-                }
-            }
-            
-            HFASSERT([hfindexset isEqualToNSIndexSet:nsindexset]);
-        }
-    }
-}
-
 static HFRange randomRange(uint32_t max) {
     HFASSERT(max <= RAND_MAX);
     uint32_t start, end;

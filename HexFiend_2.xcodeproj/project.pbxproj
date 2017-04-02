@@ -175,8 +175,6 @@
 		D0B422A20FF845F800DF27E5 /* HFTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = D0B422A00FF845F800DF27E5 /* HFTextView.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		D0B47FEF1272427B0095120E /* DiffComputationBanner.xib in Resources */ = {isa = PBXBuildFile; fileRef = D0B47FED1272427B0095120E /* DiffComputationBanner.xib */; };
 		D0B7E3750D5C5B3A007874ED /* HFByteArray_FindReplace.m in Sources */ = {isa = PBXBuildFile; fileRef = D0B7E3380D5C50EA007874ED /* HFByteArray_FindReplace.m */; };
-		D0BAA835120A7DE800D8FB51 /* HFIndexSet.h in Headers */ = {isa = PBXBuildFile; fileRef = D0BAA833120A7DE800D8FB51 /* HFIndexSet.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		D0BAA836120A7DE800D8FB51 /* HFIndexSet.m in Sources */ = {isa = PBXBuildFile; fileRef = D0BAA834120A7DE800D8FB51 /* HFIndexSet.m */; };
 		D0CBB240128F78C200989C15 /* StretchableProgressIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = D0CBB23F128F78C200989C15 /* StretchableProgressIndicator.m */; };
 		D0CBB32A128F906000989C15 /* DiffTextViewContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = D0CBB329128F906000989C15 /* DiffTextViewContainer.m */; };
 		D0CD51F60DA2B928006E8D1B /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D0CD51F50DA2B928006E8D1B /* AppDelegate.m */; };
@@ -514,8 +512,6 @@
 		D0B422A00FF845F800DF27E5 /* HFTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFTextView.m; path = sources/HFTextView.m; sourceTree = "<group>"; };
 		D0B47FEE1272427B0095120E /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/DiffComputationBanner.xib; sourceTree = "<group>"; };
 		D0B7E3380D5C50EA007874ED /* HFByteArray_FindReplace.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFByteArray_FindReplace.m; path = sources/HFByteArray_FindReplace.m; sourceTree = "<group>"; };
-		D0BAA833120A7DE800D8FB51 /* HFIndexSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFIndexSet.h; path = sources/HFIndexSet.h; sourceTree = "<group>"; };
-		D0BAA834120A7DE800D8FB51 /* HFIndexSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFIndexSet.m; path = sources/HFIndexSet.m; sourceTree = "<group>"; };
 		D0CBB23E128F78C200989C15 /* StretchableProgressIndicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StretchableProgressIndicator.h; path = app/sources/StretchableProgressIndicator.h; sourceTree = "<group>"; };
 		D0CBB23F128F78C200989C15 /* StretchableProgressIndicator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = StretchableProgressIndicator.m; path = app/sources/StretchableProgressIndicator.m; sourceTree = "<group>"; };
 		D0CBB328128F906000989C15 /* DiffTextViewContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DiffTextViewContainer.h; path = app/sources/DiffTextViewContainer.h; sourceTree = "<group>"; };
@@ -892,8 +888,6 @@
 				D04327A30CF081CD00C14250 /* HFFunctions_Private.h */,
 				D0A436570CDC8115000F7550 /* HFFunctions.m */,
 				D08491FE0DBB60C700C7195C /* HFFastMemchr.m */,
-				D0BAA833120A7DE800D8FB51 /* HFIndexSet.h */,
-				D0BAA834120A7DE800D8FB51 /* HFIndexSet.m */,
 				D0315BEA1225C553008C9EAB /* HFAnnotatedTree.h */,
 				D0315BEB1225C553008C9EAB /* HFAnnotatedTree.m */,
 				D08B2AC912B03C86004995A2 /* HFGlyphTrie.h */,
@@ -1143,7 +1137,6 @@
 				D089443C1042BA7100AB9141 /* HFByteRangeAttributeArray.h in Headers */,
 				D01D1D721489DFE5008212BB /* HFAnnotatedTree.h in Headers */,
 				D010173610491BB200536FBC /* HFTextVisualStyleRun.h in Headers */,
-				D0BAA835120A7DE800D8FB51 /* HFIndexSet.h in Headers */,
 				D016437313E5F7BC00294E60 /* HFRepresenterTextViewCallout.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1537,7 +1530,6 @@
 				D08943F91042B57800AB9141 /* HFByteRangeAttribute.m in Sources */,
 				D089443D1042BA7100AB9141 /* HFByteRangeAttributeArray.m in Sources */,
 				D010173710491BB200536FBC /* HFTextVisualStyleRun.m in Sources */,
-				D0BAA836120A7DE800D8FB51 /* HFIndexSet.m in Sources */,
 				D0315BED1225C553008C9EAB /* HFAnnotatedTree.m in Sources */,
 				D016437413E5F7BC00294E60 /* HFRepresenterTextViewCallout.m in Sources */,
 			);

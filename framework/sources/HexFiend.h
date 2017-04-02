@@ -42,7 +42,6 @@
 #import <HexFiend/HFTextField.h>
 #import <HexFiend/HFTextView.h>
 #import <HexFiend/HFSharedMemoryByteSlice.h>
-#import <HexFiend/HFIndexSet.h>
 #import <HexFiend/HFByteRangeAttribute.h>
 #import <HexFiend/HFByteRangeAttributeArray.h>
 
