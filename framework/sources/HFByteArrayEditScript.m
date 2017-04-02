@@ -1359,8 +1359,8 @@ static inline enum HFEditInstructionType HFByteArrayInstructionType(struct HFEdi
     self = [super init];
     NSParameterAssert(src != nil);
     NSParameterAssert(dst != nil);
-    source = [src retain];
-    destination = [dst retain];
+    source = src;
+    destination = dst;
     sourceLength = [source length];
     destLength = [destination length];
     return self;
@@ -1379,8 +1379,6 @@ static inline enum HFEditInstructionType HFByteArrayInstructionType(struct HFEdi
     
     /* Remember our progress tracker (if any) */
     if (tracker) {
-        [tracker retain];
-        
         /* Tell our progress tracker how much work to expect.  Here we treat the amount of work as the sum of the horizontal and vertical.  Note: this product may overflow!  Ugh! */
         [tracker setMaxProgress: sourceLength * destLength];
         
@@ -1398,7 +1396,6 @@ static inline enum HFEditInstructionType HFByteArrayInstructionType(struct HFEdi
     
     cancelRequested = NULL;
     currentProgress = NULL;
-    [tracker release];
     
     CFAbsoluteTime end = CFAbsoluteTimeGetCurrent();
     fprintf(stderr, "Diffs computed in %.2f seconds\n", end - start);
@@ -1410,18 +1407,14 @@ static inline enum HFEditInstructionType HFByteArrayInstructionType(struct HFEdi
     BOOL success = [self computeDifferencesTrackingProgress:progressTracker];
     if (! success) {
         /* Cancelled */
-        [self release];
         self = nil;
     }    
     return self;
 }
 
 - (void)dealloc {
-    [source release];
-    [destination release];
     free(insns);
     insns = NULL;
-    [super dealloc];
 }
 
 - (void)applyToByteArray:(HFByteArray *)target {

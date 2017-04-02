@@ -5,6 +5,10 @@
 //  Copyright 2007 ridiculous_fish. All rights reserved.
 //
 
+#if !__has_feature(objc_arc)
+#error ARC required
+#endif
+
 #import <HexFiend/HFByteArray_Internal.h>
 #import <HexFiend/HFFullMemoryByteSlice.h>
 
@@ -91,19 +95,18 @@
 
 - (id)mutableCopyWithZone:(NSZone *)zone {
     USE(zone);
-    return [[self subarrayWithRange:HFRangeMake(0, [self length])] retain];
+    return [self subarrayWithRange:HFRangeMake(0, [self length])];
 }
 
 - (id)copyWithZone:(NSZone *)zone {
     USE(zone);
-    return [[self subarrayWithRange:HFRangeMake(0, [self length])] retain];
+    return [self subarrayWithRange:HFRangeMake(0, [self length])];
 }
 
 - (void)deleteBytesInRange:(HFRange)lrange {
     [self incrementGenerationOrRaiseIfLockedForSelector:_cmd];
     HFByteSlice* slice = [[HFFullMemoryByteSlice alloc] initWithData:[NSData data]];
     [self insertByteSlice:slice inRange:lrange];
-    [slice release];
 }
 
 - (BOOL)isEqual:v {
@@ -191,9 +194,7 @@
     HFByteArray *byteArray = [[NSClassFromString(@"HFFullMemoryByteArray") alloc] init];
     HFByteSlice *byteSlice = [[HFFullMemoryByteSlice alloc] initWithData:val];
     [byteArray insertByteSlice:byteSlice inRange:HFRangeMake(0, 0)];
-    [byteSlice release];
     BOOL result = [self _debugIsEqual:byteArray];
-    [byteArray release];
     return result;
 }
 
