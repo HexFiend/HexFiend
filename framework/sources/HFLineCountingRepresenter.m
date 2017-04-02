@@ -5,6 +5,10 @@
 //  Copyright 2007 ridiculous_fish. All rights reserved.
 //
 
+#if !__has_feature(objc_arc)
+#error ARC required
+#endif
+
 #import <HexFiend/HFLineCountingRepresenter.h>
 #import <HexFiend/HFLineCountingView.h>
 
@@ -29,17 +33,12 @@ static CGFloat maximumDigitAdvanceForFont(NSFont *font) {
         char c = "0123456789ABCDEF"[i];
         NSString *string = [[NSString alloc] initWithBytes:&c length:1 encoding:NSASCIIStringEncoding];
         [storage replaceCharactersInRange:NSMakeRange(0, (i ? 1 : 0)) withString:string];
-        [string release];
         glyphs[i] = [manager glyphAtIndex:0 isValidIndex:NULL];
         HFASSERT(glyphs[i] != NSNullGlyph);
     }
     
     /* Get the advancements of each of those glyphs */
     [font getAdvancements:advancements forGlyphs:glyphs count:sizeof glyphs / sizeof *glyphs];
-    
-    [manager release];
-    [attributesDictionary release];
-    [storage release];
     
     /* Find the widest digit */
     for (NSUInteger i=0; i < sizeof glyphs / sizeof *glyphs; i++) {
@@ -57,8 +56,8 @@ static CGFloat maximumDigitAdvanceForFont(NSFont *font) {
         interiorShadowEdge = NSMaxXEdge;
         
         _borderedEdges = (1 << NSMaxXEdge);
-        _borderColor = [[NSColor darkGrayColor] retain];
-        _backgroundColor = [[NSColor colorWithCalibratedWhite:(CGFloat).87 alpha:1] retain];
+        _borderColor = [NSColor darkGrayColor];
+        _backgroundColor = [NSColor colorWithCalibratedWhite:(CGFloat).87 alpha:1];
     }
     return self;
 }
@@ -82,16 +81,10 @@ static CGFloat maximumDigitAdvanceForFont(NSFont *font) {
     lineNumberFormat = (HFLineNumberFormat)[coder decodeInt64ForKey:@"HFLineNumberFormat"];
     
     _borderedEdges = [coder decodeObjectForKey:@"HFBorderedEdges"] ? (NSInteger)[coder decodeInt64ForKey:@"HFBorderedEdges"] : 0;
-    _borderColor = [[coder decodeObjectForKey:@"HFBorderColor"] ?: [NSColor darkGrayColor] retain];
-    _backgroundColor = [[coder decodeObjectForKey:@"HFBackgroundColor"] ?: [NSColor colorWithCalibratedWhite:(CGFloat).87 alpha:1] retain];
+    _borderColor = [coder decodeObjectForKey:@"HFBorderColor"] ?: [NSColor darkGrayColor];
+    _backgroundColor = [coder decodeObjectForKey:@"HFBackgroundColor"] ?: [NSColor colorWithCalibratedWhite:(CGFloat).87 alpha:1];
     
     return self;
-}
-
-- (void)dealloc {
-    [_borderColor release];
-    [_backgroundColor release];
-    [super dealloc];
 }
 
 - (NSView *)createView {
@@ -232,7 +225,6 @@ static CGFloat maximumDigitAdvanceForFont(NSFont *font) {
 
 
 - (void)setBorderColor:(NSColor *)color {
-    [_borderColor autorelease];
     _borderColor = [color copy];
     if ([self isViewLoaded]) {
         [[self view] setNeedsDisplay:YES];
@@ -240,7 +232,6 @@ static CGFloat maximumDigitAdvanceForFont(NSFont *font) {
 }
 
 - (void)setBackgroundColor:(NSColor *)color {
-    [_backgroundColor autorelease];
     _backgroundColor = [color copy];
     if ([self isViewLoaded]) {
         [[self view] setNeedsDisplay:YES];

@@ -5,6 +5,10 @@
 //  Copyright 2008 ridiculous_fish. All rights reserved.
 //
 
+#if !__has_feature(objc_arc)
+#error ARC required
+#endif
+
 #import <HexFiend/HFTextSelectionPulseView.h>
 
 
@@ -18,17 +22,9 @@
 
 - (void)setImage:(NSImage *)val {
     if (val != image) {
-        [val retain];
-        [image release];
         image = val;
     }
     [self setNeedsDisplay:YES];
-}
-
-- (void)dealloc
-{
-    [image release];
-    [super dealloc];
 }
 
 @end

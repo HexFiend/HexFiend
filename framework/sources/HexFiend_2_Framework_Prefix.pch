@@ -59,6 +59,16 @@
 #define FREE_ARRAY(name) \
     if (name != name ## static_) free(name)
 
+// See "Can I create a C array of retained pointers under ARC?"
+// https://developer.apple.com/library/content/releasenotes/ObjectiveC/RN-TransitioningToARC/Introduction/Introduction.html
+#define NEW_OBJ_ARRAY(type, name, number) \
+    __strong type * name = (__strong type *)check_calloc((number) * sizeof(type))
+#define FREE_OBJ_ARRAY(name, number) \
+    for (size_t __Free_Index = 0; __Free_Index < number; ++__Free_Index) { \
+        name[__Free_Index] = nil; \
+    } \
+    free(name);
+
 #if !defined(MIN)
     #define MIN(A,B)	({ __typeof__(A) __a = (A); __typeof__(B) __b = (B); __a < __b ? __a : __b; })
 #endif

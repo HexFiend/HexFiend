@@ -5,6 +5,10 @@
 //  Copyright 2007 ridiculous_fish. All rights reserved.
 //
 
+#if !__has_feature(objc_arc)
+#error ARC required
+#endif
+
 /* Note that on Tiger, NSScroller did not support double in any meaningful way; [scroller doubleValue] always returns 0, and setDoubleValue: doesn't look like it works either. */
 
 #import <HexFiend/HFVerticalScrollerRepresenter.h>

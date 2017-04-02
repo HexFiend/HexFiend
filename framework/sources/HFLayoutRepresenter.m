@@ -5,6 +5,10 @@
 //  Copyright 2007 ridiculous_fish. All rights reserved.
 //
 
+#if !__has_feature(objc_arc)
+#error ARC required
+#endif
+
 #import <HexFiend/HFLayoutRepresenter.h>
 
 @interface HFRepresenterLayoutViewInfo : NSObject {
@@ -43,7 +47,7 @@ static NSInteger sortByLayoutPosition(id a, id b, void *self) {
     if (! representers) return nil;
     
     NSMutableArray *result = [NSMutableArray array];
-    NSArray *reps = [representers sortedArrayUsingFunction:sortByLayoutPosition context:self];
+    NSArray *reps = [representers sortedArrayUsingFunction:sortByLayoutPosition context:NULL];
     NSMutableArray *currentReps = [NSMutableArray array];
     CGFloat currentRepY = - CGFLOAT_MAX;
     for(HFRepresenter* rep in reps) {
@@ -54,14 +58,13 @@ static NSInteger sortByLayoutPosition(id a, id b, void *self) {
         info->layoutPosition = [rep layoutPosition];
         info->autoresizingMask = [info->view autoresizingMask];
         if (info->layoutPosition.y != currentRepY && [currentReps count] > 0) {
-            [result addObject:[[currentReps copy] autorelease]];
+            [result addObject:[currentReps copy]];
             [currentReps removeAllObjects];
         }
         currentRepY = info->layoutPosition.y;
         [currentReps addObject:info];
-        [info release];
     }
-    if ([currentReps count]) [result addObject:[[currentReps copy] autorelease]];
+    if ([currentReps count]) [result addObject:[currentReps copy]];
     return result;
 }
 
@@ -253,7 +256,7 @@ static NSInteger sortByLayoutPosition(id a, id b, void *self) {
 }
 
 - (NSArray *)representers {
-    return representers ? [[representers copy] autorelease] : @[];
+    return representers ? [representers copy] : @[];
 }
 
 - (instancetype)init {
@@ -264,8 +267,6 @@ static NSInteger sortByLayoutPosition(id a, id b, void *self) {
 
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NSViewFrameDidChangeNotification object:[self view]];
-    [representers release];
-    [super dealloc];
 }
 
 - (void)encodeWithCoder:(NSCoder *)coder {
@@ -278,7 +279,7 @@ static NSInteger sortByLayoutPosition(id a, id b, void *self) {
 - (instancetype)initWithCoder:(NSCoder *)coder {
     HFASSERT([coder allowsKeyedCoding]);
     self = [super initWithCoder:coder];
-    representers = [[coder decodeObjectForKey:@"HFRepresenters"] retain];
+    representers = [coder decodeObjectForKey:@"HFRepresenters"];
     maximizesBytesPerLine = [coder decodeBoolForKey:@"HFMaximizesBytesPerLine"];
     NSView *view = [self view];
     [view setPostsFrameChangedNotifications:YES];

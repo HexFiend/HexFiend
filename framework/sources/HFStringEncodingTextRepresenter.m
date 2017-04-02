@@ -5,6 +5,10 @@
 //  Copyright 2007 ridiculous_fish. All rights reserved.
 //
 
+#if !__has_feature(objc_arc)
+#error ARC required
+#endif
+
 #import <HexFiend/HFStringEncodingTextRepresenter.h>
 #import <HexFiend/HFRepresenterStringEncodingTextView.h>
 #import <HexFiend/HFPasteboardOwner.h>
@@ -45,7 +49,6 @@
     else {
 	NSString *string = [[NSString alloc] initWithBytesNoCopy:stringBuffer length:stringLength encoding:encoding freeWhenDone:YES];
 	[pboard setString:string forType:type];
-	[string release];
     }
 }
 

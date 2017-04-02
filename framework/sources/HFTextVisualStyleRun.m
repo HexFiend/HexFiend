@@ -5,6 +5,10 @@
 //  Copyright 2009 ridiculous_fish. All rights reserved.
 //
 
+#if !__has_feature(objc_arc)
+#error ARC required
+#endif
+
 #import "HFTextVisualStyleRun.h"
 
 
@@ -15,14 +19,6 @@
     _scale = 1.;
     _shouldDraw = YES;
     return self;
-}
-
-- (void)dealloc {
-    [_foregroundColor release];
-    [_backgroundColor release];
-    [_bookmarkStarts release];
-    [_bookmarkExtents release];
-    [super dealloc];
 }
 
 - (void)set {
