@@ -6,6 +6,10 @@
 //  Copyright 2009 ridiculous_fish. All rights reserved.
 //
 
+#if !__has_feature(objc_arc)
+#error ARC required
+#endif
+
 #import "DataInspectorRepresenter.h"
 
 /* NSTableColumn identifiers */
@@ -93,7 +97,7 @@ enum NumberBase_t {
 @implementation DataInspector
 
 + (DataInspector*)dataInspectorSupplementing:(NSArray*)inspectors {
-    DataInspector *ret = [[[DataInspector alloc] init] autorelease];
+    DataInspector *ret = [[DataInspector alloc] init];
 
     enum Endianness_t preferredEndian; // Prefer the most popular endianness among inspectors
     uint32_t present = 0; // Bit set of all inspector types that are already present.
@@ -391,8 +395,7 @@ static NSAttributedString *inspectionError(NSString *s) {
     NSMutableParagraphStyle *paragraphStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
     [paragraphStyle setMinimumLineHeight:(CGFloat)16.];
     NSAttributedString *result = [[NSAttributedString alloc] initWithString:s attributes:@{NSForegroundColorAttributeName: [NSColor disabledControlTextColor], NSFontAttributeName: [NSFont controlContentFontOfSize:11], NSParagraphStyleAttributeName: paragraphStyle}];
-    [paragraphStyle release];
-    return [result autorelease];
+    return result;
 }
 
 - (id)valueForController:(HFController *)controller ranges:(NSArray *)ranges isError:(BOOL *)outIsError {
@@ -481,13 +484,13 @@ static NSAttributedString *inspectionError(NSString *s) {
         case eInspectorTypeUTF8Text: {
             if(length == 0) return inspectionError(InspectionErrorNoData);
             if(length > MAX_EDITABLE_BYTE_COUNT) return inspectionError(InspectionErrorTooMuch);
-            NSString *ret = [[[NSString alloc] initWithBytes:bytes length:length encoding:NSUTF8StringEncoding] autorelease];
+            NSString *ret = [[NSString alloc] initWithBytes:bytes length:length encoding:NSUTF8StringEncoding];
             if(ret == nil) return inspectionError(@"(bytes are not valid UTF-8)");
             if(outIsError) *outIsError = NO;
             return ret;
         }
         case eInspectorTypeBinary: {
-            NSString* ret = [[[NSString alloc] init] autorelease];
+            NSString* ret = @"";
             
             for (NSUInteger i = 0; i < length; ++i) {
                 char input = bytes[i];
@@ -802,11 +805,6 @@ static BOOL stringRangeIsNullBytes(NSString *string, NSRange range) {
     return self;
 }
 
-- (void)dealloc {
-    [inspectors release];
-    [super dealloc];
-}
-
 - (void)encodeWithCoder:(NSCoder *)coder {
     HFASSERT([coder allowsKeyedCoding]);
     [super encodeWithCoder:coder];
@@ -816,7 +814,7 @@ static BOOL stringRangeIsNullBytes(NSString *string, NSRange range) {
 - (instancetype)initWithCoder:(NSCoder *)coder {
     HFASSERT([coder allowsKeyedCoding]);
     self = [super initWithCoder:coder];
-    inspectors = [[coder decodeObjectForKey:@"HFInspectors"] retain];
+    inspectors = [coder decodeObjectForKey:@"HFInspectors"];
     return self;
 }
 
@@ -825,7 +823,6 @@ static BOOL stringRangeIsNullBytes(NSString *string, NSRange range) {
     if (! defaultInspectorDictionaries) {
         DataInspector *ins = [[DataInspector alloc] init];
         [inspectors addObject:ins];
-        [ins release];
     }
     else {
         NSEnumerator *enumer = [defaultInspectorDictionaries objectEnumerator];
@@ -834,7 +831,6 @@ static BOOL stringRangeIsNullBytes(NSString *string, NSRange range) {
             DataInspector *ins = [[DataInspector alloc] init];
             [ins setPropertyListRepresentation:inspectorDictionary];
             [inspectors addObject:ins];
-            [ins release];            
         }
     }
 }
@@ -847,7 +843,6 @@ static BOOL stringRangeIsNullBytes(NSString *string, NSRange range) {
         [inspectorDictionaries addObject:[inspector propertyListRepresentation]];
     }
     [[NSUserDefaults standardUserDefaults] setObject:inspectorDictionaries forKey:kDataInspectorUserDefaultsKey];
-    [inspectorDictionaries release];
 }
 
 - (NSView *)createView {
@@ -861,7 +856,6 @@ static BOOL stringRangeIsNullBytes(NSString *string, NSRange range) {
         if (! loaded || ! outletView) {
             [NSException raise:NSInternalInconsistencyException format:@"Unable to load nib named DataInspectorView"];
         }
-        [topLevelObjects retain];
     } else {
         /* for Mac OS X 10.7 or lower */
         loaded = [NSBundle loadNibNamed:@"DataInspectorView" owner:self];
@@ -965,7 +959,6 @@ static BOOL stringRangeIsNullBytes(NSString *string, NSRange range) {
                 NSArray *selectedRanges = [controller selectedContentsRanges];
                 NSData *data = [[NSData alloc] initWithBytesNoCopy:bytes length:byteCount freeWhenDone:NO];
                 [controller insertData:data replacingPreviousBytes:0 allowUndoCoalescing:NO];
-                [data release];
                 [controller setSelectedContentsRanges:selectedRanges]; //Hack to preserve the selection across the data insertion
             }
         }
