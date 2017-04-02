@@ -878,9 +878,9 @@ static inline Class preferredByteArrayClass(void) {
         [self updateDocumentWindowTitle];
         [containerView setNeedsDisplay:YES];
         if (commandToRunAfterBannerIsDoneHiding) {
-            SEL command = commandToRunAfterBannerIsDoneHiding;
+            dispatch_block_t command = commandToRunAfterBannerIsDoneHiding;
             commandToRunAfterBannerIsDoneHiding = NULL;
-            [self performSelector:command withObject:nil];
+            command();
         }
     }
 }
@@ -952,7 +952,7 @@ static inline Class preferredByteArrayClass(void) {
     return operationView == nil || operationView != saveView;
 }
 
-- (void)hideBannerFirstThenDo:(SEL)command {
+- (void)hideBannerFirstThenDo:(dispatch_block_t)command {
     HFASSERT(bannerIsShown);
     bannerGrowing = NO;
     bannerStartTime = 0;
@@ -1125,7 +1125,7 @@ static inline Class preferredByteArrayClass(void) {
     }
     USE(item);
     if (bannerIsShown) {
-        [self hideBannerFirstThenDo:_cmd];
+        [self hideBannerFirstThenDo:^(){[self showFindPanel:item];}];
         return;
     }
     
@@ -1480,7 +1480,7 @@ cancelled:;
         return;
     }
     if (operationView != nil && operationView != moveSelectionByView) {
-        [self hideBannerFirstThenDo:_cmd];
+        [self hideBannerFirstThenDo:^(){[self moveSelectionForwards:sender];}];
         return;
     }
     [self showNavigationBannerSettingExtendSelectionCheckboxTo:NO];
@@ -1493,7 +1493,7 @@ cancelled:;
         return;
     }
     if (operationView != nil && operationView != moveSelectionByView) {
-        [self hideBannerFirstThenDo:_cmd];
+        [self hideBannerFirstThenDo:^(){[self extendSelectionForwards:sender];}];
         return;
     }
     [self showNavigationBannerSettingExtendSelectionCheckboxTo:YES];
@@ -1506,7 +1506,7 @@ cancelled:;
         return;
     }
     if (operationView != nil && operationView != jumpToOffsetView) {
-        [self hideBannerFirstThenDo:_cmd];
+        [self hideBannerFirstThenDo:^(){[self jumpToOffset:sender];}];
         return;
     }
     if (! jumpToOffsetView) jumpToOffsetView = [self newOperationViewForNibName:@"JumpToOffsetBanner" displayName:@"Jumping to Offset" fixedHeight:YES];

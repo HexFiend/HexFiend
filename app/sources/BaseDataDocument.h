@@ -43,7 +43,7 @@ extern NSString * const BaseDataDocumentDidChangeStringEncodingNotification;
     CGFloat bannerTargetHeight;
     CFAbsoluteTime bannerStartTime;
     id targetFirstResponderInBanner;
-    SEL commandToRunAfterBannerIsDoneHiding;
+    dispatch_block_t commandToRunAfterBannerIsDoneHiding;
     
     BOOL saveInProgress;
     
@@ -100,7 +100,7 @@ extern NSString * const BaseDataDocumentDidChangeStringEncodingNotification;
 
 - (HFDocumentOperationView *)newOperationViewForNibName:(NSString *)name displayName:(NSString *)displayName fixedHeight:(BOOL)fixedHeight;
 - (void)prepareBannerWithView:(HFDocumentOperationView *)newSubview withTargetFirstResponder:(id)targetFirstResponder;
-- (void)hideBannerFirstThenDo:(SEL)command;
+- (void)hideBannerFirstThenDo:(dispatch_block_t)command;
 - (NSArray *)runningOperationViews;
 
 @property (nonatomic) NSStringEncoding stringEncoding;
