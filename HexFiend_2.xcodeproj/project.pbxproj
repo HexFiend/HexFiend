@@ -617,6 +617,7 @@
 			isa = PBXGroup;
 			children = (
 				D0560B350CDC4248009D2484 /* Framework */,
+				9408FC0D19DD7360004F800E /* FrameworkTests */,
 				D0560B380CDC4253009D2484 /* App */,
 				D047E33B1022CF2B00EF307B /* PrivilegedHelper */,
 				D00C166E0FF4925A006D021F /* HexFiendling */,
@@ -678,7 +679,7 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		9408FC0D19DD7360004F800E /* Tests */ = {
+		9408FC0D19DD7360004F800E /* FrameworkTests */ = {
 			isa = PBXGroup;
 			children = (
 				D06D60BB0FA7EA23002376EE /* TreeEntry.h */,
@@ -692,8 +693,8 @@
 				9408FBFE19DD72DF004F800E /* Framework_Tests.m */,
 				9408FBFC19DD72DE004F800E /* Supporting Files */,
 			);
-			name = Tests;
-			path = tests;
+			name = FrameworkTests;
+			path = framework/tests;
 			sourceTree = "<group>";
 		};
 		94548A3719DC51FE006EFA29 /* Products */ = {
@@ -918,7 +919,6 @@
 				D0B422550FF8456D00DF27E5 /* Pasteboard and Undo */,
 				D0B422A90FF87BDA00DF27E5 /* High Level Views */,
 				D01E7C010CDC569F00943F9E /* Resources */,
-				9408FC0D19DD7360004F800E /* Tests */,
 			);
 			name = Framework;
 			path = framework;
