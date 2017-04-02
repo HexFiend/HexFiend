@@ -35,11 +35,11 @@
 		940C4E6A183C11E20009AFDA /* HexFiend.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D01E7BB80CDC530C00943F9E /* HexFiend.framework */; };
 		94548A4D19DC5218006EFA29 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 94548A4219DC51FF006EFA29 /* Sparkle.framework */; };
 		94548A4E19DC5218006EFA29 /* Sparkle.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 94548A4219DC51FF006EFA29 /* Sparkle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		9483479019DE188E0086A732 /* HFTest.h in Headers */ = {isa = PBXBuildFile; fileRef = 9483478F19DE188E0086A732 /* HFTest.h */; };
 		9483479319DE1C8E0086A732 /* NaiveArray.m in Sources */ = {isa = PBXBuildFile; fileRef = D06D60A40FA7E980002376EE /* NaiveArray.m */; };
 		9483479419DE1C920086A732 /* TreeEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = D06D60BC0FA7EA23002376EE /* TreeEntry.m */; };
 		9483479519DE1C950086A732 /* BTree_Test.m in Sources */ = {isa = PBXBuildFile; fileRef = D06D60A50FA7E980002376EE /* BTree_Test.m */; };
 		94ECCBC01BDF7DD2007FF44E /* HexFiend.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D01E7BB80CDC530C00943F9E /* HexFiend.framework */; };
+		A53B7D1A1E9185CF00CA3977 /* HFTestHashing.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D149300D8A37580018296B /* HFTestHashing.m */; };
 		A56D78161E7EF088001D1892 /* CLIController.m in Sources */ = {isa = PBXBuildFile; fileRef = A56D78151E7EF088001D1892 /* CLIController.m */; };
 		A56D78271E7EF231001D1892 /* hexf in Resources */ = {isa = PBXBuildFile; fileRef = A56D78261E7EF231001D1892 /* hexf */; };
 		D00122E30D48A8D400540B10 /* HFFindReplaceBackgroundView.m in Sources */ = {isa = PBXBuildFile; fileRef = D00122E20D48A8D400540B10 /* HFFindReplaceBackgroundView.m */; };
@@ -187,8 +187,6 @@
 		D0CDB77E0CE737130084926B /* HFStringEncodingTextRepresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = D0CDB77C0CE737130084926B /* HFStringEncodingTextRepresenter.m */; };
 		D0D0536E1487FF2500704643 /* HFFindReplaceOperationView.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D0536D1487FF2500704643 /* HFFindReplaceOperationView.m */; };
 		D0D110540FF602D800AE5CFB /* FiendlingAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D110530FF602D800AE5CFB /* FiendlingAppDelegate.m */; };
-		D0D149310D8A37580018296B /* HFTestHashing.h in Headers */ = {isa = PBXBuildFile; fileRef = D0D1492F0D8A37580018296B /* HFTestHashing.h */; };
-		D0D149320D8A37580018296B /* HFTestHashing.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D149300D8A37580018296B /* HFTestHashing.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		D0D179460D46F20E00684270 /* HFByteSlice_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = D0D179450D46F20E00684270 /* HFByteSlice_Private.h */; };
 		D0D4BE85146F43A2001B0A71 /* ServiceManagement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0D4BE84146F43A1001B0A71 /* ServiceManagement.framework */; };
 		D0D828E50CDE89E500C2AB82 /* HFByteSlice.h in Headers */ = {isa = PBXBuildFile; fileRef = D08F5E220CDE843E007EFFE8 /* HFByteSlice.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1118,7 +1116,6 @@
 				D0A9F3FD0CFBEAD50077D577 /* HFLineCountingView.h in Headers */,
 				D0A402F30D0D43F4006BC574 /* HFLayoutRepresenter.h in Headers */,
 				D0A90B050D160414008975B9 /* HFStatusBarRepresenter.h in Headers */,
-				9483479019DE188E0086A732 /* HFTest.h in Headers */,
 				D0A47C110D288EDF00CB9BB9 /* HFControllerCoalescedUndo.h in Headers */,
 				D041D1C00D397E1A00C28345 /* HFPasteboardOwner.h in Headers */,
 				D0D179460D46F20E00684270 /* HFByteSlice_Private.h in Headers */,
@@ -1131,7 +1128,6 @@
 				D0370A3F0D68307A00B3A8C6 /* HFSharedMemoryByteSlice.h in Headers */,
 				D019B9010D83FEB3005789AA /* HFByteSliceFileOperation.h in Headers */,
 				D019B9550D840FE8005789AA /* HFObjectGraph.h in Headers */,
-				D0D149310D8A37580018296B /* HFTestHashing.h in Headers */,
 				D08630F00D8BEE9900FF0BE7 /* HFByteSliceFileOperationQueueEntry.h in Headers */,
 				D04C78270DC47ECF00A76FF2 /* HFTextSelectionPulseView.h in Headers */,
 				D0A6C9D80DCC68610077175C /* HFController.h in Headers */,
@@ -1474,6 +1470,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9483479519DE1C950086A732 /* BTree_Test.m in Sources */,
+				A53B7D1A1E9185CF00CA3977 /* HFTestHashing.m in Sources */,
 				9408FBFF19DD72DF004F800E /* Framework_Tests.m in Sources */,
 				9483479419DE1C920086A732 /* TreeEntry.m in Sources */,
 				9483479319DE1C8E0086A732 /* NaiveArray.m in Sources */,
@@ -1525,7 +1522,6 @@
 				D0A1F31211439E3F008BB3BA /* HFByteArrayEditScript.m in Sources */,
 				D019B9020D83FEB3005789AA /* HFByteSliceFileOperation.m in Sources */,
 				D019B9560D840FE8005789AA /* HFObjectGraph.m in Sources */,
-				D0D149320D8A37580018296B /* HFTestHashing.m in Sources */,
 				D08630F10D8BEE9900FF0BE7 /* HFByteSliceFileOperationQueueEntry.m in Sources */,
 				D08491FF0DBB60C700C7195C /* HFFastMemchr.m in Sources */,
 				D04C78280DC47ECF00A76FF2 /* HFTextSelectionPulseView.m in Sources */,

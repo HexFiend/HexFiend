@@ -9,7 +9,7 @@
 #error ARC required
 #endif
 
-#import <HexFiend/HFTestHashing.h>
+#import "HFTestHashing.h"
 #import <HexFiend/HFByteArray.h>
 #include <CommonCrypto/CommonDigest.h>
 
