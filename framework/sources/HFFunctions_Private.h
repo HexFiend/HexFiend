@@ -44,9 +44,5 @@ __private_extern__ NSString *HFDescribeByteCountWithPrefixAndSuffix(const char *
 
 /* Function for OSAtomicAdd64 that just does a non-atomic add on PowerPC.  This should not be used where atomicity is critical; an example where this is used is updating a progress bar. */
 static inline int64_t HFAtomicAdd64(int64_t a, volatile int64_t *b) {
-#if __ppc__
-    return *b += a;
-#else
     return OSAtomicAdd64(a, b);
-#endif
 }
