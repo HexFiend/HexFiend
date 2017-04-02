@@ -1,3 +1,7 @@
+#if !__has_feature(objc_arc)
+#error ARC required
+#endif
+
 #import <HexFiend/HFFunctions.h>
 #import <HexFiend/HFController.h>
 
@@ -10,17 +14,14 @@
 + (HFRangeWrapper *)withRange:(HFRange)range {
     HFRangeWrapper *result = [[self alloc] init];
     result->range = range;
-    return [result autorelease];
+    return result;
 }
 
 + (NSArray *)withRanges:(const HFRange *)ranges count:(NSUInteger)count {
     HFASSERT(count == 0 || ranges != NULL);
     NSUInteger i;
-    NSArray *result;
-    NEW_ARRAY(HFRangeWrapper *, wrappers, count);
-    for (i=0; i < count; i++) wrappers[i] = [self withRange:ranges[i]];
-    result = [NSArray arrayWithObjects:wrappers count:count];
-    FREE_ARRAY(wrappers);
+    NSMutableArray *result = [NSMutableArray arrayWithCapacity:count];
+    for (i=0; i < count; i++) [result addObject:[self withRange:ranges[i]]];
     return result;
 }
 
@@ -35,7 +36,7 @@
 
 - (id)copyWithZone:(NSZone *)zone {
     USE(zone);
-    return [self retain];
+    return self;
 }
 
 - (NSString *)description {
@@ -216,11 +217,10 @@ static BOOL HFRangeSetOverlapsAnyRange(CFMutableArrayRef array, uintptr_t a, uin
 
 - (void)dealloc {
     CFRelease(array);
-    [super dealloc];
 }
 
 + (HFRangeSet *)withRange:(HFRange)range {
-    HFRangeSet *newSet = [[[HFRangeSet alloc] init] autorelease];
+    HFRangeSet *newSet = [[HFRangeSet alloc] init];
     if(range.length > 0) {
         CFArrayAppendValue(newSet->array, (void*)ll2p(range.location));
         CFArrayAppendValue(newSet->array, (void*)ll2p(HFMaxRange(range)));
@@ -234,7 +234,7 @@ static BOOL HFRangeSetOverlapsAnyRange(CFMutableArrayRef array, uintptr_t a, uin
 }
 
 + (HFRangeSet *)withRangeWrappers:(NSArray *)ranges {
-    HFRangeSet *newSet = [[[HFRangeSet alloc] init] autorelease];
+    HFRangeSet *newSet = [[HFRangeSet alloc] init];
     for(HFRangeWrapper *wrapper in [HFRangeWrapper organizeAndMergeRanges:ranges]) {
         if(wrapper->range.length > 0) {
             CFArrayAppendValue(newSet->array, (void*)ll2p(wrapper->range.location));
@@ -245,7 +245,7 @@ static BOOL HFRangeSetOverlapsAnyRange(CFMutableArrayRef array, uintptr_t a, uin
 }
 
 + (HFRangeSet *)withRangeSet:(HFRangeSet *)rangeSet {
-    return [[rangeSet copy] autorelease];
+    return [rangeSet copy];
 }
 
 + (HFRangeSet *)complementOfRangeSet:(HFRangeSet *)rangeSet inRange:(HFRange)range {
@@ -266,7 +266,7 @@ static BOOL HFRangeSetOverlapsAnyRange(CFMutableArrayRef array, uintptr_t a, uin
     // inverted set by just copying the fenceposts between 'a' and 'b', and then
     // maybe including 'a' and 'b'.
     
-    HFRangeSet *newSet = [[[HFRangeSet alloc] init] autorelease];
+    HFRangeSet *newSet = [[HFRangeSet alloc] init];
 
     // newSet must contain all the fenceposts strictly between 'a' and 'b'
     CFIndex copyloc = (uintptr_t)CFArrayGetValueAtIndex(rangeSet->array, idxa) == a ? idxa+1 : idxa;
@@ -490,7 +490,7 @@ static BOOL HFRangeSetOverlapsAnyRange(CFMutableArrayRef array, uintptr_t a, uin
 - (id)copyWithZone:(NSZone *)zone {
     HFRangeSet *newSet = [[HFRangeSet allocWithZone:zone] init];
     CFRelease(newSet->array);
-    newSet->array = (CFMutableArrayRef)[[NSMutableArray allocWithZone:zone] initWithArray:(NSArray*)array copyItems:NO];
+    newSet->array = (__bridge_retained CFMutableArrayRef)[[NSMutableArray allocWithZone:zone] initWithArray:(__bridge NSArray*)array copyItems:NO];
     return newSet;
 }
 
@@ -512,8 +512,8 @@ static BOOL HFRangeSetOverlapsAnyRange(CFMutableArrayRef array, uintptr_t a, uin
     } else {
         // Boo, we have to iterate through the array.
         NSUInteger i = 0;
-        for(id val in (NSArray*)array) {
-            values[i++] = CFSwapInt64HostToLittle((uint64_t)(const void *)val);
+        for(id val in (__bridge NSArray*)array) {
+            values[i++] = CFSwapInt64HostToLittle((uint64_t)(__bridge const void *)val);
         }
     }
     [aCoder encodeBytes:values length:count * sizeof(*values)];
@@ -538,31 +538,11 @@ static BOOL HFRangeSetOverlapsAnyRange(CFMutableArrayRef array, uintptr_t a, uin
     
 fail:
     CFRelease(array);
-    [super release];
     return nil;
 }
 
 + (BOOL)supportsSecureCoding {
     return YES;
-}
-
-- (NSUInteger)countByEnumeratingWithState:(NSFastEnumerationState *)state objects:(id *)stackbuf count:(NSUInteger)len {
-    NSUInteger base = state->state;
-    NSUInteger length = CFArrayGetCount(array)/2;
-    NSUInteger i = 0;
-    
-    while(i < len && base + i < length) {
-        uintptr_t a = (uintptr_t)CFArrayGetValueAtIndex(array, 2*i);
-        uintptr_t b = (uintptr_t)CFArrayGetValueAtIndex(array, 2*i+1);
-        stackbuf[i] = [HFRangeWrapper withRange:HFRangeMake(a, b-a)];
-    }
-    
-    state->state = base + i;
-    state->itemsPtr = stackbuf;
-    state->mutationsPtr = &state->extra[0]; // Use simple mutation checking.
-    state->extra[0] = length;
-    
-    return i;
 }
 
 @end
@@ -924,7 +904,7 @@ NSString *HFHexStringFromData(NSData *data) {
         charBuffer[charIndex++] = hex2char(byte >> 4);
         charBuffer[charIndex++] = hex2char(byte & 0xF);
     }
-    return [[[NSString alloc] initWithBytesNoCopy:charBuffer length:stringLength encoding:NSASCIIStringEncoding freeWhenDone:YES] autorelease];
+    return [[NSString alloc] initWithBytesNoCopy:charBuffer length:stringLength encoding:NSASCIIStringEncoding freeWhenDone:YES];
 }
 
 void HFSetFDShouldCache(int fd, BOOL shouldCache) {
@@ -1059,7 +1039,7 @@ NSString *HFDescribeByteCountWithPrefixAndSuffix(const char *stringPrefix, unsig
     char* resultPointer = NULL;
     int numChars = asprintf(&resultPointer, "%s%llu%s %s%s%s", stringPrefix, dividend, remainderBuff, suffixes[i].suffix, needsPlural ? "s" : "", stringSuffix);
     if (numChars < 0) return NULL;
-    return [[[NSString alloc] initWithBytesNoCopy:resultPointer length:numChars encoding:NSASCIIStringEncoding freeWhenDone:YES] autorelease];
+    return [[NSString alloc] initWithBytesNoCopy:resultPointer length:numChars encoding:NSASCIIStringEncoding freeWhenDone:YES];
 }
 
 static CGFloat interpolateShadow(CGFloat val) {

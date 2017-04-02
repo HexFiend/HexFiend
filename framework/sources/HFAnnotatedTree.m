@@ -5,6 +5,10 @@
 //  Copyright 2010 ridiculous_fish. All rights reserved.
 //
 
+#if !__has_feature(objc_arc)
+#error ARC required
+#endif
+
 #import "HFAnnotatedTree.h"
 
 #if NDEBUG
@@ -49,11 +53,6 @@ static HFAnnotatedTreeNode *right_child(HFAnnotatedTreeNode *node);
     return self;
 }
 
-- (void)dealloc {
-    [root release];
-    [super dealloc];
-}
-
 - (id)rootNode {
     return root;
 }
@@ -65,7 +64,6 @@ static HFAnnotatedTreeNode *right_child(HFAnnotatedTreeNode *node);
 - (id)mutableCopyWithZone:(NSZone *)zone {
     HFAnnotatedTree *copied = [[[self class] alloc] init];
     copied->annotater = annotater;
-    [copied->root release];
     copied->root = [root mutableCopyWithZone:zone];
     return copied;
 }
@@ -79,7 +77,7 @@ static HFAnnotatedTreeNode *right_child(HFAnnotatedTreeNode *node);
     HFASSERT(node != nil);
     HFASSERT(get_parent(node) == nil);    
     /* Insert into the root */
-    insert(root, [node retain], self);
+    insert(root, node, self);
     VERIFY_INTEGRITY();
 }
 
@@ -87,7 +85,6 @@ static HFAnnotatedTreeNode *right_child(HFAnnotatedTreeNode *node);
     HFASSERT(node != nil);
     HFASSERT(get_parent(node) != nil);
     delete(node, self);
-    [node release];
     VERIFY_INTEGRITY();
 }
 
@@ -109,12 +106,6 @@ static HFAnnotatedTreeAnnotaterFunction_t get_annotater(HFAnnotatedTree *tree) {
 @end
 
 @implementation HFAnnotatedTreeNode
-
-- (void)dealloc {
-    [left release];
-    [right release];
-    [super dealloc];
-}
 
 - (NSComparisonResult)compare:(HFAnnotatedTreeNode *)node {
     USE(node);
@@ -303,10 +294,10 @@ static void delete(HFAnnotatedTreeNode *n, HFAnnotatedTree *tree) { // If n is n
     
     /* Tell leaf's parent to forget about leaf */
     if (leaf->parent->left == leaf) {
-        leaf->parent->left = NULL;
+        leaf->parent->left = nil;
     }
     else {
-        leaf->parent->right = NULL;
+        leaf->parent->right = nil;
     }
     reannotate(leaf->parent, tree);
     
@@ -418,7 +409,7 @@ static void verify_integrity(HFAnnotatedTreeNode *n) {
     }
     else {
         /* non-root node */
-        HFASSERT(n->level == (n->left == NULL ? 1 : n->left->level + 1));
+        HFASSERT(n->level == (n->left == nil ? 1 : n->left->level + 1));
         HFASSERT((n->level <= 1) || (n->right && n->level - n->right->level <= 1));
     }
     HFASSERT(!n->parent || !n->parent->parent ||

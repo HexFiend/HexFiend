@@ -1,3 +1,7 @@
+#if !__has_feature(objc_arc)
+#error ARC required
+#endif
+
 #import <HexFiend/HFFunctions_Private.h>
 
 #if defined(__i386__) || defined(__x86_64__)

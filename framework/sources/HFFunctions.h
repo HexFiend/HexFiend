@@ -485,7 +485,7 @@ NSString *HFDescribeByteCount(unsigned long long count);
  
  TODO: HFRangeSet needs to be tested! I guarantee it has bugs! (Which doesn't matter right now because it's all dead code...)
  */
-@interface HFRangeSet : NSObject <NSCopying, NSSecureCoding, NSFastEnumeration> {
+@interface HFRangeSet : NSObject <NSCopying, NSSecureCoding> {
     @private
     CFMutableArrayRef array;
 }
