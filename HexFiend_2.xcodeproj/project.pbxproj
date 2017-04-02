@@ -64,7 +64,7 @@
 		D01D1D721489DFE5008212BB /* HFAnnotatedTree.h in Headers */ = {isa = PBXBuildFile; fileRef = D0315BEA1225C553008C9EAB /* HFAnnotatedTree.h */; };
 		D01E7BED0CDC55D000943F9E /* HFController.m in Sources */ = {isa = PBXBuildFile; fileRef = D01E7BEB0CDC55D000943F9E /* HFController.m */; };
 		D01E7BF00CDC564B00943F9E /* HexFiend.h in Headers */ = {isa = PBXBuildFile; fileRef = D01E7BEF0CDC564B00943F9E /* HexFiend.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		D01E7C160CDC58AA00943F9E /* BaseDataDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = D01E7C150CDC58AA00943F9E /* BaseDataDocument.m */; };
+		D01E7C160CDC58AA00943F9E /* BaseDataDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = D01E7C150CDC58AA00943F9E /* BaseDataDocument.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		D01E7C3D0CDC6A3100943F9E /* HFTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = D01E7C3B0CDC69E500943F9E /* HFTypes.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D01E7C960CDC700400943F9E /* HFRepresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = D01E7C340CDC646800943F9E /* HFRepresenter.m */; };
 		D01EF15413B2A0D300CC9283 /* TextDividerRepresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = D01EF15313B2A0D300CC9283 /* TextDividerRepresenter.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };

@@ -5,6 +5,10 @@
 //  Copyright 2007 ridiculous_fish. All rights reserved.
 //
 
+#if !__has_feature(objc_arc)
+#error ARC required
+#endif
+
 #import "BaseDataDocument.h"
 #import "HFBannerDividerThumb.h"
 #import "HFDocumentOperationView.h"
@@ -199,26 +203,23 @@ static inline Class preferredByteArrayClass(void) {
 
 /* Code to save to user defs (NO) or apply from user defs (YES) the default representers to show. */
 - (void)saveOrApplyDefaultRepresentersToDisplay:(BOOL)isApplying {
-    const struct {
-        NSString *name;
-        HFRepresenter *rep;
-    } shownRepresentersData[] = {
-        {USERDEFS_KEY_FOR_REP(lineCountingRepresenter), lineCountingRepresenter},
-        {USERDEFS_KEY_FOR_REP(hexRepresenter), hexRepresenter},
-        {USERDEFS_KEY_FOR_REP(asciiRepresenter), asciiRepresenter},
-        {USERDEFS_KEY_FOR_REP(dataInspectorRepresenter), dataInspectorRepresenter},
-        {USERDEFS_KEY_FOR_REP(statusBarRepresenter), statusBarRepresenter},
-        {USERDEFS_KEY_FOR_REP(scrollRepresenter), scrollRepresenter}
-    };
-    NSUInteger i;
+    NSMapTable *shownRepresentersData = [NSMapTable strongToWeakObjectsMapTable];
+    [shownRepresentersData setObject:lineCountingRepresenter forKey:USERDEFS_KEY_FOR_REP(lineCountingRepresenter)];
+    [shownRepresentersData setObject:hexRepresenter forKey:USERDEFS_KEY_FOR_REP(hexRepresenter)];
+    [shownRepresentersData setObject:asciiRepresenter forKey:USERDEFS_KEY_FOR_REP(asciiRepresenter)];
+    [shownRepresentersData setObject:dataInspectorRepresenter forKey:USERDEFS_KEY_FOR_REP(dataInspectorRepresenter)];
+    [shownRepresentersData setObject:statusBarRepresenter forKey:USERDEFS_KEY_FOR_REP(statusBarRepresenter)];
+    [shownRepresentersData setObject:scrollRepresenter forKey:USERDEFS_KEY_FOR_REP(scrollRepresenter)];
     NSUserDefaults *defs = [NSUserDefaults standardUserDefaults];
-    for (i=0; i < sizeof shownRepresentersData / sizeof *shownRepresentersData; i++) {
+    NSEnumerator *keysEnum = [shownRepresentersData keyEnumerator];
+    NSString *name = nil;
+    while (name = [keysEnum nextObject]) {
+        HFRepresenter *rep = [shownRepresentersData objectForKey:name];
         if (isApplying) {
             /* Read from user defaults */
-            NSNumber *boolObject = [defs objectForKey:shownRepresentersData[i].name];
+            NSNumber *boolObject = [defs objectForKey:name];
             if (boolObject != nil) {
                 BOOL shouldShow = [boolObject boolValue];
-                HFRepresenter *rep = shownRepresentersData[i].rep;
                 if (shouldShow != [self representerIsShown:rep]) {
                     if (shouldShow) [self showViewForRepresenter:rep];
                     else [self hideViewForRepresenter:rep];
@@ -227,8 +228,8 @@ static inline Class preferredByteArrayClass(void) {
         }
         else {
             /* Save to user defaults */
-            BOOL isShown = [self representerIsShown:shownRepresentersData[i].rep];
-            [defs setBool:isShown forKey:shownRepresentersData[i].name];
+            BOOL isShown = [self representerIsShown:rep];
+            [defs setBool:isShown forKey:name];
         }
     }
     if (isApplying) {
@@ -312,7 +313,6 @@ static inline Class preferredByteArrayClass(void) {
         if (windowNibName != nil) {
             NSWindowController *windowController = [[MyDocumentWindowController alloc] initWithWindowNibName:windowNibName owner:self];
             [self addWindowController:windowController];
-            [windowController release];
         }
     }
 }
@@ -358,8 +358,6 @@ static inline Class preferredByteArrayClass(void) {
 
 - (void)setContainerView:(NSSplitView *)view {
     /* Called when the nib is loaded.  We retain it. */
-    [view retain];
-    [containerView release];
     containerView = view;
 }
 
@@ -419,11 +417,9 @@ static inline Class preferredByteArrayClass(void) {
     for(NSView *view in existingViews) {
         [view removeFromSuperview];
     }
-    [existingViews release];
     
     /* It's our split view now! */
-    [containerView release];
-    containerView = [splitView retain];
+    containerView = splitView;
     
     /* Set up the window */
     [self setupWindowEnforcingBytesPerLine:oldBPL];
@@ -542,32 +538,12 @@ static inline Class preferredByteArrayClass(void) {
 
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    [lineCountingRepresenter release];
-    
-    [hexRepresenter release];
-    [asciiRepresenter release];
-    [scrollRepresenter release];
-    [layoutRepresenter release];
-    [statusBarRepresenter release];
-    [dataInspectorRepresenter release];
-    [textDividerRepresenter release];
-    
-    [controller release];
-    [bannerView release];
     
     /* Release and stop observing our banner views.  Note that any of these may be nil. */
     HFDocumentOperationView *views[] = {findReplaceView, moveSelectionByView, jumpToOffsetView, saveView};
     for (NSUInteger i = 0; i < sizeof views / sizeof *views; i++) {
         [views[i] removeObserver:self forKeyPath:@"progress"];
-        [views[i] release];
     }
-    [containerView release];
-    [bannerDividerThumb release];
-    
-    [liveReloadDate release];
-    [liveReloadTimer release];
-
-    [super dealloc];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
@@ -585,7 +561,7 @@ static inline Class preferredByteArrayClass(void) {
 
 - (HFDocumentOperationView *)newOperationViewForNibName:(NSString *)name displayName:(NSString *)displayName fixedHeight:(BOOL)fixedHeight {
     HFASSERT(name);
-    HFDocumentOperationView *result = [[HFDocumentOperationView viewWithNibNamed:name owner:self] retain];
+    HFDocumentOperationView *result = [HFDocumentOperationView viewWithNibNamed:name owner:self];
     [result setDisplayName:displayName];
     [result setIsFixedHeight:fixedHeight];
     [result setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
@@ -624,8 +600,7 @@ static inline Class preferredByteArrayClass(void) {
         else [bannerView addSubview:newSubview];
     }
     [bannerResizeTimer invalidate];
-    [bannerResizeTimer release];
-    bannerResizeTimer = [[NSTimer scheduledTimerWithTimeInterval:1. / 60. target:self selector:@selector(animateBanner:) userInfo:nil repeats:YES] retain];
+    bannerResizeTimer = [NSTimer scheduledTimerWithTimeInterval:1. / 60. target:self selector:@selector(animateBanner:) userInfo:nil repeats:YES];
     [self updateDocumentWindowTitle];
 }
 
@@ -644,14 +619,14 @@ static inline Class preferredByteArrayClass(void) {
     USE(outError);
     BOOL result = NO;
     HFASSERT([absoluteURL isFileURL]);
-    HFFileReference *fileReference = [[[HFFileReference alloc] initWithPath:[absoluteURL path] error:outError] autorelease];
+    HFFileReference *fileReference = [[HFFileReference alloc] initWithPath:[absoluteURL path] error:outError];
     if (fileReference) {
         
-        HFFileByteSlice *byteSlice = [[[HFFileByteSlice alloc] initWithFile:fileReference] autorelease];
+        HFFileByteSlice *byteSlice = [[HFFileByteSlice alloc] initWithFile:fileReference];
         //        HFByteSlice *byteSlice = [[[NSClassFromString(@"HFRandomDataByteSlice") alloc] initWithRandomDataLength:ULLONG_MAX] autorelease];
         //        pid_t pid = [[[NSRunningApplication runningApplicationsWithBundleIdentifier:@"com.apple.TextEdit"] lastObject] processIdentifier];
         //        HFByteSlice *byteSlice = [[[NSClassFromString(@"HFProcessMemoryByteSlice") alloc] initWithPID:pid range:HFRangeMake(0, 1 + (unsigned long long)UINT_MAX)] autorelease];
-        HFByteArray *byteArray = [[[preferredByteArrayClass() alloc] init] autorelease];
+        HFByteArray *byteArray = [[preferredByteArrayClass() alloc] init];
         [byteArray insertByteSlice:byteSlice inRange:HFRangeMake(0, 0)];
         [controller setByteArray:byteArray];
         cleanGenerationCount = [byteArray changeGenerationCount];
@@ -901,8 +876,7 @@ static inline Class preferredByteArrayClass(void) {
         bannerIsShown = NO;
         [bannerDividerThumb removeFromSuperview];
         [bannerView removeFromSuperview];
-        [[[[bannerView subviews] copy] autorelease] makeObjectsPerformSelector:@selector(removeFromSuperview)];
-        [bannerView release];
+        [[[bannerView subviews] copy] makeObjectsPerformSelector:@selector(removeFromSuperview)];
         bannerView = nil;
         operationView = nil;
         [self updateDocumentWindowTitle];
@@ -972,7 +946,6 @@ static inline Class preferredByteArrayClass(void) {
     if ((bannerGrowing && amount >= 1.) || (!bannerGrowing && amount <= 0.)) {
         if (timer == bannerResizeTimer && bannerResizeTimer != nil) {
             [bannerResizeTimer invalidate];
-            [bannerResizeTimer release];
             bannerResizeTimer = nil;
         }
         [self finishedAnimation];
@@ -996,8 +969,7 @@ static inline Class preferredByteArrayClass(void) {
         [self restoreFirstResponderToSavedResponder];
     }
     [bannerResizeTimer invalidate];
-    [bannerResizeTimer release];
-    bannerResizeTimer = [[NSTimer scheduledTimerWithTimeInterval:1. / 60. target:self selector:@selector(animateBanner:) userInfo:nil repeats:YES] retain];
+    bannerResizeTimer = [NSTimer scheduledTimerWithTimeInterval:1. / 60. target:self selector:@selector(animateBanner:) userInfo:nil repeats:YES];
 }
 
 - (void)hideBannerImmediately {
@@ -1043,7 +1015,7 @@ static inline Class preferredByteArrayClass(void) {
         return NO;
     }
     
-    showSaveViewAfterDelayTimer = [[NSTimer scheduledTimerWithTimeInterval:.5 target:self selector:@selector(showSaveBannerHavingDelayed:) userInfo:nil repeats:NO] retain];
+    showSaveViewAfterDelayTimer = [NSTimer scheduledTimerWithTimeInterval:.5 target:self selector:@selector(showSaveBannerHavingDelayed:) userInfo:nil repeats:NO];
     
     if (! saveView) saveView = [self newOperationViewForNibName:@"SaveBanner" displayName:@"Saving" fixedHeight:YES];
     
@@ -1055,7 +1027,6 @@ static inline Class preferredByteArrayClass(void) {
     [saveView startOperation:^id(HFProgressTracker *tracker) {
         id result = [self threadedSaveToURL:inAbsoluteURL trackingProgress:tracker error:outError];
         /* Retain the error so it can be autoreleased in the main thread */
-        [*outError retain];
         return result;
     } completionHandler:^(id result) {
         saveResult = [result integerValue];
@@ -1076,10 +1047,7 @@ static inline Class preferredByteArrayClass(void) {
         }
     }
 
-    [*outError autorelease];
-
     [showSaveViewAfterDelayTimer invalidate];
-    [showSaveViewAfterDelayTimer release];
     showSaveViewAfterDelayTimer = nil;
     
     [[controller byteArray] decrementChangeLockCounter];
@@ -1092,12 +1060,12 @@ static inline Class preferredByteArrayClass(void) {
  What we really need to know is "has a backing file been touched by this operation."  But we don't have access to that information yet.
      */
     if ((saveResult != HFSaveError) && (saveOperation == NSSaveOperation || saveOperation == NSSaveAsOperation)) {
-        HFFileReference *fileReference = [[[HFFileReference alloc] initWithPath:[inAbsoluteURL path] error:NULL] autorelease];
+        HFFileReference *fileReference = [[HFFileReference alloc] initWithPath:[inAbsoluteURL path] error:NULL];
         if (fileReference) {
             HFByteArray *oldByteArray = [controller byteArray];
 
-            HFByteArray *newByteArray = [[[preferredByteArrayClass() alloc] init] autorelease];
-            HFFileByteSlice *byteSlice = [[[HFFileByteSlice alloc] initWithFile:fileReference] autorelease];
+            HFByteArray *newByteArray = [[preferredByteArrayClass() alloc] init];
+            HFFileByteSlice *byteSlice = [[HFFileByteSlice alloc] initWithFile:fileReference];
             [newByteArray insertByteSlice:byteSlice inRange:HFRangeMake(0, 0)];
             
             /* Propogate attributes (like bookmarks) */
@@ -1357,7 +1325,7 @@ static inline Class preferredByteArrayClass(void) {
     [tracker setMaxProgress:haystackLength];
     
     /* Perform our changes in a copy of haystack, and then set that copy back on our controller */
-    HFByteArray *newHaystack = [[haystack mutableCopy] autorelease];
+    HFByteArray *newHaystack = [haystack mutableCopy];
     unsigned long long newHaystackLength = haystackLength;    
     
     HFRange remainingRange = HFRangeMake(0, haystackLength);
@@ -1473,12 +1441,27 @@ cancelled:;
 
 /* This is called from the segmented control in the Find/Replace view */
 - (IBAction)performFindReplaceActionFromSelectedSegment:(id)sender {
-    const SEL actions[] = {@selector(replaceAll:), @selector(replace:), @selector(replaceAndFind:), @selector(findPrevious:), @selector(findNext:)};
     NSUInteger selection = [sender selectedSegment];
-    if (selection < sizeof actions / sizeof *actions) {
-        [self performSelector:actions[selection] withObject:sender];
-    } else {
-        NSBeep();
+    switch (selection) {
+        case 0:
+            [self replaceAll:sender];
+            break;
+        case 1:
+            [self replace:sender];
+            break;
+        case 2:
+            [self replaceAndFind:sender];
+            break;
+        case 3:
+            [self findPrevious:sender];
+            break;
+        case 4:
+            [self findNext:sender];
+            break;
+        default:
+            NSBeep();
+            HFASSERT(0);
+            break;
     }
 }
 
@@ -1610,7 +1593,7 @@ cancelled:;
         NSString *keString = @"";
         if (bookmarkIndex <= 10) {
             char ke = '0' + (bookmarkIndex % 10);
-            keString = [[[NSString alloc] initWithBytes:&ke length:1 encoding:NSASCIIStringEncoding] autorelease];
+            keString = [[NSString alloc] initWithBytes:&ke length:1 encoding:NSASCIIStringEncoding];
         }
         
         /* The first item is Select Bookmark, the second (alternate) is Scroll To Bookmark */
@@ -1625,7 +1608,6 @@ cancelled:;
         [item setAlternate:NO];
         [item setTag:bookmarkIndex];
         [items addObject:item];
-        [item release];
         
         item = [[NSMenuItem alloc]
                 initWithTitle:[NSString stringWithFormat:@"Scroll to Bookmark %lu", (unsigned long)bookmarkIndex]
@@ -1635,7 +1617,6 @@ cancelled:;
         [item setAlternate:YES];
         [item setTag:bookmarkIndex];
         [items addObject:item];
-        [item release];
     }
     
     } // @autoreleasepool
@@ -1743,7 +1724,6 @@ cancelled:;
         if (newBookmark != NSNotFound) {
             [controller setRange:range forBookmark:newBookmark];
         }
-        [availableBookmarks release];
     }
 }
 
@@ -1835,7 +1815,6 @@ cancelled:;
             [alert addButtonWithTitle:@"Close, Discarding Any Changes"];
             [alert beginSheetModalForWindow:[document windowForSheet] modalDelegate:self didEndSelector:@selector(didEndBreakFileDependencySheet:returnCode:contextInfo:) contextInfo:nil];
             NSInteger modalResult = [NSApp runModalForWindow:[alert window]];
-            [alert release];
             
             BOOL didCancel = (modalResult == NSAlertFirstButtonReturn);
             if (didCancel) *cancellationPointer = YES;
@@ -1855,8 +1834,6 @@ cancelled:;
     
     /* Clean up the undo stack of the document being saved,unless we cancelled */
     if (! *cancellationPointer) [documentForThisByteArray->controller clearUndoManagerDependenciesOnRanges:modifiedRanges inFile:fileReference hint:hint];
-    
-    [allDocuments release];
 }
 
 - (BOOL)requiresOverwriteMode
@@ -1926,7 +1903,6 @@ cancelled:;
         nextDate = [NSDate date];
     }
     
-    [liveReloadTimer release];
     liveReloadTimer = [[NSTimer alloc] initWithFireDate:nextDate interval:0 target:self selector:@selector(tryLiveReload) userInfo:nil repeats:NO];
     
     if([liveReloadTimer respondsToSelector:@selector(setTolerance:)]) {
@@ -1940,22 +1916,29 @@ cancelled:;
     if([self isDocumentEdited]) return NO; // Don't clobber changes.
     
     NSError *error = nil;
-    NSError **errorp = &error;
+    __block BOOL gotError = NO;
     
-    NSFileCoordinator *filecoord = [[[NSFileCoordinator alloc] initWithFilePresenter:self] autorelease];
-    [filecoord coordinateReadingItemAtURL:[self fileURL] options:0 error:errorp byAccessor:^ (NSURL *url) {
-        NSDictionary *attrs = [[NSFileManager defaultManager] attributesOfItemAtPath:[[url filePathURL] path] error:errorp];
-        if(!attrs || *errorp) return;
+    NSFileCoordinator *filecoord = [[NSFileCoordinator alloc] initWithFilePresenter:self];
+    [filecoord coordinateReadingItemAtURL:[self fileURL] options:0 error:&error byAccessor:^ (NSURL *url) {
+        NSError *attrsError = nil;
+        NSDictionary *attrs = [[NSFileManager defaultManager] attributesOfItemAtPath:[[url filePathURL] path] error:&attrsError];
+        if(attrsError) {
+            gotError = YES;
+            return;
+        }
         if([attrs[NSFileModificationDate] isGreaterThan:[self fileModificationDate]]) {
             // Perhaps find a way to make this revert part of the undo buffer.
-            [self revertToContentsOfURL:url ofType:[self fileType] error:errorp];
+            NSError *revertError = nil;
+            [self revertToContentsOfURL:url ofType:[self fileType] error:&revertError];
+            if (revertError) {
+                gotError = YES;
+            }
         }
     }];
     
-    [liveReloadDate release];
-    liveReloadDate = [[NSDate date] retain];
+    liveReloadDate = [NSDate date];
     
-    return error ? NO : YES;
+    return error || gotError ? NO : YES;
 }
 
 - (BOOL)prepareSavePanel:(NSSavePanel *)savePanel
