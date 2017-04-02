@@ -5,6 +5,10 @@
 //  Copyright 2011 ridiculous_fish. All rights reserved.
 //
 
+#if !__has_feature(objc_arc)
+#error ARC required
+#endif
+
 #import <HexFiend/HFAttributedByteArray.h>
 #import <HexFiend/HFBTreeByteArray.h>
 #import <HexFiend/HFByteSlice.h>
@@ -15,24 +19,16 @@
 
 - (instancetype)initWithImplementingByteArray:(HFByteArray *)newImpl attributes:(HFByteRangeAttributeArray *)newAttrs {
     self = [super init];
-    impl = [newImpl retain];
-    attributes = [newAttrs retain];
+    impl = newImpl;
+    attributes = newAttrs;
     return self;
 }
 
 - (instancetype)init {
     HFBTreeByteArray *arr = [[HFBTreeByteArray alloc] init];
-    HFByteRangeAttributeArray *attr = [[HFByteRangeAttributeArray alloc] init];
+    HFByteRangeAttributeArray *attr = [[HFAnnotatedTreeByteRangeAttributeArray alloc] init];
     self = [self initWithImplementingByteArray:arr attributes:attr];
-    [arr release];
-    [attr release];
     return self;
-}
-
-- (void)dealloc {
-    [attributes release];
-    [impl release];
-    [super dealloc];
 }
 
 /* Interesting HFByteArray overrides */
@@ -41,7 +37,7 @@
     
     HFRange beforeRange = HFRangeMake(0, range.location), afterRange = HFRangeMake(HFMaxRange(range), [self length] - HFMaxRange(range));
     
-    HFByteArray *newImpl = [[impl subarrayWithRange:range] retain];
+    HFByteArray *newImpl = [impl subarrayWithRange:range];
     HFByteRangeAttributeArray *newAttrs = [attributes mutableCopy];
     
     // Fix up the ranges. Be sure to do the after range first, since the before range will affect the subsequence offsets!
@@ -49,9 +45,7 @@
     if (beforeRange.length) [newAttrs byteRange:beforeRange wasReplacedByBytesOfLength:0];
     
     HFAttributedByteArray *result = [[[self class] alloc] initWithImplementingByteArray:newImpl attributes:newAttrs];
-    [newImpl release];
-    [newAttrs release];
-    return [result autorelease];
+    return result;
 }
 
 - (void)deleteBytesInRange:(HFRange)range {
@@ -132,7 +126,7 @@
 }
 
 - (HFByteRangeAttributeArray *)attributesForBytesInRange:(HFRange)range {
-    HFByteRangeAttributeArray *result = [[[HFByteRangeAttributeArray alloc] init] autorelease];
+    HFByteRangeAttributeArray *result = [[HFAnnotatedTreeByteRangeAttributeArray alloc] init];
     HFASSERT(range.length < NSUIntegerMax);
     const unsigned long long rangeEnd = HFMaxRange(range);
     HFASSERT(rangeEnd <= [self length]);
