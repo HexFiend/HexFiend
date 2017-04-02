@@ -5,6 +5,10 @@
 //  Copyright 2008 ridiculous_fish. All rights reserved.
 //
 
+#if !__has_feature(objc_arc)
+#error ARC required
+#endif
+
 #import <HexFiend/HFTextField.h>
 #import <HexFiend/HFBTreeByteArray.h>
 #import <HexFiend/HFController.h>
@@ -47,14 +51,6 @@
         [self addSubview:layoutView];
     }
     return self;
-}
-
-- (void)dealloc {
-    [dataController release];
-    [layoutRepresenter release];
-    [hexRepresenter release];
-    [textRepresenter release];
-    [super dealloc];
 }
 
 - (void)resizeSubviewsWithOldSize:(NSSize)oldSize {
