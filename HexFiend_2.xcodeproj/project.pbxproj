@@ -58,7 +58,7 @@
 		D018F153107ABAC600AE805F /* DiffDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = D018F152107ABAC600AE805F /* DiffDocument.m */; };
 		D019B8C00D83E8D5005789AA /* HFByteArray_FileWriting.m in Sources */ = {isa = PBXBuildFile; fileRef = D019B8BE0D83E8D5005789AA /* HFByteArray_FileWriting.m */; };
 		D019B9010D83FEB3005789AA /* HFByteSliceFileOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = D019B8FF0D83FEB3005789AA /* HFByteSliceFileOperation.h */; };
-		D019B9020D83FEB3005789AA /* HFByteSliceFileOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = D019B9000D83FEB3005789AA /* HFByteSliceFileOperation.m */; };
+		D019B9020D83FEB3005789AA /* HFByteSliceFileOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = D019B9000D83FEB3005789AA /* HFByteSliceFileOperation.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		D019B9550D840FE8005789AA /* HFObjectGraph.h in Headers */ = {isa = PBXBuildFile; fileRef = D019B9530D840FE8005789AA /* HFObjectGraph.h */; };
 		D019B9560D840FE8005789AA /* HFObjectGraph.m in Sources */ = {isa = PBXBuildFile; fileRef = D019B9540D840FE8005789AA /* HFObjectGraph.m */; };
 		D01D1D721489DFE5008212BB /* HFAnnotatedTree.h in Headers */ = {isa = PBXBuildFile; fileRef = D0315BEA1225C553008C9EAB /* HFAnnotatedTree.h */; };
@@ -87,7 +87,7 @@
 		D041D1C00D397E1A00C28345 /* HFPasteboardOwner.h in Headers */ = {isa = PBXBuildFile; fileRef = D041D1BE0D397E1A00C28345 /* HFPasteboardOwner.h */; };
 		D041D1C10D397E1A00C28345 /* HFPasteboardOwner.m in Sources */ = {isa = PBXBuildFile; fileRef = D041D1BF0D397E1A00C28345 /* HFPasteboardOwner.m */; };
 		D0422FDF0D62599300F8FCDE /* HFProgressTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = D0422FDD0D62599300F8FCDE /* HFProgressTracker.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		D0422FE00D62599300F8FCDE /* HFProgressTracker.m in Sources */ = {isa = PBXBuildFile; fileRef = D0422FDE0D62599300F8FCDE /* HFProgressTracker.m */; };
+		D0422FE00D62599300F8FCDE /* HFProgressTracker.m in Sources */ = {isa = PBXBuildFile; fileRef = D0422FDE0D62599300F8FCDE /* HFProgressTracker.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		D04327A40CF081CD00C14250 /* HFFunctions_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = D04327A30CF081CD00C14250 /* HFFunctions_Private.h */; };
 		D047E3401022CFA800EF307B /* FortunateSon.defs in Sources */ = {isa = PBXBuildFile; fileRef = D047E33F1022CFA800EF307B /* FortunateSon.defs */; settings = {ATTRIBUTES = (Server, ); }; };
 		D047E48C1022E09300EF307B /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D047E48B1022E09300EF307B /* main.cpp */; };
@@ -107,7 +107,7 @@
 		D059E1291311C676001493B8 /* AppDebugging.m in Sources */ = {isa = PBXBuildFile; fileRef = D059E1281311C676001493B8 /* AppDebugging.m */; };
 		D059E1421311CA71001493B8 /* GenericPrompt.xib in Resources */ = {isa = PBXBuildFile; fileRef = D059E1411311CA71001493B8 /* GenericPrompt.xib */; };
 		D05B77DF0E00883B008C45EB /* HFCancelButton.h in Headers */ = {isa = PBXBuildFile; fileRef = D05B77DD0E00883B008C45EB /* HFCancelButton.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		D05B77E00E00883B008C45EB /* HFCancelButton.m in Sources */ = {isa = PBXBuildFile; fileRef = D05B77DE0E00883B008C45EB /* HFCancelButton.m */; };
+		D05B77E00E00883B008C45EB /* HFCancelButton.m in Sources */ = {isa = PBXBuildFile; fileRef = D05B77DE0E00883B008C45EB /* HFCancelButton.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		D05E7A970FF6160500767D95 /* HexFiend.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = D01E7BB80CDC530C00943F9E /* HexFiend.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		D05E7AAE0FF6167100767D95 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		D061A28F10042D6A0049B8B8 /* HFTextRepresenter_Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = D061A28E10042D6A0049B8B8 /* HFTextRepresenter_Internal.h */; };
@@ -137,9 +137,9 @@
 		D08491FF0DBB60C700C7195C /* HFFastMemchr.m in Sources */ = {isa = PBXBuildFile; fileRef = D08491FE0DBB60C700C7195C /* HFFastMemchr.m */; };
 		D084E763115DAEAC004DC181 /* DiffOverlayView.m in Sources */ = {isa = PBXBuildFile; fileRef = D084E762115DAEAC004DC181 /* DiffOverlayView.m */; };
 		D08630F00D8BEE9900FF0BE7 /* HFByteSliceFileOperationQueueEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = D08630EE0D8BEE9900FF0BE7 /* HFByteSliceFileOperationQueueEntry.h */; };
-		D08630F10D8BEE9900FF0BE7 /* HFByteSliceFileOperationQueueEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = D08630EF0D8BEE9900FF0BE7 /* HFByteSliceFileOperationQueueEntry.m */; };
+		D08630F10D8BEE9900FF0BE7 /* HFByteSliceFileOperationQueueEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = D08630EF0D8BEE9900FF0BE7 /* HFByteSliceFileOperationQueueEntry.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		D08943F81042B57800AB9141 /* HFByteRangeAttribute.h in Headers */ = {isa = PBXBuildFile; fileRef = D08943F61042B57800AB9141 /* HFByteRangeAttribute.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		D08943F91042B57800AB9141 /* HFByteRangeAttribute.m in Sources */ = {isa = PBXBuildFile; fileRef = D08943F71042B57800AB9141 /* HFByteRangeAttribute.m */; };
+		D08943F91042B57800AB9141 /* HFByteRangeAttribute.m in Sources */ = {isa = PBXBuildFile; fileRef = D08943F71042B57800AB9141 /* HFByteRangeAttribute.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		D089443C1042BA7100AB9141 /* HFByteRangeAttributeArray.h in Headers */ = {isa = PBXBuildFile; fileRef = D089443A1042BA7100AB9141 /* HFByteRangeAttributeArray.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D089443D1042BA7100AB9141 /* HFByteRangeAttributeArray.m in Sources */ = {isa = PBXBuildFile; fileRef = D089443B1042BA7100AB9141 /* HFByteRangeAttributeArray.m */; };
 		D08B2B2B12B0547E004995A2 /* HFGlyphTrie.h in Headers */ = {isa = PBXBuildFile; fileRef = D08B2AC912B03C86004995A2 /* HFGlyphTrie.h */; };
