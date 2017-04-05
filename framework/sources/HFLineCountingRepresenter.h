@@ -63,3 +63,7 @@ typedef NS_ENUM(NSUInteger, HFLineNumberFormat) {
 /*! Notification posted when the HFLineCountingRepresenter's width has changed because the number of digits it wants to show has increased or decreased.  The object is the HFLineCountingRepresenter; there is no user info.
 */
 extern NSString *const HFLineCountingRepresenterMinimumViewWidthChanged;
+
+/*! Notification posted when the HFLineCountingRepresenter has cycled through the line number format.  The object is the HFLineCountingRepresenter; there is no user info.
+ */
+extern NSString *const HFLineCountingRepresenterCycledLineNumberFormat;

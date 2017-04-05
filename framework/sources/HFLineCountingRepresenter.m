@@ -9,6 +9,8 @@
 #import <HexFiend/HFLineCountingView.h>
 
 NSString *const HFLineCountingRepresenterMinimumViewWidthChanged = @"HFLineCountingRepresenterMinimumViewWidthChanged";
+NSString *const HFLineCountingRepresenterCycledLineNumberFormat = @"HFLineCountingRepresenterCycledLineNumberFormat";
+
 
 /* Returns the maximum advance in points for a hexadecimal digit for the given font (interpreted as a screen font) */
 static CGFloat maximumDigitAdvanceForFont(NSFont *font) {
@@ -174,6 +176,7 @@ static CGFloat maximumDigitAdvanceForFont(NSFont *font) {
     lineNumberFormat = (lineNumberFormat + 1) % HFLineNumberFormatMAXIMUM;
     [self updateLineNumberFormat];
     [self updateMinimumViewWidth];
+    [[NSNotificationCenter defaultCenter] postNotificationName:HFLineCountingRepresenterCycledLineNumberFormat object:self];
 }
 
 - (void)initializeView {

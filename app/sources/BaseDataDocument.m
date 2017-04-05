@@ -456,6 +456,11 @@ static inline Class preferredByteArrayClass(void) {
     }
 }
 
+- (void)lineCountingRepCycledLineNumberFormat:(NSNotification*)note {
+    USE(note);
+    [self saveLineNumberFormat];
+}
+
 - (void)dataInspectorDeletedAllRows:(NSNotification *)note {
     DataInspectorRepresenter *inspector = [note object];
     [self hideViewForRepresenter:inspector];
@@ -493,6 +498,7 @@ static inline Class preferredByteArrayClass(void) {
     
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
     [center addObserver:self selector:@selector(lineCountingViewChangedWidth:) name:HFLineCountingRepresenterMinimumViewWidthChanged object:lineCountingRepresenter];
+    [center addObserver:self selector:@selector(lineCountingRepCycledLineNumberFormat:) name:HFLineCountingRepresenterCycledLineNumberFormat object:lineCountingRepresenter];
     [center addObserver:self selector:@selector(dataInspectorChangedRowCount:) name:DataInspectorDidChangeRowCount object:dataInspectorRepresenter];
     [center addObserver:self selector:@selector(dataInspectorDeletedAllRows:) name:DataInspectorDidDeleteAllRows object:dataInspectorRepresenter];
     NSUserDefaults *defs = [NSUserDefaults standardUserDefaults];
@@ -1667,7 +1673,12 @@ cancelled:;
     const HFLineNumberFormat format = (HFLineNumberFormat)tag;
     HFASSERT(format == HFLineNumberFormatDecimal || format == HFLineNumberFormatHexadecimal);
     lineCountingRepresenter.lineNumberFormat = format;
-    [[NSUserDefaults standardUserDefaults] setInteger:tag forKey:@"LineNumberFormat"];
+    [self saveLineNumberFormat];
+}
+
+- (void)saveLineNumberFormat
+{
+    [[NSUserDefaults standardUserDefaults] setInteger:lineCountingRepresenter.lineNumberFormat forKey:@"LineNumberFormat"];
 }
 
 - (void)jumpToBookmarkIndex:(NSInteger)bookmark selecting:(BOOL)select {
