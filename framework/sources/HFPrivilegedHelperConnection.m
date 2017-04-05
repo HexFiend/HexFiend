@@ -7,10 +7,6 @@
 
 /* Since the SMJobBless() API requires that the helper live in the app's bundle and plist (grr) this should be factored so that the app provides the interface to the framework. */
 
-#if !__has_feature(objc_arc)
-#error ARC required
-#endif
-
 #import "HFPrivilegedHelperConnection.h"
 #import "HFHelperProcessSharedCode.h"
 #import "FortunateSon.h"

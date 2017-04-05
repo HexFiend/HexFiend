@@ -1,7 +1,3 @@
-#if !__has_feature(objc_arc)
-#error ARC required
-#endif
-
 #import <HexFiend/HFFunctions.h>
 #import <HexFiend/HFController.h>
 

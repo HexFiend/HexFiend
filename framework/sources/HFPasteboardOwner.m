@@ -5,6 +5,10 @@
 //  Copyright 2008 ridiculous_fish. All rights reserved.
 //
 
+#if __has_feature(objc_arc)
+#error ARC must be disabled.
+#endif
+
 #import <HexFiend/HFPasteboardOwner.h>
 #import <HexFiend/HFProgressTracker.h>
 #import <HexFiend/HFController.h>

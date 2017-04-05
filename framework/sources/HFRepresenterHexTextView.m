@@ -5,10 +5,6 @@
 //  Copyright 2007 ridiculous_fish. All rights reserved.
 //
 
-#if !__has_feature(objc_arc)
-#error ARC required
-#endif
-
 #import <HexFiend/HFRepresenterHexTextView.h>
 #import <HexFiend/HFRepresenterTextView_Internal.h>
 #import <HexFiend/HFHexTextRepresenter.h>

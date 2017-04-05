@@ -5,10 +5,6 @@
 //  Copyright 2009 ridiculous_fish. All rights reserved.
 //
 
-#if !__has_feature(objc_arc)
-#error ARC required
-#endif
-
 #import <HexFiend/HFByteRangeAttributeArray.h>
 #import <HexFiend/HFAnnotatedTree.h>
 #import <HexFiend/HFByteRangeAttribute.h>

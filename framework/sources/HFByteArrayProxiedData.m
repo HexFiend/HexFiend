@@ -5,10 +5,6 @@
 //  Copyright 2009 __MyCompanyName__. All rights reserved.
 //
 
-#if !__has_feature(objc_arc)
-#error ARC required
-#endif
-
 #import "HFByteArrayProxiedData.h"
 #import <HexFiend/HFByteArray.h>
 

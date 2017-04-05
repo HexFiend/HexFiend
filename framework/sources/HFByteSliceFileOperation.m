@@ -5,10 +5,6 @@
 //  Copyright 2008 ridiculous_fish. All rights reserved.
 //
 
-#if !__has_feature(objc_arc)
-#error ARC required
-#endif
-
 #import <HexFiend/HFByteSliceFileOperation.h>
 #import <HexFiend/HFByteSlice.h>
 #import <HexFiend/HFProgressTracker.h>

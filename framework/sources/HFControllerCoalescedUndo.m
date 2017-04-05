@@ -5,10 +5,6 @@
 //  Copyright 2007 ridiculous_fish. All rights reserved.
 //
 
-#if !__has_feature(objc_arc)
-#error ARC required
-#endif
-
 #import <HexFiend/HFControllerCoalescedUndo.h>
 #import <HexFiend/HFFullMemoryByteArray.h>
 #import <objc/objc-auto.h>
