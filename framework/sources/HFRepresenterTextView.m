@@ -431,7 +431,7 @@ enum LineCoverage_t {
         [[self window] removeChildWindow:pulseWindow];
         [pulseWindow setFrame:pulseWindowBaseFrameInScreenCoordinates display:YES animate:NO];
         [NSTimer scheduledTimerWithTimeInterval:1. / 30. target:self selector:@selector(fadePulseWindowTimer:) userInfo:pulseWindow repeats:YES];
-        //release is not necessary, since it relases when closed by default
+        //The window is now owned by the timer, and will be relased when it is invalidated
         pulseWindow = nil;
         pulseWindowBaseFrameInScreenCoordinates = NSZeroRect;
     }
@@ -472,6 +472,7 @@ enum LineCoverage_t {
                 pulseWindowBaseFrameInScreenCoordinates.origin = [[self window] convertRectToScreen:pulseWindowBaseFrameInScreenCoordinates].origin;
                 
                 pulseWindow = [[NSWindow alloc] initWithContentRect:pulseWindowBaseFrameInScreenCoordinates styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:NO];
+                [pulseWindow setReleasedWhenClosed:NO];
                 [pulseWindow setOpaque:NO];
                 HFTextSelectionPulseView *pulseView = [[HFTextSelectionPulseView alloc] initWithFrame:[[pulseWindow contentView] frame]];
                 [pulseWindow setContentView:pulseView];
