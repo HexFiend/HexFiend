@@ -12,6 +12,11 @@
 - (BOOL)performDragOperation:(id <NSDraggingInfo>)sender;
 @end
 
+@protocol DocumentWindowDelegate <NSWindowDelegate>
+@optional
+- (void)window:(NSWindow *)w didSaveFrameWithName:(NSString *)name;
+@end
+
 @interface DocumentWindow : NSWindow
-@property (assign) id<NSWindowDelegate, DragDropDelegate>delegate;
+@property (assign) id<DocumentWindowDelegate, DragDropDelegate>delegate;
 @end

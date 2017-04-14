@@ -334,6 +334,13 @@ static inline Class preferredByteArrayClass(void) {
     return [self minimumWindowFrameSizeForProposedSize:frameSize];
 }
 
+- (void)window:(NSWindow *)w didSaveFrameWithName:(NSString *)name {
+    USE(w);
+    USE(name);
+    NSInteger bpl = [controller bytesPerLine];
+    [[NSUserDefaults standardUserDefaults] setInteger:bpl forKey:@"BytesPerLine"];
+}
+
 /* Relayout the window without increasing its window frame size */
 - (void)relayoutAndResizeWindowPreservingFrame {
     NSWindow *window = [self window];
@@ -383,7 +390,13 @@ static inline Class preferredByteArrayClass(void) {
         [self relayoutAndResizeWindowForBytesPerLine:bplOrZero];
     } else {
         /* Here we probably get smaller */
-        [self relayoutAndResizeWindowPreservingFrame];
+        NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
+        NSNumber *bpl = [ud objectForKey:@"BytesPerLine"];
+        if (!bpl || ![bpl isKindOfClass:[NSNumber class]]) {
+            [self relayoutAndResizeWindowPreservingFrame];
+        } else {
+            [self relayoutAndResizeWindowForBytesPerLine:bpl.integerValue];
+        }
     }
 }
 
