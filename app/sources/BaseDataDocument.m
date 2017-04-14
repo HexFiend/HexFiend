@@ -329,7 +329,8 @@ static inline Class preferredByteArrayClass(void) {
 }
 
 - (NSSize)windowWillResize:(NSWindow *)sender toSize:(NSSize)frameSize {
-    if (sender != [self window] || layoutRepresenter == nil) return frameSize;
+    USE(sender);
+    if (layoutRepresenter == nil) return frameSize;
     return [self minimumWindowFrameSizeForProposedSize:frameSize];
 }
 
@@ -359,6 +360,9 @@ static inline Class preferredByteArrayClass(void) {
 
 /* Shared point for setting up a window, optionally setting a bytes per line */
 - (void)setupWindowEnforcingBytesPerLine:(NSUInteger)bplOrZero {
+
+    layoutRepresenter = [[HFLayoutRepresenter alloc] init];
+    [controller addRepresenter:layoutRepresenter];
     
     NSView *layoutView = [layoutRepresenter view];
     [layoutView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
@@ -488,10 +492,11 @@ static inline Class preferredByteArrayClass(void) {
     hexRepresenter = [[HFHexTextRepresenter alloc] init];
     asciiRepresenter = [[HFStringEncodingTextRepresenter alloc] init];
     scrollRepresenter = [[HFVerticalScrollerRepresenter alloc] init];
-    layoutRepresenter = [[HFLayoutRepresenter alloc] init];
     statusBarRepresenter = [[HFStatusBarRepresenter alloc] init];
     dataInspectorRepresenter = [[DataInspectorRepresenter alloc] init];
     textDividerRepresenter = [[TextDividerRepresenter alloc] init];
+    /* We will create layoutRepresenter when the window is actually shown
+     * so that it will never exist in an inconsistent state */
     
     [(NSView *)[hexRepresenter view] setAutoresizingMask:NSViewHeightSizable];
     [(NSView *)[asciiRepresenter view] setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
@@ -513,7 +518,6 @@ static inline Class preferredByteArrayClass(void) {
     [controller setShouldLiveReload:[defs boolForKey:@"LiveReload"]];
     [controller setUndoManager:[self undoManager]];
     [controller setBytesPerColumn:[defs integerForKey:@"BytesPerColumn"]];
-    [controller addRepresenter:layoutRepresenter];
     
     [self setShouldLiveReload:[controller shouldLiveReload]];
     
