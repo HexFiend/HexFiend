@@ -431,7 +431,7 @@ enum LineCoverage_t {
         [[self window] removeChildWindow:pulseWindow];
         [pulseWindow setFrame:pulseWindowBaseFrameInScreenCoordinates display:YES animate:NO];
         [NSTimer scheduledTimerWithTimeInterval:1. / 30. target:self selector:@selector(fadePulseWindowTimer:) userInfo:pulseWindow repeats:YES];
-        //The window is now owned by the timer, and will be relased when it is invalidated
+        //The window is now owned by the timer, and will be released when it is invalidated
         pulseWindow = nil;
         pulseWindowBaseFrameInScreenCoordinates = NSZeroRect;
     }
