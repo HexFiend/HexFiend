@@ -1173,7 +1173,7 @@ static size_t unionAndCleanLists(NSRect *rectList, __unsafe_unretained id *value
     };
     
     /* Each list has the same capacity, and (initially) the same count */
-    size_t i, listCount = 0, listCapacity = 0;
+    size_t listCount = 0, listCapacity = 0;
     
     /* The function pointer we use to get our property values */
     id (* const funcPtr)(id, SEL) = (id (*)(id, SEL))objc_msgSend;
@@ -1248,13 +1248,13 @@ static size_t unionAndCleanLists(NSRect *rectList, __unsafe_unretained id *value
     
     /* Draw bookmark starts, extents, and ends */
     p = propertyInfos + 1;
-    for (i=0; i < p->count; i++) [self drawBookmarkStarts:p->propertyValueList[i] inRect:p->rectList[i]];
+    for (size_t i=0; i < p->count; i++) [self drawBookmarkStarts:p->propertyValueList[i] inRect:p->rectList[i]];
     
     p = propertyInfos + 2;
-    for (i=0; i < p->count; i++) [self drawBookmarkExtents:p->propertyValueList[i] inRect:p->rectList[i]];
+    for (size_t i=0; i < p->count; i++) [self drawBookmarkExtents:p->propertyValueList[i] inRect:p->rectList[i]];
     
     p = propertyInfos + 3;
-    for (i=0; i < p->count; i++) [self drawBookmarkEnds:p->propertyValueList[i] inRect:p->rectList[i]];
+    for (size_t i=0; i < p->count; i++) [self drawBookmarkEnds:p->propertyValueList[i] inRect:p->rectList[i]];
     
     /* Clean up */
     for (propertyIndex = 0; propertyIndex < propertyInfoCount; propertyIndex++) {
