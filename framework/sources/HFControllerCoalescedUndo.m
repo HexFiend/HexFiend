@@ -55,7 +55,6 @@
 - (void)_copyByteArray {
     HFASSERT(deletedData != nil);
     HFASSERT(byteArrayWasCopied == NO);
-    HFByteArray *oldDeletedData = deletedData;
     deletedData = [deletedData mutableCopy];
     byteArrayWasCopied = YES;
 }

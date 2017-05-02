@@ -175,9 +175,6 @@ static double distanceMod1(double a, double b) {
 
 + (void)layoutCallouts:(NSArray *)callouts inView:(HFRepresenterTextView *)textView {
     
-    // Keep track of how many drops are at a given location
-    NSCountedSet *dropsPerByteLoc = [[NSCountedSet alloc] init];
-    
     const CGFloat lineHeight = [textView lineHeight];
     const NSRect bounds = [textView bounds];
     

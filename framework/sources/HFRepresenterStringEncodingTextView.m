@@ -280,9 +280,7 @@ static int compareGlyphFontIndexes(const void *p1, const void *p2) {
     //    [self threadedPrecacheGlyphs:glyphs withFonts:localFonts count:charCount];    
     
     /* Replace fonts.  Do this before we insert into the glyph trie, because the glyph trie references fonts that we're just now putting in the fonts array. */
-    id oldFonts;
     OSSpinLockLock(&glyphLoadLock);
-    oldFonts = fonts;
     fonts = localFonts;
     OSSpinLockUnlock(&glyphLoadLock);
     

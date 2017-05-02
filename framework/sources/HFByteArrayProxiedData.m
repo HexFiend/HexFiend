@@ -52,13 +52,11 @@ static NSData *newDataFromByteArray(HFByteArray *array) {
 }
 
 - (const void *)bytes {
-    HFByteArray *byteArrayToRelease = nil;
     NSData *resultingData = nil;
     @synchronized(self) {
         if (serializedData == nil) {
             HFASSERT(byteArray != nil);
             serializedData = newDataFromByteArray(byteArray);
-            byteArrayToRelease = byteArray;
             byteArray = nil;
         }
         resultingData = serializedData;

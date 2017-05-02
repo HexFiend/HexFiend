@@ -17,7 +17,6 @@ static CGFloat maximumDigitAdvanceForFont(NSFont *font) {
     REQUIRE_NOT_NULL(font);
     font = [font screenFont];
     CGFloat maxDigitAdvance = 0;
-    NSDictionary *attributesDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:font, NSFontAttributeName, nil];
     NSTextStorage *storage = [[NSTextStorage alloc] init];
     NSLayoutManager *manager = [[NSLayoutManager alloc] init];
     [storage setFont:font];
