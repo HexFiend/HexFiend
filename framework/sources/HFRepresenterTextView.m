@@ -413,7 +413,7 @@ enum LineCoverage_t {
 }
 
 - (void)fadePulseWindowTimer:(NSTimer *)timer {
-    // TODO: close & invalidate immediatley if view scrolls.
+    // TODO: close & invalidate immediately if view scrolls.
     NSWindow *window = [timer userInfo];
     CGFloat alpha = [window alphaValue];
     alpha -= (CGFloat)(3. / 30.);
