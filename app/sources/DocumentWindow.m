@@ -25,10 +25,4 @@
     return [self.delegate performDragOperation:sender];
 }
 
-- (void)saveFrameUsingName:(NSString *)name {
-    [super saveFrameUsingName:name];
-    if ([self.delegate respondsToSelector:@selector(window:didSaveFrameWithName:)])
-        [self.delegate window:self didSaveFrameWithName:name];
-}
-
 @end

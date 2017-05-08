@@ -334,11 +334,27 @@ static inline Class preferredByteArrayClass(void) {
     return [self minimumWindowFrameSizeForProposedSize:frameSize];
 }
 
-- (void)window:(NSWindow *)w didSaveFrameWithName:(NSString *)name {
-    USE(w);
-    USE(name);
+- (void)windowDidResize:(NSNotification * __unused)notification
+{
+    [self saveWindowState];
+}
+
+- (void)windowDidMove:(NSNotification * __unused)notification
+{
+    [self saveWindowState];
+}
+
+- (void)saveWindowState
+{
+    if (loadingWindow) {
+        return;
+    }
     NSInteger bpl = [controller bytesPerLine];
-    [[NSUserDefaults standardUserDefaults] setInteger:bpl forKey:@"BytesPerLine"];
+    NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
+    [ud setInteger:bpl forKey:@"BytesPerLine"];
+    const NSRect frame = [[self window] frame];
+    [ud setDouble:frame.size.height forKey:@"WindowHeight"];
+    [ud setObject:NSStringFromPoint(frame.origin) forKey:@"WindowOrigin"];
 }
 
 /* Relayout the window without increasing its window frame size */
@@ -367,6 +383,9 @@ static inline Class preferredByteArrayClass(void) {
 
 /* Shared point for setting up a window, optionally setting a bytes per line */
 - (void)setupWindowEnforcingBytesPerLine:(NSUInteger)bplOrZero {
+    NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
+
+    loadingWindow = true;
 
     layoutRepresenter = [[HFLayoutRepresenter alloc] init];
     [controller addRepresenter:layoutRepresenter];
@@ -388,7 +407,6 @@ static inline Class preferredByteArrayClass(void) {
         [self relayoutAndResizeWindowForBytesPerLine:bplOrZero];
     } else {
         /* Here we probably get smaller */
-        NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
         NSNumber *bpl = [ud objectForKey:@"BytesPerLine"];
         if (!bpl || ![bpl isKindOfClass:[NSNumber class]]) {
             [self relayoutAndResizeWindowPreservingFrame];
@@ -396,6 +414,15 @@ static inline Class preferredByteArrayClass(void) {
             [self relayoutAndResizeWindowForBytesPerLine:bpl.integerValue];
         }
     }
+
+    if ([ud objectForKey:@"WindowOrigin"] && [ud objectForKey:@"WindowHeight"]) {
+        NSRect frame = [[self window] frame];
+        frame.origin = NSPointFromString([ud objectForKey:@"WindowOrigin"]);
+        frame.size.height = [ud doubleForKey:@"WindowHeight"];
+        [[self window] setFrame:frame display:YES];
+    }
+
+    loadingWindow = false;
 }
 
 - (void)windowControllerDidLoadNib:(NSWindowController *)windowController {

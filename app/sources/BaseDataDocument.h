@@ -12,7 +12,7 @@
 
 extern NSString * const BaseDataDocumentDidChangeStringEncodingNotification;
 
-@interface BaseDataDocument : NSDocument <DocumentWindowDelegate, DragDropDelegate, NSSplitViewDelegate> {
+@interface BaseDataDocument : NSDocument <NSWindowDelegate, DragDropDelegate, NSSplitViewDelegate> {
     IBOutlet NSSplitView *containerView;
     HFController *controller;
     
@@ -55,6 +55,8 @@ extern NSString * const BaseDataDocumentDidChangeStringEncodingNotification;
     NSTimer *liveReloadTimer;
     
     NSUInteger cleanGenerationCount;
+
+    BOOL loadingWindow;
 }
 
 - (void)moveSelectionForwards:(NSMenuItem *)sender;
