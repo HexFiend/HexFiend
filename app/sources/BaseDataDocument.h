@@ -12,7 +12,7 @@
 
 extern NSString * const BaseDataDocumentDidChangeStringEncodingNotification;
 
-@interface BaseDataDocument : NSDocument <DocumentWindowDelegate, DragDropDelegate> {
+@interface BaseDataDocument : NSDocument <DocumentWindowDelegate, DragDropDelegate, NSSplitViewDelegate> {
     IBOutlet NSSplitView *containerView;
     HFController *controller;
     

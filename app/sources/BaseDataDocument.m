@@ -376,10 +376,8 @@ static inline Class preferredByteArrayClass(void) {
     
     if (containerView) {
         [containerView setVertical:NO];
-        if ([containerView respondsToSelector:@selector(setDividerStyle:)]) {
-            [containerView setDividerStyle:NSSplitViewDividerStyleThin];
-        }
-        [containerView setDelegate:(id)self];
+        [containerView setDividerStyle:NSSplitViewDividerStyleThin];
+        [containerView setDelegate:self];
         [layoutView setFrame:[containerView bounds]];
         [containerView addSubview:layoutView];
     }
