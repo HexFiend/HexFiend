@@ -6,11 +6,11 @@
 		<description>HexFiend 2 Release Notes</description>
 		<language>en</language>
 		<item>
-			<title>HexFiend 2.6</title>
+			<title>HexFiend 2.7</title>
 			<sparkle:releaseNotesLink>https://ridiculousfish.github.io/HexFiend/ReleaseNotes.html</sparkle:releaseNotesLink>
-			<sparkle:version>170319</sparkle:version>
-			<sparkle:shortVersionString>2.6</sparkle:shortVersionString>
-			<link>https://github.com/ridiculousfish/HexFiend/releases</link>
+			<sparkle:version>170515</sparkle:version>
+			<sparkle:shortVersionString>2.7</sparkle:shortVersionString>
+			<link>https://github.com/ridiculousfish/HexFiend/releases/tag/v2.7.0</link>
 			<sparkle:minimumSystemVersion>10.7</sparkle:minimumSystemVersion>
 		</item>
 	</channel>
