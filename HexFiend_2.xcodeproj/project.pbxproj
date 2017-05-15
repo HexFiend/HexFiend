@@ -147,8 +147,6 @@
 		D08F5E4F0CDE872C007EFFE8 /* HFByteArray.m in Sources */ = {isa = PBXBuildFile; fileRef = D08F5DF00CDE8223007EFFE8 /* HFByteArray.m */; };
 		D08F5E500CDE872C007EFFE8 /* HFByteSlice.m in Sources */ = {isa = PBXBuildFile; fileRef = D08F5E230CDE843E007EFFE8 /* HFByteSlice.m */; };
 		D08F5E510CDE872C007EFFE8 /* HFFullMemoryByteSlice.m in Sources */ = {isa = PBXBuildFile; fileRef = D08F5E380CDE84F4007EFFE8 /* HFFullMemoryByteSlice.m */; };
-		D09163CA123857BB009D7D47 /* OpenPathDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = D09163C9123857BB009D7D47 /* OpenPathDialog.xib */; };
-		D09163D4123857E5009D7D47 /* OpenPathWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = D09163D3123857E5009D7D47 /* OpenPathWindowController.m */; };
 		D0A05C0113BBE48800553980 /* HFAttributedByteArray.h in Headers */ = {isa = PBXBuildFile; fileRef = D0A05BFE13BBE40100553980 /* HFAttributedByteArray.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D0A05C0213BBE4B200553980 /* HFAttributedByteArray.m in Sources */ = {isa = PBXBuildFile; fileRef = D0A05BFF13BBE40100553980 /* HFAttributedByteArray.m */; };
 		D0A1F30E11439DFE008BB3BA /* HFByteArrayEditScript.h in Headers */ = {isa = PBXBuildFile; fileRef = D0A1F2EB11439B9D008BB3BA /* HFByteArrayEditScript.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -481,9 +479,6 @@
 		D08F5E230CDE843E007EFFE8 /* HFByteSlice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFByteSlice.m; path = sources/HFByteSlice.m; sourceTree = "<group>"; };
 		D08F5E370CDE84F4007EFFE8 /* HFFullMemoryByteSlice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFFullMemoryByteSlice.h; path = sources/HFFullMemoryByteSlice.h; sourceTree = "<group>"; };
 		D08F5E380CDE84F4007EFFE8 /* HFFullMemoryByteSlice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFFullMemoryByteSlice.m; path = sources/HFFullMemoryByteSlice.m; sourceTree = "<group>"; };
-		D09163C9123857BB009D7D47 /* OpenPathDialog.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = OpenPathDialog.xib; path = app/resources/OpenPathDialog.xib; sourceTree = "<group>"; };
-		D09163D2123857E5009D7D47 /* OpenPathWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OpenPathWindowController.h; path = app/sources/OpenPathWindowController.h; sourceTree = "<group>"; };
-		D09163D3123857E5009D7D47 /* OpenPathWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OpenPathWindowController.m; path = app/sources/OpenPathWindowController.m; sourceTree = "<group>"; };
 		D0A05BFE13BBE40100553980 /* HFAttributedByteArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFAttributedByteArray.h; path = sources/HFAttributedByteArray.h; sourceTree = "<group>"; };
 		D0A05BFF13BBE40100553980 /* HFAttributedByteArray.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFAttributedByteArray.m; path = sources/HFAttributedByteArray.m; sourceTree = "<group>"; };
 		D0A1F2EB11439B9D008BB3BA /* HFByteArrayEditScript.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFByteArrayEditScript.h; path = sources/HFByteArrayEditScript.h; sourceTree = "<group>"; };
@@ -638,7 +633,6 @@
 				D03CFA810FC7857B00EE79E4 /* DataInspectorView.xib */,
 				D0D8C2AF12A3BE4300960FC4 /* ChooseStringEncodingDialog.xib */,
 				D059E1411311CA71001493B8 /* GenericPrompt.xib */,
-				D09163C9123857BB009D7D47 /* OpenPathDialog.xib */,
 				D04A6BA3100EA78700704963 /* MyDocument.xib */,
 				D04A6B9C100EA75400704963 /* MoveSelectionByBanner.xib */,
 				D04A6B95100EA73800704963 /* JumpToOffsetBanner.xib */,
@@ -1053,8 +1047,6 @@
 		D0D8C45C12A3EF3F00960FC4 /* Dialogs */ = {
 			isa = PBXGroup;
 			children = (
-				D09163D2123857E5009D7D47 /* OpenPathWindowController.h */,
-				D09163D3123857E5009D7D47 /* OpenPathWindowController.m */,
 				D0D8C2BA12A3C10100960FC4 /* ChooseStringEncodingWindowController.h */,
 				D0D8C2BB12A3C10100960FC4 /* ChooseStringEncodingWindowController.m */,
 				795F46BF14BAA45D00EB2F7D /* OpenDriveWindowController.h */,
@@ -1359,7 +1351,6 @@
 				D04A6BA5100EA78700704963 /* MyDocument.xib in Resources */,
 				D04A6BAB100EA7B800704963 /* MainMenu.xib in Resources */,
 				D018F139107AB64900AE805F /* DiffDocument.xib in Resources */,
-				D09163CA123857BB009D7D47 /* OpenPathDialog.xib in Resources */,
 				D0B47FEF1272427B0095120E /* DiffComputationBanner.xib in Resources */,
 				D0D8C2B012A3BE4300960FC4 /* ChooseStringEncodingDialog.xib in Resources */,
 				D059E1421311CA71001493B8 /* GenericPrompt.xib in Resources */,
@@ -1442,7 +1433,6 @@
 				D018F153107ABAC600AE805F /* DiffDocument.m in Sources */,
 				D074B0D5115B2075002D5FA8 /* DiffDocumentWindow.m in Sources */,
 				D084E763115DAEAC004DC181 /* DiffOverlayView.m in Sources */,
-				D09163D4123857E5009D7D47 /* OpenPathWindowController.m in Sources */,
 				D0AFA786123C2BDF00CFC513 /* MyDocumentController.m in Sources */,
 				D0CBB240128F78C200989C15 /* StretchableProgressIndicator.m in Sources */,
 				D0CBB32A128F906000989C15 /* DiffTextViewContainer.m in Sources */,

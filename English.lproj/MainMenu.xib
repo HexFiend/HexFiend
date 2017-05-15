@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11201" systemVersion="16D32" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="12120" systemVersion="16E195" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11201"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="12120"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication"/>
@@ -85,12 +85,6 @@
                             <menuItem title="Open File…" keyEquivalent="o" id="72">
                                 <connections>
                                     <action selector="openDocument:" target="-1" id="374"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem title="Open Path…" keyEquivalent="o" id="627">
-                                <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
-                                <connections>
-                                    <action selector="showWindow:" target="630" id="631"/>
                                 </connections>
                             </menuItem>
                             <menuItem title="Open Drive…" keyEquivalent="D" id="731">
@@ -690,7 +684,6 @@
                 <outlet property="stringEncodingMenu" destination="684" id="716"/>
             </connections>
         </customObject>
-        <customObject id="630" customClass="OpenPathWindowController"/>
         <customObject id="733" customClass="OpenDriveWindowController"/>
         <customObject id="680" customClass="ChooseStringEncodingWindowController"/>
         <customObject id="744" customClass="SUUpdater"/>
