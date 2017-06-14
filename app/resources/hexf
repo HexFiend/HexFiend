@@ -1,3 +1,4 @@
+#!/bin/sh
 if [ -z "$1" ]; then
 	echo "Missing path"
 	exit 1
