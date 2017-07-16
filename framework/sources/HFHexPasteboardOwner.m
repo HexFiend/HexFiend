@@ -46,42 +46,24 @@ static inline unsigned char hex2char(NSUInteger c) {
     volatile long long * const progressReportingPointer = (volatile long long *)&tracker->currentProgress;
     [tracker setMaxProgress:dataLength];
     unsigned char * restrict const stringBuffer = check_malloc(stringLength);
+    if (_bytesPerColumn > 0) {
+        memset(stringBuffer, ' ', stringLength);
+    }
     while (remaining > 0) {
         if (tracker->cancelRequested) break;
         unsigned char dataBuffer[32 * 1024];
         NSUInteger amountToCopy = MIN(sizeof dataBuffer, remaining);
-        NSUInteger bound = offset + amountToCopy - 1;
         [byteArray copyBytes:dataBuffer range:HFRangeMake(offset, amountToCopy)];
 
-        if(_bytesPerColumn > 0 && offset > 0) { // ensure offset > 0 to skip adding a leading space
-            NSUInteger left = _bytesPerColumn - (offset % _bytesPerColumn);
-            if(left != _bytesPerColumn) {
-                while(left-- > 0 && offset <= bound) {
-                    unsigned char c = dataBuffer[offset++];
-                    stringBuffer[stringOffset] = hex2char(c >> 4);
-                    stringBuffer[stringOffset + 1] = hex2char(c & 0xF);
-                    stringOffset += 2;
-                }
+        for (NSUInteger i = 0; i < amountToCopy; i++, offset++, stringOffset += 2) {
+            if (_bytesPerColumn > 0 && offset > 0 && (offset % _bytesPerColumn) == 0) {
+                stringOffset++;
             }
-            if(offset <= bound)
-                stringBuffer[stringOffset++] = ' ';
-        }
-
-        if(_bytesPerColumn > 0) while(offset+_bytesPerColumn <= bound) {
-            for(NSUInteger j = 0; j < _bytesPerColumn; j++) {
-                unsigned char c = dataBuffer[offset++];
-                stringBuffer[stringOffset] = hex2char(c >> 4);
-                stringBuffer[stringOffset + 1] = hex2char(c & 0xF);
-                stringOffset += 2;
-            }
-            stringBuffer[stringOffset++] = ' ';
-        }
-
-        while (offset <= bound) {
-            unsigned char c = dataBuffer[offset++];
+            HFASSERT(i < sizeof(dataBuffer) && i < amountToCopy);
+            unsigned char c = dataBuffer[i];
+            HFASSERT(stringOffset < (stringLength - 1));
             stringBuffer[stringOffset] = hex2char(c >> 4);
             stringBuffer[stringOffset + 1] = hex2char(c & 0xF);
-            stringOffset += 2;
         }
 
         remaining -= amountToCopy;
@@ -92,6 +74,7 @@ static inline unsigned char hex2char(NSUInteger c) {
         return @"";
     } else {
         NSString *string = [[NSString alloc] initWithBytesNoCopy:stringBuffer length:stringLength encoding:NSASCIIStringEncoding freeWhenDone:YES];
+        HFASSERT(string != nil);
         return string;
     }
 }

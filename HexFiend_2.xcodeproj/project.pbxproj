@@ -43,7 +43,10 @@
 		A56D78161E7EF088001D1892 /* CLIController.m in Sources */ = {isa = PBXBuildFile; fileRef = A56D78151E7EF088001D1892 /* CLIController.m */; };
 		A56D78271E7EF231001D1892 /* hexf in Resources */ = {isa = PBXBuildFile; fileRef = A56D78261E7EF231001D1892 /* hexf */; };
 		A57F34731F1B236E00234B94 /* HFHexPasteboardOwner.m in Sources */ = {isa = PBXBuildFile; fileRef = A57F34711F1B236E00234B94 /* HFHexPasteboardOwner.m */; };
-		A57F34741F1B236E00234B94 /* HFHexPasteboardOwner.h in Headers */ = {isa = PBXBuildFile; fileRef = A57F34721F1B236E00234B94 /* HFHexPasteboardOwner.h */; };
+		A57F34741F1B236E00234B94 /* HFHexPasteboardOwner.h in Headers */ = {isa = PBXBuildFile; fileRef = A57F34721F1B236E00234B94 /* HFHexPasteboardOwner.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A57F34761F1B2A2B00234B94 /* HFHexPasteboardOwnerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A57F34751F1B2A2B00234B94 /* HFHexPasteboardOwnerTest.m */; };
+		A57F34781F1BCC4B00234B94 /* BigColumnsResult.txt.gz in Resources */ = {isa = PBXBuildFile; fileRef = A57F34771F1BCC4B00234B94 /* BigColumnsResult.txt.gz */; };
+		A57F347C1F1BE7CD00234B94 /* BigResult.txt.gz in Resources */ = {isa = PBXBuildFile; fileRef = A57F347B1F1BE7CD00234B94 /* BigResult.txt.gz */; };
 		D00122E30D48A8D400540B10 /* HFFindReplaceBackgroundView.m in Sources */ = {isa = PBXBuildFile; fileRef = D00122E20D48A8D400540B10 /* HFFindReplaceBackgroundView.m */; };
 		D00C16790FF4925A006D021F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D00C16750FF4925A006D021F /* main.m */; };
 		D00EBA730CE866D50020E2D7 /* HFVerticalScrollerRepresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = D00EBA710CE866D50020E2D7 /* HFVerticalScrollerRepresenter.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -86,7 +89,7 @@
 		D03BD7D4146F676D00881576 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 29B97324FDCFA39411CA2CEA /* AppKit.framework */; };
 		D03CFA820FC7857B00EE79E4 /* DataInspectorView.xib in Resources */ = {isa = PBXBuildFile; fileRef = D03CFA810FC7857B00EE79E4 /* DataInspectorView.xib */; };
 		D03CFA8A0FC78BCD00EE79E4 /* DataInspectorRepresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = D03CFA890FC78BCD00EE79E4 /* DataInspectorRepresenter.m */; };
-		D041D1C00D397E1A00C28345 /* HFPasteboardOwner.h in Headers */ = {isa = PBXBuildFile; fileRef = D041D1BE0D397E1A00C28345 /* HFPasteboardOwner.h */; };
+		D041D1C00D397E1A00C28345 /* HFPasteboardOwner.h in Headers */ = {isa = PBXBuildFile; fileRef = D041D1BE0D397E1A00C28345 /* HFPasteboardOwner.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D041D1C10D397E1A00C28345 /* HFPasteboardOwner.m in Sources */ = {isa = PBXBuildFile; fileRef = D041D1BF0D397E1A00C28345 /* HFPasteboardOwner.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		D0422FDF0D62599300F8FCDE /* HFProgressTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = D0422FDD0D62599300F8FCDE /* HFProgressTracker.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D0422FE00D62599300F8FCDE /* HFProgressTracker.m in Sources */ = {isa = PBXBuildFile; fileRef = D0422FDE0D62599300F8FCDE /* HFProgressTracker.m */; };
@@ -357,6 +360,9 @@
 		A56D78261E7EF231001D1892 /* hexf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = hexf; path = app/resources/hexf; sourceTree = "<group>"; };
 		A57F34711F1B236E00234B94 /* HFHexPasteboardOwner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFHexPasteboardOwner.m; path = sources/HFHexPasteboardOwner.m; sourceTree = "<group>"; };
 		A57F34721F1B236E00234B94 /* HFHexPasteboardOwner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFHexPasteboardOwner.h; path = sources/HFHexPasteboardOwner.h; sourceTree = "<group>"; };
+		A57F34751F1B2A2B00234B94 /* HFHexPasteboardOwnerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFHexPasteboardOwnerTest.m; sourceTree = "<group>"; };
+		A57F34771F1BCC4B00234B94 /* BigColumnsResult.txt.gz */ = {isa = PBXFileReference; lastKnownFileType = archive.gzip; path = BigColumnsResult.txt.gz; sourceTree = "<group>"; };
+		A57F347B1F1BE7CD00234B94 /* BigResult.txt.gz */ = {isa = PBXFileReference; lastKnownFileType = archive.gzip; path = BigResult.txt.gz; sourceTree = "<group>"; };
 		D00122E10D48A8D400540B10 /* HFFindReplaceBackgroundView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFFindReplaceBackgroundView.h; path = app/sources/HFFindReplaceBackgroundView.h; sourceTree = "<group>"; };
 		D00122E20D48A8D400540B10 /* HFFindReplaceBackgroundView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFFindReplaceBackgroundView.m; path = app/sources/HFFindReplaceBackgroundView.m; sourceTree = "<group>"; };
 		D00C15E50FF091FF006D021F /* HexFiendling.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HexFiendling.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -669,6 +675,8 @@
 			isa = PBXGroup;
 			children = (
 				9408FBFD19DD72DE004F800E /* Framework_Tests-Info.plist */,
+				A57F347B1F1BE7CD00234B94 /* BigResult.txt.gz */,
+				A57F34771F1BCC4B00234B94 /* BigColumnsResult.txt.gz */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -684,6 +692,7 @@
 				9483478F19DE188E0086A732 /* HFTest.h */,
 				D0D1492F0D8A37580018296B /* HFTestHashing.h */,
 				D0D149300D8A37580018296B /* HFTestHashing.m */,
+				A57F34751F1B2A2B00234B94 /* HFHexPasteboardOwnerTest.m */,
 				9408FBFE19DD72DF004F800E /* Framework_Tests.m */,
 				9408FBFC19DD72DE004F800E /* Supporting Files */,
 			);
@@ -1372,6 +1381,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A57F347C1F1BE7CD00234B94 /* BigResult.txt.gz in Resources */,
+				A57F34781F1BCC4B00234B94 /* BigColumnsResult.txt.gz in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1461,6 +1472,7 @@
 			files = (
 				9483479519DE1C950086A732 /* BTree_Test.m in Sources */,
 				A53B7D1A1E9185CF00CA3977 /* HFTestHashing.m in Sources */,
+				A57F34761F1B2A2B00234B94 /* HFHexPasteboardOwnerTest.m in Sources */,
 				9408FBFF19DD72DF004F800E /* Framework_Tests.m in Sources */,
 				9483479419DE1C920086A732 /* TreeEntry.m in Sources */,
 				9483479319DE1C8E0086A732 /* NaiveArray.m in Sources */,
@@ -1701,6 +1713,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = "-lz";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculousfish.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -1737,6 +1750,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = "-lz";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculousfish.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -1773,6 +1787,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = "-lz";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculousfish.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -1804,6 +1819,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "-lz";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculousfish.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -1835,6 +1851,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "-lz";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculousfish.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
