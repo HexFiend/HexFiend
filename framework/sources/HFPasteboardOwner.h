@@ -24,6 +24,7 @@ extern NSString *const HFPrivateByteArrayPboardType;
     BOOL retainedSelfOnBehalfOfPboard;
     BOOL backgroundCopyOperationFinished;
     BOOL didStartModalSessionForBackgroundCopyOperation;
+    NSString *byteArrayMapKey;
 }
 
 /* Creates an HFPasteboardOwner to own the given pasteboard with the given types.  Note that the NSPasteboard retains its owner. */
