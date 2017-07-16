@@ -93,12 +93,19 @@
     gzFile file = gzopen(path.fileSystemRepresentation, "r");
     HFASSERT(file != NULL);
     char buf[4096];
-    int bytesRead;
     NSMutableData *data = [NSMutableData data];
-    while ((bytesRead = gzread(file, buf, sizeof(buf))) > 0) {
+    for (;;) {
+        const int bytesRead = gzread(file, buf, sizeof(buf));
+        HFASSERT(bytesRead >= 0);
+        int errnum = 0;
+        gzerror(file, &errnum);
+        HFASSERT(errnum == Z_OK);
+        if (bytesRead <= 0) {
+            break;
+        }
         [data appendBytes:buf length:bytesRead];
     }
-    HFASSERT(gzclose(file) == 0);
+    HFASSERT(gzclose(file) == Z_OK);
     return data;
 }
 
