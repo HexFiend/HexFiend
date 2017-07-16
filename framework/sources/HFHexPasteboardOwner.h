@@ -10,5 +10,9 @@
 @interface HFHexPasteboardOwner : HFPasteboardOwner {
     NSUInteger _bytesPerColumn;
 }
+
 @property (nonatomic) NSUInteger bytesPerColumn;
+
+- (NSString *)stringFromByteArray:(HFByteArray *)byteArray ofLength:(unsigned long long)length trackingProgress:(HFProgressTracker *)tracker;
+
 @end

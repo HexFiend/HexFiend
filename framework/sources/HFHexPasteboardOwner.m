@@ -9,7 +9,6 @@
 #import <HexFiend/HFProgressTracker.h>
 #import <HexFiend/HFByteArray.h>
 
-
 static inline unsigned char hex2char(NSUInteger c) {
     HFASSERT(c < 16);
     return "0123456789ABCDEF"[c];
@@ -34,6 +33,11 @@ static inline unsigned char hex2char(NSUInteger c) {
         return;
     }
     HFByteArray *byteArray = [self byteArray];
+    NSString *string = [self stringFromByteArray:byteArray ofLength:length trackingProgress:tracker];
+    [pboard setString:string forType:type];
+}
+
+- (NSString *)stringFromByteArray:(HFByteArray *)byteArray ofLength:(unsigned long long)length trackingProgress:(HFProgressTracker *)tracker {
     HFASSERT(length <= NSUIntegerMax);
     NSUInteger dataLength = ll2l(length);
     NSUInteger stringLength = ll2l([self stringLengthForDataLength:length]);
@@ -84,11 +88,11 @@ static inline unsigned char hex2char(NSUInteger c) {
         HFAtomicAdd64(amountToCopy, progressReportingPointer);
     }
     if (tracker->cancelRequested) {
-        [pboard setString:@"" forType:type];
         free(stringBuffer);
+        return @"";
     } else {
         NSString *string = [[NSString alloc] initWithBytesNoCopy:stringBuffer length:stringLength encoding:NSASCIIStringEncoding freeWhenDone:YES];
-        [pboard setString:string forType:type];
+        return string;
     }
 }
 
