@@ -42,6 +42,8 @@
 		A53B7D1A1E9185CF00CA3977 /* HFTestHashing.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D149300D8A37580018296B /* HFTestHashing.m */; };
 		A56D78161E7EF088001D1892 /* CLIController.m in Sources */ = {isa = PBXBuildFile; fileRef = A56D78151E7EF088001D1892 /* CLIController.m */; };
 		A56D78271E7EF231001D1892 /* hexf in Resources */ = {isa = PBXBuildFile; fileRef = A56D78261E7EF231001D1892 /* hexf */; };
+		A57F34731F1B236E00234B94 /* HFHexPasteboardOwner.m in Sources */ = {isa = PBXBuildFile; fileRef = A57F34711F1B236E00234B94 /* HFHexPasteboardOwner.m */; };
+		A57F34741F1B236E00234B94 /* HFHexPasteboardOwner.h in Headers */ = {isa = PBXBuildFile; fileRef = A57F34721F1B236E00234B94 /* HFHexPasteboardOwner.h */; };
 		D00122E30D48A8D400540B10 /* HFFindReplaceBackgroundView.m in Sources */ = {isa = PBXBuildFile; fileRef = D00122E20D48A8D400540B10 /* HFFindReplaceBackgroundView.m */; };
 		D00C16790FF4925A006D021F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D00C16750FF4925A006D021F /* main.m */; };
 		D00EBA730CE866D50020E2D7 /* HFVerticalScrollerRepresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = D00EBA710CE866D50020E2D7 /* HFVerticalScrollerRepresenter.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -353,6 +355,8 @@
 		A56D78141E7EF088001D1892 /* CLIController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CLIController.h; path = app/sources/CLIController.h; sourceTree = "<group>"; };
 		A56D78151E7EF088001D1892 /* CLIController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CLIController.m; path = app/sources/CLIController.m; sourceTree = "<group>"; };
 		A56D78261E7EF231001D1892 /* hexf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = hexf; path = app/resources/hexf; sourceTree = "<group>"; };
+		A57F34711F1B236E00234B94 /* HFHexPasteboardOwner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFHexPasteboardOwner.m; path = sources/HFHexPasteboardOwner.m; sourceTree = "<group>"; };
+		A57F34721F1B236E00234B94 /* HFHexPasteboardOwner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFHexPasteboardOwner.h; path = sources/HFHexPasteboardOwner.h; sourceTree = "<group>"; };
 		D00122E10D48A8D400540B10 /* HFFindReplaceBackgroundView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFFindReplaceBackgroundView.h; path = app/sources/HFFindReplaceBackgroundView.h; sourceTree = "<group>"; };
 		D00122E20D48A8D400540B10 /* HFFindReplaceBackgroundView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFFindReplaceBackgroundView.m; path = app/sources/HFFindReplaceBackgroundView.m; sourceTree = "<group>"; };
 		D00C15E50FF091FF006D021F /* HexFiendling.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HexFiendling.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -793,6 +797,8 @@
 				D0CDB7320CE7338E0084926B /* HFRepresenterTextView_Internal.h */,
 				D026C7BE0CDD54D00082279E /* HFHexTextRepresenter.h */,
 				D026C7BF0CDD54D00082279E /* HFHexTextRepresenter.m */,
+				A57F34711F1B236E00234B94 /* HFHexPasteboardOwner.m */,
+				A57F34721F1B236E00234B94 /* HFHexPasteboardOwner.h */,
 				D0CDB77B0CE737130084926B /* HFStringEncodingTextRepresenter.h */,
 				D0CDB77C0CE737130084926B /* HFStringEncodingTextRepresenter.m */,
 				D0A437380CDD4EDD000F7550 /* HFTextRepresenter.h */,
@@ -1107,6 +1113,7 @@
 				D0D179460D46F20E00684270 /* HFByteSlice_Private.h in Headers */,
 				D0826EAB0D4855900006FB7D /* HFFileReference.h in Headers */,
 				D0826EF10D487A000006FB7D /* HFFileByteSlice.h in Headers */,
+				A57F34741F1B236E00234B94 /* HFHexPasteboardOwner.h in Headers */,
 				D0A05C0113BBE48800553980 /* HFAttributedByteArray.h in Headers */,
 				D078CF550D50491100492F46 /* HFBannerDividerThumb.h in Headers */,
 				D07150670D5510CE00573D7A /* HFTextField.h in Headers */,
@@ -1499,6 +1506,7 @@
 				D0826EAC0D4855900006FB7D /* HFFileReference.m in Sources */,
 				D0826EF20D487A000006FB7D /* HFFileByteSlice.m in Sources */,
 				D07150680D5510CE00573D7A /* HFTextField.m in Sources */,
+				A57F34731F1B236E00234B94 /* HFHexPasteboardOwner.m in Sources */,
 				D0422FE00D62599300F8FCDE /* HFProgressTracker.m in Sources */,
 				D0370A400D68307A00B3A8C6 /* HFSharedMemoryByteSlice.m in Sources */,
 				D019B8C00D83E8D5005789AA /* HFByteArray_FileWriting.m in Sources */,
