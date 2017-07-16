@@ -930,6 +930,9 @@ static inline Class preferredByteArrayClass(void) {
             commandToRunAfterBannerIsDoneHiding = NULL;
             command();
         }
+    } else if (commandToRunAfterBannerPrepared) {
+        commandToRunAfterBannerPrepared();
+        commandToRunAfterBannerPrepared = nil;
     }
 }
 
@@ -1163,8 +1166,15 @@ static inline Class preferredByteArrayClass(void) {
 }
 
 - (void)showFindPanel:(NSMenuItem *)item {
+    dispatch_block_t selectText = ^{
+        NSView *field = [findReplaceView viewNamed:@"searchField"];
+        HFASSERT([field isKindOfClass:[HFTextField class]]);
+        [(HFTextField*)field selectAll:nil];
+    };
+
     if (operationView != nil && operationView == findReplaceView) {
         [self saveFirstResponderIfNotInBannerAndThenSetItTo:[findReplaceView viewNamed:@"searchField"]];
+        selectText();
         return;
     }
     if (! [self canSwitchToNewBanner]) {
@@ -1185,6 +1195,7 @@ static inline Class preferredByteArrayClass(void) {
         [(HFTextField*)[findReplaceView viewNamed:@"replaceField"] setAction:@selector(findNext:)]; //yes, this should be findNext:, not replace:, because when you just hit return in the replace text field, it only finds; replace is for the replace button
     }
     
+    commandToRunAfterBannerPrepared = selectText;
     [self prepareBannerWithView:findReplaceView withTargetFirstResponder:[findReplaceView viewNamed:@"searchField"]];
 }
 

@@ -36,4 +36,6 @@
 */
 @property (nonatomic) BOOL behavesAsTextField;
 
+- (void)selectAll:(id)sender;
+
 @end

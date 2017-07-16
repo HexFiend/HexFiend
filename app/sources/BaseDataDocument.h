@@ -44,6 +44,7 @@ extern NSString * const BaseDataDocumentDidChangeStringEncodingNotification;
     CFAbsoluteTime bannerStartTime;
     id targetFirstResponderInBanner;
     dispatch_block_t commandToRunAfterBannerIsDoneHiding;
+    dispatch_block_t commandToRunAfterBannerPrepared;
     
     BOOL saveInProgress;
     

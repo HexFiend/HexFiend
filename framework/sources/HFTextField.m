@@ -175,5 +175,17 @@
     return [dataController editable];
 }
 
+- (void)selectAll:(id)sender {
+    HFTextRepresenter *rep = nil;
+    if ([self usesHexArea]) {
+        rep = hexRepresenter;
+    } else if ([self usesTextArea]) {
+        rep = textRepresenter;
+    } else {
+        HFASSERT(0);
+        NSBeep();
+    }
+    [rep selectAll:sender];
+}
 
 @end
