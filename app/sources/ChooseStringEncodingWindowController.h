@@ -9,6 +9,7 @@
 
 @interface ChooseStringEncodingWindowController : NSWindowController <NSTableViewDataSource, NSTableViewDelegate> {
     IBOutlet NSTableView *tableView;
+    IBOutlet NSSearchField *searchField;
 }
 
 @end

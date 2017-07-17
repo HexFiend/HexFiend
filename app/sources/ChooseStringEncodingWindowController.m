@@ -19,6 +19,7 @@
 @implementation ChooseStringEncodingWindowController
 {
     NSArray<HFEncodingChoice*> *encodings;
+    NSArray<HFEncodingChoice*> *activeEncodings;
 }
 
 - (NSString *)windowNibName {
@@ -232,6 +233,7 @@ static void addEncoding(NSString *name, CFStringEncoding value, NSMutableArray<H
 #undef ENCODING
 
     encodings = localEncodings;
+    activeEncodings = encodings;
 }
 
 - (void)awakeFromNib {
@@ -241,12 +243,12 @@ static void addEncoding(NSString *name, CFStringEncoding value, NSMutableArray<H
 
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)__unused tableView
 {
-    return encodings.count;
+    return activeEncodings.count;
 }
 
 - (id)tableView:(NSTableView *)__unused tableView objectValueForTableColumn:(NSTableColumn *)__unused tableColumn row:(NSInteger)row
 {
-    return encodings[row].label;
+    return activeEncodings[row].label;
 }
 
 - (void)tableViewSelectionDidChange:(NSNotification *)__unused notification
@@ -256,12 +258,28 @@ static void addEncoding(NSString *name, CFStringEncoding value, NSMutableArray<H
         return;
     }
     /* Tell the front document (if any) and the app delegate */
-    NSStringEncoding encodingValue = encodings[row].encoding;
+    NSStringEncoding encodingValue = activeEncodings[row].encoding;
     id document = [[NSDocumentController sharedDocumentController] currentDocument];
     if ([document respondsToSelector:@selector(setStringEncoding:)]) {
         [document setStringEncoding:encodingValue];
     }
     [(AppDelegate*)[NSApp delegate] setStringEncoding:encodingValue];
+}
+
+- (void)controlTextDidChange:(NSNotification * __unused)obj
+{
+    if (searchField.stringValue.length > 0) {
+        NSMutableArray *searchedEncodings = [NSMutableArray array];
+        for (HFEncodingChoice *choice in encodings) {
+            if ([choice.label rangeOfString:searchField.stringValue options:NSCaseInsensitiveSearch].location != NSNotFound) {
+                [searchedEncodings addObject:choice];
+            }
+        }
+        activeEncodings = searchedEncodings;
+    } else {
+        activeEncodings = encodings;
+    }
+    [tableView reloadData];
 }
 
 @end
