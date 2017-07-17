@@ -9,7 +9,17 @@
 #import "BaseDataDocument.h"
 #import "AppDelegate.h"
 
+@interface HFEncodingChoice : NSObject
+@property (readwrite, copy) NSString *label;
+@property (readwrite) NSStringEncoding encoding;
+@end
+@implementation HFEncodingChoice
+@end
+
 @implementation ChooseStringEncodingWindowController
+{
+    NSArray<HFEncodingChoice*> *encodings;
+}
 
 - (NSString *)windowNibName {
     return @"ChooseStringEncodingDialog";
@@ -30,14 +40,15 @@
  
 */
 
-static void addEncoding(NSString *name, CFStringEncoding value, NSMutableArray *localKeys, NSMutableArray *localValues, NSMutableSet *usedKeys) {
+static void addEncoding(NSString *name, CFStringEncoding value, NSMutableArray<HFEncodingChoice*> *localEncodings, NSMutableSet<NSNumber*> *usedEncodings) {
     NSStringEncoding cocoaEncoding = CFStringConvertEncodingToNSStringEncoding(value);
     if (cocoaEncoding == kCFStringEncodingInvalidId) {
         /* Unsupported! */
         return;
     }
-    if (! [usedKeys containsObject:name]) {
-        [usedKeys addObject:name];
+    if ([usedEncodings containsObject:@(cocoaEncoding)]) {
+        return;
+    }
         NSString *strippedName, *localizedName, *title;
         
         /* Strip off the common prefix */
@@ -56,18 +67,18 @@ static void addEncoding(NSString *name, CFStringEncoding value, NSMutableArray *
         } else {
             title = strippedName;
         }
-        
-        [localKeys addObject:title];
-        NSNumber *numberValue = [NSNumber numberWithInteger:cocoaEncoding];
-        [localValues addObject:numberValue];
-    }
+
+        HFEncodingChoice *encoding = [[HFEncodingChoice alloc] init];
+        encoding.label = localizedName.length > 0 ? localizedName : strippedName;
+        encoding.encoding = cocoaEncoding;
+        [localEncodings addObject:encoding];
+        [usedEncodings addObject:@(cocoaEncoding)];
 }
 
 - (void)populateStringEncodings {
-    NSMutableArray *localKeys = [NSMutableArray array];
-    NSMutableArray *localValues = [NSMutableArray array];
-    NSMutableSet *usedKeys = [NSMutableSet set];
-#define ENCODING(a) do { addEncoding( @ #a, (a), localKeys, localValues, usedKeys); } while (0)
+    NSMutableSet<NSNumber*> *usedEncodings = [NSMutableSet set];
+    NSMutableArray<HFEncodingChoice*> *localEncodings = [NSMutableArray array];
+#define ENCODING(a) do { addEncoding( @ #a, (a), localEncodings, usedEncodings); } while (0)
     ENCODING(kCFStringEncodingMacRoman);
     ENCODING(kCFStringEncodingWindowsLatin1);
     ENCODING(kCFStringEncodingISOLatin1);
@@ -219,9 +230,8 @@ static void addEncoding(NSString *name, CFStringEncoding value, NSMutableArray *
     ENCODING(kCFStringEncodingShiftJIS_X0213_00);
     
 #undef ENCODING
-    
-    keysToEncodings = [[NSDictionary alloc] initWithObjects:localValues forKeys:localKeys];
-    encodings = localKeys;
+
+    encodings = localEncodings;
 }
 
 - (void)awakeFromNib {
@@ -236,7 +246,7 @@ static void addEncoding(NSString *name, CFStringEncoding value, NSMutableArray *
 
 - (id)tableView:(NSTableView *)__unused tableView objectValueForTableColumn:(NSTableColumn *)__unused tableColumn row:(NSInteger)row
 {
-    return encodings[row];
+    return encodings[row].label;
 }
 
 - (void)tableViewSelectionDidChange:(NSNotification *)__unused notification
@@ -245,9 +255,8 @@ static void addEncoding(NSString *name, CFStringEncoding value, NSMutableArray *
     if (row == -1) {
         return;
     }
-    NSNumber *selectedEncoding = keysToEncodings[encodings[row]];
     /* Tell the front document (if any) and the app delegate */
-    NSStringEncoding encodingValue = [selectedEncoding integerValue];
+    NSStringEncoding encodingValue = encodings[row].encoding;
     id document = [[NSDocumentController sharedDocumentController] currentDocument];
     if ([document respondsToSelector:@selector(setStringEncoding:)]) {
         [document setStringEncoding:encodingValue];

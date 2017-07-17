@@ -9,8 +9,6 @@
 
 @interface ChooseStringEncodingWindowController : NSWindowController <NSTableViewDataSource, NSTableViewDelegate> {
     IBOutlet NSTableView *tableView;
-    NSDictionary *keysToEncodings;
-    NSArray *encodings;
 }
 
 @end
