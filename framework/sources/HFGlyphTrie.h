@@ -34,7 +34,7 @@ struct HFGlyphTrie_t {
     struct HFGlyphTrieBranch_t root;
 };
 
-/* Initializes a trie witha  given key size */
+/* Initializes a trie with a given key size */
 __private_extern__ void HFGlyphTrieInitialize(struct HFGlyphTrie_t *trie, uint8_t keySize);
 
 /* Inserts a glyph into the trie */
