@@ -638,10 +638,10 @@
 			isa = PBXGroup;
 			children = (
 				79E2FF1F1745A2B300FA8F12 /* dsa_pub.pem */,
-				A57F348B1F1EFA9600234B94 /* OpenDriveDialog.xib */,
 				D024AFB20E349A7B00F39EBB /* hex_icon.icns */,
 				D01E7C0A0CDC570400943F9E /* Info.plist */,
 				089C165CFE840E0CC02AAC07 /* InfoPlist.strings */,
+				A57F348B1F1EFA9600234B94 /* OpenDriveDialog.xib */,
 				A57F34851F1EFA6E00234B94 /* DataInspectorView.xib */,
 				A57F34881F1EFA8800234B94 /* ChooseStringEncodingDialog.xib */,
 				A57F348E1F1EFAAD00234B94 /* GenericPrompt.xib */,
