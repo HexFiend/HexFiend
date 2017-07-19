@@ -31,7 +31,7 @@ static void insertTrie(void *node, uint8_t branchingDepth, NSUInteger key, struc
         /* Branch */
         struct HFGlyphTrieBranch_t *branch = node;
         NSUInteger keySlice = key & ((1 << kHFGlyphTrieBranchFactor) - 1), keyRemainder = key >> kHFGlyphTrieBranchFactor;
-        __strong void *child = branch->children[keySlice];
+        void *child = branch->children[keySlice];
         if (child == NULL) {
             if (branchingDepth == 2) {
                 child = calloc(1, sizeof(struct HFGlyphTrieLeaf_t));

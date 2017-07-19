@@ -22,7 +22,7 @@ static inline BOOL HFGlyphEqualsGlyph(struct HFGlyph_t a, struct HFGlyph_t b) {
 }
 
 struct HFGlyphTrieBranch_t {
-    __strong void *children[kHFGlyphTrieBranchCount];
+    void *children[kHFGlyphTrieBranchCount];
 };
 
 struct HFGlyphTrieLeaf_t {
