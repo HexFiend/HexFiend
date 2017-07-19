@@ -10,7 +10,19 @@ body {
 </head>
 <body>
 
-<h3>Release Notes for v2.7</h3>
+<h2>Hex Fiend Release Notes</h2>
+
+<h3>v2.8</h3>
+<ul>
+<li>Add "Copy as ASCII" menu for always copying plain text as ASCII instead of the current encoding</li>
+<li>Add preference to control default edit mode</li>
+<li>Add search field to encodings window</li>
+<li>When Find is activated its text field's text is now selected</li>
+<li>Fix crash when copying more than 32KB of text</li>
+<li>Fix <code>hexf</code> missing shebang (thanks Misty De Meo)</li>
+</ul>
+
+<h3>v2.7</h3>
 <ul>
 <li>Add option to show data inspector ints as hexadecimal or decimal</li>
 <li>Fix line number format not saving when clicking the column directly</li>
@@ -19,13 +31,13 @@ body {
 <li>Removed File > Open Path. Use the standard open dialog's command-shift-G feature to open paths directly</li>
 </ul>
 
-<h3>Release Notes for v2.6</h3>
+<h3>v2.6</h3>
 <ul>
 <li>Add <code>hexf</code> command line tool, which can be installed via the menu Hex Fiend > Install Command Line Tool. This is a simpler convience wrapper around the <code>open</code> command.</li>
 <li>Fix showing the last line number with certain fonts (thanks Daniele Cattaneo)</li>
 </ul>
 
-<h3>Release Notes for v2.5</h3>
+<h3>v2.5</h3>
 <ul>
 <li>Add Line Number Format menu</li>
 <li>Font menu items display using font</li>
@@ -34,7 +46,7 @@ body {
 <li>Fix error messages not showing when files can't be opened</li>
 </ul>
 
-<h3>Release Notes for v2.4</h3>
+<h3>v2.4</h3>
 <ul>
 <li>Added binary and SLEB128 and ULEB128 int inspector</li>
 <li>Added hide null bytes option</li>
@@ -43,18 +55,18 @@ body {
 <li>Fixed many bugs and memory leaks</li>
 </ul>
 
-<h3>Release Notes for v2.1.2</h3>
+<h3>v2.1.2</h3>
 <ul>
 <li>Fixed Jump to Offset</li>
 </ul>
 
-<h3>Release Notes for v2.1.1</h3>
+<h3>v2.1.1</h3>
 <ul>
 <li>Fixed a bug that caused exceptions when scrolling with a non-precise scrolling device (like a classic scroll wheel mouse).</li>
 <li>Removed an .xcconfig file that was inadvertently being copied into Resources</li>
 </ul>
 
-<h3>Release Notes for v2.1.0</h3>
+<h3>v2.1.0</h3>
 <ul>
 <li>Support for computing a binary diff between two files. This is a "true" LCS-based diff. Support for computing the diff lives in HexFiend.framework, while the document that presents it is in HexFiend.app.</li>
 <li>Bookmark support. Bookmarks are little balloons that point at a range of bytes. They are not saved with the document.</li>
