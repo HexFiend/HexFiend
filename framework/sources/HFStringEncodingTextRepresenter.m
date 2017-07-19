@@ -115,6 +115,10 @@
 }
 
 - (void)copySelectedBytesToPasteboard:(NSPasteboard *)pb {
+    return [self copySelectedBytesToPasteboard:pb encoding:[self encoding]];
+}
+
+- (void)copySelectedBytesToPasteboard:(NSPasteboard *)pb encoding:(NSStringEncoding)enc {
     REQUIRE_NOT_NULL(pb);
     HFByteArray *selection = [[self controller] byteArrayForSelectedContentsRanges];
     HFASSERT(selection != NULL);
@@ -123,7 +127,7 @@
     }
     else {
         HFStringEncodingPasteboardOwner *owner = [HFStringEncodingPasteboardOwner ownPasteboard:pb forByteArray:selection withTypes:@[HFPrivateByteArrayPboardType, NSStringPboardType]];
-        [owner setEncoding:[self encoding]];
+        [owner setEncoding:enc];
         [owner setBytesPerLine:[self bytesPerLine]];
     }
 }

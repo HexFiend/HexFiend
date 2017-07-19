@@ -192,6 +192,11 @@
                                     <action selector="copy:" target="-1" id="224"/>
                                 </connections>
                             </menuItem>
+                            <menuItem title="Copy as ASCII" keyEquivalent="C" id="dkv-xM-zDy">
+                                <connections>
+                                    <action selector="copyAsASCII:" target="-1" id="KwK-Qs-p8s"/>
+                                </connections>
+                            </menuItem>
                             <menuItem title="Paste" keyEquivalent="v" id="203">
                                 <connections>
                                     <action selector="paste:" target="-1" id="226"/>

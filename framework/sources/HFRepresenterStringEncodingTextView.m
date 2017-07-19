@@ -7,6 +7,7 @@
 
 #import <HexFiend/HFRepresenterStringEncodingTextView.h>
 #import <HexFiend/HFRepresenterTextView_Internal.h>
+#import <HexFiend/HFTextRepresenter_Internal.h>
 #include <malloc/malloc.h>
 
 @implementation HFRepresenterStringEncodingTextView
@@ -512,6 +513,13 @@ static int compareGlyphFontIndexes(const void *p1, const void *p2) {
 
 - (NSUInteger)maximumGlyphCountForByteCount:(NSUInteger)byteCount {
     return byteCount / [self bytesPerCharacter];
+}
+
+- (void)copyAsASCII:(id)sender {
+    USE(sender);
+    HFTextRepresenter *rep = [self representer];
+    HFASSERT([rep isKindOfClass:[HFTextRepresenter class]]);
+    [rep copySelectedBytesToPasteboard:[NSPasteboard generalPasteboard] encoding:NSASCIIStringEncoding];
 }
 
 @end

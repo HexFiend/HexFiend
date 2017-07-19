@@ -12,6 +12,7 @@
 
 // Copy/Paste methods
 - (void)copySelectedBytesToPasteboard:(NSPasteboard *)pb;
+- (void)copySelectedBytesToPasteboard:(NSPasteboard *)pb encoding:(NSStringEncoding)enc;
 - (void)cutSelectedBytesToPasteboard:(NSPasteboard *)pb;
 - (BOOL)canPasteFromPasteboard:(NSPasteboard *)pb;
 - (BOOL)canCut;
