@@ -1927,7 +1927,10 @@ static size_t unionAndCleanLists(NSRect *rectList, __unsafe_unretained id *value
         [self insertText:@"\t"];
     }
     else if ([self respondsToSelector:sel]) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
         [self performSelector:sel withObject:nil];
+#pragma clang diagnostic pop
     }
     else {
         return NO;
@@ -1942,7 +1945,10 @@ static size_t unionAndCleanLists(NSRect *rectList, __unsafe_unretained id *value
         /* Nothing to do */
     }
     else if ([rep respondsToSelector:sel]) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
         [rep performSelector:sel withObject:self];
+#pragma clang diagnostic pop
     }
     else {
         [super doCommandBySelector:sel];
