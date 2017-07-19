@@ -8,43 +8,6 @@
 #import "AppDebugging.h"
 #import "AppUtilities.h"
 
-@implementation GenericPrompt
-
-- (IBAction)genericPromptOKClicked:sender {
-    USE(sender);
-    [NSApp stopModalWithCode:NSRunStoppedResponse];
-}
-
-- (IBAction)genericPromptCancelClicked:sender {
-    USE(sender);
-    [NSApp stopModalWithCode:NSRunAbortedResponse];
-}
-
-- (instancetype)initWithPromptText:(NSString *)text {
-    self = [super initWithWindowNibName:@"GenericPrompt"];
-    promptText = [text copy];
-    return self;
-}
-
-- (void)windowDidLoad {
-    [super windowDidLoad];
-    [promptField setStringValue:promptText];
-}
-
-+ (NSString *)promptForValueWithText:(NSString *)text {
-    NSString *textResult = nil;
-    GenericPrompt *pmpt = [[self alloc] initWithPromptText:text];
-    NSInteger modalResult = [NSApp runModalForWindow:[pmpt window]];
-    if (modalResult == NSRunStoppedResponse) {
-        textResult = [[pmpt->valueField stringValue] copy];
-    }
-    [pmpt close];
-    return textResult;
-    
-}
-
-@end
-
 static unsigned long long unsignedLongLongValue(NSString *s) {
     unsigned long long result = 0;
     parseNumericStringWithSuffix(s, &result, NULL);
@@ -68,7 +31,21 @@ static unsigned long long unsignedLongLongValue(NSString *s) {
 }
 
 static NSString *promptForValue(NSString *promptText) {
-    return [GenericPrompt promptForValueWithText:promptText];
+    NSAlert *alert = [[NSAlert alloc] init];
+    alert.messageText = promptText;
+    alert.informativeText = @"";
+    [alert addButtonWithTitle:NSLocalizedString(@"OK", "")];
+    [alert addButtonWithTitle:NSLocalizedString(@"Cancel", "")];
+    NSTextField *textField = [[NSTextField alloc] init];
+    [textField sizeToFit];
+    NSRect frame = textField.frame;
+    frame.size.width = 200;
+    textField.frame = frame;
+    alert.accessoryView = textField;
+    if ([alert runModal] != NSAlertFirstButtonReturn) {
+        return nil;
+    }
+    return textField.stringValue;
 }
 
 - (void)_showByteArray:sender {

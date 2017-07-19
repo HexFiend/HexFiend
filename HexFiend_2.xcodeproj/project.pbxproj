@@ -50,7 +50,6 @@
 		A57F34831F1EFA6E00234B94 /* DataInspectorView.xib in Resources */ = {isa = PBXBuildFile; fileRef = A57F34851F1EFA6E00234B94 /* DataInspectorView.xib */; };
 		A57F34861F1EFA8800234B94 /* ChooseStringEncodingDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = A57F34881F1EFA8800234B94 /* ChooseStringEncodingDialog.xib */; };
 		A57F34891F1EFA9600234B94 /* OpenDriveDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = A57F348B1F1EFA9600234B94 /* OpenDriveDialog.xib */; };
-		A57F348C1F1EFAAD00234B94 /* GenericPrompt.xib in Resources */ = {isa = PBXBuildFile; fileRef = A57F348E1F1EFAAD00234B94 /* GenericPrompt.xib */; };
 		D00122E30D48A8D400540B10 /* HFFindReplaceBackgroundView.m in Sources */ = {isa = PBXBuildFile; fileRef = D00122E20D48A8D400540B10 /* HFFindReplaceBackgroundView.m */; };
 		D00C16790FF4925A006D021F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D00C16750FF4925A006D021F /* main.m */; };
 		D00EBA730CE866D50020E2D7 /* HFVerticalScrollerRepresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = D00EBA710CE866D50020E2D7 /* HFVerticalScrollerRepresenter.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -367,7 +366,6 @@
 		A57F34841F1EFA6E00234B94 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/DataInspectorView.xib; sourceTree = "<group>"; };
 		A57F34871F1EFA8800234B94 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/ChooseStringEncodingDialog.xib; sourceTree = "<group>"; };
 		A57F348A1F1EFA9600234B94 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/OpenDriveDialog.xib; sourceTree = "<group>"; };
-		A57F348D1F1EFAAD00234B94 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/GenericPrompt.xib; sourceTree = "<group>"; };
 		D00122E10D48A8D400540B10 /* HFFindReplaceBackgroundView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFFindReplaceBackgroundView.h; path = app/sources/HFFindReplaceBackgroundView.h; sourceTree = "<group>"; };
 		D00122E20D48A8D400540B10 /* HFFindReplaceBackgroundView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFFindReplaceBackgroundView.m; path = app/sources/HFFindReplaceBackgroundView.m; sourceTree = "<group>"; };
 		D00C15E50FF091FF006D021F /* HexFiendling.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HexFiendling.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -644,7 +642,6 @@
 				A57F348B1F1EFA9600234B94 /* OpenDriveDialog.xib */,
 				A57F34851F1EFA6E00234B94 /* DataInspectorView.xib */,
 				A57F34881F1EFA8800234B94 /* ChooseStringEncodingDialog.xib */,
-				A57F348E1F1EFAAD00234B94 /* GenericPrompt.xib */,
 				D04A6BA3100EA78700704963 /* MyDocument.xib */,
 				D04A6B9C100EA75400704963 /* MoveSelectionByBanner.xib */,
 				D04A6B95100EA73800704963 /* JumpToOffsetBanner.xib */,
@@ -1372,7 +1369,6 @@
 				D018F139107AB64900AE805F /* DiffDocument.xib in Resources */,
 				D0B47FEF1272427B0095120E /* DiffComputationBanner.xib in Resources */,
 				A57F34861F1EFA8800234B94 /* ChooseStringEncodingDialog.xib in Resources */,
-				A57F348C1F1EFAAD00234B94 /* GenericPrompt.xib in Resources */,
 				A57F34891F1EFA9600234B94 /* OpenDriveDialog.xib in Resources */,
 				A56D78271E7EF231001D1892 /* hexf in Resources */,
 				D8C1F92C16F278BA00A4C36E /* DiffRangeDialog.xib in Resources */,
@@ -1636,15 +1632,6 @@
 				A57F348A1F1EFA9600234B94 /* en */,
 			);
 			name = OpenDriveDialog.xib;
-			path = app/resources;
-			sourceTree = "<group>";
-		};
-		A57F348E1F1EFAAD00234B94 /* GenericPrompt.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				A57F348D1F1EFAAD00234B94 /* en */,
-			);
-			name = GenericPrompt.xib;
 			path = app/resources;
 			sourceTree = "<group>";
 		};
