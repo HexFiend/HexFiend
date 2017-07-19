@@ -17,6 +17,9 @@
 #include <stdio.h>
 
 @implementation AppDelegate
+{
+    NSWindowController *_prefs;
+}
 
 - (void)applicationWillFinishLaunching:(NSNotification *)note {
     USE(note);
@@ -212,6 +215,13 @@ static NSComparisonResult compareFontDisplayNames(NSFont *a, NSFont *b, void *un
 
 - (IBAction)setStringEncodingFromMenuItem:(NSMenuItem *)item {
     [self setStringEncoding:[item tag]];
+}
+
+- (IBAction)openPreferences:(id)sender {
+    if (!_prefs) {
+        _prefs = [[NSWindowController alloc] initWithWindowNibName:@"Preferences"];
+    }
+    [_prefs showWindow:sender];
 }
 
 @end

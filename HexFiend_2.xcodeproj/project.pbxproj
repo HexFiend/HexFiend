@@ -47,6 +47,7 @@
 		A57F34761F1B2A2B00234B94 /* HFHexPasteboardOwnerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A57F34751F1B2A2B00234B94 /* HFHexPasteboardOwnerTest.m */; };
 		A57F34781F1BCC4B00234B94 /* BigColumnsResult.txt.gz in Resources */ = {isa = PBXBuildFile; fileRef = A57F34771F1BCC4B00234B94 /* BigColumnsResult.txt.gz */; };
 		A57F347C1F1BE7CD00234B94 /* BigResult.txt.gz in Resources */ = {isa = PBXBuildFile; fileRef = A57F347B1F1BE7CD00234B94 /* BigResult.txt.gz */; };
+		A57F34801F1EF47700234B94 /* Preferences.xib in Resources */ = {isa = PBXBuildFile; fileRef = A57F34821F1EF47700234B94 /* Preferences.xib */; };
 		D00122E30D48A8D400540B10 /* HFFindReplaceBackgroundView.m in Sources */ = {isa = PBXBuildFile; fileRef = D00122E20D48A8D400540B10 /* HFFindReplaceBackgroundView.m */; };
 		D00C16790FF4925A006D021F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D00C16750FF4925A006D021F /* main.m */; };
 		D00EBA730CE866D50020E2D7 /* HFVerticalScrollerRepresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = D00EBA710CE866D50020E2D7 /* HFVerticalScrollerRepresenter.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -363,6 +364,7 @@
 		A57F34751F1B2A2B00234B94 /* HFHexPasteboardOwnerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFHexPasteboardOwnerTest.m; sourceTree = "<group>"; };
 		A57F34771F1BCC4B00234B94 /* BigColumnsResult.txt.gz */ = {isa = PBXFileReference; lastKnownFileType = archive.gzip; path = BigColumnsResult.txt.gz; sourceTree = "<group>"; };
 		A57F347B1F1BE7CD00234B94 /* BigResult.txt.gz */ = {isa = PBXFileReference; lastKnownFileType = archive.gzip; path = BigResult.txt.gz; sourceTree = "<group>"; };
+		A57F34811F1EF47700234B94 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/Preferences.xib; sourceTree = "<group>"; };
 		D00122E10D48A8D400540B10 /* HFFindReplaceBackgroundView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFFindReplaceBackgroundView.h; path = app/sources/HFFindReplaceBackgroundView.h; sourceTree = "<group>"; };
 		D00122E20D48A8D400540B10 /* HFFindReplaceBackgroundView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFFindReplaceBackgroundView.m; path = app/sources/HFFindReplaceBackgroundView.m; sourceTree = "<group>"; };
 		D00C15E50FF091FF006D021F /* HexFiendling.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HexFiendling.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -652,6 +654,7 @@
 				D018F137107AB64900AE805F /* DiffDocument.xib */,
 				D8C1F92A16F278BA00A4C36E /* DiffRangeDialog.xib */,
 				D04A6BA9100EA7B800704963 /* MainMenu.xib */,
+				A57F34821F1EF47700234B94 /* Preferences.xib */,
 				A56D78261E7EF231001D1892 /* hexf */,
 			);
 			name = Resources;
@@ -1373,6 +1376,7 @@
 				795F46C514BAAEFB00EB2F7D /* OpenDriveDialog.xib in Resources */,
 				A56D78271E7EF231001D1892 /* hexf in Resources */,
 				D8C1F92C16F278BA00A4C36E /* DiffRangeDialog.xib in Resources */,
+				A57F34801F1EF47700234B94 /* Preferences.xib in Resources */,
 				79E2FF201745A2B300FA8F12 /* dsa_pub.pem in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1597,6 +1601,15 @@
 				089C165DFE840E0CC02AAC07 /* English */,
 			);
 			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		A57F34821F1EF47700234B94 /* Preferences.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				A57F34811F1EF47700234B94 /* en */,
+			);
+			name = Preferences.xib;
+			path = app/resources;
 			sourceTree = "<group>";
 		};
 		D018F137107AB64900AE805F /* DiffDocument.xib */ = {

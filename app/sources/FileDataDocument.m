@@ -33,9 +33,7 @@ static inline Class preferredByteArrayClass(void) {
         if ([fileReference isPrivileged])
             [controller setEditMode:HFReadOnlyMode];
         else {
-            // If the file is >= 2K in size, default to starting in overwrite mode
-            if ([fileReference length] >= (2<<10))
-                [controller setEditMode:HFOverwriteMode];
+            [controller setEditMode:[[NSUserDefaults standardUserDefaults] integerForKey:@"DefaultEditMode"]];
         }
     }
 

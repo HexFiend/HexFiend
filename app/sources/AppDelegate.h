@@ -24,4 +24,6 @@
 - (IBAction)setStringEncodingFromMenuItem:(NSMenuItem *)item;
 - (void)setStringEncoding:(NSStringEncoding)encoding;
 
+- (IBAction)openPreferences:(id)sender;
+
 @end

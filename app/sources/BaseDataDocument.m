@@ -93,6 +93,7 @@ static inline Class preferredByteArrayClass(void) {
             @"DefaultFontSize" : @(HFDEFAULT_FONTSIZE),
             @"BytesPerColumn"  : @4,
             @"DefaultStringEncoding" : @([NSString defaultCStringEncoding]),
+            @"DefaultEditMode" : @(HFInsertMode),
         };
         [[NSUserDefaults standardUserDefaults] registerDefaults:defs];
         sRegisteredGlobalDefaults = YES;

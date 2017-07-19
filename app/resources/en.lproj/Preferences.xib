@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="12121" systemVersion="16F73" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+    <dependencies>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="12121"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="NSWindowController">
+            <connections>
+                <outlet property="window" destination="QvC-M9-y7g" id="gxZ-vt-yFk"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <window title="Preferences" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" frameAutosaveName="Preferences" animationBehavior="default" id="QvC-M9-y7g">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+            <rect key="contentRect" x="196" y="240" width="359" height="60"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1440" height="877"/>
+            <view key="contentView" wantsLayer="YES" id="EiT-Mj-1SZ">
+                <rect key="frame" x="0.0" y="0.0" width="359" height="60"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ky0-Ug-Ik0">
+                        <rect key="frame" x="18" y="23" width="218" height="17"/>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Default edit mode for opening files:" id="ayY-Am-Y5K">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="SkW-ts-leT">
+                        <rect key="frame" x="240" y="17" width="102" height="26"/>
+                        <popUpButtonCell key="cell" type="push" title="Insert" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="uPR-Zn-rLh" id="GiI-Hh-IdI">
+                            <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="menu"/>
+                            <menu key="menu" id="ww1-gp-Jib">
+                                <items>
+                                    <menuItem title="Insert" state="on" id="uPR-Zn-rLh"/>
+                                    <menuItem title="Overwrite" tag="1" id="qWd-te-gyr"/>
+                                    <menuItem title="Read-Only" tag="2" id="fIP-qZ-FXU"/>
+                                </items>
+                            </menu>
+                        </popUpButtonCell>
+                        <connections>
+                            <binding destination="8a1-9n-WoW" name="selectedIndex" keyPath="values.DefaultEditMode" id="An8-FK-xP8"/>
+                        </connections>
+                    </popUpButton>
+                </subviews>
+                <constraints>
+                    <constraint firstAttribute="bottom" secondItem="ky0-Ug-Ik0" secondAttribute="bottom" constant="23" id="3Qz-DE-kZq"/>
+                    <constraint firstItem="SkW-ts-leT" firstAttribute="leading" secondItem="ky0-Ug-Ik0" secondAttribute="trailing" constant="8" symbolic="YES" id="662-JD-Lhv"/>
+                    <constraint firstItem="ky0-Ug-Ik0" firstAttribute="top" secondItem="EiT-Mj-1SZ" secondAttribute="top" constant="20" symbolic="YES" id="8LD-jY-adS"/>
+                    <constraint firstAttribute="trailing" secondItem="SkW-ts-leT" secondAttribute="trailing" constant="20" id="T0d-DG-VGa"/>
+                    <constraint firstItem="ky0-Ug-Ik0" firstAttribute="baseline" secondItem="SkW-ts-leT" secondAttribute="baseline" id="dr4-cS-uun"/>
+                    <constraint firstItem="ky0-Ug-Ik0" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" constant="20" symbolic="YES" id="qvd-Cm-tfA"/>
+                </constraints>
+            </view>
+            <point key="canvasLocation" x="63.5" y="57"/>
+        </window>
+        <userDefaultsController id="0Kl-0E-JvQ"/>
+        <userDefaultsController representsSharedInstance="YES" id="8a1-9n-WoW"/>
+    </objects>
+</document>
