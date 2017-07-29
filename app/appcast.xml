@@ -8,9 +8,12 @@
 		<item>
 			<title>HexFiend 2.8</title>
 			<sparkle:releaseNotesLink>https://ridiculousfish.github.io/HexFiend/ReleaseNotes.html</sparkle:releaseNotesLink>
-			<sparkle:version>170719</sparkle:version>
-			<sparkle:shortVersionString>2.8</sparkle:shortVersionString>
-			<link>https://github.com/ridiculousfish/HexFiend/releases/tag/v2.8.0</link>
+			<enclosure
+				url="https://github.com/ridiculousfish/HexFiend/releases/download/v2.8.0/Hex_Fiend_2.8.dmg"
+				sparkle:version="170719"
+				sparkle:shortVersionString="2.8"
+				sparkle:dsaSignature="MCwCFAumBhb7Bq74AQ0QAAtxzT0uHUs3AhQUH2IxG5aFVRS9gS9aUU+3hCKdiw=="
+			/>
 			<sparkle:minimumSystemVersion>10.7</sparkle:minimumSystemVersion>
 		</item>
 	</channel>
