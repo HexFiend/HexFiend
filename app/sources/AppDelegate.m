@@ -16,6 +16,12 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+@interface AppDelegate ()
+
+@property NSArray *filesToOpen;
+
+@end
+
 @implementation AppDelegate
 {
     NSWindowController *_prefs;
@@ -42,6 +48,8 @@
     [extendBackwardsItem setKeyEquivalentModifierMask:[extendBackwardsItem keyEquivalentModifierMask] | NSShiftKeyMask];
     [extendForwardsItem setKeyEquivalent:@"]"];
     [extendBackwardsItem setKeyEquivalent:@"["];	
+
+    [self processCommandLineArguments];
 }
 
 static NSComparisonResult compareFontDisplayNames(NSFont *a, NSFont *b, void *unused) {
@@ -222,6 +230,50 @@ static NSComparisonResult compareFontDisplayNames(NSFont *a, NSFont *b, void *un
         _prefs = [[NSWindowController alloc] initWithWindowNibName:@"Preferences"];
     }
     [_prefs showWindow:sender];
+}
+
+- (void)parseCommandLineArguments {
+    if (!self.filesToOpen) {
+        NSMutableArray *filesToOpen = [NSMutableArray array];
+        NSArray *args = [[NSProcessInfo processInfo] arguments];
+        // first argument is process path
+        if (args.count > 1 && (args.count - 1) % 2 == 0) {
+            for (NSUInteger i = 1; i < args.count; i += 2) {
+                NSString *arg = args[i];
+                if ([arg isEqualToString:@"-HFOpenFile"]) {
+                    NSString *path = args[i + 1];
+                    [filesToOpen addObject:path];
+                }
+            }
+        }
+        self.filesToOpen = filesToOpen;
+    }
+}
+
+- (void)processCommandLineArguments {
+    [self parseCommandLineArguments];
+    for (NSString *path in self.filesToOpen) {
+        [self openFile:path];
+    }
+}
+
+- (void)openFile:(NSString *)path {
+    NSURL *url = [NSURL fileURLWithPath:path];
+    NSDocumentController *dc = [NSDocumentController sharedDocumentController];
+    if ([url checkResourceIsReachableAndReturnError:nil]) {
+        // Open existing file
+        [dc openDocumentWithContentsOfURL:url display:YES completionHandler:^(NSDocument * document __unused, BOOL documentWasAlreadyOpen __unused, NSError * error __unused) {
+        }];
+    } else {
+        // Open new document for file
+        NSDocument *doc = [dc openUntitledDocumentAndDisplay:YES error:nil];
+        doc.fileURL = url;
+    }
+}
+
+- (BOOL)applicationShouldOpenUntitledFile:(NSApplication * __unused)sender {
+    [self parseCommandLineArguments];
+    return self.filesToOpen.count == 0;
 }
 
 @end
