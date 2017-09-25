@@ -7,6 +7,8 @@
 
 #import <Cocoa/Cocoa.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @class HFByteArray, HFProgressTracker;
 
 extern NSString *const HFPrivateByteArrayPboardType;
@@ -32,7 +34,7 @@ extern NSString *const HFPrivateByteArrayPboardType;
 - (HFByteArray *)byteArray;
 
 /* Performs a copy to pasteboard with progress reporting. This must be overridden if you support types other than the private pboard type. */
-- (void)writeDataInBackgroundToPasteboard:(NSPasteboard *)pboard ofLength:(unsigned long long)length forType:(NSString *)type trackingProgress:(HFProgressTracker *)tracker;
+- (void)writeDataInBackgroundToPasteboard:(NSPasteboard *)pboard ofLength:(unsigned long long)length forType:(NSString *)type trackingProgress:(nullable HFProgressTracker *)tracker;
 
 /* NSPasteboard delegate methods, declared here to indicate that subclasses should call super */
 - (void)pasteboard:(NSPasteboard *)sender provideDataForType:(NSString *)type;
@@ -45,7 +47,7 @@ extern NSString *const HFPrivateByteArrayPboardType;
 + (NSString *)uuid;
 
 /* Unpacks a byte array from a pasteboard, preferring HFPrivateByteArrayPboardType */
-+ (HFByteArray *)unpackByteArrayFromPasteboard:(NSPasteboard *)pasteboard;
++ (nullable HFByteArray *)unpackByteArrayFromPasteboard:(NSPasteboard *)pasteboard;
 
 /* Used to handle the case where copying data will require a lot of memory and give the user a chance to confirm. */
 - (unsigned long long)amountToCopyForDataLength:(unsigned long long)numBytes stringLength:(unsigned long long)stringLength;
@@ -54,3 +56,5 @@ extern NSString *const HFPrivateByteArrayPboardType;
 - (unsigned long long)stringLengthForDataLength:(unsigned long long)dataLength;
 
 @end
+
+NS_ASSUME_NONNULL_END

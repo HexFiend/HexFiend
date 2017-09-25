@@ -8,6 +8,8 @@
 #import <Cocoa/Cocoa.h>
 #import <HexFiend/HFController.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 /*! @class HFRepresenter
     @brief The principal view class of Hex Fiend's MVC architecture.
     
@@ -59,7 +61,7 @@
 */
 //@{
 /*! Returns the HFController for the receiver.  This is set by the controller from the call to \c addRepresenter:. A representer can only be in one controller at a time. */
-- (HFController *)controller;
+- (nullable HFController *)controller;
 //@}
 
 /*! @name Property change notifications
@@ -119,3 +121,5 @@
 
 
 @end
+
+NS_ASSUME_NONNULL_END

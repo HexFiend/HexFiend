@@ -7,6 +7,8 @@
 
 #import <Foundation/NSObject.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 typedef unsigned long long (*HFAnnotatedTreeAnnotaterFunction_t)(id left, id right);
 
 
@@ -55,3 +57,5 @@ typedef unsigned long long (*HFAnnotatedTreeAnnotaterFunction_t)(id left, id rig
 #endif
 
 @end
+
+NS_ASSUME_NONNULL_END

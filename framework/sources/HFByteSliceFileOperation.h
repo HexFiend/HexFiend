@@ -7,6 +7,8 @@
 
 #import <Cocoa/Cocoa.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @class HFByteSlice, HFFileReference, HFProgressTracker;
 
 typedef NS_ENUM(NSInteger, HFByteSliceWriteError) {
@@ -28,6 +30,8 @@ typedef NS_ENUM(NSInteger, HFByteSliceWriteError) {
 - (HFRange)targetRange;
 
 - (unsigned long long)costToWrite;
-- (HFByteSliceWriteError)writeToFile:(HFFileReference *)file trackingProgress:(HFProgressTracker *)progressTracker error:(NSError **)error;
+- (HFByteSliceWriteError)writeToFile:(HFFileReference *)file trackingProgress:(nullable HFProgressTracker *)progressTracker error:(NSError **)error;
 
 @end
+
+NS_ASSUME_NONNULL_END

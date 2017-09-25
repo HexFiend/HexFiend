@@ -8,6 +8,8 @@
 #import <Cocoa/Cocoa.h>
 #import <HexFiend/HFController.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @class HFLayoutRepresenter;
 
 /*! @class HFTextView
@@ -51,7 +53,7 @@
 //@}
 
 /// The delegate, which may implement the methods in HFTextViewDelegate. Initially nil.
-@property (nonatomic, assign) id delegate;
+@property (nullable, nonatomic, assign) id delegate;
 
 /*! Access the contents of the HFTextView's HFByteArray as an NSData.
     When setting, the data is copied via the `-copy` message, so prefer to pass an immutable `NSData` when possible.
@@ -59,7 +61,7 @@
 
    For those reasons, this should only be used when its convenience outweighs the downside (e.g. some bindings scenarios).  For most use cases, it is better to use the `-byteArray` method above.
 */
-@property (nonatomic, copy) NSData *data;
+@property (nullable, nonatomic, copy) NSData *data;
 
 
 @end
@@ -73,3 +75,5 @@
 - (void)hexTextView:(HFTextView *)view didChangeProperties:(HFControllerPropertyBits)properties;
 
 @end
+
+NS_ASSUME_NONNULL_END

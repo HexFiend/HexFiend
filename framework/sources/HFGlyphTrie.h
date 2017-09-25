@@ -2,6 +2,8 @@
 
 #import <ApplicationServices/ApplicationServices.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 /* BranchFactor is in bits */
 #define kHFGlyphTrieBranchFactor 4
 #define kHFGlyphTrieBranchCount (1 << kHFGlyphTrieBranchFactor)
@@ -22,7 +24,7 @@ static inline BOOL HFGlyphEqualsGlyph(struct HFGlyph_t a, struct HFGlyph_t b) {
 }
 
 struct HFGlyphTrieBranch_t {
-    void *children[kHFGlyphTrieBranchCount];
+    void *_Nullable children[kHFGlyphTrieBranchCount];
 };
 
 struct HFGlyphTrieLeaf_t {
@@ -46,4 +48,4 @@ __private_extern__ struct HFGlyph_t HFGlyphTrieGet(const struct HFGlyphTrie_t *t
 /* Frees all storage associated with a glyph tree.  This is not necessary to call under GC. */
 __private_extern__ void HFGlyphTreeFree(struct HFGlyphTrie_t * trie);
 
-
+NS_ASSUME_NONNULL_END

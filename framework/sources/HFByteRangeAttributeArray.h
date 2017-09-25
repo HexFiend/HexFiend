@@ -7,6 +7,8 @@
 
 #import <Foundation/Foundation.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 /*! @class HFByteRangeAttributeArray
     @brief A class that represents sets of attributes, attached to ranges of bytes.
 */
@@ -14,7 +16,7 @@
 }
 
 /*! Returns the set of attributes at the given index, and the length over which those attributes are valid (if not NULL). */
-- (NSSet *)attributesAtIndex:(unsigned long long)index length:(unsigned long long *)length;
+- (NSSet *)attributesAtIndex:(unsigned long long)index length:(unsigned long long *_Nullable)length;
 
 /*! Returns the set of attributes within the given range. */
 - (NSSet *)attributesInRange:(HFRange)range;
@@ -44,7 +46,7 @@
 - (void)byteRange:(HFRange)srcRange wasReplacedByBytesOfLength:(unsigned long long)replacementLength;
 
 /*! Transfer attributes in the given range from array, adding baseOffset to each attribute range. range is interpreted as a range in array. If validator is not NULL, then it is called for each attribute; a YES return allows it to be added and a NO return prevents it. */
-- (void)transferAttributesFromAttributeArray:(HFByteRangeAttributeArray *)array range:(HFRange)range baseOffset:(unsigned long long)baseOffset validator:(BOOL (^)(NSString *))allowTransfer;
+- (void)transferAttributesFromAttributeArray:(HFByteRangeAttributeArray *)array range:(HFRange)range baseOffset:(unsigned long long)baseOffset validator:(nullable BOOL (^)(NSString *))allowTransfer;
 
 @end
 
@@ -61,3 +63,5 @@
 }
 @end
 #endif
+
+NS_ASSUME_NONNULL_END
