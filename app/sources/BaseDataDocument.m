@@ -659,20 +659,24 @@ static inline Class preferredByteArrayClass(void) {
     return YES;
 }
 
++ (HFByteArray *)byteArrayfromURL:(NSURL *)absoluteURL error:(NSError **)outError {
+    HFASSERT([absoluteURL isFileURL]);
+    HFFileReference *fileReference = [[HFFileReference alloc] initWithPath:[absoluteURL path] error:outError];
+    if (!fileReference) {
+        return nil;
+    }
+    HFFileByteSlice *byteSlice = [[HFFileByteSlice alloc] initWithFile:fileReference];
+    HFByteArray *byteArray = [[preferredByteArrayClass() alloc] init];
+    [byteArray insertByteSlice:byteSlice inRange:HFRangeMake(0, 0)];
+    return byteArray;
+}
+
 - (BOOL)readFromURL:(NSURL *)absoluteURL ofType:(NSString *)typeName error:(NSError **)outError {
     USE(typeName);
     USE(outError);
     BOOL result = NO;
-    HFASSERT([absoluteURL isFileURL]);
-    HFFileReference *fileReference = [[HFFileReference alloc] initWithPath:[absoluteURL path] error:outError];
-    if (fileReference) {
-        
-        HFFileByteSlice *byteSlice = [[HFFileByteSlice alloc] initWithFile:fileReference];
-        //        HFByteSlice *byteSlice = [[[NSClassFromString(@"HFRandomDataByteSlice") alloc] initWithRandomDataLength:ULLONG_MAX] autorelease];
-        //        pid_t pid = [[[NSRunningApplication runningApplicationsWithBundleIdentifier:@"com.apple.TextEdit"] lastObject] processIdentifier];
-        //        HFByteSlice *byteSlice = [[[NSClassFromString(@"HFProcessMemoryByteSlice") alloc] initWithPID:pid range:HFRangeMake(0, 1 + (unsigned long long)UINT_MAX)] autorelease];
-        HFByteArray *byteArray = [[preferredByteArrayClass() alloc] init];
-        [byteArray insertByteSlice:byteSlice inRange:HFRangeMake(0, 0)];
+    HFByteArray *byteArray = [[self class] byteArrayfromURL:absoluteURL error:outError];
+    if (byteArray) {
         [controller setByteArray:byteArray];
         cleanGenerationCount = [byteArray changeGenerationCount];
         result = YES;

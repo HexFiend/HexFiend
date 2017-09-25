@@ -94,6 +94,7 @@ extern NSString * const BaseDataDocumentDidChangeStringEncodingNotification;
 - (IBAction)setBookmark:sender;
 - (IBAction)deleteBookmark:sender;
 
++ (HFByteArray *)byteArrayfromURL:(NSURL *)absoluteURL error:(NSError **)outError;
 - (HFByteArray *)byteArray; //accessed during diffing
 
 - (BOOL)isTransientAndCanBeReplaced; //like TextEdit
