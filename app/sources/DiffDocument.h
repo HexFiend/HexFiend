@@ -34,6 +34,7 @@
 + (void)compareDocument:(BaseDataDocument *)document againstDocument:(BaseDataDocument *)otherDocument usingRange:(HFRange)range;
 + (void)compareFrontTwoDocuments;
 + (void)compareFrontTwoDocumentsUsingRange:(HFRange)range;
++ (void)compareByteArray:(HFByteArray *)leftBytes againstByteArray:(HFByteArray *)rightBytes usingRange:(HFRange)range leftFileName:(NSString *)leftFileName rightFileName:(NSString *)rightFileName;
 
 - (instancetype)initWithLeftByteArray:(HFByteArray *)left rightByteArray:(HFByteArray *)right;
 - (instancetype)initWithLeftByteArray:(HFByteArray *)left rightByteArray:(HFByteArray *)right range:(HFRange)range;
