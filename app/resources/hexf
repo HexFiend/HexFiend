@@ -1,6 +1,0 @@
-#!/bin/sh
-if [ -z "$1" ]; then
-	echo "Missing path"
-	exit 1
-fi
-open -b com.ridiculousfish.HexFiend "$1"

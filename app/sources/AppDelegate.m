@@ -50,6 +50,18 @@
     [extendBackwardsItem setKeyEquivalent:@"["];	
 
     [self processCommandLineArguments];
+
+    [[NSDistributedNotificationCenter defaultCenter] addObserverForName:@"HFOpenFileNotification" object:nil queue:nil usingBlock:^(NSNotification * _Nonnull notification) {
+        NSDictionary *userInfo = notification.userInfo;
+        NSArray *files = [userInfo objectForKey:@"files"];
+        if ([files isKindOfClass:[NSArray class]]) {
+            for (NSString *file in files) {
+                if ([file isKindOfClass:[NSString class]]) {
+                    [self openFile:file];
+                }
+            }
+        }
+    }];
 }
 
 static NSComparisonResult compareFontDisplayNames(NSFont *a, NSFont *b, void *unused) {
