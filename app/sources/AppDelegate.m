@@ -18,7 +18,10 @@
 
 @interface AppDelegate ()
 
+@property BOOL parsedCommandLineArgs;
 @property NSArray *filesToOpen;
+@property NSString *diffLeftFile;
+@property NSString *diffRightFile;
 
 @end
 
@@ -59,6 +62,18 @@
                 if ([file isKindOfClass:[NSString class]]) {
                     [self openFile:file];
                 }
+            }
+        }
+    }];
+
+    [[NSDistributedNotificationCenter defaultCenter] addObserverForName:@"HFDiffFilesNotification" object:nil queue:nil usingBlock:^(NSNotification * _Nonnull notification) {
+        NSDictionary *userInfo = notification.userInfo;
+        NSArray *files = [userInfo objectForKey:@"files"];
+        if ([files isKindOfClass:[NSArray class]] && files.count == 2) {
+            NSString *file1 = [files objectAtIndex:0];
+            NSString *file2 = [files objectAtIndex:1];
+            if ([file1 isKindOfClass:[NSString class]] && [file2 isKindOfClass:[NSString class]]) {
+                [self compareLeftFile:file1 againstRightFile:file2];
             }
         }
     }];
@@ -245,7 +260,7 @@ static NSComparisonResult compareFontDisplayNames(NSFont *a, NSFont *b, void *un
 }
 
 - (void)parseCommandLineArguments {
-    if (!self.filesToOpen) {
+    if (!self.parsedCommandLineArgs) {
         NSMutableArray *filesToOpen = [NSMutableArray array];
         NSArray *args = [[NSProcessInfo processInfo] arguments];
         // first argument is process path
@@ -253,12 +268,16 @@ static NSComparisonResult compareFontDisplayNames(NSFont *a, NSFont *b, void *un
             for (NSUInteger i = 1; i < args.count; i += 2) {
                 NSString *arg = args[i];
                 if ([arg isEqualToString:@"-HFOpenFile"]) {
-                    NSString *path = args[i + 1];
-                    [filesToOpen addObject:path];
+                    [filesToOpen addObject:args[i + 1]];
+                } else if ([arg isEqualToString:@"-HFDiffLeftFile"]) {
+                    self.diffLeftFile = args[i + 1];
+                } else if ([arg isEqualToString:@"-HFDiffRightFile"]) {
+                    self.diffRightFile = args[i + 1];
                 }
             }
         }
         self.filesToOpen = filesToOpen;
+        self.parsedCommandLineArgs = YES;
     }
 }
 
@@ -266,6 +285,9 @@ static NSComparisonResult compareFontDisplayNames(NSFont *a, NSFont *b, void *un
     [self parseCommandLineArguments];
     for (NSString *path in self.filesToOpen) {
         [self openFile:path];
+    }
+    if (self.diffLeftFile && self.diffRightFile) {
+        [self compareLeftFile:self.diffLeftFile againstRightFile:self.diffRightFile];
     }
 }
 
@@ -285,7 +307,20 @@ static NSComparisonResult compareFontDisplayNames(NSFont *a, NSFont *b, void *un
 
 - (BOOL)applicationShouldOpenUntitledFile:(NSApplication * __unused)sender {
     [self parseCommandLineArguments];
-    return self.filesToOpen.count == 0;
+    return self.filesToOpen.count == 0 && (!self.diffLeftFile || !self.diffRightFile);
+}
+
+- (void)compareLeftFile:(NSString *)leftFile againstRightFile:(NSString *)rightFile {
+    NSError *err = nil;
+    HFByteArray *array1 = [BaseDataDocument byteArrayfromURL:[NSURL fileURLWithPath:leftFile] error:&err];
+    HFByteArray *array2 = [BaseDataDocument byteArrayfromURL:[NSURL fileURLWithPath:rightFile] error:&err];
+    if (array1 && array2) {
+        [DiffDocument compareByteArray:array1
+                      againstByteArray:array2
+                            usingRange:HFRangeMake(0, 0)
+                          leftFileName:[[leftFile lastPathComponent] stringByDeletingPathExtension]
+                         rightFileName:[[rightFile lastPathComponent] stringByDeletingPathExtension]];
+    }
 }
 
 @end
