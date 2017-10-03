@@ -1076,9 +1076,9 @@ static inline Class preferredByteArrayClass(void) {
     [(NSTextField*)[saveView viewNamed:@"saveLabelField"] setStringValue:[NSString stringWithFormat:@"Saving \"%@\"", [self displayName]]];
 
     __block NSInteger saveResult = 0;
+    __block NSError *operationError = nil;
     [saveView startOperation:^id(HFProgressTracker *tracker) {
-        id result = [self threadedSaveToURL:inAbsoluteURL trackingProgress:tracker error:outError];
-        /* Retain the error so it can be autoreleased in the main thread */
+        id result = [self threadedSaveToURL:inAbsoluteURL trackingProgress:tracker error:&operationError];
         return result;
     } completionHandler:^(id result) {
         saveResult = [result integerValue];
@@ -1086,6 +1086,10 @@ static inline Class preferredByteArrayClass(void) {
         /* Post an event so our event loop wakes up */
         [NSApp postEvent:[NSEvent otherEventWithType:NSApplicationDefined location:NSZeroPoint modifierFlags:0 timestamp:0 windowNumber:0 context:NULL subtype:0 data1:0 data2:0] atStart:NO];
     }];
+
+    if (operationError && outError) {
+        *outError = operationError;
+    }
 
     while ([saveView operationIsRunning]) {
         @autoreleasepool {
