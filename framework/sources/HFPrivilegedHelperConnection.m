@@ -129,7 +129,17 @@ static NSString *read_line(FILE *file) {
     if (childReceiveMachPort == nil) {
         NSError *oops = nil;
         if (! [self launchAndConnect:&oops]) {
-            if (oops) [NSApp presentError:oops];
+            if (oops) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    @autoreleasepool {
+                        HFASSERT_MAIN_THREAD();
+                        NSAlert *alert = [[NSAlert alloc] init];
+                        alert.messageText = NSLocalizedString(@"Failed to launch and connect helper.", "");
+                        alert.informativeText = oops.localizedDescription;
+                        (void)[alert runModal];
+                    }
+                });
+            }
         }
     }
     return [childReceiveMachPort isValid];
