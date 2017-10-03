@@ -229,7 +229,13 @@ static id signedIntegerDescription(const unsigned char *bytes, NSUInteger length
         {
             FETCH(__int128_t)
             FLIP(16)
-            BOOL neg = s < 0 ? (s=-s), YES : NO;
+            BOOL neg;
+            if (s < 0) {
+                s=-s;
+                neg = YES;
+            } else {
+                neg = NO;
+            }
             char buf[50], *b = buf;
             while(s) {
                 *(b++) = (char)(s%10)+'0';

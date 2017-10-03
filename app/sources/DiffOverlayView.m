@@ -67,7 +67,8 @@
         /* Now go to the right */
         CGPathAddLineToPoint(path, &transform, NSMinX(rightViewBounds), NSMidY(rightRect));
         
-        x = NSMinX(rightRect), y = NSMidY(rightRect);
+        x = NSMinX(rightRect);
+        y = NSMidY(rightRect);
         CGPathAddLineToPoint(path, &transform, x, y);
         
         /* Add vertical line to end */
