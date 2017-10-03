@@ -1,10 +1,12 @@
 #import <HexFiend/HFTextRepresenter.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface HFTextRepresenter (HFInternal)
 
 - (NSArray *)displayedSelectedContentsRanges; //returns an array of NSValues representing the selected ranges (as NSRanges) clipped to the displayed range.
 
-- (NSDictionary *)displayedBookmarkLocations; //returns an dictionary mapping bookmark names to bookmark locations. Bookmark locations may be negative.
+- (nullable NSDictionary *)displayedBookmarkLocations; //returns an dictionary mapping bookmark names to bookmark locations. Bookmark locations may be negative.
 
 - (void)beginSelectionWithEvent:(NSEvent *)event forCharacterIndex:(NSUInteger)characterIndex;
 - (void)continueSelectionWithEvent:(NSEvent *)event forCharacterIndex:(NSUInteger)characterIndex;
@@ -32,3 +34,5 @@
 - (void)selectAll:(id)sender;
 
 @end
+
+NS_ASSUME_NONNULL_END

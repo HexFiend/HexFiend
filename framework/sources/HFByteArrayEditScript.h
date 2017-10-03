@@ -8,6 +8,8 @@
 #import <Cocoa/Cocoa.h>
 #import <HexFiend/HFTYpes.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 /*! @class HFByteArrayEditScript
  @brief A class that represents an sequence of instructions for editing an @link HFByteArray @endlink.  
  
@@ -46,7 +48,7 @@ struct HFEditInstruction_t {
 }
 
 /*! Computes the edit script (differences) from src to dst.  This retains both src and dst, and if they are modified then the receiver will likely no longer function. You may optionally pass an HFProgressTracker for progress reporting and cancellation.  This returns nil if it was cancelled. */
-- (instancetype)initWithDifferenceFromSource:(HFByteArray *)src toDestination:(HFByteArray *)dst trackingProgress:(HFProgressTracker *)progressTracker;
+- (nullable instancetype)initWithDifferenceFromSource:(HFByteArray *)src toDestination:(HFByteArray *)dst trackingProgress:(nullable HFProgressTracker *)progressTracker;
 
 /*! Applies the receiver to an HFByteArray. */
 - (void)applyToByteArray:(HFByteArray *)byteArray;
@@ -58,3 +60,5 @@ struct HFEditInstruction_t {
 - (struct HFEditInstruction_t)instructionAtIndex:(NSUInteger)index;
 
 @end
+
+NS_ASSUME_NONNULL_END

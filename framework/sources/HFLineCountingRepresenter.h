@@ -7,6 +7,8 @@
 
 #import <HexFiend/HFRepresenter.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 /*! @enum HFLineNumberFormat
     HFLineNumberFormat is a simple enum used to determine whether line numbers are in decimal or hexadecimal format.
 */
@@ -67,3 +69,5 @@ extern NSString *const HFLineCountingRepresenterMinimumViewWidthChanged;
 /*! Notification posted when the HFLineCountingRepresenter has cycled through the line number format.  The object is the HFLineCountingRepresenter; there is no user info.
  */
 extern NSString *const HFLineCountingRepresenterCycledLineNumberFormat;
+
+NS_ASSUME_NONNULL_END

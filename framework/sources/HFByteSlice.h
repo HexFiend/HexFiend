@@ -7,6 +7,8 @@
 
 #import <Cocoa/Cocoa.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @class HFFileReference, HFByteRangeAttributeArray;
 
 /*! @class HFByteSlice
@@ -31,7 +33,7 @@ The two principal subclasses of HFByteSlice are HFSharedMemoryByteSlice and HFFi
 
 /*! Attempts to create a new byte slice by appending one byte slice to another.  This does not modify the receiver or the slice argument (after all, both are immutable).  This is provided as an optimization, and is allowed to return nil if the appending cannot be done efficiently.  The default implementation returns nil.
 */
-- (HFByteSlice *)byteSliceByAppendingSlice:(HFByteSlice *)slice;
+- (nullable HFByteSlice *)byteSliceByAppendingSlice:(HFByteSlice *)slice;
 
 /*! Returns YES if the receiver is sourced from a file.  The default implementation returns NO.  This is used to estimate cost when writing to a file.
 */
@@ -48,6 +50,8 @@ The two principal subclasses of HFByteSlice are HFSharedMemoryByteSlice and HFFi
 @interface HFByteSlice (HFAttributes)
 
 /*!  Returns the attributes for the bytes in the given range. */
-- (HFByteRangeAttributeArray *)attributesForBytesInRange:(HFRange)range;
+- (nullable HFByteRangeAttributeArray *)attributesForBytesInRange:(HFRange)range;
 
 @end
+
+NS_ASSUME_NONNULL_END

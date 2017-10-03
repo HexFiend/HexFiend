@@ -8,6 +8,8 @@
 
 #import <HexFiend/HFByteArray.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @class HFBTree;
 
 /*! @class HFBTreeByteArray
@@ -28,3 +30,5 @@ Create an HFBTreeByteArray via \c -init.  It has no methods other than those on 
 - (instancetype)init;
 
 @end
+
+NS_ASSUME_NONNULL_END

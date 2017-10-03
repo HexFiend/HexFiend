@@ -2,6 +2,6 @@
 
 @interface HFRepresenter (HFInternalStuff)
 
-- (void)_setController:(HFController *)controller;
+- (void)_setController:(nullable HFController *)controller;
 
 @end

@@ -8,6 +8,8 @@
 #import <HexFiend/HFRepresenter.h>
 #import <HexFiend/HFByteArray.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 /*! @class HFTextRepresenter
     @brief An HFRepresenter that draws text (e.g. the hex or ASCII view).
     
@@ -39,3 +41,5 @@
 - (void)selectAll:(id)sender;
 
 @end
+
+NS_ASSUME_NONNULL_END

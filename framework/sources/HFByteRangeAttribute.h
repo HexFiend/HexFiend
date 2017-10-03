@@ -1,5 +1,7 @@
 #import <Foundation/NSString.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 /* Attributes used to illustrate diffs. */
 extern NSString * const kHFAttributeDiffInsertion;
 
@@ -20,3 +22,5 @@ extern NSString *HFBookmarkAttributeFromBookmark(NSInteger bookmark);
 
 /* Given a bookmark string, return the bookmark index for it, or NSNotFound if the string does not represent a bookmark attribute. */
 extern NSInteger HFBookmarkFromBookmarkAttribute(NSString *bookmark);
+
+NS_ASSUME_NONNULL_END

@@ -20,12 +20,12 @@
     BOOL registeredForAppNotifications;
 }
 
-@property (nonatomic, copy) NSFont *font;
+@property (nullable, nonatomic, copy) NSFont *font;
 @property (nonatomic) CGFloat lineHeight;
 @property (nonatomic) HFFPRange lineRangeToDraw;
 @property (nonatomic) NSUInteger bytesPerLine;
 @property (nonatomic) HFLineNumberFormat lineNumberFormat;
-@property (nonatomic, assign) HFLineCountingRepresenter *representer;
+@property (nullable, nonatomic, assign) HFLineCountingRepresenter *representer;
 
 + (NSUInteger)digitsRequiredToDisplayLineNumber:(unsigned long long)lineNumber inFormat:(HFLineNumberFormat)format;
 

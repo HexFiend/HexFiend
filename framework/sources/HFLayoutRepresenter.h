@@ -7,6 +7,8 @@
 
 #import <HexFiend/HFRepresenter.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 /*! @class HFLayoutRepresenter
     @brief An HFRepresenter responsible for arranging the views of other HFRepresenters attached to the same HFController.
     
@@ -78,3 +80,5 @@
 //@}
 
 @end
+
+NS_ASSUME_NONNULL_END

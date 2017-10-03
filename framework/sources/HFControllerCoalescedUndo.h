@@ -8,6 +8,8 @@
 #import <Cocoa/Cocoa.h>
 #import <HexFiend/HFTypes.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @class HFByteArray, HFFileReference;
 
 /* A class to track the following operation - replace the data within rangeToReplace with the replacementByteArray */
@@ -19,7 +21,7 @@
 }
 
 /* replacedData may be nil if it should be considered empty */
-- (instancetype)initWithReplacedData:(HFByteArray *)replacedData atAnchorLocation:(unsigned long long)anchor;
+- (instancetype)initWithReplacedData:(nullable HFByteArray *)replacedData atAnchorLocation:(unsigned long long)anchor;
 
 - (instancetype)initWithOverwrittenData:(HFByteArray *)overwrittenData atAnchorLocation:(unsigned long long)anchor;
 
@@ -32,11 +34,11 @@
 - (void)overwriteDataInRange:(HFRange)overwriteRange withByteArray:(HFByteArray *)array;
 
 - (HFRange)rangeToReplace;
-- (HFByteArray *)deletedData;
+- (nullable HFByteArray *)deletedData;
 
 - (HFControllerCoalescedUndo *)invertWithByteArray:(HFByteArray *)byteArray;
 
-- (BOOL)clearDependenciesOnRanges:(NSArray *)ranges inFile:(HFFileReference *)reference hint:(NSMutableDictionary *)hint;
+- (BOOL)clearDependenciesOnRanges:(NSArray *)ranges inFile:(HFFileReference *)reference hint:(nullable NSMutableDictionary *)hint;
 - (void)invalidate;
 
 @end
@@ -50,11 +52,13 @@
 
 - (instancetype)initForInsertingByteArrays:(NSArray *)arrays inRanges:(NSArray *)ranges withSelectionAction:(int)selectionAction;
 
-- (NSArray *)byteArrays;
-- (NSArray *)replacementRanges;
+- (nullable NSArray *)byteArrays;
+- (nullable NSArray *)replacementRanges;
 - (int)selectionAction;
 
-- (BOOL)clearDependenciesOnRanges:(NSArray *)ranges inFile:(HFFileReference *)reference hint:(NSMutableDictionary *)hint;
+- (BOOL)clearDependenciesOnRanges:(NSArray *)ranges inFile:(HFFileReference *)reference hint:(nullable NSMutableDictionary *)hint;
 - (void)invalidate;
 
 @end
+
+NS_ASSUME_NONNULL_END

@@ -7,6 +7,8 @@
 
 #import <HexFiend/HFByteSlice.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @class HFFileReference;
 
 /*! @class HFFileByteSlice
@@ -27,3 +29,5 @@
 - (instancetype)initWithFile:(HFFileReference *)file offset:(unsigned long long)offset length:(unsigned long long)length;
 
 @end
+
+NS_ASSUME_NONNULL_END

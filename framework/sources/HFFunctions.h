@@ -3,6 +3,8 @@
 #import <HexFiend/HFTypes.h>
 #import <libkern/OSAtomic.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 #define HFDEFAULT_FONT (@"Monaco")
 #define HFDEFAULT_FONTSIZE ((CGFloat)10.)
 
@@ -526,3 +528,5 @@ NSString *HFDescribeByteCount(unsigned long long count);
 - (void)assertIntegrity;
 
 @end
+
+NS_ASSUME_NONNULL_END
