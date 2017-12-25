@@ -390,11 +390,25 @@ static NSString * const InspectionErrorTooLittle = @"(select more data)";
 static NSString * const InspectionErrorNonPwr2 = @"(select a power of 2 bytes)";
 static NSString * const InspectionErrorInternal = @"(internal error)";
 
-static NSAttributedString *inspectionError(NSString *s) {
+static NSAttributedString *formatInspectionString(NSString *s, BOOL isError) {
     NSMutableParagraphStyle *paragraphStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
     [paragraphStyle setMinimumLineHeight:(CGFloat)16.];
-    NSAttributedString *result = [[NSAttributedString alloc] initWithString:s attributes:@{NSForegroundColorAttributeName: [NSColor disabledControlTextColor], NSFontAttributeName: [NSFont controlContentFontOfSize:11], NSParagraphStyleAttributeName: paragraphStyle}];
-    return result;
+
+    NSColor *foregroundColor = isError ? [NSColor disabledControlTextColor] : [NSColor textColor];
+
+    return [[NSAttributedString alloc] initWithString:s attributes:@{
+        NSForegroundColorAttributeName: foregroundColor,
+        NSFontAttributeName: [NSFont controlContentFontOfSize:11],
+        NSParagraphStyleAttributeName: paragraphStyle
+    }];
+}
+
+static NSAttributedString *inspectionError(NSString *s) {
+    return formatInspectionString(s, true);
+}
+
+static NSAttributedString *inspectionSuccess(NSString *s) {
+    return formatInspectionString(s, false);
 }
 
 - (id)valueForController:(HFController *)controller ranges:(NSArray *)ranges isError:(BOOL *)outIsError {
@@ -440,8 +454,9 @@ static NSAttributedString *inspectionError(NSString *s) {
             if(outIsError) *outIsError = YES;
             return inspectionError(InspectionErrorInternal);
     }
-    
-    return [self valueForData:[controller dataForRange:range] isError:outIsError];
+
+    id result = [self valueForData:[controller dataForRange:range] isError:outIsError];
+    return [result isKindOfClass:[NSString class]] ? inspectionSuccess(result) : result;
 }
 
 - (id)valueForData:(NSData *)data isError:(BOOL *)outIsError {
