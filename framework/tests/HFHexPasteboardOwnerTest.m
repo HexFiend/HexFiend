@@ -19,17 +19,13 @@
 
 @implementation HFHexPasteboardOwnerTest
 
-- (NSString *)stringForOwner:(HFHexPasteboardOwner *)owner data:(NSMutableData *)data {
+- (NSString *)stringForData:(NSMutableData *)data bytesPerColumn:(NSUInteger)bytesPerColumn {
     HFSharedMemoryByteSlice *slice = [[HFSharedMemoryByteSlice alloc] initWithData:data];
     HFBTreeByteArray *byteArray = [[HFBTreeByteArray alloc] initWithByteSlice:slice];
+    HFHexPasteboardOwner *owner = [HFHexPasteboardOwner ownPasteboard:[NSPasteboard generalPasteboard] forByteArray:byteArray withTypes:@[HFPrivateByteArrayPboardType, NSStringPboardType]];
+    owner.bytesPerColumn = bytesPerColumn;
     HFProgressTracker *tracker = [[HFProgressTracker alloc] init];
     return [owner stringFromByteArray:byteArray ofLength:byteArray.length trackingProgress:tracker];
-}
-
-- (NSString *)stringForData:(NSMutableData *)data bytesPerColumn:(NSUInteger)bytesPerColumn {
-    HFHexPasteboardOwner *owner = [[HFHexPasteboardOwner alloc] init];
-    owner.bytesPerColumn = bytesPerColumn;
-    return [self stringForOwner:owner data:data];
 }
 
 - (NSString *)stringForBytes:(unsigned char *)bytes length:(NSUInteger)length bytesPerColumn:(NSUInteger)bytesPerColumn {
