@@ -682,14 +682,7 @@ static void removeFromDictionaryOfSets(NSMutableDictionary *dictionary, NSString
 - (void)byteRange:(HFRange)dyingRange wasReplacedByBytesOfLength:(unsigned long long)replacementLength {
     @autoreleasepool {
     
-    NSMapTable *nodesToReplace;
-    // strongToStrongObjectsMapTable requires 10.8+
-    if ([NSMapTable respondsToSelector:@selector(strongToStrongObjectsMapTable)]) {
-        nodesToReplace = [NSMapTable strongToStrongObjectsMapTable];
-    } else {
-        nodesToReplace = [NSMapTable mapTableWithStrongToStrongObjects];
-    }
-
+    NSMapTable *nodesToReplace = [NSMapTable strongToStrongObjectsMapTable];
     const id null = [NSNull null];
     
     HFRange extendedRange = HFRangeMake(dyingRange.location, ULLONG_MAX - dyingRange.location);

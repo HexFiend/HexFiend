@@ -174,7 +174,7 @@ static BOOL naiveSearch(HFObjectGraph *self, id start, id goal, NSHashTable *vis
 - (NSArray *)naiveStronglyConnectedComponentsForObjects:(NSArray *)objects {
     NSMutableArray *result = [NSMutableArray array];
     /* A super-lame naive algorithm for finding all the strongly connected components of a graph. */
-    NSMapTable<id, NSMutableArray*> *components = [NSMapTable mapTableWithWeakToStrongObjects];
+    NSMapTable<id, NSMutableArray*> *components = [NSMapTable weakToStrongObjectsMapTable];
     for(id obj1 in objects) {
         NSMutableArray *loop = [components objectForKey:obj1];
         if (! loop) {

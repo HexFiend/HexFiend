@@ -178,13 +178,7 @@ static HFObjectGraph *createAcyclicGraphFromStronglyConnectedComponents(NSArray 
     HFObjectGraph *acyclicGraph = [[HFObjectGraph alloc] init];
     NSUInteger i, max = [stronglyConnectedComponents count];
     /* Construct a dictionary mapping each operation to its contained chain */
-    NSMapTable *operationToContainingChain;
-    // weakToWeakObjectsMapTable requires 10.8+
-    if ([NSMapTable respondsToSelector:@selector(weakToWeakObjectsMapTable)]) {
-        operationToContainingChain = [NSMapTable weakToWeakObjectsMapTable];
-    } else {
-        operationToContainingChain = [NSMapTable mapTableWithWeakToWeakObjects];
-    }
+    NSMapTable *operationToContainingChain = [NSMapTable weakToWeakObjectsMapTable];
 
     for (i=0; i < max; i++) {
         HFByteSliceFileOperation *chain = chains[i];

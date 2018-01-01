@@ -22,12 +22,7 @@ static NSMapTable *byteArrayMap = nil;
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(prepareCommonPasteboardsForChangeInFileNotification:) name:HFPrepareForChangeInFileNotification object:nil];
 
         HFASSERT_MAIN_THREAD(); // byteArrayMap is not thread safe
-        // strongToWeakObjectsMapTable requires 10.8+
-        if ([NSMapTable respondsToSelector:@selector(strongToWeakObjectsMapTable)]) {
-            byteArrayMap = [NSMapTable strongToWeakObjectsMapTable];
-        } else {
-            byteArrayMap = [NSMapTable mapTableWithStrongToWeakObjects];
-        }
+        byteArrayMap = [NSMapTable strongToWeakObjectsMapTable];
     }
 }
 
@@ -206,18 +201,8 @@ static NSMapTable *byteArrayMap = nil;
         progressTracker = [[HFProgressTracker alloc] init];
 
         NSMutableArray *topLevelObjects = [NSMutableArray array];
-        if ([[NSBundle mainBundle] respondsToSelector:@selector(loadNibNamed:owner:topLevelObjects:)]) {
-            /* for Mac OS X 10.8 or higher */
-            // unlike -loadNibNamed:owner: which is deprecated in 10.8, this method does
-            // not retain top level objects automatically, so objects must be set retain
-            if (![[NSBundle bundleForClass:[self class]] loadNibNamed:@"HFModalProgress" owner:self topLevelObjects:&topLevelObjects] || !progressTrackingWindow) {
-                NSLog(@"Unable to load nib named HFModalProgress!");
-            }
-        } else {
-            /* for Mac OS X 10.7 or lower */
-            if(![NSBundle loadNibNamed:@"HFModalProgress" owner:self] || !progressTrackingWindow) {
-                NSLog(@"Unable to load nib named HFModalProgress!");
-            }
+        if (![[NSBundle bundleForClass:[self class]] loadNibNamed:@"HFModalProgress" owner:self topLevelObjects:&topLevelObjects] || !progressTrackingWindow) {
+            NSLog(@"Unable to load nib named HFModalProgress!");
         }
         backgroundCopyOperationFinished = NO;
         didStartModalSessionForBackgroundCopyOperation = NO;

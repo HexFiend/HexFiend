@@ -29,18 +29,8 @@ static NSString *sNibName;
     if (! path) [NSException raise:NSInvalidArgumentException format:@"Unable to find nib named %@", name];
     sNibName = [name copy];
     NSMutableArray *topLevelObjects = [NSMutableArray array];
-    if ([[NSBundle mainBundle] respondsToSelector:@selector(loadNibNamed:owner:topLevelObjects:)]) {
-        /* for Mac OS X 10.8 or higher */
-        // unlike -loadNibFile:externalNameTable:withZone: which is deprecated in 10.8, this method does
-        // not retain top level objects automatically, so objects must be set retain
-        if (! [[NSBundle mainBundle] loadNibNamed:name owner:owner topLevelObjects:&topLevelObjects]) {
-            [NSException raise:NSInvalidArgumentException format:@"Unable to load nib at path %@", path];
-        }
-    } else {
-        /* for Mac OS X 10.7 or lower */
-        if (! [NSBundle loadNibFile:path externalNameTable:@{@"NSTopLevelObjects": topLevelObjects, @"NSOwner": owner} withZone:NULL]) {
-            [NSException raise:NSInvalidArgumentException format:@"Unable to load nib at path %@", path];
-        }
+    if (! [[NSBundle mainBundle] loadNibNamed:name owner:owner topLevelObjects:&topLevelObjects]) {
+        [NSException raise:NSInvalidArgumentException format:@"Unable to load nib at path %@", path];
     }
     sNibName = nil;
     HFDocumentOperationView *resultObject = nil;
@@ -159,7 +149,6 @@ static NSView *searchForViewWithIdentifier(NSView *view, NSString *identifier) {
     completionHandler = nil;
     tracker = nil;
     [self willChangeValueForKey:@"operationIsRunning"];
-    dispatch_release(waitGroup);
     waitGroup = NULL;
     [self didChangeValueForKey:@"operationIsRunning"];
     [cancelButton setHidden: ! [self operationIsRunning]];
