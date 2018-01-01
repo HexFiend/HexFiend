@@ -9,10 +9,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface HFObjectGraph : NSObject {
-    __strong CFMutableDictionaryRef graph;
-    NSMutableArray *containedObjects;
-}
+@interface HFObjectGraph : NSObject
 
 - (void)addDependency:depend forObject:obj;
 - (nullable NSSet *)dependenciesForObject:obj;

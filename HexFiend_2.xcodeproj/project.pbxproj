@@ -65,11 +65,11 @@
 		D01773920D7A2F32002E03DE /* HFResizingView.m in Sources */ = {isa = PBXBuildFile; fileRef = D01773910D7A2F32002E03DE /* HFResizingView.m */; };
 		D018F139107AB64900AE805F /* DiffDocument.xib in Resources */ = {isa = PBXBuildFile; fileRef = D018F137107AB64900AE805F /* DiffDocument.xib */; };
 		D018F153107ABAC600AE805F /* DiffDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = D018F152107ABAC600AE805F /* DiffDocument.m */; };
-		D019B8C00D83E8D5005789AA /* HFByteArray_FileWriting.m in Sources */ = {isa = PBXBuildFile; fileRef = D019B8BE0D83E8D5005789AA /* HFByteArray_FileWriting.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		D019B8C00D83E8D5005789AA /* HFByteArray_FileWriting.m in Sources */ = {isa = PBXBuildFile; fileRef = D019B8BE0D83E8D5005789AA /* HFByteArray_FileWriting.m */; };
 		D019B9010D83FEB3005789AA /* HFByteSliceFileOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = D019B8FF0D83FEB3005789AA /* HFByteSliceFileOperation.h */; };
 		D019B9020D83FEB3005789AA /* HFByteSliceFileOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = D019B9000D83FEB3005789AA /* HFByteSliceFileOperation.m */; };
 		D019B9550D840FE8005789AA /* HFObjectGraph.h in Headers */ = {isa = PBXBuildFile; fileRef = D019B9530D840FE8005789AA /* HFObjectGraph.h */; };
-		D019B9560D840FE8005789AA /* HFObjectGraph.m in Sources */ = {isa = PBXBuildFile; fileRef = D019B9540D840FE8005789AA /* HFObjectGraph.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		D019B9560D840FE8005789AA /* HFObjectGraph.m in Sources */ = {isa = PBXBuildFile; fileRef = D019B9540D840FE8005789AA /* HFObjectGraph.m */; };
 		D01D1D721489DFE5008212BB /* HFAnnotatedTree.h in Headers */ = {isa = PBXBuildFile; fileRef = D0315BEA1225C553008C9EAB /* HFAnnotatedTree.h */; };
 		D01E7BED0CDC55D000943F9E /* HFController.m in Sources */ = {isa = PBXBuildFile; fileRef = D01E7BEB0CDC55D000943F9E /* HFController.m */; };
 		D01E7BF00CDC564B00943F9E /* HexFiend.h in Headers */ = {isa = PBXBuildFile; fileRef = D01E7BEF0CDC564B00943F9E /* HexFiend.h */; settings = {ATTRIBUTES = (Public, ); }; };
