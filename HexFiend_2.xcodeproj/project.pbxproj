@@ -121,7 +121,7 @@
 		D0621CAD102ED50D00DAEB4D /* FortunateSonServerImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D0621CAC102ED50D00DAEB4D /* FortunateSonServerImpl.cpp */; };
 		D0621CF0102ED78900DAEB4D /* FortunateSon.defs in Sources */ = {isa = PBXBuildFile; fileRef = D047E33F1022CFA800EF307B /* FortunateSon.defs */; };
 		D06D60070FA69AFA002376EE /* HFBTree.h in Headers */ = {isa = PBXBuildFile; fileRef = D06D60050FA69AFA002376EE /* HFBTree.h */; };
-		D06D60080FA69AFA002376EE /* HFBTree.m in Sources */ = {isa = PBXBuildFile; fileRef = D06D60060FA69AFA002376EE /* HFBTree.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		D06D60080FA69AFA002376EE /* HFBTree.m in Sources */ = {isa = PBXBuildFile; fileRef = D06D60060FA69AFA002376EE /* HFBTree.m */; };
 		D06D61EE0FA7FA7C002376EE /* HFBTreeByteArray.h in Headers */ = {isa = PBXBuildFile; fileRef = D06D61EC0FA7FA7C002376EE /* HFBTreeByteArray.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D06D61EF0FA7FA7C002376EE /* HFBTreeByteArray.m in Sources */ = {isa = PBXBuildFile; fileRef = D06D61ED0FA7FA7C002376EE /* HFBTreeByteArray.m */; };
 		D0713920146F7898004D3792 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = D071391E146F7897004D3792 /* MainMenu.xib */; };
