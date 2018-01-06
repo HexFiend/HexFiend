@@ -267,7 +267,7 @@ static NSMapTable *byteArrayMap = nil;
 + (NSString *)createUUI {
     CFUUIDRef uuidRef = CFUUIDCreate(NULL);
     HFASSERT(uuidRef != NULL);
-    NSString *ret = (__bridge NSString *)CFUUIDCreateString(NULL, uuidRef);
+    NSString *ret = (__bridge_transfer NSString *)CFUUIDCreateString(NULL, uuidRef);
     CFRelease(uuidRef);
     return ret;
 }

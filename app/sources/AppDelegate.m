@@ -164,7 +164,7 @@ static NSComparisonResult compareFontDisplayNames(NSFont *a, NSFont *b, void *un
         }
         else {
             /* Zero or one document, so give it a generic title and disable it */
-            [item setTitle:@"Compare Front Documents"];
+            [item setTitle:NSLocalizedString(@"Compare Front Documents", "")];
             return NO;
         }
     } else if (sel == @selector(diffFrontDocumentsByRange:)) {
@@ -177,7 +177,7 @@ static NSComparisonResult compareFontDisplayNames(NSFont *a, NSFont *b, void *un
         }
         else {
             /* Zero or one document, so give it a generic title and disable it */
-            [item setTitle:@"Compare Range of Front Documents"];
+            [item setTitle:NSLocalizedString(@"Compare Range of Front Documents", "")];
             return NO;
         }
     }

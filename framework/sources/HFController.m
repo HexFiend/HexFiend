@@ -555,7 +555,7 @@ static inline Class preferredByteArrayClass(void) {
         HFRange existingRange = [self rangeForBookmark:bookmark];
         NSUndoManager *undoer = [self undoManager];
         [[undoer prepareWithInvocationTarget:self] setRange:existingRange forBookmark:bookmark];
-        [undoer setActionName:@"Bookmark"];
+        [undoer setActionName:NSLocalizedString(@"Bookmark", "")];
         
         NSString *attribute = HFBookmarkAttributeFromBookmark(bookmark);
         [attributeArray removeAttribute:attribute];

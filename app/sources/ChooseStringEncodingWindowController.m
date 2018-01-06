@@ -50,7 +50,7 @@ static void addEncoding(NSString *name, CFStringEncoding value, NSMutableArray<H
     if ([usedEncodings containsObject:@(cocoaEncoding)]) {
         return;
     }
-    NSString *strippedName, *localizedName, *title;
+    NSString *strippedName, *localizedName;
     
     /* Strip off the common prefix */
     if ([name hasPrefix:@"kCFStringEncoding"]) {
@@ -62,13 +62,6 @@ static void addEncoding(NSString *name, CFStringEncoding value, NSMutableArray<H
     /* Get the localized encoding name */
     localizedName = [NSString localizedNameOfStringEncoding:cocoaEncoding];
     
-    /* Compute the title.  \u2014 is an em-dash. */
-    if ([localizedName length] > 0) {
-        title = [NSString stringWithFormat:@"%@ \u2014 %@", strippedName, localizedName];
-    } else {
-        title = strippedName;
-    }
-
     HFEncodingChoice *encoding = [[HFEncodingChoice alloc] init];
     encoding.label = localizedName.length > 0 ? localizedName : strippedName;
     encoding.encoding = cocoaEncoding;

@@ -1879,9 +1879,9 @@ cancelled:;
             /* We aren't able to remove our dependency on this file in this document, so ask permission to close it.  We don't try to save the document first, because if saving the document would require breaking dependencies in another document, we could get into an infinite loop! */
             NSAlert *alert = [[NSAlert alloc] init];
             [alert setMessageText:[NSString stringWithFormat:@"This document contains data that will be overwritten if you save the document \"%@.\"", [documentForThisByteArray displayName]]];
-            [alert setInformativeText:@"To save that document, you must close this one."];
-            [alert addButtonWithTitle:@"Cancel Save"];
-            [alert addButtonWithTitle:@"Close, Discarding Any Changes"];
+            [alert setInformativeText:NSLocalizedString(@"To save that document, you must close this one.", "")];
+            [alert addButtonWithTitle:NSLocalizedString(@"Cancel Save", "")];
+            [alert addButtonWithTitle:NSLocalizedString(@"Close, Discarding Any Changes", "")];
             [alert beginSheetModalForWindow:[document windowForSheet] modalDelegate:self didEndSelector:@selector(didEndBreakFileDependencySheet:returnCode:contextInfo:) contextInfo:nil];
             NSInteger modalResult = [NSApp runModalForWindow:[alert window]];
             

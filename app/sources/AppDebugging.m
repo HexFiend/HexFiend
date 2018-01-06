@@ -55,7 +55,7 @@ static NSString *promptForValue(NSString *promptText) {
 
 - (void)_randomByteArray:sender {
     USE(sender);
-    unsigned long long length = unsignedLongLongValue(promptForValue(@"How long?"));
+    unsigned long long length = unsignedLongLongValue(promptForValue(NSLocalizedString(@"How long?", "")));
     Class clsHFRandomDataByteSlice = NSClassFromString(@"HFRandomDataByteSlice");
     HFByteSlice *slice = [[clsHFRandomDataByteSlice alloc] initWithRandomDataLength:length];
     HFByteArray *array = [[HFBTreeByteArray alloc] init];
@@ -66,7 +66,7 @@ static NSString *promptForValue(NSString *promptText) {
 - (void)_tweakByteArray:sender {
     USE(sender);
     
-    unsigned tweakCount = [promptForValue(@"How many tweaks?") intValue];
+    unsigned tweakCount = [promptForValue(NSLocalizedString(@"How many tweaks?", "")) intValue];
     
     HFByteArray *byteArray = [[controller byteArray] mutableCopy];
     unsigned i;

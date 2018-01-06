@@ -405,7 +405,7 @@ static NSAttributedString *inspectionError(NSString *s) {
     
     if ([ranges count] != 1) {
         if(outIsError) *outIsError = YES;
-        return inspectionError(@"(select a contiguous range)");
+        return inspectionError(NSLocalizedString(@"(select a contiguous range)", ""));
     }
     HFRange range = [ranges[0] HFRange];
     
