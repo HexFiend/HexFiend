@@ -471,7 +471,7 @@ FORCE_STATIC_INLINE HFBTreeNode *add_child_to_node_possibly_creating_split(HFBTr
     HFBTreeIndex totalLength = HFSum(node->subtreeLength, GET_LENGTH(value, isLeaf));
     
     /* Distribute half our values to the new leaf */
-    split_array(allEntries, sizeof allEntries / sizeof *allEntries, node->children, newNode->children, BTREE_ORDER);
+    split_array(allEntries, BTREE_ORDER + 1, node->children, newNode->children, BTREE_ORDER);
 
     FREE_OBJ_ARRAY(allEntries, BTREE_ORDER + 1);
     
