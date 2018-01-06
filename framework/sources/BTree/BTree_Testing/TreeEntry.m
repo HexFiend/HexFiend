@@ -10,13 +10,13 @@
 
 @implementation TreeEntry
 
-- (id)initWithLength:(HFBTreeIndex)len value:(NSString *)val {
+- (instancetype)initWithLength:(HFBTreeIndex)len value:(NSString *)val {
     length = len;
     value = [val copy];
     return self;
 }
 
-+ (id)entryWithLength:(HFBTreeIndex)len value:(NSString *)val {
++ (instancetype)entryWithLength:(HFBTreeIndex)len value:(NSString *)val {
     TreeEntry *result = [[self alloc] init];
     result->length = len;
     result->value = [val copy];

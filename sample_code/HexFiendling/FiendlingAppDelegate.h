@@ -45,6 +45,6 @@
 @property(readonly) NSString *label;
 @property(readonly) NSString *explanation;
 
-+ (id)exampleWithLabel:(NSString *)someLabel explanation:(NSString *)someExplanation;
++ (instancetype)exampleWithLabel:(NSString *)someLabel explanation:(NSString *)someExplanation;
 
 @end

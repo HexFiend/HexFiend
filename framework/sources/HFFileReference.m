@@ -132,7 +132,7 @@ static BOOL returnFTruncateError(NSError **error) {
     return ref->device == device && ref->inode == inode;
 }
 
-+ (id)allocWithZone:(NSZone *)zone {
++ (instancetype)allocWithZone:(NSZone *)zone {
     if (self == [HFFileReference class]) {
         /* Default to HFConcreteFileReference */
         return [HFConcreteFileReference allocWithZone:zone];

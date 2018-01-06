@@ -20,11 +20,11 @@ typedef NS_ENUM(NSInteger, HFByteSliceWriteError) {
     HFRange targetRange;
 }
 
-+ (id)identityOperationWithByteSlice:(HFByteSlice *)slice targetRange:(HFRange)range;
-+ (id)externalOperationWithByteSlice:(HFByteSlice *)slice targetRange:(HFRange)range;
-+ (id)internalOperationWithByteSlice:(HFByteSlice *)slice sourceRange:(HFRange)source targetRange:(HFRange)target;
++ (instancetype)identityOperationWithByteSlice:(HFByteSlice *)slice targetRange:(HFRange)range;
++ (instancetype)externalOperationWithByteSlice:(HFByteSlice *)slice targetRange:(HFRange)range;
++ (instancetype)internalOperationWithByteSlice:(HFByteSlice *)slice sourceRange:(HFRange)source targetRange:(HFRange)target;
 
-+ (id)chainedOperationWithInternalOperations:(NSArray *)internalOperations;
++ (instancetype)chainedOperationWithInternalOperations:(NSArray *)internalOperations;
 
 - (HFRange)sourceRange;
 - (HFRange)targetRange;

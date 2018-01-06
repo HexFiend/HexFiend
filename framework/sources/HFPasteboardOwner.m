@@ -50,7 +50,7 @@ static NSMapTable *byteArrayMap = nil;
     return self;
 }
 
-+ (id)ownPasteboard:(NSPasteboard *)pboard forByteArray:(HFByteArray *)array withTypes:(NSArray *)types {
++ (instancetype)ownPasteboard:(NSPasteboard *)pboard forByteArray:(HFByteArray *)array withTypes:(NSArray *)types {
     return [[self alloc] initWithPasteboard:pboard forByteArray:array withTypes:types];
 }
 

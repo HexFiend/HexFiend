@@ -17,7 +17,7 @@
 
 @implementation NaiveArray
 
-- (id)init {
+- (instancetype)init {
     self = [super init];
     entries = [[NSMutableArray alloc] init];
     return self;

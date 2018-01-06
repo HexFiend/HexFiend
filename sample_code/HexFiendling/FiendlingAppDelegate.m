@@ -187,7 +187,7 @@
 
 @synthesize label = label, explanation = explanation;
 
-+ (id)exampleWithLabel:(NSString *)someLabel explanation:(NSString *)someExplanation {
++ (instancetype)exampleWithLabel:(NSString *)someLabel explanation:(NSString *)someExplanation {
     FiendlingExample *example = [[self  alloc] init];
     example->label = [someLabel copy];
     example->explanation = [someExplanation copy];
