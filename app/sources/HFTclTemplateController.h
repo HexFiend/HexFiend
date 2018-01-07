@@ -6,11 +6,8 @@
 //  Copyright © 2018 ridiculous_fish. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
-#import "HFTemplateNode.h"
+#import "HFTemplateController.h"
 
-@interface HFTclTemplateController : NSObject
-
-- (HFTemplateNode *)evaluateScript:(NSString *)path forController:(HFController *)controller error:(NSString **)error;
+@interface HFTclTemplateController : HFTemplateController
 
 @end

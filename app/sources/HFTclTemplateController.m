@@ -72,8 +72,6 @@ enum endian {
 
 @interface HFTclTemplateController ()
 
-@property (weak) HFController *controller;
-@property unsigned long long position;
 @property HFTemplateNode *root;
 @property (weak) HFTemplateNode *currentNode;
 @property enum endian endian;
@@ -166,9 +164,7 @@ DEFINE_COMMAND(requires)
     }
 }
 
-- (HFTemplateNode *)evaluateScript:(NSString *)path forController:(HFController *)controller error:(NSString **)error {
-    self.controller = controller;
-    self.position = 0;
+- (HFTemplateNode *)evaluateScript:(NSString *)path error:(NSString **)error {
     self.root = [[HFTemplateNode alloc] init];
     self.root.isGroup = YES;
     self.currentNode = self.root;
@@ -464,24 +460,6 @@ DEFINE_COMMAND(requires)
             break;
     }
     return TCL_OK;
-}
-
-- (BOOL)readBytes:(void *)buffer size:(size_t)size {
-    const HFRange range = HFRangeMake(self.controller.minimumSelectionLocation + self.position, size);
-    if (!HFRangeIsSubrangeOfRange(range, HFRangeMake(0, self.controller.contentsLength))) {
-        return NO;
-    }
-    [self.controller copyBytes:buffer range:range];
-    self.position += size;
-    return YES;
-}
-
-- (NSData *)readDataForSize:(size_t)size {
-    NSMutableData *data = [NSMutableData dataWithLength:size];
-    if (![self readBytes:data.mutableBytes size:data.length]) {
-        return nil;
-    }
-    return data;
 }
 
 @end
