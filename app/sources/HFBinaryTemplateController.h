@@ -12,6 +12,6 @@
 
 @interface HFBinaryTemplateController : NSViewController
 
-- (void)setRootNode:(HFTemplateNode *)node;
+- (void)setRootNode:(HFTemplateNode *)node error:(NSString *)error;
 
 @end

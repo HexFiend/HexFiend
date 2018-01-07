@@ -58,10 +58,7 @@
     NSString *path = [NSHomeDirectory() stringByAppendingPathComponent:@"Desktop/hexfiend.tcl"];
     NSString *errorMessage = nil;
     HFTemplateNode *node = [self.templateController evaluateScript:path forController:self.controller error:&errorMessage];
-    if (errorMessage) {
-        NSLog(@"Script error: %@", errorMessage);
-    }
-    [self.viewController setRootNode:node];
+    [self.viewController setRootNode:node error:errorMessage];
 }
 
 @end

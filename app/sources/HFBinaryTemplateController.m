@@ -12,6 +12,7 @@
 @interface HFBinaryTemplateController () <NSTableViewDataSource, NSTableViewDelegate>
 
 @property (weak) IBOutlet NSTableView *tableView;
+@property (weak) IBOutlet NSTextField *errorTextField;
 @property HFTemplateNode *node;
 
 @end
@@ -34,8 +35,15 @@
     return nil;
 }
 
-- (void)setRootNode:(HFTemplateNode *)node {
-    self.node = node;
+- (void)setRootNode:(HFTemplateNode *)node error:(NSString *)error {
+    if (error != nil) {
+        self.node = nil;
+        self.errorTextField.stringValue = error;
+        self.errorTextField.hidden = NO;
+    } else {
+        self.node = node;
+        self.errorTextField.hidden = YES;
+    }
     [self.tableView reloadData];
 }
 
