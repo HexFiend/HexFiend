@@ -221,7 +221,7 @@ DEFINE_COMMAND(little_endian)
                 break;
             }
             if (self.endian == endian_big) {
-                val = NSSwapHostIntToBig(val);
+                val = NSSwapBigIntToHost(val);
             }
             Tcl_SetObjResult(_interp, tcl_obj_from_uint32(val));
             [self.currentNode.children addObject:[[HFTemplateNode alloc] initWithLabel:label value:[NSString stringWithFormat:@"%u", val]]];
@@ -233,7 +233,7 @@ DEFINE_COMMAND(little_endian)
                 break;
             }
             if (self.endian == endian_big) {
-                val = NSSwapHostIntToBig(val);
+                val = NSSwapBigIntToHost(val);
             }
             Tcl_SetObjResult(_interp, tcl_obj_from_int32(val));
             [self.currentNode.children addObject:[[HFTemplateNode alloc] initWithLabel:label value:[NSString stringWithFormat:@"%d", val]]];
@@ -245,7 +245,7 @@ DEFINE_COMMAND(little_endian)
                 break;
             }
             if (self.endian == endian_big) {
-                val = NSSwapHostShortToBig(val);
+                val = NSSwapBigShortToHost(val);
             }
             Tcl_SetObjResult(_interp, tcl_obj_from_uint16(val));
             [self.currentNode.children addObject:[[HFTemplateNode alloc] initWithLabel:label value:[NSString stringWithFormat:@"%d", val]]];
@@ -257,7 +257,7 @@ DEFINE_COMMAND(little_endian)
                 break;
             }
             if (self.endian == endian_big) {
-                val = NSSwapHostShortToBig(val);
+                val = NSSwapBigShortToHost(val);
             }
             Tcl_SetObjResult(_interp, tcl_obj_from_int16(val));
             [self.currentNode.children addObject:[[HFTemplateNode alloc] initWithLabel:label value:[NSString stringWithFormat:@"%d", val]]];
