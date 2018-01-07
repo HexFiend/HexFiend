@@ -53,6 +53,13 @@ enum command {
     command_int16,
     command_uint8,
     command_int8,
+    command_big_endian,
+    command_little_endian,
+};
+
+enum endian {
+    endian_little,
+    endian_big,
 };
 
 @interface HFTclTemplateController ()
@@ -61,6 +68,7 @@ enum command {
 @property unsigned long long position;
 @property HFTemplateNode *root;
 @property (weak) HFTemplateNode *currentNode;
+@property enum endian endian;
 
 - (int)runCommand:(enum command)command objc:(int)objc objv:(struct Tcl_Obj * CONST *)objv;
 
@@ -79,6 +87,8 @@ DEFINE_COMMAND(uint16)
 DEFINE_COMMAND(int16)
 DEFINE_COMMAND(uint8)
 DEFINE_COMMAND(int8)
+DEFINE_COMMAND(big_endian)
+DEFINE_COMMAND(little_endian)
 
 @implementation HFTclTemplateController {
     Tcl_Interp *_interp;
@@ -109,6 +119,8 @@ DEFINE_COMMAND(int8)
         {"uint8", cmd_uint8},
         {"byte", cmd_uint8},
         {"int8", cmd_int8},
+        {"big_endian", cmd_big_endian},
+        {"little_endian", cmd_little_endian},
     };
     for (size_t i = 0; i < sizeof(commands) / sizeof(commands[0]); ++i) {
         Tcl_CreateObjCommand(_interp, commands[i].name, commands[i].proc, (__bridge ClientData)self, NULL);
@@ -141,7 +153,38 @@ DEFINE_COMMAND(int8)
     return self.root;
 }
 
+#define CHECK_SINGLE_ARG \
+    if (objc != 1) { \
+        Tcl_WrongNumArgs(_interp, 0, objv, NULL); \
+        return TCL_ERROR; \
+    }
+
 - (int)runCommand:(enum command)command objc:(int)objc objv:(struct Tcl_Obj * CONST *)objv {
+    switch (command) {
+        case command_uint64:
+        case command_int64:
+        case command_uint32:
+        case command_int32:
+        case command_uint16:
+        case command_int16:
+        case command_uint8:
+        case command_int8:
+            return [self runTypeCommand:command objc:objc objv:objv];
+        case command_big_endian: {
+            CHECK_SINGLE_ARG
+            self.endian = endian_big;
+            break;
+        }
+        case command_little_endian: {
+            CHECK_SINGLE_ARG
+            self.endian = endian_little;
+            break;
+        }
+    }
+    return TCL_OK;
+}
+
+- (int)runTypeCommand:(enum command)command objc:(int)objc objv:(struct Tcl_Obj * CONST *)objv {
     if (objc != 2) {
         Tcl_WrongNumArgs(_interp, 1, objv, "label");
         return TCL_ERROR;
@@ -153,6 +196,9 @@ DEFINE_COMMAND(int8)
             if (![self readBytes:&val size:sizeof(val)]) {
                 break;
             }
+            if (self.endian == endian_big) {
+                val = NSSwapBigLongLongToHost(val);
+            }
             Tcl_SetObjResult(_interp, tcl_obj_from_uint64(val));
             [self.currentNode.children addObject:[[HFTemplateNode alloc] initWithLabel:label value:[NSString stringWithFormat:@"%llu", val]]];
             break;
@@ -161,6 +207,9 @@ DEFINE_COMMAND(int8)
             int64_t val;
             if (![self readBytes:&val size:sizeof(val)]) {
                 break;
+            }
+            if (self.endian == endian_big) {
+                val = NSSwapBigLongLongToHost(val);
             }
             Tcl_SetObjResult(_interp, tcl_obj_from_int64(val));
             [self.currentNode.children addObject:[[HFTemplateNode alloc] initWithLabel:label value:[NSString stringWithFormat:@"%lld", val]]];
@@ -171,6 +220,9 @@ DEFINE_COMMAND(int8)
             if (![self readBytes:&val size:sizeof(val)]) {
                 break;
             }
+            if (self.endian == endian_big) {
+                val = NSSwapHostIntToBig(val);
+            }
             Tcl_SetObjResult(_interp, tcl_obj_from_uint32(val));
             [self.currentNode.children addObject:[[HFTemplateNode alloc] initWithLabel:label value:[NSString stringWithFormat:@"%u", val]]];
             break;
@@ -179,6 +231,9 @@ DEFINE_COMMAND(int8)
             int32_t val;
             if (![self readBytes:&val size:sizeof(val)]) {
                 break;
+            }
+            if (self.endian == endian_big) {
+                val = NSSwapHostIntToBig(val);
             }
             Tcl_SetObjResult(_interp, tcl_obj_from_int32(val));
             [self.currentNode.children addObject:[[HFTemplateNode alloc] initWithLabel:label value:[NSString stringWithFormat:@"%d", val]]];
@@ -189,6 +244,9 @@ DEFINE_COMMAND(int8)
             if (![self readBytes:&val size:sizeof(val)]) {
                 break;
             }
+            if (self.endian == endian_big) {
+                val = NSSwapHostShortToBig(val);
+            }
             Tcl_SetObjResult(_interp, tcl_obj_from_uint16(val));
             [self.currentNode.children addObject:[[HFTemplateNode alloc] initWithLabel:label value:[NSString stringWithFormat:@"%d", val]]];
             break;
@@ -197,6 +255,9 @@ DEFINE_COMMAND(int8)
             int16_t val;
             if (![self readBytes:&val size:sizeof(val)]) {
                 break;
+            }
+            if (self.endian == endian_big) {
+                val = NSSwapHostShortToBig(val);
             }
             Tcl_SetObjResult(_interp, tcl_obj_from_int16(val));
             [self.currentNode.children addObject:[[HFTemplateNode alloc] initWithLabel:label value:[NSString stringWithFormat:@"%d", val]]];
@@ -220,6 +281,9 @@ DEFINE_COMMAND(int8)
             [self.currentNode.children addObject:[[HFTemplateNode alloc] initWithLabel:label value:[NSString stringWithFormat:@"%d", val]]];
             break;
         }
+        default:
+            HFASSERT(0);
+            break;
     }
     return TCL_OK;
 }
