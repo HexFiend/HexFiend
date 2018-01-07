@@ -228,8 +228,8 @@ DEFINE_COMMAND(requires)
                 return TCL_ERROR;
             }
             NSString *label = [NSString stringWithUTF8String:Tcl_GetStringFromObj(objv[2], NULL)];
-            NSMutableData *data = [NSMutableData dataWithLength:len];
-            if (![self readBytes:data.mutableBytes size:data.length]) {
+            NSData *data = [self readDataForSize:len];
+            if (!data) {
                 Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read bytes", -1));
                 return TCL_ERROR;
             }
