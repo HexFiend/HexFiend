@@ -180,9 +180,18 @@ DEFINE_COMMAND(requires)
     Tcl_GetTime(&time);
     time.sec += 2;
     Tcl_LimitSetTime(_interp, &time);
-    if (Tcl_EvalFile(_interp, [path fileSystemRepresentation]) != TCL_OK) {
+    int err = Tcl_EvalFile(_interp, [path fileSystemRepresentation]);
+    if (error != TCL_OK) {
         if (error) {
-            *error = [NSString stringWithUTF8String:Tcl_GetStringResult(_interp)];
+            Tcl_Obj *options = Tcl_GetReturnOptions(_interp, err);
+            Tcl_Obj *key = Tcl_NewStringObj("-errorinfo", -1);
+            Tcl_Obj *value = NULL;
+            Tcl_IncrRefCount(key);
+            Tcl_DictObjGet(NULL, options, key, &value);
+            Tcl_DecrRefCount(key);
+            if (value) {
+                *error = [NSString stringWithUTF8String:Tcl_GetStringFromObj(value, NULL)];
+            }
         }
     }
     return self.root;

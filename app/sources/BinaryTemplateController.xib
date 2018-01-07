@@ -81,10 +81,10 @@
                     </tableHeaderView>
                 </scrollView>
                 <textField hidden="YES" horizontalHuggingPriority="251" verticalHuggingPriority="750" misplaced="YES" id="f71-AR-Dtg">
-                    <rect key="frame" x="-2" y="68" width="302" height="51"/>
-                    <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="center" title="Label" id="3tC-5d-kwc">
-                        <font key="font" metaFont="system" size="15"/>
+                    <rect key="frame" x="-2" y="0.0" width="302" height="130"/>
+                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                    <textFieldCell key="cell" controlSize="small" sendsActionOnEndEditing="YES" alignment="center" title="Label" id="3tC-5d-kwc">
+                        <font key="font" metaFont="smallSystem"/>
                         <color key="textColor" red="0.37603222150259064" green="0.37603222150259064" blue="0.37603222150259064" alpha="0.84999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
