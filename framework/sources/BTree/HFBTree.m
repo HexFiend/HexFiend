@@ -152,21 +152,23 @@ static HFBTreeNode *mutable_copy_node(HFBTreeNode *node, TreeDepth_t depth, __st
 
 @end
 
-@interface SubtreeInfo_t : NSObject
-
-@property (strong) HFBTreeBranch *branch;
-@property ChildIndex_t childIndex; //childIndex is the index of the child of branch, not branch's index in its parent
+@interface SubtreeInfo_t : NSObject {
+    @public
+    HFBTreeBranch *branch;
+    ChildIndex_t childIndex; //childIndex is the index of the child of branch, not branch's index in its parent
+}
 
 @end
 
 @implementation SubtreeInfo_t
 @end
 
-@interface LeafInfo_t : NSObject
-
-@property (strong) HFBTreeLeaf *leaf;
-@property ChildIndex_t entryIndex;
-@property HFBTreeIndex offsetOfEntryInTree;
+@interface LeafInfo_t : NSObject {
+    @public
+    HFBTreeLeaf *leaf;
+    ChildIndex_t entryIndex;
+    HFBTreeIndex offsetOfEntryInTree;
+}
 
 @end
 
@@ -720,8 +722,8 @@ static HFBTreeLeaf *btree_descend(HFBTree *tree, __strong SubtreeInfo_t **outDes
         HFBTreeBranch *currentBranch = currentBranchOrLeaf;
         HFBTreeIndex priorCombinedOffset = (HFBTreeIndex)-1;
         ChildIndex_t nextChildIndex = (isForDelete ? child_index_for_deletion_at_offset : child_index_for_insertion_at_offset)(currentBranch, offsetForSubtree, &priorCombinedOffset);
-        outDescentInfo[currentDepth].branch = currentBranch;
-        outDescentInfo[currentDepth].childIndex = nextChildIndex;
+        outDescentInfo[currentDepth]->branch = currentBranch;
+        outDescentInfo[currentDepth]->childIndex = nextChildIndex;
         offsetForSubtree -= priorCombinedOffset;
         currentBranchOrLeaf = currentBranch->children[nextChildIndex];
         if (isForDelete) {
@@ -753,16 +755,16 @@ static LeafInfo_t * btree_find_leaf(HFBTree *tree, HFBTreeIndex offset) {
     HFASSERT(offset >= offsetIntoEntry);
     HFBTreeIndex beginningOffset = offset - offsetIntoEntry;
     LeafInfo_t *info = [[LeafInfo_t alloc] init];
-    info.leaf = CHECK_CAST(currentNode, HFBTreeLeaf);
-    info.entryIndex = entryIndex;
-    info.offsetOfEntryInTree = beginningOffset;
+    info->leaf = CHECK_CAST(currentNode, HFBTreeLeaf);
+    info->entryIndex = entryIndex;
+    info->offsetOfEntryInTree = beginningOffset;
     return info;
 }
 
 static TreeEntry *btree_search(HFBTree *tree, HFBTreeIndex offset, HFBTreeIndex *outBeginningOffset) {
     LeafInfo_t *leafInfo = btree_find_leaf(tree, offset);
-    *outBeginningOffset = leafInfo.offsetOfEntryInTree;
-    return leafInfo.leaf->children[leafInfo.entryIndex];
+    *outBeginningOffset = leafInfo->offsetOfEntryInTree;
+    return leafInfo->leaf->children[leafInfo->entryIndex];
 }
 
 static id btree_insert_returning_retained_value_for_parent(HFBTree *tree, TreeEntry *entry, HFBTreeIndex insertionOffset) {
@@ -782,9 +784,9 @@ static id btree_insert_returning_retained_value_for_parent(HFBTree *tree, TreeEn
     HFASSERT(depth != BAD_DEPTH);
     HFBTreeIndex entryLength = HFBTreeLength(entry);
     while (depth--) {
-        HFBTreeBranch *branch = descentInfo[depth].branch;
+        HFBTreeBranch *branch = descentInfo[depth]->branch;
         branch->subtreeLength = HFSum(branch->subtreeLength, entryLength);
-        ChildIndex_t childIndex = descentInfo[depth].childIndex;
+        ChildIndex_t childIndex = descentInfo[depth]->childIndex;
         if (retainedValueToInsertIntoParentBranch) {
             HFASSERT(branch->subtreeLength > retainedValueToInsertIntoParentBranch->subtreeLength);
             /* Since we copied some stuff out from under ourselves, subtract its length */
@@ -826,8 +828,8 @@ static BOOL btree_remove(HFBTree *tree, HFBTreeIndex deletionOffset) {
     BOOL deleteNode = remove_value_from_node_with_possible_rebalance(leaf, childIndex, depth==0/*isRootNode*/, YES, &modifiedLeft, &modifiedRight);
     HFASSERT(btree_are_cached_lengths_correct(leaf, NULL));
     while (depth--) {
-        HFBTreeBranch *branch = descentInfo[depth].branch;
-        ChildIndex_t branchChildIndex = descentInfo[depth].childIndex;
+        HFBTreeBranch *branch = descentInfo[depth]->branch;
+        ChildIndex_t branchChildIndex = descentInfo[depth]->childIndex;
         BOOL leftNeighborNeedsUpdating = modifiedLeft && branchChildIndex == 0; //if our child tweaked its left neighbor, and its left neighbor is not also a child of us, we need to inform its parent (which is our left neighbor)
         BOOL rightNeighborNeedsUpdating = modifiedRight && (branchChildIndex + 1 == BTREE_BRANCH_ORDER || branch->children[branchChildIndex + 1] == NULL); //same goes for right
         if (leftNeighborNeedsUpdating) {
@@ -1037,9 +1039,9 @@ static HFBTreeIndex btree_recursive_fixup_cached_lengths(HFBTree *tree, HFBTreeN
 
 FORCE_STATIC_INLINE void btree_apply_function_to_entries(HFBTree *tree, HFBTreeIndex offset, BOOL (*func)(id, HFBTreeIndex, void *), void *userInfo) {
     LeafInfo_t *leafInfo = btree_find_leaf(tree, offset);
-    HFBTreeLeaf *leaf = leafInfo.leaf;
-    ChildIndex_t entryIndex = leafInfo.entryIndex;
-    HFBTreeIndex leafOffset = leafInfo.offsetOfEntryInTree;
+    HFBTreeLeaf *leaf = leafInfo->leaf;
+    ChildIndex_t entryIndex = leafInfo->entryIndex;
+    HFBTreeIndex leafOffset = leafInfo->offsetOfEntryInTree;
     BOOL continueApplying = YES;
     while (leaf != NULL) {
         for (; entryIndex < BTREE_LEAF_ORDER; entryIndex++) {
@@ -1057,7 +1059,7 @@ FORCE_STATIC_INLINE void btree_apply_function_to_entries(HFBTree *tree, HFBTreeI
 
 - (NSEnumerator *)entryEnumerator {
     if (! root) return [@[] objectEnumerator];
-    HFBTreeLeaf *leaf = btree_find_leaf(self, 0).leaf;
+    HFBTreeLeaf *leaf = btree_find_leaf(self, 0)->leaf;
     return [[HFBTreeEnumerator alloc] initWithLeaf:leaf];
 }
 
