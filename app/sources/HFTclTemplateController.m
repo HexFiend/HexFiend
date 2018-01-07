@@ -227,7 +227,8 @@ DEFINE_COMMAND(end)
             NSString *label = [NSString stringWithUTF8String:Tcl_GetStringFromObj(objv[2], NULL)];
             NSMutableData *data = [NSMutableData dataWithLength:len];
             if (![self readBytes:data.mutableBytes size:data.length]) {
-                break;
+                Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read bytes", -1));
+                return TCL_ERROR;
             }
             NSString *str = nil;
             switch (command) {
@@ -280,7 +281,8 @@ DEFINE_COMMAND(end)
         case command_uint64: {
             uint64_t val;
             if (![self readBytes:&val size:sizeof(val)]) {
-                break;
+                Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read bytes", -1));
+                return TCL_ERROR;
             }
             if (self.endian == endian_big) {
                 val = NSSwapBigLongLongToHost(val);
@@ -292,7 +294,8 @@ DEFINE_COMMAND(end)
         case command_int64: {
             int64_t val;
             if (![self readBytes:&val size:sizeof(val)]) {
-                break;
+                Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read bytes", -1));
+                return TCL_ERROR;
             }
             if (self.endian == endian_big) {
                 val = NSSwapBigLongLongToHost(val);
@@ -304,7 +307,8 @@ DEFINE_COMMAND(end)
         case command_uint32: {
             uint32_t val;
             if (![self readBytes:&val size:sizeof(val)]) {
-                break;
+                Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read bytes", -1));
+                return TCL_ERROR;
             }
             if (self.endian == endian_big) {
                 val = NSSwapBigIntToHost(val);
@@ -316,7 +320,8 @@ DEFINE_COMMAND(end)
         case command_int32: {
             int32_t val;
             if (![self readBytes:&val size:sizeof(val)]) {
-                break;
+                Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read bytes", -1));
+                return TCL_ERROR;
             }
             if (self.endian == endian_big) {
                 val = NSSwapBigIntToHost(val);
@@ -328,7 +333,8 @@ DEFINE_COMMAND(end)
         case command_uint16: {
             uint16_t val;
             if (![self readBytes:&val size:sizeof(val)]) {
-                break;
+                Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read bytes", -1));
+                return TCL_ERROR;
             }
             if (self.endian == endian_big) {
                 val = NSSwapBigShortToHost(val);
@@ -340,7 +346,8 @@ DEFINE_COMMAND(end)
         case command_int16: {
             int16_t val;
             if (![self readBytes:&val size:sizeof(val)]) {
-                break;
+                Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read bytes", -1));
+                return TCL_ERROR;
             }
             if (self.endian == endian_big) {
                 val = NSSwapBigShortToHost(val);
@@ -352,7 +359,8 @@ DEFINE_COMMAND(end)
         case command_uint8: {
             uint8_t val;
             if (![self readBytes:&val size:sizeof(val)]) {
-                break;
+                Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read bytes", -1));
+                return TCL_ERROR;
             }
             Tcl_SetObjResult(_interp, tcl_obj_from_uint8(val));
             [self.currentNode.children addObject:[[HFTemplateNode alloc] initWithLabel:label value:[NSString stringWithFormat:@"%d", val]]];
@@ -361,7 +369,8 @@ DEFINE_COMMAND(end)
         case command_int8: {
             int8_t val;
             if (![self readBytes:&val size:sizeof(val)]) {
-                break;
+                Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read bytes", -1));
+                return TCL_ERROR;
             }
             Tcl_SetObjResult(_interp, tcl_obj_from_int8(val));
             [self.currentNode.children addObject:[[HFTemplateNode alloc] initWithLabel:label value:[NSString stringWithFormat:@"%d", val]]];
@@ -374,7 +383,8 @@ DEFINE_COMMAND(end)
             } val;
             static_assert(sizeof(val) == 4, "bad size");
             if (![self readBytes:&val size:sizeof(val)]) {
-                break;
+                Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read bytes", -1));
+                return TCL_ERROR;
             }
             if (self.endian == endian_big) {
                 val.f = NSSwapBigIntToHost(val.u);
@@ -389,7 +399,8 @@ DEFINE_COMMAND(end)
                 double f;
             } val;
             if (![self readBytes:&val size:sizeof(val)]) {
-                break;
+                Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read bytes", -1));
+                return TCL_ERROR;
             }
             if (self.endian == endian_big) {
                 val.f = NSSwapBigLongLongToHost(val.u);
