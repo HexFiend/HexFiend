@@ -420,7 +420,6 @@ DEFINE_COMMAND(end)
 - (BOOL)readBytes:(void *)buffer size:(size_t)size {
     const HFRange range = HFRangeMake(self.controller.minimumSelectionLocation + self.position, size);
     if (!HFRangeIsSubrangeOfRange(range, HFRangeMake(0, self.controller.contentsLength))) {
-        memset(buffer, 0, size);
         return NO;
     }
     [self.controller copyBytes:buffer range:range];
