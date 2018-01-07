@@ -143,10 +143,10 @@ DEFINE_COMMAND(int8)
 
 - (int)runCommand:(enum command)command objc:(int)objc objv:(struct Tcl_Obj * CONST *)objv {
     if (objc != 2) {
-        Tcl_WrongNumArgs(_interp, 1, objv, "title");
+        Tcl_WrongNumArgs(_interp, 1, objv, "label");
         return TCL_ERROR;
     }
-    NSString *name = [NSString stringWithUTF8String:Tcl_GetStringFromObj(objv[1], NULL)];
+    NSString *label = [NSString stringWithUTF8String:Tcl_GetStringFromObj(objv[1], NULL)];
     switch (command) {
         case command_uint64: {
             uint64_t val;
@@ -154,7 +154,7 @@ DEFINE_COMMAND(int8)
                 break;
             }
             Tcl_SetObjResult(_interp, tcl_obj_from_uint64(val));
-            [self.currentNode.children addObject:[[HFTemplateNode alloc] initWithLabel:name value:[NSString stringWithFormat:@"%llu", val]]];
+            [self.currentNode.children addObject:[[HFTemplateNode alloc] initWithLabel:label value:[NSString stringWithFormat:@"%llu", val]]];
             break;
         }
         case command_int64: {
@@ -163,7 +163,7 @@ DEFINE_COMMAND(int8)
                 break;
             }
             Tcl_SetObjResult(_interp, tcl_obj_from_int64(val));
-            [self.currentNode.children addObject:[[HFTemplateNode alloc] initWithLabel:name value:[NSString stringWithFormat:@"%lld", val]]];
+            [self.currentNode.children addObject:[[HFTemplateNode alloc] initWithLabel:label value:[NSString stringWithFormat:@"%lld", val]]];
             break;
         }
         case command_uint32: {
@@ -172,7 +172,7 @@ DEFINE_COMMAND(int8)
                 break;
             }
             Tcl_SetObjResult(_interp, tcl_obj_from_uint32(val));
-            [self.currentNode.children addObject:[[HFTemplateNode alloc] initWithLabel:name value:[NSString stringWithFormat:@"%u", val]]];
+            [self.currentNode.children addObject:[[HFTemplateNode alloc] initWithLabel:label value:[NSString stringWithFormat:@"%u", val]]];
             break;
         }
         case command_int32: {
@@ -181,7 +181,7 @@ DEFINE_COMMAND(int8)
                 break;
             }
             Tcl_SetObjResult(_interp, tcl_obj_from_int32(val));
-            [self.currentNode.children addObject:[[HFTemplateNode alloc] initWithLabel:name value:[NSString stringWithFormat:@"%d", val]]];
+            [self.currentNode.children addObject:[[HFTemplateNode alloc] initWithLabel:label value:[NSString stringWithFormat:@"%d", val]]];
             break;
         }
         case command_uint16: {
@@ -190,7 +190,7 @@ DEFINE_COMMAND(int8)
                 break;
             }
             Tcl_SetObjResult(_interp, tcl_obj_from_uint16(val));
-            [self.currentNode.children addObject:[[HFTemplateNode alloc] initWithLabel:name value:[NSString stringWithFormat:@"%d", val]]];
+            [self.currentNode.children addObject:[[HFTemplateNode alloc] initWithLabel:label value:[NSString stringWithFormat:@"%d", val]]];
             break;
         }
         case command_int16: {
@@ -199,7 +199,7 @@ DEFINE_COMMAND(int8)
                 break;
             }
             Tcl_SetObjResult(_interp, tcl_obj_from_int16(val));
-            [self.currentNode.children addObject:[[HFTemplateNode alloc] initWithLabel:name value:[NSString stringWithFormat:@"%d", val]]];
+            [self.currentNode.children addObject:[[HFTemplateNode alloc] initWithLabel:label value:[NSString stringWithFormat:@"%d", val]]];
             break;
         }
         case command_uint8: {
@@ -208,7 +208,7 @@ DEFINE_COMMAND(int8)
                 break;
             }
             Tcl_SetObjResult(_interp, tcl_obj_from_uint8(val));
-            [self.currentNode.children addObject:[[HFTemplateNode alloc] initWithLabel:name value:[NSString stringWithFormat:@"%d", val]]];
+            [self.currentNode.children addObject:[[HFTemplateNode alloc] initWithLabel:label value:[NSString stringWithFormat:@"%d", val]]];
             break;
         }
         case command_int8: {
@@ -217,7 +217,7 @@ DEFINE_COMMAND(int8)
                 break;
             }
             Tcl_SetObjResult(_interp, tcl_obj_from_int8(val));
-            [self.currentNode.children addObject:[[HFTemplateNode alloc] initWithLabel:name value:[NSString stringWithFormat:@"%d", val]]];
+            [self.currentNode.children addObject:[[HFTemplateNode alloc] initWithLabel:label value:[NSString stringWithFormat:@"%d", val]]];
             break;
         }
     }
