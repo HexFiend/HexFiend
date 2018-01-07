@@ -7,21 +7,58 @@
 //
 
 #import "HFBinaryTemplateRepresenter.h"
+#import "HFBinaryTemplateController.h"
+#import "HFTclTemplateController.h"
+
+@interface HFBinaryTemplateRepresenter ()
+
+@property (strong) HFBinaryTemplateController *viewController;
+@property (strong) HFTclTemplateController *templateController;
+@property unsigned long long lastMinimumSelectionLocation;
+
+@end
 
 @implementation HFBinaryTemplateRepresenter
 
+- (instancetype)init {
+    if ((self = [super init]) == nil) {
+        return nil;
+    }
+
+    _templateController = [[HFTclTemplateController alloc] init];
+    _lastMinimumSelectionLocation = -1;
+
+    return self;
+}
+
 - (NSView *)createView {
-    NSView *view = [[NSView alloc] initWithFrame:NSZeroRect];
-    view.autoresizingMask = NSViewHeightSizable;
-    return view;
+    self.viewController = [[HFBinaryTemplateController alloc] initWithNibName:@"BinaryTemplateController" bundle:nil];
+    return self.viewController.view;
 }
 
 + (NSPoint)defaultLayoutPosition {
     return NSMakePoint(3, 0);
 }
 
-- (CGFloat)minimumViewWidthForBytesPerLine:(NSUInteger)bytesPerLine {
-    return bytesPerLine * 10;
+- (CGFloat)minimumViewWidthForBytesPerLine:(NSUInteger __unused)bytesPerLine {
+    return 250;
+}
+
+- (void)controllerDidChange:(HFControllerPropertyBits)bits {
+    if (bits & HFControllerSelectedRanges) {
+        if (self.controller.contentsLength > 0 && self.controller.minimumSelectionLocation != self.lastMinimumSelectionLocation) {
+            self.lastMinimumSelectionLocation = self.controller.minimumSelectionLocation;
+            [self rerunTemplate];
+        }
+    }
+}
+
+- (void)rerunTemplate {
+    NSString *path = [NSHomeDirectory() stringByAppendingPathComponent:@"Desktop/hexfiend.tcl"];
+    NSString *errorMessage = [self.templateController evaluateScript:path forController:self.controller];
+    if (errorMessage) {
+        NSLog(@"Script error: %@", errorMessage);
+    }
 }
 
 @end

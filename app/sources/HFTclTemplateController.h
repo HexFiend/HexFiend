@@ -10,10 +10,8 @@
 
 @interface HFTclTemplateController : NSObject
 
-- (instancetype)initWithController:(HFController *)controller;
-
 // Evaluate the Tcl script at the given path, and if successful return nil;
 // If an error occurs, return an error message.
-- (NSString *)evaluateScript:(NSString *)path;
+- (NSString *)evaluateScript:(NSString *)path forController:(HFController *)controller;
 
 @end

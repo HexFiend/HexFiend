@@ -54,6 +54,8 @@
 		A59BC5712001AB8C0066860F /* HFBinaryTemplateRepresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = A59BC5702001AB8C0066860F /* HFBinaryTemplateRepresenter.m */; };
 		A59BC5922001FB9A0066860F /* HFTclTemplateController.m in Sources */ = {isa = PBXBuildFile; fileRef = A59BC5912001FB9A0066860F /* HFTclTemplateController.m */; };
 		A59BC5942001FD0F0066860F /* Tcl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A59BC5932001FD0F0066860F /* Tcl.framework */; };
+		A59BC59820020B480066860F /* HFBinaryTemplateController.m in Sources */ = {isa = PBXBuildFile; fileRef = A59BC59620020B480066860F /* HFBinaryTemplateController.m */; };
+		A59BC59920020B480066860F /* BinaryTemplateController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A59BC59720020B480066860F /* BinaryTemplateController.xib */; };
 		D00122E30D48A8D400540B10 /* HFFindReplaceBackgroundView.m in Sources */ = {isa = PBXBuildFile; fileRef = D00122E20D48A8D400540B10 /* HFFindReplaceBackgroundView.m */; };
 		D00C16790FF4925A006D021F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D00C16750FF4925A006D021F /* main.m */; };
 		D00EBA730CE866D50020E2D7 /* HFVerticalScrollerRepresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = D00EBA710CE866D50020E2D7 /* HFVerticalScrollerRepresenter.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -383,6 +385,9 @@
 		A59BC5902001FB9A0066860F /* HFTclTemplateController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFTclTemplateController.h; path = app/sources/HFTclTemplateController.h; sourceTree = "<group>"; };
 		A59BC5912001FB9A0066860F /* HFTclTemplateController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFTclTemplateController.m; path = app/sources/HFTclTemplateController.m; sourceTree = "<group>"; };
 		A59BC5932001FD0F0066860F /* Tcl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Tcl.framework; path = System/Library/Frameworks/Tcl.framework; sourceTree = SDKROOT; };
+		A59BC59520020B480066860F /* HFBinaryTemplateController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFBinaryTemplateController.h; path = app/sources/HFBinaryTemplateController.h; sourceTree = "<group>"; };
+		A59BC59620020B480066860F /* HFBinaryTemplateController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFBinaryTemplateController.m; path = app/sources/HFBinaryTemplateController.m; sourceTree = "<group>"; };
+		A59BC59720020B480066860F /* BinaryTemplateController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = BinaryTemplateController.xib; path = app/sources/BinaryTemplateController.xib; sourceTree = "<group>"; };
 		D00122E10D48A8D400540B10 /* HFFindReplaceBackgroundView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFFindReplaceBackgroundView.h; path = app/sources/HFFindReplaceBackgroundView.h; sourceTree = "<group>"; };
 		D00122E20D48A8D400540B10 /* HFFindReplaceBackgroundView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFFindReplaceBackgroundView.m; path = app/sources/HFFindReplaceBackgroundView.m; sourceTree = "<group>"; };
 		D00C15E50FF091FF006D021F /* HexFiendling.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HexFiendling.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -679,6 +684,7 @@
 				D8C1F92A16F278BA00A4C36E /* DiffRangeDialog.xib */,
 				D04A6BA9100EA7B800704963 /* MainMenu.xib */,
 				A57F34821F1EF47700234B94 /* Preferences.xib */,
+				A59BC59720020B480066860F /* BinaryTemplateController.xib */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -757,6 +763,8 @@
 				A59BC5702001AB8C0066860F /* HFBinaryTemplateRepresenter.m */,
 				A59BC5902001FB9A0066860F /* HFTclTemplateController.h */,
 				A59BC5912001FB9A0066860F /* HFTclTemplateController.m */,
+				A59BC59520020B480066860F /* HFBinaryTemplateController.h */,
+				A59BC59620020B480066860F /* HFBinaryTemplateController.m */,
 			);
 			name = "Binary Templates";
 			sourceTree = "<group>";
@@ -1428,6 +1436,7 @@
 			files = (
 				A550A7201F787831001C79C7 /* hexf in Resources */,
 				8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */,
+				A59BC59920020B480066860F /* BinaryTemplateController.xib in Resources */,
 				D024AFB30E349A7B00F39EBB /* hex_icon.icns in Resources */,
 				A57F34831F1EFA6E00234B94 /* DataInspectorView.xib in Resources */,
 				D04A6B6B100EA47C00704963 /* SaveBanner.xib in Resources */,
@@ -1531,6 +1540,7 @@
 				D01EF15413B2A0D300CC9283 /* TextDividerRepresenter.m in Sources */,
 				D0A8AF7D1467273900387627 /* AppUtilities.m in Sources */,
 				D0D0536E1487FF2500704643 /* HFFindReplaceOperationView.m in Sources */,
+				A59BC59820020B480066860F /* HFBinaryTemplateController.m in Sources */,
 				795F46C114BAA45D00EB2F7D /* OpenDriveWindowController.m in Sources */,
 				DAE8EBFE1598FFDB0008ADB9 /* DocumentWindow.m in Sources */,
 				D8EE3EFE16F26689001C7C09 /* DiffRangeWindowController.m in Sources */,

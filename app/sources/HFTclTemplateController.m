@@ -82,12 +82,10 @@ DEFINE_COMMAND(int8)
     Tcl_Interp *_interp;
 }
 
-- (instancetype)initWithController:(HFController *)controller {
+- (instancetype)init {
     if ((self = [super init]) == nil) {
         return nil;
     }
-
-    _controller = controller;
 
     _interp = Tcl_CreateInterp();
     if (Tcl_Init(_interp) != TCL_OK) {
@@ -107,6 +105,7 @@ DEFINE_COMMAND(int8)
         {"uint16", cmd_uint16},
         {"int16", cmd_int16},
         {"uint8", cmd_uint8},
+        {"byte", cmd_uint8},
         {"int8", cmd_int8},
     };
     for (size_t i = 0; i < sizeof(commands) / sizeof(commands[0]); ++i) {
@@ -122,7 +121,9 @@ DEFINE_COMMAND(int8)
     }
 }
 
-- (NSString *)evaluateScript:(NSString *)path {
+- (NSString *)evaluateScript:(NSString *)path forController:(HFController *)controller {
+    self.controller = controller;
+    self.position = 0;
     if (Tcl_EvalFile(_interp, [path fileSystemRepresentation]) != TCL_OK) {
         return [NSString stringWithUTF8String:Tcl_GetStringResult(_interp)];
     }
@@ -135,54 +136,61 @@ DEFINE_COMMAND(int8)
         return TCL_ERROR;
     }
     const char *name = Tcl_GetStringFromObj(objv[1], NULL);
-    printf("Name: %s\n", name);
     switch (command) {
         case command_uint64: {
-            uint64_t val = 0;
+            uint64_t val;
             [self readBytes:&val size:sizeof(val)];
             Tcl_SetObjResult(_interp, tcl_obj_from_uint64(val));
+            NSLog(@"%s = %llu", name, val);
             break;
         }
         case command_int64: {
-            int64_t val = 0;
+            int64_t val;
             [self readBytes:&val size:sizeof(val)];
             Tcl_SetObjResult(_interp, tcl_obj_from_int64(val));
+            NSLog(@"%s = %lld", name, val);
             break;
         }
         case command_uint32: {
-            uint32_t val = 0;
+            uint32_t val;
             [self readBytes:&val size:sizeof(val)];
             Tcl_SetObjResult(_interp, tcl_obj_from_uint32(val));
+            NSLog(@"%s = %u", name, val);
             break;
         }
         case command_int32: {
-            int32_t val = 0;
+            int32_t val;
             [self readBytes:&val size:sizeof(val)];
             Tcl_SetObjResult(_interp, tcl_obj_from_int32(val));
+            NSLog(@"%s = %d", name, val);
             break;
         }
         case command_uint16: {
-            uint16_t val = 0;
+            uint16_t val;
             [self readBytes:&val size:sizeof(val)];
             Tcl_SetObjResult(_interp, tcl_obj_from_uint16(val));
+            NSLog(@"%s = %u", name, val);
             break;
         }
         case command_int16: {
-            int16_t val = 0;
+            int16_t val;
             [self readBytes:&val size:sizeof(val)];
             Tcl_SetObjResult(_interp, tcl_obj_from_int16(val));
+            NSLog(@"%s = %d", name, val);
             break;
         }
         case command_uint8: {
-            uint8_t val = 0;
+            uint8_t val;
             [self readBytes:&val size:sizeof(val)];
             Tcl_SetObjResult(_interp, tcl_obj_from_uint8(val));
+            NSLog(@"%s = %u", name, val);
             break;
         }
         case command_int8: {
-            int8_t val = 0;
+            int8_t val;
             [self readBytes:&val size:sizeof(val)];
             Tcl_SetObjResult(_interp, tcl_obj_from_int8(val));
+            NSLog(@"%s = %d", name, val);
             break;
         }
     }
@@ -190,7 +198,11 @@ DEFINE_COMMAND(int8)
 }
 
 - (void)readBytes:(void *)buffer size:(size_t)size {
-    HFRange range = HFRangeMake([self.controller minimumSelectionLocation] + self.position, size);
+    const HFRange range = HFRangeMake(self.controller.minimumSelectionLocation + self.position, size);
+    if (!HFRangeIsSubrangeOfRange(range, HFRangeMake(0, self.controller.contentsLength))) {
+        memset(buffer, 0, size);
+        return;
+    }
     [self.controller copyBytes:buffer range:range];
     self.position += size;
 }
