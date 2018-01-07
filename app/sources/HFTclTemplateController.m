@@ -9,6 +9,7 @@
 #import "HFTclTemplateController.h"
 #import <tcl.h>
 #import <tclTomMath.h>
+#import "HFFunctions_Private.h"
 
 static Tcl_Obj* tcl_obj_from_uint64(uint64_t value) {
     char buf[21];
@@ -57,6 +58,10 @@ enum command {
     command_little_endian,
     command_float,
     command_double,
+    command_hex,
+    command_ascii,
+    command_move,
+    command_end,
 };
 
 enum endian {
@@ -93,6 +98,10 @@ DEFINE_COMMAND(float)
 DEFINE_COMMAND(double)
 DEFINE_COMMAND(big_endian)
 DEFINE_COMMAND(little_endian)
+DEFINE_COMMAND(hex)
+DEFINE_COMMAND(ascii)
+DEFINE_COMMAND(move)
+DEFINE_COMMAND(end)
 
 @implementation HFTclTemplateController {
     Tcl_Interp *_interp;
@@ -130,6 +139,10 @@ DEFINE_COMMAND(little_endian)
         CMD(double),
         CMD(big_endian),
         CMD(little_endian),
+        CMD(hex),
+        CMD(ascii),
+        CMD(move),
+        CMD(end),
     };
 #undef CMD
 #undef CMD_NAMED
@@ -196,6 +209,63 @@ DEFINE_COMMAND(little_endian)
             self.endian = endian_little;
             break;
         }
+        case command_hex:
+        case command_ascii: {
+            if (objc != 3) {
+                Tcl_WrongNumArgs(_interp, 1, objv, "len label");
+                return TCL_ERROR;
+            }
+            long len;
+            int err = Tcl_GetLongFromObj(_interp, objv[1], &len);
+            if (err != TCL_OK) {
+                return err;
+            }
+            if (len <= 0) {
+                Tcl_SetObjResult(_interp, Tcl_NewStringObj("Length must be greater than 0.", -1));
+                return TCL_ERROR;
+            }
+            NSString *label = [NSString stringWithUTF8String:Tcl_GetStringFromObj(objv[2], NULL)];
+            NSMutableData *data = [NSMutableData dataWithLength:len];
+            if (![self readBytes:data.mutableBytes size:data.length]) {
+                break;
+            }
+            NSString *str = nil;
+            switch (command) {
+                case command_hex:
+                    str = HFHexStringFromData(data);
+                    Tcl_SetObjResult(_interp, Tcl_NewByteArrayObj(data.bytes, (int)data.length));
+                    break;
+                case command_ascii:
+                    str = [[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding];
+                    Tcl_SetObjResult(_interp, Tcl_NewStringObj(str.UTF8String, -1));
+                    break;
+                default:
+                    HFASSERT(0);
+                    break;
+            }
+            [self.currentNode.children addObject:[[HFTemplateNode alloc] initWithLabel:label value:str]];
+            break;
+        }
+        case command_move:
+            if (objc != 2) {
+                Tcl_WrongNumArgs(_interp, 0, objv, "len");
+                return TCL_ERROR;
+            }
+            long len;
+            int err = Tcl_GetLongFromObj(_interp, objv[1], &len);
+            if (err != TCL_OK) {
+                return err;
+            }
+            self.position += len;
+            break;
+        case command_end:
+            if (objc != 1) {
+                Tcl_WrongNumArgs(_interp, 0, objv, NULL);
+                return TCL_ERROR;
+            }
+            int is_eof = (self.controller.minimumSelectionLocation + self.position) >= self.controller.contentsLength;
+            Tcl_SetObjResult(_interp, Tcl_NewBooleanObj(is_eof));
+            break;
     }
     return TCL_OK;
 }
