@@ -247,7 +247,7 @@ DEFINE_COMMAND(end)
             [self.currentNode.children addObject:[[HFTemplateNode alloc] initWithLabel:label value:str]];
             break;
         }
-        case command_move:
+        case command_move: {
             if (objc != 2) {
                 Tcl_WrongNumArgs(_interp, 0, objv, "len");
                 return TCL_ERROR;
@@ -259,7 +259,8 @@ DEFINE_COMMAND(end)
             }
             self.position += len;
             break;
-        case command_end:
+        }
+        case command_end: {
             if (objc != 1) {
                 Tcl_WrongNumArgs(_interp, 0, objv, NULL);
                 return TCL_ERROR;
