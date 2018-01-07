@@ -156,14 +156,13 @@ DEFINE_COMMAND(little_endian)
     self.root = [[HFTemplateNode alloc] init];
     self.root.isGroup = YES;
     self.currentNode = self.root;
+    if (error) {
+        *error = nil;
+    }
     if (Tcl_EvalFile(_interp, [path fileSystemRepresentation]) != TCL_OK) {
         if (error) {
             *error = [NSString stringWithUTF8String:Tcl_GetStringResult(_interp)];
         }
-        return nil;
-    }
-    if (error) {
-        *error = nil;
     }
     return self.root;
 }
