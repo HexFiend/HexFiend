@@ -175,6 +175,11 @@ DEFINE_COMMAND(requires)
     if (error) {
         *error = nil;
     }
+    Tcl_LimitTypeSet(_interp, TCL_LIMIT_TIME);
+    Tcl_Time time;
+    Tcl_GetTime(&time);
+    time.sec += 2;
+    Tcl_LimitSetTime(_interp, &time);
     if (Tcl_EvalFile(_interp, [path fileSystemRepresentation]) != TCL_OK) {
         if (error) {
             *error = [NSString stringWithUTF8String:Tcl_GetStringResult(_interp)];
