@@ -62,6 +62,7 @@ enum command {
     command_ascii,
     command_move,
     command_end,
+    command_requires,
 };
 
 enum endian {
@@ -102,6 +103,7 @@ DEFINE_COMMAND(hex)
 DEFINE_COMMAND(ascii)
 DEFINE_COMMAND(move)
 DEFINE_COMMAND(end)
+DEFINE_COMMAND(requires)
 
 @implementation HFTclTemplateController {
     Tcl_Interp *_interp;
@@ -143,6 +145,7 @@ DEFINE_COMMAND(end)
         CMD(ascii),
         CMD(move),
         CMD(end),
+        CMD(requires),
     };
 #undef CMD
 #undef CMD_NAMED
@@ -268,6 +271,38 @@ DEFINE_COMMAND(end)
             int is_eof = (self.controller.minimumSelectionLocation + self.position) >= self.controller.contentsLength;
             Tcl_SetObjResult(_interp, Tcl_NewBooleanObj(is_eof));
             break;
+        }
+        case command_requires: {
+            if (objc != 3) {
+                Tcl_WrongNumArgs(_interp, 1, objv, "offset \"hex values\"");
+                return TCL_ERROR;
+            }
+            long offset;
+            int err = Tcl_GetLongFromObj(_interp, objv[1], &offset);
+            if (err != TCL_OK) {
+                return err;
+            }
+            NSString *hexvalues = [NSString stringWithUTF8String:Tcl_GetStringFromObj(objv[2], NULL)];
+            BOOL isMissingLastNybble = NO;
+            NSData *hexdata = HFDataFromHexString(hexvalues, &isMissingLastNybble);
+            if (isMissingLastNybble) {
+                Tcl_SetObjResult(_interp, Tcl_NewStringObj("hex values is missing last nybble", -1));
+                return TCL_ERROR;
+            }
+            const unsigned long long currentPosition = self.position;
+            self.position = offset;
+            NSData *data = [self readDataForSize:hexdata.length];
+            self.position = currentPosition;
+            if (!data) {
+                Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read bytes", -1));
+                return TCL_ERROR;
+            }
+            if (![data isEqualToData:hexdata]) {
+                Tcl_SetObjResult(_interp, Tcl_NewStringObj("Data mismatch", -1));
+                return TCL_ERROR;
+            }
+            break;
+        }
     }
     return TCL_OK;
 }
@@ -425,6 +460,14 @@ DEFINE_COMMAND(end)
     [self.controller copyBytes:buffer range:range];
     self.position += size;
     return YES;
+}
+
+- (NSData *)readDataForSize:(size_t)size {
+    NSMutableData *data = [NSMutableData dataWithLength:size];
+    if (![self readBytes:data.mutableBytes size:data.length]) {
+        return nil;
+    }
+    return data;
 }
 
 @end
