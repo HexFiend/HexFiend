@@ -88,7 +88,7 @@ static HFBTreeNode *mutable_copy_node(HFBTreeNode *node, TreeDepth_t depth, __st
     HFBTreeIndex subtreeLength;
     __weak HFBTreeNode *left;
     __weak HFBTreeNode *right;
-    __strong id *children;
+    DEFINE_OBJ_ARRAY(id, children);
 }
 
 @end
@@ -97,16 +97,13 @@ static HFBTreeNode *mutable_copy_node(HFBTreeNode *node, TreeDepth_t depth, __st
 
 - (instancetype)init {
     if ((self = [super init]) != nil) {
-        children = (__strong id *)calloc(BTREE_ORDER, sizeof(id));
+        children = INIT_OBJ_ARRAY(id, BTREE_ORDER);
     }
     return self;
 }
 
 - (void)dealloc {
-    for (ChildIndex_t i=0; i < BTREE_BRANCH_ORDER; i++) {
-        children[i] = nil;
-    }
-    free(children);
+    FREE_OBJ_ARRAY(children, BTREE_ORDER);
 }
 
 - (NSString *)shortDescription {

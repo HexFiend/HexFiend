@@ -63,8 +63,12 @@
 
 // See "Can I create a C array of retained pointers under ARC?"
 // https://developer.apple.com/library/content/releasenotes/ObjectiveC/RN-TransitioningToARC/Introduction/Introduction.html
+#define DEFINE_OBJ_ARRAY(type, name) \
+    __strong type * name
+#define INIT_OBJ_ARRAY(type, number) \
+    (__strong type *)check_calloc((number) * sizeof(type))
 #define NEW_OBJ_ARRAY(type, name, number) \
-    __strong type * name = (__strong type *)check_calloc((number) * sizeof(type))
+    DEFINE_OBJ_ARRAY(type, name) = INIT_OBJ_ARRAY(type, number)
 #define FREE_OBJ_ARRAY(name, number) \
     for (size_t __Free_Index = 0; __Free_Index < number; ++__Free_Index) { \
         name[__Free_Index] = nil; \
