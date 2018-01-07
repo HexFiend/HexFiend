@@ -10,6 +10,7 @@
 #import "HFDocumentOperationView.h"
 #import "DataInspectorRepresenter.h"
 #import "TextDividerRepresenter.h"
+#import "HFBinaryTemplateRepresenter.h"
 #import "AppDebugging.h"
 #import "AppUtilities.h"
 #import "AppDelegate.h"
@@ -113,6 +114,7 @@ static inline Class preferredByteArrayClass(void) {
             USERDEFS_KEY_FOR_REP(dataInspectorRepresenter) : @YES,
             USERDEFS_KEY_FOR_REP(statusBarRepresenter) : @YES,
             USERDEFS_KEY_FOR_REP(scrollRepresenter) : @YES,
+            USERDEFS_KEY_FOR_REP(binaryTemplateRepresenter) : @YES,
         };
         [[NSUserDefaults standardUserDefaults] registerDefaults:defs];
     }
@@ -158,7 +160,15 @@ static inline Class preferredByteArrayClass(void) {
 }
 
 - (NSArray *)representers {
-    return @[lineCountingRepresenter, hexRepresenter, asciiRepresenter, scrollRepresenter, dataInspectorRepresenter, statusBarRepresenter, textDividerRepresenter];
+    return @[lineCountingRepresenter,
+             hexRepresenter,
+             asciiRepresenter,
+             scrollRepresenter,
+             dataInspectorRepresenter,
+             statusBarRepresenter,
+             textDividerRepresenter,
+             binaryTemplateRepresenter,
+    ];
 }
 
 - (HFByteArray *)byteArray {
@@ -207,6 +217,7 @@ static inline Class preferredByteArrayClass(void) {
     [shownRepresentersData setObject:dataInspectorRepresenter forKey:USERDEFS_KEY_FOR_REP(dataInspectorRepresenter)];
     [shownRepresentersData setObject:statusBarRepresenter forKey:USERDEFS_KEY_FOR_REP(statusBarRepresenter)];
     [shownRepresentersData setObject:scrollRepresenter forKey:USERDEFS_KEY_FOR_REP(scrollRepresenter)];
+    [shownRepresentersData setObject:binaryTemplateRepresenter forKey:USERDEFS_KEY_FOR_REP(binaryTemplateRepresenter)];
     NSUserDefaults *defs = [NSUserDefaults standardUserDefaults];
     NSEnumerator *keysEnum = [shownRepresentersData keyEnumerator];
     NSString *name = nil;
@@ -534,6 +545,8 @@ static inline Class preferredByteArrayClass(void) {
     statusBarRepresenter = [[HFStatusBarRepresenter alloc] init];
     dataInspectorRepresenter = [[DataInspectorRepresenter alloc] init];
     textDividerRepresenter = [[TextDividerRepresenter alloc] init];
+    binaryTemplateRepresenter = [[HFBinaryTemplateRepresenter alloc] init];
+
     /* We will create layoutRepresenter when the window is actually shown
      * so that it will never exist in an inconsistent state */
     

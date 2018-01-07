@@ -51,6 +51,7 @@
 		A57F34831F1EFA6E00234B94 /* DataInspectorView.xib in Resources */ = {isa = PBXBuildFile; fileRef = A57F34851F1EFA6E00234B94 /* DataInspectorView.xib */; };
 		A57F34861F1EFA8800234B94 /* ChooseStringEncodingDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = A57F34881F1EFA8800234B94 /* ChooseStringEncodingDialog.xib */; };
 		A57F34891F1EFA9600234B94 /* OpenDriveDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = A57F348B1F1EFA9600234B94 /* OpenDriveDialog.xib */; };
+		A59BC5712001AB8C0066860F /* HFBinaryTemplateRepresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = A59BC5702001AB8C0066860F /* HFBinaryTemplateRepresenter.m */; };
 		D00122E30D48A8D400540B10 /* HFFindReplaceBackgroundView.m in Sources */ = {isa = PBXBuildFile; fileRef = D00122E20D48A8D400540B10 /* HFFindReplaceBackgroundView.m */; };
 		D00C16790FF4925A006D021F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D00C16750FF4925A006D021F /* main.m */; };
 		D00EBA730CE866D50020E2D7 /* HFVerticalScrollerRepresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = D00EBA710CE866D50020E2D7 /* HFVerticalScrollerRepresenter.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -375,6 +376,8 @@
 		A57F34841F1EFA6E00234B94 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/DataInspectorView.xib; sourceTree = "<group>"; };
 		A57F34871F1EFA8800234B94 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/ChooseStringEncodingDialog.xib; sourceTree = "<group>"; };
 		A57F348A1F1EFA9600234B94 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/OpenDriveDialog.xib; sourceTree = "<group>"; };
+		A59BC56F2001AB8C0066860F /* HFBinaryTemplateRepresenter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFBinaryTemplateRepresenter.h; path = app/sources/HFBinaryTemplateRepresenter.h; sourceTree = "<group>"; };
+		A59BC5702001AB8C0066860F /* HFBinaryTemplateRepresenter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFBinaryTemplateRepresenter.m; path = app/sources/HFBinaryTemplateRepresenter.m; sourceTree = "<group>"; };
 		D00122E10D48A8D400540B10 /* HFFindReplaceBackgroundView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFFindReplaceBackgroundView.h; path = app/sources/HFFindReplaceBackgroundView.h; sourceTree = "<group>"; };
 		D00122E20D48A8D400540B10 /* HFFindReplaceBackgroundView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFFindReplaceBackgroundView.m; path = app/sources/HFFindReplaceBackgroundView.m; sourceTree = "<group>"; };
 		D00C15E50FF091FF006D021F /* HexFiendling.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HexFiendling.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -975,6 +978,8 @@
 				D0CBB23F128F78C200989C15 /* StretchableProgressIndicator.m */,
 				D078CF530D50491100492F46 /* HFBannerDividerThumb.h */,
 				D078CF540D50491100492F46 /* HFBannerDividerThumb.m */,
+				A59BC56F2001AB8C0066860F /* HFBinaryTemplateRepresenter.h */,
+				A59BC5702001AB8C0066860F /* HFBinaryTemplateRepresenter.m */,
 				D00122DC0D48A89F00540B10 /* Find_Replace */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
 			);
@@ -1488,6 +1493,7 @@
 			files = (
 				8D11072D0486CEB800E47090 /* main.m in Sources */,
 				D01E7C160CDC58AA00943F9E /* BaseDataDocument.m in Sources */,
+				A59BC5712001AB8C0066860F /* HFBinaryTemplateRepresenter.m in Sources */,
 				D00122E30D48A8D400540B10 /* HFFindReplaceBackgroundView.m in Sources */,
 				D078D0520D50492F00492F46 /* HFBannerDividerThumb.m in Sources */,
 				D01772F50D751DB1002E03DE /* HFDocumentOperationView.m in Sources */,

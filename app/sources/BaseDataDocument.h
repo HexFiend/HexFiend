@@ -9,6 +9,7 @@
 #import "DocumentWindow.h"
 
 @class HFByteArray, HFRepresenter, HFHexTextRepresenter, HFLineCountingRepresenter, HFLayoutRepresenter, HFDocumentOperationView, DataInspectorRepresenter;
+@class HFBinaryTemplateRepresenter;
 
 extern NSString * const BaseDataDocumentDidChangeStringEncodingNotification;
 
@@ -24,6 +25,8 @@ extern NSString * const BaseDataDocumentDidChangeStringEncodingNotification;
     HFLayoutRepresenter *layoutRepresenter;
     DataInspectorRepresenter *dataInspectorRepresenter;
     HFStatusBarRepresenter *statusBarRepresenter;
+    HFBinaryTemplateRepresenter *binaryTemplateRepresenter;
+
     NSResponder *savedFirstResponder;
     
     HFDocumentOperationView *operationView;
