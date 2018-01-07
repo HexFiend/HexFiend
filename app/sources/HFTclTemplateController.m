@@ -55,6 +55,8 @@ enum command {
     command_int8,
     command_big_endian,
     command_little_endian,
+    command_float,
+    command_double,
 };
 
 enum endian {
@@ -87,6 +89,8 @@ DEFINE_COMMAND(uint16)
 DEFINE_COMMAND(int16)
 DEFINE_COMMAND(uint8)
 DEFINE_COMMAND(int8)
+DEFINE_COMMAND(float)
+DEFINE_COMMAND(double)
 DEFINE_COMMAND(big_endian)
 DEFINE_COMMAND(little_endian)
 
@@ -109,20 +113,31 @@ DEFINE_COMMAND(little_endian)
         const char *name;
         Tcl_ObjCmdProc *proc;
     };
+#define CMD_STR(type) #type
+#define CMD_NAMED(name, type) {name, cmd_##type}
+#define CMD(type) CMD_NAMED(CMD_STR(type), type)
     const struct command commands[] = {
-        {"uint64", cmd_uint64},
-        {"int64", cmd_int64},
-        {"uint32", cmd_uint32},
-        {"int32", cmd_int32},
-        {"uint16", cmd_uint16},
-        {"int16", cmd_int16},
-        {"uint8", cmd_uint8},
-        {"byte", cmd_uint8},
-        {"int8", cmd_int8},
-        {"big_endian", cmd_big_endian},
-        {"little_endian", cmd_little_endian},
+        CMD(uint64),
+        CMD(int64),
+        CMD(uint32),
+        CMD(int32),
+        CMD(uint16),
+        CMD(int16),
+        CMD(uint8),
+        CMD_NAMED("byte", uint8),
+        CMD(int8),
+        CMD(float),
+        CMD(double),
+        CMD(big_endian),
+        CMD(little_endian),
     };
+#undef CMD
+#undef CMD_NAMED
     for (size_t i = 0; i < sizeof(commands) / sizeof(commands[0]); ++i) {
+        Tcl_CmdInfo info;
+        if (Tcl_GetCommandInfo(_interp, commands[i].name, &info) != TCL_OK) {
+            NSLog(@"Warning: replacing existing command \"%s\"", commands[i].name);
+        }
         Tcl_CreateObjCommand(_interp, commands[i].name, commands[i].proc, (__bridge ClientData)self, NULL);
     }
 
@@ -169,6 +184,8 @@ DEFINE_COMMAND(little_endian)
         case command_int16:
         case command_uint8:
         case command_int8:
+        case command_float:
+        case command_double:
             return [self runTypeCommand:command objc:objc objv:objv];
         case command_big_endian: {
             CHECK_SINGLE_ARG
@@ -279,6 +296,37 @@ DEFINE_COMMAND(little_endian)
             }
             Tcl_SetObjResult(_interp, tcl_obj_from_int8(val));
             [self.currentNode.children addObject:[[HFTemplateNode alloc] initWithLabel:label value:[NSString stringWithFormat:@"%d", val]]];
+            break;
+        }
+        case command_float: {
+            union {
+                uint32_t u;
+                float f;
+            } val;
+            static_assert(sizeof(val) == 4, "bad size");
+            if (![self readBytes:&val size:sizeof(val)]) {
+                break;
+            }
+            if (self.endian == endian_big) {
+                val.f = NSSwapBigIntToHost(val.u);
+            }
+            Tcl_SetObjResult(_interp, Tcl_NewDoubleObj(val.f));
+            [self.currentNode.children addObject:[[HFTemplateNode alloc] initWithLabel:label value:[NSString stringWithFormat:@"%f", val.f]]];
+            break;
+        }
+        case command_double: {
+            union {
+                uint32_t u;
+                double f;
+            } val;
+            if (![self readBytes:&val size:sizeof(val)]) {
+                break;
+            }
+            if (self.endian == endian_big) {
+                val.f = NSSwapBigLongLongToHost(val.u);
+            }
+            Tcl_SetObjResult(_interp, Tcl_NewDoubleObj(val.f));
+            [self.currentNode.children addObject:[[HFTemplateNode alloc] initWithLabel:label value:[NSString stringWithFormat:@"%f", val.f]]];
             break;
         }
         default:
