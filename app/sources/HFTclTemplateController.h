@@ -7,11 +7,10 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "HFTemplateNode.h"
 
 @interface HFTclTemplateController : NSObject
 
-// Evaluate the Tcl script at the given path, and if successful return nil;
-// If an error occurs, return an error message.
-- (NSString *)evaluateScript:(NSString *)path forController:(HFController *)controller;
+- (HFTemplateNode *)evaluateScript:(NSString *)path forController:(HFController *)controller error:(NSString **)error;
 
 @end

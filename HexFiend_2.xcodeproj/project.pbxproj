@@ -56,6 +56,7 @@
 		A59BC5942001FD0F0066860F /* Tcl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A59BC5932001FD0F0066860F /* Tcl.framework */; };
 		A59BC59820020B480066860F /* HFBinaryTemplateController.m in Sources */ = {isa = PBXBuildFile; fileRef = A59BC59620020B480066860F /* HFBinaryTemplateController.m */; };
 		A59BC59920020B480066860F /* BinaryTemplateController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A59BC59720020B480066860F /* BinaryTemplateController.xib */; };
+		A59BC59C2002113F0066860F /* HFTemplateNode.m in Sources */ = {isa = PBXBuildFile; fileRef = A59BC59B2002113F0066860F /* HFTemplateNode.m */; };
 		D00122E30D48A8D400540B10 /* HFFindReplaceBackgroundView.m in Sources */ = {isa = PBXBuildFile; fileRef = D00122E20D48A8D400540B10 /* HFFindReplaceBackgroundView.m */; };
 		D00C16790FF4925A006D021F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D00C16750FF4925A006D021F /* main.m */; };
 		D00EBA730CE866D50020E2D7 /* HFVerticalScrollerRepresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = D00EBA710CE866D50020E2D7 /* HFVerticalScrollerRepresenter.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -388,6 +389,8 @@
 		A59BC59520020B480066860F /* HFBinaryTemplateController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFBinaryTemplateController.h; path = app/sources/HFBinaryTemplateController.h; sourceTree = "<group>"; };
 		A59BC59620020B480066860F /* HFBinaryTemplateController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFBinaryTemplateController.m; path = app/sources/HFBinaryTemplateController.m; sourceTree = "<group>"; };
 		A59BC59720020B480066860F /* BinaryTemplateController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = BinaryTemplateController.xib; path = app/sources/BinaryTemplateController.xib; sourceTree = "<group>"; };
+		A59BC59A2002113F0066860F /* HFTemplateNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFTemplateNode.h; path = app/sources/HFTemplateNode.h; sourceTree = "<group>"; };
+		A59BC59B2002113F0066860F /* HFTemplateNode.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFTemplateNode.m; path = app/sources/HFTemplateNode.m; sourceTree = "<group>"; };
 		D00122E10D48A8D400540B10 /* HFFindReplaceBackgroundView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFFindReplaceBackgroundView.h; path = app/sources/HFFindReplaceBackgroundView.h; sourceTree = "<group>"; };
 		D00122E20D48A8D400540B10 /* HFFindReplaceBackgroundView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFFindReplaceBackgroundView.m; path = app/sources/HFFindReplaceBackgroundView.m; sourceTree = "<group>"; };
 		D00C15E50FF091FF006D021F /* HexFiendling.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HexFiendling.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -765,6 +768,8 @@
 				A59BC5912001FB9A0066860F /* HFTclTemplateController.m */,
 				A59BC59520020B480066860F /* HFBinaryTemplateController.h */,
 				A59BC59620020B480066860F /* HFBinaryTemplateController.m */,
+				A59BC59A2002113F0066860F /* HFTemplateNode.h */,
+				A59BC59B2002113F0066860F /* HFTemplateNode.m */,
 			);
 			name = "Binary Templates";
 			sourceTree = "<group>";
@@ -1527,6 +1532,7 @@
 				D0CD51F60DA2B928006E8D1B /* AppDelegate.m in Sources */,
 				D03CFA8A0FC78BCD00EE79E4 /* DataInspectorRepresenter.m in Sources */,
 				D02BD6E010545E9000535EDE /* FileDataDocument.m in Sources */,
+				A59BC59C2002113F0066860F /* HFTemplateNode.m in Sources */,
 				D018F153107ABAC600AE805F /* DiffDocument.m in Sources */,
 				D074B0D5115B2075002D5FA8 /* DiffDocumentWindow.m in Sources */,
 				D084E763115DAEAC004DC181 /* DiffOverlayView.m in Sources */,

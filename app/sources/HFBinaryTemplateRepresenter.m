@@ -9,6 +9,7 @@
 #import "HFBinaryTemplateRepresenter.h"
 #import "HFBinaryTemplateController.h"
 #import "HFTclTemplateController.h"
+#import "HFTemplateNode.h"
 
 @interface HFBinaryTemplateRepresenter ()
 
@@ -55,10 +56,12 @@
 
 - (void)rerunTemplate {
     NSString *path = [NSHomeDirectory() stringByAppendingPathComponent:@"Desktop/hexfiend.tcl"];
-    NSString *errorMessage = [self.templateController evaluateScript:path forController:self.controller];
+    NSString *errorMessage = nil;
+    HFTemplateNode *node = [self.templateController evaluateScript:path forController:self.controller error:&errorMessage];
     if (errorMessage) {
         NSLog(@"Script error: %@", errorMessage);
     }
+    [self.viewController setRootNode:node];
 }
 
 @end

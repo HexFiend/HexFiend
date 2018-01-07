@@ -7,29 +7,36 @@
 //
 
 #import "HFBinaryTemplateController.h"
+#import "HFTemplateNode.h"
 
 @interface HFBinaryTemplateController () <NSTableViewDataSource, NSTableViewDelegate>
 
 @property (weak) IBOutlet NSTableView *tableView;
+@property HFTemplateNode *node;
 
 @end
 
 @implementation HFBinaryTemplateController
 
 - (NSInteger)numberOfRowsInTableView:(NSTableView * __unused)tableView {
-    return 5;
+    return self.node.children.count;
 }
 
 - (id)tableView:(NSTableView * __unused)tableView objectValueForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row {
-    (void)row;
+    HFTemplateNode *node = [self.node.children objectAtIndex:row];
     NSString *ident = tableColumn.identifier;
     if ([ident isEqualToString:@"name"]) {
-        return @"Name";
+        return node.label;
     }
     if ([ident isEqualToString:@"value"]) {
-        return @"Value";
+        return node.value;
     }
     return nil;
+}
+
+- (void)setRootNode:(HFTemplateNode *)node {
+    self.node = node;
+    [self.tableView reloadData];
 }
 
 @end

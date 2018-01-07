@@ -59,6 +59,8 @@ enum command {
 
 @property (weak) HFController *controller;
 @property unsigned long long position;
+@property HFTemplateNode *root;
+@property (weak) HFTemplateNode *currentNode;
 
 - (int)runCommand:(enum command)command objc:(int)objc objv:(struct Tcl_Obj * CONST *)objv;
 
@@ -121,13 +123,22 @@ DEFINE_COMMAND(int8)
     }
 }
 
-- (NSString *)evaluateScript:(NSString *)path forController:(HFController *)controller {
+- (HFTemplateNode *)evaluateScript:(NSString *)path forController:(HFController *)controller error:(NSString **)error {
     self.controller = controller;
     self.position = 0;
+    self.root = [[HFTemplateNode alloc] init];
+    self.root.isGroup = YES;
+    self.currentNode = self.root;
     if (Tcl_EvalFile(_interp, [path fileSystemRepresentation]) != TCL_OK) {
-        return [NSString stringWithUTF8String:Tcl_GetStringResult(_interp)];
+        if (error) {
+            *error = [NSString stringWithUTF8String:Tcl_GetStringResult(_interp)];
+        }
+        return nil;
     }
-    return nil;
+    if (error) {
+        *error = nil;
+    }
+    return self.root;
 }
 
 - (int)runCommand:(enum command)command objc:(int)objc objv:(struct Tcl_Obj * CONST *)objv {
@@ -135,76 +146,93 @@ DEFINE_COMMAND(int8)
         Tcl_WrongNumArgs(_interp, 1, objv, "title");
         return TCL_ERROR;
     }
-    const char *name = Tcl_GetStringFromObj(objv[1], NULL);
+    NSString *name = [NSString stringWithUTF8String:Tcl_GetStringFromObj(objv[1], NULL)];
     switch (command) {
         case command_uint64: {
             uint64_t val;
-            [self readBytes:&val size:sizeof(val)];
+            if (![self readBytes:&val size:sizeof(val)]) {
+                break;
+            }
             Tcl_SetObjResult(_interp, tcl_obj_from_uint64(val));
-            NSLog(@"%s = %llu", name, val);
+            [self.currentNode.children addObject:[[HFTemplateNode alloc] initWithLabel:name value:[NSString stringWithFormat:@"%llu", val]]];
             break;
         }
         case command_int64: {
             int64_t val;
-            [self readBytes:&val size:sizeof(val)];
+            if (![self readBytes:&val size:sizeof(val)]) {
+                break;
+            }
             Tcl_SetObjResult(_interp, tcl_obj_from_int64(val));
-            NSLog(@"%s = %lld", name, val);
+            [self.currentNode.children addObject:[[HFTemplateNode alloc] initWithLabel:name value:[NSString stringWithFormat:@"%lld", val]]];
             break;
         }
         case command_uint32: {
             uint32_t val;
-            [self readBytes:&val size:sizeof(val)];
+            if (![self readBytes:&val size:sizeof(val)]) {
+                break;
+            }
             Tcl_SetObjResult(_interp, tcl_obj_from_uint32(val));
-            NSLog(@"%s = %u", name, val);
+            [self.currentNode.children addObject:[[HFTemplateNode alloc] initWithLabel:name value:[NSString stringWithFormat:@"%u", val]]];
             break;
         }
         case command_int32: {
             int32_t val;
-            [self readBytes:&val size:sizeof(val)];
+            if (![self readBytes:&val size:sizeof(val)]) {
+                break;
+            }
             Tcl_SetObjResult(_interp, tcl_obj_from_int32(val));
-            NSLog(@"%s = %d", name, val);
+            [self.currentNode.children addObject:[[HFTemplateNode alloc] initWithLabel:name value:[NSString stringWithFormat:@"%d", val]]];
             break;
         }
         case command_uint16: {
             uint16_t val;
-            [self readBytes:&val size:sizeof(val)];
+            if (![self readBytes:&val size:sizeof(val)]) {
+                break;
+            }
             Tcl_SetObjResult(_interp, tcl_obj_from_uint16(val));
-            NSLog(@"%s = %u", name, val);
+            [self.currentNode.children addObject:[[HFTemplateNode alloc] initWithLabel:name value:[NSString stringWithFormat:@"%d", val]]];
             break;
         }
         case command_int16: {
             int16_t val;
-            [self readBytes:&val size:sizeof(val)];
+            if (![self readBytes:&val size:sizeof(val)]) {
+                break;
+            }
             Tcl_SetObjResult(_interp, tcl_obj_from_int16(val));
-            NSLog(@"%s = %d", name, val);
+            [self.currentNode.children addObject:[[HFTemplateNode alloc] initWithLabel:name value:[NSString stringWithFormat:@"%d", val]]];
             break;
         }
         case command_uint8: {
             uint8_t val;
-            [self readBytes:&val size:sizeof(val)];
+            if (![self readBytes:&val size:sizeof(val)]) {
+                break;
+            }
             Tcl_SetObjResult(_interp, tcl_obj_from_uint8(val));
-            NSLog(@"%s = %u", name, val);
+            [self.currentNode.children addObject:[[HFTemplateNode alloc] initWithLabel:name value:[NSString stringWithFormat:@"%d", val]]];
             break;
         }
         case command_int8: {
             int8_t val;
-            [self readBytes:&val size:sizeof(val)];
+            if (![self readBytes:&val size:sizeof(val)]) {
+                break;
+            }
             Tcl_SetObjResult(_interp, tcl_obj_from_int8(val));
-            NSLog(@"%s = %d", name, val);
+            [self.currentNode.children addObject:[[HFTemplateNode alloc] initWithLabel:name value:[NSString stringWithFormat:@"%d", val]]];
             break;
         }
     }
     return TCL_OK;
 }
 
-- (void)readBytes:(void *)buffer size:(size_t)size {
+- (BOOL)readBytes:(void *)buffer size:(size_t)size {
     const HFRange range = HFRangeMake(self.controller.minimumSelectionLocation + self.position, size);
     if (!HFRangeIsSubrangeOfRange(range, HFRangeMake(0, self.controller.contentsLength))) {
         memset(buffer, 0, size);
-        return;
+        return NO;
     }
     [self.controller copyBytes:buffer range:range];
     self.position += size;
+    return YES;
 }
 
 @end
