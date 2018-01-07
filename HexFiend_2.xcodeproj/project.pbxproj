@@ -52,6 +52,8 @@
 		A57F34861F1EFA8800234B94 /* ChooseStringEncodingDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = A57F34881F1EFA8800234B94 /* ChooseStringEncodingDialog.xib */; };
 		A57F34891F1EFA9600234B94 /* OpenDriveDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = A57F348B1F1EFA9600234B94 /* OpenDriveDialog.xib */; };
 		A59BC5712001AB8C0066860F /* HFBinaryTemplateRepresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = A59BC5702001AB8C0066860F /* HFBinaryTemplateRepresenter.m */; };
+		A59BC5922001FB9A0066860F /* HFTclTemplateController.m in Sources */ = {isa = PBXBuildFile; fileRef = A59BC5912001FB9A0066860F /* HFTclTemplateController.m */; };
+		A59BC5942001FD0F0066860F /* Tcl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A59BC5932001FD0F0066860F /* Tcl.framework */; };
 		D00122E30D48A8D400540B10 /* HFFindReplaceBackgroundView.m in Sources */ = {isa = PBXBuildFile; fileRef = D00122E20D48A8D400540B10 /* HFFindReplaceBackgroundView.m */; };
 		D00C16790FF4925A006D021F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D00C16750FF4925A006D021F /* main.m */; };
 		D00EBA730CE866D50020E2D7 /* HFVerticalScrollerRepresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = D00EBA710CE866D50020E2D7 /* HFVerticalScrollerRepresenter.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -378,6 +380,9 @@
 		A57F348A1F1EFA9600234B94 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/OpenDriveDialog.xib; sourceTree = "<group>"; };
 		A59BC56F2001AB8C0066860F /* HFBinaryTemplateRepresenter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFBinaryTemplateRepresenter.h; path = app/sources/HFBinaryTemplateRepresenter.h; sourceTree = "<group>"; };
 		A59BC5702001AB8C0066860F /* HFBinaryTemplateRepresenter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFBinaryTemplateRepresenter.m; path = app/sources/HFBinaryTemplateRepresenter.m; sourceTree = "<group>"; };
+		A59BC5902001FB9A0066860F /* HFTclTemplateController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFTclTemplateController.h; path = app/sources/HFTclTemplateController.h; sourceTree = "<group>"; };
+		A59BC5912001FB9A0066860F /* HFTclTemplateController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFTclTemplateController.m; path = app/sources/HFTclTemplateController.m; sourceTree = "<group>"; };
+		A59BC5932001FD0F0066860F /* Tcl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Tcl.framework; path = System/Library/Frameworks/Tcl.framework; sourceTree = SDKROOT; };
 		D00122E10D48A8D400540B10 /* HFFindReplaceBackgroundView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFFindReplaceBackgroundView.h; path = app/sources/HFFindReplaceBackgroundView.h; sourceTree = "<group>"; };
 		D00122E20D48A8D400540B10 /* HFFindReplaceBackgroundView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFFindReplaceBackgroundView.m; path = app/sources/HFFindReplaceBackgroundView.m; sourceTree = "<group>"; };
 		D00C15E50FF091FF006D021F /* HexFiendling.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HexFiendling.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -568,6 +573,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A59BC5942001FD0F0066860F /* Tcl.framework in Frameworks */,
 				795F46C314BAADB600EB2F7D /* DiskArbitration.framework in Frameworks */,
 				8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */,
 				94ECCBC01BDF7DD2007FF44E /* HexFiend.framework in Frameworks */,
@@ -680,6 +686,7 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A59BC5932001FD0F0066860F /* Tcl.framework */,
 				94548A3619DC51FE006EFA29 /* Sparkle.xcodeproj */,
 				795F46C214BAADB600EB2F7D /* DiskArbitration.framework */,
 				D0D4BE84146F43A1001B0A71 /* ServiceManagement.framework */,
@@ -741,6 +748,17 @@
 				A550A7181F7877F8001C79C7 /* main.m */,
 			);
 			path = hexf;
+			sourceTree = "<group>";
+		};
+		A59BC58F2001FB590066860F /* Binary Templates */ = {
+			isa = PBXGroup;
+			children = (
+				A59BC56F2001AB8C0066860F /* HFBinaryTemplateRepresenter.h */,
+				A59BC5702001AB8C0066860F /* HFBinaryTemplateRepresenter.m */,
+				A59BC5902001FB9A0066860F /* HFTclTemplateController.h */,
+				A59BC5912001FB9A0066860F /* HFTclTemplateController.m */,
+			);
+			name = "Binary Templates";
 			sourceTree = "<group>";
 		};
 		D00122DC0D48A89F00540B10 /* Find_Replace */ = {
@@ -978,8 +996,7 @@
 				D0CBB23F128F78C200989C15 /* StretchableProgressIndicator.m */,
 				D078CF530D50491100492F46 /* HFBannerDividerThumb.h */,
 				D078CF540D50491100492F46 /* HFBannerDividerThumb.m */,
-				A59BC56F2001AB8C0066860F /* HFBinaryTemplateRepresenter.h */,
-				A59BC5702001AB8C0066860F /* HFBinaryTemplateRepresenter.m */,
+				A59BC58F2001FB590066860F /* Binary Templates */,
 				D00122DC0D48A89F00540B10 /* Find_Replace */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
 			);
@@ -1508,6 +1525,7 @@
 				D0CBB240128F78C200989C15 /* StretchableProgressIndicator.m in Sources */,
 				D0CBB32A128F906000989C15 /* DiffTextViewContainer.m in Sources */,
 				D0D8C2BC12A3C10100960FC4 /* ChooseStringEncodingWindowController.m in Sources */,
+				A59BC5922001FB9A0066860F /* HFTclTemplateController.m in Sources */,
 				A56D78161E7EF088001D1892 /* CLIController.m in Sources */,
 				D059E1291311C676001493B8 /* AppDebugging.m in Sources */,
 				D01EF15413B2A0D300CC9283 /* TextDividerRepresenter.m in Sources */,
