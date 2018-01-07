@@ -436,7 +436,7 @@ DEFINE_COMMAND(requires)
         }
         case command_double: {
             union {
-                uint32_t u;
+                uint64_t u;
                 double f;
             } val;
             if (![self readBytes:&val size:sizeof(val)]) {
