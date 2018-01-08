@@ -161,8 +161,8 @@ DEFINE_COMMAND(requires)
     Tcl_GetTime(&time);
     time.sec += 2;
     Tcl_LimitSetTime(_interp, &time);
-    int err = Tcl_EvalFile(_interp, [path fileSystemRepresentation]);
-    if (error != TCL_OK) {
+    const int err = Tcl_EvalFile(_interp, [path fileSystemRepresentation]);
+    if (err != TCL_OK) {
         if (error) {
             Tcl_Obj *options = Tcl_GetReturnOptions(_interp, err);
             Tcl_Obj *key = Tcl_NewStringObj("-errorinfo", -1);
