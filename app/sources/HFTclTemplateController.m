@@ -65,16 +65,10 @@ enum command {
     command_requires,
 };
 
-enum endian {
-    endian_little,
-    endian_big,
-};
-
 @interface HFTclTemplateController ()
 
 @property HFTemplateNode *root;
 @property (weak) HFTemplateNode *currentNode;
-@property enum endian endian;
 
 - (int)runCommand:(enum command)command objc:(int)objc objv:(struct Tcl_Obj * CONST *)objv;
 
@@ -214,12 +208,12 @@ DEFINE_COMMAND(requires)
             return [self runTypeCommand:command objc:objc objv:objv];
         case command_big_endian: {
             CHECK_SINGLE_ARG
-            self.endian = endian_big;
+            self.endian = HFEndianBig;
             break;
         }
         case command_little_endian: {
             CHECK_SINGLE_ARG
-            self.endian = endian_little;
+            self.endian = HFEndianLittle;
             break;
         }
         case command_hex:
@@ -330,7 +324,7 @@ DEFINE_COMMAND(requires)
                 Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read bytes", -1));
                 return TCL_ERROR;
             }
-            if (self.endian == endian_big) {
+            if (self.endian == HFEndianBig) {
                 val = NSSwapBigLongLongToHost(val);
             }
             Tcl_SetObjResult(_interp, tcl_obj_from_uint64(val));
@@ -343,7 +337,7 @@ DEFINE_COMMAND(requires)
                 Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read bytes", -1));
                 return TCL_ERROR;
             }
-            if (self.endian == endian_big) {
+            if (self.endian == HFEndianBig) {
                 val = NSSwapBigLongLongToHost(val);
             }
             Tcl_SetObjResult(_interp, tcl_obj_from_int64(val));
@@ -356,7 +350,7 @@ DEFINE_COMMAND(requires)
                 Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read bytes", -1));
                 return TCL_ERROR;
             }
-            if (self.endian == endian_big) {
+            if (self.endian == HFEndianBig) {
                 val = NSSwapBigIntToHost(val);
             }
             Tcl_SetObjResult(_interp, tcl_obj_from_uint32(val));
@@ -369,7 +363,7 @@ DEFINE_COMMAND(requires)
                 Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read bytes", -1));
                 return TCL_ERROR;
             }
-            if (self.endian == endian_big) {
+            if (self.endian == HFEndianBig) {
                 val = NSSwapBigIntToHost(val);
             }
             Tcl_SetObjResult(_interp, tcl_obj_from_int32(val));
@@ -382,7 +376,7 @@ DEFINE_COMMAND(requires)
                 Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read bytes", -1));
                 return TCL_ERROR;
             }
-            if (self.endian == endian_big) {
+            if (self.endian == HFEndianBig) {
                 val = NSSwapBigShortToHost(val);
             }
             Tcl_SetObjResult(_interp, tcl_obj_from_uint16(val));
@@ -395,7 +389,7 @@ DEFINE_COMMAND(requires)
                 Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read bytes", -1));
                 return TCL_ERROR;
             }
-            if (self.endian == endian_big) {
+            if (self.endian == HFEndianBig) {
                 val = NSSwapBigShortToHost(val);
             }
             Tcl_SetObjResult(_interp, tcl_obj_from_int16(val));
@@ -432,7 +426,7 @@ DEFINE_COMMAND(requires)
                 Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read bytes", -1));
                 return TCL_ERROR;
             }
-            if (self.endian == endian_big) {
+            if (self.endian == HFEndianBig) {
                 val.f = NSSwapBigIntToHost(val.u);
             }
             Tcl_SetObjResult(_interp, Tcl_NewDoubleObj(val.f));
@@ -448,7 +442,7 @@ DEFINE_COMMAND(requires)
                 Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read bytes", -1));
                 return TCL_ERROR;
             }
-            if (self.endian == endian_big) {
+            if (self.endian == HFEndianBig) {
                 val.f = NSSwapBigLongLongToHost(val.u);
             }
             Tcl_SetObjResult(_interp, Tcl_NewDoubleObj(val.f));

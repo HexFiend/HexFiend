@@ -12,6 +12,7 @@
 
 @property HFController *controller;
 @property unsigned long long position;
+@property HFEndian endian;
 
 @end
 

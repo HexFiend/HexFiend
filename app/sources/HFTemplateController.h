@@ -21,10 +21,16 @@
 
 @end
 
+typedef NS_ENUM(NSUInteger, HFEndian) {
+    HFEndianLittle,
+    HFEndianBig,
+};
+
 @interface HFTemplateController (Private)
 
 @property (readonly) HFController *controller;
 @property unsigned long long position;
+@property HFEndian endian;
 
 - (BOOL)readBytes:(void *)buffer size:(size_t)size;
 - (NSData *)readDataForSize:(size_t)size;
