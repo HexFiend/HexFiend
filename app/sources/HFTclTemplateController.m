@@ -275,23 +275,12 @@ DEFINE_COMMAND(requires)
             if (err != TCL_OK) {
                 return err;
             }
+            if (offset < 0) {
+                Tcl_SetObjResult(_interp, Tcl_NewStringObj("Offset must be >= 0.", -1));
+                return TCL_ERROR;
+            }
             NSString *hexvalues = [NSString stringWithUTF8String:Tcl_GetStringFromObj(objv[2], NULL)];
-            BOOL isMissingLastNybble = NO;
-            NSData *hexdata = HFDataFromHexString(hexvalues, &isMissingLastNybble);
-            if (isMissingLastNybble) {
-                Tcl_SetObjResult(_interp, Tcl_NewStringObj("hex values is missing last nybble", -1));
-                return TCL_ERROR;
-            }
-            const unsigned long long currentPosition = self.position;
-            self.position = offset;
-            NSData *data = [self readDataForSize:hexdata.length];
-            self.position = currentPosition;
-            if (!data) {
-                Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read bytes", -1));
-                return TCL_ERROR;
-            }
-            if (![data isEqualToData:hexdata]) {
-                Tcl_SetObjResult(_interp, Tcl_NewStringObj("Data mismatch", -1));
+            if (![self requireDataAtOffset:offset toMatchHexValues:hexvalues]) {
                 return TCL_ERROR;
             }
             break;

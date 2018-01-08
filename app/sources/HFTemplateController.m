@@ -7,6 +7,7 @@
 //
 
 #import "HFTemplateController.h"
+#import "HFFunctions_Private.h"
 
 @interface HFTemplateController ()
 
@@ -96,6 +97,25 @@
 
 - (BOOL)isEOF {
     return (self.controller.minimumSelectionLocation + self.position) >= self.controller.contentsLength;
+}
+
+- (BOOL)requireDataAtOffset:(unsigned long long)offset toMatchHexValues:(NSString *)hexValues {
+    BOOL isMissingLastNybble = NO;
+    NSData *hexdata = HFDataFromHexString(hexValues, &isMissingLastNybble);
+    if (isMissingLastNybble) {
+        return NO;
+    }
+    const unsigned long long currentPosition = self.position;
+    self.position = offset;
+    NSData *data = [self readDataForSize:hexdata.length];
+    self.position = currentPosition;
+    if (!data) {
+        return NO;
+    }
+    if (![data isEqualToData:hexdata]) {
+        return NO;
+    }
+    return YES;
 }
 
 @end

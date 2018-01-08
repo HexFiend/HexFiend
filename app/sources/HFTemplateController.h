@@ -37,6 +37,7 @@ typedef NS_ENUM(NSUInteger, HFEndian) {
 - (BOOL)readBytes:(void *)buffer size:(size_t)size;
 - (NSData *)readDataForSize:(size_t)size;
 
+- (BOOL)requireDataAtOffset:(unsigned long long)offset toMatchHexValues:(NSString *)hexValues;
 - (BOOL)readFloat:(float *)value forLabel:(NSString *)label;
 - (BOOL)readDouble:(double *)value forLabel:(NSString *)label;
 
