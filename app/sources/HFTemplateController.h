@@ -17,7 +17,7 @@
 
 @interface HFTemplateController (OverrideBySubclasses)
 
-- (void)evaluateScript:(NSString *)path error:(NSString **)error;
+- (NSString *)evaluateScript:(NSString *)path;
 
 @end
 

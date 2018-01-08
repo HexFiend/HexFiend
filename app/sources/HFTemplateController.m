@@ -30,12 +30,16 @@
     if (error) {
         *error = nil;
     }
-    [self evaluateScript:path error:error];
+    NSString *localError = [self evaluateScript:path];
+    if (localError && error) {
+        *error = localError;
+    }
     return self.root;
 }
 
-- (void)evaluateScript:(NSString * __unused)path error:(NSString ** __unused)error {
+- (NSString *)evaluateScript:(NSString * __unused)path {
     HFASSERT(0); // should be overridden in subclasses
+    return nil;
 }
 
 - (BOOL)readBytes:(void *)buffer size:(size_t)size {

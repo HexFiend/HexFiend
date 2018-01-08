@@ -155,7 +155,7 @@ DEFINE_COMMAND(requires)
     }
 }
 
-- (void)evaluateScript:(NSString *)path error:(NSString **)error {
+- (NSString *)evaluateScript:(NSString *)path {
     Tcl_LimitTypeSet(_interp, TCL_LIMIT_TIME);
     Tcl_Time time;
     Tcl_GetTime(&time);
@@ -163,18 +163,17 @@ DEFINE_COMMAND(requires)
     Tcl_LimitSetTime(_interp, &time);
     const int err = Tcl_EvalFile(_interp, [path fileSystemRepresentation]);
     if (err != TCL_OK) {
-        if (error) {
-            Tcl_Obj *options = Tcl_GetReturnOptions(_interp, err);
-            Tcl_Obj *key = Tcl_NewStringObj("-errorinfo", -1);
-            Tcl_Obj *value = NULL;
-            Tcl_IncrRefCount(key);
-            Tcl_DictObjGet(NULL, options, key, &value);
-            Tcl_DecrRefCount(key);
-            if (value) {
-                *error = [NSString stringWithUTF8String:Tcl_GetStringFromObj(value, NULL)];
-            }
+        Tcl_Obj *options = Tcl_GetReturnOptions(_interp, err);
+        Tcl_Obj *key = Tcl_NewStringObj("-errorinfo", -1);
+        Tcl_Obj *value = NULL;
+        Tcl_IncrRefCount(key);
+        Tcl_DictObjGet(NULL, options, key, &value);
+        Tcl_DecrRefCount(key);
+        if (value) {
+            return [NSString stringWithUTF8String:Tcl_GetStringFromObj(value, NULL)];
         }
     }
+    return nil;
 }
 
 #define CHECK_SINGLE_ARG \
