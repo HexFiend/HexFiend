@@ -234,6 +234,8 @@ You create an HFController via <tt>[[HFController alloc] init]</tt>.  After that
 - (nullable HFByteArray *)byteArrayForSelectedContentsRanges;
 //@}
 
+@property (nonatomic) NSArray<NSDictionary*> *colorRanges;
+
 /* Number of bytes used in each column for a text-style representer. */
 @property (nonatomic) NSUInteger bytesPerColumn;
 

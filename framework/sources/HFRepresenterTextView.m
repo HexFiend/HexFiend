@@ -376,6 +376,7 @@ enum LineCoverage_t {
 - (void)updateSelectedRanges {
     NSArray *oldSelectedRanges = cachedSelectedRanges;
     cachedSelectedRanges = [[[self representer] displayedSelectedContentsRanges] copy];
+    cachedColorRanges = [[self representer] displayedColorRanges];
     NSIndexSet *indexSet = [self _indexSetOfLinesNeedingRedrawWhenChangingSelectionFromRanges:oldSelectedRanges toRanges:cachedSelectedRanges];
     BOOL lastCaretRectNeedsRedraw = ! NSIsEmptyRect(lastDrawnCaretRect);
     NSRange lineRangeToInvalidate = NSMakeRange(NSUIntegerMax, 0);
@@ -548,9 +549,19 @@ enum LineCoverage_t {
 }
 
 - (void)drawSelectionIfNecessaryWithClip:(NSRect)clipRect {
+    for (NSDictionary *dict in cachedColorRanges) {
+        NSColor *color = dict[@"color"];
+        NSValue *wrapper = dict[@"range"];
+        [self drawSelectionIfNecessaryWithClip:clipRect forRanges:@[wrapper] withColor:color];
+    }
+
     NSArray *ranges = [self displayedSelectedContentsRanges];
+    [self drawSelectionIfNecessaryWithClip:clipRect forRanges:ranges withColor:[self textSelectionColor]];
+}
+
+- (void)drawSelectionIfNecessaryWithClip:(NSRect)clipRect forRanges:(NSArray *)ranges withColor:(NSColor *)color {
     NSUInteger bytesPerLine = [self bytesPerLine];
-    [[self textSelectionColor] set];
+    [color set];
     CGFloat lineHeight = [self lineHeight];
     for(NSValue * rangeValue in ranges) {
         NSRange range = [rangeValue rangeValue];

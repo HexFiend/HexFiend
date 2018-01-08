@@ -29,6 +29,7 @@ NS_ASSUME_NONNULL_BEGIN
 @private;
     HFTextRepresenter *representer;
     NSArray *cachedSelectedRanges;
+    NSArray *cachedColorRanges;
     CGFloat verticalOffset;
     CGFloat horizontalContainerInset;
     CGFloat defaultLineHeight;

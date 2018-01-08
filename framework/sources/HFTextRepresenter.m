@@ -292,6 +292,31 @@
     return [self displayedRanges:selectedRanges];
 }
 
+- (NSArray<NSDictionary*> *)displayedColorRanges {
+    if (!self.controller.colorRanges) {
+        self.controller.colorRanges = @[
+            @{
+                @"color": [NSColor colorWithCalibratedRed:1.00 green:0.44 blue:0.81 alpha:1.0],
+                @"range": [HFRangeWrapper withRange:HFRangeMake(0, 4)],
+            },
+            @{
+                @"color": [NSColor colorWithCalibratedRed:1.00 green:0.80 blue:0.40 alpha:1.0],
+                @"range": [HFRangeWrapper withRange:HFRangeMake(48, 8)],
+            },
+        ];
+    }
+    NSMutableArray<NSDictionary*> *a = [NSMutableArray array];
+    [self.controller.colorRanges enumerateObjectsUsingBlock:^(NSDictionary *obj, NSUInteger idx __unused, BOOL *stop __unused) {
+        NSColor *color = obj[@"color"];
+        HFRangeWrapper *wrapper = obj[@"range"];
+        NSArray *displayed = [self displayedRanges:@[wrapper]];
+        if (displayed.count > 0) {
+            [a addObject:@{@"color" : color, @"range" : displayed.firstObject}];
+        }
+    }];
+    return a;
+}
+
 - (NSArray *)displayedRanges:(NSArray *)ranges
 {
     const HFRange displayedRange = [self entireDisplayedRange];
