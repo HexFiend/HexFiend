@@ -56,6 +56,26 @@
     return data;
 }
 
+- (NSString *)readHexDataForSize:(size_t)size forLabel:(NSString *)label {
+    NSData *data = [self readDataForSize:size];
+    if (!data) {
+        return nil;
+    }
+    NSString *str = HFHexStringFromData(data);
+    [self addNodeWithLabel:label value:str];
+    return str;
+}
+
+- (NSString *)readStringDataForSize:(size_t)size encoding:(NSStringEncoding)encoding forLabel:(NSString *)label {
+    NSData *data = [self readDataForSize:size];
+    if (!data) {
+        return nil;
+    }
+    NSString *str = [[NSString alloc] initWithData:data encoding:encoding];
+    [self addNodeWithLabel:label value:str];
+    return str;
+}
+
 - (BOOL)readUInt64:(uint64_t *)value forLabel:(NSString *)label {
     uint64_t val;
     if (![self readBytes:&val size:sizeof(val)]) {

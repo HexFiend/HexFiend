@@ -28,14 +28,12 @@ typedef NS_ENUM(NSUInteger, HFEndian) {
 
 @interface HFTemplateController (Private)
 
-@property (readonly) HFController *controller;
 @property (readonly) unsigned long long position;
 @property HFEndian endian;
-@property (readonly) HFTemplateNode *currentNode;
 @property (readonly) BOOL isEOF;
 
-- (BOOL)readBytes:(void *)buffer size:(size_t)size;
-- (NSData *)readDataForSize:(size_t)size;
+- (NSString *)readHexDataForSize:(size_t)size forLabel:(NSString *)label;
+- (NSString *)readStringDataForSize:(size_t)size encoding:(NSStringEncoding)encoding forLabel:(NSString *)label;
 
 - (BOOL)requireDataAtOffset:(unsigned long long)offset toMatchHexValues:(NSString *)hexValues;
 

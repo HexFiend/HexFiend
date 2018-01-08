@@ -222,26 +222,23 @@ DEFINE_COMMAND(requires)
                 return TCL_ERROR;
             }
             NSString *label = [NSString stringWithUTF8String:Tcl_GetStringFromObj(objv[2], NULL)];
-            NSData *data = [self readDataForSize:len];
-            if (!data) {
-                Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read bytes", -1));
-                return TCL_ERROR;
-            }
             NSString *str = nil;
             switch (command) {
                 case command_hex:
-                    str = HFHexStringFromData(data);
-                    Tcl_SetObjResult(_interp, Tcl_NewByteArrayObj(data.bytes, (int)data.length));
+                    str = [self readHexDataForSize:len forLabel:label];
                     break;
                 case command_ascii:
-                    str = [[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding];
-                    Tcl_SetObjResult(_interp, Tcl_NewStringObj(str.UTF8String, -1));
+                    str = [self readStringDataForSize:len encoding:NSASCIIStringEncoding forLabel:label];
                     break;
                 default:
                     HFASSERT(0);
                     break;
             }
-            [self.currentNode.children addObject:[[HFTemplateNode alloc] initWithLabel:label value:str]];
+            if (!str) {
+                Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read bytes", -1));
+                return TCL_ERROR;
+            }
+            Tcl_SetObjResult(_interp, Tcl_NewStringObj(str.UTF8String, -1));
             break;
         }
         case command_move: {
