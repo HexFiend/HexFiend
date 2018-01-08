@@ -17,34 +17,6 @@ static Tcl_Obj* tcl_obj_from_uint64(uint64_t value) {
     return Tcl_NewStringObj(buf, (int)num_bytes);
 }
 
-static Tcl_Obj* tcl_obj_from_int64(int64_t value) {
-    return Tcl_NewWideIntObj((Tcl_WideInt)value);
-}
-
-static Tcl_Obj* tcl_obj_from_uint32(uint32_t value) {
-    return Tcl_NewWideIntObj((Tcl_WideInt)value);
-}
-
-static Tcl_Obj* tcl_obj_from_int32(int32_t value) {
-    return Tcl_NewIntObj((int)value);
-}
-
-static Tcl_Obj* tcl_obj_from_uint16(uint16_t value) {
-    return Tcl_NewIntObj((int)value);
-}
-
-static Tcl_Obj* tcl_obj_from_int16(int16_t value) {
-    return Tcl_NewIntObj((int)value);
-}
-
-static Tcl_Obj* tcl_obj_from_uint8(uint8_t value) {
-    return Tcl_NewIntObj((int)value);
-}
-
-static Tcl_Obj* tcl_obj_from_int8(int8_t value) {
-    return Tcl_NewIntObj((int)value);
-}
-
 enum command {
     command_uint64,
     command_int64,
@@ -307,7 +279,7 @@ DEFINE_COMMAND(requires)
                 Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read bytes", -1));
                 return TCL_ERROR;
             }
-            Tcl_SetObjResult(_interp, tcl_obj_from_int64(val));
+            Tcl_SetObjResult(_interp, Tcl_NewWideIntObj((Tcl_WideInt)val));
             break;
         }
         case command_uint32: {
@@ -316,7 +288,7 @@ DEFINE_COMMAND(requires)
                 Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read bytes", -1));
                 return TCL_ERROR;
             }
-            Tcl_SetObjResult(_interp, tcl_obj_from_uint32(val));
+            Tcl_SetObjResult(_interp, Tcl_NewWideIntObj((Tcl_WideInt)val));
             break;
         }
         case command_int32: {
@@ -325,7 +297,7 @@ DEFINE_COMMAND(requires)
                 Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read bytes", -1));
                 return TCL_ERROR;
             }
-            Tcl_SetObjResult(_interp, tcl_obj_from_int32(val));
+            Tcl_SetObjResult(_interp, Tcl_NewIntObj((int)val));
             break;
         }
         case command_uint16: {
@@ -334,7 +306,7 @@ DEFINE_COMMAND(requires)
                 Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read bytes", -1));
                 return TCL_ERROR;
             }
-            Tcl_SetObjResult(_interp, tcl_obj_from_uint16(val));
+            Tcl_SetObjResult(_interp, Tcl_NewIntObj((int)val));
             break;
         }
         case command_int16: {
@@ -343,7 +315,7 @@ DEFINE_COMMAND(requires)
                 Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read bytes", -1));
                 return TCL_ERROR;
             }
-            Tcl_SetObjResult(_interp, tcl_obj_from_int16(val));
+            Tcl_SetObjResult(_interp, Tcl_NewIntObj((int)val));
             break;
         }
         case command_uint8: {
@@ -352,7 +324,7 @@ DEFINE_COMMAND(requires)
                 Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read bytes", -1));
                 return TCL_ERROR;
             }
-            Tcl_SetObjResult(_interp, tcl_obj_from_uint8(val));
+            Tcl_SetObjResult(_interp, Tcl_NewIntObj((int)val));
             break;
         }
         case command_int8: {
@@ -361,7 +333,7 @@ DEFINE_COMMAND(requires)
                 Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read bytes", -1));
                 return TCL_ERROR;
             }
-            Tcl_SetObjResult(_interp, tcl_obj_from_int8(val));
+            Tcl_SetObjResult(_interp, Tcl_NewIntObj((int)val));
             break;
         }
         case command_float: {
