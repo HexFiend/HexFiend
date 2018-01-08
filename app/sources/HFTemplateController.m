@@ -56,6 +56,104 @@
     return data;
 }
 
+- (BOOL)readUInt64:(uint64_t *)value forLabel:(NSString *)label {
+    uint64_t val;
+    if (![self readBytes:&val size:sizeof(val)]) {
+        return NO;
+    }
+    if (self.endian == HFEndianBig) {
+        val = NSSwapBigLongLongToHost(val);
+    }
+    *value = val;
+    [self addNodeWithLabel:label value:[NSString stringWithFormat:@"%llu", val]];
+    return YES;
+}
+
+- (BOOL)readInt64:(int64_t *)value forLabel:(NSString *)label {
+    int64_t val;
+    if (![self readBytes:&val size:sizeof(val)]) {
+        return NO;
+    }
+    if (self.endian == HFEndianBig) {
+        val = NSSwapBigLongLongToHost(val);
+    }
+    *value = val;
+    [self addNodeWithLabel:label value:[NSString stringWithFormat:@"%lld", val]];
+    return YES;
+}
+
+- (BOOL)readUInt32:(uint32_t *)value forLabel:(NSString *)label {
+    uint32_t val;
+    if (![self readBytes:&val size:sizeof(val)]) {
+        return NO;
+    }
+    if (self.endian == HFEndianBig) {
+        val = NSSwapBigIntToHost(val);
+    }
+    *value = val;
+    [self addNodeWithLabel:label value:[NSString stringWithFormat:@"%u", val]];
+    return YES;
+}
+
+- (BOOL)readInt32:(int32_t *)value forLabel:(NSString *)label {
+    int32_t val;
+    if (![self readBytes:&val size:sizeof(val)]) {
+        return NO;
+    }
+    if (self.endian == HFEndianBig) {
+        val = NSSwapBigIntToHost(val);
+    }
+    *value = val;
+    [self addNodeWithLabel:label value:[NSString stringWithFormat:@"%d", val]];
+    return YES;
+}
+
+- (BOOL)readUInt16:(uint16_t *)value forLabel:(NSString *)label {
+    uint16_t val;
+    if (![self readBytes:&val size:sizeof(val)]) {
+        return NO;
+    }
+    if (self.endian == HFEndianBig) {
+        val = NSSwapBigShortToHost(val);
+    }
+    *value = val;
+    [self addNodeWithLabel:label value:[NSString stringWithFormat:@"%d", val]];
+    return YES;
+}
+
+- (BOOL)readInt16:(int16_t *)value forLabel:(NSString *)label {
+    int16_t val;
+    if (![self readBytes:&val size:sizeof(val)]) {
+        return NO;
+    }
+    if (self.endian == HFEndianBig) {
+        val = NSSwapBigShortToHost(val);
+    }
+    *value = val;
+    [self addNodeWithLabel:label value:[NSString stringWithFormat:@"%d", val]];
+    return YES;
+}
+
+- (BOOL)readUInt8:(uint8_t *)value forLabel:(NSString *)label {
+    uint8_t val;
+    if (![self readBytes:&val size:sizeof(val)]) {
+        return NO;
+    }
+    *value = val;
+    [self addNodeWithLabel:label value:[NSString stringWithFormat:@"%d", val]];
+    return YES;
+}
+
+- (BOOL)readInt8:(int8_t *)value forLabel:(NSString *)label {
+    int8_t val;
+    if (![self readBytes:&val size:sizeof(val)]) {
+        return NO;
+    }
+    *value = val;
+    [self addNodeWithLabel:label value:[NSString stringWithFormat:@"%d", val]];
+    return YES;
+}
+
 - (BOOL)readFloat:(float *)value forLabel:(NSString *)label {
     HFASSERT(value != NULL);
     union {

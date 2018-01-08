@@ -298,100 +298,74 @@ DEFINE_COMMAND(requires)
     switch (command) {
         case command_uint64: {
             uint64_t val;
-            if (![self readBytes:&val size:sizeof(val)]) {
+            if (![self readUInt64:&val forLabel:label]) {
                 Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read bytes", -1));
                 return TCL_ERROR;
             }
-            if (self.endian == HFEndianBig) {
-                val = NSSwapBigLongLongToHost(val);
-            }
             Tcl_SetObjResult(_interp, tcl_obj_from_uint64(val));
-            [self.currentNode.children addObject:[[HFTemplateNode alloc] initWithLabel:label value:[NSString stringWithFormat:@"%llu", val]]];
             break;
         }
         case command_int64: {
             int64_t val;
-            if (![self readBytes:&val size:sizeof(val)]) {
+            if (![self readInt64:&val forLabel:label]) {
                 Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read bytes", -1));
                 return TCL_ERROR;
             }
-            if (self.endian == HFEndianBig) {
-                val = NSSwapBigLongLongToHost(val);
-            }
             Tcl_SetObjResult(_interp, tcl_obj_from_int64(val));
-            [self.currentNode.children addObject:[[HFTemplateNode alloc] initWithLabel:label value:[NSString stringWithFormat:@"%lld", val]]];
             break;
         }
         case command_uint32: {
             uint32_t val;
-            if (![self readBytes:&val size:sizeof(val)]) {
+            if (![self readUInt32:&val forLabel:label]) {
                 Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read bytes", -1));
                 return TCL_ERROR;
             }
-            if (self.endian == HFEndianBig) {
-                val = NSSwapBigIntToHost(val);
-            }
             Tcl_SetObjResult(_interp, tcl_obj_from_uint32(val));
-            [self.currentNode.children addObject:[[HFTemplateNode alloc] initWithLabel:label value:[NSString stringWithFormat:@"%u", val]]];
             break;
         }
         case command_int32: {
             int32_t val;
-            if (![self readBytes:&val size:sizeof(val)]) {
+            if (![self readInt32:&val forLabel:label]) {
                 Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read bytes", -1));
                 return TCL_ERROR;
             }
-            if (self.endian == HFEndianBig) {
-                val = NSSwapBigIntToHost(val);
-            }
             Tcl_SetObjResult(_interp, tcl_obj_from_int32(val));
-            [self.currentNode.children addObject:[[HFTemplateNode alloc] initWithLabel:label value:[NSString stringWithFormat:@"%d", val]]];
             break;
         }
         case command_uint16: {
             uint16_t val;
-            if (![self readBytes:&val size:sizeof(val)]) {
+            if (![self readUInt16:&val forLabel:label]) {
                 Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read bytes", -1));
                 return TCL_ERROR;
             }
-            if (self.endian == HFEndianBig) {
-                val = NSSwapBigShortToHost(val);
-            }
             Tcl_SetObjResult(_interp, tcl_obj_from_uint16(val));
-            [self.currentNode.children addObject:[[HFTemplateNode alloc] initWithLabel:label value:[NSString stringWithFormat:@"%d", val]]];
             break;
         }
         case command_int16: {
             int16_t val;
-            if (![self readBytes:&val size:sizeof(val)]) {
+            if (![self readInt16:&val forLabel:label]) {
                 Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read bytes", -1));
                 return TCL_ERROR;
             }
-            if (self.endian == HFEndianBig) {
-                val = NSSwapBigShortToHost(val);
-            }
             Tcl_SetObjResult(_interp, tcl_obj_from_int16(val));
-            [self.currentNode.children addObject:[[HFTemplateNode alloc] initWithLabel:label value:[NSString stringWithFormat:@"%d", val]]];
             break;
         }
         case command_uint8: {
             uint8_t val;
-            if (![self readBytes:&val size:sizeof(val)]) {
+            if (![self readUInt8:&val forLabel:label]) {
                 Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read bytes", -1));
                 return TCL_ERROR;
             }
             Tcl_SetObjResult(_interp, tcl_obj_from_uint8(val));
-            [self.currentNode.children addObject:[[HFTemplateNode alloc] initWithLabel:label value:[NSString stringWithFormat:@"%d", val]]];
             break;
         }
         case command_int8: {
             int8_t val;
-            if (![self readBytes:&val size:sizeof(val)]) {
+            if (![self readInt8:&val forLabel:label]) {
                 Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read bytes", -1));
                 return TCL_ERROR;
             }
             Tcl_SetObjResult(_interp, tcl_obj_from_int8(val));
-            [self.currentNode.children addObject:[[HFTemplateNode alloc] initWithLabel:label value:[NSString stringWithFormat:@"%d", val]]];
             break;
         }
         case command_float: {
