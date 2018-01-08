@@ -288,41 +288,44 @@
 
 - (NSArray *)displayedSelectedContentsRanges {
     HFController *controller = [self controller];
-    NSArray *result;
     NSArray *selectedRanges = [controller selectedContentsRanges];
-    HFRange displayedRange = [self entireDisplayedRange];
-    
+    return [self displayedRanges:selectedRanges];
+}
+
+- (NSArray *)displayedRanges:(NSArray *)ranges
+{
+    const HFRange displayedRange = [self entireDisplayedRange];
     HFASSERT(displayedRange.length <= NSUIntegerMax);
-    NEW_OBJ_ARRAY(NSValue *, clippedSelectedRanges, [selectedRanges count]);
+    NEW_OBJ_ARRAY(NSValue *, clippedRanges, [ranges count]);
     NSUInteger clippedRangeIndex = 0;
-    for(HFRangeWrapper * wrapper in selectedRanges) {
-        HFRange selectedRange = [wrapper HFRange];
+    for(HFRangeWrapper * wrapper in ranges) {
+        const HFRange range = [wrapper HFRange];
         BOOL clippedRangeIsVisible;
-        NSRange clippedSelectedRange;
+        NSRange clippedRange;
         /* Necessary because zero length ranges do not intersect anything */
-        if (selectedRange.length == 0) {
+        if (range.length == 0) {
             /* Remember that {6, 0} is considered a subrange of {3, 3} */
-            clippedRangeIsVisible = HFRangeIsSubrangeOfRange(selectedRange, displayedRange);
+            clippedRangeIsVisible = HFRangeIsSubrangeOfRange(range, displayedRange);
             if (clippedRangeIsVisible) {
-                HFASSERT(selectedRange.location >= displayedRange.location);
-                clippedSelectedRange.location = ll2l(selectedRange.location - displayedRange.location);
-                clippedSelectedRange.length = 0;
+                HFASSERT(range.location >= displayedRange.location);
+                clippedRange.location = ll2l(range.location - displayedRange.location);
+                clippedRange.length = 0;
             }
         }
         else {
             // selectedRange.length > 0
-            clippedRangeIsVisible = HFIntersectsRange(selectedRange, displayedRange);
+            clippedRangeIsVisible = HFIntersectsRange(range, displayedRange);
             if (clippedRangeIsVisible) {
-                HFRange intersectionRange = HFIntersectionRange(selectedRange, displayedRange);
+                HFRange intersectionRange = HFIntersectionRange(range, displayedRange);
                 HFASSERT(intersectionRange.location >= displayedRange.location);
-                clippedSelectedRange.location = ll2l(intersectionRange.location - displayedRange.location);
-                clippedSelectedRange.length = ll2l(intersectionRange.length);
+                clippedRange.location = ll2l(intersectionRange.location - displayedRange.location);
+                clippedRange.length = ll2l(intersectionRange.length);
             }
         }
-        if (clippedRangeIsVisible) clippedSelectedRanges[clippedRangeIndex++] = [NSValue valueWithRange:clippedSelectedRange];
+        if (clippedRangeIsVisible) clippedRanges[clippedRangeIndex++] = [NSValue valueWithRange:clippedRange];
     }
-    result = [NSArray arrayWithObjects:clippedSelectedRanges count:clippedRangeIndex];
-    FREE_OBJ_ARRAY(clippedSelectedRanges, [selectedRanges count]);
+    NSArray *result = [NSArray arrayWithObjects:clippedRanges count:clippedRangeIndex];
+    FREE_OBJ_ARRAY(clippedRanges, [ranges count]);
     return result;
 }
 
