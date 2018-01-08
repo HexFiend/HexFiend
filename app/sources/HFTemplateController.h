@@ -17,7 +17,7 @@
 
 @interface HFTemplateController (OverrideBySubclasses)
 
-- (HFTemplateNode *)evaluateScript:(NSString *)path error:(NSString **)error;
+- (void)evaluateScript:(NSString *)path error:(NSString **)error;
 
 @end
 
@@ -31,8 +31,12 @@ typedef NS_ENUM(NSUInteger, HFEndian) {
 @property (readonly) HFController *controller;
 @property unsigned long long position;
 @property HFEndian endian;
+@property (readonly) HFTemplateNode *currentNode;
 
 - (BOOL)readBytes:(void *)buffer size:(size_t)size;
 - (NSData *)readDataForSize:(size_t)size;
+
+- (BOOL)readFloat:(float *)value forLabel:(NSString *)label;
+- (BOOL)readDouble:(double *)value forLabel:(NSString *)label;
 
 @end

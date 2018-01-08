@@ -67,9 +67,6 @@ enum command {
 
 @interface HFTclTemplateController ()
 
-@property HFTemplateNode *root;
-@property (weak) HFTemplateNode *currentNode;
-
 - (int)runCommand:(enum command)command objc:(int)objc objv:(struct Tcl_Obj * CONST *)objv;
 
 @end
@@ -158,13 +155,7 @@ DEFINE_COMMAND(requires)
     }
 }
 
-- (HFTemplateNode *)evaluateScript:(NSString *)path error:(NSString **)error {
-    self.root = [[HFTemplateNode alloc] init];
-    self.root.isGroup = YES;
-    self.currentNode = self.root;
-    if (error) {
-        *error = nil;
-    }
+- (void)evaluateScript:(NSString *)path error:(NSString **)error {
     Tcl_LimitTypeSet(_interp, TCL_LIMIT_TIME);
     Tcl_Time time;
     Tcl_GetTime(&time);
@@ -184,7 +175,6 @@ DEFINE_COMMAND(requires)
             }
         }
     }
-    return self.root;
 }
 
 #define CHECK_SINGLE_ARG \
@@ -417,36 +407,21 @@ DEFINE_COMMAND(requires)
             break;
         }
         case command_float: {
-            union {
-                uint32_t u;
-                float f;
-            } val;
-            static_assert(sizeof(val) == 4, "bad size");
-            if (![self readBytes:&val size:sizeof(val)]) {
+            float val;
+            if (![self readFloat:&val forLabel:label]) {
                 Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read bytes", -1));
                 return TCL_ERROR;
             }
-            if (self.endian == HFEndianBig) {
-                val.f = NSSwapBigIntToHost(val.u);
-            }
-            Tcl_SetObjResult(_interp, Tcl_NewDoubleObj(val.f));
-            [self.currentNode.children addObject:[[HFTemplateNode alloc] initWithLabel:label value:[NSString stringWithFormat:@"%f", val.f]]];
+            Tcl_SetObjResult(_interp, Tcl_NewDoubleObj(val));
             break;
         }
         case command_double: {
-            union {
-                uint64_t u;
-                double f;
-            } val;
-            if (![self readBytes:&val size:sizeof(val)]) {
+            double val;
+            if (![self readDouble:&val forLabel:label]) {
                 Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read bytes", -1));
                 return TCL_ERROR;
             }
-            if (self.endian == HFEndianBig) {
-                val.f = NSSwapBigLongLongToHost(val.u);
-            }
-            Tcl_SetObjResult(_interp, Tcl_NewDoubleObj(val.f));
-            [self.currentNode.children addObject:[[HFTemplateNode alloc] initWithLabel:label value:[NSString stringWithFormat:@"%f", val.f]]];
+            Tcl_SetObjResult(_interp, Tcl_NewDoubleObj(val));
             break;
         }
         default:
