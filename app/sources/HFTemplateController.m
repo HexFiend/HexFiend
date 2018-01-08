@@ -94,4 +94,8 @@
     [self.currentNode.children addObject:node];
 }
 
+- (BOOL)isEOF {
+    return (self.controller.minimumSelectionLocation + self.position) >= self.controller.contentsLength;
+}
+
 @end

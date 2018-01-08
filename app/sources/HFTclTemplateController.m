@@ -262,8 +262,7 @@ DEFINE_COMMAND(requires)
                 Tcl_WrongNumArgs(_interp, 0, objv, NULL);
                 return TCL_ERROR;
             }
-            int is_eof = (self.controller.minimumSelectionLocation + self.position) >= self.controller.contentsLength;
-            Tcl_SetObjResult(_interp, Tcl_NewBooleanObj(is_eof));
+            Tcl_SetObjResult(_interp, Tcl_NewBooleanObj(self.isEOF));
             break;
         }
         case command_requires: {

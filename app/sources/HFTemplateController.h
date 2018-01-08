@@ -32,6 +32,7 @@ typedef NS_ENUM(NSUInteger, HFEndian) {
 @property unsigned long long position;
 @property HFEndian endian;
 @property (readonly) HFTemplateNode *currentNode;
+@property (readonly) BOOL isEOF;
 
 - (BOOL)readBytes:(void *)buffer size:(size_t)size;
 - (NSData *)readDataForSize:(size_t)size;
