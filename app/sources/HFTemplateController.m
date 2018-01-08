@@ -216,4 +216,8 @@
     return YES;
 }
 
+- (void)moveTo:(long long)offset {
+    self.position += offset;
+}
+
 @end

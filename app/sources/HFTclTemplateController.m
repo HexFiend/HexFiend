@@ -254,7 +254,7 @@ DEFINE_COMMAND(requires)
             if (err != TCL_OK) {
                 return err;
             }
-            self.position += len;
+            [self moveTo:len];
             break;
         }
         case command_end: {
