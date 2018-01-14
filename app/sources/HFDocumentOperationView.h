@@ -22,7 +22,6 @@
     HFProgressTracker *tracker;
     NSArray *otherTopLevelObjects;
     double progress;
-    BOOL isFixedHeight;
     BOOL operationIsCancelling;
 }
 
@@ -34,7 +33,6 @@
 
 - (CGFloat)defaultHeight;
 
-@property (nonatomic) BOOL isFixedHeight;
 @property (nonatomic, copy) NSString *displayName;
 
 - (IBAction)cancelViewOperation:sender;

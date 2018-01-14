@@ -10,36 +10,57 @@
 
 @implementation CLIController
 
+- (void)runAlert:(NSString *)messageText {
+    NSAlert *alert = [[NSAlert alloc] init];
+    alert.messageText = messageText;
+    [alert runModal];
+}
+
 - (IBAction)installCommandLineTools:(id __unused)sender
 {
     NSString *srcFile = [[NSBundle mainBundle] pathForResource:@"hexf" ofType:nil];
     NSString *destDir = @"/usr/local/bin";
     NSString *destFile = [destDir stringByAppendingPathComponent:[srcFile lastPathComponent]];
-    NSError *err = nil;
-    NSFileManager *fm = [NSFileManager defaultManager];
-    if ([fm fileExistsAtPath:destFile]) {
-        [fm removeItemAtPath:destFile error:&err];
-        if (err != nil) {
-            [[NSDocumentController sharedDocumentController] presentError:err];
+    NSString *cmd = [NSString stringWithFormat:@"mkdir -p \\\"%@\\\" && ln -fs \\\"%@\\\" \\\"%@\\\" && chmod 755 \\\"%@\\\"",
+        destDir, srcFile, destFile, destFile];
+    NSString *script = [NSString stringWithFormat:@"do shell script \"%@\" with administrator privileges", cmd];
+    NSAppleScript *appleScript = [[NSAppleScript alloc] initWithSource:script];
+    NSDictionary *errInfo = nil;
+    // NOTE: running this in Debug mode in Xcode often hangs and fails
+    if (![appleScript executeAndReturnError:&errInfo]) {
+        if ([errInfo[NSAppleScriptErrorNumber] intValue] == -128) {
+            // User cancelled
             return;
         }
-    }
-    [fm copyItemAtPath:srcFile toPath:destFile error:&err];
-    if (err != nil) {
-        [[NSDocumentController sharedDocumentController] presentError:err];
+        [self runAlert:errInfo[NSAppleScriptErrorMessage]];
         return;
     }
-    NSDictionary *attrs = @{
-        NSFilePosixPermissions : @(0755),
-    };
-    [fm setAttributes:attrs ofItemAtPath:destFile error:&err];
-    if (err != nil) {
-        [[NSDocumentController sharedDocumentController] presentError:err];
+    if (0) {
+    // if NSAppleScript above turns out problematic, try the osascript variant instead
+    NSTask *task = [[NSTask alloc] init];
+    task.launchPath = @"/usr/bin/osascript";
+    task.arguments = @[@"-e", script];
+    NSPipe *standardErrorPipe = [NSPipe pipe];
+    task.standardError = standardErrorPipe;
+    @try {
+        [task launch];
+    } @catch (NSException *ex) {
+        [self runAlert:[NSString stringWithFormat:NSLocalizedString(@"Failed to run command: %@", nil), ex]];
         return;
     }
-    NSAlert *successAlert = [[NSAlert alloc] init];
-    successAlert.messageText = [NSString stringWithFormat:NSLocalizedString(@"The %@ tool has been successfully installed.", ""), [srcFile lastPathComponent]];
-    [successAlert runModal];
+    [task waitUntilExit];
+    NSFileHandle *standardErrorFile = [standardErrorPipe fileHandleForReading];
+    NSData *standardErrorData = [standardErrorFile readDataToEndOfFile];
+    if (task.terminationStatus != 0) {
+        NSString *standardErrorStr = [[NSString alloc] initWithData:standardErrorData encoding:NSUTF8StringEncoding];
+        if ([standardErrorStr rangeOfString:@"User canceled" options:NSCaseInsensitiveSearch].location != NSNotFound) {
+            return;
+        }
+        [self runAlert:[NSString stringWithFormat:NSLocalizedString(@"The %@ tool failed to install (%@).", ""), [srcFile lastPathComponent], standardErrorStr]];
+        return;
+    }
+    }
+    [self runAlert:[NSString stringWithFormat:NSLocalizedString(@"%@ has been successfully installed.", ""), [srcFile lastPathComponent]]];
 }
 
 @end

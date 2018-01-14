@@ -41,7 +41,6 @@ extern NSString * const BaseDataDocumentDidChangeStringEncodingNotification;
     BOOL bannerGrowing;
     BOOL willRemoveBannerIfSufficientlyShortAfterDrag;
     NSView *bannerView;
-    NSView *bannerDividerThumb;
     NSTimer *bannerResizeTimer;
     CGFloat bannerTargetHeight;
     CFAbsoluteTime bannerStartTime;
@@ -105,7 +104,7 @@ extern NSString * const BaseDataDocumentDidChangeStringEncodingNotification;
 
 - (NSArray *)copyBookmarksMenuItems;
 
-- (HFDocumentOperationView *)newOperationViewForNibName:(NSString *)name displayName:(NSString *)displayName fixedHeight:(BOOL)fixedHeight;
+- (HFDocumentOperationView *)newOperationViewForNibName:(NSString *)name displayName:(NSString *)displayName;
 - (void)prepareBannerWithView:(HFDocumentOperationView *)newSubview withTargetFirstResponder:(id)targetFirstResponder;
 - (void)hideBannerFirstThenDo:(dispatch_block_t)command;
 - (NSArray *)runningOperationViews;

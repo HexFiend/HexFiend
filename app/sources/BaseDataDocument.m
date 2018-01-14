@@ -6,7 +6,6 @@
 //
 
 #import "BaseDataDocument.h"
-#import "HFBannerDividerThumb.h"
 #import "HFDocumentOperationView.h"
 #import "DataInspectorRepresenter.h"
 #import "TextDividerRepresenter.h"
@@ -617,11 +616,10 @@ static inline Class preferredByteArrayClass(void) {
 }
 
 
-- (HFDocumentOperationView *)newOperationViewForNibName:(NSString *)name displayName:(NSString *)displayName fixedHeight:(BOOL)fixedHeight {
+- (HFDocumentOperationView *)newOperationViewForNibName:(NSString *)name displayName:(NSString *)displayName {
     HFASSERT(name);
     HFDocumentOperationView *result = [HFDocumentOperationView viewWithNibNamed:name owner:self];
     [result setDisplayName:displayName];
-    [result setIsFixedHeight:fixedHeight];
     [result setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
     [result setFrameSize:NSMakeSize(NSWidth([containerView frame]), 0)];
     [result setFrameOrigin:NSZeroPoint];
@@ -642,20 +640,13 @@ static inline Class preferredByteArrayClass(void) {
     bannerGrowing = YES;
     targetFirstResponderInBanner = targetFirstResponder;
     
-    if(!bannerDividerThumb)
-        bannerDividerThumb = [[HFBannerDividerThumb alloc] initWithFrame:NSMakeRect(0, 0, 14, 14)];
-    [bannerDividerThumb setAutoresizingMask:0];
-    [bannerDividerThumb setFrameOrigin:NSMakePoint(3, 0)];
-    [bannerDividerThumb removeFromSuperview];
-    [bannerView addSubview:bannerDividerThumb];
     if (newSubview) {
         NSSize newSubviewSize = [newSubview frame].size;
         if (newSubviewSize.width != NSWidth(containerBounds)) {
             newSubviewSize.width = NSWidth(containerBounds);
             [newSubview setFrameSize:newSubviewSize];
         }
-        if (bannerDividerThumb) [bannerView addSubview:newSubview positioned:NSWindowBelow relativeTo:bannerDividerThumb];
-        else [bannerView addSubview:newSubview];
+        [bannerView addSubview:newSubview];
     }
     [bannerResizeTimer invalidate];
     bannerResizeTimer = [NSTimer scheduledTimerWithTimeInterval:1. / 60. target:self selector:@selector(animateBanner:) userInfo:nil repeats:YES];
@@ -936,7 +927,7 @@ static inline Class preferredByteArrayClass(void) {
 - (void)finishedAnimation {
     if (! bannerGrowing) {
         bannerIsShown = NO;
-        [bannerDividerThumb removeFromSuperview];
+        [operationView removeFromSuperview];
         [bannerView removeFromSuperview];
         [[[bannerView subviews] copy] makeObjectsPerformSelector:@selector(removeFromSuperview)];
         bannerView = nil;
@@ -1082,7 +1073,7 @@ static inline Class preferredByteArrayClass(void) {
     
     showSaveViewAfterDelayTimer = [NSTimer scheduledTimerWithTimeInterval:.5 target:self selector:@selector(showSaveBannerHavingDelayed:) userInfo:nil repeats:NO];
     
-    if (! saveView) saveView = [self newOperationViewForNibName:@"SaveBanner" displayName:@"Saving" fixedHeight:YES];
+    if (! saveView) saveView = [self newOperationViewForNibName:@"SaveBanner" displayName:@"Saving"];
     
     [[controller byteArray] incrementChangeLockCounter];
     
@@ -1210,7 +1201,7 @@ static inline Class preferredByteArrayClass(void) {
     }
     
     if (! findReplaceView) {
-        findReplaceView = [self newOperationViewForNibName:@"FindReplaceBanner" displayName:@"Finding" fixedHeight:NO];
+        findReplaceView = [self newOperationViewForNibName:@"FindReplaceBanner" displayName:@"Finding"];
         [(HFTextField*)[findReplaceView viewNamed:@"searchField"] setTarget:self];
         [(HFTextField*)[findReplaceView viewNamed:@"searchField"] setAction:@selector(findNext:)];
         [(HFTextField*)[findReplaceView viewNamed:@"replaceField"] setTarget:self];
@@ -1221,41 +1212,35 @@ static inline Class preferredByteArrayClass(void) {
     [self prepareBannerWithView:findReplaceView withTargetFirstResponder:[findReplaceView viewNamed:@"searchField"]];
 }
 
-- (NSRect)splitView:(NSSplitView *)splitView additionalEffectiveRectOfDividerAtIndex:(NSInteger)dividerIndex {
-    USE(dividerIndex);
+- (BOOL)splitView:(NSSplitView *)splitView canCollapseSubview:(NSView * __unused)subview {
     HFASSERT(splitView == containerView);
-    if (bannerDividerThumb) return [bannerDividerThumb convertRect:[bannerDividerThumb bounds] toView:containerView];
-    else return NSZeroRect;
-}
-
-- (BOOL)splitView:(NSSplitView *)splitView canCollapseSubview:(NSView *)subview {
-    HFASSERT(splitView == containerView);
-    return subview == bannerView;
-}
-
-- (BOOL)splitView:(NSSplitView *)splitView shouldCollapseSubview:(NSView *)subview forDoubleClickOnDividerAtIndex:(NSInteger)dividerIndex {
-    HFASSERT(splitView == containerView);
-    USE(dividerIndex);
-    if (subview == bannerView && subview != NULL) {
-        [self hideBannerFirstThenDo:NULL];
-    }
     return NO;
 }
 
 - (CGFloat)splitView:(NSSplitView *)splitView constrainMaxCoordinate:(CGFloat)proposedMaximumPosition ofSubviewAt:(NSInteger)dividerIndex {
     HFASSERT(splitView == containerView);
-    CGFloat result = proposedMaximumPosition;
-    /* If our operation view is fixed height, then don't allow it to grow beyond its initial height */
-    if (operationView != nil && [operationView isFixedHeight]) {
-        /* Make sure it's actually our view */
-        if (dividerIndex == 0 && [splitView subviews][0] == bannerView) {
-            CGFloat maxHeight = [operationView defaultHeight];
-            if (maxHeight > 0 && maxHeight < proposedMaximumPosition) {
-                result = maxHeight;
-            }
-        }
+    if (dividerIndex == 0 && operationView != nil && !operationView.isHidden) {
+        return operationView.defaultHeight;
     }
-    return result;
+    return proposedMaximumPosition;
+}
+
+- (CGFloat)splitView:(NSSplitView *)splitView constrainMinCoordinate:(CGFloat)proposedMinimumPosition ofSubviewAt:(NSInteger)dividerIndex {
+    HFASSERT(splitView == containerView);
+    if (dividerIndex == 0 && operationView != nil && !operationView.isHidden) {
+        return operationView.defaultHeight;
+    }
+    return proposedMinimumPosition;
+}
+
+- (BOOL)splitView:(NSSplitView *)splitView shouldAdjustSizeOfSubview:(NSView *)subview {
+    HFASSERT(splitView == containerView);
+    return subview != bannerView;
+}
+
+- (NSRect)splitView:(NSSplitView *)splitView effectiveRect:(NSRect __unused)proposedEffectiveRect forDrawnRect:(NSRect __unused)drawnRect ofDividerAtIndex:(NSInteger __unused)dividerIndex {
+    HFASSERT(splitView == containerView);
+    return NSZeroRect;
 }
 
 - (void)removeBannerIfSufficientlyShort:unused {
@@ -1548,7 +1533,7 @@ cancelled:;
         [self saveFirstResponderIfNotInBannerAndThenSetItTo:[moveSelectionByView viewNamed:@"moveSelectionByTextField"]];
         return;
     }
-    if (! moveSelectionByView) moveSelectionByView = [self newOperationViewForNibName:@"MoveSelectionByBanner" displayName:@"Moving Selection" fixedHeight:YES];
+    if (! moveSelectionByView) moveSelectionByView = [self newOperationViewForNibName:@"MoveSelectionByBanner" displayName:@"Moving Selection"];
     [(NSButton*)[moveSelectionByView viewNamed:@"extendSelectionByCheckbox"] setIntValue:extend];
     [self prepareBannerWithView:moveSelectionByView withTargetFirstResponder:[moveSelectionByView viewNamed:@"moveSelectionByTextField"]];
     
@@ -1590,7 +1575,7 @@ cancelled:;
         [self hideBannerFirstThenDo:^(){[self jumpToOffset:sender];}];
         return;
     }
-    if (! jumpToOffsetView) jumpToOffsetView = [self newOperationViewForNibName:@"JumpToOffsetBanner" displayName:@"Jumping to Offset" fixedHeight:YES];
+    if (! jumpToOffsetView) jumpToOffsetView = [self newOperationViewForNibName:@"JumpToOffsetBanner" displayName:@"Jumping to Offset"];
     if (operationView == jumpToOffsetView) {
         [self saveFirstResponderIfNotInBannerAndThenSetItTo:[jumpToOffsetView viewNamed:@"moveSelectionByTextField"]];
     } else {
