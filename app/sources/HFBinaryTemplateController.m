@@ -32,6 +32,7 @@
 @property NSArray<HFTemplateFile*> *templates;
 @property (strong) HFTclTemplateController *templateController;
 @property HFTemplateFile *selectedFile;
+@property NSMenuItem *lastItem;
 
 @end
 
@@ -58,13 +59,12 @@
     if (![[NSFileManager defaultManager] createDirectoryAtPath:dir withIntermediateDirectories:YES attributes:nil error:&error]) {
         NSAlert *alert = [NSAlert alertWithError:error];
         [alert runModal];
-        return;
-    }
-    if (![[NSWorkspace sharedWorkspace] selectFile:nil inFileViewerRootedAtPath:dir]) {
+    } else if (![[NSWorkspace sharedWorkspace] selectFile:nil inFileViewerRootedAtPath:dir]) {
         NSAlert *alert = [[NSAlert alloc] init];
         alert.messageText = NSLocalizedString(@"Failed to open folder.", nil);
         [alert runModal];
     }
+    [self.templatesPopUp selectItem:self.lastItem];
 }
 
 - (void)loadTemplates:(id __unused)sender {
@@ -85,12 +85,16 @@
     noneItem.target = self;
     [self.templatesPopUp.menu addItem:noneItem];
     [self.templatesPopUp.menu addItem:[NSMenuItem separatorItem]];
+    NSMenuItem *itemToSelect = noneItem;
     if (templates.count > 0) {
         for (HFTemplateFile *file in templates) {
             NSMenuItem *templateItem = [[NSMenuItem alloc] initWithTitle:file.name action:@selector(selectTemplateFile:) keyEquivalent:@""];
             templateItem.target = self;
             templateItem.representedObject = file;
             [self.templatesPopUp.menu addItem:templateItem];
+            if (self.lastItem && [self.lastItem.title isEqualToString:templateItem.title]) {
+                itemToSelect = templateItem;
+            }
         }
         [self.templatesPopUp.menu addItem:[NSMenuItem separatorItem]];
     }
@@ -100,18 +104,21 @@
     NSMenuItem *openFolderItem = [[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Open Templates Folder", nil) action:@selector(openTemplatesFolder:) keyEquivalent:@""];
     openFolderItem.target = self;
     [self.templatesPopUp.menu addItem:openFolderItem];
-    [self.templatesPopUp selectItem:noneItem];
+    [self.templatesPopUp selectItem:itemToSelect];
     self.templates = templates;
+    self.lastItem = itemToSelect;
 }
 
 - (void)noTemplate:(id __unused)sender {
     self.selectedFile = nil;
     [self setRootNode:nil error:nil];
+    self.lastItem = nil;
 }
 
 - (void)selectTemplateFile:(id)sender {
     self.selectedFile = [sender representedObject];
     [self rerunTemplate];
+    self.lastItem = sender;
 }
 
 - (void)rerunTemplate {
