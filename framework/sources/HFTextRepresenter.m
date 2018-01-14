@@ -14,7 +14,9 @@
 #import <HexFiend/HFByteRangeAttribute.h>
 #import <HexFiend/HFColorRange.h>
 
-@implementation HFTextRepresenter
+@implementation HFTextRepresenter {
+    NSUInteger _clickedLocation;
+}
 
 - (Class)_textViewClass {
     UNIMPLEMENTED();
@@ -300,6 +302,9 @@
 - (NSArray<NSDictionary*> *)displayedColorRanges {
     NSMutableArray<NSDictionary*> *a = [NSMutableArray array];
     [self.controller.colorRanges enumerateObjectsUsingBlock:^(HFColorRange *obj, NSUInteger idx __unused, BOOL *stop __unused) {
+        if (!obj.color) {
+            return;
+        }
         HFRangeWrapper *wrapper = obj.range;
         NSArray *displayed = [self displayedRanges:@[wrapper]];
         if (displayed.count > 0) {
@@ -462,19 +467,33 @@
     return result;
 }
 
-- (NSMenu *)representerTextView:(HFRepresenterTextView * __unused)sender menuForEvent:(NSEvent * __unused)event {
+- (NSMenu *)representerTextView:(HFRepresenterTextView *)sender menuForEvent:(NSEvent *)event {
     NSMenu *menu = [[NSMenu alloc] init];
     menu.autoenablesItems = NO;
     NSMenuItem *menuItem;
     menuItem = [[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Highlight Selection", nil) action:@selector(highlightSelection:) keyEquivalent:@""];
     menuItem.target = self;
     NSArray *ranges = self.controller.selectedContentsRanges;
-    menuItem.enabled = ranges.count > 0 && [(HFRangeWrapper *)ranges[0] HFRange].length > 0;
+    NSPoint mouseDownLocation = [sender convertPoint:[event locationInWindow] fromView:nil];
+    _clickedLocation = [sender indexOfCharacterAtPoint:mouseDownLocation];
+    BOOL clickedOnColorRange = NO;
+    for (HFColorRange *colorRange in self.controller.colorRanges) {
+        if (HFLocationInRange(_clickedLocation, colorRange.range.HFRange)) {
+            clickedOnColorRange = YES;
+            break;
+        }
+    }
+    BOOL canHighlightSelection = ranges.count > 0 && [(HFRangeWrapper *)ranges[0] HFRange].length > 0;
+    menuItem.enabled = canHighlightSelection;
     [menu addItem:menuItem];
     [menu addItem:[NSMenuItem separatorItem]];
+    menuItem = [[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Remove Highlight", nil) action:@selector(removeHighlight:) keyEquivalent:@""];
+    menuItem.target = self;
+    menuItem.enabled = clickedOnColorRange;
+    [menu addItem:menuItem];
     menuItem = [[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Remove All Highlights", nil) action:@selector(removeAllHighlights:) keyEquivalent:@""];
     menuItem.target = self;
-    menuItem.enabled = NO;
+    menuItem.enabled = self.controller.colorRanges.count > 0;
     [menu addItem:menuItem];
     return menu;
 }
@@ -482,12 +501,11 @@
 - (void)highlightSelection:(id __unused)sender {
     HFColorRange *range = [[HFColorRange alloc] init];
     range.range = self.controller.selectedContentsRanges[0];
-    NSArray *colorRanges = self.controller.colorRanges;
+    NSMutableArray *colorRanges = self.controller.colorRanges;
     if (!colorRanges) {
-        colorRanges = [NSArray arrayWithObject:range];
-    } else {
-        colorRanges = [colorRanges arrayByAddingObject:range];
+        colorRanges = [NSMutableArray array];
     }
+    [colorRanges addObject:range];
     self.controller.colorRanges = colorRanges;
     NSColorPanel *panel = [NSColorPanel sharedColorPanel];
     id windowObserver = [[NSNotificationCenter defaultCenter] addObserverForName:NSWindowWillCloseNotification object:panel queue:nil usingBlock:^(NSNotification *note __unused) {
@@ -503,8 +521,23 @@
     [[NSNotificationCenter defaultCenter] removeObserver:windowObserver];
 }
 
+- (void)removeHighlight:(id __unused)sender {
+    NSEnumerator *enumerator = [self.controller.colorRanges reverseObjectEnumerator];
+    HFColorRange *colorRangeToRemove = nil;
+    for (HFColorRange *colorRange in enumerator) {
+        if (HFLocationInRange(_clickedLocation, colorRange.range.HFRange)) {
+            colorRangeToRemove = colorRange;
+            break;
+        }
+    }
+    if (colorRangeToRemove) {
+        [self.controller.colorRanges removeObject:colorRangeToRemove];
+        [self.controller colorRangesDidChange];
+    }
+}
+
 - (void)removeAllHighlights:(id __unused)sender {
-    
+    self.controller.colorRanges = nil;
 }
 
 @end

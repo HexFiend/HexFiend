@@ -2023,7 +2023,7 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
     return success;
 }
 
-- (void)setColorRanges:(NSArray<HFColorRange *> *)colorRanges {
+- (void)setColorRanges:(NSMutableArray<HFColorRange *> *)colorRanges {
     _colorRanges = colorRanges;
     [self colorRangesDidChange];
 }
