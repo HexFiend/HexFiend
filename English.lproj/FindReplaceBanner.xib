@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11201" systemVersion="16D32" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="13771" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11201"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13771"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="BaseDataDocument"/>
@@ -60,13 +61,13 @@
                         </customView>
                     </subviews>
                 </customView>
-                <segmentedControl identifier="fieldTypeControl" verticalHuggingPriority="750" id="99">
-                    <rect key="frame" x="8" y="49" width="84" height="18"/>
+                <segmentedControl identifier="fieldTypeControl" verticalHuggingPriority="750" misplaced="YES" id="99">
+                    <rect key="frame" x="4" y="49" width="85" height="18"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <segmentedCell key="cell" controlSize="small" borderStyle="border" alignment="left" style="roundRect" trackingMode="selectOne" id="100">
                         <font key="font" metaFont="smallSystem"/>
                         <segments>
-                            <segment label="Hex"/>
+                            <segment label="Hex" imageScaling="none"/>
                             <segment label="Text" selected="YES" tag="1"/>
                         </segments>
                     </segmentedCell>
@@ -85,13 +86,13 @@
                         <action selector="cancelViewOperation:" target="1" id="117"/>
                     </connections>
                 </button>
-                <segmentedControl verticalHuggingPriority="750" id="132">
-                    <rect key="frame" x="100" y="5" width="339" height="18"/>
+                <segmentedControl verticalHuggingPriority="750" misplaced="YES" id="132">
+                    <rect key="frame" x="89" y="5" width="354" height="18"/>
                     <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
                     <segmentedCell key="cell" controlSize="small" borderStyle="border" alignment="left" style="roundRect" trackingMode="momentary" id="133">
                         <font key="font" metaFont="smallSystem"/>
                         <segments>
-                            <segment label="Replace All"/>
+                            <segment label="Replace All" imageScaling="none"/>
                             <segment label="Replace" tag="1"/>
                             <segment label="Replace &amp; Find"/>
                             <segment label="Previous"/>
@@ -111,6 +112,7 @@
                 <outlet property="progressIndicator" destination="105" id="154"/>
                 <outlet property="replaceField" destination="12" id="43"/>
             </connections>
+            <point key="canvasLocation" x="139" y="168.5"/>
         </customView>
         <userDefaultsController representsSharedInstance="YES" id="95"/>
     </objects>
