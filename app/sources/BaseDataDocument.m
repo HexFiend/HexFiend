@@ -113,7 +113,6 @@ static inline Class preferredByteArrayClass(void) {
             USERDEFS_KEY_FOR_REP(dataInspectorRepresenter) : @YES,
             USERDEFS_KEY_FOR_REP(statusBarRepresenter) : @YES,
             USERDEFS_KEY_FOR_REP(scrollRepresenter) : @YES,
-            USERDEFS_KEY_FOR_REP(binaryTemplateRepresenter) : @YES,
         };
         [[NSUserDefaults standardUserDefaults] registerDefaults:defs];
     }
