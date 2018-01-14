@@ -1,8 +1,8 @@
 # Binary Templates
 
-Binary Templates are a new feature in Hex Fiend 2.9 that allow you to visual the structure of a binary file. They are implemented in [Tcl](https://www.tcl.tk) since this language is easy to embed, easy to write, has a ton of features, and already ships with macOS.
+Binary Templates are a new feature in Hex Fiend 2.9 that allow you to visualize the structure of a binary file. They are implemented in [Tcl](https://www.tcl.tk) since this language is easy to embed, easy to write, has a ton of features, and already ships with macOS.
 
-## Get Started
+## Getting Started
 
 1. Open a file in Hex Fiend
 2. Select from the **Views** menu **Binary Templates**
