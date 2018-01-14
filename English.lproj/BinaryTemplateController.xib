@@ -10,6 +10,7 @@
             <connections>
                 <outlet property="errorTextField" destination="f71-AR-Dtg" id="BMh-6K-EEk"/>
                 <outlet property="tableView" destination="1pa-Vm-0Dd" id="BAU-vY-gV3"/>
+                <outlet property="templatesPopUp" destination="Rj3-qZ-UB9" id="vbL-MQ-THe"/>
                 <outlet property="view" destination="Hz6-mo-xeY" id="0bl-1N-x8E"/>
             </connections>
         </customObject>
@@ -20,14 +21,14 @@
             <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" heightSizable="YES"/>
             <subviews>
                 <scrollView misplaced="YES" borderType="none" autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" id="4PB-iG-Pm4">
-                    <rect key="frame" x="0.0" y="0.0" width="298" height="200"/>
+                    <rect key="frame" x="0.0" y="0.0" width="298" height="170"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                     <clipView key="contentView" id="QU6-jz-eJv">
-                        <rect key="frame" x="0.0" y="0.0" width="298" height="200"/>
+                        <rect key="frame" x="0.0" y="0.0" width="298" height="170"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <tableView focusRingType="none" verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnReordering="NO" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" headerView="Qda-c6-1le" id="1pa-Vm-0Dd">
-                                <rect key="frame" x="0.0" y="0.0" width="298" height="177"/>
+                            <tableView focusRingType="none" verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnReordering="NO" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" id="1pa-Vm-0Dd">
+                                <rect key="frame" x="0.0" y="0.0" width="298" height="170"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <size key="intercellSpacing" width="3" height="2"/>
                                 <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -71,14 +72,10 @@
                         <rect key="frame" x="0.0" y="184" width="298" height="16"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </scroller>
-                    <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="q4F-dw-bod">
+                    <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="NO" id="q4F-dw-bod">
                         <rect key="frame" x="224" y="17" width="15" height="102"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </scroller>
-                    <tableHeaderView key="headerView" id="Qda-c6-1le">
-                        <rect key="frame" x="0.0" y="0.0" width="298" height="23"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                    </tableHeaderView>
                 </scrollView>
                 <textField hidden="YES" horizontalHuggingPriority="251" verticalHuggingPriority="750" misplaced="YES" id="f71-AR-Dtg">
                     <rect key="frame" x="-2" y="0.0" width="302" height="130"/>
@@ -86,6 +83,24 @@
                     <textFieldCell key="cell" controlSize="small" sendsActionOnEndEditing="YES" alignment="center" title="Label" id="3tC-5d-kwc">
                         <font key="font" metaFont="smallSystem"/>
                         <color key="textColor" red="0.37603222150259064" green="0.37603222150259064" blue="0.37603222150259064" alpha="0.84999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <popUpButton verticalHuggingPriority="750" misplaced="YES" id="Rj3-qZ-UB9">
+                    <rect key="frame" x="63" y="173" width="230" height="22"/>
+                    <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                    <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" controlSize="small" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="wSu-NJ-CEv">
+                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="smallSystem"/>
+                        <menu key="menu" id="pYa-7J-1RR"/>
+                    </popUpButtonCell>
+                </popUpButton>
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" misplaced="YES" id="3LB-qK-c4x">
+                    <rect key="frame" x="4" y="178" width="56" height="14"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Template:" id="b7b-58-bHQ">
+                        <font key="font" metaFont="smallSystem"/>
+                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
