@@ -12,6 +12,7 @@
 #import <HexFiend/HFByteRangeAttributeArray.h>
 #import <HexFiend/HFTextVisualStyleRun.h>
 #import <HexFiend/HFByteRangeAttribute.h>
+#import <HexFiend/HFColorRange.h>
 
 @implementation HFTextRepresenter
 
@@ -265,6 +266,10 @@
             [[self view] setByteColoring:NULL];
         }
     }
+    if (bits & (HFControllerColorRanges)) {
+        [[self view] updateSelectedRanges];
+        [[self view] setNeedsDisplay:YES];
+    }
     [super controllerDidChange:bits];
 }
 
@@ -293,31 +298,18 @@
 }
 
 - (NSArray<NSDictionary*> *)displayedColorRanges {
-    if (!self.controller.colorRanges) {
-        self.controller.colorRanges = @[
-            @{
-                @"color": [NSColor colorWithCalibratedRed:1.00 green:0.44 blue:0.81 alpha:1.0],
-                @"range": [HFRangeWrapper withRange:HFRangeMake(0, 4)],
-            },
-            @{
-                @"color": [NSColor colorWithCalibratedRed:1.00 green:0.80 blue:0.40 alpha:1.0],
-                @"range": [HFRangeWrapper withRange:HFRangeMake(48, 8)],
-            },
-        ];
-    }
     NSMutableArray<NSDictionary*> *a = [NSMutableArray array];
-    [self.controller.colorRanges enumerateObjectsUsingBlock:^(NSDictionary *obj, NSUInteger idx __unused, BOOL *stop __unused) {
-        NSColor *color = obj[@"color"];
-        HFRangeWrapper *wrapper = obj[@"range"];
+    [self.controller.colorRanges enumerateObjectsUsingBlock:^(HFColorRange *obj, NSUInteger idx __unused, BOOL *stop __unused) {
+        HFRangeWrapper *wrapper = obj.range;
         NSArray *displayed = [self displayedRanges:@[wrapper]];
         if (displayed.count > 0) {
-            [a addObject:@{@"color" : color, @"range" : displayed.firstObject}];
+            [a addObject:@{@"color" : obj.color, @"range" : displayed.firstObject}];
         }
     }];
     return a;
 }
 
-- (NSArray *)displayedRanges:(NSArray *)ranges
+- (NSArray<NSValue*> *)displayedRanges:(NSArray *)ranges
 {
     const HFRange displayedRange = [self entireDisplayedRange];
     HFASSERT(displayedRange.length <= NSUIntegerMax);
@@ -468,6 +460,51 @@
         }
     }
     return result;
+}
+
+- (NSMenu *)representerTextView:(HFRepresenterTextView * __unused)sender menuForEvent:(NSEvent * __unused)event {
+    NSMenu *menu = [[NSMenu alloc] init];
+    menu.autoenablesItems = NO;
+    NSMenuItem *menuItem;
+    menuItem = [[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Highlight Selection", nil) action:@selector(highlightSelection:) keyEquivalent:@""];
+    menuItem.target = self;
+    NSArray *ranges = self.controller.selectedContentsRanges;
+    menuItem.enabled = ranges.count > 0 && [(HFRangeWrapper *)ranges[0] HFRange].length > 0;
+    [menu addItem:menuItem];
+    [menu addItem:[NSMenuItem separatorItem]];
+    menuItem = [[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Remove All Highlights", nil) action:@selector(removeAllHighlights:) keyEquivalent:@""];
+    menuItem.target = self;
+    menuItem.enabled = NO;
+    [menu addItem:menuItem];
+    return menu;
+}
+
+- (void)highlightSelection:(id __unused)sender {
+    HFColorRange *range = [[HFColorRange alloc] init];
+    range.range = self.controller.selectedContentsRanges[0];
+    NSArray *colorRanges = self.controller.colorRanges;
+    if (!colorRanges) {
+        colorRanges = [NSArray arrayWithObject:range];
+    } else {
+        colorRanges = [colorRanges arrayByAddingObject:range];
+    }
+    self.controller.colorRanges = colorRanges;
+    NSColorPanel *panel = [NSColorPanel sharedColorPanel];
+    id windowObserver = [[NSNotificationCenter defaultCenter] addObserverForName:NSWindowWillCloseNotification object:panel queue:nil usingBlock:^(NSNotification *note __unused) {
+        [NSApp stopModal];
+    }];
+    id colorObserver = [[NSNotificationCenter defaultCenter] addObserverForName:NSColorPanelColorDidChangeNotification object:panel queue:nil usingBlock:^(NSNotification * __unused note) {
+        range.color = panel.color;
+        [self.controller colorRangesDidChange];
+    }];
+    panel.continuous = YES;
+    (void)[NSApp runModalForWindow:panel];
+    [[NSNotificationCenter defaultCenter] removeObserver:colorObserver];
+    [[NSNotificationCenter defaultCenter] removeObserver:windowObserver];
+}
+
+- (void)removeAllHighlights:(id __unused)sender {
+    
 }
 
 @end

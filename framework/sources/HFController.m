@@ -2023,6 +2023,15 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
     return success;
 }
 
+- (void)setColorRanges:(NSArray<HFColorRange *> *)colorRanges {
+    _colorRanges = colorRanges;
+    [self colorRangesDidChange];
+}
+
+- (void)colorRangesDidChange {
+    [self _addPropertyChangeBits:HFControllerColorRanges];
+}
+
 #if BENCHMARK_BYTEARRAYS
 
 + (void)_testByteArray {

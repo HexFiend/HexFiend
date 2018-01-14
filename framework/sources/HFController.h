@@ -15,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
     @abstract The HFController.h header contains the HFController class, which is a central class in Hex Fiend. 
 */
 
-@class HFRepresenter, HFByteArray, HFFileReference, HFControllerCoalescedUndo, HFByteRangeAttributeArray;
+@class HFRepresenter, HFByteArray, HFFileReference, HFControllerCoalescedUndo, HFByteRangeAttributeArray, HFColorRange;
 
 /*! @enum HFControllerPropertyBits
     The HFControllerPropertyBits bitmask is used to inform the HFRepresenters of a change in the current state that they may need to react to.  A bitmask of the changed properties is passed to representerChangedProperties:.  It is common for multiple properties to be included in such a bitmask.        
@@ -39,6 +39,7 @@ typedef NS_OPTIONS(NSUInteger, HFControllerPropertyBits) {
     HFControllerColorBytes = 1 << 15,   /*!< Indicates that the shouldColorBytes property has changed. */
     HFControllerShowCallouts = 1 << 16, /*!< Indicates that the shouldShowCallouts property has changed. */
     HFControllerHideNullBytes = 1 << 17, /*!< Indicates that the shouldHideNullBytes property has changed. */
+    HFControllerColorRanges = 1 << 18, /*!< Indicates that the colorRanges property has changed. */
 };
 
 /*! @enum HFControllerMovementDirection
@@ -234,7 +235,8 @@ You create an HFController via <tt>[[HFController alloc] init]</tt>.  After that
 - (nullable HFByteArray *)byteArrayForSelectedContentsRanges;
 //@}
 
-@property (nonatomic) NSArray<NSDictionary*> *colorRanges;
+@property (nonatomic) NSArray<HFColorRange*> *colorRanges;
+- (void)colorRangesDidChange; // manually notify of changes to color range individual values
 
 /* Number of bytes used in each column for a text-style representer. */
 @property (nonatomic) NSUInteger bytesPerColumn;

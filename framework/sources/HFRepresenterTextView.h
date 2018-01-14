@@ -29,7 +29,7 @@ NS_ASSUME_NONNULL_BEGIN
 @private;
     HFTextRepresenter *representer;
     NSArray *cachedSelectedRanges;
-    NSArray *cachedColorRanges;
+    NSArray<NSDictionary*> *cachedColorRanges;
     CGFloat verticalOffset;
     CGFloat horizontalContainerInset;
     CGFloat defaultLineHeight;
@@ -91,10 +91,6 @@ NS_ASSUME_NONNULL_BEGIN
 /* The number of bytes between vertical guides. 0 means no drawing of guides. */
 @property (nonatomic) NSUInteger bytesBetweenVerticalGuides;
 
-/* To be invoked from drawRect:. */
-- (void)drawCaretIfNecessaryWithClip:(NSRect)clipRect;
-- (void)drawSelectionIfNecessaryWithClip:(NSRect)clipRect;
-
 /* For font substitution.  An index of 0 means the default (base) font. */
 - (NSFont *)fontAtSubstitutionIndex:(uint16_t)idx;
 
@@ -147,6 +143,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (IBAction)selectAll:sender;
 
+@end
+
+@interface NSObject (HFRepresenterTextDelegate)
+
+- (NSMenu *)representerTextView:(HFRepresenterTextView *)sender menuForEvent:(NSEvent *)event;
 
 @end
 

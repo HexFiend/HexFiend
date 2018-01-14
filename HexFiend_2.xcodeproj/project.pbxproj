@@ -58,6 +58,8 @@
 		A59BC59920020B480066860F /* BinaryTemplateController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A59BC59720020B480066860F /* BinaryTemplateController.xib */; };
 		A59BC59C2002113F0066860F /* HFTemplateNode.m in Sources */ = {isa = PBXBuildFile; fileRef = A59BC59B2002113F0066860F /* HFTemplateNode.m */; };
 		A59BC59F2002E63C0066860F /* HFTemplateController.m in Sources */ = {isa = PBXBuildFile; fileRef = A59BC59E2002E63C0066860F /* HFTemplateController.m */; };
+		A5ED2A85200BD8F0004AD7A4 /* HFColorRange.h in Headers */ = {isa = PBXBuildFile; fileRef = A5ED2A83200BD8F0004AD7A4 /* HFColorRange.h */; };
+		A5ED2A86200BD8F0004AD7A4 /* HFColorRange.m in Sources */ = {isa = PBXBuildFile; fileRef = A5ED2A84200BD8F0004AD7A4 /* HFColorRange.m */; };
 		D00122E30D48A8D400540B10 /* HFFindReplaceBackgroundView.m in Sources */ = {isa = PBXBuildFile; fileRef = D00122E20D48A8D400540B10 /* HFFindReplaceBackgroundView.m */; };
 		D00C16790FF4925A006D021F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D00C16750FF4925A006D021F /* main.m */; };
 		D00EBA730CE866D50020E2D7 /* HFVerticalScrollerRepresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = D00EBA710CE866D50020E2D7 /* HFVerticalScrollerRepresenter.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -392,6 +394,8 @@
 		A59BC59B2002113F0066860F /* HFTemplateNode.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFTemplateNode.m; path = app/sources/HFTemplateNode.m; sourceTree = "<group>"; };
 		A59BC59D2002E63C0066860F /* HFTemplateController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFTemplateController.h; path = app/sources/HFTemplateController.h; sourceTree = "<group>"; };
 		A59BC59E2002E63C0066860F /* HFTemplateController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFTemplateController.m; path = app/sources/HFTemplateController.m; sourceTree = "<group>"; };
+		A5ED2A83200BD8F0004AD7A4 /* HFColorRange.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFColorRange.h; path = sources/HFColorRange.h; sourceTree = "<group>"; };
+		A5ED2A84200BD8F0004AD7A4 /* HFColorRange.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFColorRange.m; path = sources/HFColorRange.m; sourceTree = "<group>"; };
 		D00122E10D48A8D400540B10 /* HFFindReplaceBackgroundView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFFindReplaceBackgroundView.h; path = app/sources/HFFindReplaceBackgroundView.h; sourceTree = "<group>"; };
 		D00122E20D48A8D400540B10 /* HFFindReplaceBackgroundView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFFindReplaceBackgroundView.m; path = app/sources/HFFindReplaceBackgroundView.m; sourceTree = "<group>"; };
 		D00C15E50FF091FF006D021F /* HexFiendling.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HexFiendling.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -878,6 +882,8 @@
 				D010173510491BB200536FBC /* HFTextVisualStyleRun.m */,
 				D016437113E5F7BB00294E60 /* HFRepresenterTextViewCallout.h */,
 				D016437213E5F7BC00294E60 /* HFRepresenterTextViewCallout.m */,
+				A5ED2A83200BD8F0004AD7A4 /* HFColorRange.h */,
+				A5ED2A84200BD8F0004AD7A4 /* HFColorRange.m */,
 			);
 			name = "Text Representers";
 			sourceTree = "<group>";
@@ -1169,6 +1175,7 @@
 				D026C7C00CDD54D00082279E /* HFHexTextRepresenter.h in Headers */,
 				D082AC910CDEBD5300554EB7 /* HFByteArray_Internal.h in Headers */,
 				D0CDB7540CE735590084926B /* HFRepresenterStringEncodingTextView.h in Headers */,
+				A5ED2A85200BD8F0004AD7A4 /* HFColorRange.h in Headers */,
 				D0CDB77D0CE737130084926B /* HFStringEncodingTextRepresenter.h in Headers */,
 				D00EBA730CE866D50020E2D7 /* HFVerticalScrollerRepresenter.h in Headers */,
 				D04327A40CF081CD00C14250 /* HFFunctions_Private.h in Headers */,
@@ -1608,6 +1615,7 @@
 				D0A47C120D288EDF00CB9BB9 /* HFControllerCoalescedUndo.m in Sources */,
 				D041D1C10D397E1A00C28345 /* HFPasteboardOwner.m in Sources */,
 				D0B7E3750D5C5B3A007874ED /* HFByteArray_FindReplace.m in Sources */,
+				A5ED2A86200BD8F0004AD7A4 /* HFColorRange.m in Sources */,
 				D0826EAC0D4855900006FB7D /* HFFileReference.m in Sources */,
 				D0826EF20D487A000006FB7D /* HFFileByteSlice.m in Sources */,
 				D07150680D5510CE00573D7A /* HFTextField.m in Sources */,

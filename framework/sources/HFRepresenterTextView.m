@@ -548,18 +548,18 @@ enum LineCoverage_t {
     else return [self primaryTextSelectionColor];
 }
 
-- (void)drawSelectionIfNecessaryWithClip:(NSRect)clipRect {
+- (void)drawRangesIfNecessaryWithClip:(NSRect)clipRect {
+    NSArray *ranges = [self displayedSelectedContentsRanges];
+    [self drawRangesIfNecessary:ranges withClip:clipRect color:[self textSelectionColor]];
+
     for (NSDictionary *dict in cachedColorRanges) {
         NSColor *color = dict[@"color"];
         NSValue *wrapper = dict[@"range"];
-        [self drawSelectionIfNecessaryWithClip:clipRect forRanges:@[wrapper] withColor:color];
+        [self drawRangesIfNecessary:@[wrapper]  withClip:clipRect color:color];
     }
-
-    NSArray *ranges = [self displayedSelectedContentsRanges];
-    [self drawSelectionIfNecessaryWithClip:clipRect forRanges:ranges withColor:[self textSelectionColor]];
 }
 
-- (void)drawSelectionIfNecessaryWithClip:(NSRect)clipRect forRanges:(NSArray *)ranges withColor:(NSColor *)color {
+- (void)drawRangesIfNecessary:(NSArray *)ranges withClip:(NSRect)clipRect color:(NSColor *)color {
     NSUInteger bytesPerLine = [self bytesPerLine];
     [color set];
     CGFloat lineHeight = [self lineHeight];
@@ -1591,7 +1591,7 @@ static size_t unionAndCleanLists(NSRect *rectList, __unsafe_unretained id *value
     NSUInteger byteCount = [_data length];
     
     [self _drawDefaultLineBackgrounds:clip withLineHeight:[self lineHeight] maxLines:ll2l(HFRoundUpToNextMultipleSaturate(byteCount, bytesPerLine) / bytesPerLine)];
-    [self drawSelectionIfNecessaryWithClip:clip];
+    [self drawRangesIfNecessaryWithClip:clip];
     
     NSColor *textColor = [NSColor blackColor];
     [textColor set];
@@ -2010,6 +2010,13 @@ static size_t unionAndCleanLists(NSRect *rectList, __unsafe_unretained id *value
     else if (action == @selector(copy:)) return [self _selectionIsNonEmpty];
     else if (action == @selector(paste:)) return [[self representer] canPasteFromPasteboard:[NSPasteboard generalPasteboard]];
     else return YES;
+}
+
+- (NSMenu *)menuForEvent:(NSEvent *)event {
+    if ([representer respondsToSelector:@selector(representerTextView:menuForEvent:)]) {
+        return [representer representerTextView:self menuForEvent:event];
+    }
+    return [super menuForEvent:event];
 }
 
 @end
