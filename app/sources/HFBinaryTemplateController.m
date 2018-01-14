@@ -33,9 +33,28 @@
 
 @implementation HFBinaryTemplateController
 
+- (NSString *)templatesFolder {
+    return [[NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES).firstObject stringByAppendingPathComponent:[NSBundle mainBundle].bundleIdentifier] stringByAppendingPathComponent:@"Templates"];
+}
+
+- (void)openTemplatesFolder:(id __unused)sender {
+    NSString *dir = self.templatesFolder;
+    NSError *error = nil;
+    if (![[NSFileManager defaultManager] createDirectoryAtPath:dir withIntermediateDirectories:YES attributes:nil error:&error]) {
+        NSAlert *alert = [NSAlert alertWithError:error];
+        [alert runModal];
+        return;
+    }
+    if (![[NSWorkspace sharedWorkspace] selectFile:nil inFileViewerRootedAtPath:dir]) {
+        NSAlert *alert = [[NSAlert alloc] init];
+        alert.messageText = NSLocalizedString(@"Failed to open folder.", nil);
+        [alert runModal];
+    }
+}
+
 - (void)loadTemplates:(id __unused)sender {
     NSFileManager *fm = [NSFileManager defaultManager];
-    NSString *dir = [[NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES).firstObject stringByAppendingPathComponent:[NSBundle mainBundle].bundleIdentifier] stringByAppendingPathComponent:@"Templates"];
+    NSString *dir = self.templatesFolder;
     NSMutableArray<HFTemplateFile*> *templates = [NSMutableArray array];
     for (NSString *filename in [fm contentsOfDirectoryAtPath:dir error:nil]) {
         if ([filename.pathExtension isEqualToString:@"tcl"]) {
@@ -58,6 +77,9 @@
         [self.templatesPopUp.menu addItem:[NSMenuItem separatorItem]];
     }
     item = [[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Refresh", nil) action:@selector(loadTemplates:) keyEquivalent:@""];
+    item.target = self;
+    [self.templatesPopUp.menu addItem:item];
+    item = [[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Open Templates Folder", nil) action:@selector(openTemplatesFolder:) keyEquivalent:@""];
     item.target = self;
     [self.templatesPopUp.menu addItem:item];
     self.templates = templates;
