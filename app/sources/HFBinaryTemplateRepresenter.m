@@ -8,13 +8,11 @@
 
 #import "HFBinaryTemplateRepresenter.h"
 #import "HFBinaryTemplateController.h"
-#import "HFTclTemplateController.h"
 #import "HFTemplateNode.h"
 
 @interface HFBinaryTemplateRepresenter ()
 
 @property (strong) HFBinaryTemplateController *viewController;
-@property (strong) HFTclTemplateController *templateController;
 @property unsigned long long lastMinimumSelectionLocation;
 
 @end
@@ -26,14 +24,13 @@
         return nil;
     }
 
-    _templateController = [[HFTclTemplateController alloc] init];
     _lastMinimumSelectionLocation = -1;
 
     return self;
 }
 
 - (NSView *)createView {
-    self.viewController = [[HFBinaryTemplateController alloc] initWithNibName:@"BinaryTemplateController" bundle:nil];
+    self.viewController = [[HFBinaryTemplateController alloc] init];
     return self.viewController.view;
 }
 
@@ -49,16 +46,9 @@
     if (bits & HFControllerSelectedRanges) {
         if (self.controller.contentsLength > 0 && self.controller.minimumSelectionLocation != self.lastMinimumSelectionLocation) {
             self.lastMinimumSelectionLocation = self.controller.minimumSelectionLocation;
-            [self rerunTemplate];
+            [self.viewController rerunTemplateWithController:self.controller];
         }
     }
-}
-
-- (void)rerunTemplate {
-    NSString *path = [NSHomeDirectory() stringByAppendingPathComponent:@"Desktop/hexfiend.tcl"];
-    NSString *errorMessage = nil;
-    HFTemplateNode *node = [self.templateController evaluateScript:path forController:self.controller error:&errorMessage];
-    [self.viewController setRootNode:node error:errorMessage];
 }
 
 @end

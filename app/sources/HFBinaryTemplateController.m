@@ -8,6 +8,7 @@
 
 #import "HFBinaryTemplateController.h"
 #import "HFTemplateNode.h"
+#import "HFTclTemplateController.h"
 
 @interface HFTemplateFile : NSObject
 
@@ -26,12 +27,26 @@
 @property (weak) IBOutlet NSTextField *errorTextField;
 @property (weak) IBOutlet NSPopUpButton *templatesPopUp;
 
+@property HFController *controller;
 @property HFTemplateNode *node;
 @property NSArray<HFTemplateFile*> *templates;
+@property (strong) HFTclTemplateController *templateController;
+@property HFTemplateFile *selectedFile;
 
 @end
 
 @implementation HFBinaryTemplateController
+
+- (instancetype)init {
+    if ((self = [super initWithNibName:@"BinaryTemplateController" bundle:nil]) != nil) {
+        _templateController = [[HFTclTemplateController alloc] init];
+    }
+    return self;
+}
+
+- (void)awakeFromNib {
+    [self loadTemplates:self];
+}
 
 - (NSString *)templatesFolder {
     return [[NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES).firstObject stringByAppendingPathComponent:[NSBundle mainBundle].bundleIdentifier] stringByAppendingPathComponent:@"Templates"];
@@ -72,7 +87,10 @@
     [self.templatesPopUp.menu addItem:[NSMenuItem separatorItem]];
     if (templates.count > 0) {
         for (HFTemplateFile *file in templates) {
-            [self.templatesPopUp addItemWithTitle:file.name];
+            NSMenuItem *templateItem = [[NSMenuItem alloc] initWithTitle:file.name action:@selector(selectTemplateFile:) keyEquivalent:@""];
+            templateItem.target = self;
+            templateItem.representedObject = file;
+            [self.templatesPopUp.menu addItem:templateItem];
         }
         [self.templatesPopUp.menu addItem:[NSMenuItem separatorItem]];
     }
@@ -86,12 +104,28 @@
     self.templates = templates;
 }
 
-- (void)awakeFromNib {
-    [self loadTemplates:self];
+- (void)noTemplate:(id __unused)sender {
+    self.selectedFile = nil;
+    [self setRootNode:nil error:nil];
 }
 
-- (void)noTemplate:(id __unused)sender {
-    
+- (void)selectTemplateFile:(id)sender {
+    self.selectedFile = [sender representedObject];
+    [self rerunTemplate];
+}
+
+- (void)rerunTemplate {
+    [self rerunTemplateWithController:self.controller];
+}
+
+- (void)rerunTemplateWithController:(HFController *)controller {
+    _controller = controller;
+    if (!self.selectedFile) {
+        return;
+    }
+    NSString *errorMessage = nil;
+    HFTemplateNode *node = [self.templateController evaluateScript:self.selectedFile.path forController:controller error:&errorMessage];
+    [self setRootNode:node error:errorMessage];
 }
 
 - (NSInteger)numberOfRowsInTableView:(NSTableView * __unused)tableView {

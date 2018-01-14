@@ -8,10 +8,10 @@
 
 #import <Cocoa/Cocoa.h>
 
-@class HFTemplateNode;
+@class HFController;
 
 @interface HFBinaryTemplateController : NSViewController
 
-- (void)setRootNode:(HFTemplateNode *)node error:(NSString *)error;
+- (void)rerunTemplateWithController:(HFController *)controller;
 
 @end
