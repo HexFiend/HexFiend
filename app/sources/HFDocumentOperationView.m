@@ -98,14 +98,6 @@ static NSView *searchForViewWithIdentifier(NSView *view, NSString *identifier) {
     return defaultSize.height;
 }
 
-- (void)setIsFixedHeight:(BOOL)val {
-    isFixedHeight = val;
-}
-
-- (BOOL)isFixedHeight {
-    return isFixedHeight;
-}
-
 - (BOOL)selectorIsSetMethod:(SEL)sel {
     BOOL result = NO;
     const char *selName = sel_getName(sel);
