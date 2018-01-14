@@ -26,17 +26,17 @@ Congrats, you've written the most basic and simplest template that actually does
 
 Hex Fiend extends Tcl with additional commands for interacting with the opened file. Many of these commands were heavily inspired by [WinHex](https://www.x-ways.net/winhex/templates/).
 
-The most basic command is the type command. Each type command takes a single argument "label" which is the text that shows in the user interface.
-
 | Command  | Description | Example |
 | ------------- | ------------- | ------------- |
-| uint64  | Reads an unsigned 64-bit integer  | `uint64 "Label"` |
-| int64  | Reads a signed 64-bit integer  | `int64 "Label"` |
-| uint32  | Reads an unsigned 32-bit integer  | `uint32 "Label"` |
-| int32  | Reads a signed 32-bit integer  | `int32 "Label"` |
-| uint16  | Reads an unsigned 16-bit integer  | `uint16 "Label"` |
-| int16  | Reads a signed 16-bit integer  | `int16 "Label"` |
-| uint8  | Reads an unsigned 8-bit integer  | `uint8 "Label"` |
-| int8  | Reads a signed 8-bit integer  | `int8 "Label"` |
-| float  | Reads a 32-bit floating point  | `float "Label"` |
-| double  | Reads a 64-bit floating point  | `double "Label"` |
+| uint64 *label*  | Reads an unsigned 64-bit integer  | `uint64 "Label"` |
+| int64 *label* | Reads a signed 64-bit integer  | `int64 "Label"` |
+| uint32 *label* | Reads an unsigned 32-bit integer  | `uint32 "Label"` |
+| int32 *label* | Reads a signed 32-bit integer  | `int32 "Label"` |
+| uint16 *label* | Reads an unsigned 16-bit integer  | `uint16 "Label"` |
+| int16 *label* | Reads a signed 16-bit integer  | `int16 "Label"` |
+| uint8 *label* | Reads an unsigned 8-bit integer  | `uint8 "Label"` |
+| int8 *label* | Reads a signed 8-bit integer  | `int8 "Label"` |
+| float *label* | Reads a 32-bit floating point  | `float "Label"` |
+| double *label* | Reads a 64-bit floating point  | `double "Label"` |
+| hex *len* *label* | Reads *len* bytes as hexadecimal | `hex 16 "UUID"` |
+| ascii *len* *label* | Reads *len* bytes as ASCII | `ascii 32 "Name"` |
