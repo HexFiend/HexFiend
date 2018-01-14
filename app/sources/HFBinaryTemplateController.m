@@ -66,9 +66,9 @@
     }
     [templates sortUsingDescriptors:@[[[NSSortDescriptor alloc] initWithKey:@"name" ascending:YES]]];
     [self.templatesPopUp removeAllItems];
-    NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"None", nil) action:@selector(noTemplate:) keyEquivalent:@""];
-    item.target = self;
-    [self.templatesPopUp.menu addItem:item];
+    NSMenuItem *noneItem = [[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"None", nil) action:@selector(noTemplate:) keyEquivalent:@""];
+    noneItem.target = self;
+    [self.templatesPopUp.menu addItem:noneItem];
     [self.templatesPopUp.menu addItem:[NSMenuItem separatorItem]];
     if (templates.count > 0) {
         for (HFTemplateFile *file in templates) {
@@ -76,12 +76,13 @@
         }
         [self.templatesPopUp.menu addItem:[NSMenuItem separatorItem]];
     }
-    item = [[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Refresh", nil) action:@selector(loadTemplates:) keyEquivalent:@""];
-    item.target = self;
-    [self.templatesPopUp.menu addItem:item];
-    item = [[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Open Templates Folder", nil) action:@selector(openTemplatesFolder:) keyEquivalent:@""];
-    item.target = self;
-    [self.templatesPopUp.menu addItem:item];
+    NSMenuItem *refreshItem = [[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Refresh", nil) action:@selector(loadTemplates:) keyEquivalent:@""];
+    refreshItem.target = self;
+    [self.templatesPopUp.menu addItem:refreshItem];
+    NSMenuItem *openFolderItem = [[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Open Templates Folder", nil) action:@selector(openTemplatesFolder:) keyEquivalent:@""];
+    openFolderItem.target = self;
+    [self.templatesPopUp.menu addItem:openFolderItem];
+    [self.templatesPopUp selectItem:noneItem];
     self.templates = templates;
 }
 
