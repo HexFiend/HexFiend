@@ -31,24 +31,24 @@ uint32	"NextCatalogID"
 uint32	"WriteCount"
 hex 8	"EncodingsBitmap"
 
-section "FinderInfo Array"
+section "FinderInfo Array" {
 	uint32	"OS Dir ID"
 	uint32	"Finder Dir ID"
 	uint32	"Mount Open Dir"
 	uint32	"OS8/9 Dir ID"
-	uint32	"reserved"
+	uint32	"Reserved"
 	uint32	"OS X Dir ID"
 	hex 8   "Volume ID"
-endsection
+}
 
 foreach {file} [list Allocation ExtentsOverflow Catalog Attributes Startup] {
-	section "$file File"
-		uint64	logicalSize
-		uint32	clumpSize
-		uint32	totalBlocks
+	section "$file File" {
+		uint64	"LogicalSize"
+		uint32	"ClumpSize"
+		uint32	"TotalBlocks"
 		for {set i 0} {$i < 10} {incr i} {
-			uint32	startBlock
-			uint32	blockCount
+			uint32	"StartBlock"
+			uint32	"BlockCount"
 		}
-	endsection
+	}
 }

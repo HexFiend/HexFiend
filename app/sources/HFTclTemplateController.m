@@ -264,12 +264,19 @@ DEFINE_COMMAND(endsection)
             break;
         }
         case command_section: {
-            if (objc != 2) {
-                Tcl_WrongNumArgs(_interp, 1, objv, "label");
+            if (objc != 2 && objc != 3) {
+                Tcl_WrongNumArgs(_interp, 1, objv, "label [body]");
                 return TCL_ERROR;
             }
             NSString *label = [NSString stringWithUTF8String:Tcl_GetStringFromObj(objv[1], NULL)];
             [self beginSectionWithLabel:label];
+            if (objc == 3) {
+                const int err = Tcl_EvalObjEx(_interp, objv[2], 0);
+                if (err != TCL_OK) {
+                    return err;
+                }
+                [self endSection];
+            }
             break;
         }
         case command_endsection: {
