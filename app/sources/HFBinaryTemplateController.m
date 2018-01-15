@@ -21,9 +21,9 @@
 
 @end
 
-@interface HFBinaryTemplateController () <NSTableViewDataSource, NSTableViewDelegate>
+@interface HFBinaryTemplateController () <NSOutlineViewDataSource, NSOutlineViewDelegate>
 
-@property (weak) IBOutlet NSTableView *tableView;
+@property (weak) IBOutlet NSOutlineView *outlineView;
 @property (weak) IBOutlet NSTextField *errorTextField;
 @property (weak) IBOutlet NSPopUpButton *templatesPopUp;
 
@@ -135,12 +135,23 @@
     [self setRootNode:node error:errorMessage];
 }
 
-- (NSInteger)numberOfRowsInTableView:(NSTableView * __unused)tableView {
-    return self.node.children.count;
+- (id)outlineView:(NSOutlineView * __unused)outlineView child:(NSInteger)index ofItem:(id)item {
+    HFTemplateNode *node = item != nil ? item : self.node;
+    return [node.children objectAtIndex:index];
 }
 
-- (id)tableView:(NSTableView * __unused)tableView objectValueForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row {
-    HFTemplateNode *node = [self.node.children objectAtIndex:row];
+- (NSInteger)outlineView:(NSOutlineView * __unused)outlineView numberOfChildrenOfItem:(id)item {
+    HFTemplateNode *node = item != nil ? item : self.node;
+    return node.children.count;
+}
+
+- (BOOL)outlineView:(NSOutlineView * __unused)outlineView isItemExpandable:(id)item {
+    HFTemplateNode *node = item;
+    return node.isGroup;
+}
+
+- (id)outlineView:(NSOutlineView * __unused)outlineView objectValueForTableColumn:(NSTableColumn *)tableColumn byItem:(id)item {
+    HFTemplateNode *node = item;
     NSString *ident = tableColumn.identifier;
     if ([ident isEqualToString:@"name"]) {
         return node.label;
@@ -160,7 +171,7 @@
         self.node = node;
         self.errorTextField.hidden = YES;
     }
-    [self.tableView reloadData];
+    [self.outlineView reloadData];
 }
 
 @end

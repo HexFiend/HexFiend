@@ -24,8 +24,7 @@
 - (HFTemplateNode *)evaluateScript:(NSString *)path forController:(HFController *)controller error:(NSString **)error {
     self.controller = controller;
     self.position = 0;
-    self.root = [[HFTemplateNode alloc] init];
-    self.root.isGroup = YES;
+    self.root = [[HFTemplateNode alloc] initGroupWithLabel:nil parent:nil];
     self.currentNode = self.root;
     if (error) {
         *error = nil;
@@ -242,6 +241,16 @@
 
 - (void)moveTo:(long long)offset {
     self.position += offset;
+}
+
+- (void)beginSectionWithLabel:(NSString *)label {
+    HFTemplateNode *node = [[HFTemplateNode alloc] initGroupWithLabel:label parent:self.currentNode];
+    [self.currentNode.children addObject:node];
+    self.currentNode = node;
+}
+
+- (void)endSection {
+    self.currentNode = self.currentNode.parent;
 }
 
 @end

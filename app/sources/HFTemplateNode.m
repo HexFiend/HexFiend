@@ -8,26 +8,29 @@
 
 #import "HFTemplateNode.h"
 
+@interface HFTemplateNode ()
+
+@property (weak) HFTemplateNode *parent;
+
+@end
+
 @implementation HFTemplateNode
 
-- (instancetype)init {
-    if ((self = [super init]) == nil) {
-        return nil;
+- (instancetype)initWithLabel:(NSString *)label value:(NSString *)value {
+    if ((self = [super init]) != nil) {
+        _label = label;
+        _value = value;
     }
-
-    _children = [NSMutableArray array];
-
     return self;
 }
 
-- (instancetype)initWithLabel:(NSString *)label value:(NSString *)value {
-    if ((self = [self init]) == nil) {
-        return nil;
+- (instancetype)initGroupWithLabel:(NSString *)label parent:(HFTemplateNode *)parent {
+    if ((self = [super init]) != nil) {
+        _label = label;
+        _isGroup = YES;
+        _parent = parent;
+        _children = [NSMutableArray array];
     }
-
-    _label = label;
-    _value = value;
-
     return self;
 }
 

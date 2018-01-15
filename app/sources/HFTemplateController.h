@@ -50,4 +50,7 @@ typedef NS_ENUM(NSUInteger, HFEndian) {
 
 - (void)moveTo:(long long)offset;
 
+- (void)beginSectionWithLabel:(NSString *)label;
+- (void)endSection;
+
 @end

@@ -11,11 +11,13 @@
 @interface HFTemplateNode : NSObject
 
 - (instancetype)initWithLabel:(NSString *)label value:(NSString *)value;
+- (instancetype)initGroupWithLabel:(NSString *)label parent:(HFTemplateNode *)parent;
 
-@property NSString *label;
-@property NSString *value;
+@property (readonly) NSString *label;
+@property (readonly) NSString *value;
+@property (readonly) BOOL isGroup;
+@property (readonly, weak) HFTemplateNode *parent;
 
-@property BOOL isGroup;
 @property NSMutableArray *children;
 
 @end

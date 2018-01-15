@@ -35,6 +35,8 @@ enum command {
     command_move,
     command_end,
     command_requires,
+    command_section,
+    command_endsection,
 };
 
 @interface HFTclTemplateController ()
@@ -65,6 +67,8 @@ DEFINE_COMMAND(ascii)
 DEFINE_COMMAND(move)
 DEFINE_COMMAND(end)
 DEFINE_COMMAND(requires)
+DEFINE_COMMAND(section)
+DEFINE_COMMAND(endsection)
 
 @implementation HFTclTemplateController {
     Tcl_Interp *_interp;
@@ -107,6 +111,8 @@ DEFINE_COMMAND(requires)
         CMD(move),
         CMD(end),
         CMD(requires),
+        CMD(section),
+        CMD(endsection),
     };
 #undef CMD
 #undef CMD_NAMED
@@ -251,6 +257,20 @@ DEFINE_COMMAND(requires)
             if (![self requireDataAtOffset:offset toMatchHexValues:hexvalues]) {
                 return TCL_ERROR;
             }
+            break;
+        }
+        case command_section: {
+            if (objc != 2) {
+                Tcl_WrongNumArgs(_interp, 1, objv, "label");
+                return TCL_ERROR;
+            }
+            NSString *label = [NSString stringWithUTF8String:Tcl_GetStringFromObj(objv[1], NULL)];
+            [self beginSectionWithLabel:label];
+            break;
+        }
+        case command_endsection: {
+            CHECK_SINGLE_ARG;
+            [self endSection];
             break;
         }
     }
