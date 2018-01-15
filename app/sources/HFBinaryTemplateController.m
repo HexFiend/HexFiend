@@ -187,6 +187,10 @@
         }
         self.colorRange.range = [HFRangeWrapper withRange:node.range];
         [self.controller colorRangesDidChange];
+    } else if (self.colorRange) {
+        [self.controller.colorRanges removeObject:self.colorRange];
+        [self.controller colorRangesDidChange];
+        self.colorRange = nil;
     }
 }
 
