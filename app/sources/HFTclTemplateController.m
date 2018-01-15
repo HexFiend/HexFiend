@@ -34,6 +34,7 @@ enum command {
     command_hex,
     command_ascii,
     command_utf16,
+    command_uuid,
     command_move,
     command_end,
     command_requires,
@@ -68,6 +69,7 @@ DEFINE_COMMAND(little_endian)
 DEFINE_COMMAND(hex)
 DEFINE_COMMAND(ascii)
 DEFINE_COMMAND(utf16)
+DEFINE_COMMAND(uuid)
 DEFINE_COMMAND(move)
 DEFINE_COMMAND(end)
 DEFINE_COMMAND(requires)
@@ -114,6 +116,7 @@ DEFINE_COMMAND(endsection)
         CMD(hex),
         CMD(ascii),
         CMD(utf16),
+        CMD(uuid),
         CMD(move),
         CMD(end),
         CMD(requires),
@@ -179,6 +182,7 @@ DEFINE_COMMAND(endsection)
         case command_float:
         case command_double:
         case command_macdate:
+        case command_uuid:
             return [self runTypeCommand:command objc:objc objv:objv];
         case command_big_endian: {
             CHECK_SINGLE_ARG
@@ -399,6 +403,16 @@ DEFINE_COMMAND(endsection)
                 return TCL_ERROR;
             }
             Tcl_SetObjResult(_interp, Tcl_NewDoubleObj(date.timeIntervalSince1970));
+            break;
+        }
+        case command_uuid: {
+            NSUUID *uuid = nil;
+            if (![self readUUID:&uuid forLabel:label]) {
+                Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read bytes", -1));
+                return TCL_ERROR;
+            }
+            NSString *str = uuid.UUIDString;
+            Tcl_SetObjResult(_interp, Tcl_NewStringObj(str.UTF8String, -1));
             break;
         }
         default:

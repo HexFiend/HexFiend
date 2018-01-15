@@ -1,5 +1,5 @@
-hex 16 "Type GUID"
-hex 16 "Unique GUID"
+uuid "Type GUID"
+uuid "Unique GUID"
 uint64 "First LBA"
 uint64 "Last LBA"
 hex 8 "Attributes"

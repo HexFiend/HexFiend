@@ -234,6 +234,16 @@
     return YES;
 }
 
+- (BOOL)readUUID:(NSUUID **)uuid forLabel:(NSString *)label {
+    uuid_t bytes;
+    if (![self readBytes:&bytes size:sizeof(bytes)]) {
+        return NO;
+    }
+    *uuid = [[NSUUID alloc] initWithUUIDBytes:bytes];
+    [self addNodeWithLabel:label value:[*uuid UUIDString] size:sizeof(bytes)];
+    return YES;
+}
+
 - (void)addNodeWithLabel:(NSString *)label value:(NSString *)value size:(unsigned long long)size {
     HFTemplateNode *node = [[HFTemplateNode alloc] initWithLabel:label value:value];
     node.range = HFRangeMake((self.controller.minimumSelectionLocation + self.position) - size, size);
