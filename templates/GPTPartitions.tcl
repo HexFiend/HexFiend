@@ -1,0 +1,6 @@
+hex 16 "Type GUID"
+hex 16 "Unique GUID"
+uint64 "First LBA"
+uint64 "Last LBA"
+hex 8 "Attributes"
+utf16 36 "Name"
