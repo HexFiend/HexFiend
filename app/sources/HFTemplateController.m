@@ -288,7 +288,12 @@
 }
 
 - (void)endSection {
+    HFTemplateNode *node = self.currentNode;
     self.currentNode = self.currentNode.parent;
+    
+    HFRange range = self.currentNode.range;
+    range.length = ((node.range.location + node.range.length) - range.location);
+    self.currentNode.range = range;
 }
 
 @end
