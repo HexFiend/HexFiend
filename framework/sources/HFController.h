@@ -102,6 +102,7 @@ You create an HFController via <tt>[[HFController alloc] init]</tt>.  After that
     NSMutableArray *representers;
     HFByteArray *byteArray;
     NSMutableArray *selectedContentsRanges;
+    NSMutableArray<HFColorRange*> *_colorRanges;
     HFRange displayedContentsRange;
     HFFPRange displayedLineRange;
     NSUInteger bytesPerLine;
@@ -235,7 +236,7 @@ You create an HFController via <tt>[[HFController alloc] init]</tt>.  After that
 - (nullable HFByteArray *)byteArrayForSelectedContentsRanges;
 //@}
 
-@property (nonatomic, nullable) NSMutableArray<HFColorRange*> *colorRanges;
+@property (readonly) NSMutableArray<HFColorRange*> *colorRanges;
 - (void)colorRangesDidChange; // manually notify of changes to color range individual values
 
 /* Number of bytes used in each column for a text-style representer. */

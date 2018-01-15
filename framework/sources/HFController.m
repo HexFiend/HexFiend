@@ -88,6 +88,7 @@ static inline Class preferredByteArrayClass(void) {
     [byteArray addObserver:self forKeyPath:@"changesAreLocked" options:0 context:KVOContextChangesAreLocked];
     selectionAnchor = NO_SELECTION;
     undoOperations = [[NSMutableSet alloc] init];
+    _colorRanges = [NSMutableArray array];
 }
 
 - (instancetype)init {

@@ -20,5 +20,7 @@
 
 @property NSMutableArray *children;
 
+@property HFRange range;
+
 @end
 

@@ -9,6 +9,7 @@
 #import "HFBinaryTemplateController.h"
 #import "HFTemplateNode.h"
 #import "HFTclTemplateController.h"
+#import "HFColorRange.h"
 
 @interface HFTemplateFile : NSObject
 
@@ -33,6 +34,7 @@
 @property (strong) HFTclTemplateController *templateController;
 @property HFTemplateFile *selectedFile;
 @property NSMenuItem *lastItem;
+@property HFColorRange *colorRange;
 
 @end
 
@@ -172,6 +174,20 @@
         self.errorTextField.hidden = YES;
     }
     [self.outlineView reloadData];
+}
+
+- (void)outlineViewSelectionDidChange:(NSNotification * __unused)notification {
+    NSInteger row = self.outlineView.selectedRow;
+    if (row != -1) {
+        HFTemplateNode *node = [self.outlineView itemAtRow:row];
+        if (!self.colorRange) {
+            self.colorRange = [[HFColorRange alloc] init];
+            self.colorRange.color = [NSColor lightGrayColor];
+            [self.controller.colorRanges addObject:self.colorRange];
+        }
+        self.colorRange.range = [HFRangeWrapper withRange:node.range];
+        [self.controller colorRangesDidChange];
+    }
 }
 
 @end

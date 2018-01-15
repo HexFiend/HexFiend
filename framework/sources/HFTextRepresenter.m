@@ -501,12 +501,7 @@
 - (void)highlightSelection:(id __unused)sender {
     HFColorRange *range = [[HFColorRange alloc] init];
     range.range = self.controller.selectedContentsRanges[0];
-    NSMutableArray *colorRanges = self.controller.colorRanges;
-    if (!colorRanges) {
-        colorRanges = [NSMutableArray array];
-    }
-    [colorRanges addObject:range];
-    self.controller.colorRanges = colorRanges;
+    [self.controller.colorRanges addObject:range];
     NSColorPanel *panel = [NSColorPanel sharedColorPanel];
     id windowObserver = [[NSNotificationCenter defaultCenter] addObserverForName:NSWindowWillCloseNotification object:panel queue:nil usingBlock:^(NSNotification *note __unused) {
         [NSApp stopModal];
@@ -537,7 +532,7 @@
 }
 
 - (void)removeAllHighlights:(id __unused)sender {
-    self.controller.colorRanges = nil;
+    [self.controller.colorRanges removeAllObjects];
 }
 
 @end
