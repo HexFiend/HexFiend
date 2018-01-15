@@ -239,7 +239,7 @@
     node.range = HFRangeMake((self.controller.minimumSelectionLocation + self.position) - size, size);
     [self.currentNode.children addObject:node];
     HFRange range = self.currentNode.range;
-    range.length += size;
+    range.length = ((node.range.location + node.range.length) - range.location);
     self.currentNode.range = range;
 }
 
