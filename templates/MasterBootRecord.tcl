@@ -3,9 +3,9 @@ hex 446 "Bootstrap Code"
 for {set i 0} {$i < 4} {incr i} {
     section "Partition $i" {
         uint8 "Status"
-        hex 3 "CHS First Sector"
+        hex 3 "CHS Address First Sector"
         uint8 "Type"
-        hex 3 "CHS Last Sector"
+        hex 3 "CHS Address Last Sector"
         uint32 "LBA"
         uint32 "Num Sectors"
     }
