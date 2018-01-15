@@ -11,10 +11,10 @@ hex 4	"Attributes" ; # 00 00 08 00 set? Volume Inconsistent!
 ascii 4 "LastMountedVersion" ;# HFSJ if journaled, 10.0 if not; fsck and other tools also possible
 uint32 "JournalInfoBlock"
 
-uint32	"CreateDate"
-uint32	"ModifyDate"
-uint32	"BackupDate"
-uint32	"CheckedDate"
+macdate	"CreateDate"
+macdate	"ModifyDate"
+macdate	"BackupDate"
+macdate	"CheckedDate"
 
 uint32	"FileCount"
 uint32	"FolderCount"
