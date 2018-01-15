@@ -211,6 +211,29 @@
     return YES;
 }
 
+- (BOOL)readMacDate:(NSDate **)value forLabel:(NSString *)label {
+    uint32_t val;
+    if (![self readBytes:&val size:sizeof(val)]) {
+        return NO;
+    }
+    if (self.endian == HFEndianBig) {
+        val = NSSwapBigIntToHost(val);
+    }
+    
+    CFAbsoluteTime cftime = 0;
+    const OSStatus status = UCConvertSecondsToCFAbsoluteTime(val, &cftime);
+    if (status != 0) {
+        return NO;
+    }
+    *value = [NSDate dateWithTimeIntervalSinceReferenceDate:cftime];
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    formatter.doesRelativeDateFormatting = YES;
+    formatter.dateStyle = NSDateFormatterShortStyle;
+    formatter.timeStyle = NSDateFormatterShortStyle;
+    [self addNodeWithLabel:label value:[formatter stringFromDate:*value]];
+    return YES;
+}
+
 - (void)addNodeWithLabel:(NSString *)label value:(NSString *)value {
     HFTemplateNode *node = [[HFTemplateNode alloc] initWithLabel:label value:value];
     [self.currentNode.children addObject:node];
