@@ -33,6 +33,7 @@ enum command {
     command_macdate,
     command_hex,
     command_ascii,
+    command_utf16,
     command_move,
     command_end,
     command_requires,
@@ -66,6 +67,7 @@ DEFINE_COMMAND(big_endian)
 DEFINE_COMMAND(little_endian)
 DEFINE_COMMAND(hex)
 DEFINE_COMMAND(ascii)
+DEFINE_COMMAND(utf16)
 DEFINE_COMMAND(move)
 DEFINE_COMMAND(end)
 DEFINE_COMMAND(requires)
@@ -111,6 +113,7 @@ DEFINE_COMMAND(endsection)
         CMD(little_endian),
         CMD(hex),
         CMD(ascii),
+        CMD(utf16),
         CMD(move),
         CMD(end),
         CMD(requires),
@@ -188,7 +191,8 @@ DEFINE_COMMAND(endsection)
             break;
         }
         case command_hex:
-        case command_ascii: {
+        case command_ascii:
+        case command_utf16: {
             if (objc != 3) {
                 Tcl_WrongNumArgs(_interp, 1, objv, "len label");
                 return TCL_ERROR;
@@ -210,6 +214,9 @@ DEFINE_COMMAND(endsection)
                     break;
                 case command_ascii:
                     str = [self readStringDataForSize:len encoding:NSASCIIStringEncoding forLabel:label];
+                    break;
+                case command_utf16:
+                    str = [self readStringDataForSize:len encoding:self.endian == HFEndianLittle ? NSUTF16LittleEndianStringEncoding : NSUTF16BigEndianStringEncoding forLabel:label];
                     break;
                 default:
                     HFASSERT(0);
