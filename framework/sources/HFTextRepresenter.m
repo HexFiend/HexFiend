@@ -467,15 +467,26 @@
     return result;
 }
 
-- (NSMenu *)representerTextView:(HFRepresenterTextView *)sender menuForEvent:(NSEvent *)event {
-    NSMenu *menu = [[NSMenu alloc] init];
-    menu.autoenablesItems = NO;
+- (void)representerTextView:(HFRepresenterTextView * __unused)sender menu:(NSMenu *)menu forEvent:(NSEvent * __unused)event atPosition:(NSUInteger)position {
+    BOOL add = YES;
+    for (NSInteger i = 0; i < menu.numberOfItems; i++) {
+        NSMenuItem *item = [menu itemAtIndex:i];
+        if (item.action == @selector(highlightSelection:)) {
+            add = NO;
+            break;
+        }
+    }
+    if (!add) {
+        return;
+    }
+    if (menu.numberOfItems > 0) {
+        [menu addItem:[NSMenuItem separatorItem]];
+    }
     NSMenuItem *menuItem;
     menuItem = [[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Highlight Selection", nil) action:@selector(highlightSelection:) keyEquivalent:@""];
     menuItem.target = self;
     NSArray *ranges = self.controller.selectedContentsRanges;
-    NSPoint mouseDownLocation = [sender convertPoint:[event locationInWindow] fromView:nil];
-    _clickedLocation = [sender indexOfCharacterAtPoint:mouseDownLocation];
+    _clickedLocation = position;
     BOOL clickedOnColorRange = NO;
     for (HFColorRange *colorRange in self.controller.colorRanges) {
         if (HFLocationInRange(_clickedLocation, colorRange.range.HFRange)) {
@@ -486,7 +497,6 @@
     BOOL canHighlightSelection = ranges.count > 0 && [(HFRangeWrapper *)ranges[0] HFRange].length > 0;
     menuItem.enabled = canHighlightSelection;
     [menu addItem:menuItem];
-    [menu addItem:[NSMenuItem separatorItem]];
     menuItem = [[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Remove Highlight", nil) action:@selector(removeHighlight:) keyEquivalent:@""];
     menuItem.target = self;
     menuItem.enabled = clickedOnColorRange;
@@ -495,7 +505,6 @@
     menuItem.target = self;
     menuItem.enabled = self.controller.colorRanges.count > 0;
     [menu addItem:menuItem];
-    return menu;
 }
 
 - (void)highlightSelection:(id __unused)sender {
@@ -536,3 +545,4 @@
 }
 
 @end
+

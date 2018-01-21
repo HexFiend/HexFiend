@@ -27,7 +27,7 @@
                         <rect key="frame" x="0.0" y="23" width="298" height="147"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <outlineView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnReordering="NO" multipleSelection="NO" autosaveColumns="NO" rowHeight="14" headerView="JOj-tL-T8m" indentationPerLevel="16" outlineTableColumn="BZb-3J-1dW" id="Fag-j2-YsB">
+                            <outlineView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnReordering="NO" multipleSelection="NO" autosaveColumns="NO" rowHeight="14" headerView="JOj-tL-T8m" indentationPerLevel="16" outlineTableColumn="BZb-3J-1dW" id="Fag-j2-YsB" customClass="HFTemplateOutlineView">
                                 <rect key="frame" x="0.0" y="0.0" width="298" height="147"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <size key="intercellSpacing" width="3" height="2"/>

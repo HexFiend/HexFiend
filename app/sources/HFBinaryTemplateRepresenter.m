@@ -9,25 +9,16 @@
 #import "HFBinaryTemplateRepresenter.h"
 #import "HFBinaryTemplateController.h"
 #import "HFTemplateNode.h"
+#import <HexFiend/HFRepresenterTextView.h>
 
 @interface HFBinaryTemplateRepresenter ()
 
 @property (strong) HFBinaryTemplateController *viewController;
-@property unsigned long long lastMinimumSelectionLocation;
+@property NSUInteger menuPosition;
 
 @end
 
 @implementation HFBinaryTemplateRepresenter
-
-- (instancetype)init {
-    if ((self = [super init]) == nil) {
-        return nil;
-    }
-
-    _lastMinimumSelectionLocation = -1;
-
-    return self;
-}
 
 - (NSView *)createView {
     self.viewController = [[HFBinaryTemplateController alloc] init];
@@ -43,12 +34,24 @@
 }
 
 - (void)controllerDidChange:(HFControllerPropertyBits)bits {
-    if (bits & HFControllerSelectedRanges) {
-        if (self.controller.contentsLength > 0 && self.controller.minimumSelectionLocation != self.lastMinimumSelectionLocation) {
-            self.lastMinimumSelectionLocation = self.controller.minimumSelectionLocation;
-            [self.viewController rerunTemplateWithController:self.controller];
-        }
+    if (bits & HFControllerContentValue) {
+        [self.viewController rerunTemplateWithController:self.controller];
     }
+}
+
+- (void)representerTextView:(HFRepresenterTextView * __unused)sender menu:(NSMenu *)menu forEvent:(NSEvent * __unused)event atPosition:(NSUInteger)position {
+    if (menu.numberOfItems > 0) {
+        [menu addItem:[NSMenuItem separatorItem]];
+    }
+    self.menuPosition = position;
+    NSString *title = [NSString stringWithFormat:NSLocalizedString(@"Anchor Template at %llu", nil), self.menuPosition];
+    NSMenuItem *menuItem = [[NSMenuItem alloc] initWithTitle:title action:@selector(anchorTemplatesAt:) keyEquivalent:@""];
+    menuItem.target = self;
+    [menu addItem:menuItem];
+}
+
+- (void)anchorTemplatesAt:(id __unused)sender {
+    [self.viewController anchorTo:self.menuPosition];
 }
 
 @end

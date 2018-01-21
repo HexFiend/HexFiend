@@ -147,7 +147,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface NSObject (HFRepresenterTextDelegate)
 
-- (NSMenu *)representerTextView:(HFRepresenterTextView *)sender menuForEvent:(NSEvent *)event;
+- (void)representerTextView:(HFRepresenterTextView *)sender menu:(NSMenu *)menu forEvent:(NSEvent *)event atPosition:(NSUInteger)position;
 
 @end
 

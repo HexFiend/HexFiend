@@ -34,6 +34,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)selectAll:(id)sender;
 
+- (HFRange)entireDisplayedRange;
+
 @end
 
 NS_ASSUME_NONNULL_END

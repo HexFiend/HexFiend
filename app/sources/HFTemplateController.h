@@ -13,6 +13,8 @@
 
 - (HFTemplateNode *)evaluateScript:(NSString *)path forController:(HFController *)controller error:(NSString **)error;
 
+@property NSUInteger anchor;
+
 @end
 
 @interface HFTemplateController (OverrideBySubclasses)

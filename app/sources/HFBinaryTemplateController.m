@@ -11,6 +11,27 @@
 #import "HFTclTemplateController.h"
 #import "HFColorRange.h"
 
+@interface NSObject (HFTemplateOutlineViewDelegate)
+
+- (NSMenu *)outlineView:(NSOutlineView *)sender menuForEvent:(NSEvent *)event;
+
+@end
+
+@interface HFTemplateOutlineView : NSOutlineView
+
+@end
+
+@implementation HFTemplateOutlineView
+
+- (NSMenu *)menuForEvent:(NSEvent *)event {
+    if ([self.delegate respondsToSelector:@selector(outlineView:menuForEvent:)]) {
+        return [(id)self.delegate outlineView:self menuForEvent:event];
+    }
+    return nil;
+}
+
+@end
+
 @interface HFTemplateFile : NSObject
 
 @property (copy) NSString *path;
@@ -141,6 +162,7 @@
 }
 
 - (void)rerunTemplateWithController:(HFController *)controller {
+    HFASSERT(controller != nil);
     _controller = controller;
     if (!self.selectedFile) {
         return;
@@ -208,7 +230,7 @@
     }
 }
 
-- (void)outlineViewSelectionDidChange:(NSNotification * __unused)notification {
+- (void)updateSelectionColorRange {
     NSInteger row = self.outlineView.selectedRow;
     if (row != -1) {
         HFTemplateNode *node = [self.outlineView itemAtRow:row];
@@ -224,6 +246,34 @@
         [self.controller colorRangesDidChange];
         self.colorRange = nil;
     }
+}
+
+- (void)outlineViewSelectionDidChange:(NSNotification * __unused)notification {
+    [self updateSelectionColorRange];
+}
+
+- (NSMenu *)outlineView:(NSOutlineView *)sender menuForEvent:(NSEvent *)event {
+    NSMenu *menu = [[NSMenu alloc] init];
+    menu.autoenablesItems = NO;
+    NSInteger row = [sender rowAtPoint:[sender convertPoint:event.locationInWindow fromView:nil]];
+    id obj = row != -1 ? [sender itemAtRow:row] : nil;
+    NSMenuItem *item = [menu addItemWithTitle:NSLocalizedString(@"Jump to Field", nil) action:@selector(jumpToField:) keyEquivalent:@""];
+    item.target = self;
+    item.enabled = obj != nil;
+    return menu;
+}
+
+- (void)jumpToField:(id __unused)sender {
+    HFTemplateNode *node = [self.outlineView itemAtRow:[self.outlineView selectedRow]];
+    HFRange range = HFRangeMake(node.range.location, 0);
+    [self.controller setSelectedContentsRanges:@[[HFRangeWrapper withRange:range]]];
+    [self.controller maximizeVisibilityOfContentsRange:range];
+}
+
+- (void)anchorTo:(NSUInteger)position {
+    self.templateController.anchor = position;
+    [self rerunTemplate];
+    [self updateSelectionColorRange];
 }
 
 @end

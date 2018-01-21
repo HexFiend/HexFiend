@@ -14,4 +14,6 @@
 
 - (void)rerunTemplateWithController:(HFController *)controller;
 
+- (void)anchorTo:(NSUInteger)position;
+
 @end

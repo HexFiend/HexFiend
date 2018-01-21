@@ -2013,10 +2013,17 @@ static size_t unionAndCleanLists(NSRect *rectList, __unsafe_unretained id *value
 }
 
 - (NSMenu *)menuForEvent:(NSEvent *)event {
-    if ([representer respondsToSelector:@selector(representerTextView:menuForEvent:)]) {
-        return [representer representerTextView:self menuForEvent:event];
+    NSMenu *menu = [[NSMenu alloc] init];
+    menu.autoenablesItems = NO;
+    NSPoint mouseDownLocation = [self convertPoint:[event locationInWindow] fromView:nil];
+    HFRange displayedRange = [self.representer entireDisplayedRange];
+    NSUInteger position = displayedRange.location + [self indexOfCharacterAtPoint:mouseDownLocation];
+    for (HFRepresenter *rep in self.representer.controller.representers) {
+        if ([rep respondsToSelector:@selector(representerTextView:menu:forEvent:atPosition:)]) {
+            [rep representerTextView:self menu:menu forEvent:event atPosition:position];
+        }
     }
-    return [super menuForEvent:event];
+    return menu.numberOfItems > 0 ? menu : nil;
 }
 
 @end

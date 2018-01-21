@@ -42,7 +42,7 @@
 }
 
 - (BOOL)readBytes:(void *)buffer size:(size_t)size {
-    const HFRange range = HFRangeMake(self.controller.minimumSelectionLocation + self.position, size);
+    const HFRange range = HFRangeMake(self.anchor + self.position, size);
     if (!HFRangeIsSubrangeOfRange(range, HFRangeMake(0, self.controller.contentsLength))) {
         return NO;
     }
@@ -246,7 +246,7 @@
 
 - (void)addNodeWithLabel:(NSString *)label value:(NSString *)value size:(unsigned long long)size {
     HFTemplateNode *node = [[HFTemplateNode alloc] initWithLabel:label value:value];
-    node.range = HFRangeMake((self.controller.minimumSelectionLocation + self.position) - size, size);
+    node.range = HFRangeMake((self.anchor + self.position) - size, size);
     [self.currentNode.children addObject:node];
     HFRange range = self.currentNode.range;
     range.length = ((node.range.location + node.range.length) - range.location);
@@ -254,7 +254,7 @@
 }
 
 - (BOOL)isEOF {
-    return (self.controller.minimumSelectionLocation + self.position) >= self.controller.contentsLength;
+    return (self.anchor + self.position) >= self.controller.contentsLength;
 }
 
 - (BOOL)requireDataAtOffset:(unsigned long long)offset toMatchHexValues:(NSString *)hexValues {
@@ -282,7 +282,7 @@
 
 - (void)beginSectionWithLabel:(NSString *)label {
     HFTemplateNode *node = [[HFTemplateNode alloc] initGroupWithLabel:label parent:self.currentNode];
-    node.range = HFRangeMake(self.controller.minimumSelectionLocation + self.position, 0);
+    node.range = HFRangeMake(self.anchor + self.position, 0);
     [self.currentNode.children addObject:node];
     self.currentNode = node;
 }
