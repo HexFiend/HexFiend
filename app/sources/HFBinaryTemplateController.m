@@ -49,6 +49,19 @@
 
 - (void)awakeFromNib {
     [self loadTemplates:self];
+
+    [[NSUserDefaults standardUserDefaults] addObserver:self
+                                            forKeyPath:@"BinaryTemplateSelectionColor"
+                                               options:0
+                                               context:NULL];
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context {
+    if (object == [NSUserDefaults standardUserDefaults]) {
+        if ([keyPath isEqualToString:@"BinaryTemplateSelectionColor"]) {
+            [self updateSelectionColor];
+        }
+    }
 }
 
 - (NSString *)templatesFolder {
@@ -176,13 +189,32 @@
     [self.outlineView reloadData];
 }
 
+- (NSColor *)selectionColor {
+    NSColor *color = [NSColor lightGrayColor];
+    NSData *colorData = [[NSUserDefaults standardUserDefaults] objectForKey:@"BinaryTemplateSelectionColor"];
+    if (colorData && [colorData isKindOfClass:[NSData class]]) {
+        NSColor *tempColor = [NSUnarchiver unarchiveObjectWithData:colorData];
+        if (tempColor && [tempColor isKindOfClass:[NSColor class]]) {
+            color = tempColor;
+        }
+    }
+    return color;
+}
+
+- (void)updateSelectionColor {
+    if (self.colorRange) {
+        self.colorRange.color = [self selectionColor];
+        [self.controller colorRangesDidChange];
+    }
+}
+
 - (void)outlineViewSelectionDidChange:(NSNotification * __unused)notification {
     NSInteger row = self.outlineView.selectedRow;
     if (row != -1) {
         HFTemplateNode *node = [self.outlineView itemAtRow:row];
         if (!self.colorRange) {
             self.colorRange = [[HFColorRange alloc] init];
-            self.colorRange.color = [NSColor lightGrayColor];
+            self.colorRange.color = [self selectionColor];
             [self.controller.colorRanges addObject:self.colorRange];
         }
         self.colorRange.range = [HFRangeWrapper withRange:node.range];
