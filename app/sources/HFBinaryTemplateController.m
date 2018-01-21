@@ -255,7 +255,9 @@
 - (NSMenu *)outlineView:(NSOutlineView *)sender menuForEvent:(NSEvent *)event {
     NSMenu *menu = [[NSMenu alloc] init];
     menu.autoenablesItems = NO;
-    NSInteger row = [sender rowAtPoint:[sender convertPoint:event.locationInWindow fromView:nil]];
+    NSPoint loc = [sender convertPoint:event.locationInWindow fromView:nil];
+    NSInteger row = [sender rowAtPoint:loc];
+    [sender selectRowIndexes:[NSIndexSet indexSetWithIndex:row] byExtendingSelection:NO];
     id obj = row != -1 ? [sender itemAtRow:row] : nil;
     NSMenuItem *item = [menu addItemWithTitle:NSLocalizedString(@"Jump to Field", nil) action:@selector(jumpToField:) keyEquivalent:@""];
     item.target = self;
