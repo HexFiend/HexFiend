@@ -47,6 +47,7 @@
     NSString *title = [NSString stringWithFormat:NSLocalizedString(@"Anchor Template at %llu", nil), self.menuPosition];
     NSMenuItem *menuItem = [[NSMenuItem alloc] initWithTitle:title action:@selector(anchorTemplatesAt:) keyEquivalent:@""];
     menuItem.target = self;
+    menuItem.enabled = position < self.controller.contentsLength;
     [menu addItem:menuItem];
 }
 
