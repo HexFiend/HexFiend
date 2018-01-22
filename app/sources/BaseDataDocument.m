@@ -95,6 +95,7 @@ static inline Class preferredByteArrayClass(void) {
             @"DefaultStringEncoding" : @([NSString defaultCStringEncoding]),
             @"DefaultEditMode" : @(HFInsertMode),
             @"BinaryTemplateSelectionColor" : [NSArchiver archivedDataWithRootObject:[NSColor lightGrayColor]],
+            @"BinaryTemplateRepresenterWidth" : @(250),
         };
         [[NSUserDefaults standardUserDefaults] registerDefaults:defs];
         sRegisteredGlobalDefaults = YES;
