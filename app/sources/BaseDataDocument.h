@@ -1,5 +1,5 @@
 //
-//  MyDocument.h
+//  BaseDocument.h
 //  HexFiend_2
 //
 //  Copyright 2007 ridiculous_fish. All rights reserved.
