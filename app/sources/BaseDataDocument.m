@@ -1290,31 +1290,6 @@ static inline Class preferredByteArrayClass(void) {
     else return @(searchResult);
 }
 
-- (id)threadedStartFind:(HFProgressTracker *)tracker {
-    HFASSERT(tracker != NULL);
-    unsigned long long searchResult;
-    NSDictionary *userInfo = [tracker userInfo];
-    HFByteArray *needle = userInfo[@"needle"];
-    HFByteArray *haystack = userInfo[@"haystack"];
-    BOOL forwards = [userInfo[@"forwards"] boolValue];
-    HFRange searchRange1 = [userInfo[@"range1"] HFRange];
-    HFRange searchRange2 = [userInfo[@"range2"] HFRange];
-    
-    [tracker setMaxProgress:[haystack length]];
-    
-    //    CFAbsoluteTime start = CFAbsoluteTimeGetCurrent();
-    searchResult = [haystack indexOfBytesEqualToBytes:needle inRange:searchRange1 searchingForwards:forwards trackingProgress:tracker];
-    //    CFAbsoluteTime end = CFAbsoluteTimeGetCurrent();
-    //    printf("Diff: %f\n", end - start);
-    
-    if (searchResult == ULLONG_MAX) {
-        searchResult = [haystack indexOfBytesEqualToBytes:needle inRange:searchRange2 searchingForwards:forwards trackingProgress:tracker];
-    }
-    
-    if (tracker->cancelRequested) return nil;
-    else return @(searchResult);
-}
-
 - (void)findEnded:(NSNumber *)val {
     NSDictionary *userInfo = [[findReplaceView progressTracker] userInfo];
     HFByteArray *needle = userInfo[@"needle"];
