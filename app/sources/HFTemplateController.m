@@ -296,6 +296,14 @@
     self.position += offset;
 }
 
+- (void)goTo:(unsigned long long)offset {
+    self.position = self.anchor + offset;
+}
+
+- (unsigned long long)length {
+    return self.controller.contentsLength;
+}
+
 - (void)beginSectionWithLabel:(NSString *)label {
     HFTemplateNode *node = [[HFTemplateNode alloc] initGroupWithLabel:label parent:self.currentNode];
     node.range = HFRangeMake(self.anchor + self.position, 0);

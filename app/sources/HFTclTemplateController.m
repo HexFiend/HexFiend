@@ -37,6 +37,9 @@ enum command {
     command_utf16,
     command_uuid,
     command_move,
+    command_goto,
+    command_pos,
+    command_len,
     command_end,
     command_requires,
     command_section,
@@ -73,6 +76,9 @@ DEFINE_COMMAND(ascii)
 DEFINE_COMMAND(utf16)
 DEFINE_COMMAND(uuid)
 DEFINE_COMMAND(move)
+DEFINE_COMMAND(goto)
+DEFINE_COMMAND(pos)
+DEFINE_COMMAND(len)
 DEFINE_COMMAND(end)
 DEFINE_COMMAND(requires)
 DEFINE_COMMAND(section)
@@ -121,6 +127,9 @@ DEFINE_COMMAND(endsection)
         CMD(utf16),
         CMD(uuid),
         CMD(move),
+        CMD(goto),
+        CMD(pos),
+        CMD(len),
         CMD(end),
         CMD(requires),
         CMD(section),
@@ -166,7 +175,13 @@ DEFINE_COMMAND(endsection)
     return nil;
 }
 
-#define CHECK_SINGLE_ARG \
+#define CHECK_SINGLE_ARG(s) \
+    if (objc != 2) { \
+        Tcl_WrongNumArgs(_interp, 0, objv, s); \
+        return TCL_ERROR; \
+    }
+
+#define CHECK_NO_ARG \
     if (objc != 1) { \
         Tcl_WrongNumArgs(_interp, 0, objv, NULL); \
         return TCL_ERROR; \
@@ -189,12 +204,12 @@ DEFINE_COMMAND(endsection)
         case command_uuid:
             return [self runTypeCommand:command objc:objc objv:objv];
         case command_big_endian: {
-            CHECK_SINGLE_ARG
+            CHECK_NO_ARG
             self.endian = HFEndianBig;
             break;
         }
         case command_little_endian: {
-            CHECK_SINGLE_ARG
+            CHECK_NO_ARG
             self.endian = HFEndianLittle;
             break;
         }
@@ -238,10 +253,7 @@ DEFINE_COMMAND(endsection)
             break;
         }
         case command_move: {
-            if (objc != 2) {
-                Tcl_WrongNumArgs(_interp, 0, objv, "len");
-                return TCL_ERROR;
-            }
+            CHECK_SINGLE_ARG("len");
             long len;
             int err = Tcl_GetLongFromObj(_interp, objv[1], &len);
             if (err != TCL_OK) {
@@ -250,11 +262,32 @@ DEFINE_COMMAND(endsection)
             [self moveTo:len];
             break;
         }
-        case command_end: {
-            if (objc != 1) {
-                Tcl_WrongNumArgs(_interp, 0, objv, NULL);
+        case command_goto: {
+            CHECK_SINGLE_ARG("offset");
+            long offset;
+            int err = Tcl_GetLongFromObj(_interp, objv[1], &offset);
+            if (err != TCL_OK) {
+                return err;
+            }
+            if (offset < 0) {
+                Tcl_SetObjResult(_interp, Tcl_NewStringObj("Offset must be >= 0.", -1));
                 return TCL_ERROR;
             }
+            [self goTo:offset];
+            break;
+        }
+        case command_pos: {
+            CHECK_NO_ARG;
+            Tcl_SetObjResult(_interp, tcl_obj_from_uint64(self.position));
+            break;
+        }
+        case command_len: {
+            CHECK_NO_ARG;
+            Tcl_SetObjResult(_interp, tcl_obj_from_uint64(self.length));
+            break;
+        }
+        case command_end: {
+            CHECK_NO_ARG;
             Tcl_SetObjResult(_interp, Tcl_NewBooleanObj(self.isEOF));
             break;
         }
@@ -295,7 +328,7 @@ DEFINE_COMMAND(endsection)
             break;
         }
         case command_endsection: {
-            CHECK_SINGLE_ARG;
+            CHECK_NO_ARG;
             [self endSection];
             break;
         }
@@ -304,10 +337,7 @@ DEFINE_COMMAND(endsection)
 }
 
 - (int)runTypeCommand:(enum command)command objc:(int)objc objv:(struct Tcl_Obj * CONST *)objv {
-    if (objc != 2) {
-        Tcl_WrongNumArgs(_interp, 1, objv, "label");
-        return TCL_ERROR;
-    }
+    CHECK_SINGLE_ARG("label");
     NSString *label = [NSString stringWithUTF8String:Tcl_GetStringFromObj(objv[1], NULL)];
     switch (command) {
         case command_uint64: {

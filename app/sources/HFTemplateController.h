@@ -31,6 +31,7 @@ typedef NS_ENUM(NSUInteger, HFEndian) {
 @interface HFTemplateController (Private)
 
 @property (readonly) unsigned long long position;
+@property (readonly) unsigned long long length;
 @property HFEndian endian;
 @property (readonly) BOOL isEOF;
 
@@ -55,6 +56,7 @@ typedef NS_ENUM(NSUInteger, HFEndian) {
 - (BOOL)readUUID:(NSUUID **)uuid forLabel:(NSString *)label;
 
 - (void)moveTo:(long long)offset;
+- (void)goTo:(unsigned long long)offset;
 
 - (void)beginSectionWithLabel:(NSString *)label;
 - (void)endSection;
