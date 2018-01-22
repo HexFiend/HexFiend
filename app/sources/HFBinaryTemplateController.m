@@ -107,11 +107,11 @@
     NSFileManager *fm = [NSFileManager defaultManager];
     NSString *dir = self.templatesFolder;
     NSMutableArray<HFTemplateFile*> *templates = [NSMutableArray array];
-    for (NSString *filename in [fm contentsOfDirectoryAtPath:dir error:nil]) {
+    for (NSString *filename in [fm enumeratorAtPath:dir]) {
         if ([filename.pathExtension isEqualToString:@"tcl"]) {
             HFTemplateFile *file = [[HFTemplateFile alloc] init];
             file.path = [dir stringByAppendingPathComponent:filename];
-            file.name = [filename stringByDeletingPathExtension];
+            file.name = [[filename lastPathComponent] stringByDeletingPathExtension];
             [templates addObject:file];
         }
     }
