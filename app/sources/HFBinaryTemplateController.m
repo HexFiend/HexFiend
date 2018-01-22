@@ -77,7 +77,7 @@
                                                context:NULL];
 }
 
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context {
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> * __unused)change context:(void * __unused)context {
     if (object == [NSUserDefaults standardUserDefaults]) {
         if ([keyPath isEqualToString:@"BinaryTemplateSelectionColor"]) {
             [self updateSelectionColor];
