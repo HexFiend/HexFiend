@@ -131,6 +131,22 @@
     return YES;
 }
 
+- (BOOL)readUInt24:(uint32_t *)value forLabel:(NSString *)label {
+    uint8_t bytes[3];
+    if (![self readBytes:bytes size:sizeof(bytes)]) {
+        return NO;
+    }
+    if (self.endian == HFEndianBig) {
+        uint8_t byte0 = bytes[0];
+        bytes[0] = bytes[2];
+        bytes[2] = byte0;
+    }
+    uint32_t val = (bytes[2] << 16) | (bytes[1] << 8) | bytes[0];
+    *value = val;
+    [self addNodeWithLabel:label value:[NSString stringWithFormat:@"%u", val] size:sizeof(bytes)];
+    return YES;
+}
+
 - (BOOL)readUInt16:(uint16_t *)value forLabel:(NSString *)label {
     uint16_t val;
     if (![self readBytes:&val size:sizeof(val)]) {

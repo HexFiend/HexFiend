@@ -40,8 +40,7 @@ section "Map" {
                 uint16 "Resource ID"
                 uint16 "Name List Offset"
                 uint8 "Attributes"
-                hex 3 "Data Offset"
-                #uint24 "Data Offset"
+                uint24 "Data Offset"
                 uint32 "Handle"
             }
         }

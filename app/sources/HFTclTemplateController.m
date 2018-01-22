@@ -22,6 +22,7 @@ enum command {
     command_int64,
     command_uint32,
     command_int32,
+    command_uint24,
     command_uint16,
     command_int16,
     command_uint8,
@@ -57,6 +58,7 @@ DEFINE_COMMAND(uint64)
 DEFINE_COMMAND(int64)
 DEFINE_COMMAND(uint32)
 DEFINE_COMMAND(int32)
+DEFINE_COMMAND(uint24)
 DEFINE_COMMAND(uint16)
 DEFINE_COMMAND(int16)
 DEFINE_COMMAND(uint8)
@@ -103,6 +105,7 @@ DEFINE_COMMAND(endsection)
         CMD(int64),
         CMD(uint32),
         CMD(int32),
+        CMD(uint24),
         CMD(uint16),
         CMD(int16),
         CMD(uint8),
@@ -175,6 +178,7 @@ DEFINE_COMMAND(endsection)
         case command_int64:
         case command_uint32:
         case command_int32:
+        case command_uint24:
         case command_uint16:
         case command_int16:
         case command_uint8:
@@ -340,6 +344,15 @@ DEFINE_COMMAND(endsection)
                 return TCL_ERROR;
             }
             Tcl_SetObjResult(_interp, Tcl_NewIntObj((int)val));
+            break;
+        }
+        case command_uint24: {
+            uint32_t val;
+            if (![self readUInt24:&val forLabel:label]) {
+                Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read bytes", -1));
+                return TCL_ERROR;
+            }
+            Tcl_SetObjResult(_interp, Tcl_NewWideIntObj((Tcl_WideInt)val));
             break;
         }
         case command_uint16: {
