@@ -266,7 +266,9 @@
     [self.currentNode.children addObject:node];
     HFRange range = self.currentNode.range;
     range.length = ((node.range.location + node.range.length) - range.location);
-    self.currentNode.range = range;
+    if (!self.currentNode.isGroup) {
+        self.currentNode.range = range;
+    }
 }
 
 - (BOOL)isEOF {
@@ -306,18 +308,12 @@
 
 - (void)beginSectionWithLabel:(NSString *)label {
     HFTemplateNode *node = [[HFTemplateNode alloc] initGroupWithLabel:label parent:self.currentNode];
-    node.range = HFRangeMake(self.anchor + self.position, 0);
     [self.currentNode.children addObject:node];
     self.currentNode = node;
 }
 
 - (void)endSection {
-    HFTemplateNode *node = self.currentNode;
     self.currentNode = self.currentNode.parent;
-    
-    HFRange range = self.currentNode.range;
-    range.length = ((node.range.location + node.range.length) - range.location);
-    self.currentNode.range = range;
 }
 
 @end
