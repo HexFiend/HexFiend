@@ -36,7 +36,6 @@ section "Map" {
             }
         }
     }
-    puts $types
     section "Reference Lists" {
         set i 1
         foreach type $types {
