@@ -1413,7 +1413,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "DATE=`date -u \"+%y%m%d\"`\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $DATE\" \"${TARGET_BUILD_DIR}/${INFOPLIST_PATH}\"\n";
+			shellScript = "DATE=`date -u \"+%s\"`\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $DATE\" \"${TARGET_BUILD_DIR}/${INFOPLIST_PATH}\"\n";
 		};
 		D01D1D711489D208008212BB /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
