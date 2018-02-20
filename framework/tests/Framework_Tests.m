@@ -402,7 +402,7 @@ static NSUInteger random_upto(unsigned long long val) {
     }
     
     HFFileReference *ref;
-    HFByteArray *array =  byteArrayForFile([fileURL path], &ref);
+    HFByteArray *array = byteArrayForFile([fileURL path], &ref);
     XCTAssert([ref length] == [data length]);
     XCTAssert([HFHashByteArray(array) isEqual:HFHashFile(fileURL)]);
     

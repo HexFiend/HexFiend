@@ -1286,7 +1286,7 @@ static size_t unionAndCleanLists(NSRect *rectList, __unsafe_unretained id *value
     HFASSERT(glyphCount > 0);
     if ([styleRun shouldDraw]) {
         [styleRun set];
-        CGContextRef ctx =  [[NSGraphicsContext currentContext] graphicsPort];
+        CGContextRef ctx = [[NSGraphicsContext currentContext] graphicsPort];
         
         /* Get all the CGGlyphs together */
         NEW_ARRAY(CGGlyph, cgglyphs, glyphCount);

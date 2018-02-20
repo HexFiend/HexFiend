@@ -199,7 +199,7 @@ static inline Class preferredByteArrayClass(void) {
 
 /* Called to show or hide the divider representer. This should be shown when both our text representers are visible */
 - (void)showOrHideDividerRepresenter {
-    BOOL dividerRepresenterShouldBeShown = [self dividerRepresenterShouldBeShown];;
+    BOOL dividerRepresenterShouldBeShown = [self dividerRepresenterShouldBeShown];
     BOOL dividerRepresenterIsShown = [self representerIsShown:textDividerRepresenter];
     if (dividerRepresenterShouldBeShown && ! dividerRepresenterIsShown) {
         [self showViewForRepresenter:textDividerRepresenter];

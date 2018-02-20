@@ -596,7 +596,7 @@ static inline Class preferredByteArrayClass(void) {
         if (repMaxLines != DBL_MAX) {
             /* bytesPerLine may be ULONG_MAX.  We want to compute the smaller of maxBytesForViewSize and ceil(repMaxLines) * bytesPerLine.  If the latter expression overflows, the smaller is the former. */
             NSUInteger repMaxLinesUInt = (NSUInteger)ceil(repMaxLines);
-            NSUInteger maxLinesTimesBytesPerLine =  repMaxLinesUInt * bytesPerLine;
+            NSUInteger maxLinesTimesBytesPerLine = repMaxLinesUInt * bytesPerLine;
             /* Check if we overflowed */
             BOOL overflowed = (repMaxLinesUInt != 0 && (maxLinesTimesBytesPerLine / repMaxLinesUInt != bytesPerLine));
             if (! overflowed) {
