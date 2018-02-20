@@ -98,6 +98,20 @@
     REQUIRE_NOT_NULL(text);
     NSData *data = [text dataUsingEncoding:[self encoding] allowLossyConversion:NO];
     if (! data) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            NSString *key = @"HFStringEncodingConversionFailureShowAlert";
+            if (![[NSUserDefaults standardUserDefaults] objectForKey:key]) {
+                NSAlert *alert = [[NSAlert alloc] init];
+                alert.messageText = NSLocalizedString(@"Failed to convert text", "");
+                alert.informativeText = [NSString stringWithFormat:NSLocalizedString(@"The text \"%@\" could not be converted to the current encoding \"%@\". The encoding may not support these characters.", ""), text, [NSString localizedNameOfStringEncoding:[self encoding]]];
+                (void)[alert addButtonWithTitle:NSLocalizedString(@"OK", "")];
+                NSButton *ignoreButton = [alert addButtonWithTitle:NSLocalizedString(@"Do Not Show Again", "")];
+                if ([alert runModal] == NSAlertSecondButtonReturn) {
+                    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:key];
+                }
+            }
+        });
+        NSLog(@"%s: Can't convert \"%@\" to encoding %@", __PRETTY_FUNCTION__, text, [NSString localizedNameOfStringEncoding:[self encoding]]);
         NSBeep();
     }
     else if ([data length]) { // a 0 length text can come about via e.g. option-e
