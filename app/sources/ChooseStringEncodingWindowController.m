@@ -248,6 +248,8 @@ static void addEncoding(NSString *name, CFStringEncoding value, NSMutableArray<H
 {
     NSInteger row = tableView.selectedRow;
     if (row == -1) {
+        NSIndexSet *indexSet = [NSIndexSet indexSetWithIndex:0];
+        [tableView selectRowIndexes:indexSet byExtendingSelection:NO];
         return;
     }
     /* Tell the front document (if any) and the app delegate */
