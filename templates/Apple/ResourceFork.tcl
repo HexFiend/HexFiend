@@ -49,7 +49,7 @@ section "File Format" {
                             set save_pos [pos]
                             goto [expr {$header_data_offset + $data_offset}]
                             set data_len [uint32 "Data Length"]
-                            hex $data_len "Data"
+                            hex $data_len "Data" ;# TODO: region
                             goto $save_pos
                         }
                         uint32 "Handle"
