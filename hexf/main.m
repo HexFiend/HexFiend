@@ -46,7 +46,9 @@ int main(int argc __unused, const char * argv[] __unused) {
                 fprintf(stderr, "Only one file can be specified when diff argument is used.\n");
                 return EXIT_FAILURE;
             }
-            [filesToOpen addObject:arg];
+            NSURL *url = [NSURL fileURLWithPath:arg];
+            NSString *path = url.path; // get absolute path
+            [filesToOpen addObject:path];
         }
         NSString *appIdentifier = @"com.ridiculousfish.HexFiend";
         NSRunningApplication* app = [[NSRunningApplication runningApplicationsWithBundleIdentifier:appIdentifier] firstObject];
