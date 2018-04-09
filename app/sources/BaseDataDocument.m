@@ -1181,7 +1181,7 @@ static inline Class preferredByteArrayClass(void) {
 
 - (void)showFindPanel:(NSMenuItem *)item {
     dispatch_block_t selectText = ^{
-        NSView *field = [findReplaceView viewNamed:@"searchField"];
+        NSView *field = [self->findReplaceView viewNamed:@"searchField"];
         HFASSERT([field isKindOfClass:[HFTextField class]]);
         [(HFTextField*)field selectAll:nil];
     };
@@ -1345,10 +1345,10 @@ static inline Class preferredByteArrayClass(void) {
                 if (result) NSBeep();
             } else {
                 HFRange resultRange = HFRangeMake(searchResult, [needle length]);
-                [controller setSelectedContentsRanges:[HFRangeWrapper withRanges:&resultRange count:1]];
-                [controller maximizeVisibilityOfContentsRange:resultRange];
+                [self->controller setSelectedContentsRanges:[HFRangeWrapper withRanges:&resultRange count:1]];
+                [self->controller maximizeVisibilityOfContentsRange:resultRange];
                 [self restoreFirstResponderToSavedResponder];
-                [controller pulseSelection];
+                [self->controller pulseSelection];
             }
             [needle decrementChangeLockCounter];
             [haystack decrementChangeLockCounter];
@@ -1455,7 +1455,7 @@ cancelled:;
         [haystack decrementChangeLockCounter];
         [replacementValue decrementChangeLockCounter];
         if (newByteArray != nil) {
-            [controller replaceByteArray:newByteArray];
+            [self->controller replaceByteArray:newByteArray];
         }
     }];
 }

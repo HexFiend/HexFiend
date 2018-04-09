@@ -667,10 +667,10 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
     [leftBytes incrementChangeLockCounter];
     [rightBytes incrementChangeLockCounter];
     [diffComputationView startOperation:^id(HFProgressTracker *tracker) {
-        return [[HFByteArrayEditScript alloc] initWithDifferenceFromSource:leftBytes toDestination:rightBytes trackingProgress:tracker];
+        return [[HFByteArrayEditScript alloc] initWithDifferenceFromSource:self->leftBytes toDestination:self->rightBytes trackingProgress:tracker];
     } completionHandler:^(id script) {
-        [leftBytes decrementChangeLockCounter];
-        [rightBytes decrementChangeLockCounter];
+        [self->leftBytes decrementChangeLockCounter];
+        [self->rightBytes decrementChangeLockCounter];
         
         /* script may be nil if we cancelled */
         if (! script) {

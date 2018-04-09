@@ -198,8 +198,8 @@ static NSView *searchForViewWithIdentifier(NSView *view, NSString *identifier) {
     waitGroup = dispatch_group_create();
     dispatch_group_async(waitGroup, dispatch_get_global_queue(0, 0), ^{
         @autoreleasepool {
-            threadResult = block(tracker);
-            [tracker noteFinished:self];
+            self->threadResult = block(self->tracker);
+            [self->tracker noteFinished:self];
         }
     });
     [self didChangeValueForKey:@"operationIsRunning"];
