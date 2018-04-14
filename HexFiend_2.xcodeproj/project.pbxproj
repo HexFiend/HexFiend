@@ -2730,7 +2730,7 @@
 				GCC_WARN_UNUSED_VALUE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INSTALL_PATH = /Applications;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				OTHER_CFLAGS = (
 					"-DMacAppStore=1",
 					"-DHF_NO_PRIVILEGED_FILE_OPERATIONS=1",
@@ -3340,14 +3340,22 @@
 		D09B9CF720829B90007640C7 /* Debug+MAS */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				PRODUCT_NAME = CommandLineTool;
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "-";
+				PRODUCT_NAME = hexf;
+				SKIP_INSTALL = YES;
 			};
 			name = "Debug+MAS";
 		};
 		D09B9CF820829B90007640C7 /* Release+MAS */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				PRODUCT_NAME = CommandLineTool;
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "-";
+				PRODUCT_NAME = hexf;
+				SKIP_INSTALL = YES;
 			};
 			name = "Release+MAS";
 		};
