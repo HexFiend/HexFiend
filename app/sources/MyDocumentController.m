@@ -92,6 +92,7 @@
 {
     openPanel.treatsFilePackagesAsDirectories = YES;
     openPanel.showsHiddenFiles = YES;
+    openPanel.resolvesAliases = [[NSUserDefaults standardUserDefaults] boolForKey:@"ResolveAliases"];
     [super beginOpenPanel:openPanel forTypes:inTypes completionHandler:completionHandler];
 }
 
