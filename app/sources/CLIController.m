@@ -63,4 +63,15 @@
     [self runAlert:[NSString stringWithFormat:NSLocalizedString(@"%@ has been successfully installed.", ""), [srcFile lastPathComponent]]];
 }
 
+#if MacAppStore
+// We cannot install hexf in MAS builds.
+- (BOOL)validateMenuItem:(NSMenuItem *)item {
+    if ([item action] == @selector(installCommandLineTools:)) {
+        [item setHidden:YES];
+        return NO;
+    }
+    return YES;
+}
+#endif
+
 @end
