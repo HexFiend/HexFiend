@@ -678,9 +678,9 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
         } else {
             
             /* Hide the script banner */
-            if (operationView != nil && operationView == diffComputationView) [self hideBannerFirstThenDo:NULL];
+            if (self->operationView != nil && self->operationView == self->diffComputationView) [self hideBannerFirstThenDo:NULL];
             
-            editScript = script;
+            self->editScript = script;
             [self showInstructionsFromEditScript];	
         }
     }];
