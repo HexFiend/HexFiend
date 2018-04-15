@@ -352,7 +352,16 @@ static inline Class preferredByteArrayClass(void) {
 - (NSSize)windowWillResize:(NSWindow *)sender toSize:(NSSize)frameSize {
     USE(sender);
     if (layoutRepresenter == nil) return frameSize;
+#if __MAC_OS_X_VERSION_MAX_ALLOWED >= __MAC_10_12
+    NSSize size = NSZeroSize;
+    for (NSWindow *window in self.window.tabbedWindows.count ? self.window.tabbedWindows : @[self.window]) {
+        NSSize windowSize = [window.windowController.document minimumWindowFrameSizeForProposedSize:frameSize];
+        size = NSMakeSize(MAX(size.width, windowSize.width), MAX(size.height, windowSize.height));
+    }
+    return size;
+#else
     return [self minimumWindowFrameSizeForProposedSize:frameSize];
+#endif
 }
 
 - (void)windowDidResize:(NSNotification * __unused)notification
@@ -545,7 +554,8 @@ static inline Class preferredByteArrayClass(void) {
      * so that it will never exist in an inconsistent state */
     
     [(NSView *)[hexRepresenter view] setAutoresizingMask:NSViewHeightSizable];
-    [(NSView *)[asciiRepresenter view] setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
+    [(NSView *)[asciiRepresenter view] setAutoresizingMask:NSViewHeightSizable];
+    [(NSView *)[lineCountingRepresenter view] setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
     
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
     [center addObserver:self selector:@selector(lineCountingViewChangedWidth:) name:HFLineCountingRepresenterMinimumViewWidthChanged object:lineCountingRepresenter];
