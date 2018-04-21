@@ -90,7 +90,10 @@ invalidString:;
     return NO;
 }
 
-extern int sandbox_check(pid_t, const char *, int);
 BOOL isSandboxed(void) {
-    return !! sandbox_check(getpid(), NULL, 0);
+#if MacAppStore
+    return YES;
+#else
+    return NO;
+#endif
 }
