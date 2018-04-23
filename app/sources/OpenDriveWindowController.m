@@ -7,6 +7,7 @@
 //
 
 #import "OpenDriveWindowController.h"
+#import "AppUtilities.h"
 #include <sys/stat.h>
 #include <objc/message.h>
 
@@ -88,6 +89,15 @@ enum {
 - (NSString *)windowNibName
 {
     return @"OpenDriveDialog";
+}
+
+- (BOOL)validateMenuItem:(NSMenuItem *)menuItem {
+    // Hide Open Drive if we are sandboxed
+    if ([menuItem action] == @selector(showWindow:) && isSandboxed()) {
+        [menuItem setHidden:YES];
+        return NO;
+    }
+    return YES;
 }
 
 static void addDisk(DADiskRef disk, UNUSED void * context)

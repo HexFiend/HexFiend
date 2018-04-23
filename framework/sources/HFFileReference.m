@@ -12,7 +12,7 @@
 #include <unistd.h>
 #include <sys/disk.h>
 
-#ifndef HF_NO_PRIVILEGED_FILE_OPERATIONS
+#if ! HF_NO_PRIVILEGED_FILE_OPERATIONS
 #import "HFPrivilegedHelperConnection.h"
 #endif
 
@@ -193,7 +193,7 @@ static BOOL returnFTruncateError(NSError **error) {
         fileDescriptor = open(p, O_RDONLY, 0);
     }
 
-#ifndef HF_NO_PRIVILEGED_FILE_OPERATIONS
+#if ! HF_NO_PRIVILEGED_FILE_OPERATIONS
 	if (fileDescriptor < 0 && errno == EACCES) {
 		if ([[HFPrivilegedHelperConnection sharedConnection] openFileAtPath:p writable:isWritable fileDescriptor:&fileDescriptor error:error]) {
             isPrivileged = YES;

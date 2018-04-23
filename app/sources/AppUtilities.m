@@ -89,3 +89,11 @@ BOOL parseNumericStringWithSuffix(NSString *stringValue, unsigned long long *res
 invalidString:;
     return NO;
 }
+
+BOOL isSandboxed(void) {
+#if MacAppStore
+    return YES;
+#else
+    return NO;
+#endif
+}
