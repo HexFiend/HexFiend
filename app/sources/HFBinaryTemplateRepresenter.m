@@ -13,15 +13,21 @@
 
 @interface HFBinaryTemplateRepresenter ()
 
-@property (strong) HFBinaryTemplateController *viewController;
+@property (strong, nonatomic) HFBinaryTemplateController *viewController;
 @property NSUInteger menuPosition;
 
 @end
 
 @implementation HFBinaryTemplateRepresenter
 
+- (HFBinaryTemplateController *)viewController {
+    if (!_viewController) {
+        _viewController = [[HFBinaryTemplateController alloc] init];
+    }
+    return _viewController;
+}
+
 - (NSView *)createView {
-    self.viewController = [[HFBinaryTemplateController alloc] init];
     return self.viewController.view;
 }
 

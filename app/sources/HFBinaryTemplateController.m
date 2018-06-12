@@ -158,6 +158,7 @@
 }
 
 - (void)rerunTemplate {
+    HFASSERT(self.controller != nil);
     [self rerunTemplateWithController:self.controller];
 }
 
