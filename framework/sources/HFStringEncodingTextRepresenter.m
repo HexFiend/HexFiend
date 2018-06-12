@@ -105,7 +105,7 @@
                 alert.messageText = NSLocalizedString(@"Failed to convert text", "");
                 alert.informativeText = [NSString stringWithFormat:NSLocalizedString(@"The text \"%@\" could not be converted to the current encoding \"%@\". The encoding may not support these characters.", ""), text, [NSString localizedNameOfStringEncoding:[self encoding]]];
                 (void)[alert addButtonWithTitle:NSLocalizedString(@"OK", "")];
-                NSButton *ignoreButton = [alert addButtonWithTitle:NSLocalizedString(@"Do Not Show Again", "")];
+                (void)[alert addButtonWithTitle:NSLocalizedString(@"Do Not Show Again", "")];
                 if ([alert runModal] == NSAlertSecondButtonReturn) {
                     [[NSUserDefaults standardUserDefaults] setBool:YES forKey:key];
                 }
