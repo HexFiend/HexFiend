@@ -95,8 +95,6 @@
 - (void)drawRect:(NSRect)clip {
     USE(clip);
     NSRect bounds = [self bounds];
-    //    [[NSColor colorWithCalibratedWhite:(CGFloat).91 alpha:1] set];
-    //    NSRectFill(clip);
     
     NSWindow *window = [self window];
     BOOL drawActive = (window == nil || [window isMainWindow] || [window isKeyWindow]);

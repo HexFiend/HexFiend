@@ -130,8 +130,6 @@
 - (void)drawDividerWithClip:(NSRect)clipRect {
     USE(clipRect);
     
-
-#if 1    
     NSInteger edges = _representer.borderedEdges;
     NSRect bounds = self.bounds;
     
@@ -196,23 +194,6 @@
     if (NSIntersectsRect(lineRect, clipRect)) {
         NSRectFill(lineRect);
     }
-    
-#else
-    
-    
-    if (NSIntersectsRect(lineRect, clipRect)) {
-        // this looks better when we have no shadow
-        [[NSColor lightGrayColor] set];
-        NSRect bounds = self.bounds;
-        NSRect lineRect = bounds;
-        lineRect.origin.x += lineRect.size.width - 2;
-        lineRect.size.width = 1;
-        NSRectFill(NSIntersectionRect(lineRect, clipRect));
-        [[NSColor whiteColor] set];
-        lineRect.origin.x += 1;
-        NSRectFill(NSIntersectionRect(lineRect, clipRect));	
-    }
-#endif
 }
 
 static inline int common_prefix_length(const char *a, const char *b) {
@@ -223,64 +204,6 @@ static inline int common_prefix_length(const char *a, const char *b) {
         if (ac != bc || ac == 0 || bc == 0) break;
     }
     return i;
-}
-
-/* Drawing with NSLayoutManager is necessary because the 10_2 typesetting behavior used by the old string drawing does the wrong thing for fonts like Bitstream Vera Sans Mono.  Also it's an optimization for drawing the shadow. */
-- (void)drawLineNumbersWithClipLayoutManagerPerLine:(NSRect)clipRect {
-#if TIME_LINE_NUMBERS
-    CFAbsoluteTime startTime = CFAbsoluteTimeGetCurrent();
-#endif
-    NSUInteger previousTextStorageCharacterCount = [textStorage length];
-    
-    CGFloat verticalOffset = ld2f(_lineRangeToDraw.location - floorl(_lineRangeToDraw.location));
-    NSRect textRect = self.bounds;
-    textRect.size.height = _lineHeight;
-    textRect.origin.y -= verticalOffset * _lineHeight;
-    unsigned long long lineIndex = HFFPToUL(floorl(_lineRangeToDraw.location));
-    unsigned long long lineValue = lineIndex * _bytesPerLine;
-    NSUInteger linesRemaining = ll2l(HFFPToUL(ceill(_lineRangeToDraw.length + _lineRangeToDraw.location) - floorl(_lineRangeToDraw.location)));
-    char previousBuff[256];
-    int previousStringLength = (int)previousTextStorageCharacterCount;
-    BOOL conversionResult = [[textStorage string] getCString:previousBuff maxLength:sizeof previousBuff encoding:NSASCIIStringEncoding];
-    HFASSERT(conversionResult);
-    while (linesRemaining--) {
-        char formatString[64];
-        [self getLineNumberFormatString:formatString length:sizeof formatString];
-        
-        if (NSIntersectsRect(textRect, clipRect)) {
-            NSString *replacementCharacters = nil;
-            NSRange replacementRange;
-            char buff[256];
-            int newStringLength = snprintf(buff, sizeof buff, formatString, lineValue);
-            HFASSERT(newStringLength > 0);
-            int prefixLength = common_prefix_length(previousBuff, buff);
-            HFASSERT(prefixLength <= newStringLength);
-            HFASSERT(prefixLength <= previousStringLength);
-            replacementRange = NSMakeRange(prefixLength, previousStringLength - prefixLength);
-            replacementCharacters = [[NSString alloc] initWithBytesNoCopy:buff + prefixLength length:newStringLength - prefixLength encoding:NSASCIIStringEncoding freeWhenDone:NO];
-            NSUInteger glyphCount;
-            [textStorage replaceCharactersInRange:replacementRange withString:replacementCharacters];
-            if (previousTextStorageCharacterCount == 0) {
-                NSDictionary *atts = [[NSDictionary alloc] initWithObjectsAndKeys:_font, NSFontAttributeName, [NSColor colorWithCalibratedWhite:(CGFloat).1 alpha:(CGFloat).8], NSForegroundColorAttributeName, nil];
-                [textStorage setAttributes:atts range:NSMakeRange(0, newStringLength)];
-            }
-            glyphCount = [layoutManager numberOfGlyphs];
-            if (glyphCount > 0) {
-                CGFloat maxX = NSMaxX([layoutManager lineFragmentUsedRectForGlyphAtIndex:glyphCount - 1 effectiveRange:NULL]);
-                [layoutManager drawGlyphsForGlyphRange:NSMakeRange(0, glyphCount) atPoint:NSMakePoint(textRect.origin.x + textRect.size.width - maxX, textRect.origin.y)];
-            }
-            previousTextStorageCharacterCount = newStringLength;
-            memcpy(previousBuff, buff, newStringLength + 1);
-            previousStringLength = newStringLength;
-        }
-        textRect.origin.y += _lineHeight;
-        lineIndex++;
-        lineValue = HFSum(lineValue, _bytesPerLine);
-    }
-#if TIME_LINE_NUMBERS
-    CFAbsoluteTime endTime = CFAbsoluteTimeGetCurrent();
-    NSLog(@"Line number time: %f", endTime - startTime);
-#endif
 }
 
 - (void)drawLineNumbersWithClipStringDrawing:(NSRect)clipRect {
@@ -490,53 +413,6 @@ static inline int common_prefix_length(const char *a, const char *b) {
     [string drawInRect:textRect withAttributes:textAttributes];
 }
 
-- (void)drawLineNumbersWithClipSingleStringCellDrawing:(NSRect)clipRect {
-    USE(clipRect);
-    const CGFloat cellTextContainerPadding = 2.f;
-    unsigned long long lineIndex = HFFPToUL(floorl(_lineRangeToDraw.location));
-    NSUInteger linesRemaining = ll2l(HFFPToUL(ceill(_lineRangeToDraw.length + _lineRangeToDraw.location) - floorl(_lineRangeToDraw.location)));
-    
-    CGFloat linesToVerticallyOffset = ld2f(_lineRangeToDraw.location - floorl(_lineRangeToDraw.location));
-    CGFloat verticalOffset = linesToVerticallyOffset * _lineHeight + 1;
-    NSRect textRect = self.bounds;
-    textRect.size.width -= 5;
-    textRect.origin.y -= verticalOffset;
-    textRect.origin.x += cellTextContainerPadding;
-    textRect.size.height += verticalOffset;
-    
-    if (! textAttributes) {
-        NSMutableParagraphStyle *mutableStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
-        [mutableStyle setAlignment:NSRightTextAlignment];
-        [mutableStyle setMinimumLineHeight:_lineHeight];
-        [mutableStyle setMaximumLineHeight:_lineHeight];
-        NSParagraphStyle *paragraphStyle = [mutableStyle copy];
-        textAttributes = [[NSDictionary alloc] initWithObjectsAndKeys:_font, NSFontAttributeName, [NSColor colorWithCalibratedWhite:(CGFloat).1 alpha:(CGFloat).8], NSForegroundColorAttributeName, paragraphStyle, NSParagraphStyleAttributeName, nil];
-    }
-    
-    NSString *string = [self newLineStringForRange:HFRangeMake(lineIndex, linesRemaining)];
-    NSAttributedString *attributedString = [[NSAttributedString alloc] initWithString:string attributes:textAttributes];
-    NSCell *cell = [[NSCell alloc] initTextCell:@""];
-    [cell setAttributedStringValue:attributedString];
-    [cell drawWithFrame:textRect inView:self];
-    [[NSColor purpleColor] set];
-    NSFrameRect(textRect);
-}
-
-- (void)drawLineNumbersWithClipFullLayoutManager:(NSRect)clipRect {
-    USE(clipRect);
-    unsigned long long lineIndex = HFFPToUL(floorl(_lineRangeToDraw.location));
-    NSUInteger linesRemaining = ll2l(HFFPToUL(ceill(_lineRangeToDraw.length + _lineRangeToDraw.location) - floorl(_lineRangeToDraw.location)));
-    if (lineIndex != storedLineIndex || linesRemaining != storedLineCount) {
-        [self updateLayoutManagerWithLineIndex:lineIndex lineCount:linesRemaining];
-    }
-    
-    CGFloat verticalOffset = ld2f(_lineRangeToDraw.location - floorl(_lineRangeToDraw.location));
-    
-    NSPoint textPoint = self.bounds.origin;
-    textPoint.y -= verticalOffset * _lineHeight;
-    [layoutManager drawGlyphsForGlyphRange:NSMakeRange(0, [layoutManager numberOfGlyphs]) atPoint:textPoint];
-}
-
 - (void)drawLineNumbersWithClip:(NSRect)clipRect {
 #if TIME_LINE_NUMBERS
     CFAbsoluteTime startTime = CFAbsoluteTimeGetCurrent();
@@ -549,27 +425,15 @@ static inline int common_prefix_length(const char *a, const char *b) {
         // actually be a problem in practice.
         // TODO: Make a drawing mode that is "Fonts could get clipped if too wide"
         //       because that seems like better behavior than any of these.
-        case 0:
-            // Most fonts are too wide and every character gets piled on right (unreadable).
-            [self drawLineNumbersWithClipLayoutManagerPerLine:clipRect];
-            break;
         case 1:
             // Last characters could get omitted (*not* clipped) if too wide.
             // Also, most fonts have bottoms clipped (very unsigntly).
             [self drawLineNumbersWithClipStringDrawing:clipRect];
             break;
-        case 2:
-            // Most fonts are too wide and wrap (breaks numbering).
-            [self drawLineNumbersWithClipFullLayoutManager:clipRect];
-            break;
         case 3:
             // Fonts could wrap if too wide (breaks numbering).
             // *Note that that this is the only mode that generally works.*
             [self drawLineNumbersWithClipSingleStringDrawing:clipRect];
-            break;
-        case 4:
-            // Most fonts are too wide and wrap (breaks numbering).
-            [self drawLineNumbersWithClipSingleStringCellDrawing:clipRect];
             break;
     }
 #if TIME_LINE_NUMBERS

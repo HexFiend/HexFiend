@@ -404,7 +404,6 @@ enum LineCoverage_t {
 }
 
 - (void)drawPulseBackgroundInRect:(NSRect)pulseRect {
-    [[NSColor yellowColor] set];
     CGContextRef ctx = [[NSGraphicsContext currentContext] graphicsPort];
     CGContextSaveGState(ctx);
     [[NSBezierPath bezierPathWithRoundedRect:pulseRect xRadius:25 yRadius:25] addClip];
@@ -1562,9 +1561,6 @@ static size_t unionAndCleanLists(NSRect *rectList, __unsafe_unretained id *value
             CGContextEndTransparencyLayer(ctx);
             
             for(HFRepresenterTextViewCallout * newCallout in localCallouts) {
-                // NSRect rect = [callout rect];
-                // [[NSColor greenColor] set];
-                // NSFrameRect(rect);
                 [newCallout drawWithClip:clip];
             }
         }
@@ -1592,9 +1588,6 @@ static size_t unionAndCleanLists(NSRect *rectList, __unsafe_unretained id *value
     
     [self _drawDefaultLineBackgrounds:clip withLineHeight:[self lineHeight] maxLines:ll2l(HFRoundUpToNextMultipleSaturate(byteCount, bytesPerLine) / bytesPerLine)];
     [self drawRangesIfNecessaryWithClip:clip];
-    
-    NSColor *textColor = [NSColor blackColor];
-    [textColor set];
     
     if (! antialias) {
         CGContextSaveGState(ctx);
