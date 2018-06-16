@@ -56,7 +56,8 @@
 
 #define NEW_ARRAY(type, name, number) \
     type name ## static_ [256];\
-    type * name = ((number) <= 256 ? name ## static_ : check_malloc((number) * sizeof(type)))
+    bzero(name ## static_, sizeof(name ## static_));\
+    type * name = ((number) <= 256 ? name ## static_ : check_calloc((number) * sizeof(type)))
     
 #define FREE_ARRAY(name) \
     if (name != name ## static_) free(name)
