@@ -389,11 +389,6 @@ static inline Class preferredByteArrayClass(void) {
     [window setFrame:windowFrame display:YES];
 }
 
-- (void)setContainerView:(NSSplitView *)view {
-    /* Called when the nib is loaded.  We retain it. */
-    containerView = view;
-}
-
 /* Shared point for setting up a window, optionally setting a bytes per line */
 - (void)setupWindowEnforcingBytesPerLine:(NSUInteger)bplOrZero {
     NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
@@ -407,9 +402,6 @@ static inline Class preferredByteArrayClass(void) {
     [layoutView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
     
     if (containerView) {
-        [containerView setVertical:NO];
-        [containerView setDividerStyle:NSSplitViewDividerStyleThin];
-        [containerView setDelegate:self];
         [layoutView setFrame:[containerView bounds]];
         [containerView addSubview:layoutView];
     }
@@ -456,21 +448,9 @@ static inline Class preferredByteArrayClass(void) {
     /* Set the delegate */
     [window setDelegate:self];
     
-    /* Find the split view */
+    /* Find the container view */
     NSView *contentView = [window contentView];
-    NSArray *contentSubviews = [contentView subviews];
-    NSAssert1([contentSubviews count] == 1, @"Unable to adopt transient window controller %@", windowController);
-    NSSplitView *splitView = contentSubviews[0];
-    NSAssert1([splitView isKindOfClass:[NSSplitView class]], @"Unable to adopt transient window controller %@", windowController);
-    
-    /* Remove all of its subviews */
-    NSArray *existingViews = [[splitView subviews] copy];
-    for(NSView *view in existingViews) {
-        [view removeFromSuperview];
-    }
-    
-    /* It's our split view now! */
-    containerView = splitView;
+    containerView = contentView;
     
     /* Set up the window */
     [self setupWindowEnforcingBytesPerLine:oldBPL];
@@ -633,10 +613,12 @@ static inline Class preferredByteArrayClass(void) {
     HFASSERT(operationView == nil);
     operationView = newSubview;
     bannerTargetHeight = [newSubview defaultHeight];
-    if (! bannerView) bannerView = [[NSView alloc] initWithFrame:NSMakeRect(0, 0, 1, 1)];
     NSRect containerBounds = [containerView bounds];
-    NSRect bannerFrame = NSMakeRect(NSMinX(containerBounds), NSMaxY(containerBounds), NSWidth(containerBounds), 0);
-    [bannerView setFrame:bannerFrame];
+    if (! bannerView) {
+        NSRect bannerFrame = NSMakeRect(NSMinX(containerBounds), NSMaxY(containerBounds), NSWidth(containerBounds), 0);
+        bannerView = [[NSView alloc] initWithFrame:bannerFrame];
+    }
+    bannerView.autoresizingMask = NSViewWidthSizable | NSViewMinYMargin;
     bannerStartTime = 0;
     bannerIsShown = YES;
     bannerGrowing = YES;
@@ -995,8 +977,13 @@ static inline Class preferredByteArrayClass(void) {
     CGFloat height = (CGFloat)round(bannerTargetHeight * amount);
     NSRect bannerFrame = [bannerView frame];
     bannerFrame.size.height = height;
+    bannerFrame.origin.y = NSMaxY(containerView.frame) - height;
     [bannerView setFrame:bannerFrame];
-    [containerView display];
+    NSView *layoutView = [layoutRepresenter view];
+    NSRect layoutFrame = layoutView.frame;
+    layoutFrame.size.height = containerView.frame.size.height - height;
+    layoutView.frame = layoutFrame;
+
     if (isFirstCall) {
         /* The first display can take some time, which can cause jerky animation; so we start the animation after it */
         bannerStartTime = CFAbsoluteTimeGetCurrent();
@@ -1212,54 +1199,6 @@ static inline Class preferredByteArrayClass(void) {
     
     commandToRunAfterBannerPrepared = selectText;
     [self prepareBannerWithView:findReplaceView withTargetFirstResponder:[findReplaceView viewNamed:@"searchField"]];
-}
-
-- (BOOL)splitView:(NSSplitView *)splitView canCollapseSubview:(NSView * __unused)subview {
-    HFASSERT(splitView == containerView);
-    return NO;
-}
-
-- (CGFloat)splitView:(NSSplitView *)splitView constrainMaxCoordinate:(CGFloat)proposedMaximumPosition ofSubviewAt:(NSInteger)dividerIndex {
-    HFASSERT(splitView == containerView);
-    if (dividerIndex == 0 && operationView != nil && !operationView.isHidden) {
-        return operationView.defaultHeight;
-    }
-    return proposedMaximumPosition;
-}
-
-- (CGFloat)splitView:(NSSplitView *)splitView constrainMinCoordinate:(CGFloat)proposedMinimumPosition ofSubviewAt:(NSInteger)dividerIndex {
-    HFASSERT(splitView == containerView);
-    if (dividerIndex == 0 && operationView != nil && !operationView.isHidden) {
-        return operationView.defaultHeight;
-    }
-    return proposedMinimumPosition;
-}
-
-- (BOOL)splitView:(NSSplitView *)splitView shouldAdjustSizeOfSubview:(NSView *)subview {
-    HFASSERT(splitView == containerView);
-    return subview != bannerView;
-}
-
-- (NSRect)splitView:(NSSplitView *)splitView effectiveRect:(NSRect __unused)proposedEffectiveRect forDrawnRect:(NSRect __unused)drawnRect ofDividerAtIndex:(NSInteger __unused)dividerIndex {
-    HFASSERT(splitView == containerView);
-    return NSZeroRect;
-}
-
-- (void)removeBannerIfSufficientlyShort:unused {
-    USE(unused);
-    willRemoveBannerIfSufficientlyShortAfterDrag = NO;
-    if (bannerIsShown && bannerResizeTimer == NULL && NSHeight([bannerView frame]) < 20.) {
-        [self hideBannerFirstThenDo:NULL];
-    }
-}
-
-- (void)splitViewDidResizeSubviews:(NSNotification *)notification {
-    USE(notification);
-    /* If the user drags the banner so that it is very small, we want it to shrink to nothing when it is released.  We handle this by checking if we are in live resize, and setting a timer to fire in NSDefaultRunLoopMode to remove the banner. */
-    if (willRemoveBannerIfSufficientlyShortAfterDrag == NO && bannerResizeTimer == nil && [containerView inLiveResize]) {
-        willRemoveBannerIfSufficientlyShortAfterDrag = YES;
-        [self performSelector:@selector(removeBannerIfSufficientlyShort:) withObject:nil afterDelay:0. inModes:@[NSDefaultRunLoopMode]];
-    }
 }
 
 - (void)cancelOperation:sender {

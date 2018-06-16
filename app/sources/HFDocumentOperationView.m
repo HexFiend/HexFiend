@@ -116,6 +116,9 @@ static NSView *searchForViewWithIdentifier(NSView *view, NSString *identifier) {
 
 - (void)drawRect:(NSRect)dirtyRect {
     USE(dirtyRect);
+    
+    NSRect bounds = self.bounds;
+    
     static NSGradient *sGradient = nil;
     if (! sGradient) {
         NSColor *startColor = [NSColor colorWithCalibratedWhite:1. alpha:1.];
@@ -123,7 +126,11 @@ static NSView *searchForViewWithIdentifier(NSView *view, NSString *identifier) {
         NSColor *endColor = [NSColor colorWithCalibratedWhite:.9 alpha:1.];
         sGradient = [[NSGradient alloc] initWithColors:@[startColor, midColor, endColor]];
     }
-    [sGradient drawInRect:[self bounds] angle:-90];
+    [sGradient drawInRect:bounds angle:-90];
+    
+    [[NSColor lightGrayColor] set];
+    NSRect line = NSMakeRect(NSMinX(bounds), NSMinY(bounds), NSWidth(bounds), 1.0);
+    NSFrameRectWithWidthUsingOperation(line, 1.0, NSCompositeSourceOver);
 }
 
 - (BOOL)isOpaque {

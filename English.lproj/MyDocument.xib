@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11201" systemVersion="16D32" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14269.12" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11201"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14269.12"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="BaseDataDocument">
             <connections>
-                <outlet property="containerView" destination="100021" id="100022"/>
+                <outlet property="containerView" destination="6" id="iWz-7P-Vlp"/>
                 <outlet property="window" destination="5" id="18"/>
             </connections>
         </customObject>
@@ -22,12 +23,6 @@
             <view key="contentView" id="6">
                 <rect key="frame" x="0.0" y="0.0" width="433" height="420"/>
                 <autoresizingMask key="autoresizingMask"/>
-                <subviews>
-                    <customView id="100021" customClass="NSSplitView">
-                        <rect key="frame" x="0.0" y="0.0" width="433" height="420"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                    </customView>
-                </subviews>
             </view>
             <connections>
                 <outlet property="delegate" destination="-2" id="17"/>

@@ -13,8 +13,8 @@
 
 extern NSString * const BaseDataDocumentDidChangeStringEncodingNotification;
 
-@interface BaseDataDocument : NSDocument <NSWindowDelegate, DragDropDelegate, NSSplitViewDelegate> {
-    IBOutlet NSSplitView *containerView;
+@interface BaseDataDocument : NSDocument <NSWindowDelegate, DragDropDelegate> {
+    IBOutlet NSView *containerView;
     HFController *controller;
     
     HFLineCountingRepresenter *lineCountingRepresenter;
@@ -39,7 +39,6 @@ extern NSString * const BaseDataDocumentDidChangeStringEncodingNotification;
     
     BOOL bannerIsShown;
     BOOL bannerGrowing;
-    BOOL willRemoveBannerIfSufficientlyShortAfterDrag;
     NSView *bannerView;
     NSTimer *bannerResizeTimer;
     CGFloat bannerTargetHeight;
