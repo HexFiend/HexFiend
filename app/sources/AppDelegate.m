@@ -299,8 +299,7 @@ static NSComparisonResult compareFontDisplayNames(NSFont *a, NSFont *b, void *un
             NSLog(@"Invalid encoding object: %@", encoding);
         }
     }
-    HFASSERT(0); // shouldn't happen
-    return nil;
+    return [HFNSStringEncoding ascii];
 }
 
 - (void)setStringEncoding:(HFStringEncoding *)encoding {
