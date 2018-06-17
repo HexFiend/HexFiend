@@ -7,6 +7,7 @@
 
 #import <Cocoa/Cocoa.h>
 
+@class ChooseStringEncodingWindowController;
 
 @interface AppDelegate : NSObject {
     IBOutlet NSMenuItem *extendForwardsItem, *extendBackwardsItem;
@@ -16,6 +17,7 @@
     IBOutlet NSMenuItem *noBookmarksMenuItem;
     NSArray *bookmarksMenuItems;
     IBOutlet NSMenu *stringEncodingMenu;
+    IBOutlet ChooseStringEncodingWindowController *chooseStringEncoding;
 }
 
 - (IBAction)diffFrontDocuments:(id)sender;

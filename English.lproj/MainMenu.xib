@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="13771" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14269.12" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13771"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14269.12"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication"/>
@@ -537,52 +537,6 @@
                 <menuItem title="Text Encoding" id="683">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <menu key="submenu" title="Text Encoding" id="684">
-                        <items>
-                            <menuItem title="ASCII (strict 7 bit)" tag="1" id="686">
-                                <modifierMask key="keyEquivalentModifierMask"/>
-                                <connections>
-                                    <action selector="setStringEncodingFromMenuItem:" target="-1" id="704"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem title="MacRoman" tag="30" id="687">
-                                <modifierMask key="keyEquivalentModifierMask"/>
-                                <connections>
-                                    <action selector="setStringEncodingFromMenuItem:" target="-1" id="701"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem title="ISO Latin-1 (Western Europe)" tag="5" id="691">
-                                <modifierMask key="keyEquivalentModifierMask"/>
-                                <connections>
-                                    <action selector="setStringEncodingFromMenuItem:" target="-1" id="706"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem title="ISO Latin-2 (Eastern Europe)" tag="9" id="692">
-                                <modifierMask key="keyEquivalentModifierMask"/>
-                                <connections>
-                                    <action selector="setStringEncodingFromMenuItem:" target="-1" id="713"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem isSeparatorItem="YES" id="714"/>
-                            <menuItem title="UTF-16 Little (0xFFFE)" tag="-1811939072" id="689">
-                                <modifierMask key="keyEquivalentModifierMask"/>
-                                <connections>
-                                    <action selector="setStringEncodingFromMenuItem:" target="-1" id="708"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem title="UTF-16 Big (0xFEFF)" tag="-1879047936" id="688">
-                                <modifierMask key="keyEquivalentModifierMask"/>
-                                <connections>
-                                    <action selector="setStringEncodingFromMenuItem:" target="-1" id="711"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem isSeparatorItem="YES" id="690"/>
-                            <menuItem title="Other…" tag="-1" id="700">
-                                <modifierMask key="keyEquivalentModifierMask"/>
-                                <connections>
-                                    <action selector="showWindow:" target="680" id="709"/>
-                                </connections>
-                            </menuItem>
-                        </items>
                         <connections>
                             <outlet property="delegate" destination="403" id="715"/>
                         </connections>

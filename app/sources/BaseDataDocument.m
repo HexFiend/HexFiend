@@ -755,7 +755,7 @@ static inline Class preferredByteArrayClass(void) {
 }
 
 - (void)setStringEncodingFromMenuItem:(NSMenuItem *)item {
-    [self setStringEncoding:[[HFNSStringEncoding alloc] initWithEncoding:[item tag]]];
+    [self setStringEncoding:item.representedObject];
     
     /* Call to the delegate so it sets the default */
     [(AppDelegate*)[NSApp delegate] setStringEncodingFromMenuItem:item];

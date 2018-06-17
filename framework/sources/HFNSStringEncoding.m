@@ -51,4 +51,16 @@
     return [[self alloc] initWithEncoding:NSASCIIStringEncoding];
 }
 
+- (BOOL)isEqual:(id)object {
+    if ([object class] != [HFNSStringEncoding class]) {
+        return NO;
+    }
+    HFNSStringEncoding *obj = object;
+    return obj.encoding == self.encoding;
+}
+
+- (NSString *)description {
+    return [NSString stringWithFormat:@"<%@: %p - %@>", self.className, self, self.localizedName];
+}
+
 @end

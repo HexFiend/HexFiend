@@ -51,6 +51,7 @@
     [extendBackwardsItem setKeyEquivalentModifierMask:[extendBackwardsItem keyEquivalentModifierMask] | NSShiftKeyMask];
     [extendForwardsItem setKeyEquivalent:@"]"];
     [extendBackwardsItem setKeyEquivalent:@"["];	
+    [self buildStringEncodingsMenu:nil];
 
     [self processCommandLineArguments];
 
@@ -77,6 +78,46 @@
             }
         }
     }];
+}
+
+- (void)buildStringEncodingsMenu:(id __unused)sender {
+    NSArray<NSDictionary *> *encodings = @[
+        @{
+              @"value" : @(NSASCIIStringEncoding),
+              @"title" : NSLocalizedString(@"ASCII (strict 7 bit)", ""),
+        },
+        @{
+              @"value" : @(NSMacOSRomanStringEncoding),
+              @"title" : NSLocalizedString(@"MacRoman", ""),
+        },
+        @{
+              @"value" : @(NSISOLatin1StringEncoding),
+              @"title" : NSLocalizedString(@"ISO Latin-1 (Western Europe)", ""),
+        },
+        @{
+              @"value" : @(NSISOLatin2StringEncoding),
+              @"title" : NSLocalizedString(@"ISO Latin-2 (Eastern Europe)", ""),
+        },
+        @{
+              @"value" : @(NSUTF16LittleEndianStringEncoding),
+              @"title" : NSLocalizedString(@"UTF-16 Little (0xFFFE)", ""),
+        },
+        @{
+              @"value" : @(NSUTF16BigEndianStringEncoding),
+              @"title" : NSLocalizedString(@"UTF-16 Big (0xFEFF)", ""),
+        },
+    ];
+    for (NSDictionary *dict in encodings) {
+        NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:dict[@"title"] action:@selector(setStringEncodingFromMenuItem:) keyEquivalent:@""];
+        item.representedObject = [[HFNSStringEncoding alloc] initWithEncoding:[(NSNumber *)dict[@"value"] integerValue]];
+        [stringEncodingMenu addItem:item];
+    }
+    
+    [stringEncodingMenu addItem:[NSMenuItem separatorItem]];
+    
+    NSMenuItem *otherEncodingsItem = [[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Other…", "") action:@selector(showWindow:) keyEquivalent:@""];
+    otherEncodingsItem.target = chooseStringEncoding;
+    [stringEncodingMenu addItem:otherEncodingsItem];
 }
 
 static NSComparisonResult compareFontDisplayNames(NSFont *a, NSFont *b, void *unused) {
@@ -236,14 +277,7 @@ static NSComparisonResult compareFontDisplayNames(NSFont *a, NSFont *b, void *un
         NSUInteger i, max = [menu numberOfItems];
         for (i=0; i < max; i++) {
             NSMenuItem *item = [menu itemAtIndex:i];
-            NSInteger state = NSOffState;
-            if ([selectedEncoding isKindOfClass:[HFNSStringEncoding class]]) {
-                HFNSStringEncoding *nsEncoding = (HFNSStringEncoding *)selectedEncoding;
-                if ((NSStringEncoding)item.tag == nsEncoding.encoding) {
-                    state = NSOnState;
-                }
-            }
-            [item setState:state];
+            [item setState:[selectedEncoding isEqual:item.representedObject] ? NSOnState : NSOffState];
         }
     }
     else {
@@ -254,10 +288,16 @@ static NSComparisonResult compareFontDisplayNames(NSFont *a, NSFont *b, void *un
 - (HFStringEncoding *)defaultStringEncoding {
     id obj = [[NSUserDefaults standardUserDefaults] objectForKey:@"DefaultStringEncoding"];
     if ([obj isKindOfClass:[NSNumber class]]) {
+        // Old format just stored encoding raw
         NSStringEncoding encoding = [(NSNumber *)obj integerValue];
         return [[HFNSStringEncoding alloc] initWithEncoding:encoding];
     } else if ([obj isKindOfClass:[NSData class]]) {
-        return [NSKeyedUnarchiver unarchiveObjectWithData:obj];
+        HFStringEncoding *encoding = [NSKeyedUnarchiver unarchiveObjectWithData:obj];
+        if ([encoding isKindOfClass:[HFStringEncoding class]]) {
+            return encoding;
+        } else {
+            NSLog(@"Invalid encoding object: %@", encoding);
+        }
     }
     HFASSERT(0); // shouldn't happen
     return nil;
@@ -268,8 +308,9 @@ static NSComparisonResult compareFontDisplayNames(NSFont *a, NSFont *b, void *un
 }
 
 - (IBAction)setStringEncodingFromMenuItem:(NSMenuItem *)item {
-    NSStringEncoding encoding = item.tag;
-    [self setStringEncoding:[[HFNSStringEncoding alloc] initWithEncoding:encoding]];
+    HFStringEncoding *encoding = item.representedObject;
+    HFASSERT([encoding isKindOfClass:[HFStringEncoding class]]);
+    [self setStringEncoding:encoding];
 }
 
 - (IBAction)openPreferences:(id)sender {
