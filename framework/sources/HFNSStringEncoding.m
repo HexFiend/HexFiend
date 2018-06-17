@@ -47,4 +47,8 @@
     return [NSString localizedNameOfStringEncoding:self.encoding];
 }
 
++ (instancetype)ascii {
+    return [[self alloc] initWithEncoding:NSASCIIStringEncoding];
+}
+
 @end

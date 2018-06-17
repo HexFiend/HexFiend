@@ -16,6 +16,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property NSStringEncoding encoding;
 
++ (instancetype)ascii;
+
 @end
 
 NS_ASSUME_NONNULL_END

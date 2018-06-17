@@ -523,7 +523,7 @@ static int compareGlyphFontIndexes(const void *p1, const void *p2) {
     USE(sender);
     HFTextRepresenter *rep = [self representer];
     HFASSERT([rep isKindOfClass:[HFTextRepresenter class]]);
-    [rep copySelectedBytesToPasteboard:[NSPasteboard generalPasteboard] encoding:[[HFNSStringEncoding alloc] initWithEncoding:NSASCIIStringEncoding]];
+    [rep copySelectedBytesToPasteboard:[NSPasteboard generalPasteboard] encoding:[HFNSStringEncoding ascii]];
 }
 
 @end
