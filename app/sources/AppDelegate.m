@@ -15,6 +15,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <stdio.h>
+#import <HexFiend/HFCustomEncoding.h>
 
 @interface AppDelegate ()
 
@@ -111,6 +112,30 @@
         NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:dict[@"title"] action:@selector(setStringEncodingFromMenuItem:) keyEquivalent:@""];
         item.representedObject = [[HFNSStringEncoding alloc] initWithEncoding:[(NSNumber *)dict[@"value"] integerValue]];
         [stringEncodingMenu addItem:item];
+    }
+    
+    NSString *encodingsFolder = [[NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES).firstObject stringByAppendingPathComponent:[NSBundle mainBundle].bundleIdentifier] stringByAppendingPathComponent:@"Encodings"];
+    NSFileManager *fm = [NSFileManager defaultManager];
+    NSMutableArray<HFCustomEncoding *> *customEncodings = [NSMutableArray array];
+    for (NSString *filename in [fm enumeratorAtPath:encodingsFolder]) {
+        if ([filename.pathExtension isEqualToString:@"json"]) {
+            NSString *path = [encodingsFolder stringByAppendingPathComponent:filename];
+            HFCustomEncoding *encoding = [[HFCustomEncoding alloc] initWithPath:path];
+            if (!encoding) {
+                NSLog(@"Error with file %@", path);
+                continue;
+            }
+            [customEncodings addObject:encoding];
+        }
+    }
+    if (customEncodings.count > 0) {
+        [stringEncodingMenu addItem:[NSMenuItem separatorItem]];
+        [customEncodings sortUsingSelector:@selector(compare:)];
+        for (HFCustomEncoding *encoding in customEncodings) {
+            NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:encoding.name action:@selector(setStringEncodingFromMenuItem:) keyEquivalent:@""];
+            item.representedObject = encoding;
+            [stringEncodingMenu addItem:item];
+        }
     }
     
     [stringEncodingMenu addItem:[NSMenuItem separatorItem]];
