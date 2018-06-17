@@ -57,6 +57,10 @@
 		A59BC59C2002113F0066860F /* HFTemplateNode.m in Sources */ = {isa = PBXBuildFile; fileRef = A59BC59B2002113F0066860F /* HFTemplateNode.m */; };
 		A59BC59F2002E63C0066860F /* HFTemplateController.m in Sources */ = {isa = PBXBuildFile; fileRef = A59BC59E2002E63C0066860F /* HFTemplateController.m */; };
 		A59DFE67200BE7A800FEA540 /* BinaryTemplateController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A59DFE65200BE7A800FEA540 /* BinaryTemplateController.xib */; };
+		A5CEA41C20D5DF4400BCA488 /* HFStringEncoding.h in Headers */ = {isa = PBXBuildFile; fileRef = A5CEA41A20D5DF4400BCA488 /* HFStringEncoding.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A5CEA41D20D5DF4400BCA488 /* HFStringEncoding.m in Sources */ = {isa = PBXBuildFile; fileRef = A5CEA41B20D5DF4400BCA488 /* HFStringEncoding.m */; };
+		A5CEA42A20D5E0F500BCA488 /* HFNSStringEncoding.h in Headers */ = {isa = PBXBuildFile; fileRef = A5CEA42820D5E0F500BCA488 /* HFNSStringEncoding.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A5CEA42B20D5E0F500BCA488 /* HFNSStringEncoding.m in Sources */ = {isa = PBXBuildFile; fileRef = A5CEA42920D5E0F500BCA488 /* HFNSStringEncoding.m */; };
 		A5ED2A85200BD8F0004AD7A4 /* HFColorRange.h in Headers */ = {isa = PBXBuildFile; fileRef = A5ED2A83200BD8F0004AD7A4 /* HFColorRange.h */; };
 		A5ED2A86200BD8F0004AD7A4 /* HFColorRange.m in Sources */ = {isa = PBXBuildFile; fileRef = A5ED2A84200BD8F0004AD7A4 /* HFColorRange.m */; };
 		D00122E30D48A8D400540B10 /* HFFindReplaceBackgroundView.m in Sources */ = {isa = PBXBuildFile; fileRef = D00122E20D48A8D400540B10 /* HFFindReplaceBackgroundView.m */; };
@@ -404,6 +408,10 @@
 		A59BC59D2002E63C0066860F /* HFTemplateController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFTemplateController.h; path = app/sources/HFTemplateController.h; sourceTree = "<group>"; };
 		A59BC59E2002E63C0066860F /* HFTemplateController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFTemplateController.m; path = app/sources/HFTemplateController.m; sourceTree = "<group>"; };
 		A59DFE66200BE7A800FEA540 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/BinaryTemplateController.xib; sourceTree = "<group>"; };
+		A5CEA41A20D5DF4400BCA488 /* HFStringEncoding.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFStringEncoding.h; path = sources/HFStringEncoding.h; sourceTree = "<group>"; };
+		A5CEA41B20D5DF4400BCA488 /* HFStringEncoding.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFStringEncoding.m; path = sources/HFStringEncoding.m; sourceTree = "<group>"; };
+		A5CEA42820D5E0F500BCA488 /* HFNSStringEncoding.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFNSStringEncoding.h; path = sources/HFNSStringEncoding.h; sourceTree = "<group>"; };
+		A5CEA42920D5E0F500BCA488 /* HFNSStringEncoding.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFNSStringEncoding.m; path = sources/HFNSStringEncoding.m; sourceTree = "<group>"; };
 		A5ED2A83200BD8F0004AD7A4 /* HFColorRange.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFColorRange.h; path = sources/HFColorRange.h; sourceTree = "<group>"; };
 		A5ED2A84200BD8F0004AD7A4 /* HFColorRange.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFColorRange.m; path = sources/HFColorRange.m; sourceTree = "<group>"; };
 		D00122E10D48A8D400540B10 /* HFFindReplaceBackgroundView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFFindReplaceBackgroundView.h; path = app/sources/HFFindReplaceBackgroundView.h; sourceTree = "<group>"; };
@@ -792,6 +800,17 @@
 			name = "Binary Templates";
 			sourceTree = "<group>";
 		};
+		A5CEA42C20D5E14D00BCA488 /* Encoding */ = {
+			isa = PBXGroup;
+			children = (
+				A5CEA41A20D5DF4400BCA488 /* HFStringEncoding.h */,
+				A5CEA41B20D5DF4400BCA488 /* HFStringEncoding.m */,
+				A5CEA42820D5E0F500BCA488 /* HFNSStringEncoding.h */,
+				A5CEA42920D5E0F500BCA488 /* HFNSStringEncoding.m */,
+			);
+			name = Encoding;
+			sourceTree = "<group>";
+		};
 		D00122DC0D48A89F00540B10 /* Find_Replace */ = {
 			isa = PBXGroup;
 			children = (
@@ -1000,6 +1019,7 @@
 				D047E5001022E33300EF307B /* PrivilegedHelper */,
 				D0F6FE1D0FFF67C700C609F0 /* Global Headers */,
 				D0480E6A0DBB76970048F3FF /* Utilities */,
+				A5CEA42C20D5E14D00BCA488 /* Encoding */,
 				D026C7A70CDD4FD30082279E /* Representers */,
 				D08F5DF40CDE822D007EFFE8 /* ByteArray */,
 				D0370B130D69172E00B3A8C6 /* ByteSlice */,
@@ -1199,6 +1219,7 @@
 				D082AC910CDEBD5300554EB7 /* HFByteArray_Internal.h in Headers */,
 				D0CDB7540CE735590084926B /* HFRepresenterStringEncodingTextView.h in Headers */,
 				A5ED2A85200BD8F0004AD7A4 /* HFColorRange.h in Headers */,
+				A5CEA41C20D5DF4400BCA488 /* HFStringEncoding.h in Headers */,
 				D0CDB77D0CE737130084926B /* HFStringEncodingTextRepresenter.h in Headers */,
 				D00EBA730CE866D50020E2D7 /* HFVerticalScrollerRepresenter.h in Headers */,
 				D04327A40CF081CD00C14250 /* HFFunctions_Private.h in Headers */,
@@ -1207,6 +1228,7 @@
 				D0A402F30D0D43F4006BC574 /* HFLayoutRepresenter.h in Headers */,
 				D0A90B050D160414008975B9 /* HFStatusBarRepresenter.h in Headers */,
 				D0A47C110D288EDF00CB9BB9 /* HFControllerCoalescedUndo.h in Headers */,
+				A5CEA42A20D5E0F500BCA488 /* HFNSStringEncoding.h in Headers */,
 				D041D1C00D397E1A00C28345 /* HFPasteboardOwner.h in Headers */,
 				D0D179460D46F20E00684270 /* HFByteSlice_Private.h in Headers */,
 				D0826EAB0D4855900006FB7D /* HFFileReference.h in Headers */,
@@ -1650,6 +1672,8 @@
 				D0A436590CDC811D000F7550 /* HFFunctions.m in Sources */,
 				D0A4373B0CDD4EDD000F7550 /* HFTextRepresenter.m in Sources */,
 				D026C7B10CDD50ED0082279E /* HFRepresenterTextView.m in Sources */,
+				A5CEA42B20D5E0F500BCA488 /* HFNSStringEncoding.m in Sources */,
+				A5CEA41D20D5DF4400BCA488 /* HFStringEncoding.m in Sources */,
 				D026C7BC0CDD546C0082279E /* HFRepresenterHexTextView.m in Sources */,
 				D026C7C10CDD54D00082279E /* HFHexTextRepresenter.m in Sources */,
 				D08B2B9B12B06835004995A2 /* HFGlyphTrie.m in Sources */,

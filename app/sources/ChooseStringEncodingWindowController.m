@@ -252,11 +252,11 @@ static void addEncoding(NSString *name, CFStringEncoding value, NSMutableArray<H
     }
     /* Tell the front document (if any) and the app delegate */
     NSStringEncoding encodingValue = activeEncodings[row].encoding;
-    id document = [[NSDocumentController sharedDocumentController] currentDocument];
-    if ([document respondsToSelector:@selector(setStringEncoding:)]) {
-        [document setStringEncoding:encodingValue];
-    }
-    [(AppDelegate*)[NSApp delegate] setStringEncoding:encodingValue];
+    BaseDataDocument *document = [[NSDocumentController sharedDocumentController] currentDocument];
+    HFASSERT([document isKindOfClass:[BaseDataDocument class]]);
+    HFStringEncoding *encoding = [[HFNSStringEncoding alloc] initWithEncoding:encodingValue];
+    [document setStringEncoding:encoding];
+    [(AppDelegate*)[NSApp delegate] setStringEncoding:encoding];
 }
 
 - (void)controlTextDidChange:(NSNotification * __unused)obj

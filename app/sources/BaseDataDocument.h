@@ -108,7 +108,7 @@ extern NSString * const BaseDataDocumentDidChangeStringEncodingNotification;
 - (void)hideBannerFirstThenDo:(dispatch_block_t)command;
 - (NSArray *)runningOperationViews;
 
-@property (nonatomic) NSStringEncoding stringEncoding;
+@property (nonatomic) HFStringEncoding *stringEncoding;
 - (IBAction)setStringEncodingFromMenuItem:(NSMenuItem *)item;
 
 @property (nonatomic, getter=isTransient) BOOL transient;

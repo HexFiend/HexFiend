@@ -92,7 +92,7 @@ static inline Class preferredByteArrayClass(void) {
             @"DefaultFontName" : HFDEFAULT_FONT,
             @"DefaultFontSize" : @(HFDEFAULT_FONTSIZE),
             @"BytesPerColumn"  : @4,
-            @"DefaultStringEncoding" : @([NSString defaultCStringEncoding]),
+            @"DefaultStringEncoding" : [NSKeyedArchiver archivedDataWithRootObject:[[HFNSStringEncoding alloc] initWithEncoding:[NSString defaultCStringEncoding]]],
             @"DefaultEditMode" : @(HFInsertMode),
             @"BinaryTemplateSelectionColor" : [NSArchiver archivedDataWithRootObject:[NSColor lightGrayColor]],
             @"BinaryTemplateRepresenterWidth" : @(250),
@@ -561,7 +561,7 @@ static inline Class preferredByteArrayClass(void) {
         [controller setFont: font];
     }
     
-    [self setStringEncoding:[[NSUserDefaults standardUserDefaults] integerForKey:@"DefaultStringEncoding"]];
+    [self setStringEncoding:[(AppDelegate *)NSApp.delegate defaultStringEncoding]];
     
     static BOOL hasAddedMenu = NO;
     if (! hasAddedMenu) {
@@ -741,11 +741,11 @@ static inline Class preferredByteArrayClass(void) {
     [self setFont:[NSFont fontWithName:[font fontName] size:[font pointSize] - 1] registeringUndo:YES];
 }
 
-- (NSStringEncoding)stringEncoding {
+- (HFStringEncoding *)stringEncoding {
     return [(HFStringEncodingTextRepresenter *)asciiRepresenter encoding];
 }
 
-- (void)setStringEncoding:(NSStringEncoding)encoding {
+- (void)setStringEncoding:(HFStringEncoding *)encoding {
     NSUInteger bytesPerLine = [controller bytesPerLine];
     [(HFStringEncodingTextRepresenter *)asciiRepresenter setEncoding:encoding];
     if ([[self windowControllers] count] > 0) {
@@ -755,7 +755,7 @@ static inline Class preferredByteArrayClass(void) {
 }
 
 - (void)setStringEncodingFromMenuItem:(NSMenuItem *)item {
-    [self setStringEncoding:[item tag]];
+    [self setStringEncoding:[[HFNSStringEncoding alloc] initWithEncoding:[item tag]]];
     
     /* Call to the delegate so it sets the default */
     [(AppDelegate*)[NSApp delegate] setStringEncodingFromMenuItem:item];

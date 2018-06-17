@@ -8,11 +8,10 @@
 #import <HexFiend/HFRepresenterStringEncodingTextView.h>
 #import <HexFiend/HFRepresenterTextView_Internal.h>
 #import <HexFiend/HFTextRepresenter_Internal.h>
+#import <HexFiend/HFNSStringEncoding.h>
 #include <malloc/malloc.h>
 
-@implementation HFRepresenterStringEncodingTextView
-
-static NSString *copy1CharStringForByteValue(unsigned long long byteValue, NSUInteger bytesPerChar, NSStringEncoding encoding) {
+static NSString *copy1CharStringForByteValue(unsigned long long byteValue, NSUInteger bytesPerChar, HFStringEncoding *encoding) {
     NSString *result = nil;
     unsigned char bytes[sizeof byteValue];
     /* If we are little endian, then the bytesPerChar doesn't matter, because it will all come out the same.  If we are big endian, then it does matter. */
@@ -34,7 +33,7 @@ static NSString *copy1CharStringForByteValue(unsigned long long byteValue, NSUIn
 
     /* ASCII is mishandled :( */
     BOOL encodingOK = YES;
-    if (encoding == NSASCIIStringEncoding && bytesPerChar == 1 && bytes[0] > 0x7F) {
+    if (encoding.isASCII && bytesPerChar == 1 && bytes[0] > 0x7F) {
         encodingOK = NO;
     }
 
@@ -42,7 +41,7 @@ static NSString *copy1CharStringForByteValue(unsigned long long byteValue, NSUIn
     
     /* Now create a string from these bytes */
     if (encodingOK) {
-        result = [[NSString alloc] initWithBytes:bytes length:bytesPerChar encoding:encoding];
+        result = [encoding stringFromBytes:bytes length:bytesPerChar];
         
         if ([result length] > 1) {
             /* Try precomposing it */
@@ -83,7 +82,7 @@ static BOOL getGlyphs(CGGlyph *glyphs, NSString *string, NSFont *inputFont) {
     return result;
 }
 
-static void generateGlyphs(NSFont *baseFont, NSMutableArray *fonts, struct HFGlyph_t *outGlyphs, NSInteger bytesPerChar, NSStringEncoding encoding, const NSUInteger *charactersToLoad, NSUInteger charactersToLoadCount, CGFloat *outMaxAdvance) {
+static void generateGlyphs(NSFont *baseFont, NSMutableArray *fonts, struct HFGlyph_t *outGlyphs, NSInteger bytesPerChar, HFStringEncoding *encoding, const NSUInteger *charactersToLoad, NSUInteger charactersToLoadCount, CGFloat *outMaxAdvance) {
     /* If the caller wants the advance, initialize it to 0 */
     if (outMaxAdvance) *outMaxAdvance = 0;
     
@@ -187,6 +186,11 @@ static int compareGlyphFontIndexes(const void *p1, const void *p2) {
     }
 }
 
+@implementation HFRepresenterStringEncodingTextView
+{
+    HFStringEncoding *encoding;
+}
+
 - (void)threadedPrecacheGlyphs:(const struct HFGlyph_t *)glyphs withFonts:(NSArray *)localFonts count:(NSUInteger)count {
     /* This method draws glyphs anywhere, so that they get cached by CG and drawing them a second time can be fast. */
     NSUInteger i, validGlyphCount;
@@ -273,7 +277,7 @@ static int compareGlyphFontIndexes(const void *p1, const void *p2) {
     /* Now generate our glyphs */
     NEW_ARRAY(NSUInteger, characters, charCount);
     [charactersToLoad getIndexes:characters maxCount:charCount inIndexRange:NULL];
-    generateGlyphs(font, localFonts, glyphs, bytesPerChar, encoding, characters, charCount, NULL);
+    generateGlyphs(font, localFonts, glyphs, bytesPerChar, self.encoding, characters, charCount, NULL);
     FREE_ARRAY(characters);
     
     /* The first time we draw glyphs, it's slow, so pre-cache them by drawing them now. */
@@ -358,8 +362,8 @@ static int compareGlyphFontIndexes(const void *p1, const void *p2) {
 - (instancetype)initWithCoder:(NSCoder *)coder {
     HFASSERT([coder allowsKeyedCoding]);
     self = [super initWithCoder:coder];
-    encoding = (NSStringEncoding)[coder decodeInt64ForKey:@"HFStringEncoding"];
-    bytesPerChar = HFStringEncodingCharacterLength(encoding);
+    encoding = [coder decodeObjectForKey:@"HFStringEncoding"];
+    bytesPerChar = encoding.fixedBytesPerCharacter;
     [self staleTieredProperties];
     return self;
 }
@@ -375,14 +379,14 @@ static int compareGlyphFontIndexes(const void *p1, const void *p2) {
 - (void)encodeWithCoder:(NSCoder *)coder {
     HFASSERT([coder allowsKeyedCoding]);
     [super encodeWithCoder:coder];
-    [coder encodeInt64:encoding forKey:@"HFStringEncoding"];
+    [coder encodeObject:encoding forKey:@"HFStringEncoding"];
 }
 
-- (NSStringEncoding)encoding {
+- (HFStringEncoding *)encoding {
     return encoding;
 }
 
-- (void)setEncoding:(NSStringEncoding)val {
+- (void)setEncoding:(HFStringEncoding *)val {
     if (encoding != val) {
         /* Our glyph table is now stale. Call this first to ensure our background operation is complete. */
         [self staleTieredProperties];
@@ -391,7 +395,7 @@ static int compareGlyphFontIndexes(const void *p1, const void *p2) {
         encoding = val;	
         
         /* Compute bytes per character */
-        bytesPerChar = HFStringEncodingCharacterLength(encoding);
+        bytesPerChar = encoding.fixedBytesPerCharacter;
         HFASSERT(bytesPerChar > 0);
         
         /* Ensure the tree knows about the new bytes per character */
@@ -519,7 +523,7 @@ static int compareGlyphFontIndexes(const void *p1, const void *p2) {
     USE(sender);
     HFTextRepresenter *rep = [self representer];
     HFASSERT([rep isKindOfClass:[HFTextRepresenter class]]);
-    [rep copySelectedBytesToPasteboard:[NSPasteboard generalPasteboard] encoding:NSASCIIStringEncoding];
+    [rep copySelectedBytesToPasteboard:[NSPasteboard generalPasteboard] encoding:[[HFNSStringEncoding alloc] initWithEncoding:NSASCIIStringEncoding]];
 }
 
 @end

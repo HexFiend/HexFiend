@@ -22,8 +22,10 @@
 - (IBAction)diffFrontDocumentsByRange:(id)sender;
 
 - (IBAction)setStringEncodingFromMenuItem:(NSMenuItem *)item;
-- (void)setStringEncoding:(NSStringEncoding)encoding;
+- (void)setStringEncoding:(HFStringEncoding *)encoding;
 
 - (IBAction)openPreferences:(id)sender;
+
+@property (readonly) HFStringEncoding *defaultStringEncoding;
 
 @end

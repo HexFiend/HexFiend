@@ -9,16 +9,13 @@
 #import <HexFiend/HFRepresenterStringEncodingTextView.h>
 #import <HexFiend/HFPasteboardOwner.h>
 #import <HexFiend/HFProgressTracker.h>
+#import <HexFiend/HFNSStringEncoding.h>
 
-@interface HFStringEncodingPasteboardOwner : HFPasteboardOwner {
-    NSStringEncoding encoding;
-}
-@property (nonatomic) NSStringEncoding encoding;
+@interface HFStringEncodingPasteboardOwner : HFPasteboardOwner
+@property HFStringEncoding* encoding;
 @end
 
 @implementation HFStringEncodingPasteboardOwner
-- (void)setEncoding:(NSStringEncoding)val { encoding = val; }
-- (NSStringEncoding)encoding { return encoding; }
 
 - (void)writeDataInBackgroundToPasteboard:(NSPasteboard *)pboard ofLength:(unsigned long long)length forType:(NSString *)type trackingProgress:(HFProgressTracker *)tracker {
     HFASSERT([type isEqual:NSStringPboardType]);
@@ -38,14 +35,12 @@
         remaining -= amountToCopy;
         HFAtomicAdd64(amountToCopy, progressReportingPointer);
     }
-    if (tracker->cancelRequested) {
-        [pboard setString:@"" forType:type];
-        free(stringBuffer);
+    NSString *string = @"";
+    if (!tracker->cancelRequested) {
+        string = [self.encoding stringFromBytes:stringBuffer length:stringLength];
     }
-    else {
-        NSString *string = [[NSString alloc] initWithBytesNoCopy:stringBuffer length:stringLength encoding:encoding freeWhenDone:YES];
-        [pboard setString:string forType:type];
-    }
+    free(stringBuffer);
+    [pboard setString:string forType:type];
 }
 
 - (unsigned long long)stringLengthForDataLength:(unsigned long long)dataLength {
@@ -55,55 +50,58 @@
 @end
 
 @implementation HFStringEncodingTextRepresenter
+{
+    HFStringEncoding *stringEncoding;
+}
 
 - (instancetype)init {
     self = [super init];
-    stringEncoding = [NSString defaultCStringEncoding];
+    stringEncoding = [[HFNSStringEncoding alloc] initWithEncoding:[NSString defaultCStringEncoding]];
     return self;
 }
 
 - (instancetype)initWithCoder:(NSCoder *)coder {
     HFASSERT([coder allowsKeyedCoding]);
     self = [super initWithCoder:coder];
-    stringEncoding = (NSStringEncoding)[coder decodeInt64ForKey:@"HFStringEncoding"];
+    stringEncoding = [coder decodeObjectForKey:@"HFStringEncoding"];
     return self;
 }
 
 - (void)encodeWithCoder:(NSCoder *)coder {
     HFASSERT([coder allowsKeyedCoding]);
     [super encodeWithCoder:coder];
-    [coder encodeInt64:stringEncoding forKey:@"HFStringEncoding"];
+    [coder encodeObject:stringEncoding forKey:@"HFStringEncoding"];
 }
 
 - (Class)_textViewClass {
     return [HFRepresenterStringEncodingTextView class];
 }
 
-- (NSStringEncoding)encoding {
+- (HFStringEncoding *)encoding {
     return stringEncoding;
 }
 
-- (void)setEncoding:(NSStringEncoding)encoding {
+- (void)setEncoding:(HFStringEncoding *)encoding {
     stringEncoding = encoding;
-    [[self view] setEncoding:encoding];
+    [(HFRepresenterStringEncodingTextView *)[self view] setEncoding:encoding];
     [[self controller] representer:self changedProperties:HFControllerViewSizeRatios];
 }
 
 - (void)initializeView {
-    [[self view] setEncoding:stringEncoding];
+    [(HFRepresenterStringEncodingTextView *)[self view] setEncoding:stringEncoding];
     [super initializeView];
 }
 
 - (void)insertText:(NSString *)text {
     REQUIRE_NOT_NULL(text);
-    NSData *data = [text dataUsingEncoding:[self encoding] allowLossyConversion:NO];
+    NSData *data = [self.encoding dataFromString:text];
     if (! data) {
         dispatch_async(dispatch_get_main_queue(), ^{
             NSString *key = @"HFStringEncodingConversionFailureShowAlert";
             if (![[NSUserDefaults standardUserDefaults] objectForKey:key]) {
                 NSAlert *alert = [[NSAlert alloc] init];
                 alert.messageText = NSLocalizedString(@"Failed to convert text", "");
-                alert.informativeText = [NSString stringWithFormat:NSLocalizedString(@"The text \"%@\" could not be converted to the current encoding \"%@\". The encoding may not support these characters.", ""), text, [NSString localizedNameOfStringEncoding:[self encoding]]];
+                alert.informativeText = [NSString stringWithFormat:NSLocalizedString(@"The text \"%@\" could not be converted to the current encoding \"%@\". The encoding may not support these characters.", ""), text, self.encoding.localizedName];
                 (void)[alert addButtonWithTitle:NSLocalizedString(@"OK", "")];
                 (void)[alert addButtonWithTitle:NSLocalizedString(@"Do Not Show Again", "")];
                 if ([alert runModal] == NSAlertSecondButtonReturn) {
@@ -111,7 +109,7 @@
                 }
             }
         });
-        NSLog(@"%s: Can't convert \"%@\" to encoding %@", __PRETTY_FUNCTION__, text, [NSString localizedNameOfStringEncoding:[self encoding]]);
+        NSLog(@"%s: Can't convert \"%@\" to encoding %@", __PRETTY_FUNCTION__, text, self.encoding.localizedName);
         NSBeep();
     }
     else if ([data length]) { // a 0 length text can come about via e.g. option-e
@@ -121,7 +119,7 @@
 
 - (NSData *)dataFromPasteboardString:(NSString *)string {
     REQUIRE_NOT_NULL(string);
-    return [string dataUsingEncoding:[self encoding] allowLossyConversion:NO];
+    return [self.encoding dataFromString:string];
 }
 
 + (NSPoint)defaultLayoutPosition {
@@ -132,7 +130,7 @@
     return [self copySelectedBytesToPasteboard:pb encoding:[self encoding]];
 }
 
-- (void)copySelectedBytesToPasteboard:(NSPasteboard *)pb encoding:(NSStringEncoding)enc {
+- (void)copySelectedBytesToPasteboard:(NSPasteboard *)pb encoding:(HFStringEncoding *)enc {
     REQUIRE_NOT_NULL(pb);
     HFByteArray *selection = [[self controller] byteArrayForSelectedContentsRanges];
     HFASSERT(selection != NULL);

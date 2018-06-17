@@ -159,11 +159,11 @@
     }
 }
 
-- (void)setStringEncoding:(NSStringEncoding)encoding {
+- (void)setStringEncoding:(HFStringEncoding *)encoding {
     [textRepresenter setEncoding:encoding];
 }
 
-- (NSStringEncoding)stringEncoding {
+- (HFStringEncoding *)stringEncoding {
     return [textRepresenter encoding];
 }
 

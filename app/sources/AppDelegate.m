@@ -224,19 +224,26 @@ static NSComparisonResult compareFontDisplayNames(NSFont *a, NSFont *b, void *un
     }
     else if (menu == stringEncodingMenu) {
         /* Check the menu item whose string encoding corresponds to the key document, or if none do, select the default. */
-        NSInteger selectedEncoding;
+        HFStringEncoding *selectedEncoding;
         BaseDataDocument *currentDocument = [[NSDocumentController sharedDocumentController] currentDocument];
         if (currentDocument && [currentDocument isKindOfClass:[BaseDataDocument class]]) {
             selectedEncoding = [currentDocument stringEncoding];
         } else {
-            selectedEncoding = [[NSUserDefaults standardUserDefaults] integerForKey:@"DefaultStringEncoding"];
+            selectedEncoding = self.defaultStringEncoding;
         }
         
         /* Now select that item */
         NSUInteger i, max = [menu numberOfItems];
         for (i=0; i < max; i++) {
             NSMenuItem *item = [menu itemAtIndex:i];
-            [item setState:[item tag] == selectedEncoding];
+            NSInteger state = NSOffState;
+            if ([selectedEncoding isKindOfClass:[HFNSStringEncoding class]]) {
+                HFNSStringEncoding *nsEncoding = (HFNSStringEncoding *)selectedEncoding;
+                if ((NSStringEncoding)item.tag == nsEncoding.encoding) {
+                    state = NSOnState;
+                }
+            }
+            [item setState:state];
         }
     }
     else {
@@ -244,12 +251,25 @@ static NSComparisonResult compareFontDisplayNames(NSFont *a, NSFont *b, void *un
     }
 }
 
-- (void)setStringEncoding:(NSStringEncoding)encoding {
-    [[NSUserDefaults standardUserDefaults] setInteger:encoding forKey:@"DefaultStringEncoding"];    
+- (HFStringEncoding *)defaultStringEncoding {
+    id obj = [[NSUserDefaults standardUserDefaults] objectForKey:@"DefaultStringEncoding"];
+    if ([obj isKindOfClass:[NSNumber class]]) {
+        NSStringEncoding encoding = [(NSNumber *)obj integerValue];
+        return [[HFNSStringEncoding alloc] initWithEncoding:encoding];
+    } else if ([obj isKindOfClass:[NSData class]]) {
+        return [NSKeyedUnarchiver unarchiveObjectWithData:obj];
+    }
+    HFASSERT(0); // shouldn't happen
+    return nil;
+}
+
+- (void)setStringEncoding:(HFStringEncoding *)encoding {
+    [[NSUserDefaults standardUserDefaults] setObject:[NSKeyedArchiver archivedDataWithRootObject:encoding] forKey:@"DefaultStringEncoding"];
 }
 
 - (IBAction)setStringEncodingFromMenuItem:(NSMenuItem *)item {
-    [self setStringEncoding:[item tag]];
+    NSStringEncoding encoding = item.tag;
+    [self setStringEncoding:[[HFNSStringEncoding alloc] initWithEncoding:encoding]];
 }
 
 - (IBAction)openPreferences:(id)sender {

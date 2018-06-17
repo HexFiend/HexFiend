@@ -1,4 +1,5 @@
 #import <HexFiend/HFTextRepresenter.h>
+#import <HexFiend/HFStringEncoding.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -15,7 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 // Copy/Paste methods
 - (void)copySelectedBytesToPasteboard:(NSPasteboard *)pb;
-- (void)copySelectedBytesToPasteboard:(NSPasteboard *)pb encoding:(NSStringEncoding)enc;
+- (void)copySelectedBytesToPasteboard:(NSPasteboard *)pb encoding:(HFStringEncoding *)enc;
 - (void)cutSelectedBytesToPasteboard:(NSPasteboard *)pb;
 - (BOOL)canPasteFromPasteboard:(NSPasteboard *)pb;
 - (BOOL)canCut;

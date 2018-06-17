@@ -7,10 +7,10 @@
 
 #import <HexFiend/HFRepresenterTextView.h>
 #import <HexFiend/HFGlyphTrie.h>
+#import <HexFiend/HFStringEncoding.h>
 
 @interface HFRepresenterStringEncodingTextView : HFRepresenterTextView {
     /* Tier 0 data (always up to date) */
-    NSStringEncoding encoding;
     uint8_t bytesPerChar;
     
     /* Tier 1 data (computed synchronously on-demand) */
@@ -31,7 +31,7 @@
     NSOperationQueue *glyphLoader;
 }
 
-/// Set and get the NSStringEncoding that is used
-@property (nonatomic) NSStringEncoding encoding;
+/// Set and get the HFStringEncoding that is used
+@property (nonatomic) HFStringEncoding *encoding;
 
 @end
