@@ -15,7 +15,7 @@
     
     HFTextField encapsulates a HFController and HFRepresenters into a single "do it all" NSControl analagous to NSTextField.  Its objectValue is an HFByteArray.  It sends its \c action to its \c target when the user hits return.  It has no control.
     
-    An HFTextField can be configured to show a hexadecimal view, an ASCII (really the \c defaultCStringEncoding) view, or both.
+    An HFTextField can be configured to show a hexadecimal view, an ASCII view, or both.
     
     This class is currently missing a fair amount of functionality, such as enabled state.
 */

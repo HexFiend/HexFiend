@@ -370,8 +370,8 @@ static int compareGlyphFontIndexes(const void *p1, const void *p2) {
 
 - (instancetype)initWithFrame:(NSRect)frameRect {
     self = [super initWithFrame:frameRect];
-    encoding = NSMacOSRomanStringEncoding;
-    bytesPerChar = HFStringEncodingCharacterLength(encoding);
+    encoding = [HFNSStringEncoding ascii];
+    bytesPerChar = encoding.fixedBytesPerCharacter;
     [self staleTieredProperties];
     return self;
 }

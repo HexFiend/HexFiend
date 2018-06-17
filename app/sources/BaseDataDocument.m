@@ -92,7 +92,7 @@ static inline Class preferredByteArrayClass(void) {
             @"DefaultFontName" : HFDEFAULT_FONT,
             @"DefaultFontSize" : @(HFDEFAULT_FONTSIZE),
             @"BytesPerColumn"  : @4,
-            @"DefaultStringEncoding" : [NSKeyedArchiver archivedDataWithRootObject:[[HFNSStringEncoding alloc] initWithEncoding:[NSString defaultCStringEncoding]]],
+            @"DefaultStringEncoding" : [NSKeyedArchiver archivedDataWithRootObject:[HFNSStringEncoding ascii]],
             @"DefaultEditMode" : @(HFInsertMode),
             @"BinaryTemplateSelectionColor" : [NSArchiver archivedDataWithRootObject:[NSColor lightGrayColor]],
             @"BinaryTemplateRepresenterWidth" : @(250),

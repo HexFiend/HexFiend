@@ -56,7 +56,7 @@
 
 - (instancetype)init {
     self = [super init];
-    stringEncoding = [[HFNSStringEncoding alloc] initWithEncoding:[NSString defaultCStringEncoding]];
+    stringEncoding = [HFNSStringEncoding ascii];
     return self;
 }
 

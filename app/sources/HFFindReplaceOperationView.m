@@ -77,7 +77,7 @@
     if (document) {
         encoding = [document stringEncoding];
     } else {
-        encoding = [[HFNSStringEncoding alloc] initWithEncoding:[NSString defaultCStringEncoding]];
+        encoding = [HFNSStringEncoding ascii];
     }
     [findField setStringEncoding:encoding];
     [replaceField setStringEncoding:encoding];
