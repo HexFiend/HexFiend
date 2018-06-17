@@ -95,7 +95,7 @@
 
 - (NSData *)dataFromString:(NSString *)string {
     NSLog(@"UNIMPLEMENTED: %@", string);
-    return [NSData data];
+    return nil;
 }
 
 - (NSString *)name {
