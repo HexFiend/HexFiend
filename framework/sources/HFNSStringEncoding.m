@@ -43,7 +43,7 @@
     return [string dataUsingEncoding:self.encoding allowLossyConversion:NO];
 }
 
-- (NSString *)localizedName {
+- (NSString *)name {
     return [NSString localizedNameOfStringEncoding:self.encoding];
 }
 
@@ -60,7 +60,7 @@
 }
 
 - (NSString *)description {
-    return [NSString stringWithFormat:@"<%@: %p - %@>", self.className, self, self.localizedName];
+    return [NSString stringWithFormat:@"<%@: %p - %@>", self.className, self, self.name];
 }
 
 @end

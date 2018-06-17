@@ -101,7 +101,7 @@
             if (![[NSUserDefaults standardUserDefaults] objectForKey:key]) {
                 NSAlert *alert = [[NSAlert alloc] init];
                 alert.messageText = NSLocalizedString(@"Failed to convert text", "");
-                alert.informativeText = [NSString stringWithFormat:NSLocalizedString(@"The text \"%@\" could not be converted to the current encoding \"%@\". The encoding may not support these characters.", ""), text, self.encoding.localizedName];
+                alert.informativeText = [NSString stringWithFormat:NSLocalizedString(@"The text \"%@\" could not be converted to the current encoding \"%@\". The encoding may not support these characters.", ""), text, self.encoding.name];
                 (void)[alert addButtonWithTitle:NSLocalizedString(@"OK", "")];
                 (void)[alert addButtonWithTitle:NSLocalizedString(@"Do Not Show Again", "")];
                 if ([alert runModal] == NSAlertSecondButtonReturn) {
@@ -109,7 +109,7 @@
                 }
             }
         });
-        NSLog(@"%s: Can't convert \"%@\" to encoding %@", __PRETTY_FUNCTION__, text, self.encoding.localizedName);
+        NSLog(@"%s: Can't convert \"%@\" to encoding %@", __PRETTY_FUNCTION__, text, self.encoding.name);
         NSBeep();
     }
     else if ([data length]) { // a 0 length text can come about via e.g. option-e

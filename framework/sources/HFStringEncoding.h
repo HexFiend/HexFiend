@@ -12,7 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface HFStringEncoding : NSObject <NSCoding>
 
-@property (readonly) NSString *localizedName;
+@property (readonly) NSString *name;
 @property (readonly) uint8_t fixedBytesPerCharacter;
 @property (readonly) BOOL isASCII;
 
