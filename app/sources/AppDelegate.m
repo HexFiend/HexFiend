@@ -52,7 +52,7 @@
     [extendBackwardsItem setKeyEquivalentModifierMask:[extendBackwardsItem keyEquivalentModifierMask] | NSShiftKeyMask];
     [extendForwardsItem setKeyEquivalent:@"]"];
     [extendBackwardsItem setKeyEquivalent:@"["];	
-    [self buildStringEncodingsMenu:nil];
+    [self buildEncodingMenu];
 
     [self processCommandLineArguments];
 
@@ -81,7 +81,7 @@
     }];
 }
 
-- (void)buildStringEncodingsMenu:(id __unused)sender {
+- (void)buildEncodingMenu {
     NSArray<NSDictionary *> *encodings = @[
         @{
               @"value" : @(NSASCIIStringEncoding),
