@@ -82,14 +82,15 @@
 }
 
 - (NSString *)stringFromBytes:(const unsigned char *)bytes length:(NSUInteger)length {
-    if (length != 1) {
-        return @"";
+    NSMutableString *str = [NSMutableString string];
+    for (NSUInteger i = 0; i < length; ++i) {
+        NSString *value = self.charToStringMap[@(bytes[i])];
+        if (!value) {
+            value = @".";
+        }
+        [str appendString:value];
     }
-    NSString *value = self.charToStringMap[@(bytes[0])];
-    if (value) {
-        return value;
-    }
-    return @"";
+    return str;
 }
 
 - (NSData *)dataFromString:(NSString *)string {
