@@ -260,9 +260,16 @@
     NSInteger row = [sender rowAtPoint:loc];
     [sender selectRowIndexes:[NSIndexSet indexSetWithIndex:row] byExtendingSelection:NO];
     id obj = row != -1 ? [sender itemAtRow:row] : nil;
-    NSMenuItem *item = [menu addItemWithTitle:NSLocalizedString(@"Jump to Field", nil) action:@selector(jumpToField:) keyEquivalent:@""];
+    NSMenuItem *item;
+
+    item = [menu addItemWithTitle:NSLocalizedString(@"Jump to Field", nil) action:@selector(jumpToField:) keyEquivalent:@""];
     item.target = self;
     item.enabled = obj != nil;
+    
+    item = [menu addItemWithTitle:NSLocalizedString(@"Copy Value", nil) action:@selector(copyValue:) keyEquivalent:@""];
+    item.target = self;
+    item.enabled = obj != nil;
+    
     return menu;
 }
 
@@ -277,6 +284,13 @@
     self.templateController.anchor = position;
     [self rerunTemplate];
     [self updateSelectionColorRange];
+}
+
+- (void)copyValue:(id __unused)sender {
+    HFTemplateNode *node = [self.outlineView itemAtRow:[self.outlineView selectedRow]];
+    NSPasteboard *pboard = [NSPasteboard generalPasteboard];
+    [pboard clearContents];
+    [pboard setString:node.value forType:NSPasteboardTypeString];
 }
 
 @end
