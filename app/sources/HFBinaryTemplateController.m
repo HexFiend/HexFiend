@@ -103,6 +103,11 @@
     [self.templatesPopUp selectItem:self.lastItem];
 }
 
+- (void)refresh:(id __unused)sender {
+    [self loadTemplates:sender];
+    [self rerunTemplate];
+}
+
 - (void)loadTemplates:(id __unused)sender {
     NSFileManager *fm = [NSFileManager defaultManager];
     NSString *dir = self.templatesFolder;
@@ -134,7 +139,7 @@
         }
         [self.templatesPopUp.menu addItem:[NSMenuItem separatorItem]];
     }
-    NSMenuItem *refreshItem = [[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Refresh", nil) action:@selector(loadTemplates:) keyEquivalent:@""];
+    NSMenuItem *refreshItem = [[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Refresh", nil) action:@selector(refresh:) keyEquivalent:@""];
     refreshItem.target = self;
     [self.templatesPopUp.menu addItem:refreshItem];
     NSMenuItem *openFolderItem = [[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Open Templates Folder", nil) action:@selector(openTemplatesFolder:) keyEquivalent:@""];
@@ -171,6 +176,7 @@
     NSString *errorMessage = nil;
     HFTemplateNode *node = [self.templateController evaluateScript:self.selectedFile.path forController:controller error:&errorMessage];
     [self setRootNode:node error:errorMessage];
+    [self updateSelectionColorRange];
 }
 
 - (id)outlineView:(NSOutlineView * __unused)outlineView child:(NSInteger)index ofItem:(id)item {
@@ -283,7 +289,6 @@
 - (void)anchorTo:(NSUInteger)position {
     self.templateController.anchor = position;
     [self rerunTemplate];
-    [self updateSelectionColorRange];
 }
 
 - (void)copyValue:(id __unused)sender {
