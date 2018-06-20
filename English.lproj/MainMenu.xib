@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14269.12" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14269.14" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14269.12"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14269.14"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication"/>
@@ -648,6 +648,7 @@
         <customObject id="403" userLabel="App Delegate" customClass="AppDelegate">
             <connections>
                 <outlet property="bookmarksMenu" destination="569" id="623"/>
+                <outlet property="chooseStringEncoding" destination="680" id="k0D-Q1-3F6"/>
                 <outlet property="extendForwardsItem" destination="397" id="407"/>
                 <outlet property="fontMenuItem" destination="409" id="413"/>
                 <outlet property="noBookmarksMenuItem" destination="8Hb-Ga-nGj" id="cOn-oy-A85"/>
