@@ -32,7 +32,6 @@
 		9408FC0E19DD7C87004F800E /* HexFiend.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D01E7BB80CDC530C00943F9E /* HexFiend.framework */; };
 		9408FC1019DD8669004F800E /* HFPrivilegedHelperConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 9408FC0F19DD8669004F800E /* HFPrivilegedHelperConnection.h */; };
 		940C4E6A183C11E20009AFDA /* HexFiend.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D01E7BB80CDC530C00943F9E /* HexFiend.framework */; };
-		94548A4E19DC5218006EFA29 /* Sparkle.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 94548A4219DC51FF006EFA29 /* Sparkle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		9483479319DE1C8E0086A732 /* NaiveArray.m in Sources */ = {isa = PBXBuildFile; fileRef = D06D60A40FA7E980002376EE /* NaiveArray.m */; };
 		9483479419DE1C920086A732 /* TreeEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = D06D60BC0FA7EA23002376EE /* TreeEntry.m */; };
 		9483479519DE1C950086A732 /* BTree_Test.m in Sources */ = {isa = PBXBuildFile; fileRef = D06D60A50FA7E980002376EE /* BTree_Test.m */; };
@@ -40,6 +39,8 @@
 		A53B7D1A1E9185CF00CA3977 /* HFTestHashing.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D149300D8A37580018296B /* HFTestHashing.m */; };
 		A550A7191F7877F8001C79C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = A550A7181F7877F8001C79C7 /* main.m */; };
 		A550A7201F787831001C79C7 /* hexf in Resources */ = {isa = PBXBuildFile; fileRef = A550A7161F7877F8001C79C7 /* hexf */; };
+		A567D7D520DA1D7C00F7C0A4 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A567D7D420DA1D7C00F7C0A4 /* Sparkle.framework */; };
+		A567D7D620DA1D9100F7C0A4 /* Sparkle.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = A567D7D420DA1D7C00F7C0A4 /* Sparkle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A56D78161E7EF088001D1892 /* CLIController.m in Sources */ = {isa = PBXBuildFile; fileRef = A56D78151E7EF088001D1892 /* CLIController.m */; };
 		A57F34731F1B236E00234B94 /* HFHexPasteboardOwner.m in Sources */ = {isa = PBXBuildFile; fileRef = A57F34711F1B236E00234B94 /* HFHexPasteboardOwner.m */; };
 		A57F34741F1B236E00234B94 /* HFHexPasteboardOwner.h in Headers */ = {isa = PBXBuildFile; fileRef = A57F34721F1B236E00234B94 /* HFHexPasteboardOwner.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -113,7 +114,7 @@
 		D04327A40CF081CD00C14250 /* HFFunctions_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = D04327A30CF081CD00C14250 /* HFFunctions_Private.h */; };
 		D047E3401022CFA800EF307B /* FortunateSon.defs in Sources */ = {isa = PBXBuildFile; fileRef = D047E33F1022CFA800EF307B /* FortunateSon.defs */; settings = {ATTRIBUTES = (Server, ); }; };
 		D047E48C1022E09300EF307B /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D047E48B1022E09300EF307B /* main.cpp */; };
-		D047E4CA1022E1CA00EF307B /* HexFiend.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = D01E7BB80CDC530C00943F9E /* HexFiend.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		D047E4CA1022E1CA00EF307B /* HexFiend.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = D01E7BB80CDC530C00943F9E /* HexFiend.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		D04A6B6B100EA47C00704963 /* SaveBanner.xib in Resources */ = {isa = PBXBuildFile; fileRef = D04A6B69100EA47C00704963 /* SaveBanner.xib */; };
 		D04A6B7A100EA4BC00704963 /* FindReplaceBanner.xib in Resources */ = {isa = PBXBuildFile; fileRef = D04A6B78100EA4BC00704963 /* FindReplaceBanner.xib */; };
 		D04A6B97100EA73800704963 /* JumpToOffsetBanner.xib in Resources */ = {isa = PBXBuildFile; fileRef = D04A6B95100EA73800704963 /* JumpToOffsetBanner.xib */; };
@@ -125,7 +126,6 @@
 		D04C78280DC47ECF00A76FF2 /* HFTextSelectionPulseView.m in Sources */ = {isa = PBXBuildFile; fileRef = D04C78260DC47ECF00A76FF2 /* HFTextSelectionPulseView.m */; };
 		D04D8FDF10239BB20013A2A1 /* HFPrivilegedHelperConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = D04D8FCB102396FC0013A2A1 /* HFPrivilegedHelperConnection.m */; };
 		D04D90531023AAEE0013A2A1 /* HFHelperProcessSharedCode.h in Headers */ = {isa = PBXBuildFile; fileRef = D04D90521023AAEE0013A2A1 /* HFHelperProcessSharedCode.h */; };
-		D05390571E21AB4300F9AAC1 /* Sparkle.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 94548A4219DC51FF006EFA29 /* Sparkle.framework */; };
 		D05984CC1032C6D900059E72 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D05984CB1032C6D900059E72 /* Security.framework */; };
 		D059E1291311C676001493B8 /* AppDebugging.m in Sources */ = {isa = PBXBuildFile; fileRef = D059E1281311C676001493B8 /* AppDebugging.m */; };
 		D05B77DF0E00883B008C45EB /* HFCancelButton.h in Headers */ = {isa = PBXBuildFile; fileRef = D05B77DD0E00883B008C45EB /* HFCancelButton.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -216,82 +216,12 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		94548A4119DC51FF006EFA29 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 94548A3619DC51FE006EFA29 /* Sparkle.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 8DC2EF5B0486A6940098B216;
-			remoteInfo = Sparkle;
-		};
-		94548A4319DC51FF006EFA29 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 94548A3619DC51FE006EFA29 /* Sparkle.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 61B5F90209C4CEE200B25A18;
-			remoteInfo = "Sparkle Test App";
-		};
-		94548A4519DC51FF006EFA29 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 94548A3619DC51FE006EFA29 /* Sparkle.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 612279D90DB5470200AB99EA;
-			remoteInfo = "Sparkle Unit Tests";
-		};
-		94548A4719DC51FF006EFA29 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 94548A3619DC51FE006EFA29 /* Sparkle.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 5D06E8D00FD68C7C005AE3F6;
-			remoteInfo = BinaryDelta;
-		};
-		94548A4919DC51FF006EFA29 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 94548A3619DC51FE006EFA29 /* Sparkle.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 55C14BB7136EEF1500649790;
-			remoteInfo = Autoupdate;
-		};
-		94548A4B19DC5213006EFA29 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 94548A3619DC51FE006EFA29 /* Sparkle.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 8DC2EF4F0486A6940098B216;
-			remoteInfo = Sparkle;
-		};
-		94548A4F19DC5218006EFA29 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 94548A3619DC51FE006EFA29 /* Sparkle.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 8DC2EF4F0486A6940098B216;
-			remoteInfo = Sparkle;
-		};
-		A5056D5D1DDA6F6200DA325F /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 94548A3619DC51FE006EFA29 /* Sparkle.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 726B2B5D1C645FC900388755;
-			remoteInfo = "UI Tests";
-		};
 		A550A7211F787A60001C79C7 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = A550A7151F7877F8001C79C7;
 			remoteInfo = hexf;
-		};
-		A5AB4C6120CF94B800948256 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 94548A3619DC51FE006EFA29 /* Sparkle.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 722954B41D04ADAF00ECF9CA;
-			remoteInfo = fileop;
-		};
-		A5AB4C6320CF94B800948256 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 94548A3619DC51FE006EFA29 /* Sparkle.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 5AE13FB31E0D9E07000D2C2C;
-			remoteInfo = generate_appcast;
 		};
 		D039DBFF1481C17C00364FA6 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -324,15 +254,16 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		D01E7BDA0CDC540700943F9E /* CopyFiles */ = {
+		D01E7BDA0CDC540700943F9E /* Copy Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				D047E4CA1022E1CA00EF307B /* HexFiend.framework in CopyFiles */,
-				94548A4E19DC5218006EFA29 /* Sparkle.framework in CopyFiles */,
+				D047E4CA1022E1CA00EF307B /* HexFiend.framework in Copy Frameworks */,
+				A567D7D620DA1D9100F7C0A4 /* Sparkle.framework in Copy Frameworks */,
 			);
+			name = "Copy Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		D039DC011481C18400364FA6 /* CopyFiles */ = {
@@ -342,16 +273,6 @@
 			dstSubfolderSpec = 1;
 			files = (
 				D039DC031482DCD000364FA6 /* com.ridiculousfish.HexFiend.PrivilegedHelper in CopyFiles */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		D05390561E21AB2500F9AAC1 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = built_frameworks;
-			dstSubfolderSpec = 16;
-			files = (
-				D05390571E21AB4300F9AAC1 /* Sparkle.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -383,10 +304,10 @@
 		9408FBFD19DD72DE004F800E /* Framework_Tests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Framework_Tests-Info.plist"; sourceTree = "<group>"; };
 		9408FBFE19DD72DF004F800E /* Framework_Tests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Framework_Tests.m; sourceTree = "<group>"; };
 		9408FC0F19DD8669004F800E /* HFPrivilegedHelperConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFPrivilegedHelperConnection.h; path = sources/HFPrivilegedHelperConnection.h; sourceTree = "<group>"; };
-		94548A3619DC51FE006EFA29 /* Sparkle.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Sparkle.xcodeproj; path = third_party/Sparkle/Sparkle.xcodeproj; sourceTree = SOURCE_ROOT; };
 		9483478F19DE188E0086A732 /* HFTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFTest.h; sourceTree = "<group>"; };
 		A550A7161F7877F8001C79C7 /* hexf */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = hexf; sourceTree = BUILT_PRODUCTS_DIR; };
 		A550A7181F7877F8001C79C7 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		A567D7D420DA1D7C00F7C0A4 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Sparkle.framework; path = vendor/Sparkle.framework; sourceTree = "<group>"; };
 		A56D78141E7EF088001D1892 /* CLIController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CLIController.h; path = app/sources/CLIController.h; sourceTree = "<group>"; };
 		A56D78151E7EF088001D1892 /* CLIController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CLIController.m; path = app/sources/CLIController.m; sourceTree = "<group>"; };
 		A57F34711F1B236E00234B94 /* HFHexPasteboardOwner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFHexPasteboardOwner.m; path = sources/HFHexPasteboardOwner.m; sourceTree = "<group>"; };
@@ -611,6 +532,7 @@
 			files = (
 				A59BC5942001FD0F0066860F /* Tcl.framework in Frameworks */,
 				795F46C314BAADB600EB2F7D /* DiskArbitration.framework in Frameworks */,
+				A567D7D520DA1D7C00F7C0A4 /* Sparkle.framework in Frameworks */,
 				8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */,
 				94ECCBC01BDF7DD2007FF44E /* HexFiend.framework in Frameworks */,
 			);
@@ -723,8 +645,8 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A567D7D420DA1D7C00F7C0A4 /* Sparkle.framework */,
 				A59BC5932001FD0F0066860F /* Tcl.framework */,
-				94548A3619DC51FE006EFA29 /* Sparkle.xcodeproj */,
 				795F46C214BAADB600EB2F7D /* DiskArbitration.framework */,
 				D0D4BE84146F43A1001B0A71 /* ServiceManagement.framework */,
 				D05984CB1032C6D900059E72 /* Security.framework */,
@@ -762,21 +684,6 @@
 			);
 			name = FrameworkTests;
 			path = framework/tests;
-			sourceTree = "<group>";
-		};
-		94548A3719DC51FE006EFA29 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				94548A4219DC51FF006EFA29 /* Sparkle.framework */,
-				94548A4419DC51FF006EFA29 /* Sparkle Test App.app */,
-				94548A4619DC51FF006EFA29 /* Sparkle Unit Tests.xctest */,
-				94548A4819DC51FF006EFA29 /* BinaryDelta */,
-				94548A4A19DC51FF006EFA29 /* Autoupdate.app */,
-				A5056D5E1DDA6F6200DA325F /* UI Tests.xctest */,
-				A5AB4C6220CF94B800948256 /* fileop */,
-				A5AB4C6420CF94B800948256 /* generate_appcast */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 		A550A7171F7877F8001C79C7 /* hexf */ = {
@@ -1273,23 +1180,20 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = C01FCF4A08A954540054247B /* Build configuration list for PBXNativeTarget "HexFiend_2" */;
 			buildPhases = (
-				D05390561E21AB2500F9AAC1 /* CopyFiles */,
-				D01E7BDA0CDC540700943F9E /* CopyFiles */,
+				D05390581E21AB5800F9AAC1 /* Get Sparkle */,
+				D01E7BDA0CDC540700943F9E /* Copy Frameworks */,
 				8D1107290486CEB800E47090 /* Resources */,
 				8D11072C0486CEB800E47090 /* Sources */,
 				8D11072E0486CEB800E47090 /* Frameworks */,
 				D039DC011481C18400364FA6 /* CopyFiles */,
 				A57617BB1E430C18003CF6BB /* Set Bundle Version */,
 				D05390401E2192AE00F9AAC1 /* Optionally Postprocess for Mac App Store */,
-				D05390581E21AB5800F9AAC1 /* ShellScript */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				94548A4C19DC5213006EFA29 /* PBXTargetDependency */,
 				A550A7221F787A60001C79C7 /* PBXTargetDependency */,
 				D039DC001481C17C00364FA6 /* PBXTargetDependency */,
-				94548A5019DC5218006EFA29 /* PBXTargetDependency */,
 			);
 			name = HexFiend_2;
 			productInstallPath = "$(HOME)/Applications";
@@ -1416,12 +1320,6 @@
 			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* HexFiend_2 */;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = 94548A3719DC51FE006EFA29 /* Products */;
-					ProjectRef = 94548A3619DC51FE006EFA29 /* Sparkle.xcodeproj */;
-				},
-			);
 			projectRoot = ../..;
 			targets = (
 				8D1107260486CEB800E47090 /* HexFiend_2 */,
@@ -1434,65 +1332,6 @@
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXReferenceProxy section */
-		94548A4219DC51FF006EFA29 /* Sparkle.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = Sparkle.framework;
-			remoteRef = 94548A4119DC51FF006EFA29 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		94548A4419DC51FF006EFA29 /* Sparkle Test App.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = "Sparkle Test App.app";
-			remoteRef = 94548A4319DC51FF006EFA29 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		94548A4619DC51FF006EFA29 /* Sparkle Unit Tests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = "Sparkle Unit Tests.xctest";
-			remoteRef = 94548A4519DC51FF006EFA29 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		94548A4819DC51FF006EFA29 /* BinaryDelta */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			path = BinaryDelta;
-			remoteRef = 94548A4719DC51FF006EFA29 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		94548A4A19DC51FF006EFA29 /* Autoupdate.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = Autoupdate.app;
-			remoteRef = 94548A4919DC51FF006EFA29 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		A5056D5E1DDA6F6200DA325F /* UI Tests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = "UI Tests.xctest";
-			remoteRef = A5056D5D1DDA6F6200DA325F /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		A5AB4C6220CF94B800948256 /* fileop */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			path = fileop;
-			remoteRef = A5AB4C6120CF94B800948256 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		A5AB4C6420CF94B800948256 /* generate_appcast */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			path = generate_appcast;
-			remoteRef = A5AB4C6320CF94B800948256 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		8D1107290486CEB800E47090 /* Resources */ = {
@@ -1589,18 +1428,19 @@
 			shellPath = /bin/sh;
 			shellScript = "${SRCROOT}/configs/postprocess_for_mas.sh\n";
 		};
-		D05390581E21AB5800F9AAC1 /* ShellScript */ = {
+		D05390581E21AB5800F9AAC1 /* Get Sparkle */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
+			name = "Get Sparkle";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "";
+			shellScript = "\"$PROJECT_DIR/app/get_sparkle.sh\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -1744,16 +1584,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		94548A4C19DC5213006EFA29 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = Sparkle;
-			targetProxy = 94548A4B19DC5213006EFA29 /* PBXContainerItemProxy */;
-		};
-		94548A5019DC5218006EFA29 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = Sparkle;
-			targetProxy = 94548A4F19DC5218006EFA29 /* PBXContainerItemProxy */;
-		};
 		A550A7221F787A60001C79C7 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = A550A7151F7877F8001C79C7 /* hexf */;
@@ -2331,7 +2161,6 @@
 				INSTALL_PATH = /Applications;
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "-F$(BUILT_PRODUCTS_DIR)/built_frameworks/";
 				SDKROOT = macosx;
 				VALID_ARCHS = "armv6 armv7 i386 x86_64";
 				WARNING_CFLAGS = (
@@ -2346,6 +2175,10 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "-";
 				ENABLE_STRICT_OBJC_MSGSEND = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/vendor",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = app/sources/HexFiend_2_Prefix.pch;
 				INFOPLIST_FILE = app/Info.plist;
@@ -2492,7 +2325,6 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "-F$(BUILT_PRODUCTS_DIR)/built_frameworks/";
 				SDKROOT = macosx;
 				VALID_ARCHS = "armv6 armv7 i386 x86_64";
 				WARNING_CFLAGS = (
@@ -2507,6 +2339,10 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "-";
 				ENABLE_STRICT_OBJC_MSGSEND = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/vendor",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = app/sources/HexFiend_2_Prefix.pch;
 				INFOPLIST_FILE = app/Info.plist;
@@ -2650,7 +2486,6 @@
 				INSTALL_PATH = /Applications;
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "-F$(BUILT_PRODUCTS_DIR)/built_frameworks/";
 				SDKROOT = macosx;
 				VALID_ARCHS = "armv6 armv7 i386 x86_64";
 				WARNING_CFLAGS = (
@@ -2665,6 +2500,10 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "-";
 				ENABLE_STRICT_OBJC_MSGSEND = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/vendor",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = app/sources/HexFiend_2_Prefix.pch;
 				INFOPLIST_FILE = app/Info.plist;
@@ -2826,7 +2665,6 @@
 					"-DMacAppStore=1",
 					"-DHF_NO_PRIVILEGED_FILE_OPERATIONS=1",
 				);
-				OTHER_LDFLAGS = "-F$(BUILT_PRODUCTS_DIR)/built_frameworks/";
 				SDKROOT = macosx;
 				VALID_ARCHS = "armv6 armv7 i386 x86_64";
 				WARNING_CFLAGS = (
@@ -2841,6 +2679,10 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "-";
 				ENABLE_STRICT_OBJC_MSGSEND = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/vendor",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = app/sources/HexFiend_2_Prefix.pch;
 				INFOPLIST_FILE = app/Info_MAS.plist;
@@ -3019,7 +2861,6 @@
 					"-DMacAppStore=1",
 					"-DHF_NO_PRIVILEGED_FILE_OPERATIONS=1",
 				);
-				OTHER_LDFLAGS = "-F$(BUILT_PRODUCTS_DIR)/built_frameworks/";
 				SDKROOT = macosx;
 				VALID_ARCHS = "armv6 armv7 i386 x86_64";
 				WARNING_CFLAGS = (
@@ -3034,6 +2875,10 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "-";
 				ENABLE_STRICT_OBJC_MSGSEND = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/vendor",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = app/sources/HexFiend_2_Prefix.pch;
 				INFOPLIST_FILE = app/Info_MAS.plist;
@@ -3219,7 +3064,6 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "-F$(BUILT_PRODUCTS_DIR)/built_frameworks/";
 				SDKROOT = macosx;
 				VALID_ARCHS = "armv6 armv7 i386 x86_64";
 				WARNING_CFLAGS = (
@@ -3234,6 +3078,10 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "-";
 				ENABLE_STRICT_OBJC_MSGSEND = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/vendor",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = app/sources/HexFiend_2_Prefix.pch;
 				INFOPLIST_FILE = app/Info.plist;
@@ -3380,7 +3228,6 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "-F$(BUILT_PRODUCTS_DIR)/built_frameworks/";
 				SDKROOT = macosx;
 				VALID_ARCHS = "armv6 armv7 i386 x86_64";
 				WARNING_CFLAGS = (
@@ -3426,6 +3273,10 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "-";
 				ENABLE_STRICT_OBJC_MSGSEND = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/vendor",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = app/sources/HexFiend_2_Prefix.pch;
 				INFOPLIST_FILE = app/Info.plist;
