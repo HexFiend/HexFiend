@@ -17,7 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (readonly) BOOL isASCII;
 
 - (NSString *)stringFromBytes:(const unsigned char *)bytes length:(NSUInteger)length;
-- (NSData *)dataFromString:(NSString *)string;
+- (nullable NSData *)dataFromString:(NSString *)string;
 
 @end
 
