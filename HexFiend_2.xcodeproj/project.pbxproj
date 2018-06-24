@@ -307,6 +307,21 @@
 		9483478F19DE188E0086A732 /* HFTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFTest.h; sourceTree = "<group>"; };
 		A550A7161F7877F8001C79C7 /* hexf */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = hexf; sourceTree = BUILT_PRODUCTS_DIR; };
 		A550A7181F7877F8001C79C7 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		A554E0CD20DF2CD3001B4C48 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/OpenDriveDialog.xib; sourceTree = "<group>"; };
+		A554E0CE20DF2CD3001B4C48 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/DataInspectorView.xib; sourceTree = "<group>"; };
+		A554E0CF20DF2CD4001B4C48 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/ChooseStringEncodingDialog.xib; sourceTree = "<group>"; };
+		A554E0D020DF2CD4001B4C48 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MyDocument.xib; sourceTree = "<group>"; };
+		A554E0D120DF2CD4001B4C48 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MoveSelectionByBanner.xib; sourceTree = "<group>"; };
+		A554E0D220DF2CD4001B4C48 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/JumpToOffsetBanner.xib; sourceTree = "<group>"; };
+		A554E0D320DF2CD5001B4C48 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/FindReplaceBanner.xib; sourceTree = "<group>"; };
+		A554E0D420DF2CD5001B4C48 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/SaveBanner.xib; sourceTree = "<group>"; };
+		A554E0D520DF2CD5001B4C48 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/DiffComputationBanner.xib; sourceTree = "<group>"; };
+		A554E0D620DF2CD6001B4C48 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/DiffDocument.xib; sourceTree = "<group>"; };
+		A554E0D720DF2CD6001B4C48 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/DiffRangeDialog.xib; sourceTree = "<group>"; };
+		A554E0D820DF2CD6001B4C48 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		A554E0D920DF2CD6001B4C48 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/Preferences.xib; sourceTree = "<group>"; };
+		A554E0DA20DF2CD6001B4C48 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/BinaryTemplateController.xib; sourceTree = "<group>"; };
+		A554E0DB20DF2CD7001B4C48 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		A567D7D420DA1D7C00F7C0A4 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Sparkle.framework; path = vendor/Sparkle.framework; sourceTree = "<group>"; };
 		A56D78141E7EF088001D1892 /* CLIController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CLIController.h; path = app/sources/CLIController.h; sourceTree = "<group>"; };
 		A56D78151E7EF088001D1892 /* CLIController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CLIController.m; path = app/sources/CLIController.m; sourceTree = "<group>"; };
@@ -315,10 +330,6 @@
 		A57F34751F1B2A2B00234B94 /* HFHexPasteboardOwnerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFHexPasteboardOwnerTest.m; sourceTree = "<group>"; };
 		A57F34771F1BCC4B00234B94 /* BigColumnsResult.txt.gz */ = {isa = PBXFileReference; lastKnownFileType = archive.gzip; path = BigColumnsResult.txt.gz; sourceTree = "<group>"; };
 		A57F347B1F1BE7CD00234B94 /* BigResult.txt.gz */ = {isa = PBXFileReference; lastKnownFileType = archive.gzip; path = BigResult.txt.gz; sourceTree = "<group>"; };
-		A57F34811F1EF47700234B94 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/Preferences.xib; sourceTree = "<group>"; };
-		A57F34841F1EFA6E00234B94 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/DataInspectorView.xib; sourceTree = "<group>"; };
-		A57F34871F1EFA8800234B94 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/ChooseStringEncodingDialog.xib; sourceTree = "<group>"; };
-		A57F348A1F1EFA9600234B94 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/OpenDriveDialog.xib; sourceTree = "<group>"; };
 		A59BC56F2001AB8C0066860F /* HFBinaryTemplateRepresenter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFBinaryTemplateRepresenter.h; path = app/sources/HFBinaryTemplateRepresenter.h; sourceTree = "<group>"; };
 		A59BC5702001AB8C0066860F /* HFBinaryTemplateRepresenter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFBinaryTemplateRepresenter.m; path = app/sources/HFBinaryTemplateRepresenter.m; sourceTree = "<group>"; };
 		A59BC5902001FB9A0066860F /* HFTclTemplateController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFTclTemplateController.h; path = app/sources/HFTclTemplateController.h; sourceTree = "<group>"; };
@@ -330,7 +341,6 @@
 		A59BC59B2002113F0066860F /* HFTemplateNode.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFTemplateNode.m; path = app/sources/HFTemplateNode.m; sourceTree = "<group>"; };
 		A59BC59D2002E63C0066860F /* HFTemplateController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFTemplateController.h; path = app/sources/HFTemplateController.h; sourceTree = "<group>"; };
 		A59BC59E2002E63C0066860F /* HFTemplateController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFTemplateController.m; path = app/sources/HFTemplateController.m; sourceTree = "<group>"; };
-		A59DFE66200BE7A800FEA540 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/BinaryTemplateController.xib; sourceTree = "<group>"; };
 		A5CEA41A20D5DF4400BCA488 /* HFStringEncoding.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFStringEncoding.h; path = sources/HFStringEncoding.h; sourceTree = "<group>"; };
 		A5CEA41B20D5DF4400BCA488 /* HFStringEncoding.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFStringEncoding.m; path = sources/HFStringEncoding.m; sourceTree = "<group>"; };
 		A5CEA42820D5E0F500BCA488 /* HFNSStringEncoding.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFNSStringEncoding.h; path = sources/HFNSStringEncoding.h; sourceTree = "<group>"; };
@@ -356,7 +366,6 @@
 		D01772F40D751DB1002E03DE /* HFDocumentOperationView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFDocumentOperationView.m; path = app/sources/HFDocumentOperationView.m; sourceTree = "<group>"; };
 		D01773900D7A2F32002E03DE /* HFResizingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFResizingView.h; path = app/sources/HFResizingView.h; sourceTree = "<group>"; };
 		D01773910D7A2F32002E03DE /* HFResizingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFResizingView.m; path = app/sources/HFResizingView.m; sourceTree = "<group>"; };
-		D018F138107AB64900AE805F /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/DiffDocument.xib; sourceTree = "<group>"; };
 		D018F151107ABAC600AE805F /* DiffDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DiffDocument.h; path = app/sources/DiffDocument.h; sourceTree = "<group>"; };
 		D018F152107ABAC600AE805F /* DiffDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DiffDocument.m; path = app/sources/DiffDocument.m; sourceTree = "<group>"; };
 		D019B8BE0D83E8D5005789AA /* HFByteArray_FileWriting.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFByteArray_FileWriting.m; path = sources/HFByteArray_FileWriting.m; sourceTree = "<group>"; };
@@ -404,12 +413,6 @@
 		D047E33F1022CFA800EF307B /* FortunateSon.defs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.mig; name = FortunateSon.defs; path = helper_subprocess/FortunateSon.defs; sourceTree = "<group>"; };
 		D047E4431022DF6F00EF307B /* FortunateSonIPCTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FortunateSonIPCTypes.h; path = helper_subprocess/FortunateSonIPCTypes.h; sourceTree = "<group>"; };
 		D047E48B1022E09300EF307B /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = helper_subprocess/main.cpp; sourceTree = "<group>"; };
-		D04A6B6A100EA47C00704963 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/SaveBanner.xib; sourceTree = "<group>"; };
-		D04A6B79100EA4BC00704963 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/FindReplaceBanner.xib; sourceTree = "<group>"; };
-		D04A6B96100EA73800704963 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/JumpToOffsetBanner.xib; sourceTree = "<group>"; };
-		D04A6B9D100EA75400704963 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MoveSelectionByBanner.xib; sourceTree = "<group>"; };
-		D04A6BA4100EA78700704963 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MyDocument.xib; sourceTree = "<group>"; };
-		D04A6BAA100EA7B800704963 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		D04A6C15100EB02400704963 /* HFModalProgress.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = HFModalProgress.xib; path = resources/HFModalProgress.xib; sourceTree = "<group>"; };
 		D04C78250DC47ECF00A76FF2 /* HFTextSelectionPulseView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFTextSelectionPulseView.h; path = sources/HFTextSelectionPulseView.h; sourceTree = "<group>"; };
 		D04C78260DC47ECF00A76FF2 /* HFTextSelectionPulseView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFTextSelectionPulseView.m; path = sources/HFTextSelectionPulseView.m; sourceTree = "<group>"; };
@@ -434,7 +437,6 @@
 		D06D60BC0FA7EA23002376EE /* TreeEntry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TreeEntry.m; path = ../sources/BTree/BTree_Testing/TreeEntry.m; sourceTree = "<group>"; };
 		D06D61EC0FA7FA7C002376EE /* HFBTreeByteArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFBTreeByteArray.h; path = sources/HFBTreeByteArray.h; sourceTree = "<group>"; };
 		D06D61ED0FA7FA7C002376EE /* HFBTreeByteArray.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFBTreeByteArray.m; path = sources/HFBTreeByteArray.m; sourceTree = "<group>"; };
-		D071391F146F7898004D3792 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		D07150650D5510CE00573D7A /* HFTextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFTextField.h; path = sources/HFTextField.h; sourceTree = "<group>"; };
 		D07150660D5510CE00573D7A /* HFTextField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFTextField.m; path = sources/HFTextField.m; sourceTree = "<group>"; };
 		D074B0D3115B2075002D5FA8 /* DiffDocumentWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DiffDocumentWindow.h; path = app/sources/DiffDocumentWindow.h; sourceTree = "<group>"; };
@@ -490,7 +492,6 @@
 		D0AFA785123C2BDF00CFC513 /* MyDocumentController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MyDocumentController.m; path = app/sources/MyDocumentController.m; sourceTree = "<group>"; };
 		D0B4229F0FF845F800DF27E5 /* HFTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFTextView.h; path = sources/HFTextView.h; sourceTree = "<group>"; };
 		D0B422A00FF845F800DF27E5 /* HFTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFTextView.m; path = sources/HFTextView.m; sourceTree = "<group>"; };
-		D0B47FEE1272427B0095120E /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/DiffComputationBanner.xib; sourceTree = "<group>"; };
 		D0B7E3380D5C50EA007874ED /* HFByteArray_FindReplace.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFByteArray_FindReplace.m; path = sources/HFByteArray_FindReplace.m; sourceTree = "<group>"; };
 		D0CBB23E128F78C200989C15 /* StretchableProgressIndicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StretchableProgressIndicator.h; path = app/sources/StretchableProgressIndicator.h; sourceTree = "<group>"; };
 		D0CBB23F128F78C200989C15 /* StretchableProgressIndicator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = StretchableProgressIndicator.m; path = app/sources/StretchableProgressIndicator.m; sourceTree = "<group>"; };
@@ -517,7 +518,6 @@
 		D0D828FF0CDE8ABE00C2AB82 /* HFFullMemoryByteArray.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFFullMemoryByteArray.m; path = sources/HFFullMemoryByteArray.m; sourceTree = "<group>"; };
 		D0D8C2BA12A3C10100960FC4 /* ChooseStringEncodingWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ChooseStringEncodingWindowController.h; path = app/sources/ChooseStringEncodingWindowController.h; sourceTree = "<group>"; };
 		D0D8C2BB12A3C10100960FC4 /* ChooseStringEncodingWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ChooseStringEncodingWindowController.m; path = app/sources/ChooseStringEncodingWindowController.m; sourceTree = "<group>"; };
-		D8C1F92B16F278BA00A4C36E /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/DiffRangeDialog.xib; sourceTree = "<group>"; };
 		D8EE3EFC16F26689001C7C09 /* DiffRangeWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DiffRangeWindowController.h; path = app/sources/DiffRangeWindowController.h; sourceTree = "<group>"; };
 		D8EE3EFD16F26689001C7C09 /* DiffRangeWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DiffRangeWindowController.m; path = app/sources/DiffRangeWindowController.m; sourceTree = "<group>"; };
 		DAE8EBFC1598FFDB0008ADB9 /* DocumentWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DocumentWindow.h; path = app/sources/DocumentWindow.h; sourceTree = "<group>"; };
@@ -1317,6 +1317,7 @@
 				French,
 				German,
 				en,
+				Base,
 			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* HexFiend_2 */;
 			projectDirPath = "";
@@ -1623,7 +1624,7 @@
 		A57F34821F1EF47700234B94 /* Preferences.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				A57F34811F1EF47700234B94 /* en */,
+				A554E0D920DF2CD6001B4C48 /* Base */,
 			);
 			name = Preferences.xib;
 			path = app/resources;
@@ -1632,7 +1633,7 @@
 		A57F34851F1EFA6E00234B94 /* DataInspectorView.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				A57F34841F1EFA6E00234B94 /* en */,
+				A554E0CE20DF2CD3001B4C48 /* Base */,
 			);
 			name = DataInspectorView.xib;
 			path = app/resources;
@@ -1641,7 +1642,7 @@
 		A57F34881F1EFA8800234B94 /* ChooseStringEncodingDialog.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				A57F34871F1EFA8800234B94 /* en */,
+				A554E0CF20DF2CD4001B4C48 /* Base */,
 			);
 			name = ChooseStringEncodingDialog.xib;
 			path = app/resources;
@@ -1650,7 +1651,7 @@
 		A57F348B1F1EFA9600234B94 /* OpenDriveDialog.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				A57F348A1F1EFA9600234B94 /* en */,
+				A554E0CD20DF2CD3001B4C48 /* Base */,
 			);
 			name = OpenDriveDialog.xib;
 			path = app/resources;
@@ -1659,7 +1660,7 @@
 		A59DFE65200BE7A800FEA540 /* BinaryTemplateController.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				A59DFE66200BE7A800FEA540 /* English */,
+				A554E0DA20DF2CD6001B4C48 /* Base */,
 			);
 			name = BinaryTemplateController.xib;
 			sourceTree = "<group>";
@@ -1667,7 +1668,7 @@
 		D018F137107AB64900AE805F /* DiffDocument.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				D018F138107AB64900AE805F /* English */,
+				A554E0D620DF2CD6001B4C48 /* Base */,
 			);
 			name = DiffDocument.xib;
 			sourceTree = "<group>";
@@ -1675,7 +1676,7 @@
 		D04A6B69100EA47C00704963 /* SaveBanner.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				D04A6B6A100EA47C00704963 /* English */,
+				A554E0D420DF2CD5001B4C48 /* Base */,
 			);
 			name = SaveBanner.xib;
 			sourceTree = "<group>";
@@ -1683,7 +1684,7 @@
 		D04A6B78100EA4BC00704963 /* FindReplaceBanner.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				D04A6B79100EA4BC00704963 /* English */,
+				A554E0D320DF2CD5001B4C48 /* Base */,
 			);
 			name = FindReplaceBanner.xib;
 			sourceTree = "<group>";
@@ -1691,7 +1692,7 @@
 		D04A6B95100EA73800704963 /* JumpToOffsetBanner.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				D04A6B96100EA73800704963 /* English */,
+				A554E0D220DF2CD4001B4C48 /* Base */,
 			);
 			name = JumpToOffsetBanner.xib;
 			sourceTree = "<group>";
@@ -1699,7 +1700,7 @@
 		D04A6B9C100EA75400704963 /* MoveSelectionByBanner.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				D04A6B9D100EA75400704963 /* English */,
+				A554E0D120DF2CD4001B4C48 /* Base */,
 			);
 			name = MoveSelectionByBanner.xib;
 			sourceTree = "<group>";
@@ -1707,7 +1708,7 @@
 		D04A6BA3100EA78700704963 /* MyDocument.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				D04A6BA4100EA78700704963 /* English */,
+				A554E0D020DF2CD4001B4C48 /* Base */,
 			);
 			name = MyDocument.xib;
 			sourceTree = "<group>";
@@ -1715,7 +1716,7 @@
 		D04A6BA9100EA7B800704963 /* MainMenu.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				D04A6BAA100EA7B800704963 /* English */,
+				A554E0D820DF2CD6001B4C48 /* Base */,
 			);
 			name = MainMenu.xib;
 			sourceTree = "<group>";
@@ -1723,7 +1724,7 @@
 		D071391E146F7897004D3792 /* MainMenu.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				D071391F146F7898004D3792 /* English */,
+				A554E0DB20DF2CD7001B4C48 /* Base */,
 			);
 			name = MainMenu.xib;
 			sourceTree = "<group>";
@@ -1731,7 +1732,7 @@
 		D0B47FED1272427B0095120E /* DiffComputationBanner.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				D0B47FEE1272427B0095120E /* English */,
+				A554E0D520DF2CD5001B4C48 /* Base */,
 			);
 			name = DiffComputationBanner.xib;
 			sourceTree = "<group>";
@@ -1739,7 +1740,7 @@
 		D8C1F92A16F278BA00A4C36E /* DiffRangeDialog.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				D8C1F92B16F278BA00A4C36E /* English */,
+				A554E0D720DF2CD6001B4C48 /* Base */,
 			);
 			name = DiffRangeDialog.xib;
 			sourceTree = "<group>";
