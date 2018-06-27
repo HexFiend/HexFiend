@@ -941,3 +941,17 @@ void HFUnregisterViewForWindowAppearanceChanges(NSView *self, BOOL appToo) {
         [center removeObserver:self name:NSApplicationDidResignActiveNotification object:nil];
     }    
 }
+
+BOOL HFDarkModeEnabled(void) {
+#if defined(MAC_OS_X_VERSION_10_4) && MAC_OS_X_VERSION_10_4 > 0 && MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
+    if (@available(macOS 10.14, *)) {
+        if ([NSAppearance.currentAppearance.name isEqualToString:NSAppearanceNameDarkAqua]) {
+            return YES;
+        }
+    }
+#else
+// Dark Mode requires compiling against 10.14+ SDK
+#warning Compiling without Dark Mode support.
+#endif
+    return NO;
+}

@@ -529,4 +529,6 @@ NSString *HFDescribeByteCount(unsigned long long count);
 
 @end
 
+BOOL HFDarkModeEnabled(void);
+
 NS_ASSUME_NONNULL_END
