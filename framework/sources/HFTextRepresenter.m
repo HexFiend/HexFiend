@@ -22,14 +22,25 @@
     UNIMPLEMENTED();
 }
 
-- (instancetype)init {
-    self = [super init];
-    
++ (NSArray<NSColor *> *)defaultRowBackgroundColors {
+    if (@available(macOS 10.14, *)) {
+        if (HFDarkModeEnabled()) {
+            return [NSColor alternatingContentBackgroundColors];
+        }
+    }
     NSColor *color1 = [NSColor colorWithCalibratedWhite:1.0 alpha:1.0];
     NSColor *color2 = [NSColor colorWithCalibratedRed:.87 green:.89 blue:1. alpha:1.];
-    _rowBackgroundColors = @[color1, color2];
-    
-    return self;
+    return @[color1, color2];
+}
+
+- (NSArray<NSColor *> *)rowBackgroundColors {
+    // If set use the customized value, otherwise return the default.
+    // This must be dynamic and not stored so we can update live on redraw
+    // when the appearance changes.
+    if (_rowBackgroundColors) {
+        return _rowBackgroundColors;
+    }
+    return [[self class] defaultRowBackgroundColors];
 }
 
 - (void)dealloc {
@@ -135,7 +146,13 @@
         [run setBackgroundColor:[NSColor orangeColor]];
     }
     else {
-        [run setForegroundColor:[NSColor blackColor]];
+        NSColor *foregroundColor;
+        if (@available(macOS 10.10, *)) {
+            foregroundColor = [NSColor labelColor];
+        } else {
+            foregroundColor = [NSColor blackColor];
+        }
+        [run setForegroundColor:foregroundColor];
     }
     if ([attributes containsObject:kHFAttributeUnmapped]) {
         [run setShouldDraw:NO];

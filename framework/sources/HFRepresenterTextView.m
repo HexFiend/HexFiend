@@ -407,7 +407,13 @@ enum LineCoverage_t {
     CGContextRef ctx = [[NSGraphicsContext currentContext] graphicsPort];
     CGContextSaveGState(ctx);
     [[NSBezierPath bezierPathWithRoundedRect:pulseRect xRadius:25 yRadius:25] addClip];
-    NSGradient *gradient = [[NSGradient alloc] initWithStartingColor:[NSColor yellowColor] endingColor:[NSColor colorWithCalibratedRed:(CGFloat)1. green:(CGFloat).75 blue:0 alpha:1]];
+    NSColor *yellow;
+    if (@available(macOS 10.10, *)) {
+        yellow = [NSColor systemYellowColor];
+    } else {
+        yellow = [NSColor yellowColor];
+    }
+    NSGradient *gradient = [[NSGradient alloc] initWithStartingColor:yellow endingColor:[NSColor colorWithCalibratedRed:(CGFloat)1. green:(CGFloat).75 blue:0 alpha:1]];
     [gradient drawInRect:pulseRect angle:90];
     CGContextRestoreGState(ctx);
 }
@@ -486,7 +492,11 @@ enum LineCoverage_t {
                 CGContextRef ctx = [[NSGraphicsContext currentContext] graphicsPort];
                 CGContextClearRect(ctx, *(CGRect *)&imageRect);
                 [self drawPulseBackgroundInRect:imageRect];
-                [[NSColor blackColor] set];
+                if (@available(macOS 10.10, *)) {
+                    [[NSColor labelColor] set];
+                } else {
+                    [[NSColor blackColor] set];
+                }
                 [[self.font screenFont] set];
                 if (! [self shouldAntialias]) CGContextSetShouldAntialias(ctx, NO);
                 CGContextScaleCTM(ctx, imageScale, imageScale);
@@ -516,7 +526,11 @@ enum LineCoverage_t {
 - (void)drawCaretIfNecessaryWithClip:(NSRect)clipRect {
     NSRect caretRect = NSIntersectionRect(caretRectToDraw, clipRect);
     if (! NSIsEmptyRect(caretRect)) {
-        [[NSColor blackColor] set];
+        if (@available(macOS 10.10, *)) {
+            [[NSColor labelColor] set];
+        } else {
+            [[NSColor blackColor] set];
+        }
         NSRectFill(caretRect);
         lastDrawnCaretRect = caretRect;
     }
@@ -531,20 +545,21 @@ enum LineCoverage_t {
 
 /* This is the color when we are not in the key window */
 - (NSColor *)inactiveTextSelectionColor {
+    if (HFDarkModeEnabled()) {
+        if (@available(macOS 10.14, *)) {
+            return [NSColor unemphasizedSelectedTextBackgroundColor];
+        }
+    }
     return [NSColor colorWithCalibratedWhite: (CGFloat)(212./255.) alpha:1];
-}
-
-/* This is the color when we are not the first responder, but we are in the key window */
-- (NSColor *)secondaryTextSelectionColor {
-    return [[self primaryTextSelectionColor] blendedColorWithFraction:.66 ofColor:[NSColor colorWithCalibratedWhite:.8f alpha:1]];
 }
 
 - (NSColor *)textSelectionColor {
     NSWindow *window = [self window];
-    if (window == nil) return [self primaryTextSelectionColor];
-    else if (! [window isKeyWindow]) return [self inactiveTextSelectionColor];
-    else if (self != [window firstResponder]) return [self secondaryTextSelectionColor];
-    else return [self primaryTextSelectionColor];
+    if (!window.isKeyWindow || self != window.firstResponder) {
+        return [self inactiveTextSelectionColor];
+    } else {
+        return [self primaryTextSelectionColor];
+    }
 }
 
 - (void)drawRangesIfNecessaryWithClip:(NSRect)clipRect {
@@ -576,7 +591,7 @@ enum LineCoverage_t {
                 NSRect selectionRect = NSMakeRect(startPoint.x, startPoint.y, endPoint.x + [self advancePerCharacter] - startPoint.x, lineHeight);
                 NSRect clippedSelectionRect = NSIntersectionRect(selectionRect, clipRect);
                 if (! NSIsEmptyRect(clippedSelectionRect)) {
-                    NSRectFill(clippedSelectionRect);
+                    NSRectFillUsingOperation(clippedSelectionRect, NSCompositeSourceOver);
                 }
                 byteIndex = endByteForThisLineOfRange + 1;
             }
@@ -976,8 +991,15 @@ static size_t unionAndCleanLists(NSRect *rectList, __unsafe_unretained id *value
         guideIndex++;
     }
     if (rectIndex > 0) {
-        [[NSColor colorWithCalibratedWhite:(CGFloat).8 alpha:1] set];
-        NSRectFillListUsingOperation(lineRects, rectIndex, NSCompositePlusDarker);
+        NSCompositingOperation op;
+        if (HFDarkModeEnabled()) {
+            [[NSColor colorWithCalibratedWhite:0.2 alpha:1] set];
+            op = NSCompositePlusLighter;
+        } else {
+            [[NSColor colorWithCalibratedWhite:0.8 alpha:1] set];
+            op = NSCompositePlusDarker;
+        }
+        NSRectFillListUsingOperation(lineRects, rectIndex, op);
     }
     FREE_ARRAY(lineRects);
 }

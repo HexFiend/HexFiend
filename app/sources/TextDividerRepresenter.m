@@ -25,16 +25,30 @@
     CGContextRef ctx = [[NSGraphicsContext currentContext] graphicsPort];
     const CGFloat shadowWidth = SHADOW_WIDTH;
     
-    [[NSColor colorWithCalibratedWhite:(CGFloat).87 alpha:1] set];
-    NSRectFill(clip);
+    const BOOL darkMode = HFDarkModeEnabled();
+    
+    if (darkMode ) {
+        [[NSColor colorWithCalibratedWhite:0.13 alpha:1] set];
+    } else {
+        [[NSColor colorWithCalibratedWhite:0.87 alpha:1] set];
+    }
+    NSRectFillUsingOperation(clip, NSCompositeSourceOver);
     NSRect bounds = [self bounds];
     
     // Draw left and right shadow
-    HFDrawShadow(ctx, bounds, shadowWidth, NSMinXEdge, drawActive, clip);
-    HFDrawShadow(ctx, bounds, shadowWidth, NSMaxXEdge, drawActive, clip);
+    if (!darkMode) {
+        HFDrawShadow(ctx, bounds, shadowWidth, NSMinXEdge, drawActive, clip);
+        HFDrawShadow(ctx, bounds, shadowWidth, NSMaxXEdge, drawActive, clip);
+    }
     
     // Draw dividers
-    [[NSColor darkGrayColor] set];
+    NSColor *dividerColor = [NSColor darkGrayColor];
+    if (darkMode) {
+        if (@available(macOS 10.14, *)) {
+            dividerColor = [NSColor separatorColor];
+        }
+    }
+    [dividerColor set];
     NSRect divider = bounds;
     divider.size.width = 1;
     NSRectFill(divider);

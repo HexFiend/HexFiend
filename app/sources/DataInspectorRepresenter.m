@@ -783,16 +783,31 @@ static BOOL stringRangeIsNullBytes(NSString *string, NSRange range) {
 @implementation DataInspectorScrollView
 
 - (void)drawDividerWithClip:(NSRect)clipRect {
-    [[NSColor lightGrayColor] set];
+    NSColor *separatorColor = [NSColor lightGrayColor];
+    if (HFDarkModeEnabled()) {
+        if (@available(macOS 10.14, *)) {
+            separatorColor = [NSColor separatorColor];
+        }
+    }
+    [separatorColor set];
     NSRect bounds = [self bounds];
     NSRect lineRect = bounds;
     lineRect.size.height = 1;
-    NSRectFill(NSIntersectionRect(lineRect, clipRect));
+    NSRectFillUsingOperation(NSIntersectionRect(lineRect, clipRect), NSCompositeSourceOver);
 }
 
 - (void)drawRect:(NSRect)rect {
-    [[NSColor colorWithCalibratedWhite:(CGFloat).91 alpha:1] set];
-    NSRectFill(rect);
+    if (!HFDarkModeEnabled()) {
+        [[NSColor colorWithCalibratedWhite:(CGFloat).91 alpha:1] set];
+        NSRectFillUsingOperation(rect, NSCompositeSourceOver);
+    }
+    
+    if (HFDarkModeEnabled()) {
+        [[NSColor colorWithCalibratedWhite:(CGFloat).09 alpha:1] set];
+    } else {
+        [[NSColor colorWithCalibratedWhite:(CGFloat).91 alpha:1] set];
+    }
+    NSRectFillUsingOperation(rect, NSCompositeSourceOver);
     [self drawDividerWithClip:rect];
 }
 
@@ -857,7 +872,6 @@ static BOOL stringRangeIsNullBytes(NSString *string, NSRange range) {
     NSView *resultView = outletView; //want to inherit its retain here
     outletView = nil;
     [table setSelectionHighlightStyle:NSTableViewSelectionHighlightStyleNone];
-    [table setBackgroundColor:[NSColor colorWithCalibratedWhite:(CGFloat).91 alpha:1]];
     [table setRefusesFirstResponder:YES];
     [table setTarget:self];
     [table setDoubleAction:@selector(doubleClickedTable:)];    

@@ -29,7 +29,13 @@
 - (void)_sharedInitStatusBarView {
     NSMutableParagraphStyle *style = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
     [style setAlignment:NSCenterTextAlignment];
-    cellAttributes = [[NSDictionary alloc] initWithObjectsAndKeys:[NSColor colorWithCalibratedWhite:(CGFloat).15 alpha:1], NSForegroundColorAttributeName, [NSFont labelFontOfSize:10], NSFontAttributeName, style, NSParagraphStyleAttributeName, nil];
+    NSColor *foregroundColor;
+    if (@available(macOS 10.10, *)) {
+        foregroundColor = [NSColor tertiaryLabelColor];
+    } else {
+        foregroundColor = [NSColor colorWithCalibratedWhite:(CGFloat).15 alpha:1];
+    }
+    cellAttributes = [[NSDictionary alloc] initWithObjectsAndKeys:foregroundColor, NSForegroundColorAttributeName, [NSFont labelFontOfSize:10], NSFontAttributeName, style, NSParagraphStyleAttributeName, nil];
     cell = [[NSCell alloc] initTextCell:@""];
     [cell setAlignment:NSCenterTextAlignment];
     [cell setBackgroundStyle:NSBackgroundStyleRaised];
@@ -63,7 +69,11 @@
 }
 
 - (void)drawDividerWithClip:(NSRect)clipRect {
-    [[NSColor lightGrayColor] set];
+    if (@available(macOS 10.14, *)) {
+        [[NSColor separatorColor] set];
+    } else {
+        [[NSColor lightGrayColor] set];
+    }
     NSRect bounds = [self bounds];
     NSRect lineRect = bounds;
     lineRect.size.height = 1;
@@ -96,9 +106,11 @@
     USE(clip);
     NSRect bounds = [self bounds];
     
-    NSWindow *window = [self window];
-    BOOL drawActive = (window == nil || [window isMainWindow] || [window isKeyWindow]);
-    [[self getGradient:drawActive] drawInRect:bounds angle:90.];
+    if (!HFDarkModeEnabled()) {
+        NSWindow *window = [self window];
+        BOOL drawActive = (window == nil || [window isMainWindow] || [window isKeyWindow]);
+        [[self getGradient:drawActive] drawInRect:bounds angle:90.];
+    }
     
     [self drawDividerWithClip:clip];
     NSRect cellRect = NSMakeRect(NSMinX(bounds), HFCeil(NSMidY(bounds) - cellSize.height / 2), NSWidth(bounds), cellSize.height);

@@ -119,6 +119,12 @@ static NSView *searchForViewWithIdentifier(NSView *view, NSString *identifier) {
     
     NSRect bounds = self.bounds;
     
+    if (HFDarkModeEnabled()) {
+        [[NSColor controlBackgroundColor] set];
+        NSRectFillUsingOperation(self.bounds, NSCompositeSourceOver);
+        return;
+    }
+
     static NSGradient *sGradient = nil;
     if (! sGradient) {
         NSColor *startColor = [NSColor colorWithCalibratedWhite:1. alpha:1.];

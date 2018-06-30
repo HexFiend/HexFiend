@@ -113,9 +113,25 @@
     [super viewWillMoveToWindow:newWindow];
 }
 
+- (NSColor *)borderColor {
+    if (HFDarkModeEnabled()) {
+        if (@available(macOS 10.14, *)) {
+            return [NSColor separatorColor];
+        }
+    }
+    return [NSColor darkGrayColor];
+}
+
+- (NSColor *)backgroundColor {
+    if (HFDarkModeEnabled()) {
+        return [NSColor colorWithCalibratedWhite:0.13 alpha:1];
+    }
+    return [NSColor colorWithCalibratedWhite:0.87 alpha:1];
+}
+
 - (void)drawGradientWithClip:(NSRect)clip {
-    [_representer.backgroundColor set];
-    NSRectFill(clip);
+    [self.backgroundColor set];
+    NSRectFillUsingOperation(clip, NSCompositeSourceOver);
     
     NSInteger shadowEdge = _representer.interiorShadowEdge;
     
@@ -139,14 +155,14 @@
         edges = 0;
     }
     
-    [_representer.borderColor set];
+    [self.borderColor set];
     
     if ((edges & (1 << NSMinXEdge)) > 0) {
         NSRect lineRect = bounds;
         lineRect.size.width = 1;
         lineRect.origin.x = 0;
         if (NSIntersectsRect(lineRect, clipRect)) {
-            NSRectFill(lineRect);
+            NSRectFillUsingOperation(lineRect, NSCompositeSourceOver);
         }
     }
     
@@ -155,7 +171,7 @@
         lineRect.size.width = 1;
         lineRect.origin.x = NSMaxX(bounds) - lineRect.size.width;
         if (NSIntersectsRect(lineRect, clipRect)) {
-            NSRectFill(lineRect);
+            NSRectFillUsingOperation(lineRect, NSCompositeSourceOver);
         }
     }
     
@@ -164,7 +180,7 @@
         lineRect.size.height = 1;
         lineRect.origin.y = 0;
         if (NSIntersectsRect(lineRect, clipRect)) {
-            NSRectFill(lineRect);
+            NSRectFillUsingOperation(lineRect, NSCompositeSourceOver);
         }
     }
     
@@ -173,7 +189,7 @@
         lineRect.size.height = 1;
         lineRect.origin.y = NSMaxY(bounds) - lineRect.size.height;
         if (NSIntersectsRect(lineRect, clipRect)) {
-            NSRectFill(lineRect);
+            NSRectFillUsingOperation(lineRect, NSCompositeSourceOver);
         }
     }
     
@@ -192,7 +208,7 @@
     }
     
     if (NSIntersectsRect(lineRect, clipRect)) {
-        NSRectFill(lineRect);
+        NSRectFillUsingOperation(lineRect, NSCompositeSourceOver);
     }
 }
 
@@ -219,7 +235,13 @@ static inline int common_prefix_length(const char *a, const char *b) {
         NSMutableParagraphStyle *mutableStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
         [mutableStyle setAlignment:NSRightTextAlignment];
         NSParagraphStyle *paragraphStyle = [mutableStyle copy];
-        textAttributes = [[NSDictionary alloc] initWithObjectsAndKeys:_font, NSFontAttributeName, [NSColor colorWithCalibratedWhite:(CGFloat).1 alpha:(CGFloat).8], NSForegroundColorAttributeName, paragraphStyle, NSParagraphStyleAttributeName, nil];
+        NSColor *foregroundColor;
+        if (@available(macOS 10.10, *)) {
+            foregroundColor = [NSColor secondaryLabelColor];
+        } else {
+            foregroundColor = [NSColor colorWithCalibratedWhite:(CGFloat).1 alpha:(CGFloat).8];
+        }
+        textAttributes = [[NSDictionary alloc] initWithObjectsAndKeys:_font, NSFontAttributeName, foregroundColor, NSForegroundColorAttributeName, paragraphStyle, NSParagraphStyleAttributeName, nil];
     }
     
     char formatString[64];
