@@ -110,6 +110,9 @@
         NSWindow *window = [self window];
         BOOL drawActive = (window == nil || [window isMainWindow] || [window isKeyWindow]);
         [[self getGradient:drawActive] drawInRect:bounds angle:90.];
+    } else {
+        [[NSColor windowBackgroundColor] set];
+        NSRectFillUsingOperation(bounds, NSCompositeSourceOver);
     }
     
     [self drawDividerWithClip:clip];
