@@ -146,7 +146,9 @@
 
 @end
 
-@implementation HFStatusBarRepresenter
+@implementation HFStatusBarRepresenter {
+    HFStatusBarMode statusMode;
+}
 
 - (void)encodeWithCoder:(NSCoder *)coder {
     HFASSERT([coder allowsKeyedCoding]);
