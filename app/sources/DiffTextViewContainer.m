@@ -145,24 +145,38 @@
     /* Paranoia */
     if (! leftView || ! rightView) return;
     
-    [[NSColor colorWithCalibratedWhite:.64 alpha:1.] set];
-    NSRectFill(dirtyRect);
+    const BOOL darkMode = HFDarkModeEnabled();
+    
+    if (darkMode) {
+        [[NSColor colorWithCalibratedWhite:.36 alpha:1.] set];
+    } else {
+        [[NSColor colorWithCalibratedWhite:.64 alpha:1.] set];
+    }
+    NSRectFillUsingOperation(dirtyRect, NSCompositeSourceOver);
     
     CGContextRef ctx = [[NSGraphicsContext currentContext] graphicsPort];
     CGFloat lineWidth = 1;
     NSRect bounds = [self bounds], lineRect = bounds;
     NSRect middleFrame = [self interviewRect];
     
-    NSWindow *window = [self window];
-    BOOL drawActive = (window == nil || [window isMainWindow] || [window isKeyWindow]);
-    
     /* Draw shadows */
-    CGFloat shadowWidth = 6;
-    HFDrawShadow(ctx, middleFrame, shadowWidth, NSMinXEdge, drawActive, dirtyRect);
-    HFDrawShadow(ctx, middleFrame, shadowWidth, NSMaxXEdge, drawActive, dirtyRect);
+    if (!darkMode) {
+        NSWindow *window = [self window];
+        BOOL drawActive = (window == nil || [window isMainWindow] || [window isKeyWindow]);
+        
+        CGFloat shadowWidth = 6;
+        HFDrawShadow(ctx, middleFrame, shadowWidth, NSMinXEdge, drawActive, dirtyRect);
+        HFDrawShadow(ctx, middleFrame, shadowWidth, NSMaxXEdge, drawActive, dirtyRect);
+    }
     
     /* Draw the edge line rects */
-    [[NSColor darkGrayColor] set];
+    NSColor *dividerColor = [NSColor darkGrayColor];
+    if (darkMode) {
+        if (@available(macOS 10.14, *)) {
+            dividerColor = [NSColor separatorColor];
+        }
+    }
+    [dividerColor set];
     lineRect.size.width = lineWidth;
     lineRect.origin.x = NSMinX(middleFrame);
     if (NSIntersectsRect(lineRect, dirtyRect)) NSRectFill(lineRect);

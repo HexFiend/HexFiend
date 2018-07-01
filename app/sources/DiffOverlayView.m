@@ -77,7 +77,13 @@
     }
     
     CGContextAddPath(ctx, path);
-    [[NSColor colorWithCalibratedRed:1. green:0. blue:0. alpha:.5] set];
+    NSColor *color;
+    if (@available(macOS 10.10, *)) {
+        color = [NSColor systemRedColor];
+    } else {
+        color = [NSColor redColor];
+    }
+    [[color colorWithAlphaComponent:0.5] set];
     CGContextSetBlendMode(ctx, kCGBlendModeNormal);
     CGContextSetLineWidth(ctx, 2.);
     CGContextStrokePath(ctx);
