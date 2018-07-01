@@ -54,7 +54,6 @@
 @property NSArray<HFTemplateFile*> *templates;
 @property (strong) HFTclTemplateController *templateController;
 @property HFTemplateFile *selectedFile;
-@property NSMenuItem *lastItem;
 @property HFColorRange *colorRange;
 
 @end
@@ -89,6 +88,19 @@
     return [[NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES).firstObject stringByAppendingPathComponent:[NSBundle mainBundle].bundleIdentifier] stringByAppendingPathComponent:@"Templates"];
 }
 
+- (NSString *)titleOfLastTemplate {
+    return [[NSUserDefaults standardUserDefaults] objectForKey:@"BinaryTemplatesLastTemplate"];
+}
+
+- (void)saveTitleOfLastTemplate:(NSString *)title {
+    NSString *key = @"BinaryTemplatesLastTemplate";
+    if (title) {
+        [[NSUserDefaults standardUserDefaults] setObject:title forKey:key];
+    } else {
+        [[NSUserDefaults standardUserDefaults] removeObjectForKey:key];
+    }
+}
+
 - (void)openTemplatesFolder:(id __unused)sender {
     NSString *dir = self.templatesFolder;
     NSError *error = nil;
@@ -100,7 +112,7 @@
         alert.messageText = NSLocalizedString(@"Failed to open folder.", nil);
         [alert runModal];
     }
-    [self.templatesPopUp selectItem:self.lastItem];
+    [self.templatesPopUp selectItemWithTitle:self.titleOfLastTemplate];
 }
 
 - (void)refresh:(id __unused)sender {
@@ -127,13 +139,14 @@
     [self.templatesPopUp.menu addItem:noneItem];
     [self.templatesPopUp.menu addItem:[NSMenuItem separatorItem]];
     NSMenuItem *itemToSelect = noneItem;
+    NSString *titleOfLastTemplate = self.titleOfLastTemplate;
     if (templates.count > 0) {
         for (HFTemplateFile *file in templates) {
             NSMenuItem *templateItem = [[NSMenuItem alloc] initWithTitle:file.name action:@selector(selectTemplateFile:) keyEquivalent:@""];
             templateItem.target = self;
             templateItem.representedObject = file;
             [self.templatesPopUp.menu addItem:templateItem];
-            if (self.lastItem && [self.lastItem.title isEqualToString:templateItem.title]) {
+            if (titleOfLastTemplate && [titleOfLastTemplate isEqualToString:templateItem.title]) {
                 itemToSelect = templateItem;
             }
         }
@@ -147,19 +160,22 @@
     [self.templatesPopUp.menu addItem:openFolderItem];
     [self.templatesPopUp selectItem:itemToSelect];
     self.templates = templates;
-    self.lastItem = itemToSelect;
+    [self saveTitleOfLastTemplate:itemToSelect.title];
+    self.selectedFile = itemToSelect.representedObject;
 }
 
 - (void)noTemplate:(id __unused)sender {
     self.selectedFile = nil;
     [self setRootNode:nil error:nil];
-    self.lastItem = nil;
+    [self saveTitleOfLastTemplate:nil];
 }
 
 - (void)selectTemplateFile:(id)sender {
-    self.selectedFile = [sender representedObject];
+    HFASSERT([sender isKindOfClass:[NSMenuItem class]]);
+    NSMenuItem *item = (NSMenuItem *)sender;
+    self.selectedFile = item.representedObject;
     [self rerunTemplate];
-    self.lastItem = sender;
+    [self saveTitleOfLastTemplate:item.title];
 }
 
 - (void)rerunTemplate {
@@ -170,7 +186,7 @@
 - (void)rerunTemplateWithController:(HFController *)controller {
     HFASSERT(controller != nil);
     _controller = controller;
-    if (!self.selectedFile) {
+    if (!self.selectedFile || self.controller.contentsLength == 0) {
         return;
     }
     NSString *errorMessage = nil;
