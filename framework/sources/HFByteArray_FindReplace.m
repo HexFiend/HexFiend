@@ -373,7 +373,36 @@ static RollingHash_t find_power(RollingHash_t base, unsigned long long exponent)
     else return base * find_power(base, exponent ^ 1); // x^(2n + 1) = x * x^(2n)
 }
 
-static BOOL matchOccursAtIndex(HFByteArray *needle, HFByteArray *haystack, HFRange haystackRange) {
+typedef int (*MatchFunc)(const void *, const void *, size_t);
+
+static int memicmp(const void *a, const void *b, size_t n) {
+    if (n == 0) {
+        return -1;
+    }
+    const unsigned char diff = 'a' - 'A';
+    const unsigned char *aa = a;
+    const unsigned char *bb = b;
+    unsigned char ac;
+    unsigned char bc;
+    for (size_t i = 0; i < n; ++i) {
+        ac = *aa;
+        bc = *bb;
+        if (ac >= 'a' && ac <= 'z') {
+            ac -= diff;
+        }
+        if (bc >= 'a' && bc <= 'z') {
+            bc -= diff;
+        }
+        if (ac != bc) {
+            return -1;
+        }
+        aa++;
+        bb++;
+    }
+    return 0;
+}
+
+static BOOL matchOccursAtIndex(HFByteArray *needle, HFByteArray *haystack, HFRange haystackRange, MatchFunc matchFunc) {
     HFASSERT(needle != NULL);
     HFASSERT(haystack != NULL);
     HFASSERT(haystackRange.length == [needle length]);
@@ -384,7 +413,7 @@ static BOOL matchOccursAtIndex(HFByteArray *needle, HFByteArray *haystack, HFRan
         NSUInteger amountToCopy = ll2l(MIN(needleRange.length, sizeof needleBuff));
         [needle copyBytes:needleBuff range:HFRangeMake(needleRange.location, amountToCopy)];
         [haystack copyBytes:haystackBuff range:HFRangeMake(haystackRange.location, amountToCopy)];
-        if (memcmp(needleBuff, haystackBuff, amountToCopy)) {
+        if (matchFunc(needleBuff, haystackBuff, amountToCopy)) {
             result = NO;
             break;
         }
@@ -430,7 +459,7 @@ static BOOL matchOccursAtIndex(HFByteArray *needle, HFByteArray *haystack, HFRan
                 if (! forwards) {
                     proposedResult = invertRangeInRange(HFRangeMake(proposedResult, needleLength), range).location;
                 }
-                if (matchOccursAtIndex(findBytes, self, HFRangeMake(proposedResult, needleLength))) {
+                if (matchOccursAtIndex(findBytes, self, HFRangeMake(proposedResult, needleLength), memcmp)) {
                     result = proposedResult;
                     break;
                 }
@@ -453,22 +482,49 @@ cancelled:
     return ULLONG_MAX;
 }
 
-- (unsigned long long)_byteSearchNaive:(HFByteArray *)findBytes inRange:(const HFRange)range forwards:(BOOL)forwards trackingProgress:(HFProgressTracker *)progressTracker {
-    USE(progressTracker);
-    unsigned long long i;
+- (unsigned long long)_byteSearchNaive:(HFByteArray *)findBytes inRange:(const HFRange)range forwards:(BOOL)forwards trackingProgress:(HFProgressTracker *)progressTracker caseInsensitive:(BOOL)caseInsensitive {
+    // This is super slow since it does 1 byte at a time! Thus "naive".
+    unsigned long long tempProgressValue = 0;
+    int tempCancelRequested = 0;
+    volatile unsigned long long * const progressValuePtr = (progressTracker ? &progressTracker->currentProgress : &tempProgressValue);
+    volatile int *cancelRequested = progressTracker ? &progressTracker->cancelRequested : &tempCancelRequested;
     const unsigned long long needleLength = [findBytes length];
     const unsigned long long end = range.length - needleLength + 1;
+    const MatchFunc matchFunc = caseInsensitive ? memicmp : memcmp;
+    
+    if (*cancelRequested) {
+        goto cancelled;
+    }
+    
     if (forwards) {
-        for (i=0; i < end; i++) {
-            if (matchOccursAtIndex(findBytes, self, HFRangeMake(range.location + i, needleLength))) return i + range.location;
+        for (unsigned long long i = 0; i < end; i++) {
+            if (matchOccursAtIndex(findBytes, self, HFRangeMake(range.location + i, needleLength), matchFunc)) {
+                return i + range.location;
+            }
+            
+            HFAtomicAdd64(1, (int64_t *)progressValuePtr);
+
+            if (*cancelRequested) {
+                goto cancelled;
+            }
         }
     }
     else {
-        i = end;
+        unsigned long long i = end;
         while (i--) {
-            if (matchOccursAtIndex(findBytes, self, HFRangeMake(range.location + i, needleLength))) return i + range.location;
+            if (matchOccursAtIndex(findBytes, self, HFRangeMake(range.location + i, needleLength), matchFunc)) {
+                return i + range.location;
+            }
+            
+            HFAtomicAdd64(1, (int64_t *)progressValuePtr);
+            
+            if (*cancelRequested) {
+                goto cancelled;
+            }
         }
     }
+
+cancelled:
     return ULLONG_MAX;
 }
 

@@ -133,6 +133,9 @@
     if (length == 0) {
         return range.location;
     }
+    else if ([[NSUserDefaults standardUserDefaults] boolForKey:@"CaseInsensitiveSearch"]) {
+        return [self _byteSearchNaive:findBytes inRange:range forwards:forwards trackingProgress:progressTracker caseInsensitive:YES];
+    }
     else if (length == 1) {
         unsigned char byte;
         [findBytes copyBytes:&byte range:HFRangeMake(0, 1)];
