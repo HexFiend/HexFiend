@@ -563,14 +563,14 @@ enum LineCoverage_t {
 }
 
 - (void)drawRangesIfNecessaryWithClip:(NSRect)clipRect {
-    NSArray *ranges = [self displayedSelectedContentsRanges];
-    [self drawRangesIfNecessary:ranges withClip:clipRect color:[self textSelectionColor]];
-
     for (NSDictionary *dict in cachedColorRanges) {
         NSColor *color = dict[@"color"];
         NSValue *wrapper = dict[@"range"];
         [self drawRangesIfNecessary:@[wrapper]  withClip:clipRect color:color];
     }
+
+    NSArray *ranges = [self displayedSelectedContentsRanges];
+    [self drawRangesIfNecessary:ranges withClip:clipRect color:[self textSelectionColor]];    
 }
 
 - (void)drawRangesIfNecessary:(NSArray *)ranges withClip:(NSRect)clipRect color:(NSColor *)color {
