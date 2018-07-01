@@ -292,6 +292,10 @@
     item.target = self;
     item.enabled = obj != nil;
     
+    item = [menu addItemWithTitle:NSLocalizedString(@"Select Bytes", nil) action:@selector(selectBytes:) keyEquivalent:@""];
+    item.target = self;
+    item.enabled = obj != nil;
+
     return menu;
 }
 
@@ -312,6 +316,11 @@
     NSPasteboard *pboard = [NSPasteboard generalPasteboard];
     [pboard clearContents];
     [pboard setString:node.value forType:NSPasteboardTypeString];
+}
+
+- (void)selectBytes:(id __unused)sender {
+    HFTemplateNode *node = [self.outlineView itemAtRow:[self.outlineView selectedRow]];
+    [self.controller setSelectedContentsRanges:@[[HFRangeWrapper withRange:node.range]]];
 }
 
 @end
