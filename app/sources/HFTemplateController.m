@@ -65,7 +65,9 @@
         return nil;
     }
     NSString *str = HFHexStringFromData(data);
-    [self addNodeWithLabel:label value:str size:size];
+    if (label) {
+        [self addNodeWithLabel:label value:str size:size];
+    }
     return str;
 }
 
@@ -75,7 +77,9 @@
         return nil;
     }
     NSString *str = [[NSString alloc] initWithData:data encoding:encoding];
-    [self addNodeWithLabel:label value:str size:size];
+    if (label) {
+        [self addNodeWithLabel:label value:str size:size];
+    }
     return str;
 }
 
@@ -88,7 +92,9 @@
         val = NSSwapBigLongLongToHost(val);
     }
     *value = val;
-    [self addNodeWithLabel:label value:[NSString stringWithFormat:@"%llu", val] size:sizeof(val)];
+    if (label) {
+        [self addNodeWithLabel:label value:[NSString stringWithFormat:@"%llu", val] size:sizeof(val)];
+    }
     return YES;
 }
 
@@ -101,7 +107,9 @@
         val = NSSwapBigLongLongToHost(val);
     }
     *value = val;
-    [self addNodeWithLabel:label value:[NSString stringWithFormat:@"%lld", val] size:sizeof(val)];
+    if (label) {
+        [self addNodeWithLabel:label value:[NSString stringWithFormat:@"%lld", val] size:sizeof(val)];
+    }
     return YES;
 }
 
@@ -114,7 +122,9 @@
         val = NSSwapBigIntToHost(val);
     }
     *value = val;
-    [self addNodeWithLabel:label value:[NSString stringWithFormat:@"%u", val] size:sizeof(val)];
+    if (label) {
+        [self addNodeWithLabel:label value:[NSString stringWithFormat:@"%u", val] size:sizeof(val)];
+    }
     return YES;
 }
 
@@ -127,7 +137,9 @@
         val = NSSwapBigIntToHost(val);
     }
     *value = val;
-    [self addNodeWithLabel:label value:[NSString stringWithFormat:@"%d", val] size:sizeof(val)];
+    if (label) {
+        [self addNodeWithLabel:label value:[NSString stringWithFormat:@"%d", val] size:sizeof(val)];
+    }
     return YES;
 }
 
@@ -143,7 +155,9 @@
     }
     uint32_t val = (bytes[2] << 16) | (bytes[1] << 8) | bytes[0];
     *value = val;
-    [self addNodeWithLabel:label value:[NSString stringWithFormat:@"%u", val] size:sizeof(bytes)];
+    if (label) {
+        [self addNodeWithLabel:label value:[NSString stringWithFormat:@"%u", val] size:sizeof(bytes)];
+    }
     return YES;
 }
 
@@ -156,7 +170,9 @@
         val = NSSwapBigShortToHost(val);
     }
     *value = val;
-    [self addNodeWithLabel:label value:[NSString stringWithFormat:@"%d", val] size:sizeof(val)];
+    if (label) {
+        [self addNodeWithLabel:label value:[NSString stringWithFormat:@"%d", val] size:sizeof(val)];
+    }
     return YES;
 }
 
@@ -169,7 +185,9 @@
         val = NSSwapBigShortToHost(val);
     }
     *value = val;
-    [self addNodeWithLabel:label value:[NSString stringWithFormat:@"%d", val] size:sizeof(val)];
+    if (label) {
+        [self addNodeWithLabel:label value:[NSString stringWithFormat:@"%d", val] size:sizeof(val)];
+    }
     return YES;
 }
 
@@ -179,7 +197,9 @@
         return NO;
     }
     *value = val;
-    [self addNodeWithLabel:label value:[NSString stringWithFormat:@"%d", val] size:sizeof(val)];
+    if (label) {
+        [self addNodeWithLabel:label value:[NSString stringWithFormat:@"%d", val] size:sizeof(val)];
+    }
     return YES;
 }
 
@@ -189,7 +209,9 @@
         return NO;
     }
     *value = val;
-    [self addNodeWithLabel:label value:[NSString stringWithFormat:@"%d", val] size:sizeof(val)];
+    if (label) {
+        [self addNodeWithLabel:label value:[NSString stringWithFormat:@"%d", val] size:sizeof(val)];
+    }
     return YES;
 }
 
@@ -206,7 +228,9 @@
         val.u = NSSwapBigIntToHost(val.u);
     }
     *value = val.f;
-    [self addNodeWithLabel:label value:[NSString stringWithFormat:@"%f", val.f] size:sizeof(val)];
+    if (label) {
+        [self addNodeWithLabel:label value:[NSString stringWithFormat:@"%f", val.f] size:sizeof(val)];
+    }
     return YES;
 }
 
@@ -223,7 +247,9 @@
         val.u = NSSwapBigLongLongToHost(val.u);
     }
     *value = val.f;
-    [self addNodeWithLabel:label value:[NSString stringWithFormat:@"%f", val.f] size:sizeof(val)];
+    if (label) {
+        [self addNodeWithLabel:label value:[NSString stringWithFormat:@"%f", val.f] size:sizeof(val)];
+    }
     return YES;
 }
 
@@ -242,11 +268,13 @@
         return NO;
     }
     *value = [NSDate dateWithTimeIntervalSinceReferenceDate:cftime];
-    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-    formatter.doesRelativeDateFormatting = YES;
-    formatter.dateStyle = NSDateFormatterShortStyle;
-    formatter.timeStyle = NSDateFormatterShortStyle;
-    [self addNodeWithLabel:label value:[formatter stringFromDate:*value] size:sizeof(val)];
+    if (label) {
+        NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+        formatter.doesRelativeDateFormatting = YES;
+        formatter.dateStyle = NSDateFormatterShortStyle;
+        formatter.timeStyle = NSDateFormatterShortStyle;
+        [self addNodeWithLabel:label value:[formatter stringFromDate:*value] size:sizeof(val)];
+    }
     return YES;
 }
 
@@ -256,7 +284,9 @@
         return NO;
     }
     *uuid = [[NSUUID alloc] initWithUUIDBytes:bytes];
-    [self addNodeWithLabel:label value:[*uuid UUIDString] size:sizeof(bytes)];
+    if (label) {
+        [self addNodeWithLabel:label value:[*uuid UUIDString] size:sizeof(bytes)];
+    }
     return YES;
 }
 

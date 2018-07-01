@@ -216,8 +216,8 @@ DEFINE_COMMAND(endsection)
         case command_hex:
         case command_ascii:
         case command_utf16: {
-            if (objc != 3) {
-                Tcl_WrongNumArgs(_interp, 1, objv, "len label");
+            if (objc != 2 && objc != 3) {
+                Tcl_WrongNumArgs(_interp, 1, objv, "len [label]");
                 return TCL_ERROR;
             }
             long len;
@@ -229,7 +229,10 @@ DEFINE_COMMAND(endsection)
                 Tcl_SetObjResult(_interp, Tcl_NewStringObj("Length must be greater than 0.", -1));
                 return TCL_ERROR;
             }
-            NSString *label = [NSString stringWithUTF8String:Tcl_GetStringFromObj(objv[2], NULL)];
+            NSString *label = nil;
+            if (objc == 3) {
+                label = [NSString stringWithUTF8String:Tcl_GetStringFromObj(objv[2], NULL)];
+            }
             NSString *str = nil;
             switch (command) {
                 case command_hex:
@@ -337,8 +340,14 @@ DEFINE_COMMAND(endsection)
 }
 
 - (int)runTypeCommand:(enum command)command objc:(int)objc objv:(struct Tcl_Obj * CONST *)objv {
-    CHECK_SINGLE_ARG("label");
-    NSString *label = [NSString stringWithUTF8String:Tcl_GetStringFromObj(objv[1], NULL)];
+    if (objc != 1 && objc != 2) {
+        Tcl_WrongNumArgs(_interp, 0, objv, "[label]");
+        return TCL_ERROR;
+    }
+    NSString *label = nil;
+    if (objc == 2) {
+        label = [NSString stringWithUTF8String:Tcl_GetStringFromObj(objv[1], NULL)];
+    }
     switch (command) {
         case command_uint64: {
             uint64_t val;
