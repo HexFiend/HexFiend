@@ -273,6 +273,16 @@
 
 - (void)outlineViewSelectionDidChange:(NSNotification * __unused)notification {
     [self updateSelectionColorRange];
+    
+    if (self.outlineView.numberOfSelectedRows == 1) {
+        NSUserDefaults *uds = [NSUserDefaults standardUserDefaults];
+        if ([uds boolForKey:@"BinaryTemplatesOnSelectionJump"]) {
+            [self jumpToField:nil];
+        }
+        if ([uds boolForKey:@"BinaryTemplatesOnSelectionSelect"]) {
+            [self selectBytes:nil];
+        }
+    }
 }
 
 - (NSMenu *)outlineView:(NSOutlineView *)sender menuForEvent:(NSEvent *)event {
