@@ -16,6 +16,9 @@
 #import "HFPrivilegedHelperConnection.h"
 #endif
 
+@interface HFConcreteFileReference : HFFileReference
+@end
+
 /* The return code is just to quiet the static analyzer */
 static BOOL returnReadError(NSError **error) {
     if (! error) return NO;
@@ -106,7 +109,18 @@ static BOOL returnFTruncateError(NSError **error) {
     return YES;
 }
 
-@implementation HFFileReference
+@implementation HFFileReference {
+@protected
+    int fileDescriptor;
+    dev_t device;
+    unsigned long long inode;
+    unsigned long long fileLength;
+    mode_t fileMode;
+    BOOL isWritable;
+    uint32_t blockSize;
+    BOOL isPrivileged;
+    BOOL isFixedLength;
+}
 
 @synthesize isPrivileged, isFixedLength;
 

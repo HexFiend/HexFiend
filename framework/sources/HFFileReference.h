@@ -18,18 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
     
     All HFFileReferences use non-caching IO (F_NOCACHE is set).
 */
-@interface HFFileReference : NSObject {
-    @protected
-    int fileDescriptor;
-    dev_t device;
-    unsigned long long inode;
-    unsigned long long fileLength;
-    mode_t fileMode;
-    BOOL isWritable;
-    uint32_t blockSize;
-    BOOL isPrivileged;
-    BOOL isFixedLength;
-}
+@interface HFFileReference : NSObject
 
 @property (readonly) BOOL isPrivileged;
 @property (readonly) BOOL isFixedLength;
@@ -67,12 +56,6 @@ NS_ASSUME_NONNULL_BEGIN
 /*! isEqual: returns whether two file references both reference the same file, as in have the same inode and device. */
 - (BOOL)isEqual:(id)val;
 
-@end
-
-/*! @class HFConcreteFileReference
- @brief A reference to an open file that can be read (and possibly written) using normal C functions
-*/
-@interface HFConcreteFileReference : HFFileReference
 @end
 
 NS_ASSUME_NONNULL_END
