@@ -14,8 +14,6 @@ NS_ASSUME_NONNULL_BEGIN
     
     HFFileReference encapsulates a reference to an open file.  Multiple instances of HFFileByteSlice may share an HFFileReference, so that the file only needs to be opened once.
  
-    HFFileReference is an abstract class.  You must instantiate HFConcreteFileReference.
-    
     All HFFileReferences use non-caching IO (F_NOCACHE is set).
 */
 @interface HFFileReference : NSObject
