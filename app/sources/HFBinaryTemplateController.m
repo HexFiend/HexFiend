@@ -52,9 +52,9 @@
 @property HFController *controller;
 @property HFTemplateNode *node;
 @property NSArray<HFTemplateFile*> *templates;
-@property (strong) HFTclTemplateController *templateController;
 @property HFTemplateFile *selectedFile;
 @property HFColorRange *colorRange;
+@property NSUInteger anchorPosition;
 
 @end
 
@@ -62,7 +62,6 @@
 
 - (instancetype)init {
     if ((self = [super initWithNibName:@"BinaryTemplateController" bundle:nil]) != nil) {
-        _templateController = [[HFTclTemplateController alloc] init];
     }
     return self;
 }
@@ -190,7 +189,9 @@
         return;
     }
     NSString *errorMessage = nil;
-    HFTemplateNode *node = [self.templateController evaluateScript:self.selectedFile.path forController:controller error:&errorMessage];
+    HFTclTemplateController *templateController = [[HFTclTemplateController alloc] init];
+    templateController.anchor = self.anchorPosition;
+    HFTemplateNode *node = [templateController evaluateScript:self.selectedFile.path forController:controller error:&errorMessage];
     [self setRootNode:node error:errorMessage];
     [self updateSelectionColorRange];
 }
@@ -317,7 +318,7 @@
 }
 
 - (void)anchorTo:(NSUInteger)position {
-    self.templateController.anchor = position;
+    self.anchorPosition = position;
     [self rerunTemplate];
 }
 
