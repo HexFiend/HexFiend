@@ -64,6 +64,7 @@
 		A5CEA42B20D5E0F500BCA488 /* HFNSStringEncoding.m in Sources */ = {isa = PBXBuildFile; fileRef = A5CEA42920D5E0F500BCA488 /* HFNSStringEncoding.m */; };
 		A5CEA42F20D6316600BCA488 /* HFCustomEncoding.h in Headers */ = {isa = PBXBuildFile; fileRef = A5CEA42D20D6316600BCA488 /* HFCustomEncoding.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A5CEA43020D6316600BCA488 /* HFCustomEncoding.m in Sources */ = {isa = PBXBuildFile; fileRef = A5CEA42E20D6316600BCA488 /* HFCustomEncoding.m */; };
+		A5D8C8F220E9E58000103D60 /* libz.1.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = A5D8C8F120E9E58000103D60 /* libz.1.tbd */; };
 		A5ED2A85200BD8F0004AD7A4 /* HFColorRange.h in Headers */ = {isa = PBXBuildFile; fileRef = A5ED2A83200BD8F0004AD7A4 /* HFColorRange.h */; };
 		A5ED2A86200BD8F0004AD7A4 /* HFColorRange.m in Sources */ = {isa = PBXBuildFile; fileRef = A5ED2A84200BD8F0004AD7A4 /* HFColorRange.m */; };
 		D00122E30D48A8D400540B10 /* HFFindReplaceBackgroundView.m in Sources */ = {isa = PBXBuildFile; fileRef = D00122E20D48A8D400540B10 /* HFFindReplaceBackgroundView.m */; };
@@ -347,6 +348,7 @@
 		A5CEA42920D5E0F500BCA488 /* HFNSStringEncoding.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFNSStringEncoding.m; path = sources/HFNSStringEncoding.m; sourceTree = "<group>"; };
 		A5CEA42D20D6316600BCA488 /* HFCustomEncoding.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFCustomEncoding.h; path = sources/HFCustomEncoding.h; sourceTree = "<group>"; };
 		A5CEA42E20D6316600BCA488 /* HFCustomEncoding.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFCustomEncoding.m; path = sources/HFCustomEncoding.m; sourceTree = "<group>"; };
+		A5D8C8F120E9E58000103D60 /* libz.1.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.1.tbd; path = usr/lib/libz.1.tbd; sourceTree = SDKROOT; };
 		A5ED2A83200BD8F0004AD7A4 /* HFColorRange.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFColorRange.h; path = sources/HFColorRange.h; sourceTree = "<group>"; };
 		A5ED2A84200BD8F0004AD7A4 /* HFColorRange.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFColorRange.m; path = sources/HFColorRange.m; sourceTree = "<group>"; };
 		D00122E10D48A8D400540B10 /* HFFindReplaceBackgroundView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFFindReplaceBackgroundView.h; path = app/sources/HFFindReplaceBackgroundView.h; sourceTree = "<group>"; };
@@ -530,6 +532,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A5D8C8F220E9E58000103D60 /* libz.1.tbd in Frameworks */,
 				A59BC5942001FD0F0066860F /* Tcl.framework in Frameworks */,
 				795F46C314BAADB600EB2F7D /* DiskArbitration.framework in Frameworks */,
 				A567D7D520DA1D7C00F7C0A4 /* Sparkle.framework in Frameworks */,
@@ -645,6 +648,7 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A5D8C8F120E9E58000103D60 /* libz.1.tbd */,
 				A567D7D420DA1D7C00F7C0A4 /* Sparkle.framework */,
 				A59BC5932001FD0F0066860F /* Tcl.framework */,
 				795F46C214BAADB600EB2F7D /* DiskArbitration.framework */,

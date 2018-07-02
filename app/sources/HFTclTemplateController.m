@@ -9,6 +9,7 @@
 #import "HFTclTemplateController.h"
 #import <tcl.h>
 #import <tclTomMath.h>
+#import <zlib.h>
 #import "HFFunctions_Private.h"
 
 static Tcl_Obj* tcl_obj_from_uint64(uint64_t value) {
@@ -45,6 +46,7 @@ enum command {
     command_requires,
     command_section,
     command_endsection,
+    command_zlib_uncompress,
 };
 
 @interface HFTclTemplateController ()
@@ -85,6 +87,7 @@ DEFINE_COMMAND(end)
 DEFINE_COMMAND(requires)
 DEFINE_COMMAND(section)
 DEFINE_COMMAND(endsection)
+DEFINE_COMMAND(zlib_uncompress)
 
 @implementation HFTclTemplateController {
     Tcl_Interp *_interp;
@@ -137,6 +140,7 @@ DEFINE_COMMAND(endsection)
         CMD(requires),
         CMD(section),
         CMD(endsection),
+        CMD(zlib_uncompress),
     };
 #undef CMD
 #undef CMD_NAMED
@@ -346,6 +350,34 @@ DEFINE_COMMAND(endsection)
         case command_endsection: {
             CHECK_NO_ARG;
             [self endSection];
+            break;
+        }
+        case command_zlib_uncompress: {
+            if (objc != 2) {
+                Tcl_WrongNumArgs(_interp, 1, objv, "data");
+                return TCL_ERROR;
+            }
+            int numBytes = 0;
+            const unsigned char *bytes = Tcl_GetByteArrayFromObj(objv[1], &numBytes);
+            if (!bytes) {
+                return TCL_ERROR;
+            }
+            int factor = 5;
+            NSMutableData *data = nil;
+            uLongf destLen = 0;
+            for (int i = 0; i < 10; i++) {
+                data = [NSMutableData dataWithLength:numBytes * factor];
+                destLen = data.length;
+                int res = uncompress(data.mutableBytes, &destLen, bytes, numBytes);
+                if (res == Z_MEM_ERROR) {
+                    factor *= 2;
+                } else if (res == Z_OK) {
+                    break;
+                } else {
+                    return TCL_ERROR;
+                }
+            }
+            Tcl_SetObjResult(_interp, Tcl_NewByteArrayObj((const unsigned char *)data.bytes, (int)destLen));
             break;
         }
     }
