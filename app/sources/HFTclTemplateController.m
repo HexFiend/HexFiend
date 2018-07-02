@@ -32,6 +32,7 @@ enum command {
     command_float,
     command_double,
     command_macdate,
+    command_bytes,
     command_hex,
     command_ascii,
     command_utf16,
@@ -71,6 +72,7 @@ DEFINE_COMMAND(double)
 DEFINE_COMMAND(macdate)
 DEFINE_COMMAND(big_endian)
 DEFINE_COMMAND(little_endian)
+DEFINE_COMMAND(bytes)
 DEFINE_COMMAND(hex)
 DEFINE_COMMAND(ascii)
 DEFINE_COMMAND(utf16)
@@ -122,6 +124,7 @@ DEFINE_COMMAND(endsection)
         CMD(macdate),
         CMD(big_endian),
         CMD(little_endian),
+        CMD(bytes),
         CMD(hex),
         CMD(ascii),
         CMD(utf16),
@@ -213,6 +216,7 @@ DEFINE_COMMAND(endsection)
             self.endian = HFEndianLittle;
             break;
         }
+        case command_bytes:
         case command_hex:
         case command_ascii:
         case command_utf16: {
@@ -232,6 +236,15 @@ DEFINE_COMMAND(endsection)
             NSString *label = nil;
             if (objc == 3) {
                 label = [NSString stringWithUTF8String:Tcl_GetStringFromObj(objv[2], NULL)];
+            }
+            if (command == command_bytes) {
+                NSData *data = [self readBytesForSize:len forLabel:label];
+                if (!data) {
+                    Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read bytes", -1));
+                    return TCL_ERROR;
+                }
+                Tcl_SetObjResult(_interp, Tcl_NewByteArrayObj(data.bytes, (int)data.length));
+                break;
             }
             NSString *str = nil;
             switch (command) {

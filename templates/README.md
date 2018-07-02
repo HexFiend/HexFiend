@@ -40,6 +40,7 @@ Hex Fiend extends Tcl with additional commands for interacting with the opened f
 | double *label* | Reads a 64-bit floating point  | `double "Label"` |
 | big_endian | Sets the endian mode to big | `big_endian` |
 | little_endian | Sets the endian mode back to little (default) | `little_endian` |
+| bytes *len* *label* [v2.10] | Reads *len* bytes | `bytes 128 "Data"` |
 | hex *len* *label* | Reads *len* bytes as hexadecimal | `hex 16 "UUID"` |
 | ascii *len* *label* | Reads *len* bytes as ASCII | `ascii 32 "Name"` |
 | move *len* | Moves the file pointer *len* bytes, can be negative | `move -4` |

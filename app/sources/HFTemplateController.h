@@ -37,6 +37,7 @@ typedef NS_ENUM(NSUInteger, HFEndian) {
 @property HFEndian endian;
 @property (readonly) BOOL isEOF;
 
+- (NSData *)readBytesForSize:(size_t)size forLabel:(NSString *)label;
 - (NSString *)readHexDataForSize:(size_t)size forLabel:(NSString *)label;
 - (NSString *)readStringDataForSize:(size_t)size encoding:(NSStringEncoding)encoding forLabel:(NSString *)label;
 

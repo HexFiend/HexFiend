@@ -65,6 +65,17 @@
     return data;
 }
 
+- (NSData *)readBytesForSize:(size_t)size forLabel:(NSString *)label {
+    NSData *data = [self readDataForSize:size];
+    if (!data) {
+        return nil;
+    }
+    if (label) {
+        [self addNodeWithLabel:label value:@"" size:size];
+    }
+    return data;
+}
+
 - (NSString *)readHexDataForSize:(size_t)size forLabel:(NSString *)label {
     NSData *data = [self readDataForSize:size];
     if (!data) {
