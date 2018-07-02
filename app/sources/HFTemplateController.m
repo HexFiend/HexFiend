@@ -16,6 +16,7 @@
 @property HFEndian endian;
 @property HFTemplateNode *root;
 @property (weak) HFTemplateNode *currentNode;
+@property BOOL requireFailed;
 
 @end
 
@@ -30,8 +31,13 @@
         *error = nil;
     }
     NSString *localError = [self evaluateScript:path];
-    if (localError && error) {
-        *error = localError;
+    if (localError) {
+        if (self.requireFailed) {
+            localError = NSLocalizedString(@"Template not applicable", nil);
+        }
+        if (error) {
+            *error = localError;
+        }
     }
     return self.root;
 }
@@ -309,6 +315,7 @@
     BOOL isMissingLastNybble = NO;
     NSData *hexdata = HFDataFromHexString(hexValues, &isMissingLastNybble);
     if (isMissingLastNybble) {
+        self.requireFailed = YES;
         return NO;
     }
     const unsigned long long currentPosition = self.position;
@@ -316,9 +323,11 @@
     NSData *data = [self readDataForSize:hexdata.length];
     self.position = currentPosition;
     if (!data) {
+        self.requireFailed = YES;
         return NO;
     }
     if (![data isEqualToData:hexdata]) {
+        self.requireFailed = YES;
         return NO;
     }
     return YES;

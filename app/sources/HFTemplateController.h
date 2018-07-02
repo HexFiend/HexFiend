@@ -17,9 +17,11 @@
 
 @end
 
-@interface HFTemplateController (OverrideBySubclasses)
+@interface HFTemplateController (ProtectedForSubclasses)
 
 - (NSString *)evaluateScript:(NSString *)path;
+
+@property BOOL requireFailed;
 
 @end
 
