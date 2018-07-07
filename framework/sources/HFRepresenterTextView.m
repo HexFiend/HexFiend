@@ -404,7 +404,7 @@ enum LineCoverage_t {
 }
 
 - (void)drawPulseBackgroundInRect:(NSRect)pulseRect {
-    CGContextRef ctx = [[NSGraphicsContext currentContext] graphicsPort];
+    CGContextRef ctx = HFGraphicsGetCurrentContext();
     CGContextSaveGState(ctx);
     [[NSBezierPath bezierPathWithRoundedRect:pulseRect xRadius:25 yRadius:25] addClip];
     NSColor *yellow;
@@ -489,7 +489,7 @@ enum LineCoverage_t {
                 NSImage *image = [[NSImage alloc] initWithSize:imageRect.size];
                 [image setCacheMode:NSImageCacheNever];
                 [image lockFocusFlipped:YES];
-                CGContextRef ctx = [[NSGraphicsContext currentContext] graphicsPort];
+                CGContextRef ctx = HFGraphicsGetCurrentContext();
                 CGContextClearRect(ctx, *(CGRect *)&imageRect);
                 [self drawPulseBackgroundInRect:imageRect];
                 if (@available(macOS 10.10, *)) {
@@ -1176,7 +1176,7 @@ static size_t unionAndCleanLists(NSRect *rectList, __unsafe_unretained id *value
     CGColorSpaceRef cgcolorspace = CGColorSpaceCreateWithName(kCGColorSpaceGenericRGB);
     CGImageRef image = CGImageCreate(width, 1, 8, 32, 4 * width, cgcolorspace,
                                      (CGBitmapInfo)kCGImageAlphaLast, provider, NULL, false, kCGRenderingIntentDefault);
-    CGContextDrawImage([[NSGraphicsContext currentContext] graphicsPort], NSRectToCGRect(rect), image);
+    CGContextDrawImage(HFGraphicsGetCurrentContext(), NSRectToCGRect(rect), image);
     CGColorSpaceRelease(cgcolorspace);
     CGImageRelease(image);
     CGDataProviderRelease(provider);
@@ -1307,7 +1307,7 @@ static size_t unionAndCleanLists(NSRect *rectList, __unsafe_unretained id *value
     HFASSERT(glyphCount > 0);
     if ([styleRun shouldDraw]) {
         [styleRun set];
-        CGContextRef ctx = [[NSGraphicsContext currentContext] graphicsPort];
+        CGContextRef ctx = HFGraphicsGetCurrentContext();
         
         /* Get all the CGGlyphs together */
         NEW_ARRAY(CGGlyph, cgglyphs, glyphCount);
@@ -1417,7 +1417,7 @@ static size_t unionAndCleanLists(NSRect *rectList, __unsafe_unretained id *value
 }
 
 - (void)drawTextWithClip:(NSRect)clip restrictingToTextInRanges:(NSArray *)restrictingToRanges {
-    CGContextRef ctx = [[NSGraphicsContext currentContext] graphicsPort];
+    CGContextRef ctx = HFGraphicsGetCurrentContext();
     NSRect bounds = [self bounds];
     CGFloat lineHeight = [self lineHeight];
     
@@ -1575,7 +1575,7 @@ static size_t unionAndCleanLists(NSRect *rectList, __unsafe_unretained id *value
         
         if ([localCallouts count]) {
             /* Draw shadows first */
-            CGContextRef ctx = [[NSGraphicsContext currentContext] graphicsPort];
+            CGContextRef ctx = HFGraphicsGetCurrentContext();
             CGContextBeginTransparencyLayerWithRect(ctx, NSRectToCGRect(allCalloutsRect), NULL);
             for(HFRepresenterTextViewCallout * callout in localCallouts) {
                 [callout drawShadowWithClip:clip];
@@ -1593,7 +1593,7 @@ static size_t unionAndCleanLists(NSRect *rectList, __unsafe_unretained id *value
     [[self backgroundColorForEmptySpace] set];
     NSRectFillUsingOperation(clip, NSCompositeSourceOver);
     BOOL antialias = [self shouldAntialias];
-    CGContextRef ctx = [[NSGraphicsContext currentContext] graphicsPort];
+    CGContextRef ctx = HFGraphicsGetCurrentContext();
     
     [[self.font screenFont] set];
     

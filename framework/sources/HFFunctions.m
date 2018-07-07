@@ -955,3 +955,20 @@ BOOL HFDarkModeEnabled(void) {
 #endif
     return NO;
 }
+
+CGContextRef HFGraphicsGetCurrentContext(void) {
+    CGContextRef ctx;
+#if MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_10
+    if (@available(macOS 10.10, *)) {
+        ctx = [NSGraphicsContext currentContext].CGContext;
+    } else {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+        ctx = [NSGraphicsContext currentContext].graphicsPort;
+#pragma clang diagnostic pop
+    }
+#else
+    ctx = [NSGraphicsContext currentContext].CGContext;
+#endif
+    return ctx;
+}

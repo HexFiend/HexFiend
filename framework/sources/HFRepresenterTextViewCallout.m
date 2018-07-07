@@ -333,7 +333,7 @@ static double distanceMod1(double a, double b) {
 
 - (void)drawShadowWithClip:(NSRect)clip {
     USE(clip);
-    CGContextRef ctx = [[NSGraphicsContext currentContext] graphicsPort];
+    CGContextRef ctx = HFGraphicsGetCurrentContext();
     
     // Set the shadow. Note that these shadows are pretty unphysical for high rotations.
     NSShadow *shadow = [[NSShadow alloc] init];
@@ -358,7 +358,7 @@ static double distanceMod1(double a, double b) {
 
 - (void)drawWithClip:(NSRect)clip {
     USE(clip);
-    CGContextRef ctx = [[NSGraphicsContext currentContext] graphicsPort];
+    CGContextRef ctx = HFGraphicsGetCurrentContext();
     // Here's the font we'll use
     CTFontRef ctfont = CTFontCreateWithName(CFSTR("Helvetica-Bold"), 1., NULL);
     if (ctfont) {

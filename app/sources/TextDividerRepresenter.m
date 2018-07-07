@@ -22,7 +22,7 @@
 - (void)drawRect:(NSRect)clip {
     NSWindow *window = [self window];
     BOOL drawActive = (window == nil || [window isKeyWindow] || [window isMainWindow]);
-    CGContextRef ctx = [[NSGraphicsContext currentContext] graphicsPort];
+    CGContextRef ctx = HFGraphicsGetCurrentContext();
     const CGFloat shadowWidth = SHADOW_WIDTH;
     
     const BOOL darkMode = HFDarkModeEnabled();

@@ -1182,7 +1182,7 @@ static BOOL stringRangeIsNullBytes(NSString *string, NSRange range) {
     CGDataProviderRelease(provider);
     CGColorSpaceRelease(space);
     [[NSGraphicsContext currentContext] setCompositingOperation:NSCompositeSourceOver];
-    CGContextDrawImage([[NSGraphicsContext currentContext] graphicsPort], *(CGRect *)&bitmapRect, image);
+    CGContextDrawImage(HFGraphicsGetCurrentContext(), *(CGRect *)&bitmapRect, image);
     CGImageRelease(image);
 }
 

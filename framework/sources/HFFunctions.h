@@ -531,4 +531,6 @@ NSString *HFDescribeByteCount(unsigned long long count);
 
 BOOL HFDarkModeEnabled(void);
 
+CGContextRef HFGraphicsGetCurrentContext(void);
+
 NS_ASSUME_NONNULL_END

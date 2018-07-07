@@ -225,7 +225,7 @@ static int compareGlyphFontIndexes(const void *p1, const void *p2) {
     NEW_ARRAY(CGGlyph, cgglyphs, count);
     NSImage *glyphDrawingImage = [[NSImage alloc] initWithSize:NSMakeSize(100, 100)];
     [glyphDrawingImage lockFocus];
-    CGContextRef ctx = [[NSGraphicsContext currentContext] graphicsPort];
+    CGContextRef ctx = HFGraphicsGetCurrentContext();
     HFGlyphFontIndex runFontIndex = -1;
     NSUInteger runLength = 0;
     for (i=0; i <= validGlyphCount; i++) {

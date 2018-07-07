@@ -12,7 +12,7 @@
 
 - (void)drawRect:(NSRect)rect {
     USE(rect);
-    CGContextSetInterpolationQuality([[NSGraphicsContext currentContext] graphicsPort], kCGInterpolationHigh);
+    CGContextSetInterpolationQuality(HFGraphicsGetCurrentContext(), kCGInterpolationHigh);
     [image drawInRect:[self bounds] fromRect:NSZeroRect operation:NSCompositeCopy fraction:(CGFloat)1.];
 }
 

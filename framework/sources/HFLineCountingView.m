@@ -139,7 +139,7 @@
         const CGFloat shadowWidth = 6;
         NSWindow *window = self.window;
         BOOL drawActive = (window == nil || [window isKeyWindow] || [window isMainWindow]);
-        HFDrawShadow([[NSGraphicsContext currentContext] graphicsPort], self.bounds, shadowWidth, shadowEdge, drawActive, clip);
+        HFDrawShadow(HFGraphicsGetCurrentContext(), self.bounds, shadowWidth, shadowEdge, drawActive, clip);
     }
 }
 

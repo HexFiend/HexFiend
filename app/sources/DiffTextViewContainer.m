@@ -154,7 +154,7 @@
     }
     NSRectFillUsingOperation(dirtyRect, NSCompositeSourceOver);
     
-    CGContextRef ctx = [[NSGraphicsContext currentContext] graphicsPort];
+    CGContextRef ctx = HFGraphicsGetCurrentContext();
     CGFloat lineWidth = 1;
     NSRect bounds = [self bounds], lineRect = bounds;
     NSRect middleFrame = [self interviewRect];

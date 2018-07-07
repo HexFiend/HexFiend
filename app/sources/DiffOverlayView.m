@@ -26,7 +26,7 @@
     /* Clip to the bounds of our left and right views so we don't draw into the content region below */
     [NSBezierPath clipRect:NSUnionRect(leftViewBounds, rightViewBounds)];
     
-    CGContextRef ctx = [[NSGraphicsContext currentContext] graphicsPort];
+    CGContextRef ctx = HFGraphicsGetCurrentContext();
     CGMutablePathRef path = CGPathCreateMutable();
     const CGAffineTransform transform = CGAffineTransformIdentity;
     
