@@ -183,6 +183,11 @@ static inline Class preferredByteArrayClass(void) {
 
 - (void)showViewForRepresenter:(HFRepresenter *)rep {
     HFASSERT([[rep view] superview] == nil && [[rep view] window] == nil);
+    if (rep == statusBarRepresenter) {
+        NSView *view = rep.view;
+        [self.window setContentBorderThickness:view.frame.size.height forEdge:NSRectEdgeMinY];
+        [self.window setAutorecalculatesContentBorderThickness:NO forEdge:NSMinYEdge];
+    }
     [controller addRepresenter:rep];
     [layoutRepresenter addRepresenter:rep];
 }
@@ -190,6 +195,10 @@ static inline Class preferredByteArrayClass(void) {
 - (void)hideViewForRepresenter:(HFRepresenter *)rep {
     HFASSERT(rep != NULL);
     HFASSERT([layoutRepresenter.representers indexOfObjectIdenticalTo:rep] != NSNotFound);
+    if (rep == statusBarRepresenter) {
+        [self.window setContentBorderThickness:0 forEdge:NSRectEdgeMinY];
+        [self.window setAutorecalculatesContentBorderThickness:NO forEdge:NSMinYEdge];
+    }
     [controller removeRepresenter:rep];
     [layoutRepresenter removeRepresenter:rep];
 }

@@ -10,145 +10,26 @@
 
 #define kHFStatusBarDefaultModeUserDefaultsKey @"HFStatusBarDefaultMode"
 
-@interface HFStatusBarView : NSView {
-    NSCell *cell;
-    NSSize cellSize;
-    HFStatusBarRepresenter *representer;
-    NSDictionary *cellAttributes;
-    BOOL registeredForAppNotifications;
-}
+@interface HFStatusBarView : NSTextField
 
-- (void)setRepresenter:(HFStatusBarRepresenter *)rep;
-- (void)setString:(NSString *)string;
+@property (weak) HFStatusBarRepresenter *rep;
 
 @end
 
-
 @implementation HFStatusBarView
-
-- (void)_sharedInitStatusBarView {
-    NSMutableParagraphStyle *style = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
-    [style setAlignment:NSCenterTextAlignment];
-    NSColor *foregroundColor = [NSColor colorWithCalibratedWhite:(CGFloat).15 alpha:1];
-    if (@available(macOS 10.10, *)) {
-        foregroundColor = [NSColor secondaryLabelColor];
-    }
-    cellAttributes = [[NSDictionary alloc] initWithObjectsAndKeys:foregroundColor, NSForegroundColorAttributeName, [NSFont labelFontOfSize:10], NSFontAttributeName, style, NSParagraphStyleAttributeName, nil];
-    cell = [[NSCell alloc] initTextCell:@""];
-    [cell setAlignment:NSCenterTextAlignment];
-    [cell setBackgroundStyle:NSBackgroundStyleRaised];
-}
-
-- (instancetype)initWithFrame:(NSRect)frame {
-    self = [super initWithFrame:frame];
-    [self _sharedInitStatusBarView];
-    return self;
-}
-
-- (instancetype)initWithCoder:(NSCoder *)coder {
-    HFASSERT([coder allowsKeyedCoding]);
-    self = [super initWithCoder:coder];
-    [self _sharedInitStatusBarView];
-    return self;
-}
-
-// nothing to do in encodeWithCoder
-
-- (BOOL)isFlipped { return YES; }
-
-- (void)setRepresenter:(HFStatusBarRepresenter *)rep {
-    representer = rep;
-}
-
-- (void)setString:(NSString *)string {
-    [cell setAttributedStringValue:[[NSAttributedString alloc] initWithString:string attributes:cellAttributes]];
-    cellSize = [cell cellSize];
-    [self setNeedsDisplay:YES];
-}
-
-- (void)drawDividerWithClip:(NSRect)clipRect {
-    if (@available(macOS 10.14, *)) {
-        [[NSColor separatorColor] set];
-    } else {
-        [[NSColor lightGrayColor] set];
-    }
-    NSRect bounds = [self bounds];
-    NSRect lineRect = bounds;
-    lineRect.size.height = 1;
-    NSRectFill(NSIntersectionRect(lineRect, clipRect));
-}
-
-
-- (NSGradient *)getGradient:(BOOL)active {
-    static NSGradient *sActiveGradient;
-    static NSGradient *sInactiveGradient;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        sActiveGradient = [[NSGradient alloc] initWithColorsAndLocations:
-                           [NSColor colorWithCalibratedWhite:.89 alpha:1.], 0.00, 
-                           [NSColor colorWithCalibratedWhite:.77 alpha:1.], 0.9,
-                           [NSColor colorWithCalibratedWhite:.82 alpha:1.], 1.0,
-                           nil];
-        
-        sInactiveGradient = [[NSGradient alloc] initWithColorsAndLocations:
-                             [NSColor colorWithCalibratedWhite:.93 alpha:1.], 0.00, 
-                             [NSColor colorWithCalibratedWhite:.87 alpha:1.], 0.9,
-                             [NSColor colorWithCalibratedWhite:.90 alpha:1.], 1.0,
-                             nil];
-    });
-    return active ? sActiveGradient : sInactiveGradient;
-}
-
-
-- (void)drawRect:(NSRect)clip {
-    USE(clip);
-    NSRect bounds = [self bounds];
-    
-    if (!HFDarkModeEnabled()) {
-        NSWindow *window = [self window];
-        BOOL drawActive = (window == nil || [window isMainWindow] || [window isKeyWindow]);
-        [[self getGradient:drawActive] drawInRect:bounds angle:90.];
-    } else {
-        [[NSColor windowBackgroundColor] set];
-        NSRectFillUsingOperation(bounds, NSCompositeSourceOver);
-    }
-    
-    [self drawDividerWithClip:clip];
-    NSRect cellRect = NSMakeRect(NSMinX(bounds), HFCeil(NSMidY(bounds) - cellSize.height / 2), NSWidth(bounds), cellSize.height);
-    [cell drawWithFrame:cellRect inView:self];
-}
 
 - (void)mouseDown:(NSEvent *)event {
     USE(event);
-    HFStatusBarMode newMode = ([representer statusMode] + 1) % HFSTATUSMODECOUNT;
-    [representer setStatusMode:newMode];
+    HFStatusBarMode newMode = ([self.rep statusMode] + 1) % HFSTATUSMODECOUNT;
+    [self.rep setStatusMode:newMode];
     [[NSUserDefaults standardUserDefaults] setInteger:newMode forKey:kHFStatusBarDefaultModeUserDefaultsKey];
-}
-
-- (void)windowDidChangeKeyStatus:(NSNotification *)note {
-    USE(note);
-    [self setNeedsDisplay:YES];
-}
-
-- (void)viewDidMoveToWindow {
-    HFRegisterViewForWindowAppearanceChanges(self, @selector(windowDidChangeKeyStatus:), !registeredForAppNotifications);
-    registeredForAppNotifications = YES;
-    [super viewDidMoveToWindow];
-}
-
-- (void)viewWillMoveToWindow:(NSWindow *)newWindow {
-    HFUnregisterViewForWindowAppearanceChanges(self, NO);
-    [super viewWillMoveToWindow:newWindow];
-}
-
-- (void)dealloc {
-    HFUnregisterViewForWindowAppearanceChanges(self, registeredForAppNotifications);
 }
 
 @end
 
 @implementation HFStatusBarRepresenter {
     HFStatusBarMode statusMode;
+    HFStatusBarView *_statusView;
 }
 
 - (void)encodeWithCoder:(NSCoder *)coder {
@@ -171,9 +52,30 @@
 }
 
 - (NSView *)createView {
-    HFStatusBarView *view = [[HFStatusBarView alloc] initWithFrame:NSMakeRect(0, 0, 100, 18)];
-    [view setRepresenter:self];
+    _statusView = [[HFStatusBarView alloc] initWithFrame:NSZeroRect];
+    _statusView.drawsBackground = NO;
+    _statusView.editable = NO;
+    _statusView.selectable = NO;
+    _statusView.bordered = NO;
+    _statusView.bezeled = NO;
+    _statusView.alignment = NSCenterTextAlignment;
+    NSColor *foregroundColor = [NSColor colorWithCalibratedWhite:(CGFloat).15 alpha:1];
+    if (@available(macOS 10.10, *)) {
+        foregroundColor = [NSColor secondaryLabelColor];
+    }
+    _statusView.textColor = foregroundColor;
+    _statusView.font = [NSFont labelFontOfSize:10];
+    _statusView.rep = self;
+    _statusView.autoresizingMask = NSViewWidthSizable;
+    _statusView.stringValue = [NSString stringWithUTF8String:__FUNCTION__]; // dummy
+    [_statusView sizeToFit];
+    NSView *view = [[NSView alloc] initWithFrame:NSMakeRect(0, 0, _statusView.bounds.size.width, _statusView.bounds.size.height + 4)];
+    NSRect statusFrame = _statusView.frame;
+    NSRect bounds = view.bounds;
+    statusFrame.origin.y = bounds.origin.y + floor((bounds.size.height - statusFrame.size.height) / 2);
+    _statusView.frame = statusFrame;
     [view setAutoresizingMask:NSViewWidthSizable];
+    [view addSubview:_statusView];
     return view;
 }
 
@@ -221,7 +123,6 @@
     return [NSString stringWithFormat:@"%@ selected at multiple offsets out of %@", [self describeLength:multipleSelectionLength], [self describeLength:length]];
 }
 
-
 - (void)updateString {
     NSString *string = nil;
     HFController *controller = [self controller];
@@ -251,7 +152,7 @@
         }
     }
     if (! string) string = @"";
-    [[self view] setString:string];
+    _statusView.stringValue = string;
 }
 
 - (HFStatusBarMode)statusMode {
