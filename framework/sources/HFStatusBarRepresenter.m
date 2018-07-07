@@ -29,11 +29,9 @@
 - (void)_sharedInitStatusBarView {
     NSMutableParagraphStyle *style = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
     [style setAlignment:NSCenterTextAlignment];
-    NSColor *foregroundColor;
+    NSColor *foregroundColor = [NSColor colorWithCalibratedWhite:(CGFloat).15 alpha:1];
     if (@available(macOS 10.10, *)) {
-        foregroundColor = [NSColor tertiaryLabelColor];
-    } else {
-        foregroundColor = [NSColor colorWithCalibratedWhite:(CGFloat).15 alpha:1];
+        foregroundColor = [NSColor secondaryLabelColor];
     }
     cellAttributes = [[NSDictionary alloc] initWithObjectsAndKeys:foregroundColor, NSForegroundColorAttributeName, [NSFont labelFontOfSize:10], NSFontAttributeName, style, NSParagraphStyleAttributeName, nil];
     cell = [[NSCell alloc] initTextCell:@""];
