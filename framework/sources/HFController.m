@@ -1456,7 +1456,7 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
         END_TRANSACTION();
     }
     else {
-        NSBeep();
+        NSLog(@"Nothing was deleted");
     }
 }
 
@@ -1739,7 +1739,7 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
 
 - (void)deleteSelection {
     if ([self editMode] == HFOverwriteMode || ! [self editable]) {
-        NSBeep();
+        NSLog(@"Wrong edit mode or not editable");
     }
     else {
         [self _commandDeleteRanges:[HFRangeWrapper organizeAndMergeRanges:selectedContentsRanges]];
@@ -1752,7 +1752,7 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
     EXPECT_CLASS(newArray, HFByteArray);
     HFRange entireRange = HFRangeMake(0, [self contentsLength]);
     if ([self editMode] == HFOverwriteMode && [newArray length] != entireRange.length) {
-        NSBeep();
+        NSLog(@"Invalid length for overwrite mode");
     }
     else {
         [self _commandInsertByteArrays:@[newArray] inRanges:[HFRangeWrapper withRanges:&entireRange count:1] withSelectionAction:ePreserveSelection];
@@ -1865,8 +1865,7 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
     HFASSERT(proposedRangeToOverwrite.location >= previousBytes);
     proposedRangeToOverwrite.location -= previousBytes;
     if (! HFRangeIsSubrangeOfRange(proposedRangeToOverwrite, HFRangeMake(0, byteArrayLength))) {
-        /* The user tried to overwrite past the end */
-        NSBeep();
+        NSLog(@"The user tried to overwrite past the end");
         return NO;
     }
     
@@ -1926,7 +1925,7 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
 - (void)deleteDirection:(HFControllerMovementDirection)direction {
     HFASSERT(direction == HFControllerDirectionLeft || direction == HFControllerDirectionRight);
     if ([self editMode] != HFInsertMode || ! [self editable]) {
-        NSBeep();
+        NSLog(@"Wrong edit mode or not editable");
         return;
     }
     unsigned long long minSelection = [self _minimumSelectionLocation];
