@@ -955,9 +955,13 @@ BOOL HFDarkModeEnabled(void) {
 #endif
     return NO;
 }
+#endif
 
 CGContextRef HFGraphicsGetCurrentContext(void) {
     CGContextRef ctx;
+#if TARGET_OS_IPHONE
+    ctx = UIGraphicsGetCurrentContext();
+#else
 #if MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_10
     if (@available(macOS 10.10, *)) {
         ctx = [NSGraphicsContext currentContext].CGContext;
@@ -970,6 +974,6 @@ CGContextRef HFGraphicsGetCurrentContext(void) {
 #else
     ctx = [NSGraphicsContext currentContext].CGContext;
 #endif
+#endif
     return ctx;
 }
-#endif
