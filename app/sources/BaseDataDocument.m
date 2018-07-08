@@ -15,7 +15,6 @@
 #import "AppDelegate.h"
 #import <HexFiend/HexFiend.h>
 #include <pthread.h>
-#include <objc/runtime.h>
 
 static const char *const kProgressContext = "context";
 

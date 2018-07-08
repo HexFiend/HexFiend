@@ -9,7 +9,6 @@
 #import <HexFiend/HFProgressTracker.h>
 #import <HexFiend/HFController.h>
 #import <HexFiend/HFByteArray.h>
-#import <objc/message.h>
 
 NSString *const HFPrivateByteArrayPboardType = @"HFPrivateByteArrayPboardType";
 

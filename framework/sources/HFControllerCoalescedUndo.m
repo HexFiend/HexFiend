@@ -7,7 +7,6 @@
 
 #import "HFControllerCoalescedUndo.h"
 #import <HexFiend/HFFullMemoryByteArray.h>
-#import <objc/objc-auto.h>
 
 /* Invariant for this class: actionPoint >= anchorPoint
  
