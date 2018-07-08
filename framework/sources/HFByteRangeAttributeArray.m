@@ -6,7 +6,7 @@
 //
 
 #import <HexFiend/HFByteRangeAttributeArray.h>
-#import <HexFiend/HFAnnotatedTree.h>
+#import "HFAnnotatedTree.h"
 #import <HexFiend/HFByteRangeAttribute.h>
 
 #if NDEBUG

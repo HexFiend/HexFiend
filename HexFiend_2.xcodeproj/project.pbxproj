@@ -67,6 +67,68 @@
 		A5D8C8F220E9E58000103D60 /* libz.1.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = A5D8C8F120E9E58000103D60 /* libz.1.tbd */; };
 		A5ED2A85200BD8F0004AD7A4 /* HFColorRange.h in Headers */ = {isa = PBXBuildFile; fileRef = A5ED2A83200BD8F0004AD7A4 /* HFColorRange.h */; };
 		A5ED2A86200BD8F0004AD7A4 /* HFColorRange.m in Sources */ = {isa = PBXBuildFile; fileRef = A5ED2A84200BD8F0004AD7A4 /* HFColorRange.m */; };
+		A5EF28CA20F187B700CA7B39 /* HexFiend.h in Headers */ = {isa = PBXBuildFile; fileRef = D01E7BEF0CDC564B00943F9E /* HexFiend.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A5EF28CB20F187B700CA7B39 /* HFByteArrayEditScript.h in Headers */ = {isa = PBXBuildFile; fileRef = D0A1F2EB11439B9D008BB3BA /* HFByteArrayEditScript.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A5EF28CC20F187B700CA7B39 /* HFGlyphTrie.h in Headers */ = {isa = PBXBuildFile; fileRef = D08B2AC912B03C86004995A2 /* HFGlyphTrie.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A5EF28CD20F187B700CA7B39 /* HFFullMemoryByteArray.h in Headers */ = {isa = PBXBuildFile; fileRef = D0D828FE0CDE8ABE00C2AB82 /* HFFullMemoryByteArray.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A5EF28CF20F187B700CA7B39 /* HFFullMemoryByteSlice.h in Headers */ = {isa = PBXBuildFile; fileRef = D08F5E370CDE84F4007EFFE8 /* HFFullMemoryByteSlice.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A5EF28D020F187B700CA7B39 /* HFByteArray.h in Headers */ = {isa = PBXBuildFile; fileRef = D08F5DEF0CDE8223007EFFE8 /* HFByteArray.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A5EF28D120F187B700CA7B39 /* HFByteSlice.h in Headers */ = {isa = PBXBuildFile; fileRef = D08F5E220CDE843E007EFFE8 /* HFByteSlice.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A5EF28D220F187B700CA7B39 /* HFFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = D0A436300CDC7EAA000F7550 /* HFFunctions.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A5EF28D420F187B700CA7B39 /* HFTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = D01E7C3B0CDC69E500943F9E /* HFTypes.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A5EF28DB20F187B700CA7B39 /* HFByteArray_Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = D082AC900CDEBD5300554EB7 /* HFByteArray_Internal.h */; };
+		A5EF28DE20F187B700CA7B39 /* HFStringEncoding.h in Headers */ = {isa = PBXBuildFile; fileRef = A5CEA41A20D5DF4400BCA488 /* HFStringEncoding.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A5EF28E120F187B700CA7B39 /* HFFunctions_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = D04327A30CF081CD00C14250 /* HFFunctions_Private.h */; };
+		A5EF28E420F187B700CA7B39 /* HFCustomEncoding.h in Headers */ = {isa = PBXBuildFile; fileRef = A5CEA42D20D6316600BCA488 /* HFCustomEncoding.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A5EF28E720F187B700CA7B39 /* HFControllerCoalescedUndo.h in Headers */ = {isa = PBXBuildFile; fileRef = D0A47C0F0D288EDF00CB9BB9 /* HFControllerCoalescedUndo.h */; };
+		A5EF28E820F187B700CA7B39 /* HFNSStringEncoding.h in Headers */ = {isa = PBXBuildFile; fileRef = A5CEA42820D5E0F500BCA488 /* HFNSStringEncoding.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A5EF28EA20F187B700CA7B39 /* HFByteSlice_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = D0D179450D46F20E00684270 /* HFByteSlice_Private.h */; };
+		A5EF28EB20F187B700CA7B39 /* HFFileReference.h in Headers */ = {isa = PBXBuildFile; fileRef = D0826EA90D4855900006FB7D /* HFFileReference.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A5EF28EC20F187B700CA7B39 /* HFFileByteSlice.h in Headers */ = {isa = PBXBuildFile; fileRef = D0826EEF0D487A000006FB7D /* HFFileByteSlice.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A5EF28EE20F187B700CA7B39 /* HFAttributedByteArray.h in Headers */ = {isa = PBXBuildFile; fileRef = D0A05BFE13BBE40100553980 /* HFAttributedByteArray.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A5EF28F020F187B700CA7B39 /* HFProgressTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = D0422FDD0D62599300F8FCDE /* HFProgressTracker.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A5EF28F120F187B700CA7B39 /* HFSharedMemoryByteSlice.h in Headers */ = {isa = PBXBuildFile; fileRef = D0370A3D0D68307A00B3A8C6 /* HFSharedMemoryByteSlice.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A5EF28F220F187B700CA7B39 /* HFByteSliceFileOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = D019B8FF0D83FEB3005789AA /* HFByteSliceFileOperation.h */; };
+		A5EF28F320F187B700CA7B39 /* HFObjectGraph.h in Headers */ = {isa = PBXBuildFile; fileRef = D019B9530D840FE8005789AA /* HFObjectGraph.h */; };
+		A5EF28F420F187B700CA7B39 /* HFByteSliceFileOperationQueueEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = D08630EE0D8BEE9900FF0BE7 /* HFByteSliceFileOperationQueueEntry.h */; };
+		A5EF28F820F187B700CA7B39 /* HFRandomDataByteSlice.h in Headers */ = {isa = PBXBuildFile; fileRef = D081DDA80F0E75FB00F66150 /* HFRandomDataByteSlice.h */; settings = {ATTRIBUTES = (); }; };
+		A5EF28F920F187B700CA7B39 /* HFBTree.h in Headers */ = {isa = PBXBuildFile; fileRef = D06D60050FA69AFA002376EE /* HFBTree.h */; };
+		A5EF28FA20F187B700CA7B39 /* HFBTreeByteArray.h in Headers */ = {isa = PBXBuildFile; fileRef = D06D61EC0FA7FA7C002376EE /* HFBTreeByteArray.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A5EF28FD20F187B700CA7B39 /* HFByteArrayProxiedData.h in Headers */ = {isa = PBXBuildFile; fileRef = D0114CA71006D1DF00DAF4CE /* HFByteArrayProxiedData.h */; };
+		A5EF28FF20F187B700CA7B39 /* HFByteRangeAttribute.h in Headers */ = {isa = PBXBuildFile; fileRef = D08943F61042B57800AB9141 /* HFByteRangeAttribute.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A5EF290020F187B700CA7B39 /* HFByteRangeAttributeArray.h in Headers */ = {isa = PBXBuildFile; fileRef = D089443A1042BA7100AB9141 /* HFByteRangeAttributeArray.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A5EF290120F187B700CA7B39 /* HFAnnotatedTree.h in Headers */ = {isa = PBXBuildFile; fileRef = D0315BEA1225C553008C9EAB /* HFAnnotatedTree.h */; };
+		A5EF290920F187B700CA7B39 /* HFFunctions.m in Sources */ = {isa = PBXBuildFile; fileRef = D0A436570CDC8115000F7550 /* HFFunctions.m */; };
+		A5EF290C20F187B700CA7B39 /* HFCustomEncoding.m in Sources */ = {isa = PBXBuildFile; fileRef = A5CEA42E20D6316600BCA488 /* HFCustomEncoding.m */; };
+		A5EF290D20F187B700CA7B39 /* HFNSStringEncoding.m in Sources */ = {isa = PBXBuildFile; fileRef = A5CEA42920D5E0F500BCA488 /* HFNSStringEncoding.m */; };
+		A5EF290E20F187B700CA7B39 /* HFStringEncoding.m in Sources */ = {isa = PBXBuildFile; fileRef = A5CEA41B20D5DF4400BCA488 /* HFStringEncoding.m */; };
+		A5EF291120F187B700CA7B39 /* HFGlyphTrie.m in Sources */ = {isa = PBXBuildFile; fileRef = D08B2ACA12B03C86004995A2 /* HFGlyphTrie.m */; };
+		A5EF291220F187B700CA7B39 /* HFByteArray.m in Sources */ = {isa = PBXBuildFile; fileRef = D08F5DF00CDE8223007EFFE8 /* HFByteArray.m */; };
+		A5EF291320F187B700CA7B39 /* HFByteSlice.m in Sources */ = {isa = PBXBuildFile; fileRef = D08F5E230CDE843E007EFFE8 /* HFByteSlice.m */; };
+		A5EF291420F187B700CA7B39 /* HFFullMemoryByteSlice.m in Sources */ = {isa = PBXBuildFile; fileRef = D08F5E380CDE84F4007EFFE8 /* HFFullMemoryByteSlice.m */; };
+		A5EF291520F187B700CA7B39 /* HFFullMemoryByteArray.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D828FF0CDE8ABE00C2AB82 /* HFFullMemoryByteArray.m */; };
+		A5EF291E20F187B700CA7B39 /* HFControllerCoalescedUndo.m in Sources */ = {isa = PBXBuildFile; fileRef = D0A47C100D288EDF00CB9BB9 /* HFControllerCoalescedUndo.m */; };
+		A5EF292020F187B700CA7B39 /* HFByteArray_FindReplace.m in Sources */ = {isa = PBXBuildFile; fileRef = D0B7E3380D5C50EA007874ED /* HFByteArray_FindReplace.m */; };
+		A5EF292220F187B700CA7B39 /* HFFileReference.m in Sources */ = {isa = PBXBuildFile; fileRef = D0826EAA0D4855900006FB7D /* HFFileReference.m */; };
+		A5EF292320F187B700CA7B39 /* HFFileByteSlice.m in Sources */ = {isa = PBXBuildFile; fileRef = D0826EF00D487A000006FB7D /* HFFileByteSlice.m */; };
+		A5EF292620F187B700CA7B39 /* HFProgressTracker.m in Sources */ = {isa = PBXBuildFile; fileRef = D0422FDE0D62599300F8FCDE /* HFProgressTracker.m */; };
+		A5EF292720F187B700CA7B39 /* HFSharedMemoryByteSlice.m in Sources */ = {isa = PBXBuildFile; fileRef = D0370A3E0D68307A00B3A8C6 /* HFSharedMemoryByteSlice.m */; };
+		A5EF292820F187B700CA7B39 /* HFByteArray_FileWriting.m in Sources */ = {isa = PBXBuildFile; fileRef = D019B8BE0D83E8D5005789AA /* HFByteArray_FileWriting.m */; };
+		A5EF292920F187B700CA7B39 /* HFByteArrayEditScript.m in Sources */ = {isa = PBXBuildFile; fileRef = D0A1F2EC11439B9D008BB3BA /* HFByteArrayEditScript.m */; };
+		A5EF292A20F187B700CA7B39 /* HFByteSliceFileOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = D019B9000D83FEB3005789AA /* HFByteSliceFileOperation.m */; };
+		A5EF292B20F187B700CA7B39 /* HFObjectGraph.m in Sources */ = {isa = PBXBuildFile; fileRef = D019B9540D840FE8005789AA /* HFObjectGraph.m */; };
+		A5EF292C20F187B700CA7B39 /* HFByteSliceFileOperationQueueEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = D08630EF0D8BEE9900FF0BE7 /* HFByteSliceFileOperationQueueEntry.m */; };
+		A5EF292D20F187B700CA7B39 /* HFFastMemchr.m in Sources */ = {isa = PBXBuildFile; fileRef = D08491FE0DBB60C700C7195C /* HFFastMemchr.m */; };
+		A5EF293020F187B700CA7B39 /* HFRandomDataByteSlice.m in Sources */ = {isa = PBXBuildFile; fileRef = D081DDA90F0E75FB00F66150 /* HFRandomDataByteSlice.m */; settings = {COMPILER_FLAGS = "-O3"; }; };
+		A5EF293120F187B700CA7B39 /* HFBTree.m in Sources */ = {isa = PBXBuildFile; fileRef = D06D60060FA69AFA002376EE /* HFBTree.m */; };
+		A5EF293220F187B700CA7B39 /* HFBTreeByteArray.m in Sources */ = {isa = PBXBuildFile; fileRef = D06D61ED0FA7FA7C002376EE /* HFBTreeByteArray.m */; };
+		A5EF293420F187B700CA7B39 /* HFByteArrayProxiedData.m in Sources */ = {isa = PBXBuildFile; fileRef = D0114CA81006D1DF00DAF4CE /* HFByteArrayProxiedData.m */; };
+		A5EF293520F187B700CA7B39 /* HFAttributedByteArray.m in Sources */ = {isa = PBXBuildFile; fileRef = D0A05BFF13BBE40100553980 /* HFAttributedByteArray.m */; };
+		A5EF293820F187B700CA7B39 /* HFByteRangeAttribute.m in Sources */ = {isa = PBXBuildFile; fileRef = D08943F71042B57800AB9141 /* HFByteRangeAttribute.m */; };
+		A5EF293920F187B700CA7B39 /* HFByteRangeAttributeArray.m in Sources */ = {isa = PBXBuildFile; fileRef = D089443B1042BA7100AB9141 /* HFByteRangeAttributeArray.m */; };
+		A5EF293B20F187B700CA7B39 /* HFAnnotatedTree.m in Sources */ = {isa = PBXBuildFile; fileRef = D0315BEB1225C553008C9EAB /* HFAnnotatedTree.m */; };
+		A5EF293F20F187B700CA7B39 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 29B97325FDCFA39411CA2CEA /* Foundation.framework */; };
+		A5EF294120F187B700CA7B39 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D05984CB1032C6D900059E72 /* Security.framework */; };
 		D00122E30D48A8D400540B10 /* HFFindReplaceBackgroundView.m in Sources */ = {isa = PBXBuildFile; fileRef = D00122E20D48A8D400540B10 /* HFFindReplaceBackgroundView.m */; };
 		D00C16790FF4925A006D021F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D00C16750FF4925A006D021F /* main.m */; };
 		D00EBA730CE866D50020E2D7 /* HFVerticalScrollerRepresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = D00EBA710CE866D50020E2D7 /* HFVerticalScrollerRepresenter.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -351,6 +413,8 @@
 		A5D8C8F120E9E58000103D60 /* libz.1.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.1.tbd; path = usr/lib/libz.1.tbd; sourceTree = SDKROOT; };
 		A5ED2A83200BD8F0004AD7A4 /* HFColorRange.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFColorRange.h; path = sources/HFColorRange.h; sourceTree = "<group>"; };
 		A5ED2A84200BD8F0004AD7A4 /* HFColorRange.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFColorRange.m; path = sources/HFColorRange.m; sourceTree = "<group>"; };
+		A5EF294A20F187B700CA7B39 /* HexFiend_Framework_iOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = HexFiend_Framework_iOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A5EF294B20F187B700CA7B39 /* HexFiend_Framework_iOS-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "HexFiend_Framework_iOS-Info.plist"; path = "/Users/kainjow/git/HexFiend/HexFiend_Framework_iOS-Info.plist"; sourceTree = "<absolute>"; };
 		D00122E10D48A8D400540B10 /* HFFindReplaceBackgroundView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFFindReplaceBackgroundView.h; path = app/sources/HFFindReplaceBackgroundView.h; sourceTree = "<group>"; };
 		D00122E20D48A8D400540B10 /* HFFindReplaceBackgroundView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFFindReplaceBackgroundView.m; path = app/sources/HFFindReplaceBackgroundView.m; sourceTree = "<group>"; };
 		D00C15E50FF091FF006D021F /* HexFiendling.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HexFiendling.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -556,6 +620,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A5EF293D20F187B700CA7B39 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A5EF293F20F187B700CA7B39 /* Foundation.framework in Frameworks */,
+				A5EF294120F187B700CA7B39 /* Security.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D00C15E30FF091FF006D021F /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -596,6 +669,7 @@
 				D047E3151022CEFE00EF307B /* com.ridiculousfish.HexFiend.PrivilegedHelper */,
 				9408FBFA19DD72DE004F800E /* HexFiend_Framework Tests.xctest */,
 				A550A7161F7877F8001C79C7 /* hexf */,
+				A5EF294A20F187B700CA7B39 /* HexFiend_Framework_iOS.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -782,6 +856,7 @@
 			children = (
 				D04A6C15100EB02400704963 /* HFModalProgress.xib */,
 				D01E7BB90CDC530C00943F9E /* HexFiend_Framework-Info.plist */,
+				A5EF294B20F187B700CA7B39 /* HexFiend_Framework_iOS-Info.plist */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -1112,6 +1187,44 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
+		A5EF28C920F187B700CA7B39 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A5EF28CA20F187B700CA7B39 /* HexFiend.h in Headers */,
+				A5EF28CB20F187B700CA7B39 /* HFByteArrayEditScript.h in Headers */,
+				A5EF28CC20F187B700CA7B39 /* HFGlyphTrie.h in Headers */,
+				A5EF28CD20F187B700CA7B39 /* HFFullMemoryByteArray.h in Headers */,
+				A5EF28CF20F187B700CA7B39 /* HFFullMemoryByteSlice.h in Headers */,
+				A5EF28D020F187B700CA7B39 /* HFByteArray.h in Headers */,
+				A5EF28D120F187B700CA7B39 /* HFByteSlice.h in Headers */,
+				A5EF28D220F187B700CA7B39 /* HFFunctions.h in Headers */,
+				A5EF28D420F187B700CA7B39 /* HFTypes.h in Headers */,
+				A5EF28DB20F187B700CA7B39 /* HFByteArray_Internal.h in Headers */,
+				A5EF28DE20F187B700CA7B39 /* HFStringEncoding.h in Headers */,
+				A5EF28E120F187B700CA7B39 /* HFFunctions_Private.h in Headers */,
+				A5EF28E420F187B700CA7B39 /* HFCustomEncoding.h in Headers */,
+				A5EF28E720F187B700CA7B39 /* HFControllerCoalescedUndo.h in Headers */,
+				A5EF28E820F187B700CA7B39 /* HFNSStringEncoding.h in Headers */,
+				A5EF28EA20F187B700CA7B39 /* HFByteSlice_Private.h in Headers */,
+				A5EF28EB20F187B700CA7B39 /* HFFileReference.h in Headers */,
+				A5EF28EC20F187B700CA7B39 /* HFFileByteSlice.h in Headers */,
+				A5EF28EE20F187B700CA7B39 /* HFAttributedByteArray.h in Headers */,
+				A5EF28F020F187B700CA7B39 /* HFProgressTracker.h in Headers */,
+				A5EF28F120F187B700CA7B39 /* HFSharedMemoryByteSlice.h in Headers */,
+				A5EF28F220F187B700CA7B39 /* HFByteSliceFileOperation.h in Headers */,
+				A5EF28F320F187B700CA7B39 /* HFObjectGraph.h in Headers */,
+				A5EF28F420F187B700CA7B39 /* HFByteSliceFileOperationQueueEntry.h in Headers */,
+				A5EF28F820F187B700CA7B39 /* HFRandomDataByteSlice.h in Headers */,
+				A5EF28F920F187B700CA7B39 /* HFBTree.h in Headers */,
+				A5EF28FA20F187B700CA7B39 /* HFBTreeByteArray.h in Headers */,
+				A5EF28FD20F187B700CA7B39 /* HFByteArrayProxiedData.h in Headers */,
+				A5EF28FF20F187B700CA7B39 /* HFByteRangeAttribute.h in Headers */,
+				A5EF290020F187B700CA7B39 /* HFByteRangeAttributeArray.h in Headers */,
+				A5EF290120F187B700CA7B39 /* HFAnnotatedTree.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D01E7BB30CDC530C00943F9E /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -1238,6 +1351,24 @@
 			productReference = A550A7161F7877F8001C79C7 /* hexf */;
 			productType = "com.apple.product-type.tool";
 		};
+		A5EF28C620F187B700CA7B39 /* HexFiend_Framework_iOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A5EF294220F187B700CA7B39 /* Build configuration list for PBXNativeTarget "HexFiend_Framework_iOS" */;
+			buildPhases = (
+				A5EF28C920F187B700CA7B39 /* Headers */,
+				A5EF290420F187B700CA7B39 /* Resources */,
+				A5EF290620F187B700CA7B39 /* Sources */,
+				A5EF293D20F187B700CA7B39 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = HexFiend_Framework_iOS;
+			productName = HexFiend_Framework;
+			productReference = A5EF294A20F187B700CA7B39 /* HexFiend_Framework_iOS.framework */;
+			productType = "com.apple.product-type.framework";
+		};
 		D00C15E40FF091FF006D021F /* HexFiendling */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = D00C15EE0FF09200006D021F /* Build configuration list for PBXNativeTarget "HexFiendling" */;
@@ -1329,6 +1460,7 @@
 			targets = (
 				8D1107260486CEB800E47090 /* HexFiend_2 */,
 				D01E7BB70CDC530C00943F9E /* HexFiend_Framework */,
+				A5EF28C620F187B700CA7B39 /* HexFiend_Framework_iOS */,
 				D047E3141022CEFE00EF307B /* FortunateSon (PrivilegedHelper) */,
 				D00C15E40FF091FF006D021F /* HexFiendling */,
 				D0F6FE0A0FFF679200C609F0 /* Documentation Generation */,
@@ -1370,6 +1502,13 @@
 			files = (
 				A57F347C1F1BE7CD00234B94 /* BigResult.txt.gz in Resources */,
 				A57F34781F1BCC4B00234B94 /* BigColumnsResult.txt.gz in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A5EF290420F187B700CA7B39 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1503,6 +1642,42 @@
 			buildActionMask = 2147483647;
 			files = (
 				A550A7191F7877F8001C79C7 /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A5EF290620F187B700CA7B39 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A5EF290920F187B700CA7B39 /* HFFunctions.m in Sources */,
+				A5EF290C20F187B700CA7B39 /* HFCustomEncoding.m in Sources */,
+				A5EF290D20F187B700CA7B39 /* HFNSStringEncoding.m in Sources */,
+				A5EF290E20F187B700CA7B39 /* HFStringEncoding.m in Sources */,
+				A5EF291120F187B700CA7B39 /* HFGlyphTrie.m in Sources */,
+				A5EF291220F187B700CA7B39 /* HFByteArray.m in Sources */,
+				A5EF291320F187B700CA7B39 /* HFByteSlice.m in Sources */,
+				A5EF291420F187B700CA7B39 /* HFFullMemoryByteSlice.m in Sources */,
+				A5EF291520F187B700CA7B39 /* HFFullMemoryByteArray.m in Sources */,
+				A5EF291E20F187B700CA7B39 /* HFControllerCoalescedUndo.m in Sources */,
+				A5EF292020F187B700CA7B39 /* HFByteArray_FindReplace.m in Sources */,
+				A5EF292220F187B700CA7B39 /* HFFileReference.m in Sources */,
+				A5EF292320F187B700CA7B39 /* HFFileByteSlice.m in Sources */,
+				A5EF292620F187B700CA7B39 /* HFProgressTracker.m in Sources */,
+				A5EF292720F187B700CA7B39 /* HFSharedMemoryByteSlice.m in Sources */,
+				A5EF292820F187B700CA7B39 /* HFByteArray_FileWriting.m in Sources */,
+				A5EF292920F187B700CA7B39 /* HFByteArrayEditScript.m in Sources */,
+				A5EF292A20F187B700CA7B39 /* HFByteSliceFileOperation.m in Sources */,
+				A5EF292B20F187B700CA7B39 /* HFObjectGraph.m in Sources */,
+				A5EF292C20F187B700CA7B39 /* HFByteSliceFileOperationQueueEntry.m in Sources */,
+				A5EF292D20F187B700CA7B39 /* HFFastMemchr.m in Sources */,
+				A5EF293020F187B700CA7B39 /* HFRandomDataByteSlice.m in Sources */,
+				A5EF293120F187B700CA7B39 /* HFBTree.m in Sources */,
+				A5EF293220F187B700CA7B39 /* HFBTreeByteArray.m in Sources */,
+				A5EF293420F187B700CA7B39 /* HFByteArrayProxiedData.m in Sources */,
+				A5EF293520F187B700CA7B39 /* HFAttributedByteArray.m in Sources */,
+				A5EF293820F187B700CA7B39 /* HFByteRangeAttribute.m in Sources */,
+				A5EF293920F187B700CA7B39 /* HFByteRangeAttributeArray.m in Sources */,
+				A5EF293B20F187B700CA7B39 /* HFAnnotatedTree.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2079,6 +2254,250 @@
 			};
 			name = "Release+CodeSign";
 		};
+		A5EF294320F187B700CA7B39 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\"",
+				);
+				FRAMEWORK_VERSION = A;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = framework/sources/HexFiend_2_Framework_Prefix.pch;
+				INFOPLIST_FILE = "HexFiend_Framework_iOS-Info.plist";
+				INSTALL_PATH = "@loader_path/../Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_DYLIB_INSTALL_NAME = "@loader_path/../Frameworks/HexFiend.framework/Versions/A/HexFiend";
+				OTHER_CFLAGS = (
+					"-fblocks",
+					"-DHF_NO_PRIVILEGED_FILE_OPERATIONS=1",
+					"$(inherited)",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculousfish.HexFiend-Framework-iOS";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				VALID_ARCHS = "arm64 armv7 armv7s";
+				WARNING_CFLAGS = (
+					"-W",
+					"-Wall",
+					"-Winit-self",
+					"-Wno-unused",
+				);
+			};
+			name = Debug;
+		};
+		A5EF294420F187B700CA7B39 /* Debug+CodeSign */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\"",
+				);
+				FRAMEWORK_VERSION = A;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = framework/sources/HexFiend_2_Framework_Prefix.pch;
+				INFOPLIST_FILE = "HexFiend_Framework_iOS-Info.plist";
+				INSTALL_PATH = "@loader_path/../Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_DYLIB_INSTALL_NAME = "@loader_path/../Frameworks/HexFiend.framework/Versions/A/HexFiend";
+				OTHER_CFLAGS = (
+					"-fblocks",
+					"-DHF_NO_PRIVILEGED_FILE_OPERATIONS=1",
+					"$(inherited)",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculousfish.HexFiend-Framework-iOS";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				VALID_ARCHS = "arm64 armv7 armv7s";
+				WARNING_CFLAGS = (
+					"-W",
+					"-Wall",
+					"-Winit-self",
+					"-Wno-unused",
+				);
+			};
+			name = "Debug+CodeSign";
+		};
+		A5EF294520F187B700CA7B39 /* Debug+MAS */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\"",
+				);
+				FRAMEWORK_VERSION = A;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = framework/sources/HexFiend_2_Framework_Prefix.pch;
+				INFOPLIST_FILE = "HexFiend_Framework_iOS-Info.plist";
+				INSTALL_PATH = "@loader_path/../Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_DYLIB_INSTALL_NAME = "@loader_path/../Frameworks/HexFiend.framework/Versions/A/HexFiend";
+				OTHER_CFLAGS = (
+					"-fblocks",
+					"$(inherited)",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculousfish.HexFiend-Framework-iOS";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				VALID_ARCHS = "arm64 armv7 armv7s";
+				WARNING_CFLAGS = (
+					"-W",
+					"-Wall",
+					"-Winit-self",
+					"-Wno-unused",
+				);
+			};
+			name = "Debug+MAS";
+		};
+		A5EF294620F187B700CA7B39 /* Debug+UnitTests */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\"",
+				);
+				FRAMEWORK_VERSION = A;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = framework/sources/HexFiend_2_Framework_Prefix.pch;
+				INFOPLIST_FILE = "HexFiend_Framework_iOS-Info.plist";
+				INSTALL_PATH = "@loader_path/../Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_DYLIB_INSTALL_NAME = "@loader_path/../Frameworks/HexFiend.framework/Versions/A/HexFiend";
+				OTHER_CFLAGS = (
+					"-fblocks",
+					"-DHF_NO_PRIVILEGED_FILE_OPERATIONS=1",
+					"$(inherited)",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculousfish.HexFiend-Framework-iOS";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				VALID_ARCHS = "arm64 armv7 armv7s";
+				WARNING_CFLAGS = (
+					"-W",
+					"-Wall",
+					"-Winit-self",
+					"-Wno-unused",
+				);
+			};
+			name = "Debug+UnitTests";
+		};
+		A5EF294720F187B700CA7B39 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\"",
+				);
+				FRAMEWORK_VERSION = A;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = framework/sources/HexFiend_2_Framework_Prefix.pch;
+				INFOPLIST_FILE = "HexFiend_Framework_iOS-Info.plist";
+				INSTALL_PATH = "@loader_path/../Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_DYLIB_INSTALL_NAME = "@loader_path/../Frameworks/HexFiend.framework/Versions/A/HexFiend";
+				OTHER_CFLAGS = (
+					"-fblocks",
+					"-DHF_NO_PRIVILEGED_FILE_OPERATIONS=1",
+					"$(inherited)",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculousfish.HexFiend-Framework-iOS";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				VALID_ARCHS = "arm64 armv7 armv7s";
+				WARNING_CFLAGS = (
+					"-W",
+					"-Wall",
+					"-Winit-self",
+					"-Wno-unused",
+				);
+			};
+			name = Release;
+		};
+		A5EF294820F187B700CA7B39 /* Release+CodeSign */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\"",
+				);
+				FRAMEWORK_VERSION = A;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = framework/sources/HexFiend_2_Framework_Prefix.pch;
+				INFOPLIST_FILE = "HexFiend_Framework_iOS-Info.plist";
+				INSTALL_PATH = "@loader_path/../Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_DYLIB_INSTALL_NAME = "@loader_path/../Frameworks/HexFiend.framework/Versions/A/HexFiend";
+				OTHER_CFLAGS = (
+					"-fblocks",
+					"-DHF_NO_PRIVILEGED_FILE_OPERATIONS=1",
+					"$(inherited)",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculousfish.HexFiend-Framework-iOS";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				VALID_ARCHS = "arm64 armv7 armv7s";
+				WARNING_CFLAGS = (
+					"-W",
+					"-Wall",
+					"-Winit-self",
+					"-Wno-unused",
+				);
+			};
+			name = "Release+CodeSign";
+		};
+		A5EF294920F187B700CA7B39 /* Release+MAS */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\"",
+				);
+				FRAMEWORK_VERSION = A;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = framework/sources/HexFiend_2_Framework_Prefix.pch;
+				INFOPLIST_FILE = "HexFiend_Framework_iOS-Info.plist";
+				INSTALL_PATH = "@loader_path/../Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_DYLIB_INSTALL_NAME = "@loader_path/../Frameworks/HexFiend.framework/Versions/A/HexFiend";
+				OTHER_CFLAGS = (
+					"-fblocks",
+					"-DHF_NO_PRIVILEGED_FILE_OPERATIONS=1",
+					"$(inherited)",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculousfish.HexFiend-Framework-iOS";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				VALID_ARCHS = "arm64 armv7 armv7s";
+				WARNING_CFLAGS = (
+					"-W",
+					"-Wall",
+					"-Winit-self",
+					"-Wno-unused",
+				);
+			};
+			name = "Release+MAS";
+		};
 		D00C15ED0FF09200006D021F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -2143,10 +2562,10 @@
 				GCC_WARN_UNUSED_VALUE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INSTALL_PATH = /Applications;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				OTHER_CFLAGS = "";
 				SDKROOT = macosx;
-				VALID_ARCHS = "armv6 armv7 i386 x86_64";
 				WARNING_CFLAGS = (
 					"-W",
 					"-Wall",
@@ -2309,11 +2728,11 @@
 				GCC_WARN_UNUSED_VALUE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INSTALL_PATH = /Applications;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "";
 				SDKROOT = macosx;
-				VALID_ARCHS = "armv6 armv7 i386 x86_64";
 				WARNING_CFLAGS = (
 					"-W",
 					"-Wall",
@@ -2474,10 +2893,10 @@
 				GCC_WARN_UNUSED_VALUE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INSTALL_PATH = /Applications;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				OTHER_CFLAGS = "";
 				SDKROOT = macosx;
-				VALID_ARCHS = "armv6 armv7 i386 x86_64";
 				WARNING_CFLAGS = (
 					"-W",
 					"-Wall",
@@ -2653,13 +3072,13 @@
 				GCC_WARN_UNUSED_VALUE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INSTALL_PATH = /Applications;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				OTHER_CFLAGS = (
 					"-DMacAppStore=1",
 					"-DHF_NO_PRIVILEGED_FILE_OPERATIONS=1",
 				);
 				SDKROOT = macosx;
-				VALID_ARCHS = "armv6 armv7 i386 x86_64";
 				WARNING_CFLAGS = (
 					"-W",
 					"-Wall",
@@ -2848,6 +3267,7 @@
 				GCC_WARN_UNUSED_VALUE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INSTALL_PATH = /Applications;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = (
@@ -2855,7 +3275,6 @@
 					"-DHF_NO_PRIVILEGED_FILE_OPERATIONS=1",
 				);
 				SDKROOT = macosx;
-				VALID_ARCHS = "armv6 armv7 i386 x86_64";
 				WARNING_CFLAGS = (
 					"-W",
 					"-Wall",
@@ -3054,11 +3473,11 @@
 				GCC_WARN_UNUSED_VALUE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INSTALL_PATH = /Applications;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "";
 				SDKROOT = macosx;
-				VALID_ARCHS = "armv6 armv7 i386 x86_64";
 				WARNING_CFLAGS = (
 					"-W",
 					"-Wall",
@@ -3220,11 +3639,11 @@
 				GCC_WARN_UNUSED_VALUE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INSTALL_PATH = /Applications;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "";
 				SDKROOT = macosx;
-				VALID_ARCHS = "armv6 armv7 i386 x86_64";
 				WARNING_CFLAGS = (
 					"-W",
 					"-Wall",
@@ -3348,6 +3767,20 @@
 				A550A71F1F7877F8001C79C7 /* Release+CodeSign */,
 				D09B9CF720829B90007640C7 /* Debug+MAS */,
 				D09B9CF820829B90007640C7 /* Release+MAS */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A5EF294220F187B700CA7B39 /* Build configuration list for PBXNativeTarget "HexFiend_Framework_iOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A5EF294320F187B700CA7B39 /* Debug */,
+				A5EF294420F187B700CA7B39 /* Debug+CodeSign */,
+				A5EF294520F187B700CA7B39 /* Debug+MAS */,
+				A5EF294620F187B700CA7B39 /* Debug+UnitTests */,
+				A5EF294720F187B700CA7B39 /* Release */,
+				A5EF294820F187B700CA7B39 /* Release+CodeSign */,
+				A5EF294920F187B700CA7B39 /* Release+MAS */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

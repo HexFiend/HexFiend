@@ -60,7 +60,7 @@
 }
 
 - (NSString *)description {
-    return [NSString stringWithFormat:@"<%@: %p - %@>", self.className, self, self.name];
+    return [NSString stringWithFormat:@"<%@: %p - %@>", NSStringFromClass(self.class), self, self.name];
 }
 
 @end

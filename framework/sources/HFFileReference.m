@@ -10,7 +10,9 @@
 #include <sys/types.h>
 #include <fcntl.h>
 #include <unistd.h>
+#if ! HF_NO_PRIVILEGED_FILE_OPERATIONS
 #include <sys/disk.h>
+#endif
 
 #if ! HF_NO_PRIVILEGED_FILE_OPERATIONS
 #import "HFPrivilegedHelperConnection.h"
@@ -233,6 +235,7 @@ static BOOL returnFTruncateError(NSError **error) {
         return NO;
     }
 
+#if ! HF_NO_PRIVILEGED_FILE_OPERATIONS
     if (!sb.st_size && (S_ISCHR(sb.st_mode) || S_ISBLK(sb.st_mode))) {
         uint64_t blockCount;
 
@@ -248,8 +251,11 @@ static BOOL returnFTruncateError(NSError **error) {
         isFixedLength = YES;
     }
     else {
+#endif
         fileLength = sb.st_size;
+#if ! HF_NO_PRIVILEGED_FILE_OPERATIONS
     }
+#endif
 
     fileMode = sb.st_mode;
     inode = sb.st_ino;

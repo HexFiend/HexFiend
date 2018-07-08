@@ -5,8 +5,6 @@
 //  Copyright 2009 ridiculous_fish. All rights reserved.
 //
 
-#import <Cocoa/Cocoa.h>
-
 @interface HFTextVisualStyleRun : NSObject {}
 
 @property (nonatomic, copy) NSColor *foregroundColor;

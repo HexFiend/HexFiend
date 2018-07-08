@@ -5,7 +5,7 @@
 //  Copyright 2007 ridiculous_fish. All rights reserved.
 //
 
-#import <HexFiend/HFByteArray_Internal.h>
+#import "HFByteArray_Internal.h"
 #import <HexFiend/HFFullMemoryByteArray.h>
 #import <HexFiend/HFFullMemoryByteSlice.h>
 #import <HexFiend/HFByteSlice.h>

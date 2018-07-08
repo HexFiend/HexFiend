@@ -5,11 +5,11 @@
 //  Copyright 2008 ridiculous_fish. All rights reserved.
 //
 
-#import <HexFiend/HFByteSliceFileOperation.h>
+#import "HFByteSliceFileOperation.h"
 #import <HexFiend/HFByteSlice.h>
 #import <HexFiend/HFProgressTracker.h>
 #import <HexFiend/HFFileReference.h>
-#import <HexFiend/HFByteSliceFileOperationQueueEntry.h>
+#import "HFByteSliceFileOperationQueueEntry.h"
 #include <malloc/malloc.h>
 
 enum {

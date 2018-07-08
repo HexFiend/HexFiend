@@ -8,7 +8,7 @@
 
 /* NOTE - THIS FILE IS COMPILED -O3 EVEN IN DEBUG BUILDS BECAUSE OF THE MUNGE LOOP (extra build flags for this file in Xcode) */
 
-#import <HexFiend/HFRandomDataByteSlice.h>
+#import "HFRandomDataByteSlice.h"
 
 //#if ! NDEBUG
 

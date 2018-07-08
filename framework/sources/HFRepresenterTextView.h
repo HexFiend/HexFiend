@@ -5,7 +5,6 @@
 //  Copyright 2007 ridiculous_fish. All rights reserved.
 //
 
-#import <Cocoa/Cocoa.h>
 #import <HexFiend/HFGlyphTrie.h>
 
 /*  Bytes per column philosophy

@@ -1,6 +1,5 @@
 /* HFGlyphTrie is used to represent a trie of glyphs that allows multiple concurrent readers, along with one writer. */
 
-#import <ApplicationServices/ApplicationServices.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

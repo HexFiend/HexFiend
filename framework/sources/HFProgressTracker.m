@@ -19,6 +19,7 @@
     return maxProgress;
 }
 
+#if !TARGET_OS_IPHONE
 - (void)setProgressIndicator:(NSProgressIndicator *)indicator {
     progressIndicator = indicator;
 }
@@ -26,6 +27,7 @@
 - (NSProgressIndicator *)progressIndicator {
     return progressIndicator;
 }
+#endif
 
 - (void)_updateProgress:(NSTimer *)timer {
     USE(timer);
@@ -39,7 +41,9 @@
     }
     if (value != lastSetValue) {
         lastSetValue = value;
+#if !TARGET_OS_IPHONE
         [progressIndicator setDoubleValue:lastSetValue];
+#endif
         if (delegate && [delegate respondsToSelector:@selector(progressTracker:didChangeProgressTo:)]) {
             [delegate progressTracker:self didChangeProgressTo:lastSetValue];
         }
@@ -51,16 +55,22 @@
     NSRunLoop *currentRunLoop = [NSRunLoop currentRunLoop];
     progressTimer = [NSTimer timerWithTimeInterval:1 / 30. target:self selector:@selector(_updateProgress:) userInfo:nil repeats:YES];
     [currentRunLoop addTimer:progressTimer forMode:NSDefaultRunLoopMode];
+#if !TARGET_OS_IPHONE
     [currentRunLoop addTimer:progressTimer forMode:NSModalPanelRunLoopMode];
+#endif
     [self _updateProgress:nil];
+#if !TARGET_OS_IPHONE
     [progressIndicator startAnimation:self];
+#endif
 }
 
 - (void)endTrackingProgress {
     HFASSERT(progressTimer != NULL);
     [progressTimer invalidate];
     progressTimer = nil;
+#if !TARGET_OS_IPHONE
     [progressIndicator stopAnimation:self];
+#endif
 }
 
 - (void)requestCancel:(id)sender {

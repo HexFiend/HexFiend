@@ -1,5 +1,4 @@
 #import <HexFiend/HFFunctions.h>
-#import <HexFiend/HFController.h>
 
 #import "HFFunctions_Private.h"
 
@@ -895,6 +894,7 @@ static CGFloat interpolateShadow(CGFloat val) {
     return (CGFloat)(expm1(val * scale) / expm1(scale));
 }
 
+#if !TARGET_OS_IPHONE
 void HFDrawShadow(CGContextRef ctx, NSRect rect, CGFloat shadowSize, NSRectEdge rectEdge, BOOL drawActive, NSRect clip) {
     NSRect remainingRect, unused;
     NSDivideRect(rect, &remainingRect, &unused, shadowSize, rectEdge);
@@ -972,3 +972,4 @@ CGContextRef HFGraphicsGetCurrentContext(void) {
 #endif
     return ctx;
 }
+#endif

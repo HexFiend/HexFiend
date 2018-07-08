@@ -8,7 +8,7 @@
 #import <HexFiend/HFByteArrayEditScript.h>
 #import <HexFiend/HFByteArray.h>
 #import <HexFiend/HFProgressTracker.h>
-#import <HexFiend/HFByteArray_Internal.h>
+#import "HFByteArray_Internal.h"
 #include <malloc/malloc.h>
 #include <libkern/OSAtomic.h>
 #include <pthread.h>

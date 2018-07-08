@@ -5,7 +5,6 @@
 //  Copyright 2007 ridiculous_fish. All rights reserved.
 //
 
-#import <Cocoa/Cocoa.h>
 #import <HexFiend/HFLineCountingRepresenter.h>
 
 @interface HFLineCountingView : NSView {

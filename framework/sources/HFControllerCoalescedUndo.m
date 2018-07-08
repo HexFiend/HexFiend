@@ -5,7 +5,7 @@
 //  Copyright 2007 ridiculous_fish. All rights reserved.
 //
 
-#import <HexFiend/HFControllerCoalescedUndo.h>
+#import "HFControllerCoalescedUndo.h"
 #import <HexFiend/HFFullMemoryByteArray.h>
 #import <objc/objc-auto.h>
 

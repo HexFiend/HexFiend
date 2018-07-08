@@ -5,7 +5,6 @@
 //  Copyright 2008 ridiculous_fish. All rights reserved.
 //
 
-#import <Cocoa/Cocoa.h>
 #import <HexFiend/HFStringEncoding.h>
 
 @class HFLayoutRepresenter, HFRepresenter, HFController, HFHexTextRepresenter, HFStringEncodingTextRepresenter;
