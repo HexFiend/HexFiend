@@ -477,7 +477,7 @@ enum LineCoverage_t {
                 if (! [self shouldAntialias]) CGContextSetShouldAntialias(ctx, NO);
                 CGContextScaleCTM(ctx, imageScale, imageScale);
                 CGContextTranslateCTM(ctx, -windowFrameInBoundsCoords.origin.x, -windowFrameInBoundsCoords.origin.y);
-                [self drawTextWithClip:windowFrameInBoundsCoords restrictingToTextInRanges:ranges];
+                [self drawTextWithClip:windowFrameInBoundsCoords restrictingToTextInRanges:ranges context:ctx];
                 [image unlockFocus];
                 [pulseView setImage:image];
                 
@@ -500,17 +500,19 @@ enum LineCoverage_t {
 #endif
 }
 
-- (void)drawCaretIfNecessaryWithClip:(CGRect)clipRect {
+- (void)drawCaretIfNecessaryWithClip:(CGRect)clipRect context:(CGContextRef)ctx {
     CGRect caretRect = CGRectIntersection(caretRectToDraw, clipRect);
     if (! CGRectIsEmpty(caretRect)) {
-#if !TARGET_OS_IPHONE
+#if TARGET_OS_IPHONE
+        [[UIColor blackColor] set];
+#else
         if (@available(macOS 10.10, *)) {
             [[NSColor labelColor] set];
         } else {
             [[NSColor blackColor] set];
         }
-        NSRectFill(caretRect);
 #endif
+        CGContextFillRect(ctx, caretRect);
         lastDrawnCaretRect = caretRect;
     }
     if (CGRectIsEmpty(caretRectToDraw)) lastDrawnCaretRect = CGRectZero;
@@ -559,26 +561,19 @@ enum LineCoverage_t {
 }
 #endif
 
-- (void)drawRangesIfNecessaryWithClip:(CGRect)clipRect {
+- (void)drawRangesIfNecessaryWithClip:(CGRect)clipRect context:(CGContextRef)ctx {
     for (NSDictionary *dict in cachedColorRanges) {
-#if TARGET_OS_IPHONE
-        UIColor
-#else
-        NSColor
-#endif
-            *color = dict[@"color"];
-        NSValue *wrapper = dict[@"range"];
-        [self drawRangesIfNecessary:@[wrapper] withClip:clipRect color:color];
+        [self drawRangesIfNecessary:@[dict[@"range"]] withClip:clipRect color:dict[@"color"] context:ctx];
     }
 
     NSArray *ranges = [self displayedSelectedContentsRanges];
-    [self drawRangesIfNecessary:ranges withClip:clipRect color:[self textSelectionColor]];    
+    [self drawRangesIfNecessary:ranges withClip:clipRect color:[self textSelectionColor] context:ctx];
 }
 
 #if TARGET_OS_IPHONE
-- (void)drawRangesIfNecessary:(NSArray *)ranges withClip:(CGRect)clipRect color:(UIColor *)color
+- (void)drawRangesIfNecessary:(NSArray *)ranges withClip:(CGRect)clipRect color:(UIColor *)color context:(CGContextRef)ctx
 #else
-- (void)drawRangesIfNecessary:(NSArray *)ranges withClip:(CGRect)clipRect color:(NSColor *)color
+- (void)drawRangesIfNecessary:(NSArray *)ranges withClip:(CGRect)clipRect color:(NSColor *)color context:(CGContextRef)ctx
 #endif
 {
     NSUInteger bytesPerLine = [self bytesPerLine];
@@ -598,9 +593,7 @@ enum LineCoverage_t {
                 CGRect selectionRect = CGRectMake(startPoint.x, startPoint.y, endPoint.x + [self advancePerCharacter] - startPoint.x, lineHeight);
                 CGRect clippedSelectionRect = CGRectIntersection(selectionRect, clipRect);
                 if (! CGRectIsEmpty(clippedSelectionRect)) {
-#if !TARGET_OS_IPHONE
-                    NSRectFillUsingOperation(clippedSelectionRect, NSCompositeSourceOver);
-#endif
+                    CGContextFillRect(ctx, clippedSelectionRect);
                 }
                 byteIndex = endByteForThisLineOfRange + 1;
             }
@@ -1034,7 +1027,7 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
 }
 
 /* Draw vertical guidelines every four bytes */
-- (void)drawVerticalGuideLines:(CGRect)clip {
+- (void)drawVerticalGuideLines:(CGRect)clip context:(CGContextRef)ctx {
     if (bytesBetweenVerticalGuides == 0) return;
     
     NSUInteger bytesPerLine = [self bytesPerLine];
@@ -1059,17 +1052,22 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
         guideIndex++;
     }
     if (rectIndex > 0) {
-#if !TARGET_OS_IPHONE
-        NSCompositingOperation op;
         if (HFDarkModeEnabled()) {
+#if !TARGET_OS_IPHONE
             [[NSColor colorWithCalibratedWhite:0.2 alpha:1] set];
-            op = NSCompositePlusLighter;
-        } else {
-            [[NSColor colorWithCalibratedWhite:0.8 alpha:1] set];
-            op = NSCompositePlusDarker;
-        }
-        NSRectFillListUsingOperation(lineRects, rectIndex, op);
+#else
+            [[UIColor colorWithWhite:(CGFloat)0.2 alpha:1] set];
 #endif
+            CGContextSetBlendMode(ctx, kCGBlendModeLighten);
+        } else {
+#if !TARGET_OS_IPHONE
+            [[NSColor colorWithCalibratedWhite:0.8 alpha:1] set];
+#else
+            [[UIColor colorWithWhite:(CGFloat)0.8 alpha:1] set];
+#endif
+            CGContextSetBlendMode(ctx, kCGBlendModeDarken);
+        }
+        CGContextFillRects(ctx, lineRects, rectIndex);
     }
     FREE_ARRAY(lineRects);
 }
@@ -1096,11 +1094,11 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
     }
     reverse <<= s; // shift when v's highest bits are zero
     
-    double hue = reverse / (1. + NSUIntegerMax);
+    CGFloat hue = (CGFloat)reverse / ((CGFloat)1. + NSUIntegerMax);
 #if TARGET_OS_IPHONE
-    return [UIColor colorWithHue:hue saturation:1. brightness:.6 alpha:alpha];
+    return [UIColor colorWithHue:hue saturation:1. brightness:(CGFloat).6 alpha:alpha];
 #else
-    return [NSColor colorWithCalibratedHue:hue saturation:1. brightness:.6 alpha:alpha];
+    return [NSColor colorWithCalibratedHue:hue saturation:(CGFloat)1. brightness:(CGFloat).6 alpha:alpha];
 #endif
 }
 
@@ -1533,8 +1531,7 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
     if (resultingGlyphCount) *resultingGlyphCount = glyphBufferIndex;
 }
 
-- (void)drawTextWithClip:(CGRect)clip restrictingToTextInRanges:(NSArray *)restrictingToRanges {
-    CGContextRef ctx = HFGraphicsGetCurrentContext();
+- (void)drawTextWithClip:(CGRect)clip restrictingToTextInRanges:(NSArray *)restrictingToRanges context:(CGContextRef)ctx {
     CGRect bounds = [self bounds];
     CGFloat lineHeight = [self lineHeight];
     
@@ -1724,12 +1721,12 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
 }
 
 - (void)drawRect:(CGRect)clip {
-    [[self backgroundColorForEmptySpace] set];
-#if !TARGET_OS_IPHONE
-    NSRectFillUsingOperation(clip, NSCompositeSourceOver);
-#endif
-    BOOL antialias = [self shouldAntialias];
     CGContextRef ctx = HFGraphicsGetCurrentContext();
+    
+    [[self backgroundColorForEmptySpace] set];
+    CGContextFillRect(ctx, clip);
+
+    BOOL antialias = [self shouldAntialias];
     
 #if !TARGET_OS_IPHONE
     [[self.font screenFont] set];
@@ -1747,23 +1744,23 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
     NSUInteger byteCount = [_data length];
     
     [self _drawDefaultLineBackgrounds:clip withLineHeight:[self lineHeight] maxLines:ll2l(HFRoundUpToNextMultipleSaturate(byteCount, bytesPerLine) / bytesPerLine)];
-    [self drawRangesIfNecessaryWithClip:clip];
+    [self drawRangesIfNecessaryWithClip:clip context:ctx];
     
     if (! antialias) {
         CGContextSaveGState(ctx);
         CGContextSetShouldAntialias(ctx, NO);
     }
-    [self drawTextWithClip:clip restrictingToTextInRanges:nil];
+    [self drawTextWithClip:clip restrictingToTextInRanges:nil context:ctx];
     if (! antialias) {
         CGContextRestoreGState(ctx);
     }
     
     // Vertical dividers only make sense in single byte mode.
     if ([self _effectiveBytesPerColumn] == 1) {
-        [self drawVerticalGuideLines:clip];
+        [self drawVerticalGuideLines:clip context:ctx];
     }
     
-    [self drawCaretIfNecessaryWithClip:clip];
+    [self drawCaretIfNecessaryWithClip:clip context:ctx];
     
     [self drawBookmarksWithClip:clip];
 }
@@ -2099,14 +2096,11 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
     }
 }
 
-- (BOOL)handleCommand:(SEL)sel {
 #if !TARGET_OS_IPHONE
+- (BOOL)handleCommand:(SEL)sel {
     if (sel == @selector(insertTabIgnoringFieldEditor:)) {
         [self insertText:@"\t"];
-    }
-    else
-#endif
-    if ([self respondsToSelector:sel]) {
+    } else if ([self respondsToSelector:sel]) {
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
         [self performSelector:sel withObject:nil];
@@ -2118,7 +2112,6 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
     return YES;
 }
 
-#if !TARGET_OS_IPHONE
 - (void)doCommandBySelector:(SEL)sel {
     HFRepresenter *rep = [self representer];
     //    NSLog(@"%s%s", _cmd, sel);

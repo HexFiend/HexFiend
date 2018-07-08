@@ -112,8 +112,6 @@ NSView
 /* Uniformly "rounds" the byte range so that it contains an integer number of characters.  The algorithm is to "floor:" any character intersecting the min of the range are included, and any character extending beyond the end of the range is excluded. If both the min and the max are within a single character, then an empty range is returned. */
 - (NSRange)roundPartialByteRange:(NSRange)byteRange;
 
-- (void)drawTextWithClip:(CGRect)clipRect restrictingToTextInRanges:(nullable NSArray *)restrictingToRanges;
-
 /* Must be overridden */
 - (void)extractGlyphsForBytes:(const unsigned char *)bytes count:(NSUInteger)numBytes offsetIntoLine:(NSUInteger)offsetIntoLine intoArray:(struct HFGlyph_t *)glyphs advances:(CGSize *)advances resultingGlyphCount:(NSUInteger *)resultGlyphCount;
 
