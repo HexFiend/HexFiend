@@ -5,10 +5,11 @@
 //  Copyright 2007 ridiculous_fish. All rights reserved.
 //
 
-#import <HexFiend/HFRepresenterStringEncodingTextView.h>
-#import <HexFiend/HFTextRepresenter_Internal.h>
+#import "HFRepresenterStringEncodingTextView.h"
+#import "HFTextRepresenter_Internal.h"
 #import <HexFiend/HFNSStringEncoding.h>
 #include <malloc/malloc.h>
+#import <CoreText/CoreText.h>
 
 static NSString *copy1CharStringForByteValue(unsigned long long byteValue, NSUInteger bytesPerChar, HFStringEncoding *encoding) {
     NSString *result = nil;
@@ -58,12 +59,12 @@ static NSString *copy1CharStringForByteValue(unsigned long long byteValue, NSUIn
     return result;
 }
 
-static BOOL getGlyphs(CGGlyph *glyphs, NSString *string, NSFont *inputFont) {
+static BOOL getGlyphs(CGGlyph *glyphs, NSString *string, CTFontRef inputFont) {
     NSUInteger length = [string length];
     HFASSERT(inputFont != nil);
     NEW_ARRAY(UniChar, chars, length);
     [string getCharacters:chars range:NSMakeRange(0, length)];
-    bool result = CTFontGetGlyphsForCharacters((CTFontRef)inputFont, chars, glyphs, length);
+    bool result = CTFontGetGlyphsForCharacters(inputFont, chars, glyphs, length);
     /* A NO return means some or all characters were not mapped.  This is OK.  We'll use the replacement glyph.  Unless we're calculating the replacement glyph!  Hmm...maybe we should have a series of replacement glyphs that we try? */
     
     ////////////////////////
@@ -72,7 +73,7 @@ static BOOL getGlyphs(CGGlyph *glyphs, NSString *string, NSFont *inputFont) {
     if(!result) for(NSUInteger i = 0; i < length; i+=15) {
         CFIndex x = length-i;
         if(x > 15) x = 15;
-        result = CTFontGetGlyphsForCharacters((CTFontRef)inputFont, chars+i, glyphs+i, x);
+        result = CTFontGetGlyphsForCharacters(inputFont, chars+i, glyphs+i, x);
         if(!result) break;
     }
     ////////////////////////
@@ -81,14 +82,14 @@ static BOOL getGlyphs(CGGlyph *glyphs, NSString *string, NSFont *inputFont) {
     return result;
 }
 
-static void generateGlyphs(NSFont *baseFont, NSMutableArray *fonts, struct HFGlyph_t *outGlyphs, NSInteger bytesPerChar, HFStringEncoding *encoding, const NSUInteger *charactersToLoad, NSUInteger charactersToLoadCount, CGFloat *outMaxAdvance) {
+static void generateGlyphs(CTFontRef baseFont, NSMutableArray *fonts, struct HFGlyph_t *outGlyphs, NSInteger bytesPerChar, HFStringEncoding *encoding, const NSUInteger *charactersToLoad, NSUInteger charactersToLoadCount, CGFloat *outMaxAdvance) {
     /* If the caller wants the advance, initialize it to 0 */
     if (outMaxAdvance) *outMaxAdvance = 0;
     
     /* Invalid glyph marker */
     const struct HFGlyph_t invalidGlyph = {.fontIndex = kHFGlyphFontIndexInvalid, .glyph = -1};
     
-    NSCharacterSet *coveredSet = [baseFont coveredCharacterSet];
+    NSCharacterSet *coveredSet = (__bridge_transfer NSCharacterSet *)CTFontCopyCharacterSet(baseFont);
     NSMutableString *coveredGlyphFetchingString = [[NSMutableString alloc] init];
     NSMutableIndexSet *coveredGlyphIndexes = [[NSMutableIndexSet alloc] init];
     NSMutableString *substitutionFontsGlyphFetchingString = [[NSMutableString alloc] init];
@@ -129,8 +130,11 @@ static void generateGlyphs(NSFont *baseFont, NSMutableArray *fonts, struct HFGly
             coveredGlyphIdx = [coveredGlyphIndexes indexGreaterThanIndex:coveredGlyphIdx];
             
             /* Record the advancement.  Note that this may be more efficient to do in bulk. */
-            if (outMaxAdvance) *outMaxAdvance = HFMax(*outMaxAdvance, [baseFont advancementForGlyph:cgglyphs[i]].width);
-            
+            if (outMaxAdvance) {
+                CGSize advance;
+                CTFontGetAdvancesForGlyphs(baseFont, kCTFontOrientationVertical, cgglyphs + i, &advance, 1);
+                *outMaxAdvance = HFMax(*outMaxAdvance, advance.width);
+            }
         }
         HFASSERT(coveredGlyphIdx == NSNotFound); //we must have exhausted the table
         FREE_ARRAY(cgglyphs);
@@ -146,7 +150,7 @@ static void generateGlyphs(NSFont *baseFont, NSMutableArray *fonts, struct HFGly
                 CGGlyph glyph;
                 unichar c = [substitutionFontsGlyphFetchingString characterAtIndex:i];
                 NSString *substring = [[NSString alloc] initWithCharacters:&c length:1];
-                BOOL success = getGlyphs(&glyph, substring, (__bridge NSFont *)substitutionFont);
+                BOOL success = getGlyphs(&glyph, substring, substitutionFont);
                 
                 if (! success) {
                     /* Turns out there wasn't a glyph like we thought there would be, so set an invalid glyph marker */
@@ -204,16 +208,13 @@ static int compareGlyphFontIndexes(const void *p1, const void *p2) {
     requestedCharacters = nil;
     OSSpinLockUnlock(&glyphLoadLock);
     
-    /* The base font is the first font */
-    NSFont *font = localFonts[0];
-    
     NSUInteger charVal, glyphIdx, charCount = [charactersToLoad count];
     NEW_ARRAY(struct HFGlyph_t, glyphs, charCount);
     
     /* Now generate our glyphs */
     NEW_ARRAY(NSUInteger, characters, charCount);
     [charactersToLoad getIndexes:characters maxCount:charCount inIndexRange:NULL];
-    generateGlyphs(font, localFonts, glyphs, bytesPerChar, self.encoding, characters, charCount, NULL);
+    generateGlyphs((__bridge CTFontRef)localFonts[0], localFonts, glyphs, bytesPerChar, self.encoding, characters, charCount, NULL);
     FREE_ARRAY(characters);
     
     /* Replace fonts.  Do this before we insert into the glyph trie, because the glyph trie references fonts that we're just now putting in the fonts array. */
@@ -234,7 +235,11 @@ static int compareGlyphFontIndexes(const void *p1, const void *p2) {
 
 - (void)triggerRedisplay:unused {
     USE(unused);
+#if TARGET_OS_IPHONE
+    [self setNeedsDisplay];
+#else
     [self setNeedsDisplay:YES];
+#endif
 }
 
 - (void)beginLoadGlyphsForCharacters:(NSIndexSet *)charactersToLoad {
@@ -244,8 +249,7 @@ static int compareGlyphFontIndexes(const void *p1, const void *p2) {
         [glyphLoader setMaxConcurrentOperationCount:1];
     }
     if (! fonts) {
-        NSFont *font = [self font];
-        fonts = [[NSMutableArray alloc] initWithObjects:&font count:1];
+        fonts = [NSMutableArray arrayWithObject:self.font];
     }
     
     BOOL needToStartOperation;    
@@ -283,7 +287,12 @@ static int compareGlyphFontIndexes(const void *p1, const void *p2) {
     fontCache = nil;
 }
 
-- (void)setFont:(NSFont *)font {
+#if TARGET_OS_IPHONE
+- (void)setFont:(UIFont *)font
+#else
+- (void)setFont:(NSFont *)font
+#endif
+{
     [self staleTieredProperties];
     /* fonts is preloaded with our one font */
     if (! fonts) fonts = [[NSMutableArray alloc] init];
@@ -300,7 +309,7 @@ static int compareGlyphFontIndexes(const void *p1, const void *p2) {
     return self;
 }
 
-- (instancetype)initWithFrame:(NSRect)frameRect {
+- (instancetype)initWithFrame:(CGRect)frameRect {
     self = [super initWithFrame:frameRect];
     encoding = [HFNSStringEncoding ascii];
     bytesPerChar = encoding.fixedBytesPerCharacter;
@@ -334,16 +343,26 @@ static int compareGlyphFontIndexes(const void *p1, const void *p2) {
         HFGlyphTrieInitialize(&glyphTable, bytesPerChar);
 		
         /* Redraw ourselves with our new glyphs */
+#if TARGET_OS_IPHONE
+        [self setNeedsDisplay];
+#else
         [self setNeedsDisplay:YES];
+#endif
     }
 }
 
 - (void)loadTier1Data {
-    NSFont *font = [self font];
+    CTFontRef font = (__bridge CTFontRef)[self font];
     
     /* Use the max advance as the glyph advance */
-    glyphAdvancement = HFCeil([font maximumAdvancement].width);
-    
+#if !TARGET_OS_IPHONE
+    glyphAdvancement = HFCeil([(__bridge NSFont *)font maximumAdvancement].width);
+#else
+    // private API :(
+    extern CGSize CTFontGetMaximumAdvance(CTFontRef);
+    glyphAdvancement = HFCeil(CTFontGetMaximumAdvance(font).width);
+#endif
+
     /* Generate replacementGlyph */
     CGGlyph glyph[1];
     BOOL foundReplacement = NO;
@@ -362,7 +381,12 @@ static int compareGlyphFontIndexes(const void *p1, const void *p2) {
 }
 
 /* Override of base class method for font substitution */
-- (NSFont *)fontAtSubstitutionIndex:(uint16_t)idx {
+#if TARGET_OS_IPHONE
+- (UIFont *)fontAtSubstitutionIndex:(uint16_t)idx
+#else
+- (NSFont *)fontAtSubstitutionIndex:(uint16_t)idx
+#endif
+{
     HFASSERT(idx != kHFGlyphFontIndexInvalid);
     if (idx >= [fontCache count]) {
         /* Our font cache is out of date.  Take the lock and update the cache. */
@@ -455,7 +479,9 @@ static int compareGlyphFontIndexes(const void *p1, const void *p2) {
     USE(sender);
     HFTextRepresenter *rep = [self representer];
     HFASSERT([rep isKindOfClass:[HFTextRepresenter class]]);
+#if !TARGET_OS_IPHONE
     [rep copySelectedBytesToPasteboard:[NSPasteboard generalPasteboard] encoding:[HFNSStringEncoding ascii]];
+#endif
 }
 
 @end

@@ -5,14 +5,16 @@
 //  Copyright 2007 ridiculous_fish. All rights reserved.
 //
 
-#import <HexFiend/HFTextRepresenter_Internal.h>
+#import "HFTextRepresenter_Internal.h"
 #import <HexFiend/HFRepresenterTextView.h>
+#if !TARGET_OS_IPHONE
 #import <HexFiend/HFPasteboardOwner.h>
+#endif
 #import <HexFiend/HFByteArray.h>
 #import <HexFiend/HFByteRangeAttributeArray.h>
-#import <HexFiend/HFTextVisualStyleRun.h>
+#import "HFTextVisualStyleRun.h"
 #import <HexFiend/HFByteRangeAttribute.h>
-#import <HexFiend/HFColorRange.h>
+#import "HFColorRange.h"
 
 @implementation HFTextRepresenter {
     NSUInteger _clickedLocation;
@@ -22,7 +24,11 @@
     UNIMPLEMENTED();
 }
 
-+ (NSArray<NSColor *> *)defaultRowBackgroundColors {
++ (NSArray<HFColor *> *)defaultRowBackgroundColors {
+#if TARGET_OS_IPHONE
+    UIColor *color1 = [UIColor colorWithWhite:1.0 alpha:1.0];
+    UIColor *color2 = [UIColor colorWithRed:.87 green:.89 blue:1. alpha:1.];
+#else
     if (@available(macOS 10.14, *)) {
         if (HFDarkModeEnabled()) {
             return [NSColor alternatingContentBackgroundColors];
@@ -30,10 +36,11 @@
     }
     NSColor *color1 = [NSColor colorWithCalibratedWhite:1.0 alpha:1.0];
     NSColor *color2 = [NSColor colorWithCalibratedRed:.87 green:.89 blue:1. alpha:1.];
+#endif
     return @[color1, color2];
 }
 
-- (NSArray<NSColor *> *)rowBackgroundColors {
+- (NSArray<HFColor *> *)rowBackgroundColors {
     // If set use the customized value, otherwise return the default.
     // This must be dynamic and not stored so we can update live on redraw
     // when the appearance changes.
@@ -64,9 +71,11 @@
     return self;
 }
 
-- (NSView *)createView {
+- (HFView *)createView {
     HFRepresenterTextView *view = [[[self _textViewClass] alloc] initWithRepresenter:self];
+#if !TARGET_OS_IPHONE
     [view setAutoresizingMask:NSViewHeightSizable];
+#endif
     return view;
 }
 
@@ -100,7 +109,7 @@
     HFASSERT(byteRange.length > 0);
     HFRange displayedRange = [self entireDisplayedRange];
     HFRange intersection = HFIntersectionRange(displayedRange, byteRange);
-    NSRect result = NSZeroRect;
+    CGRect result = CGRectZero;
     if (intersection.length > 0) {
         NSRange intersectionNSRange = NSMakeRange(ll2l(intersection.location - displayedRange.location), ll2l(intersection.length));
         if (intersectionNSRange.length > 0) {
@@ -109,11 +118,11 @@
     }
     else if (byteRange.location < displayedRange.location) {
         /* We're below it. */
-        return NSMakeRect(-CGFLOAT_MAX, -CGFLOAT_MAX, 0, 0);
+        return CGRectMake(-CGFLOAT_MAX, -CGFLOAT_MAX, 0, 0);
     }
     else if (byteRange.location >= HFMaxRange(displayedRange)) {
         /* We're above it */
-        return NSMakeRect(CGFLOAT_MAX, CGFLOAT_MAX, 0, 0);
+        return CGRectMake(CGFLOAT_MAX, CGFLOAT_MAX, 0, 0);
     }
     else {
         /* Shouldn't be possible to get here */
@@ -122,18 +131,18 @@
     return result;
 }
 
-- (NSPoint)locationOfCharacterAtByteIndex:(unsigned long long)index {
-    NSPoint result;
+- (CGPoint)locationOfCharacterAtByteIndex:(unsigned long long)index {
+    CGPoint result;
     HFRange displayedRange = [self entireDisplayedRange];
     if (HFLocationInRange(index, displayedRange) || index == HFMaxRange(displayedRange)) {
         NSUInteger location = ll2l(index - displayedRange.location);
         result = [[self view] originForCharacterAtByteIndex:location];
     }
     else if (index < displayedRange.location) {
-        result = NSMakePoint(-CGFLOAT_MAX, -CGFLOAT_MAX);
+        result = CGPointMake(-CGFLOAT_MAX, -CGFLOAT_MAX);
     }
     else {
-        result = NSMakePoint(CGFLOAT_MAX, CGFLOAT_MAX);
+        result = CGPointMake(CGFLOAT_MAX, CGFLOAT_MAX);
     }
     return result;
 }
@@ -142,38 +151,38 @@
     HFTextVisualStyleRun *run = [[HFTextVisualStyleRun alloc] init];
     [run setRange:range];
     if ([attributes containsObject:kHFAttributeMagic]) {
-        [run setForegroundColor:[NSColor blueColor]];
-        [run setBackgroundColor:[NSColor orangeColor]];
+        [run setForegroundColor:[HFColor blueColor]];
+        [run setBackgroundColor:[HFColor orangeColor]];
     }
     else {
-        NSColor *foregroundColor;
+        HFColor *foregroundColor = [HFColor blackColor];
+#if !TARGET_OS_IPHONE
         if (@available(macOS 10.10, *)) {
             foregroundColor = [NSColor labelColor];
-        } else {
-            foregroundColor = [NSColor blackColor];
         }
+#endif
         [run setForegroundColor:foregroundColor];
     }
     if ([attributes containsObject:kHFAttributeUnmapped]) {
         [run setShouldDraw:NO];
     }
     if ([attributes containsObject:kHFAttributeUnreadable]) {
-        [run setBackgroundColor:[NSColor colorWithCalibratedWhite:.5 alpha:.5]];
+        [run setBackgroundColor:HFColorWithWhite(.5, .5)];
     }
     else if ([attributes containsObject:kHFAttributeWritable]) {
-        [run setBackgroundColor:[NSColor colorWithCalibratedRed:.5 green:1. blue:.5 alpha:.5]];
+        [run setBackgroundColor:HFColorWithRGB(.5, 1., .5, .5)];
     }
     else if ([attributes containsObject:kHFAttributeExecutable]) {
-        [run setBackgroundColor:[NSColor colorWithCalibratedRed:1. green:.5 blue:0. alpha:.5]];
+        [run setBackgroundColor:HFColorWithRGB(1., .5, 0., .5)];
     }
     if ([attributes containsObject:kHFAttributeFocused]) {
-        [run setBackgroundColor:[NSColor colorWithCalibratedRed:(CGFloat)128/255. green:(CGFloat)0/255. blue:0/255. alpha:1.]];
+        [run setBackgroundColor:HFColorWithRGB((CGFloat)128/255., (CGFloat)0/255., 0/255., 1.)];
         [run setScale:1.15];
-        [run setForegroundColor:[NSColor whiteColor]];
+        [run setForegroundColor:[HFColor whiteColor]];
     }
     else if ([attributes containsObject:kHFAttributeDiffInsertion]) {
         CGFloat white = 180;
-        [run setBackgroundColor:[NSColor colorWithCalibratedRed:(CGFloat)255./255. green:(CGFloat)white/255. blue:white/255. alpha:.7]];
+        [run setBackgroundColor:HFColorWithRGB((CGFloat)255./255., (CGFloat)white/255., white/255., .7)];
     }
     
     /* Process bookmarks */
@@ -234,13 +243,17 @@
         [self updateText];
     }
     else {
+#if !TARGET_OS_IPHONE
         [view setFont:[NSFont fontWithName:HFDEFAULT_FONT size:HFDEFAULT_FONTSIZE]];
+#endif
     }
 }
 
+#if !TARGET_OS_IPHONE
 - (void)scrollWheel:(NSEvent *)event {
     [[self controller] scrollWithScrollEvent:event];
 }
+#endif
 
 - (void)selectAll:(id)sender {
     [[self controller] selectAll:sender];
@@ -287,7 +300,11 @@
     }
     if (bits & (HFControllerColorRanges)) {
         [[self view] updateSelectedRanges];
+#if TARGET_OS_IPHONE
+        [[self view] setNeedsDisplay];
+#else
         [[self view] setNeedsDisplay:YES];
+#endif
     }
     [super controllerDidChange:bits];
 }
@@ -408,6 +425,7 @@
     return byteIndex;
 }
 
+#if !TARGET_OS_IPHONE
 - (void)beginSelectionWithEvent:(NSEvent *)event forCharacterIndex:(NSUInteger)characterIndex {
     [[self controller] beginSelectionWithEvent:event forByteIndex:[self byteIndexForCharacterIndex:characterIndex]];
 }
@@ -419,12 +437,14 @@
 - (void)endSelectionWithEvent:(NSEvent *)event forCharacterIndex:(NSUInteger)characterIndex {
     [[self controller] endSelectionWithEvent:event forByteIndex:[self byteIndexForCharacterIndex:characterIndex]];
 }
+#endif
 
 - (void)insertText:(NSString *)text {
     USE(text);
     UNIMPLEMENTED_VOID();
 }
 
+#if !TARGET_OS_IPHONE
 - (void)copySelectedBytesToPasteboard:(NSPasteboard *)pb {
     USE(pb);
     UNIMPLEMENTED_VOID();
@@ -523,11 +543,13 @@
     menuItem.enabled = self.controller.colorRanges.count > 0;
     [menu addItem:menuItem];
 }
+#endif
 
 - (void)highlightSelection:(id __unused)sender {
     HFColorRange *range = [[HFColorRange alloc] init];
     range.range = self.controller.selectedContentsRanges[0];
     [self.controller.colorRanges addObject:range];
+#if !TARGET_OS_IPHONE
     NSColorPanel *panel = [NSColorPanel sharedColorPanel];
     id windowObserver = [[NSNotificationCenter defaultCenter] addObserverForName:NSWindowWillCloseNotification object:panel queue:nil usingBlock:^(NSNotification *note __unused) {
         [NSApp stopModal];
@@ -540,6 +562,7 @@
     (void)[NSApp runModalForWindow:panel];
     [[NSNotificationCenter defaultCenter] removeObserver:colorObserver];
     [[NSNotificationCenter defaultCenter] removeObserver:windowObserver];
+#endif
 }
 
 - (void)removeHighlight:(id __unused)sender {

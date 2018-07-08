@@ -54,6 +54,11 @@
 		A51D0E9120F2A8D200B55775 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A51D0E9020F2A8D200B55775 /* CoreText.framework */; };
 		A51D0E9220F2B74C00B55775 /* HFRepresenterHexTextView.h in Headers */ = {isa = PBXBuildFile; fileRef = D026C7B90CDD546C0082279E /* HFRepresenterHexTextView.h */; };
 		A51D0E9320F2B74F00B55775 /* HFRepresenterHexTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = D026C7BA0CDD546C0082279E /* HFRepresenterHexTextView.m */; };
+		A51D0E9420F2BAB700B55775 /* HFRepresenterStringEncodingTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = D0CDB7530CE735590084926B /* HFRepresenterStringEncodingTextView.m */; };
+		A51D0E9520F2BABA00B55775 /* HFRepresenterStringEncodingTextView.h in Headers */ = {isa = PBXBuildFile; fileRef = D0CDB7520CE735590084926B /* HFRepresenterStringEncodingTextView.h */; };
+		A51D0E9620F2C21500B55775 /* HFTextRepresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = D0A437380CDD4EDD000F7550 /* HFTextRepresenter.h */; };
+		A51D0E9720F2C21500B55775 /* HFTextRepresenter_Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = D061A28E10042D6A0049B8B8 /* HFTextRepresenter_Internal.h */; };
+		A51D0E9820F2C21500B55775 /* HFTextRepresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = D0A437390CDD4EDD000F7550 /* HFTextRepresenter.m */; };
 		A53B7D1A1E9185CF00CA3977 /* HFTestHashing.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D149300D8A37580018296B /* HFTestHashing.m */; };
 		A550A7191F7877F8001C79C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = A550A7181F7877F8001C79C7 /* main.m */; };
 		A550A7201F787831001C79C7 /* hexf in Resources */ = {isa = PBXBuildFile; fileRef = A550A7161F7877F8001C79C7 /* hexf */; };
@@ -1211,6 +1216,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A51D0E9620F2C21500B55775 /* HFTextRepresenter.h in Headers */,
 				A5EF28CA20F187B700CA7B39 /* HexFiend.h in Headers */,
 				A5EF28CB20F187B700CA7B39 /* HFByteArrayEditScript.h in Headers */,
 				A51D0E8620F1D58F00B55775 /* HFRepresenterTextView.h in Headers */,
@@ -1249,6 +1255,8 @@
 				A5EF28FF20F187B700CA7B39 /* HFByteRangeAttribute.h in Headers */,
 				A5EF290020F187B700CA7B39 /* HFByteRangeAttributeArray.h in Headers */,
 				A51D0E7F20F1D04E00B55775 /* HFRepresenter.h in Headers */,
+				A51D0E9520F2BABA00B55775 /* HFRepresenterStringEncodingTextView.h in Headers */,
+				A51D0E9720F2C21500B55775 /* HFTextRepresenter_Internal.h in Headers */,
 				A5EF290120F187B700CA7B39 /* HFAnnotatedTree.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1704,11 +1712,13 @@
 				A5EF292D20F187B700CA7B39 /* HFFastMemchr.m in Sources */,
 				A51D0E7C20F1CB7F00B55775 /* HFController.m in Sources */,
 				A5EF293020F187B700CA7B39 /* HFRandomDataByteSlice.m in Sources */,
+				A51D0E9820F2C21500B55775 /* HFTextRepresenter.m in Sources */,
 				A51D0E8D20F2A40C00B55775 /* HFRepresenterTextViewCallout.m in Sources */,
 				A5EF293120F187B700CA7B39 /* HFBTree.m in Sources */,
 				A5EF293220F187B700CA7B39 /* HFBTreeByteArray.m in Sources */,
 				A5EF293420F187B700CA7B39 /* HFByteArrayProxiedData.m in Sources */,
 				A5EF293520F187B700CA7B39 /* HFAttributedByteArray.m in Sources */,
+				A51D0E9420F2BAB700B55775 /* HFRepresenterStringEncodingTextView.m in Sources */,
 				A5EF293820F187B700CA7B39 /* HFByteRangeAttribute.m in Sources */,
 				A5EF293920F187B700CA7B39 /* HFByteRangeAttributeArray.m in Sources */,
 				A5EF293B20F187B700CA7B39 /* HFAnnotatedTree.m in Sources */,
