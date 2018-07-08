@@ -44,8 +44,11 @@
 		A51D0E8120F1D05200B55775 /* HFRepresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = D01E7C340CDC646800943F9E /* HFRepresenter.m */; };
 		A51D0E8420F1D4FA00B55775 /* HFColorRange.h in Headers */ = {isa = PBXBuildFile; fileRef = A5ED2A83200BD8F0004AD7A4 /* HFColorRange.h */; };
 		A51D0E8520F1D4FA00B55775 /* HFColorRange.m in Sources */ = {isa = PBXBuildFile; fileRef = A5ED2A84200BD8F0004AD7A4 /* HFColorRange.m */; };
+		A51D0E8620F1D58F00B55775 /* HFRepresenterTextView.h in Headers */ = {isa = PBXBuildFile; fileRef = D026C7AE0CDD50ED0082279E /* HFRepresenterTextView.h */; };
+		A51D0E8720F1D59200B55775 /* HFRepresenterTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = D026C7AF0CDD50ED0082279E /* HFRepresenterTextView.m */; };
 		A51D0E8920F1D86F00B55775 /* HFTextVisualStyleRun.m in Sources */ = {isa = PBXBuildFile; fileRef = D010173510491BB200536FBC /* HFTextVisualStyleRun.m */; };
 		A51D0E8A20F1D87200B55775 /* HFTextVisualStyleRun.h in Headers */ = {isa = PBXBuildFile; fileRef = D010173410491BB200536FBC /* HFTextVisualStyleRun.h */; };
+		A51D0E8C20F1E56700B55775 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A51D0E8B20F1E56600B55775 /* CoreGraphics.framework */; };
 		A53B7D1A1E9185CF00CA3977 /* HFTestHashing.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D149300D8A37580018296B /* HFTestHashing.m */; };
 		A550A7191F7877F8001C79C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = A550A7181F7877F8001C79C7 /* main.m */; };
 		A550A7201F787831001C79C7 /* hexf in Resources */ = {isa = PBXBuildFile; fileRef = A550A7161F7877F8001C79C7 /* hexf */; };
@@ -376,6 +379,7 @@
 		9408FC0F19DD8669004F800E /* HFPrivilegedHelperConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFPrivilegedHelperConnection.h; path = sources/HFPrivilegedHelperConnection.h; sourceTree = "<group>"; };
 		9483478F19DE188E0086A732 /* HFTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFTest.h; sourceTree = "<group>"; };
 		A51D0E7D20F1D01A00B55775 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.0.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
+		A51D0E8B20F1E56600B55775 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.0.sdk/System/Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
 		A550A7161F7877F8001C79C7 /* hexf */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = hexf; sourceTree = BUILT_PRODUCTS_DIR; };
 		A550A7181F7877F8001C79C7 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		A554E0CD20DF2CD3001B4C48 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/OpenDriveDialog.xib; sourceTree = "<group>"; };
@@ -631,6 +635,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A51D0E8C20F1E56700B55775 /* CoreGraphics.framework in Frameworks */,
 				A51D0E7E20F1D01A00B55775 /* UIKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -728,6 +733,7 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A51D0E8B20F1E56600B55775 /* CoreGraphics.framework */,
 				A51D0E7D20F1D01A00B55775 /* UIKit.framework */,
 				A5D8C8F120E9E58000103D60 /* libz.1.tbd */,
 				A567D7D420DA1D7C00F7C0A4 /* Sparkle.framework */,
@@ -1199,6 +1205,7 @@
 			files = (
 				A5EF28CA20F187B700CA7B39 /* HexFiend.h in Headers */,
 				A5EF28CB20F187B700CA7B39 /* HFByteArrayEditScript.h in Headers */,
+				A51D0E8620F1D58F00B55775 /* HFRepresenterTextView.h in Headers */,
 				A5EF28CC20F187B700CA7B39 /* HFGlyphTrie.h in Headers */,
 				A5EF28CD20F187B700CA7B39 /* HFFullMemoryByteArray.h in Headers */,
 				A5EF28CF20F187B700CA7B39 /* HFFullMemoryByteSlice.h in Headers */,
@@ -1671,6 +1678,7 @@
 				A5EF291420F187B700CA7B39 /* HFFullMemoryByteSlice.m in Sources */,
 				A5EF291520F187B700CA7B39 /* HFFullMemoryByteArray.m in Sources */,
 				A5EF291E20F187B700CA7B39 /* HFControllerCoalescedUndo.m in Sources */,
+				A51D0E8720F1D59200B55775 /* HFRepresenterTextView.m in Sources */,
 				A5EF292020F187B700CA7B39 /* HFByteArray_FindReplace.m in Sources */,
 				A5EF292220F187B700CA7B39 /* HFFileReference.m in Sources */,
 				A5EF292320F187B700CA7B39 /* HFFileByteSlice.m in Sources */,

@@ -96,7 +96,7 @@
     }
 }
 
-- (NSRect)furthestRectOnEdge:(NSRectEdge)edge forByteRange:(HFRange)byteRange {
+- (CGRect)furthestRectOnEdge:(CGRectEdge)edge forByteRange:(HFRange)byteRange {
     HFASSERT(byteRange.length > 0);
     HFRange displayedRange = [self entireDisplayedRange];
     HFRange intersection = HFIntersectionRange(displayedRange, byteRange);

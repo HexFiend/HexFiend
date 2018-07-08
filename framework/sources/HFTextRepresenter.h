@@ -24,11 +24,11 @@ NS_ASSUME_NONNULL_BEGIN
  
     This raises an exception if range is empty.
 */
-- (NSRect)furthestRectOnEdge:(NSRectEdge)edge forByteRange:(HFRange)range;
+- (CGRect)furthestRectOnEdge:(CGRectEdge)edge forByteRange:(HFRange)range;
 
 /*! Returns the origin of the character at the given byte index.  The returned point is in the coordinate space of the receiver's view.  If the character is not displayed because it would be above the displayed range, returns {0, -CGFLOAT_MAX}.  If it is not displayed because it is below the displayed range, returns {0, CGFLOAT_MAX}.  As a special affordance, you may pass a byte index one greater than the contents length of the controller, and it will return the result as if the byte existed.
  */
-- (NSPoint)locationOfCharacterAtByteIndex:(unsigned long long)byteIndex;
+- (CGPoint)locationOfCharacterAtByteIndex:(unsigned long long)byteIndex;
 
 /*! The per-row background colors. Each row is drawn with the next color in turn, cycling back to the beginning when the array is exhausted.  Any empty space is filled with the first color in the array.  If the array is empty, then the background is drawn with \c clearColor.
  */

@@ -149,14 +149,14 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
             leftRect.size = NSMakeSize(0, [[leftTextView controller] lineHeight]);
         }
         else {
-            leftRect = [left furthestRectOnEdge:NSMaxXEdge forByteRange:leftRange];
+            leftRect = [left furthestRectOnEdge:CGRectMaxXEdge forByteRange:leftRange];
         }
         if (rightRange.length == 0) {
             rightRect.origin = [right locationOfCharacterAtByteIndex:rightRange.location];
             rightRect.size = NSMakeSize(0, [[rightTextView controller] lineHeight]);
         }
         else {
-            rightRect = [right furthestRectOnEdge:NSMinXEdge forByteRange:rightRange];
+            rightRect = [right furthestRectOnEdge:CGRectMinXEdge forByteRange:rightRange];
         }
         //leftRect and rightRect may have origins of CGFLOAT_MAX and -CGFLOAT_MAX.  Converting them is a sketchy thing to do.  But in that case, the range type will be RangeIsAbove or RangeIsBelow, in which case the rect is ignored
         
