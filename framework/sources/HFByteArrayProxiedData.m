@@ -69,9 +69,12 @@ static NSData *newDataFromByteArray(HFByteArray *array) {
     return self;
 }
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-implementations"
 - (void)getBytes:(void *)buffer {
     return [self getBytes:buffer range:NSMakeRange(0, length)];
 }
+#pragma clang diagnostic pop
 
 - (void)getBytes:(void *)buffer length:(NSUInteger)len {
     return [self getBytes:buffer range:NSMakeRange(0, len)];
