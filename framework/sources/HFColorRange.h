@@ -6,13 +6,15 @@
 //  Copyright © 2018 ridiculous_fish. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
-
 @class HFRangeWrapper;
 
 @interface HFColorRange : NSObject
 
+#if TARGET_OS_IPHONE
+@property (readwrite) UIColor *color;
+#else
 @property (readwrite) NSColor *color;
+#endif
 @property (readwrite) HFRangeWrapper *range;
 
 @end
