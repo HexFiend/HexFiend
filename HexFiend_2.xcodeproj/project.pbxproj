@@ -44,6 +44,8 @@
 		A51D0E8120F1D05200B55775 /* HFRepresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = D01E7C340CDC646800943F9E /* HFRepresenter.m */; };
 		A51D0E8420F1D4FA00B55775 /* HFColorRange.h in Headers */ = {isa = PBXBuildFile; fileRef = A5ED2A83200BD8F0004AD7A4 /* HFColorRange.h */; };
 		A51D0E8520F1D4FA00B55775 /* HFColorRange.m in Sources */ = {isa = PBXBuildFile; fileRef = A5ED2A84200BD8F0004AD7A4 /* HFColorRange.m */; };
+		A51D0E8920F1D86F00B55775 /* HFTextVisualStyleRun.m in Sources */ = {isa = PBXBuildFile; fileRef = D010173510491BB200536FBC /* HFTextVisualStyleRun.m */; };
+		A51D0E8A20F1D87200B55775 /* HFTextVisualStyleRun.h in Headers */ = {isa = PBXBuildFile; fileRef = D010173410491BB200536FBC /* HFTextVisualStyleRun.h */; };
 		A53B7D1A1E9185CF00CA3977 /* HFTestHashing.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D149300D8A37580018296B /* HFTestHashing.m */; };
 		A550A7191F7877F8001C79C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = A550A7181F7877F8001C79C7 /* main.m */; };
 		A550A7201F787831001C79C7 /* hexf in Resources */ = {isa = PBXBuildFile; fileRef = A550A7161F7877F8001C79C7 /* hexf */; };
@@ -1220,6 +1222,7 @@
 				A51D0E7B20F1CB7F00B55775 /* HFController.h in Headers */,
 				A5EF28F320F187B700CA7B39 /* HFObjectGraph.h in Headers */,
 				A5EF28F420F187B700CA7B39 /* HFByteSliceFileOperationQueueEntry.h in Headers */,
+				A51D0E8A20F1D87200B55775 /* HFTextVisualStyleRun.h in Headers */,
 				A5EF28F820F187B700CA7B39 /* HFRandomDataByteSlice.h in Headers */,
 				A5EF28F920F187B700CA7B39 /* HFBTree.h in Headers */,
 				A51D0E8020F1D05200B55775 /* HFRepresenter_Internal.h in Headers */,
@@ -1664,6 +1667,7 @@
 				A5EF291120F187B700CA7B39 /* HFGlyphTrie.m in Sources */,
 				A5EF291220F187B700CA7B39 /* HFByteArray.m in Sources */,
 				A5EF291320F187B700CA7B39 /* HFByteSlice.m in Sources */,
+				A51D0E8920F1D86F00B55775 /* HFTextVisualStyleRun.m in Sources */,
 				A5EF291420F187B700CA7B39 /* HFFullMemoryByteSlice.m in Sources */,
 				A5EF291520F187B700CA7B39 /* HFFullMemoryByteArray.m in Sources */,
 				A5EF291E20F187B700CA7B39 /* HFControllerCoalescedUndo.m in Sources */,
