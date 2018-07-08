@@ -52,6 +52,8 @@
 		A51D0E8D20F2A40C00B55775 /* HFRepresenterTextViewCallout.m in Sources */ = {isa = PBXBuildFile; fileRef = D016437213E5F7BC00294E60 /* HFRepresenterTextViewCallout.m */; };
 		A51D0E8F20F2A43700B55775 /* HFRepresenterTextViewCallout.h in Headers */ = {isa = PBXBuildFile; fileRef = D016437113E5F7BB00294E60 /* HFRepresenterTextViewCallout.h */; };
 		A51D0E9120F2A8D200B55775 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A51D0E9020F2A8D200B55775 /* CoreText.framework */; };
+		A51D0E9220F2B74C00B55775 /* HFRepresenterHexTextView.h in Headers */ = {isa = PBXBuildFile; fileRef = D026C7B90CDD546C0082279E /* HFRepresenterHexTextView.h */; };
+		A51D0E9320F2B74F00B55775 /* HFRepresenterHexTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = D026C7BA0CDD546C0082279E /* HFRepresenterHexTextView.m */; };
 		A53B7D1A1E9185CF00CA3977 /* HFTestHashing.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D149300D8A37580018296B /* HFTestHashing.m */; };
 		A550A7191F7877F8001C79C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = A550A7181F7877F8001C79C7 /* main.m */; };
 		A550A7201F787831001C79C7 /* hexf in Resources */ = {isa = PBXBuildFile; fileRef = A550A7161F7877F8001C79C7 /* hexf */; };
@@ -1222,6 +1224,7 @@
 				A5EF28DB20F187B700CA7B39 /* HFByteArray_Internal.h in Headers */,
 				A5EF28DE20F187B700CA7B39 /* HFStringEncoding.h in Headers */,
 				A5EF28E120F187B700CA7B39 /* HFFunctions_Private.h in Headers */,
+				A51D0E9220F2B74C00B55775 /* HFRepresenterHexTextView.h in Headers */,
 				A5EF28E420F187B700CA7B39 /* HFCustomEncoding.h in Headers */,
 				A5EF28E720F187B700CA7B39 /* HFControllerCoalescedUndo.h in Headers */,
 				A5EF28E820F187B700CA7B39 /* HFNSStringEncoding.h in Headers */,
@@ -1696,6 +1699,7 @@
 				A5EF292920F187B700CA7B39 /* HFByteArrayEditScript.m in Sources */,
 				A5EF292A20F187B700CA7B39 /* HFByteSliceFileOperation.m in Sources */,
 				A5EF292B20F187B700CA7B39 /* HFObjectGraph.m in Sources */,
+				A51D0E9320F2B74F00B55775 /* HFRepresenterHexTextView.m in Sources */,
 				A5EF292C20F187B700CA7B39 /* HFByteSliceFileOperationQueueEntry.m in Sources */,
 				A5EF292D20F187B700CA7B39 /* HFFastMemchr.m in Sources */,
 				A51D0E7C20F1CB7F00B55775 /* HFController.m in Sources */,
