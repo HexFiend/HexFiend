@@ -25,12 +25,6 @@
 - (void)scrollToFocusedInstruction;
 @end
 
-@interface NSEvent (HFLionStuff)
-- (CGFloat)scrollingDeltaY;
-- (BOOL)hasPreciseScrollingDeltas;
-- (CGFloat)deviceDeltaY;
-@end
-
 @implementation DiffDocument
 
 /* Returns either nil, or an array of two documents that would be compared in the "Compare (Range of) Front Documents" menu item. */

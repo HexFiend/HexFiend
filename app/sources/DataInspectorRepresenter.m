@@ -17,9 +17,6 @@
 
 #define kScrollViewExtraPadding ((CGFloat)2.)
 
-/* Declaration of SnowLeopard only property so we can build on Leopard */
-#define NSTableViewSelectionHighlightStyleNone (-1)
-
 /* The largest number of bytes that any inspector type can edit */
 #define MAX_EDITABLE_BYTE_COUNT 128
 #define INVALID_EDITING_BYTE_COUNT NSUIntegerMax

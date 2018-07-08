@@ -67,12 +67,6 @@ typedef NS_ENUM(NSInteger, HFControllerSelectAction) {
 - (void)_updateDisplayedRange;
 @end
 
-@interface NSEvent (HFLionStuff)
-- (CGFloat)scrollingDeltaY;
-- (BOOL)hasPreciseScrollingDeltas;
-- (CGFloat)deviceDeltaY;
-@end
-
 static inline Class preferredByteArrayClass(void) {
     return [HFAttributedByteArray class];
 }
@@ -1161,20 +1155,10 @@ static inline Class preferredByteArrayClass(void) {
     BOOL hasPreciseScroll;
     
     /* Prefer precise deltas */
-    if ([scrollEvent respondsToSelector:@selector(hasPreciseScrollingDeltas)]) {
-        hasPreciseScroll = [scrollEvent hasPreciseScrollingDeltas];
-        if (hasPreciseScroll) {
-            /* In this case, we're going to scroll by a certain number of points */
-            preciseScroll = [scrollEvent scrollingDeltaY];
-        }
-    } else if ([scrollEvent respondsToSelector:@selector(deviceDeltaY)]) {
-        /* Legacy (SnowLeopard) support */
-        hasPreciseScroll = ([scrollEvent subtype] == 1);
-        if (hasPreciseScroll) {
-            preciseScroll = [scrollEvent deviceDeltaY];
-        }
-    } else {
-        hasPreciseScroll = NO;
+    hasPreciseScroll = [scrollEvent hasPreciseScrollingDeltas];
+    if (hasPreciseScroll) {
+        /* In this case, we're going to scroll by a certain number of points */
+        preciseScroll = [scrollEvent scrollingDeltaY];
     }
     
     long double scrollY = 0;
