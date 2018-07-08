@@ -7,6 +7,7 @@
 
 #import "HFRepresenterTextViewCallout.h"
 #import "HFRepresenterTextView.h"
+#import <CoreText/CoreText.h>
 
 static const CGFloat HFTeardropRadius = 12;
 static const CGFloat HFTeadropTipScale = 2.5;
@@ -15,25 +16,37 @@ static const CGFloat HFShadowXOffset = -6;
 static const CGFloat HFShadowYOffset = 0;
 static const CGFloat HFShadowOffscreenHack = 3100;
 
-static NSPoint rotatePoint(NSPoint center, NSPoint point, CGFloat percent) {
+static CGPoint rotatePoint(CGPoint center, CGPoint point, CGFloat percent) {
     CGFloat radians = percent * M_PI * 2;
     CGFloat x = point.x - center.x;
     CGFloat y = point.y - center.y;
     CGFloat newX = x * cos(radians) + y * sin(radians);
     CGFloat newY = x * -sin(radians) + y * cos(radians);
-    return NSMakePoint(center.x + newX, center.y + newY);
+    return CGPointMake(center.x + newX, center.y + newY);
 }
 
-static NSPoint scalePoint(NSPoint center, NSPoint point, CGFloat percent) {
+static CGPoint scalePoint(CGPoint center, CGPoint point, CGFloat percent) {
     CGFloat x = point.x - center.x;
     CGFloat y = point.y - center.y;
     CGFloat newX = x * percent;
     CGFloat newY = y * percent;
-    return NSMakePoint(center.x + newX, center.y + newY);
+    return CGPointMake(center.x + newX, center.y + newY);
 }
 
-static NSBezierPath *copyTeardropPath(void) {
-    static NSBezierPath *sPath = nil;
+static
+#if TARGET_OS_IPHONE
+UIBezierPath
+#else
+NSBezierPath
+#endif
+*copyTeardropPath(void) {
+    static
+#if TARGET_OS_IPHONE
+    UIBezierPath
+#else
+    NSBezierPath
+#endif
+    *sPath = nil;
     if (! sPath) {
         
         CGFloat radius = HFTeardropRadius;
@@ -41,19 +54,31 @@ static NSBezierPath *copyTeardropPath(void) {
         CGFloat droppiness = .15;
         CGFloat tipScale = HFTeadropTipScale;
         CGFloat tipLengthFromCenter = radius * tipScale;
-        NSPoint bulbCenter = NSMakePoint(-tipLengthFromCenter, 0);
+        CGPoint bulbCenter = CGPointMake(-tipLengthFromCenter, 0);
         
-        NSPoint triangleCenter = rotatePoint(bulbCenter, NSMakePoint(bulbCenter.x + radius, bulbCenter.y), rotation);
-        NSPoint dropCorner1 = rotatePoint(bulbCenter, triangleCenter, droppiness / 2);
-        NSPoint dropCorner2 = rotatePoint(bulbCenter, triangleCenter, -droppiness / 2);
-        NSPoint dropTip = scalePoint(bulbCenter, triangleCenter, tipScale);
+        CGPoint triangleCenter = rotatePoint(bulbCenter, CGPointMake(bulbCenter.x + radius, bulbCenter.y), rotation);
+        CGPoint dropCorner1 = rotatePoint(bulbCenter, triangleCenter, droppiness / 2);
+        CGPoint dropCorner2 = rotatePoint(bulbCenter, triangleCenter, -droppiness / 2);
+        CGPoint dropTip = scalePoint(bulbCenter, triangleCenter, tipScale);
         
-        NSBezierPath *path = [[NSBezierPath alloc] init];
-        [path appendBezierPathWithArcWithCenter:bulbCenter radius:radius startAngle:-rotation * 360 + droppiness * 180. endAngle:-rotation * 360 - droppiness * 180. clockwise:NO];
+        CGFloat startAngle = -rotation * 360 + droppiness * 180.;
+        CGFloat endAngle = -rotation * 360 - droppiness * 180.;
+#if TARGET_OS_IPHONE
+        UIBezierPath *path = [UIBezierPath bezierPath];
+        [path addArcWithCenter:bulbCenter radius:radius startAngle:startAngle endAngle:endAngle clockwise:NO];
+#else
+        NSBezierPath *path = [NSBezierPath bezierPath];
+        [path appendBezierPathWithArcWithCenter:bulbCenter radius:radius startAngle:startAngle endAngle:endAngle clockwise:NO];
+#endif
         
         [path moveToPoint:dropCorner1];
+#if TARGET_OS_IPHONE
+        [path addLineToPoint:dropTip];
+        [path addLineToPoint:dropCorner2];
+#else
         [path lineToPoint:dropTip];
         [path lineToPoint:dropCorner2];
+#endif
         [path closePath];
         
         sPath = path;
@@ -62,7 +87,12 @@ static NSBezierPath *copyTeardropPath(void) {
 }
 
 
-@implementation HFRepresenterTextViewCallout
+@implementation HFRepresenterTextViewCallout {
+    CGFloat rotation;
+    CGPoint tipOrigin;
+    CGPoint pinStart;
+    CGPoint pinEnd;
+}
 
 /* A helpful struct for representing a wedge (portion of a circle). Wedges are counterclockwise. */
 typedef struct {
@@ -104,15 +134,6 @@ static Wedge_t wedgeUnion(Wedge_t wedge1, Wedge_t wedge2) {
     Wedge_t result = (union1.length <= union2.length ? union1 : union2);
     HFASSERT(result.length <= 1);
     return result;
-}
-
-- (instancetype)init {
-    self = [super init];
-    if (self) {
-        // Initialization code here.
-    }
-    
-    return self;
 }
 
 - (NSComparisonResult)compare:(HFRepresenterTextViewCallout *)callout {
@@ -176,7 +197,7 @@ static double distanceMod1(double a, double b) {
 + (void)layoutCallouts:(NSArray *)callouts inView:(HFRepresenterTextView *)textView {
     
     const CGFloat lineHeight = [textView lineHeight];
-    const NSRect bounds = [textView bounds];
+    const CGRect bounds = [textView bounds];
     
     NSMutableArray *remainingCallouts = [callouts mutableCopy];
     [remainingCallouts sortUsingSelector:@selector(compare:)];
@@ -198,7 +219,7 @@ static double distanceMod1(double a, double b) {
         HFASSERT(calloutCount > 0);
         
         /* Get the character origin */
-        const NSPoint characterOrigin = [textView originForCharacterAtByteIndex:byteLoc];
+        const CGPoint characterOrigin = [textView originForCharacterAtByteIndex:byteLoc];
         
         /* This is how far it is to the center of our teardrop */
         const double teardropLength = HFTeardropRadius * HFTeadropTipScale;
@@ -206,13 +227,13 @@ static double distanceMod1(double a, double b) {
         Wedge_t forbiddenAngle = {0, 0};
         
         // Compute how far we are from the top (or bottom)
-        BOOL isNearerTop = (characterOrigin.y < NSMidY(bounds));
-        double verticalDistance = (isNearerTop ? characterOrigin.y - NSMinY(bounds) : NSMaxY(bounds) - characterOrigin.y);
+        BOOL isNearerTop = (characterOrigin.y < CGRectGetMidY(bounds));
+        double verticalDistance = (isNearerTop ? characterOrigin.y - CGRectGetMinY(bounds) : CGRectGetMaxY(bounds) - characterOrigin.y);
         forbiddenAngle = wedgeUnion(forbiddenAngle, computeForbiddenAngle(verticalDistance, (isNearerTop ? .25 : .75)));
         
         // Compute how far we are from the left (or right)
-        BOOL isNearerLeft = (characterOrigin.x < NSMidX(bounds));
-        double horizontalDistance = (isNearerLeft ? characterOrigin.x - NSMinX(bounds) : NSMaxX(bounds) - characterOrigin.x);
+        BOOL isNearerLeft = (characterOrigin.x < CGRectGetMidX(bounds));
+        double horizontalDistance = (isNearerLeft ? characterOrigin.x - CGRectGetMinX(bounds) : CGRectGetMaxX(bounds) - characterOrigin.x);
         forbiddenAngle = wedgeUnion(forbiddenAngle, computeForbiddenAngle(horizontalDistance, (isNearerLeft ? .5 : 0.)));
         
         
@@ -257,12 +278,12 @@ static double distanceMod1(double a, double b) {
         double consumedAngleCenter = normalizeAngle(wedgeMax(forbiddenAngle) + consumedSegmentCenter);
         
         // move us slightly towards the character
-        NSPoint teardropTipOrigin = NSMakePoint(characterOrigin.x + 1, characterOrigin.y + floor(lineHeight / 8.));
+        CGPoint teardropTipOrigin = CGPointMake(characterOrigin.x + 1, characterOrigin.y + floor(lineHeight / 8.));
         
         // make the pin
-        NSPoint pinStart, pinEnd;
-        pinStart = NSMakePoint(characterOrigin.x + .25, characterOrigin.y);
-        pinEnd = NSMakePoint(pinStart.x, pinStart.y + lineHeight);
+        CGPoint pinStart, pinEnd;
+        pinStart = CGPointMake(characterOrigin.x + .25, characterOrigin.y);
+        pinEnd = CGPointMake(pinStart.x, pinStart.y + lineHeight);
         
         // store it all, invalidating as necessary
         NSInteger i = 0;
@@ -279,7 +300,7 @@ static double distanceMod1(double a, double b) {
             angle = normalizeAngle(.5 - angle);
 
             
-            NSRect beforeRect = [callout rect];
+            CGRect beforeRect = [callout rect];
             
             callout->rotation = angle;
             callout->tipOrigin = teardropTipOrigin;
@@ -287,11 +308,11 @@ static double distanceMod1(double a, double b) {
             callout->pinEnd = pinEnd;
             
             // Only the first gets a pin
-            pinStart = pinEnd = NSZeroPoint;
+            pinStart = pinEnd = CGPointZero;
             
-            NSRect afterRect = [callout rect];
+            CGRect afterRect = [callout rect];
             
-            if (! NSEqualRects(beforeRect, afterRect)) {
+            if (! CGRectEqualToRect(beforeRect, afterRect)) {
                 [textView setNeedsDisplayInRect:beforeRect];
                 [textView setNeedsDisplayInRect:afterRect];
             }
@@ -311,9 +332,9 @@ static double distanceMod1(double a, double b) {
     return trans;
 }
 
-- (NSRect)teardropBaseRect {
-    NSSize teardropSize = NSMakeSize(HFTeardropRadius * (1 + HFTeadropTipScale), HFTeardropRadius*2);
-    NSRect result = NSMakeRect(-teardropSize.width, -teardropSize.height/2, teardropSize.width, teardropSize.height);
+- (CGRect)teardropBaseRect {
+    CGSize teardropSize = CGSizeMake(HFTeardropRadius * (1 + HFTeadropTipScale), HFTeardropRadius*2);
+    CGRect result = CGRectMake(-teardropSize.width, -teardropSize.height/2, teardropSize.width, teardropSize.height);
     return result;
 }
 
@@ -331,23 +352,23 @@ static double distanceMod1(double a, double b) {
     return transform;
 }
 
-- (void)drawShadowWithClip:(NSRect)clip {
+- (void)drawShadowWithClip:(CGRect)clip context:(CGContextRef)ctx {
     USE(clip);
-    CGContextRef ctx = HFGraphicsGetCurrentContext();
     
     // Set the shadow. Note that these shadows are pretty unphysical for high rotations.
-    NSShadow *shadow = [[NSShadow alloc] init];
-    [shadow setShadowBlurRadius:5.];
-    [shadow setShadowOffset:NSMakeSize(HFShadowXOffset - HFShadowOffscreenHack, HFShadowYOffset)];
-    [shadow setShadowColor:[NSColor colorWithDeviceWhite:0. alpha:.5]];
-    [shadow set];
+    CGSize offset = CGSizeMake(HFShadowXOffset - HFShadowOffscreenHack, HFShadowYOffset);
+#if TARGET_OS_IPHONE
+    CGColorRef color = [UIColor colorWithWhite:0. alpha:.5].CGColor;
+#else
+    CGColorRef color = [NSColor colorWithCalibratedWhite:0. alpha:.5].CGColor;
+#endif
+    CGContextSetShadowWithColor(ctx, offset, 5., color);
     
     // Draw the shadow first and separately
     CGAffineTransform transform = [self shadowTransform];
     CGContextConcatCTM(ctx, transform);
     
-    NSBezierPath *teardrop = copyTeardropPath();
-    [teardrop fill];
+    [copyTeardropPath() fill];
     
     // Clear the shadow
     CGContextSetShadowWithColor(ctx, CGSizeZero, 0, NULL);
@@ -356,14 +377,15 @@ static double distanceMod1(double a, double b) {
     CGContextConcatCTM(ctx, CGAffineTransformInvert(transform));
 }
 
-- (void)drawWithClip:(NSRect)clip {
+- (void)drawWithClip:(CGRect)clip context:(CGContextRef)ctx {
     USE(clip);
-    CGContextRef ctx = HFGraphicsGetCurrentContext();
     // Here's the font we'll use
     CTFontRef ctfont = CTFontCreateWithName(CFSTR("Helvetica-Bold"), 1., NULL);
     if (ctfont) {
+#if !TARGET_OS_IPHONE
         // Set the font
         [(__bridge NSFont *)ctfont set];
+#endif
             
         // Get characters
         NSUInteger labelLength = MIN([_label length], kHFRepresenterTextViewCalloutMaxGlyphCount);
@@ -374,7 +396,7 @@ static double distanceMod1(double a, double b) {
         CGGlyph glyphs[kHFRepresenterTextViewCalloutMaxGlyphCount];
         CGSize advances[kHFRepresenterTextViewCalloutMaxGlyphCount];
         CTFontGetGlyphsForCharacters(ctfont, calloutUniLabel, glyphs, labelLength);
-        CTFontGetAdvancesForGlyphs(ctfont, kCTFontHorizontalOrientation, glyphs, advances, labelLength);
+        CTFontGetAdvancesForGlyphs(ctfont, kCTFontOrientationHorizontal, glyphs, advances, labelLength);
 
         // Count our glyphs. Note: this won't work with any label containing spaces, etc.
         NSUInteger glyphCount;
@@ -386,20 +408,21 @@ static double distanceMod1(double a, double b) {
         [_color set];
         
         // Draw the pin first
-        if (! NSEqualPoints(pinStart, pinEnd)) {
+        if (! CGPointEqualToPoint(pinStart, pinEnd)) {
+#if !TARGET_OS_IPHONE
             [NSBezierPath setDefaultLineWidth:1.25];
             [NSBezierPath strokeLineFromPoint:pinStart toPoint:pinEnd];
+#endif
         }
         
         CGContextSaveGState(ctx);
-        CGContextBeginTransparencyLayerWithRect(ctx, NSRectToCGRect([self rect]), NULL);
+        CGContextBeginTransparencyLayerWithRect(ctx, [self rect], NULL);
 
         // Rotate and translate in preparation for drawing the teardrop
         CGContextConcatCTM(ctx, [self teardropTransform]);
         
         // Draw the teardrop
-        NSBezierPath *teardrop = copyTeardropPath();
-        [teardrop fill];
+        [copyTeardropPath() fill];
         
         // Draw the text with white and alpha.  Use blend mode copy so that we clip out the shadow, and when the transparency layer is ended we'll composite over the text.
         CGFloat textScale = (glyphCount == 1 ? 24 : 20);
@@ -425,19 +448,19 @@ static double distanceMod1(double a, double b) {
         // Compute the vertical offset
         CGFloat textYOffset = (glyphCount == 1 ? 4 : 5);                
         // LOL
-        if ([_label isEqualToString:@"6"] || [_label isEqualToString:@"7"] == 7) textYOffset -= 1;
+        if ([_label isEqualToString:@"6"]) textYOffset -= 1;
         
         
         // Apply this text matrix
-        NSRect bulbRect = [self teardropBaseRect];
+        CGRect bulbRect = [self teardropBaseRect];
         CGAffineTransform textMatrix = CGAffineTransformMakeScale(-copysign(textScale, textDirection), copysign(textScale, textDirection)); //roughly the font size we want
-        textMatrix.tx = NSMinX(bulbRect) + HFTeardropRadius + copysign(totalAdvance/2, textDirection);
+        textMatrix.tx = CGRectGetMinX(bulbRect) + HFTeardropRadius + copysign(totalAdvance/2, textDirection);
         
 
         if (textDirection < 0) {
-            textMatrix.ty = NSMaxY(bulbRect) - textYOffset;
+            textMatrix.ty = CGRectGetMaxY(bulbRect) - textYOffset;
         } else {
-            textMatrix.ty = NSMinY(bulbRect) + textYOffset;
+            textMatrix.ty = CGRectGetMinY(bulbRect) + textYOffset;
         }
         
         // Draw
@@ -447,7 +470,7 @@ static double distanceMod1(double a, double b) {
         
         CGContextSetBlendMode(ctx, kCGBlendModeCopy);
         CGContextSetGrayFillColor(ctx, 1., .66); //faint white fill
-        CGContextFillRect(ctx, NSRectToCGRect(NSInsetRect(bulbRect, -20, -20)));
+        CGContextFillRect(ctx, CGRectInset(bulbRect, -20, -20));
         
         // Done drawing, so composite
         CGContextEndTransparencyLayer(ctx);
@@ -458,12 +481,12 @@ static double distanceMod1(double a, double b) {
     }
 }
 
-- (NSRect)rect {
+- (CGRect)rect {
     // get the transformed teardrop rect
-    NSRect result = NSRectFromCGRect(CGRectApplyAffineTransform(NSRectToCGRect([self teardropBaseRect]), [self teardropTransform]));
+    CGRect result = CGRectApplyAffineTransform([self teardropBaseRect], [self teardropTransform]);
     
     // outset a bit for the shadow
-    result = NSInsetRect(result, -8, -8);
+    result = CGRectInset(result, -8, -8);
     return result;
 }
 

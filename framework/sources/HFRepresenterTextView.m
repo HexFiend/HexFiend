@@ -12,9 +12,7 @@
 #endif
 #import "HFTextVisualStyleRun.h"
 #import <HexFiend/HFFunctions.h>
-#if !TARGET_OS_IPHONE
-#import <HexFiend/HFRepresenterTextViewCallout.h>
-#endif
+#import "HFRepresenterTextViewCallout.h"
 #import <objc/message.h>
 
 static const NSTimeInterval HFCaretBlinkFrequency = 0.56;
@@ -1637,9 +1635,6 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
 #endif
 
 - (void)setBookmarks:(NSDictionary *)bookmarks {
-#if TARGET_OS_IPHONE
-    (void)bookmarks;
-#else
     if (! callouts) callouts = [[NSMutableDictionary alloc] init];
 
     /* Invalidate any bookmarks we're losing */
@@ -1670,7 +1665,6 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
     
     /* Layout. This also invalidates any that have changed */
     [HFRepresenterTextViewCallout layoutCallouts:[callouts allValues] inView:self];
-#endif
 }
 
 - (BOOL)shouldDrawCallouts {
@@ -1686,38 +1680,33 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
 #endif
 }
 
-- (void)drawBookmarksWithClip:(CGRect)clip {
-#if TARGET_OS_IPHONE
-    (void)clip;
-#else
+- (void)drawBookmarksWithClip:(CGRect)clip context:(CGContextRef)ctx {
     if([self shouldDrawCallouts]) {
         /* Figure out which callouts we're going to draw */
-        NSRect allCalloutsRect = NSZeroRect;
+        CGRect allCalloutsRect = CGRectZero;
         NSMutableArray *localCallouts = [[NSMutableArray alloc] initWithCapacity:[callouts count]];
         for(HFRepresenterTextViewCallout * callout in [callouts objectEnumerator]) {
-            NSRect calloutRect = [callout rect];
-            if (NSIntersectsRect(clip, calloutRect)) {
+            CGRect calloutRect = [callout rect];
+            if (CGRectIntersectsRect(clip, calloutRect)) {
                 [localCallouts addObject:callout];
-                allCalloutsRect = NSUnionRect(allCalloutsRect, calloutRect);
+                allCalloutsRect = CGRectUnion(allCalloutsRect, calloutRect);
             }
         }
-        allCalloutsRect = NSIntersectionRect(allCalloutsRect, clip);
+        allCalloutsRect = CGRectIntersection(allCalloutsRect, clip);
         
         if ([localCallouts count]) {
             /* Draw shadows first */
-            CGContextRef ctx = HFGraphicsGetCurrentContext();
-            CGContextBeginTransparencyLayerWithRect(ctx, NSRectToCGRect(allCalloutsRect), NULL);
+            CGContextBeginTransparencyLayerWithRect(ctx, allCalloutsRect, NULL);
             for(HFRepresenterTextViewCallout * callout in localCallouts) {
-                [callout drawShadowWithClip:clip];
+                [callout drawShadowWithClip:clip context:ctx];
             }
             CGContextEndTransparencyLayer(ctx);
             
             for(HFRepresenterTextViewCallout * newCallout in localCallouts) {
-                [newCallout drawWithClip:clip];
+                [newCallout drawWithClip:clip context:ctx];
             }
         }
     }
-#endif
 }
 
 - (void)drawRect:(CGRect)clip {
@@ -1762,7 +1751,7 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
     
     [self drawCaretIfNecessaryWithClip:clip context:ctx];
     
-    [self drawBookmarksWithClip:clip];
+    [self drawBookmarksWithClip:clip context:ctx];
 }
 
 - (CGRect)furthestRectOnEdge:(CGRectEdge)edge forRange:(NSRange)byteRange {

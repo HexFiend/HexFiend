@@ -49,6 +49,9 @@
 		A51D0E8920F1D86F00B55775 /* HFTextVisualStyleRun.m in Sources */ = {isa = PBXBuildFile; fileRef = D010173510491BB200536FBC /* HFTextVisualStyleRun.m */; };
 		A51D0E8A20F1D87200B55775 /* HFTextVisualStyleRun.h in Headers */ = {isa = PBXBuildFile; fileRef = D010173410491BB200536FBC /* HFTextVisualStyleRun.h */; };
 		A51D0E8C20F1E56700B55775 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A51D0E8B20F1E56600B55775 /* CoreGraphics.framework */; };
+		A51D0E8D20F2A40C00B55775 /* HFRepresenterTextViewCallout.m in Sources */ = {isa = PBXBuildFile; fileRef = D016437213E5F7BC00294E60 /* HFRepresenterTextViewCallout.m */; };
+		A51D0E8F20F2A43700B55775 /* HFRepresenterTextViewCallout.h in Headers */ = {isa = PBXBuildFile; fileRef = D016437113E5F7BB00294E60 /* HFRepresenterTextViewCallout.h */; };
+		A51D0E9120F2A8D200B55775 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A51D0E9020F2A8D200B55775 /* CoreText.framework */; };
 		A53B7D1A1E9185CF00CA3977 /* HFTestHashing.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D149300D8A37580018296B /* HFTestHashing.m */; };
 		A550A7191F7877F8001C79C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = A550A7181F7877F8001C79C7 /* main.m */; };
 		A550A7201F787831001C79C7 /* hexf in Resources */ = {isa = PBXBuildFile; fileRef = A550A7161F7877F8001C79C7 /* hexf */; };
@@ -380,6 +383,7 @@
 		9483478F19DE188E0086A732 /* HFTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFTest.h; sourceTree = "<group>"; };
 		A51D0E7D20F1D01A00B55775 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.0.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		A51D0E8B20F1E56600B55775 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.0.sdk/System/Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
+		A51D0E9020F2A8D200B55775 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.0.sdk/System/Library/Frameworks/CoreText.framework; sourceTree = DEVELOPER_DIR; };
 		A550A7161F7877F8001C79C7 /* hexf */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = hexf; sourceTree = BUILT_PRODUCTS_DIR; };
 		A550A7181F7877F8001C79C7 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		A554E0CD20DF2CD3001B4C48 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/OpenDriveDialog.xib; sourceTree = "<group>"; };
@@ -635,6 +639,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A51D0E9120F2A8D200B55775 /* CoreText.framework in Frameworks */,
 				A51D0E8C20F1E56700B55775 /* CoreGraphics.framework in Frameworks */,
 				A51D0E7E20F1D01A00B55775 /* UIKit.framework in Frameworks */,
 			);
@@ -733,6 +738,7 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A51D0E9020F2A8D200B55775 /* CoreText.framework */,
 				A51D0E8B20F1E56600B55775 /* CoreGraphics.framework */,
 				A51D0E7D20F1D01A00B55775 /* UIKit.framework */,
 				A5D8C8F120E9E58000103D60 /* libz.1.tbd */,
@@ -1230,6 +1236,7 @@
 				A5EF28F320F187B700CA7B39 /* HFObjectGraph.h in Headers */,
 				A5EF28F420F187B700CA7B39 /* HFByteSliceFileOperationQueueEntry.h in Headers */,
 				A51D0E8A20F1D87200B55775 /* HFTextVisualStyleRun.h in Headers */,
+				A51D0E8F20F2A43700B55775 /* HFRepresenterTextViewCallout.h in Headers */,
 				A5EF28F820F187B700CA7B39 /* HFRandomDataByteSlice.h in Headers */,
 				A5EF28F920F187B700CA7B39 /* HFBTree.h in Headers */,
 				A51D0E8020F1D05200B55775 /* HFRepresenter_Internal.h in Headers */,
@@ -1693,6 +1700,7 @@
 				A5EF292D20F187B700CA7B39 /* HFFastMemchr.m in Sources */,
 				A51D0E7C20F1CB7F00B55775 /* HFController.m in Sources */,
 				A5EF293020F187B700CA7B39 /* HFRandomDataByteSlice.m in Sources */,
+				A51D0E8D20F2A40C00B55775 /* HFRepresenterTextViewCallout.m in Sources */,
 				A5EF293120F187B700CA7B39 /* HFBTree.m in Sources */,
 				A5EF293220F187B700CA7B39 /* HFBTreeByteArray.m in Sources */,
 				A5EF293420F187B700CA7B39 /* HFByteArrayProxiedData.m in Sources */,
