@@ -11,3 +11,11 @@ typedef struct {
     long double location;
     long double length;
 } HFFPRange;
+
+#if TARGET_OS_IPHONE
+#define HFColor UIColor
+#define HFView UIView
+#else
+#define HFColor NSColor
+#define HFView NSView
+#endif

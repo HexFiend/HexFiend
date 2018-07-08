@@ -981,3 +981,19 @@ CGContextRef HFGraphicsGetCurrentContext(void) {
 #endif
     return ctx;
 }
+
+HFColor* HFColorWithWhite(CGFloat white, CGFloat alpha) {
+#if TARGET_OS_IPHONE
+    return [UIColor colorWithWhite:white alpha:alpha];
+#else
+    return [NSColor colorWithCalibratedWhite:white alpha:alpha];
+#endif
+}
+
+HFColor* HFColorWithRGB(CGFloat red, CGFloat green, CGFloat blue, CGFloat alpha) {
+#if TARGET_OS_IPHONE
+    return [UIColor colorWithRed:red green:green blue:blue alpha:alpha];
+#else
+    return [NSColor colorWithCalibratedRed:red green:green blue:blue alpha:alpha];
+#endif
+}

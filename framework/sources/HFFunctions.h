@@ -535,4 +535,7 @@ BOOL HFDarkModeEnabled(void);
 
 CGContextRef HFGraphicsGetCurrentContext(void);
 
+HFColor* HFColorWithWhite(CGFloat white, CGFloat alpha);
+HFColor* HFColorWithRGB(CGFloat red, CGFloat green, CGFloat blue, CGFloat alpha);
+
 NS_ASSUME_NONNULL_END
