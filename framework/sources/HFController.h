@@ -264,7 +264,11 @@ You create an HFController via <tt>[[HFController alloc] init]</tt>.  After that
 //@}
 
 /*! The current font. */
+#if TARGET_OS_IPHONE
+@property (nonatomic, copy) UIFont *font;
+#else
 @property (nonatomic, copy) NSFont *font;
+#endif
 
 /*! The undo manager. If no undo manager is set, then undo is not supported. By default the undo manager is nil.
 */
@@ -297,6 +301,7 @@ You create an HFController via <tt>[[HFController alloc] init]</tt>.  After that
 - (void)representer:(nullable HFRepresenter *)rep changedProperties:(HFControllerPropertyBits)properties;
 //@}
 
+#if !TARGET_OS_IPHONE
 /*! @name Mouse selection
     Methods to handle mouse selection.  Representers that allow text selection should call beginSelectionWithEvent:forByteIndex: upon receiving a mouseDown event, and then continueSelectionWithEvent:forByteIndex: for mouseDragged events, terminating with endSelectionWithEvent:forByteIndex: upon receiving the mouse up.  HFController will compute the correct selected ranges and propagate any changes via the HFControllerPropertyBits mechanism. */
 //@{
@@ -314,6 +319,7 @@ You create an HFController via <tt>[[HFController alloc] init]</tt>.  After that
 //@{
 /*! Trigger scrolling appropriate for the given scroll event.  */
 - (void)scrollWithScrollEvent:(NSEvent *)scrollEvent;
+#endif
 
 /*! Trigger scrolling by the given number of lines.  If lines is positive, then the document is scrolled down; otherwise it is scrolled up.  */
 - (void)scrollByLines:(long double)lines;

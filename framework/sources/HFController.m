@@ -6,16 +6,16 @@
 //
 
 #import <HexFiend/HFController.h>
-#import <HexFiend/HFRepresenter_Internal.h>
-#import <HexFiend/HFByteArray_Internal.h>
+#import "HFRepresenter_Internal.h"
+#import "HFByteArray_Internal.h"
 #import <HexFiend/HFFullMemoryByteArray.h>
 #import <HexFiend/HFBTreeByteArray.h>
 #import <HexFiend/HFAttributedByteArray.h>
 #import <HexFiend/HFByteRangeAttribute.h>
 #import <HexFiend/HFFullMemoryByteSlice.h>
-#import <HexFiend/HFControllerCoalescedUndo.h>
+#import "HFControllerCoalescedUndo.h"
 #import <HexFiend/HFSharedMemoryByteSlice.h>
-#import <HexFiend/HFRandomDataByteSlice.h>
+#import "HFRandomDataByteSlice.h"
 #import <HexFiend/HFFileReference.h>
 #import <HexFiend/HFByteRangeAttributeArray.h>
 
@@ -93,7 +93,11 @@ static inline Class preferredByteArrayClass(void) {
     _hfflags.hideNullBytes = NO;
     _hfflags.selectable = YES;
     representers = [[NSMutableArray alloc] init];
+#if TARGET_OS_IPHONE
+    [self setFont:[UIFont monospacedDigitSystemFontOfSize:HFDEFAULT_FONTSIZE weight:UIFontWeightRegular]];
+#else
     [self setFont:[NSFont fontWithName:HFDEFAULT_FONT size:HFDEFAULT_FONTSIZE]];
+#endif
     return self;
 }
 
@@ -281,14 +285,23 @@ static inline Class preferredByteArrayClass(void) {
     return lineHeight;
 }
 
-- (void)setFont:(NSFont *)val {
+#if TARGET_OS_IPHONE
+- (void)setFont:(UIFont *)val
+#else
+- (void)setFont:(NSFont *)val
+#endif
+{
     if (val != _font) {
         CGFloat priorLineHeight = [self lineHeight];
         
         _font = [val copy];
         
         NSLayoutManager *manager = [[NSLayoutManager alloc] init];
+#if TARGET_OS_IPHONE
+        lineHeight = val.lineHeight;
+#else
         lineHeight = [manager defaultLineHeightForFont:_font];
+#endif
         
         HFControllerPropertyBits bits = HFControllerFont;
         if (lineHeight != priorLineHeight) bits |= HFControllerLineHeight;
@@ -582,8 +595,7 @@ static inline Class preferredByteArrayClass(void) {
     NSUInteger maxBytesForViewSize = NSUIntegerMax;
     double maxLines = DBL_MAX;
     for(HFRepresenter* rep in representers) {
-        NSView *view = [rep view];
-        double repMaxLines = [rep maximumAvailableLinesForViewHeight:NSHeight([view frame])];
+        double repMaxLines = [rep maximumAvailableLinesForViewHeight:[rep.view frame].size.height];
         if (repMaxLines != DBL_MAX) {
             /* bytesPerLine may be ULONG_MAX.  We want to compute the smaller of maxBytesForViewSize and ceil(repMaxLines) * bytesPerLine.  If the latter expression overflows, the smaller is the former. */
             NSUInteger repMaxLinesUInt = (NSUInteger)ceil(repMaxLines);
@@ -842,8 +854,7 @@ static inline Class preferredByteArrayClass(void) {
 - (void)_updateBytesPerLine {
     NSUInteger newBytesPerLine = NSUIntegerMax;
     for(HFRepresenter* rep in representers) {
-        NSView *view = [rep view];
-        CGFloat width = [view frame].size.width;
+        CGFloat width = [rep.view frame].size.width;
         NSUInteger repMaxBytesPerLine = [rep maximumBytesPerLineForViewWidth:width];
         HFASSERT(repMaxBytesPerLine > 0);
         newBytesPerLine = MIN(repMaxBytesPerLine, newBytesPerLine);
@@ -961,6 +972,7 @@ static inline Class preferredByteArrayClass(void) {
     return resultRange;
 }
 
+#if !TARGET_OS_IPHONE
 - (void)beginSelectionWithEvent:(NSEvent *)event forByteIndex:(unsigned long long)characterIndex {
     USE(event);
     HFASSERT(characterIndex <= [self contentsLength]);
@@ -1105,6 +1117,7 @@ static inline Class preferredByteArrayClass(void) {
     _hfflags.commandExtendSelection = NO;
     selectionAnchor = NO_SELECTION;
 }
+#endif
 
 - (double)selectionPulseAmount {
     double result = 0;
@@ -1148,6 +1161,7 @@ static inline Class preferredByteArrayClass(void) {
     [self setDisplayedLineRange:lineRange];
 }
 
+#if !TARGET_OS_IPHONE
 - (void)scrollWithScrollEvent:(NSEvent *)scrollEvent {
     HFASSERT(scrollEvent != NULL);
     HFASSERT([scrollEvent type] == NSScrollWheel);
@@ -1169,6 +1183,7 @@ static inline Class preferredByteArrayClass(void) {
     }
     [self scrollByLines:scrollY];
 }
+#endif
 
 - (void)setSelectedContentsRanges:(NSArray *)selectedRanges {
     REQUIRE_NOT_NULL(selectedRanges);

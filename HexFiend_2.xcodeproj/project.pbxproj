@@ -36,6 +36,12 @@
 		9483479419DE1C920086A732 /* TreeEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = D06D60BC0FA7EA23002376EE /* TreeEntry.m */; };
 		9483479519DE1C950086A732 /* BTree_Test.m in Sources */ = {isa = PBXBuildFile; fileRef = D06D60A50FA7E980002376EE /* BTree_Test.m */; };
 		94ECCBC01BDF7DD2007FF44E /* HexFiend.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D01E7BB80CDC530C00943F9E /* HexFiend.framework */; };
+		A51D0E7B20F1CB7F00B55775 /* HFController.h in Headers */ = {isa = PBXBuildFile; fileRef = D0A6C9D70DCC68610077175C /* HFController.h */; };
+		A51D0E7C20F1CB7F00B55775 /* HFController.m in Sources */ = {isa = PBXBuildFile; fileRef = D01E7BEB0CDC55D000943F9E /* HFController.m */; };
+		A51D0E7E20F1D01A00B55775 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A51D0E7D20F1D01A00B55775 /* UIKit.framework */; };
+		A51D0E7F20F1D04E00B55775 /* HFRepresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = D01E7C330CDC646800943F9E /* HFRepresenter.h */; };
+		A51D0E8020F1D05200B55775 /* HFRepresenter_Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = D0A4360B0CDC7B65000F7550 /* HFRepresenter_Internal.h */; };
+		A51D0E8120F1D05200B55775 /* HFRepresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = D01E7C340CDC646800943F9E /* HFRepresenter.m */; };
 		A53B7D1A1E9185CF00CA3977 /* HFTestHashing.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D149300D8A37580018296B /* HFTestHashing.m */; };
 		A550A7191F7877F8001C79C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = A550A7181F7877F8001C79C7 /* main.m */; };
 		A550A7201F787831001C79C7 /* hexf in Resources */ = {isa = PBXBuildFile; fileRef = A550A7161F7877F8001C79C7 /* hexf */; };
@@ -127,8 +133,6 @@
 		A5EF293820F187B700CA7B39 /* HFByteRangeAttribute.m in Sources */ = {isa = PBXBuildFile; fileRef = D08943F71042B57800AB9141 /* HFByteRangeAttribute.m */; };
 		A5EF293920F187B700CA7B39 /* HFByteRangeAttributeArray.m in Sources */ = {isa = PBXBuildFile; fileRef = D089443B1042BA7100AB9141 /* HFByteRangeAttributeArray.m */; };
 		A5EF293B20F187B700CA7B39 /* HFAnnotatedTree.m in Sources */ = {isa = PBXBuildFile; fileRef = D0315BEB1225C553008C9EAB /* HFAnnotatedTree.m */; };
-		A5EF293F20F187B700CA7B39 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 29B97325FDCFA39411CA2CEA /* Foundation.framework */; };
-		A5EF294120F187B700CA7B39 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D05984CB1032C6D900059E72 /* Security.framework */; };
 		D00122E30D48A8D400540B10 /* HFFindReplaceBackgroundView.m in Sources */ = {isa = PBXBuildFile; fileRef = D00122E20D48A8D400540B10 /* HFFindReplaceBackgroundView.m */; };
 		D00C16790FF4925A006D021F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D00C16750FF4925A006D021F /* main.m */; };
 		D00EBA730CE866D50020E2D7 /* HFVerticalScrollerRepresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = D00EBA710CE866D50020E2D7 /* HFVerticalScrollerRepresenter.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -368,6 +372,7 @@
 		9408FBFE19DD72DF004F800E /* Framework_Tests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Framework_Tests.m; sourceTree = "<group>"; };
 		9408FC0F19DD8669004F800E /* HFPrivilegedHelperConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFPrivilegedHelperConnection.h; path = sources/HFPrivilegedHelperConnection.h; sourceTree = "<group>"; };
 		9483478F19DE188E0086A732 /* HFTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFTest.h; sourceTree = "<group>"; };
+		A51D0E7D20F1D01A00B55775 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.0.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		A550A7161F7877F8001C79C7 /* hexf */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = hexf; sourceTree = BUILT_PRODUCTS_DIR; };
 		A550A7181F7877F8001C79C7 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		A554E0CD20DF2CD3001B4C48 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/OpenDriveDialog.xib; sourceTree = "<group>"; };
@@ -624,8 +629,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A5EF293F20F187B700CA7B39 /* Foundation.framework in Frameworks */,
-				A5EF294120F187B700CA7B39 /* Security.framework in Frameworks */,
+				A51D0E7E20F1D01A00B55775 /* UIKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -722,6 +726,7 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A51D0E7D20F1D01A00B55775 /* UIKit.framework */,
 				A5D8C8F120E9E58000103D60 /* libz.1.tbd */,
 				A567D7D420DA1D7C00F7C0A4 /* Sparkle.framework */,
 				A59BC5932001FD0F0066860F /* Tcl.framework */,
@@ -1213,14 +1218,17 @@
 				A5EF28F020F187B700CA7B39 /* HFProgressTracker.h in Headers */,
 				A5EF28F120F187B700CA7B39 /* HFSharedMemoryByteSlice.h in Headers */,
 				A5EF28F220F187B700CA7B39 /* HFByteSliceFileOperation.h in Headers */,
+				A51D0E7B20F1CB7F00B55775 /* HFController.h in Headers */,
 				A5EF28F320F187B700CA7B39 /* HFObjectGraph.h in Headers */,
 				A5EF28F420F187B700CA7B39 /* HFByteSliceFileOperationQueueEntry.h in Headers */,
 				A5EF28F820F187B700CA7B39 /* HFRandomDataByteSlice.h in Headers */,
 				A5EF28F920F187B700CA7B39 /* HFBTree.h in Headers */,
+				A51D0E8020F1D05200B55775 /* HFRepresenter_Internal.h in Headers */,
 				A5EF28FA20F187B700CA7B39 /* HFBTreeByteArray.h in Headers */,
 				A5EF28FD20F187B700CA7B39 /* HFByteArrayProxiedData.h in Headers */,
 				A5EF28FF20F187B700CA7B39 /* HFByteRangeAttribute.h in Headers */,
 				A5EF290020F187B700CA7B39 /* HFByteRangeAttributeArray.h in Headers */,
+				A51D0E7F20F1D04E00B55775 /* HFRepresenter.h in Headers */,
 				A5EF290120F187B700CA7B39 /* HFAnnotatedTree.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1665,11 +1673,13 @@
 				A5EF292620F187B700CA7B39 /* HFProgressTracker.m in Sources */,
 				A5EF292720F187B700CA7B39 /* HFSharedMemoryByteSlice.m in Sources */,
 				A5EF292820F187B700CA7B39 /* HFByteArray_FileWriting.m in Sources */,
+				A51D0E8120F1D05200B55775 /* HFRepresenter.m in Sources */,
 				A5EF292920F187B700CA7B39 /* HFByteArrayEditScript.m in Sources */,
 				A5EF292A20F187B700CA7B39 /* HFByteSliceFileOperation.m in Sources */,
 				A5EF292B20F187B700CA7B39 /* HFObjectGraph.m in Sources */,
 				A5EF292C20F187B700CA7B39 /* HFByteSliceFileOperationQueueEntry.m in Sources */,
 				A5EF292D20F187B700CA7B39 /* HFFastMemchr.m in Sources */,
+				A51D0E7C20F1CB7F00B55775 /* HFController.m in Sources */,
 				A5EF293020F187B700CA7B39 /* HFRandomDataByteSlice.m in Sources */,
 				A5EF293120F187B700CA7B39 /* HFBTree.m in Sources */,
 				A5EF293220F187B700CA7B39 /* HFBTreeByteArray.m in Sources */,
