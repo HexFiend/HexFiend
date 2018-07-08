@@ -190,69 +190,6 @@ static int compareGlyphFontIndexes(const void *p1, const void *p2) {
     HFStringEncoding *encoding;
 }
 
-- (void)threadedPrecacheGlyphs:(const struct HFGlyph_t *)glyphs withFonts:(NSArray *)localFonts count:(NSUInteger)count {
-    /* This method draws glyphs anywhere, so that they get cached by CG and drawing them a second time can be fast. */
-    NSUInteger i, validGlyphCount;
-    
-    /* We can use 0 advances */
-    NEW_ARRAY(CGSize, advances, count);
-    bzero(advances, count * sizeof *advances);
-    
-    /* Make a local copy of the glyphs, and sort them according to their font index so that we can draw them with the fewest runs. */
-    NEW_ARRAY(struct HFGlyph_t, validGlyphs, count);
-    
-    validGlyphCount = 0;
-    for (i=0; i < count; i++) {
-        if (glyphs[i].glyph <= kCGGlyphMax && glyphs[i].fontIndex != kHFGlyphFontIndexInvalid) {
-            validGlyphs[validGlyphCount++] = glyphs[i];
-        }
-    }
-    qsort(validGlyphs, validGlyphCount, sizeof *validGlyphs, compareGlyphFontIndexes);
-    
-    /* Remove duplicate glyphs */
-    NSUInteger trailing = 0;
-    struct HFGlyph_t lastGlyph = {.glyph = kCGFontIndexInvalid, .fontIndex = kHFGlyphFontIndexInvalid};
-    for (i=0; i < validGlyphCount; i++) {
-        if (! HFGlyphEqualsGlyph(lastGlyph, validGlyphs[i])) {
-            lastGlyph = validGlyphs[i];
-            validGlyphs[trailing++] = lastGlyph;
-        }
-    }
-    validGlyphCount = trailing;
-    
-    /* Draw the glyphs in runs */
-    NEW_ARRAY(CGGlyph, cgglyphs, count);
-    NSImage *glyphDrawingImage = [[NSImage alloc] initWithSize:NSMakeSize(100, 100)];
-    [glyphDrawingImage lockFocus];
-    CGContextRef ctx = HFGraphicsGetCurrentContext();
-    HFGlyphFontIndex runFontIndex = -1;
-    NSUInteger runLength = 0;
-    for (i=0; i <= validGlyphCount; i++) {
-        if (i == validGlyphCount || validGlyphs[i].fontIndex != runFontIndex) {
-            /* End the current run */
-            if (runLength > 0) {
-                NSLog(@"Drawing with %@", [localFonts[runFontIndex] screenFont]);
-                [[localFonts[runFontIndex] screenFont] set];
-                CGContextSetTextPosition(ctx, 0, 50);
-                CGContextShowGlyphsWithAdvances(ctx, cgglyphs, advances, runLength);
-            }
-            NSLog(@"Drew a run of length %lu", (unsigned long)runLength);
-            runLength = 0;
-            if (i < validGlyphCount) runFontIndex = validGlyphs[i].fontIndex;
-        }
-        if (i < validGlyphCount) {
-            /* Append to the current run */
-            cgglyphs[runLength++] = validGlyphs[i].glyph;
-        }
-    }
-    
-    /* All done */
-    [glyphDrawingImage unlockFocus];
-    FREE_ARRAY(advances);
-    FREE_ARRAY(validGlyphs);
-    FREE_ARRAY(cgglyphs);
-}
-
 - (void)threadedLoadGlyphs:(id)unused {
     /* Note that this is running on a background thread */
     USE(unused);
@@ -278,10 +215,6 @@ static int compareGlyphFontIndexes(const void *p1, const void *p2) {
     [charactersToLoad getIndexes:characters maxCount:charCount inIndexRange:NULL];
     generateGlyphs(font, localFonts, glyphs, bytesPerChar, self.encoding, characters, charCount, NULL);
     FREE_ARRAY(characters);
-    
-    /* The first time we draw glyphs, it's slow, so pre-cache them by drawing them now. */
-    // This was disabled because it blows up the CG glyph cache
-    //    [self threadedPrecacheGlyphs:glyphs withFonts:localFonts count:charCount];    
     
     /* Replace fonts.  Do this before we insert into the glyph trie, because the glyph trie references fonts that we're just now putting in the fonts array. */
     OSSpinLockLock(&glyphLoadLock);
