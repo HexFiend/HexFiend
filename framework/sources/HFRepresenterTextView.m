@@ -5,7 +5,6 @@
 //  Copyright 2007 ridiculous_fish. All rights reserved.
 //
 
-#import <HexFiend/HFRepresenterTextView_Internal.h>
 #import <HexFiend/HFTextRepresenter_Internal.h>
 #import <HexFiend/HFTextSelectionPulseView.h>
 #import <HexFiend/HFTextVisualStyleRun.h>
@@ -18,45 +17,6 @@ static const NSTimeInterval HFCaretBlinkFrequency = 0.56;
 static const CGFloat HFTeardropRadius = 12;
 
 @implementation HFRepresenterTextView
-
-- (NSUInteger)_getGlyphs:(CGGlyph *)glyphs forString:(NSString *)string font:(NSFont *)inputFont {
-    NSUInteger length = [string length];
-    UniChar chars[256];
-    HFASSERT(length <= sizeof chars / sizeof *chars);
-    HFASSERT(inputFont != nil);
-    [string getCharacters:chars range:NSMakeRange(0, length)];
-    if (! CTFontGetGlyphsForCharacters((CTFontRef)inputFont, chars, glyphs, length)) {
-        /* Some or all characters were not mapped.  This is OK.  We'll use the replacement glyph. */
-    }
-    return length;
-}
-
-- (NSUInteger)_glyphsForString:(NSString *)string withGeneratingLayoutManager:(NSLayoutManager *)layoutManager glyphs:(CGGlyph *)glyphs {
-    HFASSERT(layoutManager != NULL);
-    HFASSERT(string != NULL);
-    NSGlyph nsglyphs[GLYPH_BUFFER_SIZE];
-    [[[layoutManager textStorage] mutableString] setString:string];
-    NSUInteger glyphIndex, glyphCount = [layoutManager getGlyphs:nsglyphs range:NSMakeRange(0, MIN(GLYPH_BUFFER_SIZE, [layoutManager numberOfGlyphs]))];
-    if (glyphs != NULL) {
-        /* Convert from unsigned int NSGlyphs to unsigned short CGGlyphs */
-        for (glyphIndex = 0; glyphIndex < glyphCount; glyphIndex++) {
-            /* Get rid of NSControlGlyph */
-            NSGlyph modifiedGlyph = nsglyphs[glyphIndex] == NSControlGlyph ? NSNullGlyph : nsglyphs[glyphIndex];
-            HFASSERT(modifiedGlyph <= USHRT_MAX);
-            glyphs[glyphIndex] = (CGGlyph)modifiedGlyph;
-        }
-    }
-    return glyphCount;    
-}
-
-/* Returns the number of glyphs for the given string, using the given text view, and generating the glyphs if the glyphs parameter is not NULL */
-- (NSUInteger)_glyphsForString:(NSString *)string withGeneratingTextView:(NSTextView *)textView glyphs:(CGGlyph *)glyphs {
-    HFASSERT(string != NULL);
-    HFASSERT(textView != NULL);
-    [textView setString:string];
-    [textView setNeedsDisplay:YES]; //ligature generation doesn't seem to happen without this, for some reason.  This seems very fragile!  We should find a better way to get this ligature information!!
-    return [self _glyphsForString:string withGeneratingLayoutManager:[textView layoutManager] glyphs:glyphs];
-}
 
 - (NSArray *)displayedSelectedContentsRanges {
     if (! cachedSelectedRanges) {

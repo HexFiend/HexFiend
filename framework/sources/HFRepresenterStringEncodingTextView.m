@@ -6,7 +6,6 @@
 //
 
 #import <HexFiend/HFRepresenterStringEncodingTextView.h>
-#import <HexFiend/HFRepresenterTextView_Internal.h>
 #import <HexFiend/HFTextRepresenter_Internal.h>
 #import <HexFiend/HFNSStringEncoding.h>
 #include <malloc/malloc.h>
