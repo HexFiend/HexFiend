@@ -13,9 +13,6 @@
 
     HFHexTextRepresenter is an HFRepresenter responsible for showing data in hexadecimal form.  It has no methods except those inherited from HFTextRepresenter.
 */
-@interface HFHexTextRepresenter : HFTextRepresenter {
-    unsigned long long omittedNybbleLocation;
-    unsigned char unpartneredLastNybble;
-}
+@interface HFHexTextRepresenter : HFTextRepresenter
 
 @end

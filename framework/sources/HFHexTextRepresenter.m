@@ -6,10 +6,15 @@
 //
 
 #import <HexFiend/HFHexTextRepresenter.h>
-#import <HexFiend/HFRepresenterHexTextView.h>
+#import "HFRepresenterHexTextView.h"
+#if !TARGET_OS_IPHONE
 #import <HexFiend/HFHexPasteboardOwner.h>
+#endif
 
-@implementation HFHexTextRepresenter
+@implementation HFHexTextRepresenter {
+    unsigned long long omittedNybbleLocation;
+    unsigned char unpartneredLastNybble;
+}
 
 /* No extra NSCoder support needed */
 
@@ -24,8 +29,8 @@
     omittedNybbleLocation = ULLONG_MAX;
 }
 
-+ (NSPoint)defaultLayoutPosition {
-    return NSMakePoint(0, 0);
++ (CGPoint)defaultLayoutPosition {
+    return CGPointMake(0, 0);
 }
 
 - (void)_clearOmittedNybble {
@@ -104,6 +109,7 @@
     }
 }
 
+#if !TARGET_OS_IPHONE
 - (void)copySelectedBytesToPasteboard:(NSPasteboard *)pb {
     REQUIRE_NOT_NULL(pb);
     HFByteArray *selection = [[self controller] byteArrayForSelectedContentsRanges];
@@ -116,5 +122,6 @@
         owner.bytesPerColumn = self.bytesPerColumn;
     }
 }
+#endif
 
 @end
