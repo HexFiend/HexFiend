@@ -23,18 +23,18 @@
 #import <TargetConditionals.h>
 #import <HexFiend/HFTypes.h>
 #import <HexFiend/HFFunctions.h>
-#if !TARGET_OS_IPHONE
 #import <HexFiend/HFController.h>
 #import <HexFiend/HFRepresenter.h>
-#endif
 #import <HexFiend/HFFullMemoryByteArray.h>
 #import <HexFiend/HFFullMemoryByteSlice.h>
-#if !TARGET_OS_IPHONE
 #import <HexFiend/HFHexTextRepresenter.h>
+#if !TARGET_OS_IPHONE
 #import <HexFiend/HFLineCountingRepresenter.h>
 #import <HexFiend/HFStatusBarRepresenter.h>
 #import <HexFiend/HFLayoutRepresenter.h>
+#endif
 #import <HexFiend/HFStringEncodingTextRepresenter.h>
+#if !TARGET_OS_IPHONE
 #import <HexFiend/HFVerticalScrollerRepresenter.h>
 #endif
 #import <HexFiend/HFByteArray.h>
