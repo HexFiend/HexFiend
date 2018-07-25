@@ -75,6 +75,10 @@
                                                context:NULL];
 }
 
+- (void)dealloc {
+    [[NSUserDefaults standardUserDefaults] removeObserver:self forKeyPath:@"BinaryTemplateSelectionColor" context:NULL];
+}
+
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> * __unused)change context:(void * __unused)context {
     if (object == [NSUserDefaults standardUserDefaults]) {
         if ([keyPath isEqualToString:@"BinaryTemplateSelectionColor"]) {
