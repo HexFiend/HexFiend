@@ -1854,6 +1854,10 @@ cancelled:;
     [self setShouldLiveReload:[controller shouldLiveReload]];
 }
 
+- (void)insertData:(NSData *)data {
+    [controller insertData:data replacingPreviousBytes:0 allowUndoCoalescing:NO];
+}
+
 @end
 
 // Let the compiler know about the 10.9 -[NSTimer setTolerance:] selector

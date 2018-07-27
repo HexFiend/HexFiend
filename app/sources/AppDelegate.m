@@ -23,6 +23,7 @@
 @property NSArray *filesToOpen;
 @property NSString *diffLeftFile;
 @property NSString *diffRightFile;
+@property NSData *dataToOpen;
 
 @end
 
@@ -56,7 +57,9 @@
 
     [self processCommandLineArguments];
 
-    [[NSDistributedNotificationCenter defaultCenter] addObserverForName:@"HFOpenFileNotification" object:nil queue:nil usingBlock:^(NSNotification * _Nonnull notification) {
+    NSDistributedNotificationCenter *ndc = [NSDistributedNotificationCenter defaultCenter];
+    
+    [ndc addObserverForName:@"HFOpenFileNotification" object:nil queue:nil usingBlock:^(NSNotification * _Nonnull notification) {
         [NSApp activateIgnoringOtherApps:YES];
         NSDictionary *userInfo = notification.userInfo;
         NSArray *files = [userInfo objectForKey:@"files"];
@@ -69,7 +72,7 @@
         }
     }];
 
-    [[NSDistributedNotificationCenter defaultCenter] addObserverForName:@"HFDiffFilesNotification" object:nil queue:nil usingBlock:^(NSNotification * _Nonnull notification) {
+    [ndc addObserverForName:@"HFDiffFilesNotification" object:nil queue:nil usingBlock:^(NSNotification * _Nonnull notification) {
         [NSApp activateIgnoringOtherApps:YES];
         NSDictionary *userInfo = notification.userInfo;
         NSArray *files = [userInfo objectForKey:@"files"];
@@ -80,6 +83,13 @@
                 [self compareLeftFile:file1 againstRightFile:file2];
             }
         }
+    }];
+
+    [ndc addObserverForName:@"HFOpenDataNotification" object:nil queue:nil usingBlock:^(NSNotification * _Nonnull notification) {
+        [NSApp activateIgnoringOtherApps:YES];
+        NSDictionary *userInfo = notification.userInfo;
+        NSData *data = [userInfo objectForKey:@"data"];
+        [self openData:data];
     }];
 }
 
@@ -360,6 +370,15 @@ static NSComparisonResult compareFontDisplayNames(NSFont *a, NSFont *b, void *un
                     self.diffLeftFile = args[i + 1];
                 } else if ([arg isEqualToString:@"-HFDiffRightFile"]) {
                     self.diffRightFile = args[i + 1];
+                } else if ([arg isEqualToString:@"-HFOpenData"]) {
+                    NSString *base64 = args[i + 1];
+                    NSData *data = nil;
+                    if (@available(macOS 10.9, *)) {
+                        data = [[NSData alloc] initWithBase64EncodedString:base64 options:0];
+                    } else {
+                        NSLog(@"Feature not available on 10.8");
+                    }
+                    self.dataToOpen = data;
                 }
             }
         }
@@ -376,6 +395,10 @@ static NSComparisonResult compareFontDisplayNames(NSFont *a, NSFont *b, void *un
     if (self.diffLeftFile && self.diffRightFile) {
         [self compareLeftFile:self.diffLeftFile againstRightFile:self.diffRightFile];
     }
+    if (self.dataToOpen) {
+        [self openData:self.dataToOpen];
+        self.dataToOpen = nil;
+    }
 }
 
 - (void)openFile:(NSString *)path {
@@ -390,6 +413,23 @@ static NSComparisonResult compareFontDisplayNames(NSFont *a, NSFont *b, void *un
         NSDocument *doc = [dc openUntitledDocumentAndDisplay:YES error:nil];
         doc.fileURL = url;
     }
+}
+
+- (void)openData:(NSData *)data {
+    NSDocumentController *dc = [NSDocumentController sharedDocumentController];
+    BaseDataDocument *doc = nil;
+    // Use transient document if available
+    for (BaseDataDocument *d in dc.documents) {
+        if (d.transient) {
+            doc = d;
+            break;
+        }
+    }
+    // Otherwise make a new document
+    if (!doc) {
+        doc = [dc openUntitledDocumentAndDisplay:YES error:nil];
+    }
+    [doc insertData:data];
 }
 
 - (BOOL)applicationShouldOpenUntitledFile:(NSApplication * __unused)sender {

@@ -121,4 +121,6 @@ extern NSString * const BaseDataDocumentDidChangeStringEncodingNotification;
 @property (nonatomic) BOOL shouldLiveReload;
 - (IBAction)setLiveReloadFromMenuItem:sender;
 
+- (void)insertData:(NSData *)data;
+
 @end
