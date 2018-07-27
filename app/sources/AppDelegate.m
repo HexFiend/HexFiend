@@ -57,6 +57,7 @@
     [self processCommandLineArguments];
 
     [[NSDistributedNotificationCenter defaultCenter] addObserverForName:@"HFOpenFileNotification" object:nil queue:nil usingBlock:^(NSNotification * _Nonnull notification) {
+        [NSApp activateIgnoringOtherApps:YES];
         NSDictionary *userInfo = notification.userInfo;
         NSArray *files = [userInfo objectForKey:@"files"];
         if ([files isKindOfClass:[NSArray class]]) {
@@ -69,6 +70,7 @@
     }];
 
     [[NSDistributedNotificationCenter defaultCenter] addObserverForName:@"HFDiffFilesNotification" object:nil queue:nil usingBlock:^(NSNotification * _Nonnull notification) {
+        [NSApp activateIgnoringOtherApps:YES];
         NSDictionary *userInfo = notification.userInfo;
         NSArray *files = [userInfo objectForKey:@"files"];
         if ([files isKindOfClass:[NSArray class]] && files.count == 2) {
