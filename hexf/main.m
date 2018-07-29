@@ -17,7 +17,18 @@ static NSString *kAppIdentifier = @"com.ridiculousfish.HexFiend";
 @implementation Controller
 
 - (int)printUsage {
-    fprintf(stderr, "usage: hexf: file [file ...]\n");
+    fprintf(stderr,
+            "Usage:\n"
+            "\n"
+            "  Open files:\n"
+            "    hexf file1 [file2 file3 ...]\n"
+            "\n"
+            "  Compare files:\n"
+            "    hexf -d file1 file2\n"
+            "\n"
+            "  Open piped data:\n"
+            "    echo hello | hexf\n"
+    );
     return EXIT_FAILURE;
 }
 
