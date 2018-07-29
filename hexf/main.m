@@ -35,6 +35,11 @@ static NSString *kAppIdentifier = @"com.ridiculousfish.HexFiend";
     return EXIT_FAILURE;
 }
 
+- (NSString *)standardizePath:(NSString *)path {
+    NSURL *url = [NSURL fileURLWithPath:path];
+    return url.path; // get absolute path
+}
+
 - (BOOL)appRunning {
     NSRunningApplication* app = [[NSRunningApplication runningApplicationsWithBundleIdentifier:kAppIdentifier] firstObject];
     return app != nil;
@@ -81,35 +86,31 @@ static NSString *kAppIdentifier = @"com.ridiculousfish.HexFiend";
 - (int)processArguments:(NSArray<NSString *> *)args {
     NSMutableArray<NSString *> *filesToOpen = [NSMutableArray array];
     const NSUInteger argsCount = args.count;
-    NSString *diffFile = nil;
-    for (NSUInteger i = 1; i < argsCount; ++i) {
-        NSString *arg = [args objectAtIndex:i];
-        if ([arg hasPrefix:@"-"]) {
-            if ([arg isEqualToString:@"-d"] || [arg isEqualToString:@"--diff"]) {
-                if (i == (argsCount - 1) || diffFile) {
-                    return [self printUsage];
+    NSString *diffLeftFile = nil;
+    NSString *diffRightFile = nil;
+    if (argsCount == 4 && [args[1] isEqualToString:@"-d"]) {
+        diffLeftFile = [self standardizePath:args[2]];
+        diffRightFile = [self standardizePath:args[3]];
+    } else {
+        for (NSUInteger i = 1; i < argsCount; ++i) {
+            NSString *arg = [args objectAtIndex:i];
+            if ([arg hasPrefix:@"-"]) {
+                if ([arg isEqualToString:@"-h"] || [arg isEqualToString:@"--help"]) {
+                    (void)[self printUsage];
+                    return EXIT_SUCCESS;
                 }
-                diffFile = [args objectAtIndex:i + 1];
-                i++;
-                continue;
-            } else {
                 return [self printUsage];
             }
+            [filesToOpen addObject:[self standardizePath:arg]];
         }
-        if (diffFile && filesToOpen.count == 1) {
-            return [self printUsage];
-        }
-        NSURL *url = [NSURL fileURLWithPath:arg];
-        NSString *path = url.path; // get absolute path
-        [filesToOpen addObject:path];
     }
     if (self.appRunning) {
         // App is already running so post distributed notification
         NSString *name = nil;
         NSDictionary *userInfo = nil;
-        if (diffFile) {
+        if (diffLeftFile && diffRightFile) {
             name = @"HFDiffFilesNotification";
-            userInfo = @{@"files": @[diffFile, [filesToOpen firstObject]]};
+            userInfo = @{@"files": @[diffLeftFile, diffRightFile]};
         } else {
             name = @"HFOpenFileNotification";
             userInfo = @{@"files": filesToOpen};
@@ -118,11 +119,11 @@ static NSString *kAppIdentifier = @"com.ridiculousfish.HexFiend";
     } else {
         // App isn't running so launch it with custom args
         NSMutableArray *launchArgs = [NSMutableArray array];
-        if (diffFile) {
+        if (diffLeftFile && diffRightFile) {
             [launchArgs addObject:@"-HFDiffLeftFile"];
-            [launchArgs addObject:diffFile];
+            [launchArgs addObject:diffLeftFile];
             [launchArgs addObject:@"-HFDiffRightFile"];
-            [launchArgs addObject:[filesToOpen firstObject]];
+            [launchArgs addObject:diffRightFile];
         } else {
             for (NSString *fileToOpen in filesToOpen) {
                 [launchArgs addObject:@"-HFOpenFile"];
