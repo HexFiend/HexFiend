@@ -31,7 +31,7 @@ static NSString *kAppIdentifier = @"com.ridiculousfish.HexFiend";
             "    echo hello | hexf\n"
             "\n"
             "  Show help:\n"
-            "    hexf [-h | --help]\n"
+            "    hexf -h | --help\n"
     );
     return EXIT_FAILURE;
 }
