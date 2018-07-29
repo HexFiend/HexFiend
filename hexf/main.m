@@ -7,6 +7,7 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#include <sys/select.h>
 
 static NSString *kAppIdentifier = @"com.ridiculousfish.HexFiend";
 
@@ -56,7 +57,18 @@ static NSString *kAppIdentifier = @"com.ridiculousfish.HexFiend";
     return YES;
 }
 
+- (BOOL)standardInputHasData {
+    fd_set rfds;
+    FD_ZERO(&rfds);
+    FD_SET(STDIN_FILENO, &rfds);
+    struct timeval timeout = {0, 0};
+    return select(1, &rfds, NULL, NULL, &timeout) == 1;
+}
+
 - (BOOL)processStandardInput {
+    if (!self.standardInputHasData) {
+        return NO;
+    }
     NSFileHandle *inFile = [NSFileHandle fileHandleWithStandardInput];
     NSData *data = [inFile readDataToEndOfFile];
     if (data.length == 0) {
