@@ -5,7 +5,7 @@
 //  Copyright 2010 ridiculous_fish. All rights reserved.
 //
 
-#import <HexFiend/HFTYpes.h>
+#import <HexFiend/HFTypes.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
