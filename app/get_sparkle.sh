@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 # This script should be called from the root directory
 
 set -e
@@ -20,7 +21,7 @@ if [ -e "$FRAMEWORK" ]; then
 fi
 
 # Download Sparkle
-curl -sL -o "$ARCHIVE" "$URL"
+nscurl -o "$ARCHIVE" "$URL"
 
 # Extract Sparkle.framework
 tar -xvf "$ARCHIVE" "$FRAMEWORK"
