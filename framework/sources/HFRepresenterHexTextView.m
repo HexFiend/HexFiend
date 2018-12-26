@@ -38,6 +38,8 @@
     for (size_t i = 0; i < numGlyphs; i++) {
         maxAdv = HFMax(maxAdv, advances[i].width);
     }
+    maxAdv = round(maxAdv); // mimics what -[NSFont advancementForGlyph:] returns
+    
     glyphAdvancement = maxAdv;
     spaceAdvancement = maxAdv;
 }
