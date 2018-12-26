@@ -222,6 +222,14 @@ static inline int common_prefix_length(const char *a, const char *b) {
     return i;
 }
 
+- (NSColor *)foregroundColor {
+    if (@available(macOS 10.10, *)) {
+        return [NSColor secondaryLabelColor];
+    } else {
+        return [NSColor colorWithCalibratedWhite:(CGFloat).1 alpha:(CGFloat).8];
+    }
+}
+
 - (void)drawLineNumbersWithClipStringDrawing:(NSRect)clipRect {
     CGFloat verticalOffset = ld2f(_lineRangeToDraw.location - floorl(_lineRangeToDraw.location));
     NSRect textRect = self.bounds;
@@ -235,13 +243,7 @@ static inline int common_prefix_length(const char *a, const char *b) {
         NSMutableParagraphStyle *mutableStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
         [mutableStyle setAlignment:NSRightTextAlignment];
         NSParagraphStyle *paragraphStyle = [mutableStyle copy];
-        NSColor *foregroundColor;
-        if (@available(macOS 10.10, *)) {
-            foregroundColor = [NSColor secondaryLabelColor];
-        } else {
-            foregroundColor = [NSColor colorWithCalibratedWhite:(CGFloat).1 alpha:(CGFloat).8];
-        }
-        textAttributes = [[NSDictionary alloc] initWithObjectsAndKeys:_font, NSFontAttributeName, foregroundColor, NSForegroundColorAttributeName, paragraphStyle, NSParagraphStyleAttributeName, nil];
+        textAttributes = [[NSDictionary alloc] initWithObjectsAndKeys:_font, NSFontAttributeName, [self foregroundColor], NSForegroundColorAttributeName, paragraphStyle, NSParagraphStyleAttributeName, nil];
     }
     
     char formatString[64];
@@ -390,7 +392,7 @@ static inline int common_prefix_length(const char *a, const char *b) {
         NSMutableParagraphStyle *mutableStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
         [mutableStyle setAlignment:NSRightTextAlignment];
         NSParagraphStyle *paragraphStyle = [mutableStyle copy];
-        textAttributes = [[NSDictionary alloc] initWithObjectsAndKeys:_font, NSFontAttributeName, [NSColor colorWithCalibratedWhite:(CGFloat).1 alpha:(CGFloat).8], NSForegroundColorAttributeName, paragraphStyle, NSParagraphStyleAttributeName, nil];
+        textAttributes = [[NSDictionary alloc] initWithObjectsAndKeys:_font, NSFontAttributeName, [self foregroundColor], NSForegroundColorAttributeName, paragraphStyle, NSParagraphStyleAttributeName, nil];
         [textStorage setAttributes:textAttributes range:NSMakeRange(0, [textStorage length])];
     }
     
@@ -428,7 +430,7 @@ static inline int common_prefix_length(const char *a, const char *b) {
         [mutableStyle setMinimumLineHeight:_lineHeight];
         [mutableStyle setMaximumLineHeight:_lineHeight];
         NSParagraphStyle *paragraphStyle = [mutableStyle copy];
-        textAttributes = [[NSDictionary alloc] initWithObjectsAndKeys:_font, NSFontAttributeName, [NSColor colorWithCalibratedWhite:(CGFloat).1 alpha:(CGFloat).8], NSForegroundColorAttributeName, paragraphStyle, NSParagraphStyleAttributeName, nil];
+        textAttributes = [[NSDictionary alloc] initWithObjectsAndKeys:_font, NSFontAttributeName, [self foregroundColor], NSForegroundColorAttributeName, paragraphStyle, NSParagraphStyleAttributeName, nil];
     }
     
     NSString *string = [self newLineStringForRange:HFRangeMake(lineIndex, linesRemaining)];
