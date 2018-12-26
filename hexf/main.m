@@ -7,7 +7,7 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#include <sys/select.h>
+#include <sys/time.h>
 
 static NSString *kAppIdentifier = @"com.ridiculousfish.HexFiend";
 
