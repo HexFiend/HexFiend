@@ -980,8 +980,10 @@ static inline Class preferredByteArrayClass(void) {
     double amount = diff / .15;
     amount = fmin(fmax(amount, 0), 1);
     if (! bannerGrowing) amount = 1. - amount;
+    NSView *bannerRelativeView = [self bannerAssociateView];
     if (bannerGrowing && diff >= 0 && [bannerView superview] != containerView) {
-        [containerView addSubview:bannerView positioned:NSWindowBelow relativeTo:[layoutRepresenter view]];
+        NSAssert([bannerRelativeView superview] == containerView, @"oops");
+        [containerView addSubview:bannerView positioned:NSWindowBelow relativeTo:bannerRelativeView];
         if (targetFirstResponderInBanner) {
             NSWindow *window = [self window];
             savedFirstResponder = [window firstResponder];
@@ -993,10 +995,9 @@ static inline Class preferredByteArrayClass(void) {
     bannerFrame.size.height = height;
     bannerFrame.origin.y = NSMaxY(containerView.frame) - height;
     [bannerView setFrame:bannerFrame];
-    NSView *layoutView = [layoutRepresenter view];
-    NSRect layoutFrame = layoutView.frame;
+    NSRect layoutFrame = bannerRelativeView.frame;
     layoutFrame.size.height = containerView.frame.size.height - height;
-    layoutView.frame = layoutFrame;
+    bannerRelativeView.frame = layoutFrame;
 
     if (isFirstCall) {
         /* The first display can take some time, which can cause jerky animation; so we start the animation after it */
@@ -1009,6 +1010,11 @@ static inline Class preferredByteArrayClass(void) {
         }
         [self finishedAnimation];
     }
+}
+
+- (NSView *)bannerAssociateView
+{
+    return [layoutRepresenter view];
 }
 
 - (BOOL)canSwitchToNewBanner {

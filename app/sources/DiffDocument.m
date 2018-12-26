@@ -1137,4 +1137,11 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
     return resultSize;
 }
 
+- (NSView *)bannerAssociateView
+{
+    NSView *view = [textViewContainer superview];
+    HFASSERT([view isKindOfClass:[NSSplitView class]]);
+    return view;
+}
+
 @end

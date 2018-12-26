@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11201" systemVersion="16B2555" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11201"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14460.31"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="DiffDocument">
             <connections>
-                <outlet property="containerView" destination="3" id="26"/>
+                <outlet property="containerView" destination="2" id="spH-UW-Bdb"/>
                 <outlet property="diffTable" destination="16" id="22"/>
                 <outlet property="leftTextView" destination="6" id="11"/>
                 <outlet property="rightTextView" destination="7" id="12"/>
@@ -17,8 +18,8 @@
             </connections>
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
-        <customObject id="-3" userLabel="Application"/>
-        <window title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" visibleAtLaunch="NO" animationBehavior="default" id="1" customClass="DiffDocumentWindow">
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <window title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" visibleAtLaunch="NO" animationBehavior="default" id="1" customClass="DiffDocumentWindow">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="467" y="225" width="670" height="533"/>
@@ -27,20 +28,20 @@
                 <rect key="frame" x="0.0" y="0.0" width="670" height="533"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <splitView dividerStyle="paneSplitter" id="3">
+                    <splitView dividerStyle="thin" id="3">
                         <rect key="frame" x="0.0" y="0.0" width="655" height="533"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <customView id="4" customClass="DiffTextViewContainer">
-                                <rect key="frame" x="0.0" y="0.0" width="655" height="356"/>
+                                <rect key="frame" x="0.0" y="0.0" width="655" height="362"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <subviews>
                                     <customView id="6" customClass="HFTextView">
-                                        <rect key="frame" x="0.0" y="0.0" width="321" height="356"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="321" height="362"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxX="YES" heightSizable="YES"/>
                                     </customView>
                                     <customView id="7" customClass="HFTextView">
-                                        <rect key="frame" x="332" y="0.0" width="321" height="356"/>
+                                        <rect key="frame" x="332" y="0.0" width="321" height="362"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" heightSizable="YES"/>
                                     </customView>
                                 </subviews>
@@ -50,14 +51,14 @@
                                 </connections>
                             </customView>
                             <scrollView focusRingType="none" borderType="none" autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" hasVerticalScroller="NO" usesPredominantAxisScrolling="NO" id="13">
-                                <rect key="frame" x="0.0" y="366" width="655" height="167"/>
+                                <rect key="frame" x="0.0" y="363" width="655" height="170"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <clipView key="contentView" id="toj-fC-VLA">
-                                    <rect key="frame" x="0.0" y="0.0" width="655" height="167"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="655" height="170"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <tableView focusRingType="none" verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" alternatingRowBackgroundColors="YES" multipleSelection="NO" autosaveColumns="NO" id="16">
-                                            <rect key="frame" x="0.0" y="0.0" width="655" height="167"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="655" height="170"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <size key="intercellSpacing" width="3" height="2"/>
                                             <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -84,11 +85,11 @@
                                         </tableView>
                                     </subviews>
                                 </clipView>
-                                <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="15">
+                                <scroller key="horizontalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="YES" id="15">
                                     <rect key="frame" x="0.0" y="151" width="655" height="16"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
-                                <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="NO" id="14">
+                                <scroller key="verticalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="NO" id="14">
                                     <rect key="frame" x="-100" y="-100" width="15" height="167"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
