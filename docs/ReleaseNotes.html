@@ -12,6 +12,31 @@ body {
 
 <h2>Hex Fiend Release Notes</h2>
 
+<h3>v2.10</h3>
+<ul>
+<li>Add dark mode for 10.14 Mojave</li>
+<li>Initial tabbed windows support (thanks saagarjha)</li>
+<li>Binary template improvements:
+<ul>
+  <li>Template label argument is now optional. When the label argument is not passed, no entry in the UI will be created.</li>
+  <li>The selected template is now remembered</li>
+  <li>"Refresh" also reloads the selected template</li>
+  <li>Add "Copy Value" to binary template item</li>
+  <li>Increased script timeout to 10 seconds</li>
+  <li>Add "Select Bytes" context menu</li>
+  <li>Fix template variables persisting between runs</li>
+  <li>Improve "requires" error message</li>
+  <li>Add "bytes" command</li>
+  <li>Add "zlib_uncompress" command</li>
+</ul>
+<li>hexf improvements:
+<ul>
+  <li>hexf can open documents from stdin (for example "echo hello | hexf")</li>
+  <li>hexf brings Hex Fiend to front</li>
+</ul>
+<li>Experimental <a href="https://github.com/ridiculousfish/HexFiend/issues/95#issuecomment-397858715">custom string encoding</a> support</li>
+</ul>
+
 <h3>v2.9</h3>
 <ul>
 <li>Binary Templates are here! Note this is an early beta, and fields are currently read-only.</li>
