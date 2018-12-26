@@ -353,16 +353,15 @@ static inline Class preferredByteArrayClass(void) {
 - (NSSize)windowWillResize:(NSWindow *)sender toSize:(NSSize)frameSize {
     USE(sender);
     if (layoutRepresenter == nil) return frameSize;
-#if __MAC_OS_X_VERSION_MAX_ALLOWED >= __MAC_10_12
-    NSSize size = NSZeroSize;
-    for (NSWindow *window in self.window.tabbedWindows.count ? self.window.tabbedWindows : @[self.window]) {
-        NSSize windowSize = [window.windowController.document minimumWindowFrameSizeForProposedSize:frameSize];
-        size = NSMakeSize(MAX(size.width, windowSize.width), MAX(size.height, windowSize.height));
+    if (@available(macOS 10.12, *)) {
+        NSSize size = NSZeroSize;
+        for (NSWindow *window in self.window.tabbedWindows.count ? self.window.tabbedWindows : @[self.window]) {
+            NSSize windowSize = [window.windowController.document minimumWindowFrameSizeForProposedSize:frameSize];
+            size = NSMakeSize(MAX(size.width, windowSize.width), MAX(size.height, windowSize.height));
+        }
+        return size;
     }
-    return size;
-#else
     return [self minimumWindowFrameSizeForProposedSize:frameSize];
-#endif
 }
 
 - (void)windowDidResize:(NSNotification * __unused)notification
