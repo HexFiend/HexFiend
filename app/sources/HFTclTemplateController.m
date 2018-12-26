@@ -165,7 +165,7 @@ DEFINE_COMMAND(zlib_uncompress)
     Tcl_LimitTypeSet(_interp, TCL_LIMIT_TIME);
     Tcl_Time time;
     Tcl_GetTime(&time);
-    time.sec += 2;
+    time.sec += [[NSUserDefaults standardUserDefaults] integerForKey:@"BinaryTemplateScriptTimeout"];
     Tcl_LimitSetTime(_interp, &time);
     const int err = Tcl_EvalFile(_interp, [path fileSystemRepresentation]);
     if (err != TCL_OK) {
