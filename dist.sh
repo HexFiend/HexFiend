@@ -23,6 +23,11 @@ xcodebuild \
 
 APPNAME="Hex Fiend"
 APP="${DERIVED_DATA_PATH}/Build/Products/${CONFIG}/${APPNAME}.app"
+SPARKLE="${APP}/Contents/Frameworks/Sparkle.framework"
+AUTOUPDATEAPP="${SPARKLE}/Versions/A/Resources/Autoupdate.app"
+codesign --timestamp --options runtime -f -s "${CODESIGN}" --deep "${AUTOUPDATEAPP}"
+codesign --timestamp --options runtime -f -s "${CODESIGN}" "${SPARKLE}"
+codesign --timestamp --options runtime -f -s "${CODESIGN}" "${APP}"
 VERSION="$(defaults read "${APP}/Contents/Info.plist" CFBundleShortVersionString)"
 DMG="$(echo "${APPNAME} ${VERSION}.dmg" | tr " " "_")"
 FOLDER="${APPNAME} ${VERSION}"
