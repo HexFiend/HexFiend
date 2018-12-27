@@ -17,7 +17,8 @@ rm -rf "vendor" "${DERIVED_DATA_PATH}"
 xcodebuild \
 	-scheme "${SCHEME}" \
 	-derivedDataPath "${DERIVED_DATA_PATH}" \
-	"CODE_SIGN_IDENTITY=${CODESIGN}"
+	"CODE_SIGN_IDENTITY=${CODESIGN}" \
+	"OTHER_CODE_SIGN_FLAGS=--timestamp" \
 
 APPNAME="Hex Fiend"
 APP="${DERIVED_DATA_PATH}/Build/Products/${CONFIG}/${APPNAME}.app"
@@ -29,4 +30,4 @@ mkdir -p "${FOLDER}"
 cp -Rp "${APP}" "docs/ReleaseNotes.html" "License.txt" "${FOLDER}"
 hdiutil create -fs "HFS+" -format UDBZ -srcfolder "${FOLDER}" -ov "${DMG}"
 rm -rf "${FOLDER}"
-codesign -s "${CODESIGN}" "${DMG}"
+codesign --timestamp -s "${CODESIGN}" "${DMG}"
