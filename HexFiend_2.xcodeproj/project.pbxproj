@@ -791,6 +791,27 @@
 			path = tests;
 			sourceTree = "<group>";
 		};
+		A531921C21D58DC1006C25D6 /* Miscellaneous */ = {
+			isa = PBXGroup;
+			children = (
+				D0A8AF7B1467272B00387627 /* AppUtilities.h */,
+				D0A8AF7C1467273900387627 /* AppUtilities.m */,
+				D059E1271311C675001493B8 /* AppDebugging.h */,
+				D059E1281311C676001493B8 /* AppDebugging.m */,
+				D03CFA880FC78BCD00EE79E4 /* DataInspectorRepresenter.h */,
+				D03CFA890FC78BCD00EE79E4 /* DataInspectorRepresenter.m */,
+				D01772F30D751DB1002E03DE /* HFDocumentOperationView.h */,
+				D01772F40D751DB1002E03DE /* HFDocumentOperationView.m */,
+				D01773900D7A2F32002E03DE /* HFResizingView.h */,
+				D01773910D7A2F32002E03DE /* HFResizingView.m */,
+				D01EF15213B2A0D300CC9283 /* TextDividerRepresenter.h */,
+				D01EF15313B2A0D300CC9283 /* TextDividerRepresenter.m */,
+				D0CBB23E128F78C200989C15 /* StretchableProgressIndicator.h */,
+				D0CBB23F128F78C200989C15 /* StretchableProgressIndicator.m */,
+			);
+			name = Miscellaneous;
+			sourceTree = "<group>";
+		};
 		A550A7171F7877F8001C79C7 /* hexf */ = {
 			isa = PBXGroup;
 			children = (
@@ -949,7 +970,6 @@
 				D01E7C150CDC58AA00943F9E /* BaseDataDocument.m */,
 				D02BD6DE10545E9000535EDE /* FileDataDocument.h */,
 				D02BD6DF10545E9000535EDE /* FileDataDocument.m */,
-				D084E75C115DAE90004DC181 /* DiffDocument */,
 			);
 			name = DocumentTypes;
 			sourceTree = "<group>";
@@ -1058,26 +1078,14 @@
 			children = (
 				32CA4F630368D1EE00C91783 /* HexFiend_2_Prefix.pch */,
 				29B97316FDCFA39411CA2CEA /* main.m */,
-				D0A8AF7B1467272B00387627 /* AppUtilities.h */,
-				D0A8AF7C1467273900387627 /* AppUtilities.m */,
-				D02BD6D910545E7B00535EDE /* DocumentTypes */,
-				D0D8C45C12A3EF3F00960FC4 /* Dialogs */,
 				D0CD51F40DA2B928006E8D1B /* AppDelegate.h */,
 				D0CD51F50DA2B928006E8D1B /* AppDelegate.m */,
-				D059E1271311C675001493B8 /* AppDebugging.h */,
-				D059E1281311C676001493B8 /* AppDebugging.m */,
-				D03CFA880FC78BCD00EE79E4 /* DataInspectorRepresenter.h */,
-				D03CFA890FC78BCD00EE79E4 /* DataInspectorRepresenter.m */,
-				D01772F30D751DB1002E03DE /* HFDocumentOperationView.h */,
-				D01772F40D751DB1002E03DE /* HFDocumentOperationView.m */,
-				D01773900D7A2F32002E03DE /* HFResizingView.h */,
-				D01773910D7A2F32002E03DE /* HFResizingView.m */,
-				D01EF15213B2A0D300CC9283 /* TextDividerRepresenter.h */,
-				D01EF15313B2A0D300CC9283 /* TextDividerRepresenter.m */,
-				D0CBB23E128F78C200989C15 /* StretchableProgressIndicator.h */,
-				D0CBB23F128F78C200989C15 /* StretchableProgressIndicator.m */,
+				D02BD6D910545E7B00535EDE /* DocumentTypes */,
+				D084E75C115DAE90004DC181 /* DiffDocument */,
+				D0D8C45C12A3EF3F00960FC4 /* Dialogs */,
 				A59BC58F2001FB590066860F /* Binary Templates */,
 				D00122DC0D48A89F00540B10 /* Find_Replace */,
+				A531921C21D58DC1006C25D6 /* Miscellaneous */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
 			);
 			name = App;
