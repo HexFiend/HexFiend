@@ -44,5 +44,6 @@ Hex Fiend extends Tcl with additional commands for interacting with the opened f
 | hex *len* *label* | Reads *len* bytes as hexadecimal | `hex 16 "UUID"` |
 | ascii *len* *label* | Reads *len* bytes as ASCII | `ascii 32 "Name"` |
 | move *len* | Moves the file pointer *len* bytes, can be negative | `move -4` |
+| goto *position* | Moves the file pointer to *position*, relative to the anchor | `goto 10` |
 | end | Returns true if the file is eof | `while {![end]} { ... }` |
 
