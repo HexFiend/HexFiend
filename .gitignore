@@ -1,5 +1,5 @@
 .DS_Store
 HexFiend_2.xcodeproj/project.xcworkspace/*
 HexFiend_2.xcodeproj/xcuserdata/*
-/build
+/DerivedData
 /vendor

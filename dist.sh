@@ -8,19 +8,19 @@ if [ -z "${CODESIGN}" ]; then
 	exit 1
 fi
 
-BUILDDIR="$(pwd)/build"
+DERIVED_DATA_PATH="$(pwd)/DerivedData"
 SCHEME="Release + CodeSign"
 CONFIG="Release+CodeSign"
 
-rm -rf "vendor"
-xcodebuild clean -scheme "${SCHEME}" \
-	"BUILD_DIR=${BUILDDIR}"
-xcodebuild build -scheme "${SCHEME}" \
-	"CODE_SIGN_IDENTITY=${CODESIGN}" \
-	"BUILD_DIR=${BUILDDIR}"
+rm -rf "vendor" "${DERIVED_DATA_PATH}"
+
+xcodebuild \
+	-scheme "${SCHEME}" \
+	-derivedDataPath "${DERIVED_DATA_PATH}" \
+	"CODE_SIGN_IDENTITY=${CODESIGN}"
 
 APPNAME="Hex Fiend"
-APP="${BUILDDIR}/${CONFIG}/${APPNAME}.app"
+APP="${DERIVED_DATA_PATH}/Build/Products/${CONFIG}/${APPNAME}.app"
 VERSION="$(defaults read "${APP}/Contents/Info.plist" CFBundleShortVersionString)"
 DMG="$(echo "${APPNAME} ${VERSION}.dmg" | tr " " "_")"
 FOLDER="${APPNAME} ${VERSION}"
