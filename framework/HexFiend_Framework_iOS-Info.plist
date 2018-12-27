@@ -18,10 +18,5 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>200</string>
-	<key>SMPrivilegedExecutables</key>
-	<dict>
-		<key>com.ridiculousfish.HexFiend.PrivilegedHelper</key>
-		<string>certificate leaf[subject.CN] = "Hex Fiend"</string>
-	</dict>
 </dict>
 </plist>

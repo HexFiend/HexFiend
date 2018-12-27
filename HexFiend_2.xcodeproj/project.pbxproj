@@ -2313,7 +2313,7 @@
 				FRAMEWORK_VERSION = A;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = framework/sources/HexFiend_2_Framework_Prefix.pch;
-				INFOPLIST_FILE = "HexFiend_Framework_iOS-Info.plist";
+				INFOPLIST_FILE = "framework/HexFiend_Framework_iOS-Info.plist";
 				INSTALL_PATH = "@loader_path/../Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_DYLIB_INSTALL_NAME = "@loader_path/../Frameworks/HexFiend.framework/Versions/A/HexFiend";
@@ -2348,7 +2348,7 @@
 				FRAMEWORK_VERSION = A;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = framework/sources/HexFiend_2_Framework_Prefix.pch;
-				INFOPLIST_FILE = "HexFiend_Framework_iOS-Info.plist";
+				INFOPLIST_FILE = "framework/HexFiend_Framework_iOS-Info.plist";
 				INSTALL_PATH = "@loader_path/../Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_DYLIB_INSTALL_NAME = "@loader_path/../Frameworks/HexFiend.framework/Versions/A/HexFiend";
@@ -2383,7 +2383,7 @@
 				FRAMEWORK_VERSION = A;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = framework/sources/HexFiend_2_Framework_Prefix.pch;
-				INFOPLIST_FILE = "HexFiend_Framework_iOS-Info.plist";
+				INFOPLIST_FILE = "framework/HexFiend_Framework_iOS-Info.plist";
 				INSTALL_PATH = "@loader_path/../Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_DYLIB_INSTALL_NAME = "@loader_path/../Frameworks/HexFiend.framework/Versions/A/HexFiend";
@@ -2417,7 +2417,7 @@
 				FRAMEWORK_VERSION = A;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = framework/sources/HexFiend_2_Framework_Prefix.pch;
-				INFOPLIST_FILE = "HexFiend_Framework_iOS-Info.plist";
+				INFOPLIST_FILE = "framework/HexFiend_Framework_iOS-Info.plist";
 				INSTALL_PATH = "@loader_path/../Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_DYLIB_INSTALL_NAME = "@loader_path/../Frameworks/HexFiend.framework/Versions/A/HexFiend";
@@ -2452,7 +2452,7 @@
 				FRAMEWORK_VERSION = A;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = framework/sources/HexFiend_2_Framework_Prefix.pch;
-				INFOPLIST_FILE = "HexFiend_Framework_iOS-Info.plist";
+				INFOPLIST_FILE = "framework/HexFiend_Framework_iOS-Info.plist";
 				INSTALL_PATH = "@loader_path/../Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_DYLIB_INSTALL_NAME = "@loader_path/../Frameworks/HexFiend.framework/Versions/A/HexFiend";
@@ -2487,7 +2487,7 @@
 				FRAMEWORK_VERSION = A;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = framework/sources/HexFiend_2_Framework_Prefix.pch;
-				INFOPLIST_FILE = "HexFiend_Framework_iOS-Info.plist";
+				INFOPLIST_FILE = "framework/HexFiend_Framework_iOS-Info.plist";
 				INSTALL_PATH = "@loader_path/../Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_DYLIB_INSTALL_NAME = "@loader_path/../Frameworks/HexFiend.framework/Versions/A/HexFiend";
@@ -2522,7 +2522,7 @@
 				FRAMEWORK_VERSION = A;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = framework/sources/HexFiend_2_Framework_Prefix.pch;
-				INFOPLIST_FILE = "HexFiend_Framework_iOS-Info.plist";
+				INFOPLIST_FILE = "framework/HexFiend_Framework_iOS-Info.plist";
 				INSTALL_PATH = "@loader_path/../Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_DYLIB_INSTALL_NAME = "@loader_path/../Frameworks/HexFiend.framework/Versions/A/HexFiend";
