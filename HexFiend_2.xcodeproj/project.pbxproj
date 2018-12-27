@@ -391,6 +391,7 @@
 		A51D0E7D20F1D01A00B55775 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.0.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		A51D0E8B20F1E56600B55775 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.0.sdk/System/Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
 		A51D0E9020F2A8D200B55775 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.0.sdk/System/Library/Frameworks/CoreText.framework; sourceTree = DEVELOPER_DIR; };
+		A531921B21D585FD006C25D6 /* version.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = version.h; sourceTree = "<group>"; };
 		A550A7161F7877F8001C79C7 /* hexf */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = hexf; sourceTree = BUILT_PRODUCTS_DIR; };
 		A550A7181F7877F8001C79C7 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		A554E0CD20DF2CD3001B4C48 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/OpenDriveDialog.xib; sourceTree = "<group>"; };
@@ -437,7 +438,7 @@
 		A5ED2A83200BD8F0004AD7A4 /* HFColorRange.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFColorRange.h; path = sources/HFColorRange.h; sourceTree = "<group>"; };
 		A5ED2A84200BD8F0004AD7A4 /* HFColorRange.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFColorRange.m; path = sources/HFColorRange.m; sourceTree = "<group>"; };
 		A5EF294A20F187B700CA7B39 /* HexFiend_Framework_iOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = HexFiend_Framework_iOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		A5EF294B20F187B700CA7B39 /* HexFiend_Framework_iOS-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "HexFiend_Framework_iOS-Info.plist"; path = "/Users/kainjow/git/HexFiend/HexFiend_Framework_iOS-Info.plist"; sourceTree = "<absolute>"; };
+		A5EF294B20F187B700CA7B39 /* HexFiend_Framework_iOS-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "HexFiend_Framework_iOS-Info.plist"; sourceTree = "<group>"; };
 		D00122E10D48A8D400540B10 /* HFFindReplaceBackgroundView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFFindReplaceBackgroundView.h; path = app/sources/HFFindReplaceBackgroundView.h; sourceTree = "<group>"; };
 		D00122E20D48A8D400540B10 /* HFFindReplaceBackgroundView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFFindReplaceBackgroundView.m; path = app/sources/HFFindReplaceBackgroundView.m; sourceTree = "<group>"; };
 		D00C15E50FF091FF006D021F /* HexFiendling.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HexFiendling.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -700,6 +701,7 @@
 		29B97314FDCFA39411CA2CEA /* HexFiend_2 */ = {
 			isa = PBXGroup;
 			children = (
+				A531921B21D585FD006C25D6 /* version.h */,
 				D0560B350CDC4248009D2484 /* Framework */,
 				D0560B380CDC4253009D2484 /* App */,
 				D047E33B1022CF2B00EF307B /* PrivilegedHelper */,
@@ -2314,6 +2316,9 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = framework/sources/HexFiend_2_Framework_Prefix.pch;
 				INFOPLIST_FILE = "framework/HexFiend_Framework_iOS-Info.plist";
+				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-traditional";
+				INFOPLIST_PREFIX_HEADER = version.h;
+				INFOPLIST_PREPROCESS = YES;
 				INSTALL_PATH = "@loader_path/../Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_DYLIB_INSTALL_NAME = "@loader_path/../Frameworks/HexFiend.framework/Versions/A/HexFiend";
@@ -2349,6 +2354,9 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = framework/sources/HexFiend_2_Framework_Prefix.pch;
 				INFOPLIST_FILE = "framework/HexFiend_Framework_iOS-Info.plist";
+				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-traditional";
+				INFOPLIST_PREFIX_HEADER = version.h;
+				INFOPLIST_PREPROCESS = YES;
 				INSTALL_PATH = "@loader_path/../Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_DYLIB_INSTALL_NAME = "@loader_path/../Frameworks/HexFiend.framework/Versions/A/HexFiend";
@@ -2384,6 +2392,9 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = framework/sources/HexFiend_2_Framework_Prefix.pch;
 				INFOPLIST_FILE = "framework/HexFiend_Framework_iOS-Info.plist";
+				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-traditional";
+				INFOPLIST_PREFIX_HEADER = version.h;
+				INFOPLIST_PREPROCESS = YES;
 				INSTALL_PATH = "@loader_path/../Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_DYLIB_INSTALL_NAME = "@loader_path/../Frameworks/HexFiend.framework/Versions/A/HexFiend";
@@ -2418,6 +2429,9 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = framework/sources/HexFiend_2_Framework_Prefix.pch;
 				INFOPLIST_FILE = "framework/HexFiend_Framework_iOS-Info.plist";
+				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-traditional";
+				INFOPLIST_PREFIX_HEADER = version.h;
+				INFOPLIST_PREPROCESS = YES;
 				INSTALL_PATH = "@loader_path/../Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_DYLIB_INSTALL_NAME = "@loader_path/../Frameworks/HexFiend.framework/Versions/A/HexFiend";
@@ -2453,6 +2467,9 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = framework/sources/HexFiend_2_Framework_Prefix.pch;
 				INFOPLIST_FILE = "framework/HexFiend_Framework_iOS-Info.plist";
+				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-traditional";
+				INFOPLIST_PREFIX_HEADER = version.h;
+				INFOPLIST_PREPROCESS = YES;
 				INSTALL_PATH = "@loader_path/../Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_DYLIB_INSTALL_NAME = "@loader_path/../Frameworks/HexFiend.framework/Versions/A/HexFiend";
@@ -2488,6 +2505,9 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = framework/sources/HexFiend_2_Framework_Prefix.pch;
 				INFOPLIST_FILE = "framework/HexFiend_Framework_iOS-Info.plist";
+				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-traditional";
+				INFOPLIST_PREFIX_HEADER = version.h;
+				INFOPLIST_PREPROCESS = YES;
 				INSTALL_PATH = "@loader_path/../Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_DYLIB_INSTALL_NAME = "@loader_path/../Frameworks/HexFiend.framework/Versions/A/HexFiend";
@@ -2523,6 +2543,9 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = framework/sources/HexFiend_2_Framework_Prefix.pch;
 				INFOPLIST_FILE = "framework/HexFiend_Framework_iOS-Info.plist";
+				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-traditional";
+				INFOPLIST_PREFIX_HEADER = version.h;
+				INFOPLIST_PREPROCESS = YES;
 				INSTALL_PATH = "@loader_path/../Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_DYLIB_INSTALL_NAME = "@loader_path/../Frameworks/HexFiend.framework/Versions/A/HexFiend";
@@ -2632,6 +2655,9 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = app/sources/HexFiend_2_Prefix.pch;
 				INFOPLIST_FILE = app/Info.plist;
+				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-traditional";
+				INFOPLIST_PREFIX_HEADER = version.h;
+				INFOPLIST_PREPROCESS = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -2665,6 +2691,9 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = framework/sources/HexFiend_2_Framework_Prefix.pch;
 				INFOPLIST_FILE = "framework/HexFiend_Framework-Info.plist";
+				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-traditional";
+				INFOPLIST_PREFIX_HEADER = version.h;
+				INFOPLIST_PREPROCESS = YES;
 				INSTALL_PATH = "@loader_path/../Frameworks";
 				LD_DYLIB_INSTALL_NAME = "@loader_path/../Frameworks/HexFiend.framework/Versions/A/HexFiend";
 				OTHER_CFLAGS = (
@@ -2800,6 +2829,9 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = app/sources/HexFiend_2_Prefix.pch;
 				INFOPLIST_FILE = app/Info.plist;
+				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-traditional";
+				INFOPLIST_PREFIX_HEADER = version.h;
+				INFOPLIST_PREPROCESS = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -2833,6 +2865,9 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = framework/sources/HexFiend_2_Framework_Prefix.pch;
 				INFOPLIST_FILE = "framework/HexFiend_Framework-Info.plist";
+				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-traditional";
+				INFOPLIST_PREFIX_HEADER = version.h;
+				INFOPLIST_PREPROCESS = YES;
 				INSTALL_PATH = "@loader_path/../Frameworks";
 				LD_DYLIB_INSTALL_NAME = "@loader_path/../Frameworks/HexFiend.framework/Versions/A/HexFiend";
 				OTHER_CFLAGS = (
@@ -2965,6 +3000,9 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = app/sources/HexFiend_2_Prefix.pch;
 				INFOPLIST_FILE = app/Info.plist;
+				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-traditional";
+				INFOPLIST_PREFIX_HEADER = version.h;
+				INFOPLIST_PREPROCESS = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -2998,6 +3036,9 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = framework/sources/HexFiend_2_Framework_Prefix.pch;
 				INFOPLIST_FILE = "framework/HexFiend_Framework-Info.plist";
+				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-traditional";
+				INFOPLIST_PREFIX_HEADER = version.h;
+				INFOPLIST_PREPROCESS = YES;
 				INSTALL_PATH = "@loader_path/../Frameworks";
 				LD_DYLIB_INSTALL_NAME = "@loader_path/../Frameworks/HexFiend.framework/Versions/A/HexFiend";
 				OTHER_CFLAGS = (
@@ -3149,6 +3190,9 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = app/sources/HexFiend_2_Prefix.pch;
 				INFOPLIST_FILE = app/Info_MAS.plist;
+				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-traditional";
+				INFOPLIST_PREFIX_HEADER = version.h;
+				INFOPLIST_PREPROCESS = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -3178,6 +3222,9 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = framework/sources/HexFiend_2_Framework_Prefix.pch;
 				INFOPLIST_FILE = "framework/HexFiend_Framework-Info.plist";
+				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-traditional";
+				INFOPLIST_PREFIX_HEADER = version.h;
+				INFOPLIST_PREPROCESS = YES;
 				INSTALL_PATH = "@loader_path/../Frameworks";
 				LD_DYLIB_INSTALL_NAME = "@loader_path/../Frameworks/HexFiend.framework/Versions/A/HexFiend";
 				OTHER_CFLAGS = (
@@ -3346,6 +3393,9 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = app/sources/HexFiend_2_Prefix.pch;
 				INFOPLIST_FILE = app/Info_MAS.plist;
+				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-traditional";
+				INFOPLIST_PREFIX_HEADER = version.h;
+				INFOPLIST_PREPROCESS = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -3375,6 +3425,9 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = framework/sources/HexFiend_2_Framework_Prefix.pch;
 				INFOPLIST_FILE = "framework/HexFiend_Framework-Info.plist";
+				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-traditional";
+				INFOPLIST_PREFIX_HEADER = version.h;
+				INFOPLIST_PREPROCESS = YES;
 				INSTALL_PATH = "@loader_path/../Frameworks";
 				LD_DYLIB_INSTALL_NAME = "@loader_path/../Frameworks/HexFiend.framework/Versions/A/HexFiend";
 				OTHER_CFLAGS = (
@@ -3549,6 +3602,9 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = app/sources/HexFiend_2_Prefix.pch;
 				INFOPLIST_FILE = app/Info.plist;
+				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-traditional";
+				INFOPLIST_PREFIX_HEADER = version.h;
+				INFOPLIST_PREPROCESS = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -3582,6 +3638,9 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = framework/sources/HexFiend_2_Framework_Prefix.pch;
 				INFOPLIST_FILE = "framework/HexFiend_Framework-Info.plist";
+				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-traditional";
+				INFOPLIST_PREFIX_HEADER = version.h;
+				INFOPLIST_PREPROCESS = YES;
 				INSTALL_PATH = "@loader_path/../Frameworks";
 				LD_DYLIB_INSTALL_NAME = "@loader_path/../Frameworks/HexFiend.framework/Versions/A/HexFiend";
 				OTHER_CFLAGS = (
@@ -3717,6 +3776,9 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = framework/sources/HexFiend_2_Framework_Prefix.pch;
 				INFOPLIST_FILE = "framework/HexFiend_Framework-Info.plist";
+				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-traditional";
+				INFOPLIST_PREFIX_HEADER = version.h;
+				INFOPLIST_PREPROCESS = YES;
 				INSTALL_PATH = "@loader_path/../Frameworks";
 				LD_DYLIB_INSTALL_NAME = "@loader_path/../Frameworks/HexFiend.framework/Versions/A/HexFiend";
 				OTHER_CFLAGS = (
@@ -3746,6 +3808,9 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = app/sources/HexFiend_2_Prefix.pch;
 				INFOPLIST_FILE = app/Info.plist;
+				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-traditional";
+				INFOPLIST_PREFIX_HEADER = version.h;
+				INFOPLIST_PREPROCESS = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
