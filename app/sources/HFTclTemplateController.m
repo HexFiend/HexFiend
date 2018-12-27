@@ -369,11 +369,12 @@ DEFINE_COMMAND(zlib_uncompress)
                 data = [NSMutableData dataWithLength:numBytes * factor];
                 destLen = data.length;
                 int res = uncompress(data.mutableBytes, &destLen, bytes, numBytes);
-                if (res == Z_MEM_ERROR) {
+                if (res == Z_BUF_ERROR) {
                     factor *= 2;
                 } else if (res == Z_OK) {
                     break;
                 } else {
+                    NSLog(@"Unknown zlib error %d", res);
                     return TCL_ERROR;
                 }
             }
