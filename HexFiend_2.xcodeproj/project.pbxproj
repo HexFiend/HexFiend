@@ -1852,6 +1852,7 @@
 				089C165DFE840E0CC02AAC07 /* Base */,
 			);
 			name = InfoPlist.strings;
+			path = app/resources;
 			sourceTree = "<group>";
 		};
 		A57F34821F1EF47700234B94 /* Preferences.xib */ = {
@@ -1896,6 +1897,7 @@
 				A554E0DA20DF2CD6001B4C48 /* Base */,
 			);
 			name = BinaryTemplateController.xib;
+			path = app/resources;
 			sourceTree = "<group>";
 		};
 		D018F137107AB64900AE805F /* DiffDocument.xib */ = {
@@ -1904,6 +1906,7 @@
 				A554E0D620DF2CD6001B4C48 /* Base */,
 			);
 			name = DiffDocument.xib;
+			path = app/resources;
 			sourceTree = "<group>";
 		};
 		D04A6B69100EA47C00704963 /* SaveBanner.xib */ = {
@@ -1912,6 +1915,7 @@
 				A554E0D420DF2CD5001B4C48 /* Base */,
 			);
 			name = SaveBanner.xib;
+			path = app/resources;
 			sourceTree = "<group>";
 		};
 		D04A6B78100EA4BC00704963 /* FindReplaceBanner.xib */ = {
@@ -1920,6 +1924,7 @@
 				A554E0D320DF2CD5001B4C48 /* Base */,
 			);
 			name = FindReplaceBanner.xib;
+			path = app/resources;
 			sourceTree = "<group>";
 		};
 		D04A6B95100EA73800704963 /* JumpToOffsetBanner.xib */ = {
@@ -1928,6 +1933,7 @@
 				A554E0D220DF2CD4001B4C48 /* Base */,
 			);
 			name = JumpToOffsetBanner.xib;
+			path = app/resources;
 			sourceTree = "<group>";
 		};
 		D04A6B9C100EA75400704963 /* MoveSelectionByBanner.xib */ = {
@@ -1936,6 +1942,7 @@
 				A554E0D120DF2CD4001B4C48 /* Base */,
 			);
 			name = MoveSelectionByBanner.xib;
+			path = app/resources;
 			sourceTree = "<group>";
 		};
 		D04A6BA3100EA78700704963 /* MyDocument.xib */ = {
@@ -1944,6 +1951,7 @@
 				A554E0D020DF2CD4001B4C48 /* Base */,
 			);
 			name = MyDocument.xib;
+			path = app/resources;
 			sourceTree = "<group>";
 		};
 		D04A6BA9100EA7B800704963 /* MainMenu.xib */ = {
@@ -1952,6 +1960,7 @@
 				A554E0D820DF2CD6001B4C48 /* Base */,
 			);
 			name = MainMenu.xib;
+			path = app/resources;
 			sourceTree = "<group>";
 		};
 		D071391E146F7897004D3792 /* MainMenu.xib */ = {
@@ -1960,6 +1969,7 @@
 				A554E0DB20DF2CD7001B4C48 /* Base */,
 			);
 			name = MainMenu.xib;
+			path = app/resources;
 			sourceTree = "<group>";
 		};
 		D0B47FED1272427B0095120E /* DiffComputationBanner.xib */ = {
@@ -1968,6 +1978,7 @@
 				A554E0D520DF2CD5001B4C48 /* Base */,
 			);
 			name = DiffComputationBanner.xib;
+			path = app/resources;
 			sourceTree = "<group>";
 		};
 		D8C1F92A16F278BA00A4C36E /* DiffRangeDialog.xib */ = {
@@ -1976,6 +1987,7 @@
 				A554E0D720DF2CD6001B4C48 /* Base */,
 			);
 			name = DiffRangeDialog.xib;
+			path = app/resources;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
