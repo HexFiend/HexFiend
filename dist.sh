@@ -18,7 +18,7 @@ xcodebuild \
 	-scheme "${SCHEME}" \
 	-derivedDataPath "${DERIVED_DATA_PATH}" \
 	"CODE_SIGN_IDENTITY=${CODESIGN}" \
-	"OTHER_CODE_SIGN_FLAGS=--timestamp" \
+	"OTHER_CODE_SIGN_FLAGS=--timestamp --options runtime" \
 
 APPNAME="Hex Fiend"
 APP="${DERIVED_DATA_PATH}/Build/Products/${CONFIG}/${APPNAME}.app"
