@@ -1969,7 +1969,6 @@
 				A554E0DB20DF2CD7001B4C48 /* Base */,
 			);
 			name = MainMenu.xib;
-			path = app/resources;
 			sourceTree = "<group>";
 		};
 		D0B47FED1272427B0095120E /* DiffComputationBanner.xib */ = {
