@@ -83,7 +83,7 @@ Various commands are provided for reading and interpreting multiple bytes.
 The `requires` command can be used to restrict where the template is used.
 
 | Parameter  | Description |
-| ------------- | ------------- | ------------- |
+| ------------- | ------------- |
 | offset | Offset in file where restriction begins |
 | hex | Bytes as hexadecimal that must match in file |
 
