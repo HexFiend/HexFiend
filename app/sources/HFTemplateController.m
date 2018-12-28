@@ -370,4 +370,9 @@
     self.currentNode.range = range;
 }
 
+- (void)addEntryWithLabel:(NSString *)label value:(NSString *)value {
+    HFTemplateNode *node = [[HFTemplateNode alloc] initWithLabel:label value:value];
+    [self.currentNode.children addObject:node];
+}
+
 @end

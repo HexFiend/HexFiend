@@ -47,6 +47,7 @@ enum command {
     command_section,
     command_endsection,
     command_zlib_uncompress,
+    command_entry,
 };
 
 @interface HFTclTemplateController ()
@@ -88,6 +89,7 @@ DEFINE_COMMAND(requires)
 DEFINE_COMMAND(section)
 DEFINE_COMMAND(endsection)
 DEFINE_COMMAND(zlib_uncompress)
+DEFINE_COMMAND(entry)
 
 @implementation HFTclTemplateController {
     Tcl_Interp *_interp;
@@ -141,6 +143,7 @@ DEFINE_COMMAND(zlib_uncompress)
         CMD(section),
         CMD(endsection),
         CMD(zlib_uncompress),
+        CMD(entry),
     };
 #undef CMD
 #undef CMD_NAMED
@@ -379,6 +382,16 @@ DEFINE_COMMAND(zlib_uncompress)
                 }
             }
             Tcl_SetObjResult(_interp, Tcl_NewByteArrayObj((const unsigned char *)data.bytes, (int)destLen));
+            break;
+        }
+        case command_entry: {
+            if (objc != 3) {
+                Tcl_WrongNumArgs(_interp, 1, objv, "label value");
+                return TCL_ERROR;
+            }
+            NSString *label = [NSString stringWithUTF8String:Tcl_GetStringFromObj(objv[1], NULL)];
+            NSString *value = [NSString stringWithUTF8String:Tcl_GetStringFromObj(objv[2], NULL)];
+            [self addEntryWithLabel:label value:value];
             break;
         }
     }
