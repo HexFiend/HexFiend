@@ -20,4 +20,4 @@ uint32 "UInt32"
 3. Go back to Hex Fiend and select **Refresh** from the **Templates** drop-down. You should see your template listed as **First** if everything was correct so far.
 4. Open any file and change the selection cursor to new locations. You'll see the "UInt32" field update.
 
-Congrats, you've written the most basic and simplest template that actually does something!
+Congrats, you've written the most basic and simplest template that actually does something! Visit the [reference](Reference.md) for details on other commands available.

@@ -2,28 +2,79 @@
 
 Hex Fiend extends Tcl with additional commands for interacting with the opened file. Many of these commands were heavily inspired by [WinHex](https://www.x-ways.net/winhex/templates/).
 
+## Types
+
+Type commands all have the same structure of `type [label]`. For example:
+
+```tcl
+uint32 "Size"
+```
+
+As of v2.10+ the label argument is optional. When the label is not passed, no entry in the UI will be created. This allows using the returned result strictly programmatically. For example:
+
+```tcl
+set size [uint32]
+```
+
+| Type | Description |
+| --------| ----------- |
+| uint64  | Reads an unsigned 64-bit integer |
+| int64   | Reads a signed 64-bit integer |
+| uint32  | Reads an unsigned 32-bit integer |
+| int32   | Reads a signed 32-bit integer |
+| uint16  | Reads an unsigned 16-bit integer |
+| int16   | Reads a signed 16-bit integer |
+| uint8   | Reads an unsigned 8-bit integer |
+| int8    | Reads a signed 8-bit integer |
+| float   | Reads a 32-bit floating point |
+| double  | Reads a 64-bit floating point |
+| uuid    | Reads 16-byte UUID |
+| macdate | Reads classic Mac OS 4-byte date (seconds since January 1, 1904) |
+
+## Endian
+
+The default endian mode for the type commands above is little. To interpret types as big endian, use the `big_endian` command. To go back to little, use `little_endian`. No arguments are passed.
+
+## File Pointer
+
+The file pointer is automatically moved forward for any command that reads data. However the following commands can be used to alter and access the file pointer's offset.
+
 | Command  | Description | Example |
 | ------------- | ------------- | ------------- |
-| uint64 *label*  | Reads an unsigned 64-bit integer  | `uint64 "Label"` |
-| int64 *label* | Reads a signed 64-bit integer  | `int64 "Label"` |
-| uint32 *label* | Reads an unsigned 32-bit integer  | `uint32 "Label"` |
-| int32 *label* | Reads a signed 32-bit integer  | `int32 "Label"` |
-| uint16 *label* | Reads an unsigned 16-bit integer  | `uint16 "Label"` |
-| int16 *label* | Reads a signed 16-bit integer  | `int16 "Label"` |
-| uint8 *label* | Reads an unsigned 8-bit integer  | `uint8 "Label"` |
-| int8 *label* | Reads a signed 8-bit integer  | `int8 "Label"` |
-| float *label* | Reads a 32-bit floating point  | `float "Label"` |
-| double *label* | Reads a 64-bit floating point  | `double "Label"` |
-| uuid *label* | Reads 16-byte UUID | `uuid "GUID"` |
-| macdate *label* | Reads classic Mac OS 4-byte date (seconds since January 1, 1904) | `macdate "CreateDate"` |
-| big_endian | Sets the endian mode to big | `big_endian` |
-| little_endian | Sets the endian mode back to little (default) | `little_endian` |
-| bytes *len* *label* [v2.10] | Reads *len* bytes | `bytes 128 "Data"` |
+| move *len* | Moves the file pointer *len* bytes, can be negative | `move -4` |
+| goto *position* | Moves the file pointer to absolute *position*, relative to the anchor | `goto 10` |
+| end | Returns true if the file is at the end (beyond the file length) | `while {![end]} { ... }` |
+
+## Raw Bytes
+
+Various commands are provided for reading and interpreting multiple bytes.
+
+| Command  | Description | Example |
+| ------------- | ------------- | ------------- |
+| bytes *len* *label* [v2.10+] | Reads *len* bytes as raw data | `bytes 128 "Data"` |
 | hex *len* *label* | Reads *len* bytes as hexadecimal | `hex 16 "UUID"` |
 | ascii *len* *label* | Reads *len* bytes as ASCII | `ascii 32 "Name"` |
-| utf16 *len* *label* | Reads *len* bytes as UTF16 | `utf16 12 "Name"` |
-| move *len* | Moves the file pointer *len* bytes, can be negative | `move -4` |
-| goto *position* | Moves the file pointer to *position*, relative to the anchor | `goto 10` |
-| end | Returns true if the file is eof | `while {![end]} { ... }` |
-| requires *offset* *hex* | Restricts template to data whose bytes at *offset* match *hex* | `requires 510 "55 AA"` |
+| utf16 *len* *label* | Reads *len* bytes as UTF16 (via current endian) | `utf16 12 "Name"` |
+
+## Restrictions
+
+The `requires` command can be used to restrict where the template is used.
+
+| Parameter  | Description |
+| ------------- | ------------- | ------------- |
+| offset | Offset in file where restriction begins |
+| hex | Bytes as hexadecimal that must match in file |
+
+### Example
+
+```tcl
+requires 510 "55 AA" ;# Master Boot Record
+```
+
+If the bytes at offset 510 (from the anchor) do not match "55 AA" in hexadecimal, then the template stops executing and errors out. Otherwise execution continues.
+
+## Compression
+
+| Command  | Description | Example |
+| ------------- | ------------- | ------------- |
 | zlib_uncompress *data* | Decompress *data* via zlib | `zlib_uncompress $compressed_data` |
