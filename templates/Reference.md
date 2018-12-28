@@ -31,6 +31,28 @@ set size [uint32]
 | uuid    | Reads 16-byte UUID |
 | macdate | Reads classic Mac OS 4-byte date (seconds since January 1, 1904) |
 
+## Grouping
+
+Any command that takes a label will create a new entry in the user interface with the label provided and a string representation of the data type. However, this could become a long list of entries. Therefore entries can be grouped via the `section` command.
+
+`section` takes a label argument, just like types do. However, no value is associated with the group. To end grouping, use the `endsection` command. Here's an example:
+
+```tcl
+section "Header"
+uint32 "Size"
+endsection
+```
+
+There is also the simpler alternative syntax which does not require using `endsection`:
+
+```tcl
+section "Header" {
+    uint32 "Size"
+}
+```
+
+Sections can be nested within each other.
+
 ## Endian
 
 The default endian mode for the type commands above is little. To interpret types as big endian, use the `big_endian` command. To go back to little, use `little_endian`. No arguments are passed.
