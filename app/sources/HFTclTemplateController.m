@@ -202,7 +202,7 @@ DEFINE_COMMAND(entry)
     *length = 0;
     const char *str = Tcl_GetStringFromObj(objPtr, NULL);
     if (str && strcmp(str, "eof") == 0) {
-        *length = self.length - self.position;
+        *length = self.length - (self.anchor + self.position);
         return TCL_OK;
     }
     return Tcl_GetLongFromObj(_interp, objPtr, length);
