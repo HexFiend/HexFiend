@@ -1245,6 +1245,7 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
 
 - (void)drawByteColoringBackground:(NSRange)range inRect:(CGRect)rect {
     if(!byteColoring) return;
+    if (self.bytesPerCharacter != 1) return;
     
     size_t width = (size_t)rect.size.width;
     
