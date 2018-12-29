@@ -258,7 +258,7 @@ DEFINE_COMMAND(entry)
             if (command == command_bytes) {
                 NSData *data = [self readBytesForSize:len forLabel:label];
                 if (!data) {
-                    Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read bytes", -1));
+                    Tcl_SetObjResult(_interp, Tcl_ObjPrintf("Failed to read %ld bytes", len));
                     return TCL_ERROR;
                 }
                 Tcl_SetObjResult(_interp, Tcl_NewByteArrayObj(data.bytes, (int)data.length));
@@ -280,7 +280,7 @@ DEFINE_COMMAND(entry)
                     break;
             }
             if (!str) {
-                Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read bytes", -1));
+                Tcl_SetObjResult(_interp, Tcl_ObjPrintf("Failed to read %ld bytes", len));
                 return TCL_ERROR;
             }
             Tcl_SetObjResult(_interp, Tcl_NewStringObj(str.UTF8String, -1));
@@ -422,7 +422,7 @@ DEFINE_COMMAND(entry)
         case command_uint64: {
             uint64_t val;
             if (![self readUInt64:&val forLabel:label]) {
-                Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read bytes", -1));
+                Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read uint64 bytes", -1));
                 return TCL_ERROR;
             }
             Tcl_SetObjResult(_interp, tcl_obj_from_uint64(val));
@@ -431,7 +431,7 @@ DEFINE_COMMAND(entry)
         case command_int64: {
             int64_t val;
             if (![self readInt64:&val forLabel:label]) {
-                Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read bytes", -1));
+                Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read int64 bytes", -1));
                 return TCL_ERROR;
             }
             Tcl_SetObjResult(_interp, Tcl_NewWideIntObj((Tcl_WideInt)val));
@@ -440,7 +440,7 @@ DEFINE_COMMAND(entry)
         case command_uint32: {
             uint32_t val;
             if (![self readUInt32:&val forLabel:label]) {
-                Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read bytes", -1));
+                Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read uint32 bytes", -1));
                 return TCL_ERROR;
             }
             Tcl_SetObjResult(_interp, Tcl_NewWideIntObj((Tcl_WideInt)val));
@@ -449,7 +449,7 @@ DEFINE_COMMAND(entry)
         case command_int32: {
             int32_t val;
             if (![self readInt32:&val forLabel:label]) {
-                Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read bytes", -1));
+                Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read int32 bytes", -1));
                 return TCL_ERROR;
             }
             Tcl_SetObjResult(_interp, Tcl_NewIntObj((int)val));
@@ -458,7 +458,7 @@ DEFINE_COMMAND(entry)
         case command_uint24: {
             uint32_t val;
             if (![self readUInt24:&val forLabel:label]) {
-                Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read bytes", -1));
+                Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read uint24 bytes", -1));
                 return TCL_ERROR;
             }
             Tcl_SetObjResult(_interp, Tcl_NewWideIntObj((Tcl_WideInt)val));
@@ -467,7 +467,7 @@ DEFINE_COMMAND(entry)
         case command_uint16: {
             uint16_t val;
             if (![self readUInt16:&val forLabel:label]) {
-                Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read bytes", -1));
+                Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read uint16 bytes", -1));
                 return TCL_ERROR;
             }
             Tcl_SetObjResult(_interp, Tcl_NewIntObj((int)val));
@@ -476,7 +476,7 @@ DEFINE_COMMAND(entry)
         case command_int16: {
             int16_t val;
             if (![self readInt16:&val forLabel:label]) {
-                Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read bytes", -1));
+                Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read int16 bytes", -1));
                 return TCL_ERROR;
             }
             Tcl_SetObjResult(_interp, Tcl_NewIntObj((int)val));
@@ -485,7 +485,7 @@ DEFINE_COMMAND(entry)
         case command_uint8: {
             uint8_t val;
             if (![self readUInt8:&val forLabel:label]) {
-                Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read bytes", -1));
+                Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read uint8 bytes", -1));
                 return TCL_ERROR;
             }
             Tcl_SetObjResult(_interp, Tcl_NewIntObj((int)val));
@@ -494,7 +494,7 @@ DEFINE_COMMAND(entry)
         case command_int8: {
             int8_t val;
             if (![self readInt8:&val forLabel:label]) {
-                Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read bytes", -1));
+                Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read int8 bytes", -1));
                 return TCL_ERROR;
             }
             Tcl_SetObjResult(_interp, Tcl_NewIntObj((int)val));
@@ -503,7 +503,7 @@ DEFINE_COMMAND(entry)
         case command_float: {
             float val;
             if (![self readFloat:&val forLabel:label]) {
-                Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read bytes", -1));
+                Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read float bytes", -1));
                 return TCL_ERROR;
             }
             Tcl_SetObjResult(_interp, Tcl_NewDoubleObj(val));
@@ -512,7 +512,7 @@ DEFINE_COMMAND(entry)
         case command_double: {
             double val;
             if (![self readDouble:&val forLabel:label]) {
-                Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read bytes", -1));
+                Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read double bytes", -1));
                 return TCL_ERROR;
             }
             Tcl_SetObjResult(_interp, Tcl_NewDoubleObj(val));
@@ -521,7 +521,7 @@ DEFINE_COMMAND(entry)
         case command_macdate: {
             NSDate *date = nil;
             if (![self readMacDate:&date forLabel:label]) {
-                Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read bytes", -1));
+                Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read macdate bytes", -1));
                 return TCL_ERROR;
             }
             Tcl_SetObjResult(_interp, Tcl_NewDoubleObj(date.timeIntervalSince1970));
@@ -530,7 +530,7 @@ DEFINE_COMMAND(entry)
         case command_uuid: {
             NSUUID *uuid = nil;
             if (![self readUUID:&uuid forLabel:label]) {
-                Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read bytes", -1));
+                Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read uuid bytes", -1));
                 return TCL_ERROR;
             }
             NSString *str = uuid.UUIDString;
