@@ -81,7 +81,7 @@
     if (!data) {
         return nil;
     }
-    NSString *str = HFHexStringFromData(data);
+    NSString *str = [NSString stringWithFormat:@"0x%@", HFHexStringFromData(data)];
     if (label) {
         [self addNodeWithLabel:label value:str size:size];
     }
