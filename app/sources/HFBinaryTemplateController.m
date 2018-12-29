@@ -237,6 +237,7 @@
         self.errorTextField.hidden = YES;
     }
     [self.outlineView reloadData];
+    [self.outlineView expandItem:nil expandChildren:YES];
 }
 
 - (NSColor *)selectionColor {
