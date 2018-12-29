@@ -197,6 +197,17 @@ DEFINE_COMMAND(entry)
         return TCL_ERROR; \
     }
 
+- (int)getLength:(long *)length objv:(Tcl_Obj *)objPtr {
+    _Static_assert(sizeof(long) == sizeof(unsigned long long), "invalid long");
+    *length = 0;
+    const char *str = Tcl_GetStringFromObj(objPtr, NULL);
+    if (str && strcmp(str, "eof") == 0) {
+        *length = self.length - self.position;
+        return TCL_OK;
+    }
+    return Tcl_GetLongFromObj(_interp, objPtr, length);
+}
+
 - (int)runCommand:(enum command)command objc:(int)objc objv:(struct Tcl_Obj * CONST *)objv {
     switch (command) {
         case command_uint64:
@@ -232,7 +243,7 @@ DEFINE_COMMAND(entry)
                 return TCL_ERROR;
             }
             long len;
-            int err = Tcl_GetLongFromObj(_interp, objv[1], &len);
+            int err = [self getLength:&len objv:objv[1]];
             if (err != TCL_OK) {
                 return err;
             }
