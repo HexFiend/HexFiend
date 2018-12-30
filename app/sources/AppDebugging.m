@@ -30,7 +30,7 @@ static unsigned long long unsignedLongLongValue(NSString *s) {
     
 }
 
-static NSString *promptForValue(NSString *promptText) {
+NSString *promptForValue(NSString *promptText) {
     NSAlert *alert = [[NSAlert alloc] init];
     alert.messageText = promptText;
     alert.informativeText = @"";

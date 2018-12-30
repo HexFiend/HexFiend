@@ -18,6 +18,7 @@
     NSArray *bookmarksMenuItems;
     IBOutlet NSMenu *stringEncodingMenu;
     IBOutlet ChooseStringEncodingWindowController *chooseStringEncoding;
+    IBOutlet NSMenuItem *byteGroupingMenuItem;
 }
 
 - (IBAction)diffFrontDocuments:(id)sender;
@@ -29,5 +30,7 @@
 - (IBAction)openPreferences:(id)sender;
 
 @property (readonly) HFStringEncoding *defaultStringEncoding;
+
+- (void)buildByteGroupingMenu;
 
 @end

@@ -1643,9 +1643,13 @@ cancelled:;
     [self setFont:[sender convertFont:[self font]] registeringUndo:YES];
 }
 
-- (IBAction)modifyByteGrouping:sender {
-    NSUInteger bytesPerLine = [controller bytesPerLine], newDesiredBytesPerLine;
+- (IBAction)modifyByteGrouping:(id)sender {
     NSUInteger newBytesPerColumn = (NSUInteger)[sender tag];
+    [self setByteGrouping:newBytesPerColumn];
+}
+
+- (void)setByteGrouping:(NSUInteger)newBytesPerColumn {
+    NSUInteger bytesPerLine = [controller bytesPerLine], newDesiredBytesPerLine;
     if (newBytesPerColumn == 0) {
         newDesiredBytesPerLine = bytesPerLine;
     }
@@ -1655,6 +1659,19 @@ cancelled:;
     [controller setBytesPerColumn:newBytesPerColumn];
     [self relayoutAndResizeWindowForBytesPerLine:newDesiredBytesPerLine]; //this ensures that the window does not shrink when going e.g. from 4->8->4
     [[NSUserDefaults standardUserDefaults] setInteger:newBytesPerColumn forKey:@"BytesPerColumn"];
+}
+
+- (IBAction)customByteGrouping:(id __unused)sender {
+    extern NSString *promptForValue(NSString *promptText);
+    NSString *byteGrouping = promptForValue(NSLocalizedString(@"Enter a custom byte grouping", ""));
+    if (byteGrouping) {
+        NSInteger value = byteGrouping.integerValue;
+        if (value >= 0) {
+            [[NSUserDefaults standardUserDefaults] setInteger:value forKey:@"BytesPerColumn"];
+            [self setByteGrouping:value];
+            [(AppDelegate *)NSApp.delegate buildByteGroupingMenu];
+        }
+    }
 }
 
 - (IBAction)setOverwriteMode:sender {
