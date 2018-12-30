@@ -15,15 +15,24 @@ body {
 <h3>v2.11 [beta]</h3>
 <ul>
 <li>Hex Fiend is notarized for added security on 10.14+</li>
-<li>Fix data inspector text alignment (thanks rpendleton)</li>
 <li>Binary template improvements:
   <ul>
     <li>Add section selection</li>
     <li>Add <code>entry</code> command for arbitrary key/value fields</li>
+    <li>Add <code>eof</code> as a special length parameter to go to the end of the file</li>
+    <li>Add optional <code>-hex</code> argument for unsigned integers to display as hexadecimal</li>
+    <li>Sections now auto-expand</li>
+    <li>Added preference for controlling behavior on single and double click of template entries</li>
+    <li>Performing a copy with a selected entry copies its value to the clipboard</li>
     <li>Fix incorrect anchor usage in some commands</li>
     <li>Fix incorrect error handling with <code>zlib_uncompress</code></li>
+    <li>Prefix hexadecimal values with 0x to match Data Inspector</li>
+    <li>Improve error messages for read failures</li>
     <li>Improved documentation</li>
   </ul>
+<li>Add custom byte grouping</li>
+<li>Fix data inspector text alignment (thanks rpendleton)</li>
+<li>Fix crash when Color Bytes is enabled with a multi-byte text encoding</li>
 </ul>
 
 <h3>v2.10</h3>
