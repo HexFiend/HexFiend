@@ -12,6 +12,9 @@
 #import <zlib.h>
 #import "HFFunctions_Private.h"
 
+// Tcl_ParseArgsObjv was added in Tcl 8.6, but macOS ships with Tcl 8.5
+#import "Tcl_ParseArgsObjv.h"
+
 static Tcl_Obj* tcl_obj_from_uint64(uint64_t value) {
     char buf[21];
     const size_t num_bytes = snprintf(buf, sizeof(buf), "%" PRIu64, value);
@@ -418,37 +421,32 @@ DEFINE_COMMAND(entry)
         default:
             break;
     }
-    int maxNumberOfArgs = hexSwitchAllowed ? 3 : 2;
-    if (objc < 1 || objc > maxNumberOfArgs) {
-        const char *usage = hexSwitchAllowed ? "[-hex] [label]" : "[label";
-        Tcl_WrongNumArgs(_interp, 0, objv, usage);
-        return TCL_ERROR;
-    }
+    int asHex = 0;
     NSString *label = nil;
-    BOOL asHex = NO;
-    if (hexSwitchAllowed) {
-        if (objc == 2) {
-            if (strcmp(Tcl_GetStringFromObj(objv[1], NULL), "-hex") == 0) {
-                asHex = YES;
-            } else {
-                label = [NSString stringWithUTF8String:Tcl_GetStringFromObj(objv[1], NULL)];
-            }
-        } else if (objc == 3) {
-            const char *objv1 = Tcl_GetStringFromObj(objv[1], NULL);
-            const char *objv2 = Tcl_GetStringFromObj(objv[2], NULL);
-            if (strcmp(objv1, "-hex") != 0) {
-                Tcl_SetObjResult(_interp, Tcl_ObjPrintf("Unknown argument %s", objv1));
+    Tcl_Obj **extraArgs = NULL;
+    Tcl_ArgvInfo argInfoTable[] = {
+        {TCL_ARGV_CONSTANT, "-hex", (void*)1, &asHex, "display as hexadecimal", NULL},
+        TCL_ARGV_AUTO_HELP,
+        TCL_ARGV_TABLE_END,
+    };
+    int err = Tcl_ParseArgsObjv(_interp, argInfoTable, &objc, objv, &extraArgs);
+    if (err != TCL_OK) {
+        return err;
+    }
+    if (extraArgs && objc > 1) {
+        for (int i = 1; i < objc; i++) {
+            const char *arg = Tcl_GetStringFromObj(extraArgs[i], NULL);
+            if (arg && arg[0] == '-') {
+                Tcl_SetObjResult(_interp, Tcl_ObjPrintf("Unknown option %s", arg));
                 return TCL_ERROR;
             }
-            asHex = YES;
-            label = [NSString stringWithUTF8String:objv2];
-        } else {
-            HFASSERT(0);
         }
-    } else {
-        if (objc == 2) {
-            label = [NSString stringWithUTF8String:Tcl_GetStringFromObj(objv[1], NULL)];
+        if (objc > 2) {
+            const char *usage = hexSwitchAllowed ? "[-hex] [label]" : "[label";
+            Tcl_WrongNumArgs(_interp, 0, objv, usage);
+            return TCL_ERROR;
         }
+        label = [NSString stringWithUTF8String:Tcl_GetStringFromObj(extraArgs[1], NULL)];
     }
     switch (command) {
         case command_uint64: {
@@ -471,7 +469,7 @@ DEFINE_COMMAND(entry)
         }
         case command_uint32: {
             uint32_t val;
-            if (![self readUInt32:&val forLabel:label asHex:asHex]) {
+            if (![self readUInt32:&val forLabel:label asHex:asHex == 1]) {
                 Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read uint32 bytes", -1));
                 return TCL_ERROR;
             }
