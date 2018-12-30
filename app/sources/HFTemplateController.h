@@ -45,7 +45,7 @@ typedef NS_ENUM(NSUInteger, HFEndian) {
 
 - (BOOL)readUInt64:(uint64_t *)value forLabel:(NSString *)label;
 - (BOOL)readInt64:(int64_t *)value forLabel:(NSString *)label;
-- (BOOL)readUInt32:(uint32_t *)value forLabel:(NSString *)label;
+- (BOOL)readUInt32:(uint32_t *)result forLabel:(NSString *)label asHex:(BOOL)asHex;
 - (BOOL)readInt32:(int32_t *)value forLabel:(NSString *)label;
 - (BOOL)readUInt24:(uint32_t *)value forLabel:(NSString *)label;
 - (BOOL)readUInt16:(uint16_t *)value forLabel:(NSString *)label;

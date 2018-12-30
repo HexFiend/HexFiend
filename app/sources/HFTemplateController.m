@@ -130,7 +130,7 @@
     return YES;
 }
 
-- (BOOL)readUInt32:(uint32_t *)value forLabel:(NSString *)label {
+- (BOOL)readUInt32:(uint32_t *)result forLabel:(NSString *)label asHex:(BOOL)asHex {
     uint32_t val;
     if (![self readBytes:&val size:sizeof(val)]) {
         return NO;
@@ -138,9 +138,15 @@
     if (self.endian == HFEndianBig) {
         val = NSSwapBigIntToHost(val);
     }
-    *value = val;
+    *result = val;
+    NSString *value;
+    if (asHex) {
+        value = [NSString stringWithFormat:@"0x%04X", val];
+    } else {
+        value = [NSString stringWithFormat:@"%u", val];
+    }
     if (label) {
-        [self addNodeWithLabel:label value:[NSString stringWithFormat:@"%u", val] size:sizeof(val)];
+        [self addNodeWithLabel:label value:value size:sizeof(val)];
     }
     return YES;
 }

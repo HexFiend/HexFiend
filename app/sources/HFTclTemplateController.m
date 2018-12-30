@@ -410,13 +410,45 @@ DEFINE_COMMAND(entry)
 }
 
 - (int)runTypeCommand:(enum command)command objc:(int)objc objv:(struct Tcl_Obj * CONST *)objv {
-    if (objc != 1 && objc != 2) {
-        Tcl_WrongNumArgs(_interp, 0, objv, "[label]");
+    BOOL hexSwitchAllowed = NO;
+    switch (command) {
+        case command_uint32:
+            hexSwitchAllowed = YES;
+            break;
+        default:
+            break;
+    }
+    int maxNumberOfArgs = hexSwitchAllowed ? 3 : 2;
+    if (objc < 1 || objc > maxNumberOfArgs) {
+        const char *usage = hexSwitchAllowed ? "[-hex] [label]" : "[label";
+        Tcl_WrongNumArgs(_interp, 0, objv, usage);
         return TCL_ERROR;
     }
     NSString *label = nil;
-    if (objc == 2) {
-        label = [NSString stringWithUTF8String:Tcl_GetStringFromObj(objv[1], NULL)];
+    BOOL asHex = NO;
+    if (hexSwitchAllowed) {
+        if (objc == 2) {
+            if (strcmp(Tcl_GetStringFromObj(objv[1], NULL), "-hex") == 0) {
+                asHex = YES;
+            } else {
+                label = [NSString stringWithUTF8String:Tcl_GetStringFromObj(objv[1], NULL)];
+            }
+        } else if (objc == 3) {
+            const char *objv1 = Tcl_GetStringFromObj(objv[1], NULL);
+            const char *objv2 = Tcl_GetStringFromObj(objv[2], NULL);
+            if (strcmp(objv1, "-hex") != 0) {
+                Tcl_SetObjResult(_interp, Tcl_ObjPrintf("Unknown argument %s", objv1));
+                return TCL_ERROR;
+            }
+            asHex = YES;
+            label = [NSString stringWithUTF8String:objv2];
+        } else {
+            HFASSERT(0);
+        }
+    } else {
+        if (objc == 2) {
+            label = [NSString stringWithUTF8String:Tcl_GetStringFromObj(objv[1], NULL)];
+        }
     }
     switch (command) {
         case command_uint64: {
@@ -439,7 +471,7 @@ DEFINE_COMMAND(entry)
         }
         case command_uint32: {
             uint32_t val;
-            if (![self readUInt32:&val forLabel:label]) {
+            if (![self readUInt32:&val forLabel:label asHex:asHex]) {
                 Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read uint32 bytes", -1));
                 return TCL_ERROR;
             }
