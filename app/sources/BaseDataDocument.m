@@ -1667,7 +1667,6 @@ cancelled:;
     if (byteGrouping) {
         NSInteger value = byteGrouping.integerValue;
         if (value >= 0) {
-            [[NSUserDefaults standardUserDefaults] setInteger:value forKey:@"BytesPerColumn"];
             [self setByteGrouping:value];
             [(AppDelegate *)NSApp.delegate buildByteGroupingMenu];
         }
