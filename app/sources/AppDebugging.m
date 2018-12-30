@@ -7,6 +7,7 @@
 
 #import "AppDebugging.h"
 #import "AppUtilities.h"
+#import "HFPrompt.h"
 
 static unsigned long long unsignedLongLongValue(NSString *s) {
     unsigned long long result = 0;
@@ -30,24 +31,6 @@ static unsigned long long unsignedLongLongValue(NSString *s) {
     
 }
 
-NSString *promptForValue(NSString *promptText) {
-    NSAlert *alert = [[NSAlert alloc] init];
-    alert.messageText = promptText;
-    alert.informativeText = @"";
-    [alert addButtonWithTitle:NSLocalizedString(@"OK", "")];
-    [alert addButtonWithTitle:NSLocalizedString(@"Cancel", "")];
-    NSTextField *textField = [[NSTextField alloc] init];
-    [textField sizeToFit];
-    NSRect frame = textField.frame;
-    frame.size.width = 200;
-    textField.frame = frame;
-    alert.accessoryView = textField;
-    if ([alert runModal] != NSAlertFirstButtonReturn) {
-        return nil;
-    }
-    return textField.stringValue;
-}
-
 - (void)_showByteArray:sender {
     USE(sender);
     NSLog(@"%@", [controller byteArray]);
@@ -55,7 +38,7 @@ NSString *promptForValue(NSString *promptText) {
 
 - (void)_randomByteArray:sender {
     USE(sender);
-    unsigned long long length = unsignedLongLongValue(promptForValue(NSLocalizedString(@"How long?", "")));
+    unsigned long long length = unsignedLongLongValue(HFPromptForValue(NSLocalizedString(@"How long?", "")));
     Class clsHFRandomDataByteSlice = NSClassFromString(@"HFRandomDataByteSlice");
     HFByteSlice *slice = [[clsHFRandomDataByteSlice alloc] initWithRandomDataLength:length];
     HFByteArray *array = [[HFBTreeByteArray alloc] init];
@@ -66,7 +49,7 @@ NSString *promptForValue(NSString *promptText) {
 - (void)_tweakByteArray:sender {
     USE(sender);
     
-    unsigned tweakCount = [promptForValue(NSLocalizedString(@"How many tweaks?", "")) intValue];
+    unsigned tweakCount = [HFPromptForValue(NSLocalizedString(@"How many tweaks?", "")) intValue];
     
     HFByteArray *byteArray = [[controller byteArray] mutableCopy];
     unsigned i;

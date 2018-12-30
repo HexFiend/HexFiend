@@ -66,6 +66,7 @@
 		A567D7D520DA1D7C00F7C0A4 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A567D7D420DA1D7C00F7C0A4 /* Sparkle.framework */; };
 		A567D7D620DA1D9100F7C0A4 /* Sparkle.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = A567D7D420DA1D7C00F7C0A4 /* Sparkle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A56D78161E7EF088001D1892 /* CLIController.m in Sources */ = {isa = PBXBuildFile; fileRef = A56D78151E7EF088001D1892 /* CLIController.m */; };
+		A572614A21D8A51B00970A0E /* HFPrompt.m in Sources */ = {isa = PBXBuildFile; fileRef = A572614921D8A51B00970A0E /* HFPrompt.m */; };
 		A57F34731F1B236E00234B94 /* HFHexPasteboardOwner.m in Sources */ = {isa = PBXBuildFile; fileRef = A57F34711F1B236E00234B94 /* HFHexPasteboardOwner.m */; };
 		A57F34741F1B236E00234B94 /* HFHexPasteboardOwner.h in Headers */ = {isa = PBXBuildFile; fileRef = A57F34721F1B236E00234B94 /* HFHexPasteboardOwner.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A57F34761F1B2A2B00234B94 /* HFHexPasteboardOwnerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A57F34751F1B2A2B00234B94 /* HFHexPasteboardOwnerTest.m */; };
@@ -415,6 +416,8 @@
 		A567D7D420DA1D7C00F7C0A4 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Sparkle.framework; path = vendor/Sparkle.framework; sourceTree = "<group>"; };
 		A56D78141E7EF088001D1892 /* CLIController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CLIController.h; path = app/sources/CLIController.h; sourceTree = "<group>"; };
 		A56D78151E7EF088001D1892 /* CLIController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CLIController.m; path = app/sources/CLIController.m; sourceTree = "<group>"; };
+		A572614821D8A51B00970A0E /* HFPrompt.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFPrompt.h; path = app/sources/HFPrompt.h; sourceTree = "<group>"; };
+		A572614921D8A51B00970A0E /* HFPrompt.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFPrompt.m; path = app/sources/HFPrompt.m; sourceTree = "<group>"; };
 		A57F34711F1B236E00234B94 /* HFHexPasteboardOwner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFHexPasteboardOwner.m; path = sources/HFHexPasteboardOwner.m; sourceTree = "<group>"; };
 		A57F34721F1B236E00234B94 /* HFHexPasteboardOwner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFHexPasteboardOwner.h; path = sources/HFHexPasteboardOwner.h; sourceTree = "<group>"; };
 		A57F34751F1B2A2B00234B94 /* HFHexPasteboardOwnerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFHexPasteboardOwnerTest.m; sourceTree = "<group>"; };
@@ -811,6 +814,8 @@
 				D01EF15313B2A0D300CC9283 /* TextDividerRepresenter.m */,
 				D0CBB23E128F78C200989C15 /* StretchableProgressIndicator.h */,
 				D0CBB23F128F78C200989C15 /* StretchableProgressIndicator.m */,
+				A572614821D8A51B00970A0E /* HFPrompt.h */,
+				A572614921D8A51B00970A0E /* HFPrompt.m */,
 			);
 			name = Miscellaneous;
 			sourceTree = "<group>";
@@ -1672,6 +1677,7 @@
 				795F46C114BAA45D00EB2F7D /* OpenDriveWindowController.m in Sources */,
 				DAE8EBFE1598FFDB0008ADB9 /* DocumentWindow.m in Sources */,
 				D8EE3EFE16F26689001C7C09 /* DiffRangeWindowController.m in Sources */,
+				A572614A21D8A51B00970A0E /* HFPrompt.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -14,7 +14,7 @@
 #import "AppUtilities.h"
 #import "AppDelegate.h"
 #import <HexFiend/HexFiend.h>
-#include <pthread.h>
+#import "HFPrompt.h"
 
 static const char *const kProgressContext = "context";
 
@@ -1662,8 +1662,7 @@ cancelled:;
 }
 
 - (IBAction)customByteGrouping:(id __unused)sender {
-    extern NSString *promptForValue(NSString *promptText);
-    NSString *byteGrouping = promptForValue(NSLocalizedString(@"Enter a custom byte grouping", ""));
+    NSString *byteGrouping = HFPromptForValue(NSLocalizedString(@"Enter a custom byte grouping", ""));
     if (byteGrouping) {
         NSInteger value = byteGrouping.integerValue;
         if (value >= 0) {
