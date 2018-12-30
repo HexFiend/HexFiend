@@ -320,7 +320,7 @@ DEFINE_COMMAND(entry)
         }
         case command_len: {
             CHECK_NO_ARG;
-            Tcl_SetObjResult(_interp, tcl_obj_from_uint64(self.length));
+            Tcl_SetObjResult(_interp, tcl_obj_from_uint64(self.length - self.anchor));
             break;
         }
         case command_end: {

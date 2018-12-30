@@ -371,7 +371,7 @@
 }
 
 - (void)goTo:(unsigned long long)offset {
-    self.position = self.anchor + offset;
+    self.position = offset;
 }
 
 - (unsigned long long)length {
