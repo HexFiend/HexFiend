@@ -738,7 +738,7 @@ NSData *HFDataFromHexString(NSString *string, BOOL* isMissingLastNybble) {
     return result;    
 }
 
-NSString *HFHexStringFromData(NSData *data) {
+NSString *HFHexStringFromData(NSData *data, BOOL includePrefix) {
     REQUIRE_NOT_NULL(data);
     NSUInteger dataLength = [data length];
     NSUInteger stringLength = HFProductInt(dataLength, 2);
@@ -750,7 +750,11 @@ NSString *HFHexStringFromData(NSData *data) {
         charBuffer[charIndex++] = hex2char(byte >> 4);
         charBuffer[charIndex++] = hex2char(byte & 0xF);
     }
-    return [[NSString alloc] initWithBytesNoCopy:charBuffer length:stringLength encoding:NSASCIIStringEncoding freeWhenDone:YES];
+    NSString *hex = [[NSString alloc] initWithBytesNoCopy:charBuffer length:stringLength encoding:NSASCIIStringEncoding freeWhenDone:YES];
+    if (includePrefix) {
+        return [@"0x" stringByAppendingString:hex];
+    }
+    return hex;
 }
 
 void HFSetFDShouldCache(int fd, BOOL shouldCache) {
