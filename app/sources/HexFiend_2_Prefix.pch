@@ -3,9 +3,6 @@
 //
 
 // Make sure we're compiled as ARC
-#if !__has_feature(objc_arc)
-#error ARC required
-#endif
 
 #ifdef __OBJC__
     #import <Cocoa/Cocoa.h>
