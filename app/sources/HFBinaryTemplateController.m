@@ -339,4 +339,11 @@
     [self.controller setSelectedContentsRanges:@[[HFRangeWrapper withRange:node.range]]];
 }
 
+- (void)copy:(id)sender {
+    // NSResponder chain from Edit > Copy
+    if (self.outlineView.numberOfSelectedRows > 0) {
+        [self copyValue:sender];
+    }
+}
+
 @end
