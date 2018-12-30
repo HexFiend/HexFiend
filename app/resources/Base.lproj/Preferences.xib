@@ -15,7 +15,6 @@
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <window title="Preferences" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="Preferences" animationBehavior="default" id="QvC-M9-y7g">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES"/>
-            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="196" y="240" width="359" height="173"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1280" height="777"/>
             <view key="contentView" wantsLayer="YES" id="EiT-Mj-1SZ">
@@ -93,7 +92,7 @@
                         </connections>
                     </textField>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ZWd-Qo-NUq">
-                        <rect key="frame" x="18" y="18" width="324" height="18"/>
+                        <rect key="frame" x="18" y="18" width="232" height="18"/>
                         <buttonCell key="cell" type="check" title="Resolve aliases when opening files" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="Rwz-vo-SgD">
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                             <font key="font" metaFont="system"/>
@@ -106,21 +105,22 @@
                 <constraints>
                     <constraint firstItem="Nx6-eC-8ZN" firstAttribute="top" secondItem="7jK-2L-g2r" secondAttribute="bottom" constant="18" id="1i7-Mj-nzj"/>
                     <constraint firstItem="1eM-U2-kEU" firstAttribute="baseline" secondItem="Nx6-eC-8ZN" secondAttribute="baseline" id="3Kd-fo-seI"/>
-                    <constraint firstAttribute="trailing" secondItem="ZWd-Qo-NUq" secondAttribute="trailing" constant="20" symbolic="YES" id="3Q1-tk-OEH"/>
+                    <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="ZWd-Qo-NUq" secondAttribute="trailing" constant="20" symbolic="YES" id="3Q1-tk-OEH"/>
                     <constraint firstItem="SkW-ts-leT" firstAttribute="leading" secondItem="ky0-Ug-Ik0" secondAttribute="trailing" constant="8" symbolic="YES" id="662-JD-Lhv"/>
-                    <constraint firstItem="Nx6-eC-8ZN" firstAttribute="leading" secondItem="1eM-U2-kEU" secondAttribute="trailing" constant="8" id="6df-qo-0me"/>
-                    <constraint firstItem="ZWd-Qo-NUq" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" constant="20" id="7pZ-rQ-KAp"/>
+                    <constraint firstItem="ZWd-Qo-NUq" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" constant="20" symbolic="YES" id="7pZ-rQ-KAp"/>
                     <constraint firstItem="ky0-Ug-Ik0" firstAttribute="top" secondItem="EiT-Mj-1SZ" secondAttribute="top" constant="20" symbolic="YES" id="8LD-jY-adS"/>
                     <constraint firstItem="9YR-4n-fOt" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" constant="20" symbolic="YES" id="DCr-kG-qvI"/>
                     <constraint firstItem="1eM-U2-kEU" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" constant="20" symbolic="YES" id="LXj-Vl-QKv"/>
-                    <constraint firstAttribute="trailing" secondItem="Nx6-eC-8ZN" secondAttribute="trailing" constant="87" id="NET-KA-bST"/>
-                    <constraint firstAttribute="bottom" secondItem="ZWd-Qo-NUq" secondAttribute="bottom" constant="20" id="SIB-Wx-ddb"/>
+                    <constraint firstAttribute="bottom" secondItem="ZWd-Qo-NUq" secondAttribute="bottom" constant="20" symbolic="YES" id="SIB-Wx-ddb"/>
                     <constraint firstAttribute="trailing" secondItem="SkW-ts-leT" secondAttribute="trailing" constant="20" symbolic="YES" id="T0d-DG-VGa"/>
+                    <constraint firstItem="7jK-2L-g2r" firstAttribute="top" secondItem="SkW-ts-leT" secondAttribute="bottom" constant="19" id="VBG-fJ-mTJ"/>
+                    <constraint firstItem="Nx6-eC-8ZN" firstAttribute="leading" secondItem="1eM-U2-kEU" secondAttribute="trailing" constant="8" symbolic="YES" id="b0D-1n-9Qn"/>
                     <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="7jK-2L-g2r" secondAttribute="trailing" constant="20" symbolic="YES" id="cvq-T2-Dqh"/>
                     <constraint firstItem="ZWd-Qo-NUq" firstAttribute="top" secondItem="Nx6-eC-8ZN" secondAttribute="bottom" constant="18" id="dZg-KB-CD6"/>
                     <constraint firstItem="ky0-Ug-Ik0" firstAttribute="baseline" secondItem="SkW-ts-leT" secondAttribute="baseline" id="dr4-cS-uun"/>
                     <constraint firstItem="7jK-2L-g2r" firstAttribute="leading" secondItem="9YR-4n-fOt" secondAttribute="trailing" constant="8" symbolic="YES" id="fe0-2n-71U"/>
                     <constraint firstItem="9YR-4n-fOt" firstAttribute="centerY" secondItem="7jK-2L-g2r" secondAttribute="centerY" id="kNj-d0-v1Y"/>
+                    <constraint firstAttribute="trailing" secondItem="Nx6-eC-8ZN" secondAttribute="trailing" constant="87" id="ocW-uE-ifk"/>
                     <constraint firstItem="ky0-Ug-Ik0" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" constant="20" symbolic="YES" id="qvd-Cm-tfA"/>
                 </constraints>
             </view>
