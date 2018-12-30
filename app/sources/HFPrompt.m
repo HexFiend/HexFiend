@@ -20,6 +20,7 @@ NSString *HFPromptForValue(NSString *promptText) {
     frame.size.width = 200;
     textField.frame = frame;
     alert.accessoryView = textField;
+    alert.window.initialFirstResponder = textField;
     if ([alert runModal] != NSAlertFirstButtonReturn) {
         return nil;
     }
