@@ -67,6 +67,9 @@
 }
 
 - (void)awakeFromNib {
+    self.outlineView.doubleAction = @selector(outlineViewDoubleAction:);
+    self.outlineView.target = self;
+    
     [self loadTemplates:self];
 
     [[NSUserDefaults standardUserDefaults] addObserver:self
@@ -281,12 +284,18 @@
     [self updateSelectionColorRange];
     
     if (self.outlineView.numberOfSelectedRows == 1) {
-        NSUserDefaults *uds = [NSUserDefaults standardUserDefaults];
-        if ([uds boolForKey:@"BinaryTemplatesOnSelectionJump"]) {
-            [self jumpToField:nil];
-        }
-        if ([uds boolForKey:@"BinaryTemplatesOnSelectionSelect"]) {
-            [self selectBytes:nil];
+        NSInteger action = [[NSUserDefaults standardUserDefaults] integerForKey:@"BinaryTemplatesSingleClickAction"];
+        switch (action) {
+            case 0: // do nothing
+                break;
+            case 1: // scroll to offset
+                [self jumpToField:nil];
+                break;
+            case 2: // select bytes
+                [self selectBytes:nil];
+                break;
+            default:
+                NSLog(@"Unknown single click action %ld", action);
         }
     }
 }
@@ -300,7 +309,7 @@
     id obj = row != -1 ? [sender itemAtRow:row] : nil;
     NSMenuItem *item;
 
-    item = [menu addItemWithTitle:NSLocalizedString(@"Jump to Field", nil) action:@selector(jumpToField:) keyEquivalent:@""];
+    item = [menu addItemWithTitle:NSLocalizedString(@"Scroll to Offset", nil) action:@selector(jumpToField:) keyEquivalent:@""];
     item.target = self;
     item.enabled = obj != nil;
     
@@ -313,6 +322,26 @@
     item.enabled = obj != nil;
 
     return menu;
+}
+
+- (void)outlineViewDoubleAction:(id)sender {
+    HFASSERT(sender == self.outlineView);
+    NSInteger row = self.outlineView.clickedRow;
+    if (row != -1) {
+        NSInteger action = [[NSUserDefaults standardUserDefaults] integerForKey:@"BinaryTemplatesDoubleClickAction"];
+        switch (action) {
+            case 0: // do nothing
+                break;
+            case 1: // scroll to offset
+                [self jumpToField:sender];
+                break;
+            case 2: // select bytes
+                [self selectBytes:sender];
+                break;
+            default:
+                NSLog(@"Unknown double click action %ld", action);
+        }
+    }
 }
 
 - (void)jumpToField:(id __unused)sender {

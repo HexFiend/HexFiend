@@ -96,6 +96,8 @@ static inline Class preferredByteArrayClass(void) {
             @"BinaryTemplateSelectionColor" : [NSArchiver archivedDataWithRootObject:[NSColor lightGrayColor]],
             @"BinaryTemplateRepresenterWidth" : @(250),
             @"BinaryTemplateScriptTimeout" : @(10),
+            @"BinaryTemplatesSingleClickAction" : @(1), // scroll to offset
+            @"BinaryTemplatesDoubleClickAction" : @(0), // do nothing
             @"ResolveAliases": @YES,
         };
         [[NSUserDefaults standardUserDefaults] registerDefaults:defs];
