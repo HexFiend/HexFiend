@@ -100,7 +100,7 @@
     return str;
 }
 
-- (BOOL)readUInt64:(uint64_t *)value forLabel:(NSString *)label {
+- (BOOL)readUInt64:(uint64_t *)result forLabel:(NSString *)label asHex:(BOOL)asHex {
     uint64_t val;
     if (![self readBytes:&val size:sizeof(val)]) {
         return NO;
@@ -108,9 +108,15 @@
     if (self.endian == HFEndianBig) {
         val = NSSwapBigLongLongToHost(val);
     }
-    *value = val;
+    *result = val;
     if (label) {
-        [self addNodeWithLabel:label value:[NSString stringWithFormat:@"%llu", val] size:sizeof(val)];
+        NSString *value;
+        if (asHex) {
+            value = [NSString stringWithFormat:@"0x%" PRIX64, val];
+        } else {
+            value = [NSString stringWithFormat:@"%" PRIu64, val];
+        }
+        [self addNodeWithLabel:label value:value size:sizeof(val)];
     }
     return YES;
 }
@@ -139,13 +145,13 @@
         val = NSSwapBigIntToHost(val);
     }
     *result = val;
-    NSString *value;
-    if (asHex) {
-        value = [NSString stringWithFormat:@"0x%04X", val];
-    } else {
-        value = [NSString stringWithFormat:@"%u", val];
-    }
     if (label) {
+        NSString *value;
+        if (asHex) {
+            value = [NSString stringWithFormat:@"0x%" PRIX32, val];
+        } else {
+            value = [NSString stringWithFormat:@"%" PRIu32, val];
+        }
         [self addNodeWithLabel:label value:value size:sizeof(val)];
     }
     return YES;
@@ -184,7 +190,7 @@
     return YES;
 }
 
-- (BOOL)readUInt16:(uint16_t *)value forLabel:(NSString *)label {
+- (BOOL)readUInt16:(uint16_t *)result forLabel:(NSString *)label asHex:(BOOL)asHex {
     uint16_t val;
     if (![self readBytes:&val size:sizeof(val)]) {
         return NO;
@@ -192,9 +198,15 @@
     if (self.endian == HFEndianBig) {
         val = NSSwapBigShortToHost(val);
     }
-    *value = val;
+    *result = val;
     if (label) {
-        [self addNodeWithLabel:label value:[NSString stringWithFormat:@"%d", val] size:sizeof(val)];
+        NSString *value;
+        if (asHex) {
+            value = [NSString stringWithFormat:@"0x%" PRIX16, val];
+        } else {
+            value = [NSString stringWithFormat:@"%" PRIu16, val];
+        }
+        [self addNodeWithLabel:label value:value size:sizeof(val)];
     }
     return YES;
 }
@@ -214,14 +226,20 @@
     return YES;
 }
 
-- (BOOL)readUInt8:(uint8_t *)value forLabel:(NSString *)label {
+- (BOOL)readUInt8:(uint8_t *)result forLabel:(NSString *)label asHex:(BOOL)asHex {
     uint8_t val;
     if (![self readBytes:&val size:sizeof(val)]) {
         return NO;
     }
-    *value = val;
+    *result = val;
     if (label) {
-        [self addNodeWithLabel:label value:[NSString stringWithFormat:@"%d", val] size:sizeof(val)];
+        NSString *value;
+        if (asHex) {
+            value = [NSString stringWithFormat:@"0x%" PRIX8, val];
+        } else {
+            value = [NSString stringWithFormat:@"%" PRIu8, val];
+        }
+        [self addNodeWithLabel:label value:value size:sizeof(val)];
     }
     return YES;
 }

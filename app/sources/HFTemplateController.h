@@ -43,14 +43,14 @@ typedef NS_ENUM(NSUInteger, HFEndian) {
 
 - (BOOL)requireDataAtOffset:(unsigned long long)offset toMatchHexValues:(NSString *)hexValues;
 
-- (BOOL)readUInt64:(uint64_t *)value forLabel:(NSString *)label;
+- (BOOL)readUInt64:(uint64_t *)result forLabel:(NSString *)label asHex:(BOOL)asHex;
 - (BOOL)readInt64:(int64_t *)value forLabel:(NSString *)label;
 - (BOOL)readUInt32:(uint32_t *)result forLabel:(NSString *)label asHex:(BOOL)asHex;
 - (BOOL)readInt32:(int32_t *)value forLabel:(NSString *)label;
 - (BOOL)readUInt24:(uint32_t *)value forLabel:(NSString *)label;
-- (BOOL)readUInt16:(uint16_t *)value forLabel:(NSString *)label;
+- (BOOL)readUInt16:(uint16_t *)result forLabel:(NSString *)label asHex:(BOOL)asHex;
 - (BOOL)readInt16:(int16_t *)value forLabel:(NSString *)label;
-- (BOOL)readUInt8:(uint8_t *)value forLabel:(NSString *)label;
+- (BOOL)readUInt8:(uint8_t *)result forLabel:(NSString *)label asHex:(BOOL)asHex;
 - (BOOL)readInt8:(int8_t *)value forLabel:(NSString *)label;
 - (BOOL)readFloat:(float *)value forLabel:(NSString *)label;
 - (BOOL)readDouble:(double *)value forLabel:(NSString *)label;

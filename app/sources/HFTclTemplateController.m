@@ -451,7 +451,7 @@ DEFINE_COMMAND(entry)
     switch (command) {
         case command_uint64: {
             uint64_t val;
-            if (![self readUInt64:&val forLabel:label]) {
+            if (![self readUInt64:&val forLabel:label asHex:asHex == 1]) {
                 Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read uint64 bytes", -1));
                 return TCL_ERROR;
             }
@@ -496,7 +496,7 @@ DEFINE_COMMAND(entry)
         }
         case command_uint16: {
             uint16_t val;
-            if (![self readUInt16:&val forLabel:label]) {
+            if (![self readUInt16:&val forLabel:label asHex:asHex == 1]) {
                 Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read uint16 bytes", -1));
                 return TCL_ERROR;
             }
@@ -514,7 +514,7 @@ DEFINE_COMMAND(entry)
         }
         case command_uint8: {
             uint8_t val;
-            if (![self readUInt8:&val forLabel:label]) {
+            if (![self readUInt8:&val forLabel:label asHex:asHex == 1]) {
                 Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read uint8 bytes", -1));
                 return TCL_ERROR;
             }
