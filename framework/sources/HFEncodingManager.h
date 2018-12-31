@@ -15,4 +15,6 @@
 
 @property (readonly) NSArray<HFNSStringEncoding *> *systemEncodings;
 
+- (HFNSStringEncoding *)systemEncoding:(NSStringEncoding)systenEncoding;
+
 @end

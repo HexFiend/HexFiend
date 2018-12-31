@@ -11,6 +11,7 @@
 @interface HFEncodingManager ()
 
 @property (readwrite) NSArray<HFNSStringEncoding *> *systemEncodings;
+@property (readwrite) NSDictionary<NSNumber *, HFNSStringEncoding *> *systemEncodingsByType;
 
 @end
 
@@ -31,7 +32,7 @@
     return self;
 }
 
-static void addEncoding(NSString *name, CFStringEncoding value, NSMutableArray<HFNSStringEncoding*> *encodings, NSMutableSet<NSNumber *> *usedEncodings) {
+static void addEncoding(NSString *name, CFStringEncoding value, NSMutableArray<HFNSStringEncoding*> *encodings, NSMutableSet<NSNumber *> *usedEncodings, NSMutableDictionary<NSNumber *, HFNSStringEncoding *> *systemEncodingsByType) {
     NSStringEncoding cocoaEncoding = CFStringConvertEncodingToNSStringEncoding(value);
     if (cocoaEncoding == kCFStringEncodingInvalidId) {
         /* Unsupported! */
@@ -60,6 +61,7 @@ static void addEncoding(NSString *name, CFStringEncoding value, NSMutableArray<H
     HFNSStringEncoding *encoding = [[HFNSStringEncoding alloc] initWithEncoding:cocoaEncoding name:theName identifier:identifier];
     [encodings addObject:encoding];
     [usedEncodings addObject:@(cocoaEncoding)];
+    systemEncodingsByType[@(cocoaEncoding)] = encoding;
 }
 
 /* Python script to generate string encoding stuff:
@@ -79,7 +81,8 @@ static void addEncoding(NSString *name, CFStringEncoding value, NSMutableArray<H
 - (void)loadEncodings {
     NSMutableArray<HFNSStringEncoding *> *encodings = [NSMutableArray array];
     NSMutableSet<NSNumber *> *usedEncodings = [NSMutableSet set];
-#define ENCODING(a) do { addEncoding( @ #a, (a), encodings, usedEncodings); } while (0)
+    NSMutableDictionary<NSNumber *, HFNSStringEncoding *> *systemEncodingsByType = [NSMutableDictionary dictionary];
+#define ENCODING(a) do { addEncoding( @ #a, (a), encodings, usedEncodings, systemEncodingsByType); } while (0)
     // [NSString availableStringEncodings] doesn't list all CF encodings
     ENCODING(kCFStringEncodingMacRoman);
     ENCODING(kCFStringEncodingWindowsLatin1);
@@ -231,6 +234,11 @@ static void addEncoding(NSString *name, CFStringEncoding value, NSMutableArray<H
     ENCODING(kCFStringEncodingShiftJIS_X0213_00);
 #undef ENCODING
     self.systemEncodings = encodings;
+    self.systemEncodingsByType = systemEncodingsByType;
+}
+
+- (HFNSStringEncoding *)systemEncoding:(NSStringEncoding)systenEncoding {
+    return self.systemEncodingsByType[@(systenEncoding)];
 }
 
 @end

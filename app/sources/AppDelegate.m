@@ -16,6 +16,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #import <HexFiend/HFCustomEncoding.h>
+#import <HexFiend/HFEncodingManager.h>
 
 @interface AppDelegate ()
 
@@ -95,36 +96,19 @@
 }
 
 - (void)buildEncodingMenu {
-    NSArray<NSDictionary *> *encodings = @[
-        @{
-              @"value" : @(NSASCIIStringEncoding),
-              @"title" : NSLocalizedString(@"ASCII (strict 7 bit)", ""),
-        },
-        @{
-              @"value" : @(NSMacOSRomanStringEncoding),
-              @"title" : NSLocalizedString(@"MacRoman", ""),
-        },
-        @{
-              @"value" : @(NSISOLatin1StringEncoding),
-              @"title" : NSLocalizedString(@"ISO Latin-1 (Western Europe)", ""),
-        },
-        @{
-              @"value" : @(NSISOLatin2StringEncoding),
-              @"title" : NSLocalizedString(@"ISO Latin-2 (Eastern Europe)", ""),
-        },
-        @{
-              @"value" : @(NSUTF16LittleEndianStringEncoding),
-              @"title" : NSLocalizedString(@"UTF-16 Little (0xFFFE)", ""),
-        },
-        @{
-              @"value" : @(NSUTF16BigEndianStringEncoding),
-              @"title" : NSLocalizedString(@"UTF-16 Big (0xFEFF)", ""),
-        },
-    ];
-    for (NSDictionary *dict in encodings) {
-        NSString *title = dict[@"title"];
-        NSNumber *value = dict[@"value"];
-        NSStringEncoding encoding = value.integerValue;
+    NSStringEncoding defaultEncodings[] = {
+        NSASCIIStringEncoding,
+        NSMacOSRomanStringEncoding,
+        NSISOLatin1StringEncoding,
+        NSISOLatin2StringEncoding,
+        NSUTF16LittleEndianStringEncoding,
+        NSUTF16BigEndianStringEncoding,
+    };
+    for (size_t i = 0; i < sizeof(defaultEncodings) / sizeof(defaultEncodings[0]); ++i) {
+        NSStringEncoding encoding = defaultEncodings[i];
+        HFNSStringEncoding *encodingObj = [[HFEncodingManager shared] systemEncoding:encoding];
+        HFASSERT(encodingObj != nil);
+        NSString *title = encodingObj.name;
         NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:title action:@selector(setStringEncodingFromMenuItem:) keyEquivalent:@""];
         item.representedObject = [[HFNSStringEncoding alloc] initWithEncoding:encoding];
         [stringEncodingMenu addItem:item];
