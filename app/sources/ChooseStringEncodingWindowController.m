@@ -50,7 +50,7 @@ static void addEncoding(NSString *name, CFStringEncoding value, NSMutableArray<H
     if ([usedEncodings containsObject:@(cocoaEncoding)]) {
         return;
     }
-    NSString *strippedName, *localizedName;
+    NSString *strippedName;
     
     /* Strip off the common prefix */
     if ([name hasPrefix:@"kCFStringEncoding"]) {
@@ -59,11 +59,14 @@ static void addEncoding(NSString *name, CFStringEncoding value, NSMutableArray<H
         strippedName = name;
     }
     
-    /* Get the localized encoding name */
-    localizedName = [NSString localizedNameOfStringEncoding:cocoaEncoding];
+    /* Get the encoding name */
+    NSString *encodingName = (__bridge NSString *)CFStringGetNameOfEncoding(value);
+    if (!encodingName) {
+        encodingName = @"";
+    }
     
     HFEncodingChoice *encoding = [[HFEncodingChoice alloc] init];
-    encoding.label = localizedName.length > 0 ? localizedName : strippedName;
+    encoding.label = encodingName.length > 0 ? encodingName : strippedName;
     encoding.encoding = cocoaEncoding;
     [localEncodings addObject:encoding];
     [usedEncodings addObject:@(cocoaEncoding)];
@@ -222,7 +225,6 @@ static void addEncoding(NSString *name, CFStringEncoding value, NSMutableArray<H
     ENCODING(kCFStringEncodingUTF7);
     ENCODING(kCFStringEncodingUTF7_IMAP);
     ENCODING(kCFStringEncodingShiftJIS_X0213_00);
-    
 #undef ENCODING
 
     NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey:@"label" ascending:YES];
