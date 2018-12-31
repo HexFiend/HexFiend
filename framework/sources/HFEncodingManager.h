@@ -20,4 +20,6 @@
 - (NSArray<HFCustomEncoding *> *)loadCustomEncodingsFromDirectory:(NSString *)directory;
 @property (readonly) NSArray<HFCustomEncoding *> *customEncodings;
 
+- (HFStringEncoding *)encodingByIdentifier:(NSString *)identifier;
+
 @end

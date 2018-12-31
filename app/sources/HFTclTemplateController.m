@@ -11,6 +11,7 @@
 #import <tclTomMath.h>
 #import <zlib.h>
 #import "HFFunctions_Private.h"
+#import <HexFiend/HFEncodingManager.h>
 
 // Tcl_ParseArgsObjv was added in Tcl 8.6, but macOS ships with Tcl 8.5
 #import "Tcl_ParseArgsObjv.h"
@@ -40,6 +41,7 @@ enum command {
     command_hex,
     command_ascii,
     command_utf16,
+    command_str,
     command_uuid,
     command_move,
     command_goto,
@@ -82,6 +84,7 @@ DEFINE_COMMAND(bytes)
 DEFINE_COMMAND(hex)
 DEFINE_COMMAND(ascii)
 DEFINE_COMMAND(utf16)
+DEFINE_COMMAND(str)
 DEFINE_COMMAND(uuid)
 DEFINE_COMMAND(move)
 DEFINE_COMMAND(goto)
@@ -136,6 +139,7 @@ DEFINE_COMMAND(entry)
         CMD(hex),
         CMD(ascii),
         CMD(utf16),
+        CMD(str),
         CMD(uuid),
         CMD(move),
         CMD(goto),
@@ -276,16 +280,49 @@ DEFINE_COMMAND(entry)
                 case command_hex:
                     str = [self readHexDataForSize:len forLabel:label];
                     break;
-                case command_ascii:
-                    str = [self readStringDataForSize:len encoding:NSASCIIStringEncoding forLabel:label];
+                case command_ascii: {
+                    HFStringEncoding *encodingObj = [[HFEncodingManager shared] systemEncoding:NSASCIIStringEncoding];
+                    str = [self readStringDataForSize:len encoding:encodingObj forLabel:label];
                     break;
-                case command_utf16:
-                    str = [self readStringDataForSize:len encoding:self.endian == HFEndianLittle ? NSUTF16LittleEndianStringEncoding : NSUTF16BigEndianStringEncoding forLabel:label];
+                }
+                case command_utf16: {
+                    NSStringEncoding encoding = self.endian == HFEndianLittle ? NSUTF16LittleEndianStringEncoding : NSUTF16BigEndianStringEncoding;
+                    HFStringEncoding *encodingObj = [[HFEncodingManager shared] systemEncoding:encoding];
+                    str = [self readStringDataForSize:len encoding:encodingObj forLabel:label];
                     break;
+                }
                 default:
                     HFASSERT(0);
                     break;
             }
+            if (!str) {
+                Tcl_SetObjResult(_interp, Tcl_ObjPrintf("Failed to read %ld bytes", len));
+                return TCL_ERROR;
+            }
+            Tcl_SetObjResult(_interp, Tcl_NewStringObj(str.UTF8String, -1));
+            break;
+        }
+        case command_str: {
+            if (objc != 3 && objc != 4) {
+                Tcl_WrongNumArgs(_interp, 1, objv, "len encoding [label]");
+                return TCL_ERROR;
+            }
+            long len;
+            int err = [self getLength:&len objv:objv[1]];
+            if (err != TCL_OK) {
+                return err;
+            }
+            NSString *encodingIdentifier = [NSString stringWithUTF8String:Tcl_GetStringFromObj(objv[2], NULL)];
+            HFStringEncoding *encoding = [[HFEncodingManager shared] encodingByIdentifier:encodingIdentifier];
+            if (!encoding) {
+                Tcl_SetObjResult(_interp, Tcl_ObjPrintf("Unknown identifier %s", encodingIdentifier.UTF8String));
+                return TCL_ERROR;
+            }
+            NSString *label = nil;
+            if (objc == 4) {
+                label = [NSString stringWithUTF8String:Tcl_GetStringFromObj(objv[3], NULL)];
+            }
+            NSString *str = [self readStringDataForSize:len encoding:encoding forLabel:label];
             if (!str) {
                 Tcl_SetObjResult(_interp, Tcl_ObjPrintf("Failed to read %ld bytes", len));
                 return TCL_ERROR;

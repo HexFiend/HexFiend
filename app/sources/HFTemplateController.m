@@ -88,12 +88,12 @@
     return str;
 }
 
-- (NSString *)readStringDataForSize:(size_t)size encoding:(NSStringEncoding)encoding forLabel:(NSString *)label {
+- (NSString *)readStringDataForSize:(size_t)size encoding:(HFStringEncoding *)encoding forLabel:(NSString *)label {
     NSData *data = [self readDataForSize:size];
     if (!data) {
         return nil;
     }
-    NSString *str = [[NSString alloc] initWithData:data encoding:encoding];
+    NSString *str = [encoding stringFromBytes:data.bytes length:data.length];
     if (label) {
         [self addNodeWithLabel:label value:str size:size];
     }

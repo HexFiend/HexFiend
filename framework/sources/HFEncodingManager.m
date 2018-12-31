@@ -265,4 +265,19 @@ static void addEncoding(NSString *name, CFStringEncoding value, NSMutableArray<H
     return newEncodings;
 }
 
+- (HFStringEncoding *)encodingByIdentifier:(NSString *)identifier {
+    NSString *identifierLower = identifier.lowercaseString;
+    for (HFNSStringEncoding *encoding in self.systemEncodings) {
+        if ([encoding.identifier.lowercaseString isEqualToString:identifierLower]) {
+            return encoding;
+        }
+    }
+    for (HFCustomEncoding *encoding in self.customEncodings) {
+        if ([encoding.identifier.lowercaseString isEqualToString:identifierLower]) {
+            return encoding;
+        }
+    }
+    return nil;
+}
+
 @end

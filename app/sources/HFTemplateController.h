@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "HFTemplateNode.h"
+#import <HexFiend/HFStringEncoding.h>
 
 @interface HFTemplateController : NSObject
 
@@ -39,7 +40,7 @@ typedef NS_ENUM(NSUInteger, HFEndian) {
 
 - (NSData *)readBytesForSize:(size_t)size forLabel:(NSString *)label;
 - (NSString *)readHexDataForSize:(size_t)size forLabel:(NSString *)label;
-- (NSString *)readStringDataForSize:(size_t)size encoding:(NSStringEncoding)encoding forLabel:(NSString *)label;
+- (NSString *)readStringDataForSize:(size_t)size encoding:(HFStringEncoding *)encoding forLabel:(NSString *)label;
 
 - (BOOL)requireDataAtOffset:(unsigned long long)offset toMatchHexValues:(NSString *)hexValues;
 
