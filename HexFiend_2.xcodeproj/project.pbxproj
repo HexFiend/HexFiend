@@ -67,6 +67,10 @@
 		A567D7D620DA1D9100F7C0A4 /* Sparkle.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = A567D7D420DA1D7C00F7C0A4 /* Sparkle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A56D78161E7EF088001D1892 /* CLIController.m in Sources */ = {isa = PBXBuildFile; fileRef = A56D78151E7EF088001D1892 /* CLIController.m */; };
 		A572614A21D8A51B00970A0E /* HFPrompt.m in Sources */ = {isa = PBXBuildFile; fileRef = A572614921D8A51B00970A0E /* HFPrompt.m */; };
+		A572614D21D9AA7600970A0E /* HFEncodingManager.h in Headers */ = {isa = PBXBuildFile; fileRef = A572614B21D9AA7600970A0E /* HFEncodingManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A572614E21D9AA7600970A0E /* HFEncodingManager.h in Headers */ = {isa = PBXBuildFile; fileRef = A572614B21D9AA7600970A0E /* HFEncodingManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A572614F21D9AA7600970A0E /* HFEncodingManager.m in Sources */ = {isa = PBXBuildFile; fileRef = A572614C21D9AA7600970A0E /* HFEncodingManager.m */; };
+		A572615021D9AA7600970A0E /* HFEncodingManager.m in Sources */ = {isa = PBXBuildFile; fileRef = A572614C21D9AA7600970A0E /* HFEncodingManager.m */; };
 		A57F34731F1B236E00234B94 /* HFHexPasteboardOwner.m in Sources */ = {isa = PBXBuildFile; fileRef = A57F34711F1B236E00234B94 /* HFHexPasteboardOwner.m */; };
 		A57F34741F1B236E00234B94 /* HFHexPasteboardOwner.h in Headers */ = {isa = PBXBuildFile; fileRef = A57F34721F1B236E00234B94 /* HFHexPasteboardOwner.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A57F34761F1B2A2B00234B94 /* HFHexPasteboardOwnerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A57F34751F1B2A2B00234B94 /* HFHexPasteboardOwnerTest.m */; };
@@ -418,6 +422,8 @@
 		A56D78151E7EF088001D1892 /* CLIController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CLIController.m; path = app/sources/CLIController.m; sourceTree = "<group>"; };
 		A572614821D8A51B00970A0E /* HFPrompt.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFPrompt.h; path = app/sources/HFPrompt.h; sourceTree = "<group>"; };
 		A572614921D8A51B00970A0E /* HFPrompt.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFPrompt.m; path = app/sources/HFPrompt.m; sourceTree = "<group>"; };
+		A572614B21D9AA7600970A0E /* HFEncodingManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFEncodingManager.h; path = sources/HFEncodingManager.h; sourceTree = "<group>"; };
+		A572614C21D9AA7600970A0E /* HFEncodingManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFEncodingManager.m; path = sources/HFEncodingManager.m; sourceTree = "<group>"; };
 		A57F34711F1B236E00234B94 /* HFHexPasteboardOwner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFHexPasteboardOwner.m; path = sources/HFHexPasteboardOwner.m; sourceTree = "<group>"; };
 		A57F34721F1B236E00234B94 /* HFHexPasteboardOwner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFHexPasteboardOwner.h; path = sources/HFHexPasteboardOwner.h; sourceTree = "<group>"; };
 		A57F34751F1B2A2B00234B94 /* HFHexPasteboardOwnerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFHexPasteboardOwnerTest.m; sourceTree = "<group>"; };
@@ -856,6 +862,8 @@
 				A5CEA42920D5E0F500BCA488 /* HFNSStringEncoding.m */,
 				A5CEA42D20D6316600BCA488 /* HFCustomEncoding.h */,
 				A5CEA42E20D6316600BCA488 /* HFCustomEncoding.m */,
+				A572614B21D9AA7600970A0E /* HFEncodingManager.h */,
+				A572614C21D9AA7600970A0E /* HFEncodingManager.m */,
 			);
 			name = Encoding;
 			sourceTree = "<group>";
@@ -1249,6 +1257,7 @@
 				A5EF28D420F187B700CA7B39 /* HFTypes.h in Headers */,
 				A5EF28DB20F187B700CA7B39 /* HFByteArray_Internal.h in Headers */,
 				A5EF28DE20F187B700CA7B39 /* HFStringEncoding.h in Headers */,
+				A572614E21D9AA7600970A0E /* HFEncodingManager.h in Headers */,
 				A5EF28E120F187B700CA7B39 /* HFFunctions_Private.h in Headers */,
 				A51D0E9220F2B74C00B55775 /* HFRepresenterHexTextView.h in Headers */,
 				A5EF28E420F187B700CA7B39 /* HFCustomEncoding.h in Headers */,
@@ -1326,6 +1335,7 @@
 				D0370A3F0D68307A00B3A8C6 /* HFSharedMemoryByteSlice.h in Headers */,
 				D019B9010D83FEB3005789AA /* HFByteSliceFileOperation.h in Headers */,
 				D019B9550D840FE8005789AA /* HFObjectGraph.h in Headers */,
+				A572614D21D9AA7600970A0E /* HFEncodingManager.h in Headers */,
 				D08630F00D8BEE9900FF0BE7 /* HFByteSliceFileOperationQueueEntry.h in Headers */,
 				D04C78270DC47ECF00A76FF2 /* HFTextSelectionPulseView.h in Headers */,
 				D0A6C9D80DCC68610077175C /* HFController.h in Headers */,
@@ -1725,6 +1735,7 @@
 				A5EF292620F187B700CA7B39 /* HFProgressTracker.m in Sources */,
 				A5EF292720F187B700CA7B39 /* HFSharedMemoryByteSlice.m in Sources */,
 				A5EF292820F187B700CA7B39 /* HFByteArray_FileWriting.m in Sources */,
+				A572615021D9AA7600970A0E /* HFEncodingManager.m in Sources */,
 				A51D0E8120F1D05200B55775 /* HFRepresenter.m in Sources */,
 				A5EF292920F187B700CA7B39 /* HFByteArrayEditScript.m in Sources */,
 				A5EF292A20F187B700CA7B39 /* HFByteSliceFileOperation.m in Sources */,
@@ -1787,6 +1798,7 @@
 				D041D1C10D397E1A00C28345 /* HFPasteboardOwner.m in Sources */,
 				D0B7E3750D5C5B3A007874ED /* HFByteArray_FindReplace.m in Sources */,
 				A5ED2A86200BD8F0004AD7A4 /* HFColorRange.m in Sources */,
+				A572614F21D9AA7600970A0E /* HFEncodingManager.m in Sources */,
 				D0826EAC0D4855900006FB7D /* HFFileReference.m in Sources */,
 				D0826EF20D487A000006FB7D /* HFFileByteSlice.m in Sources */,
 				D07150680D5510CE00573D7A /* HFTextField.m in Sources */,
