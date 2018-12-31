@@ -80,6 +80,7 @@ static void addEncoding(NSString *name, CFStringEncoding value, NSMutableArray<H
     NSMutableArray<HFNSStringEncoding *> *encodings = [NSMutableArray array];
     NSMutableSet<NSNumber *> *usedEncodings = [NSMutableSet set];
 #define ENCODING(a) do { addEncoding( @ #a, (a), encodings, usedEncodings); } while (0)
+    // [NSString availableStringEncodings] doesn't list all CF encodings
     ENCODING(kCFStringEncodingMacRoman);
     ENCODING(kCFStringEncodingWindowsLatin1);
     ENCODING(kCFStringEncodingISOLatin1);
