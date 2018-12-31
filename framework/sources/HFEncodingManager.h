@@ -22,4 +22,6 @@
 
 - (HFStringEncoding *)encodingByIdentifier:(NSString *)identifier;
 
+@property (readonly) HFNSStringEncoding *ascii;
+
 @end

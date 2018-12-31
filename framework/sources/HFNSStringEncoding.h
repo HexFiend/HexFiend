@@ -12,12 +12,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface HFNSStringEncoding : HFStringEncoding <NSCoding>
 
-- (instancetype)initWithEncoding:(NSStringEncoding)encoding;
 - (instancetype)initWithEncoding:(NSStringEncoding)encoding name:(NSString *)name identifier:(NSString *)identifier;
 
 @property NSStringEncoding encoding;
-
-+ (instancetype)ascii;
 
 @end
 

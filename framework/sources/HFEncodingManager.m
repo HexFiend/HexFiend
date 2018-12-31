@@ -280,4 +280,8 @@ static void addEncoding(NSString *name, CFStringEncoding value, NSMutableArray<H
     return nil;
 }
 
+- (HFNSStringEncoding *)ascii {
+    return [self systemEncoding:NSASCIIStringEncoding];
+}
+
 @end

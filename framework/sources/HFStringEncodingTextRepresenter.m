@@ -9,7 +9,7 @@
 #import <HexFiend/HFRepresenterStringEncodingTextView.h>
 #import <HexFiend/HFPasteboardOwner.h>
 #import <HexFiend/HFProgressTracker.h>
-#import <HexFiend/HFNSStringEncoding.h>
+#import <HexFiend/HFEncodingManager.h>
 
 @interface HFStringEncodingPasteboardOwner : HFPasteboardOwner
 @property HFStringEncoding* encoding;
@@ -56,7 +56,7 @@
 
 - (instancetype)init {
     self = [super init];
-    stringEncoding = [HFNSStringEncoding ascii];
+    stringEncoding = [HFEncodingManager shared].ascii;
     return self;
 }
 

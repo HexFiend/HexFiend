@@ -7,6 +7,7 @@
 
 #import "HFFindReplaceOperationView.h"
 #import "BaseDataDocument.h"
+#import <HexFiend/HFEncodingManager.h>
 
 @implementation HFFindReplaceOperationView
 
@@ -77,7 +78,7 @@
     if (document) {
         encoding = [document stringEncoding];
     } else {
-        encoding = [HFNSStringEncoding ascii];
+        encoding = [HFEncodingManager shared].ascii;
     }
     [findField setStringEncoding:encoding];
     [replaceField setStringEncoding:encoding];

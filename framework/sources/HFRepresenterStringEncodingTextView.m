@@ -7,7 +7,7 @@
 
 #import "HFRepresenterStringEncodingTextView.h"
 #import "HFTextRepresenter_Internal.h"
-#import <HexFiend/HFNSStringEncoding.h>
+#import <HexFiend/HFEncodingManager.h>
 #include <malloc/malloc.h>
 #import <CoreText/CoreText.h>
 
@@ -311,7 +311,7 @@ static int compareGlyphFontIndexes(const void *p1, const void *p2) {
 
 - (instancetype)initWithFrame:(CGRect)frameRect {
     self = [super initWithFrame:frameRect];
-    encoding = [HFNSStringEncoding ascii];
+    encoding = [HFEncodingManager shared].ascii;
     bytesPerChar = encoding.fixedBytesPerCharacter;
     [self staleTieredProperties];
     return self;
@@ -480,7 +480,7 @@ static int compareGlyphFontIndexes(const void *p1, const void *p2) {
     HFTextRepresenter *rep = [self representer];
     HFASSERT([rep isKindOfClass:[HFTextRepresenter class]]);
 #if !TARGET_OS_IPHONE
-    [rep copySelectedBytesToPasteboard:[NSPasteboard generalPasteboard] encoding:[HFNSStringEncoding ascii]];
+    [rep copySelectedBytesToPasteboard:[NSPasteboard generalPasteboard] encoding:[HFEncodingManager shared].ascii];
 #endif
 }
 

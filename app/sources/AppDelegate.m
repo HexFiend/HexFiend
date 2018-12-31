@@ -111,7 +111,7 @@
         HFASSERT(encodingObj != nil);
         NSString *title = encodingObj.name;
         NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:title action:@selector(setStringEncodingFromMenuItem:) keyEquivalent:@""];
-        item.representedObject = [[HFNSStringEncoding alloc] initWithEncoding:encoding];
+        item.representedObject = encodingObj;
         [stringEncodingMenu addItem:item];
     }
     
@@ -320,20 +320,36 @@ static NSComparisonResult compareFontDisplayNames(NSFont *a, NSFont *b, void *un
 }
 
 - (HFStringEncoding *)defaultStringEncoding {
+    HFEncodingManager *manager = [HFEncodingManager shared];
     id obj = [[NSUserDefaults standardUserDefaults] objectForKey:@"DefaultStringEncoding"];
     if ([obj isKindOfClass:[NSNumber class]]) {
         // Old format just stored encoding raw
         NSStringEncoding encoding = [(NSNumber *)obj integerValue];
-        return [[HFNSStringEncoding alloc] initWithEncoding:encoding];
-    } else if ([obj isKindOfClass:[NSData class]]) {
-        HFStringEncoding *encoding = [NSKeyedUnarchiver unarchiveObjectWithData:obj];
-        if ([encoding isKindOfClass:[HFStringEncoding class]]) {
-            return encoding;
+        HFNSStringEncoding *encodingObj = [manager systemEncoding:encoding];
+        if (encodingObj) {
+            return encodingObj;
         } else {
-            NSLog(@"Invalid encoding object: %@", encoding);
+            NSLog(@"Failed to find encoding object for %ld", encoding);
+        }
+    } else if ([obj isKindOfClass:[NSData class]]) {
+        HFStringEncoding *encodingObj = [NSKeyedUnarchiver unarchiveObjectWithData:obj];
+        if ([encodingObj isKindOfClass:[HFCustomEncoding class]]) {
+            return encodingObj;
+        } else if ([encodingObj isKindOfClass:[HFNSStringEncoding class]]) {
+            // we only encode the raw encoding in HFNSStringEncoding, so get the
+            // object from the manager so we can use proper name and identifier
+            HFNSStringEncoding *nsencoding = (HFNSStringEncoding *)encodingObj;
+            encodingObj = [manager systemEncoding:nsencoding.encoding];
+            if (encodingObj) {
+                return encodingObj;
+            } else {
+                NSLog(@"Failed to find encoding object for %ld", nsencoding.encoding);
+            }
+        } else {
+            NSLog(@"Invalid encoding object: %@", encodingObj);
         }
     }
-    return [HFNSStringEncoding ascii];
+    return manager.ascii;
 }
 
 - (void)setStringEncoding:(HFStringEncoding *)encoding {

@@ -15,17 +15,6 @@
     NSString *_identifier;
 }
 
-- (instancetype)initWithEncoding:(NSStringEncoding)encoding {
-    self = [super init];
-    _encoding = encoding;
-    CFStringEncoding cfencoding = CFStringConvertNSStringEncodingToEncoding(_encoding);
-    _name = (__bridge NSString *)CFStringGetNameOfEncoding(cfencoding);
-    if (!_name) {
-        _name = @"";
-    }
-    return self;
-}
-
 - (instancetype)initWithEncoding:(NSStringEncoding)encoding name:(NSString *)name identifier:(NSString *)identifier {
     self = [super init];
     _encoding = encoding;
@@ -66,10 +55,6 @@
 
 - (NSString *)identifier {
     return _identifier;
-}
-
-+ (instancetype)ascii {
-    return [[self alloc] initWithEncoding:NSASCIIStringEncoding];
 }
 
 - (BOOL)isEqual:(id)object {
