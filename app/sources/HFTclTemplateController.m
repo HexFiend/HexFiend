@@ -208,7 +208,15 @@ DEFINE_COMMAND(entry)
         *length = self.length - (self.anchor + self.position);
         return TCL_OK;
     }
-    return Tcl_GetLongFromObj(_interp, objPtr, length);
+    int err = Tcl_GetLongFromObj(_interp, objPtr, length);
+    if (err != TCL_OK) {
+        return err;
+    }
+    if (*length <= 0) {
+        Tcl_SetObjResult(_interp, Tcl_ObjPrintf("Length must be greater than 0, but was %ld.", *length));
+        return TCL_ERROR;
+    }
+    return err;
 }
 
 - (int)runCommand:(enum command)command objc:(int)objc objv:(struct Tcl_Obj * CONST *)objv {
@@ -249,10 +257,6 @@ DEFINE_COMMAND(entry)
             int err = [self getLength:&len objv:objv[1]];
             if (err != TCL_OK) {
                 return err;
-            }
-            if (len <= 0) {
-                Tcl_SetObjResult(_interp, Tcl_NewStringObj("Length must be greater than 0.", -1));
-                return TCL_ERROR;
             }
             NSString *label = nil;
             if (objc == 3) {
