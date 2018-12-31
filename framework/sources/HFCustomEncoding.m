@@ -12,6 +12,7 @@
 
 @property NSString *path;
 @property NSString *nameValue;
+@property NSString *identifierValue;
 @property NSDictionary<NSNumber *, NSString *> *charToStringMap;
 
 @end
@@ -29,7 +30,12 @@
     }
     NSString *name = dict[@"name"];
     if (!name) {
+        NSLog(@"Missing \"name\" field");
         return NO;
+    }
+    NSString *identifier = dict[@"identifier"];
+    if (!identifier) {
+        identifier = name;
     }
     NSDictionary *map = dict[@"map"];
     if (![map isKindOfClass:[NSDictionary class]]) {
@@ -56,6 +62,7 @@
     }
     _path = path;
     _nameValue = name;
+    _identifierValue = identifier;
     _charToStringMap = nsMap;
     return YES;
 }
@@ -100,6 +107,10 @@
 
 - (NSString *)name {
     return self.nameValue;
+}
+
+- (NSString *)identifier {
+    return self.identifierValue;
 }
 
 - (BOOL)isEqual:(id)object {
