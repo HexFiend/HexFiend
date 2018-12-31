@@ -104,9 +104,10 @@
         NSUTF16LittleEndianStringEncoding,
         NSUTF16BigEndianStringEncoding,
     };
+    HFEncodingManager *encodingManager = [HFEncodingManager shared];
     for (size_t i = 0; i < sizeof(defaultEncodings) / sizeof(defaultEncodings[0]); ++i) {
         NSStringEncoding encoding = defaultEncodings[i];
-        HFNSStringEncoding *encodingObj = [[HFEncodingManager shared] systemEncoding:encoding];
+        HFNSStringEncoding *encodingObj = [encodingManager systemEncoding:encoding];
         HFASSERT(encodingObj != nil);
         NSString *title = encodingObj.name;
         NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:title action:@selector(setStringEncodingFromMenuItem:) keyEquivalent:@""];
@@ -115,22 +116,10 @@
     }
     
     NSString *encodingsFolder = [[NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES).firstObject stringByAppendingPathComponent:[NSBundle mainBundle].bundleIdentifier] stringByAppendingPathComponent:@"Encodings"];
-    NSFileManager *fm = [NSFileManager defaultManager];
-    NSMutableArray<HFCustomEncoding *> *customEncodings = [NSMutableArray array];
-    for (NSString *filename in [fm enumeratorAtPath:encodingsFolder]) {
-        if ([filename.pathExtension isEqualToString:@"json"]) {
-            NSString *path = [encodingsFolder stringByAppendingPathComponent:filename];
-            HFCustomEncoding *encoding = [[HFCustomEncoding alloc] initWithPath:path];
-            if (!encoding) {
-                NSLog(@"Error with file %@", path);
-                continue;
-            }
-            [customEncodings addObject:encoding];
-        }
-    }
+    NSArray<HFCustomEncoding *> *customEncodings = [encodingManager loadCustomEncodingsFromDirectory:encodingsFolder];
     if (customEncodings.count > 0) {
         [stringEncodingMenu addItem:[NSMenuItem separatorItem]];
-        [customEncodings sortUsingSelector:@selector(compare:)];
+        customEncodings = [customEncodings sortedArrayUsingSelector:@selector(compare:)];
         for (HFCustomEncoding *encoding in customEncodings) {
             NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:encoding.name action:@selector(setStringEncodingFromMenuItem:) keyEquivalent:@""];
             item.representedObject = encoding;

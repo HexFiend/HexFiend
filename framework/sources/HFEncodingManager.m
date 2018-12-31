@@ -16,6 +16,9 @@
 @end
 
 @implementation HFEncodingManager
+{
+    NSMutableArray<HFCustomEncoding *> *_customEncodings;
+}
 
 + (instancetype)shared {
     static HFEncodingManager *shared = nil;
@@ -239,6 +242,27 @@ static void addEncoding(NSString *name, CFStringEncoding value, NSMutableArray<H
 
 - (HFNSStringEncoding *)systemEncoding:(NSStringEncoding)systenEncoding {
     return self.systemEncodingsByType[@(systenEncoding)];
+}
+
+- (NSArray<HFCustomEncoding *> *)loadCustomEncodingsFromDirectory:(NSString *)directory {
+    NSMutableArray<HFCustomEncoding *> *newEncodings = [NSMutableArray array];
+    NSFileManager *fm = [NSFileManager defaultManager];
+    for (NSString *filename in [fm enumeratorAtPath:directory]) {
+        if ([filename.pathExtension isEqualToString:@"json"]) {
+            NSString *path = [directory stringByAppendingPathComponent:filename];
+            HFCustomEncoding *encoding = [[HFCustomEncoding alloc] initWithPath:path];
+            if (!encoding) {
+                NSLog(@"Error with file %@", path);
+                continue;
+            }
+            [newEncodings addObject:encoding];
+        }
+    }
+    if (!_customEncodings) {
+        _customEncodings = [NSMutableArray array];
+    }
+    [_customEncodings addObjectsFromArray:newEncodings];
+    return newEncodings;
 }
 
 @end

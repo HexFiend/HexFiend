@@ -8,13 +8,16 @@
 
 #import <Foundation/Foundation.h>
 #import "HFNSStringEncoding.h"
+#import "HFCustomEncoding.h"
 
 @interface HFEncodingManager : NSObject
 
 + (instancetype)shared;
 
 @property (readonly) NSArray<HFNSStringEncoding *> *systemEncodings;
-
 - (HFNSStringEncoding *)systemEncoding:(NSStringEncoding)systenEncoding;
+
+- (NSArray<HFCustomEncoding *> *)loadCustomEncodingsFromDirectory:(NSString *)directory;
+@property (readonly) NSArray<HFCustomEncoding *> *customEncodings;
 
 @end
