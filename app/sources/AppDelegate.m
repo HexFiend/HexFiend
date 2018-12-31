@@ -122,8 +122,11 @@
         },
     ];
     for (NSDictionary *dict in encodings) {
-        NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:dict[@"title"] action:@selector(setStringEncodingFromMenuItem:) keyEquivalent:@""];
-        item.representedObject = [[HFNSStringEncoding alloc] initWithEncoding:[(NSNumber *)dict[@"value"] integerValue]];
+        NSString *title = dict[@"title"];
+        NSNumber *value = dict[@"value"];
+        NSStringEncoding encoding = value.integerValue;
+        NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:title action:@selector(setStringEncodingFromMenuItem:) keyEquivalent:@""];
+        item.representedObject = [[HFNSStringEncoding alloc] initWithEncoding:encoding];
         [stringEncodingMenu addItem:item];
     }
     
