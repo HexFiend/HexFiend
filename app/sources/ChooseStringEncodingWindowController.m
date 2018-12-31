@@ -225,6 +225,8 @@ static void addEncoding(NSString *name, CFStringEncoding value, NSMutableArray<H
     
 #undef ENCODING
 
+    NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey:@"label" ascending:YES];
+    [localEncodings sortUsingDescriptors:@[descriptor]];
     encodings = localEncodings;
     activeEncodings = encodings;
 }
