@@ -8,6 +8,7 @@
 #import <HexFiend/HFLineCountingView.h>
 #import <HexFiend/HFLineCountingRepresenter.h>
 #import <HexFiend/HFFunctions.h>
+#import <HexFiend/HFTextRepresenter_Internal.h>
 
 #define INVALID_LINE_COUNT NSUIntegerMax
 
@@ -235,12 +236,11 @@ static const CGFloat kShadowWidth = 6;
     unsigned long long lineIndex = HFFPToUL(floorl(_lineRangeToDraw.location));
     NSUInteger linesRemaining = ll2l(HFFPToUL(ceill(_lineRangeToDraw.length + _lineRangeToDraw.location) - floorl(_lineRangeToDraw.location)));
     
-    CGFloat linesToVerticallyOffset = ld2f(_lineRangeToDraw.location - floorl(_lineRangeToDraw.location));
-    CGFloat verticalOffset = linesToVerticallyOffset * _lineHeight + 1;
+    CGFloat verticalOffset = [HFTextRepresenter verticalOffsetForLineRange:_lineRangeToDraw];
     NSRect textRect = self.bounds;
     textRect.size.width -= (kShadowWidth - 1);
-    textRect.origin.y -= verticalOffset;
-    textRect.size.height += verticalOffset + _lineHeight;
+    textRect.origin.y -= (verticalOffset * _lineHeight);
+    textRect.size.height += (verticalOffset * _lineHeight) + _lineHeight;
     
     if (! textAttributes) {
         NSMutableParagraphStyle *mutableStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];

@@ -41,6 +41,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (HFRange)entireDisplayedRange;
 
++ (CGFloat)verticalOffsetForLineRange:(HFFPRange)range;
+
 @end
 
 NS_ASSUME_NONNULL_END

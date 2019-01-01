@@ -220,6 +220,12 @@
     return result;
 }
 
++ (CGFloat)verticalOffsetForLineRange:(HFFPRange)range {
+    long double offsetLongDouble = range.location - floorl(range.location);
+    CGFloat offset = ld2f(offsetLongDouble);
+    return offset;
+}
+
 - (void)updateText {
     HFController *controller = [self controller];
     HFRepresenterTextView *view = [self view];
@@ -227,9 +233,7 @@
     [view setData:[controller dataForRange:entireDisplayedRange]];
     [view setStyles:[self stylesForRange:entireDisplayedRange]];
     HFFPRange lineRange = [controller displayedLineRange];
-    long double offsetLongDouble = lineRange.location - floorl(lineRange.location);
-    CGFloat offset = ld2f(offsetLongDouble);
-    [view setVerticalOffset:offset];
+    [view setVerticalOffset:[[self class] verticalOffsetForLineRange:lineRange]];
     [view setStartingLineBackgroundColorIndex:ll2l(HFFPToUL(floorl(lineRange.location)) % NSUIntegerMax)];
 }
 
