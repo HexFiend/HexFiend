@@ -248,7 +248,11 @@ static const CGFloat kShadowWidth = 6;
         [mutableStyle setMinimumLineHeight:_lineHeight];
         [mutableStyle setMaximumLineHeight:_lineHeight];
         NSParagraphStyle *paragraphStyle = [mutableStyle copy];
-        textAttributes = [[NSDictionary alloc] initWithObjectsAndKeys:_font, NSFontAttributeName, [self foregroundColor], NSForegroundColorAttributeName, paragraphStyle, NSParagraphStyleAttributeName, nil];
+        textAttributes = @{
+           NSFontAttributeName: _font,
+           NSForegroundColorAttributeName: [self foregroundColor],
+           NSParagraphStyleAttributeName: paragraphStyle,
+        };
     }
     
     NSString *string = [self newLineStringForRange:HFRangeMake(lineIndex, linesRemaining)];
