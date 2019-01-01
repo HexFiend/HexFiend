@@ -1549,7 +1549,9 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
     
     /* Start us off with the horizontal inset and move the baseline down by the ascender so our glyphs just graze the top of our view */
     textTransform.tx += [self horizontalContainerInset];
-    textTransform.ty += [fontObject ascender] - lineHeight * [self verticalOffset];
+    // Adjust by descender to center
+    CGFloat yAdjust = lineHeight - ceil(fabs(fontObject.descender));
+    textTransform.ty += yAdjust - lineHeight * [self verticalOffset];
     NSUInteger lineIndex = 0;
     const NSUInteger maxGlyphCount = [self maximumGlyphCountForByteCount:bytesPerLine];
     NEW_ARRAY(struct HFGlyph_t, glyphs, maxGlyphCount);
