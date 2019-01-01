@@ -11,6 +11,8 @@
 
 #define INVALID_LINE_COUNT NSUIntegerMax
 
+static const CGFloat kShadowWidth = 6;
+
 @implementation HFLineCountingView
 
 - (void)dealloc {
@@ -93,10 +95,9 @@
     NSInteger shadowEdge = _representer.interiorShadowEdge;
     
     if (shadowEdge >= 0) {
-        const CGFloat shadowWidth = 6;
         NSWindow *window = self.window;
         BOOL drawActive = (window == nil || [window isKeyWindow] || [window isMainWindow]);
-        HFDrawShadow(HFGraphicsGetCurrentContext(), self.bounds, shadowWidth, shadowEdge, drawActive, clip);
+        HFDrawShadow(HFGraphicsGetCurrentContext(), self.bounds, kShadowWidth, shadowEdge, drawActive, clip);
     }
 }
 
@@ -237,7 +238,7 @@
     CGFloat linesToVerticallyOffset = ld2f(_lineRangeToDraw.location - floorl(_lineRangeToDraw.location));
     CGFloat verticalOffset = linesToVerticallyOffset * _lineHeight + 1;
     NSRect textRect = self.bounds;
-    textRect.size.width -= 5;
+    textRect.size.width -= (kShadowWidth - 1);
     textRect.origin.y -= verticalOffset;
     textRect.size.height += verticalOffset + _lineHeight;
     
