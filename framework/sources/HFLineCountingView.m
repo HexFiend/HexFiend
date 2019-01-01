@@ -25,7 +25,6 @@
     [coder encodeObject:_representer forKey:@"HFRepresenter"];
     [coder encodeInt64:_bytesPerLine forKey:@"HFBytesPerLine"];
     [coder encodeInt64:_lineNumberFormat forKey:@"HFLineNumberFormat"];
-    [coder encodeBool:useStringDrawingPath forKey:@"HFUseStringDrawingPath"];
 }
 
 - (instancetype)initWithCoder:(NSCoder *)coder {
@@ -36,7 +35,6 @@
     _representer = [coder decodeObjectForKey:@"HFRepresenter"];
     _bytesPerLine = (NSUInteger)[coder decodeInt64ForKey:@"HFBytesPerLine"];
     _lineNumberFormat = (NSUInteger)[coder decodeInt64ForKey:@"HFLineNumberFormat"];
-    useStringDrawingPath = [coder decodeBoolForKey:@"HFUseStringDrawingPath"];
     return self;
 }
 
@@ -171,54 +169,11 @@
     }
 }
 
-static inline int common_prefix_length(const char *a, const char *b) {
-    int i;
-    for (i=0; ; i++) {
-        char ac = a[i];
-        char bc = b[i];
-        if (ac != bc || ac == 0 || bc == 0) break;
-    }
-    return i;
-}
-
 - (NSColor *)foregroundColor {
     if (@available(macOS 10.10, *)) {
         return [NSColor secondaryLabelColor];
     } else {
         return [NSColor colorWithCalibratedWhite:(CGFloat).1 alpha:(CGFloat).8];
-    }
-}
-
-- (void)drawLineNumbersWithClipStringDrawing:(NSRect)clipRect {
-    CGFloat verticalOffset = ld2f(_lineRangeToDraw.location - floorl(_lineRangeToDraw.location));
-    NSRect textRect = self.bounds;
-    textRect.size.height = _lineHeight;
-    textRect.size.width -= 5;
-    textRect.origin.y -= verticalOffset * _lineHeight + 1;
-    unsigned long long lineIndex = HFFPToUL(floorl(_lineRangeToDraw.location));
-    unsigned long long lineValue = lineIndex * _bytesPerLine;
-    NSUInteger linesRemaining = ll2l(HFFPToUL(ceill(_lineRangeToDraw.length + _lineRangeToDraw.location) - floorl(_lineRangeToDraw.location)));
-    if (! textAttributes) {
-        NSMutableParagraphStyle *mutableStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
-        [mutableStyle setAlignment:NSRightTextAlignment];
-        NSParagraphStyle *paragraphStyle = [mutableStyle copy];
-        textAttributes = [[NSDictionary alloc] initWithObjectsAndKeys:_font, NSFontAttributeName, [self foregroundColor], NSForegroundColorAttributeName, paragraphStyle, NSParagraphStyleAttributeName, nil];
-    }
-    
-    char formatString[64];
-    [self getLineNumberFormatString:formatString length:sizeof formatString];
-    
-    while (linesRemaining--) {
-        if (NSIntersectsRect(textRect, clipRect)) {
-            char buff[256];
-            int newStringLength = snprintf(buff, sizeof buff, formatString, lineValue);
-            HFASSERT(newStringLength > 0);
-            NSString *string = [[NSString alloc] initWithBytesNoCopy:buff length:newStringLength encoding:NSASCIIStringEncoding freeWhenDone:NO];
-            [string drawInRect:textRect withAttributes:textAttributes];
-        }
-        textRect.origin.y += _lineHeight;
-        lineIndex++;
-        if (linesRemaining > 0) lineValue = HFSum(lineValue, _bytesPerLine); //we could do this unconditionally, but then we risk overflow
     }
 }
 
@@ -275,8 +230,7 @@ static inline int common_prefix_length(const char *a, const char *b) {
     return string;
 }
 
-- (void)drawLineNumbersWithClipSingleStringDrawing:(NSRect)clipRect {
-    USE(clipRect);
+- (void)drawLineNumbersWithClipSingleStringDrawing {
     unsigned long long lineIndex = HFFPToUL(floorl(_lineRangeToDraw.location));
     NSUInteger linesRemaining = ll2l(HFFPToUL(ceill(_lineRangeToDraw.length + _lineRangeToDraw.location) - floorl(_lineRangeToDraw.location)));
     
@@ -300,32 +254,10 @@ static inline int common_prefix_length(const char *a, const char *b) {
     [string drawInRect:textRect withAttributes:textAttributes];
 }
 
-- (void)drawLineNumbersWithClip:(NSRect)clipRect {
-    NSInteger drawingMode = (useStringDrawingPath ? 1 : 3);
-    switch (drawingMode) {
-        // Drawing can't be done right if fonts are wider than expected, but all
-        // of these have rather nasty behavior in that case. I've commented what
-        // that behavior is; the comment is hypothetical 'could' if it shouldn't
-        // actually be a problem in practice.
-        // TODO: Make a drawing mode that is "Fonts could get clipped if too wide"
-        //       because that seems like better behavior than any of these.
-        case 1:
-            // Last characters could get omitted (*not* clipped) if too wide.
-            // Also, most fonts have bottoms clipped (very unsigntly).
-            [self drawLineNumbersWithClipStringDrawing:clipRect];
-            break;
-        case 3:
-            // Fonts could wrap if too wide (breaks numbering).
-            // *Note that that this is the only mode that generally works.*
-            [self drawLineNumbersWithClipSingleStringDrawing:clipRect];
-            break;
-    }
-}
-
 - (void)drawRect:(NSRect)clipRect {
     [self drawGradientWithClip:clipRect];
     [self drawDividerWithClip:clipRect];
-    [self drawLineNumbersWithClip:clipRect];
+    [self drawLineNumbersWithClipSingleStringDrawing];
 }
 
 - (void)setLineRangeToDraw:(HFFPRange)range {
@@ -349,17 +281,10 @@ static inline int common_prefix_length(const char *a, const char *b) {
     }
 }
 
-- (BOOL)canUseStringDrawingPathForFont:(NSFont *)testFont {
-    NSString *name = [testFont fontName];
-    // No, Menlo does not work here.
-    return [name isEqualToString:@"Monaco"] || [name isEqualToString:@"Courier"] || [name isEqualToString:@"Consolas"];
-}
-
 - (void)setFont:(NSFont *)val {
     if (val != _font) {
         _font = [val copy];
         textAttributes = nil;
-        useStringDrawingPath = [self canUseStringDrawingPathForFont:_font];
         [self setNeedsDisplay:YES];
     }
 }

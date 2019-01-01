@@ -9,8 +9,6 @@
 
 @interface HFLineCountingView : NSView {
     NSDictionary *textAttributes;
-    
-    BOOL useStringDrawingPath;
     BOOL registeredForAppNotifications;
 }
 
