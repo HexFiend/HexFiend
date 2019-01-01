@@ -715,12 +715,7 @@ enum LineCoverage_t {
 {
     if (val != _font) {
         _font = val;
-        NSLayoutManager *manager = [[NSLayoutManager alloc] init];
-#if TARGET_OS_IPHONE
-        defaultLineHeight = val.lineHeight;
-#else
-        defaultLineHeight = [manager defaultLineHeightForFont:_font];
-#endif
+        defaultLineHeight = HFLineHeightForFont(_font);
 #if TARGET_OS_IPHONE
         [self setNeedsDisplay];
 #else

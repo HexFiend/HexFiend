@@ -1001,3 +1001,20 @@ HFColor* HFColorWithRGB(CGFloat red, CGFloat green, CGFloat blue, CGFloat alpha)
     return [NSColor colorWithCalibratedRed:red green:green blue:blue alpha:alpha];
 #endif
 }
+
+
+NSUInteger HFLineHeightForFont(HFFont *font) {
+#if TARGET_OS_IPHONE
+    NSUInteger defaultLineHeight = (NSUInteger)ceil(font.lineHeight);
+#else
+    NSLayoutManager *manager = [[NSLayoutManager alloc] init];
+    NSUInteger defaultLineHeight = (NSUInteger)ceil([manager defaultLineHeightForFont:font]);
+#endif
+    // Make sure there's an even number of spacing on top and bottom so
+    // the font centers cleaner.
+    if (((defaultLineHeight - (NSUInteger)ceil(font.ascender + fabs(font.descender))) % 2) != 0) {
+        NSLog(@"Adjusted default line height for font %@", font.fontName);
+        ++defaultLineHeight;
+    }
+    return defaultLineHeight;
+}

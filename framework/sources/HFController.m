@@ -295,13 +295,7 @@ static inline Class preferredByteArrayClass(void) {
         CGFloat priorLineHeight = [self lineHeight];
         
         _font = [val copy];
-        
-        NSLayoutManager *manager = [[NSLayoutManager alloc] init];
-#if TARGET_OS_IPHONE
-        lineHeight = val.lineHeight;
-#else
-        lineHeight = [manager defaultLineHeightForFont:_font];
-#endif
+        lineHeight = HFLineHeightForFont(_font);
         
         HFControllerPropertyBits bits = HFControllerFont;
         if (lineHeight != priorLineHeight) bits |= HFControllerLineHeight;

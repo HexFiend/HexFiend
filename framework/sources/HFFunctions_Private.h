@@ -43,4 +43,6 @@ static inline int64_t HFAtomicAdd64(int64_t a, volatile int64_t *b) {
     return OSAtomicAdd64(a, b);
 }
 
+__private_extern__ NSUInteger HFLineHeightForFont(HFFont *font);
+
 NS_ASSUME_NONNULL_END

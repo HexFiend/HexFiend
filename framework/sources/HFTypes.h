@@ -15,7 +15,9 @@ typedef struct {
 #if TARGET_OS_IPHONE
 #define HFColor UIColor
 #define HFView UIView
+#define HFFont UIFont
 #else
 #define HFColor NSColor
 #define HFView NSView
+#define HFFont NSFont
 #endif
