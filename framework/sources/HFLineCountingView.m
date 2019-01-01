@@ -293,6 +293,7 @@ static const CGFloat kShadowWidth = 6;
 - (void)setLineHeight:(CGFloat)height {
     if (_lineHeight != height) {
         _lineHeight = height;
+        textAttributes = nil;
         [self setNeedsDisplay:YES];
     }
 }
