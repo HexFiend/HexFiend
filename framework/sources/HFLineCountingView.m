@@ -9,44 +9,9 @@
 #import <HexFiend/HFLineCountingRepresenter.h>
 #import <HexFiend/HFFunctions.h>
 
-#define TIME_LINE_NUMBERS 0
-
-#define HEX_LINE_NUMBERS_HAVE_0X_PREFIX 0
-
 #define INVALID_LINE_COUNT NSUIntegerMax
 
-#if TIME_LINE_NUMBERS
-@interface HFTimingTextView : NSTextView
-@end
-@implementation HFTimingTextView
-- (void)drawRect:(NSRect)rect {
-    CFAbsoluteTime startTime = CFAbsoluteTimeGetCurrent();
-    [super drawRect:rect];
-    CFAbsoluteTime endTime = CFAbsoluteTimeGetCurrent();
-    NSLog(@"TextView line number time: %f", endTime - startTime);
-}
-@end
-#endif
-
 @implementation HFLineCountingView
-
-- (void)_sharedInitLineCountingView {
-    layoutManager = [[NSLayoutManager alloc] init];
-    textStorage = [[NSTextStorage alloc] init];
-    [textStorage addLayoutManager:layoutManager];
-    textContainer = [[NSTextContainer alloc] init];
-    [textContainer setLineFragmentPadding:(CGFloat)5];
-    [textContainer setContainerSize:NSMakeSize(self.bounds.size.width, [textContainer containerSize].height)];
-    [layoutManager addTextContainer:textContainer];
-}
-
-- (instancetype)initWithFrame:(NSRect)frame {
-    self = [super initWithFrame:frame];
-    if (self) {
-        [self _sharedInitLineCountingView];
-    }
-    return self;
-}
 
 - (void)dealloc {
     HFUnregisterViewForWindowAppearanceChanges(self, registeredForAppNotifications);
@@ -66,7 +31,6 @@
 - (instancetype)initWithCoder:(NSCoder *)coder {
     HFASSERT([coder allowsKeyedCoding]);
     self = [super initWithCoder:coder];
-    [self _sharedInitLineCountingView];
     _font = [coder decodeObjectForKey:@"HFFont"];
     _lineHeight = (CGFloat)[coder decodeDoubleForKey:@"HFLineHeight"];
     _representer = [coder decodeObjectForKey:@"HFRepresenter"];
@@ -84,13 +48,8 @@
         strlcpy(outString, "%llu", length);
     }
     else if (format == HFLineNumberFormatHexadecimal) {
-#if HEX_LINE_NUMBERS_HAVE_0X_PREFIX
-        // we want a format string like 0x%08llX
-        snprintf(outString, length, "0x%%0%lullX", (unsigned long)self.representer.digitCount - 2);
-#else
         // we want a format string like %08llX
         snprintf(outString, length, "%%0%lullX", (unsigned long)self.representer.digitCount);
-#endif
     }
     else {
         strlcpy(outString, "", length);
@@ -316,102 +275,6 @@ static inline int common_prefix_length(const char *a, const char *b) {
     return string;
 }
 
-- (void)updateLayoutManagerWithLineIndex:(unsigned long long)startingLineIndex lineCount:(NSUInteger)linesRemaining {
-    const BOOL debug = NO;
-    [textStorage beginEditing];
-    
-    if (storedLineCount == INVALID_LINE_COUNT) {
-        /* This usually indicates that our bytes per line or line number format changed, and we need to just recalculate everything */
-        NSString *string = [self newLineStringForRange:HFRangeMake(startingLineIndex, linesRemaining)];
-        [textStorage replaceCharactersInRange:NSMakeRange(0, [textStorage length]) withString:string];
-    }
-    else {
-        HFRange leftRangeToReplace, rightRangeToReplace;
-        HFRange leftRangeToStore, rightRangeToStore;
-        
-        HFRange oldRange = HFRangeMake(storedLineIndex, storedLineCount);
-        HFRange newRange = HFRangeMake(startingLineIndex, linesRemaining);
-        HFRange rangeToPreserve = HFIntersectionRange(oldRange, newRange);
-        
-        if (rangeToPreserve.length == 0) {
-            leftRangeToReplace = oldRange;
-            leftRangeToStore = newRange;
-            rightRangeToReplace = HFZeroRange;
-            rightRangeToStore = HFZeroRange;
-        }
-        else {
-            if (debug) NSLog(@"Preserving %llu", rangeToPreserve.length);
-            HFASSERT(HFRangeIsSubrangeOfRange(rangeToPreserve, newRange));
-            HFASSERT(HFRangeIsSubrangeOfRange(rangeToPreserve, oldRange));
-            const unsigned long long maxPreserve = HFMaxRange(rangeToPreserve);
-            leftRangeToReplace = HFRangeMake(oldRange.location, rangeToPreserve.location - oldRange.location);
-            leftRangeToStore = HFRangeMake(newRange.location, rangeToPreserve.location - newRange.location);
-            rightRangeToReplace = HFRangeMake(maxPreserve, HFMaxRange(oldRange) - maxPreserve);
-            rightRangeToStore = HFRangeMake(maxPreserve, HFMaxRange(newRange) - maxPreserve);
-        }
-        
-        if (debug) NSLog(@"Changing %@ -> %@", HFRangeToString(oldRange), HFRangeToString(newRange));
-        if (debug) NSLog(@"LEFT: %@ -> %@", HFRangeToString(leftRangeToReplace), HFRangeToString(leftRangeToStore));
-        if (debug) NSLog(@"RIGHT: %@ -> %@", HFRangeToString(rightRangeToReplace), HFRangeToString(rightRangeToStore));
-        
-        HFASSERT(leftRangeToReplace.length == 0 || HFRangeIsSubrangeOfRange(leftRangeToReplace, oldRange));
-        HFASSERT(rightRangeToReplace.length == 0 || HFRangeIsSubrangeOfRange(rightRangeToReplace, oldRange));
-        
-        if (leftRangeToReplace.length > 0 || leftRangeToStore.length > 0) {
-            NSUInteger charactersToDelete = [self characterCountForLineRange:leftRangeToReplace];
-            NSRange rangeToDelete = NSMakeRange(0, charactersToDelete);
-            if (leftRangeToStore.length == 0) {
-                [textStorage deleteCharactersInRange:rangeToDelete];
-                if (debug) NSLog(@"Left deleting text range %@", NSStringFromRange(rangeToDelete));
-            }
-            else {
-                NSString *leftRangeString = [self newLineStringForRange:leftRangeToStore];
-                [textStorage replaceCharactersInRange:rangeToDelete withString:leftRangeString];
-                if (debug) NSLog(@"Replacing text range %@ with %@", NSStringFromRange(rangeToDelete), leftRangeString);
-            }
-        }
-        
-        if (rightRangeToReplace.length > 0 || rightRangeToStore.length > 0) {
-            NSUInteger charactersToDelete = [self characterCountForLineRange:rightRangeToReplace];
-            NSUInteger stringLength = [textStorage length];
-            HFASSERT(charactersToDelete <= stringLength);
-            NSRange rangeToDelete = NSMakeRange(stringLength - charactersToDelete, charactersToDelete);
-            if (rightRangeToStore.length == 0) {
-                [textStorage deleteCharactersInRange:rangeToDelete];
-                if (debug) NSLog(@"Right deleting text range %@", NSStringFromRange(rangeToDelete));
-            }
-            else {
-                NSString *rightRangeString = [self newLineStringForRange:rightRangeToStore];
-                [textStorage replaceCharactersInRange:rangeToDelete withString:rightRangeString];
-                if (debug) NSLog(@"Replacing text range %@ with %@ (for range %@)", NSStringFromRange(rangeToDelete), rightRangeString, HFRangeToString(rightRangeToStore));
-            }
-        }
-    }
-    
-    if (! textAttributes) {
-        NSMutableParagraphStyle *mutableStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
-        [mutableStyle setAlignment:NSRightTextAlignment];
-        NSParagraphStyle *paragraphStyle = [mutableStyle copy];
-        textAttributes = [[NSDictionary alloc] initWithObjectsAndKeys:_font, NSFontAttributeName, [self foregroundColor], NSForegroundColorAttributeName, paragraphStyle, NSParagraphStyleAttributeName, nil];
-        [textStorage setAttributes:textAttributes range:NSMakeRange(0, [textStorage length])];
-    }
-    
-    [textStorage endEditing];
-    
-#if ! NDEBUG
-    NSString *comparisonString = [self newLineStringForRange:HFRangeMake(startingLineIndex, linesRemaining)];
-    if (! [comparisonString isEqualToString:[textStorage string]]) {
-        NSLog(@"Not equal!");
-        NSLog(@"Expected:\n%@", comparisonString);
-        NSLog(@"Actual:\n%@", [textStorage string]);
-    }
-    HFASSERT([comparisonString isEqualToString:[textStorage string]]);
-#endif
-    
-    storedLineIndex = startingLineIndex;
-    storedLineCount = linesRemaining;
-}
-
 - (void)drawLineNumbersWithClipSingleStringDrawing:(NSRect)clipRect {
     USE(clipRect);
     unsigned long long lineIndex = HFFPToUL(floorl(_lineRangeToDraw.location));
@@ -438,9 +301,6 @@ static inline int common_prefix_length(const char *a, const char *b) {
 }
 
 - (void)drawLineNumbersWithClip:(NSRect)clipRect {
-#if TIME_LINE_NUMBERS
-    CFAbsoluteTime startTime = CFAbsoluteTimeGetCurrent();
-#endif
     NSInteger drawingMode = (useStringDrawingPath ? 1 : 3);
     switch (drawingMode) {
         // Drawing can't be done right if fonts are wider than expected, but all
@@ -460,10 +320,6 @@ static inline int common_prefix_length(const char *a, const char *b) {
             [self drawLineNumbersWithClipSingleStringDrawing:clipRect];
             break;
     }
-#if TIME_LINE_NUMBERS
-    CFAbsoluteTime endTime = CFAbsoluteTimeGetCurrent();
-    NSLog(@"Line number time: %f", endTime - startTime);
-#endif
 }
 
 - (void)drawRect:(NSRect)clipRect {
@@ -482,7 +338,6 @@ static inline int common_prefix_length(const char *a, const char *b) {
 - (void)setBytesPerLine:(NSUInteger)val {
     if (_bytesPerLine != val) {
         _bytesPerLine = val;
-        storedLineCount = INVALID_LINE_COUNT;
         [self setNeedsDisplay:YES];
     }
 }
@@ -490,7 +345,6 @@ static inline int common_prefix_length(const char *a, const char *b) {
 - (void)setLineNumberFormat:(HFLineNumberFormat)format {
     if (format != _lineNumberFormat) {
         _lineNumberFormat = format;
-        storedLineCount = INVALID_LINE_COUNT;
         [self setNeedsDisplay:YES];
     }
 }
@@ -504,9 +358,7 @@ static inline int common_prefix_length(const char *a, const char *b) {
 - (void)setFont:(NSFont *)val {
     if (val != _font) {
         _font = [val copy];
-        [textStorage deleteCharactersInRange:NSMakeRange(0, [textStorage length])]; //delete the characters so we know to set the font next time we render
         textAttributes = nil;
-        storedLineCount = INVALID_LINE_COUNT;
         useStringDrawingPath = [self canUseStringDrawingPathForFont:_font];
         [self setNeedsDisplay:YES];
     }
@@ -517,11 +369,6 @@ static inline int common_prefix_length(const char *a, const char *b) {
         _lineHeight = height;
         [self setNeedsDisplay:YES];
     }
-}
-
-- (void)setFrameSize:(NSSize)size {
-    [super setFrameSize:size];
-    [textContainer setContainerSize:NSMakeSize(self.bounds.size.width, [textContainer containerSize].height)];
 }
 
 - (void)mouseDown:(NSEvent *)event {
@@ -536,11 +383,7 @@ static inline int common_prefix_length(const char *a, const char *b) {
 + (NSUInteger)digitsRequiredToDisplayLineNumber:(unsigned long long)lineNumber inFormat:(HFLineNumberFormat)format {
     switch (format) {
         case HFLineNumberFormatDecimal: return HFCountDigitsBase10(lineNumber);
-#if HEX_LINE_NUMBERS_HAVE_0X_PREFIX
-        case HFLineNumberFormatHexadecimal: return 2 + HFCountDigitsBase16(lineNumber);
-#else
         case HFLineNumberFormatHexadecimal: return HFCountDigitsBase16(lineNumber);
-#endif
         default: return 0;
     }
 }

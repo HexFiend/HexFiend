@@ -8,13 +8,8 @@
 #import <HexFiend/HFLineCountingRepresenter.h>
 
 @interface HFLineCountingView : NSView {
-    NSLayoutManager *layoutManager;
-    NSTextStorage *textStorage;
-    NSTextContainer *textContainer;
     NSDictionary *textAttributes;
     
-    unsigned long long storedLineIndex;
-    NSUInteger storedLineCount;
     BOOL useStringDrawingPath;
     BOOL registeredForAppNotifications;
 }
