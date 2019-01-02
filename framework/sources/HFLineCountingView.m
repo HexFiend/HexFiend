@@ -74,10 +74,8 @@ static const CGFloat kShadowWidth = 6;
 }
 
 - (NSColor *)borderColor {
-    if (HFDarkModeEnabled()) {
-        if (@available(macOS 10.14, *)) {
-            return [NSColor separatorColor];
-        }
+    if (@available(macOS 10.14, *)) {
+        return [NSColor separatorColor];
     }
     return [NSColor darkGrayColor];
 }
@@ -95,7 +93,7 @@ static const CGFloat kShadowWidth = 6;
     
     NSInteger shadowEdge = _representer.interiorShadowEdge;
     
-    if (shadowEdge >= 0) {
+    if (shadowEdge >= 0 && 0) {
         NSWindow *window = self.window;
         BOOL drawActive = (window == nil || [window isKeyWindow] || [window isMainWindow]);
         HFDrawShadow(HFGraphicsGetCurrentContext(), self.bounds, kShadowWidth, shadowEdge, drawActive, clip);

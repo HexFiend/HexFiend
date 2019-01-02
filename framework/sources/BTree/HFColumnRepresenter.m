@@ -8,10 +8,11 @@
 
 #import "HFColumnRepresenter.h"
 
-static const CGFloat kShadowWidth = 6;
+static const CGFloat kShadowHeight = 6;
 
 @interface HFColumnView : NSView
 
+@property (weak) HFColumnRepresenter *representer;
 @property BOOL registeredForAppNotifications;
 @property CGFloat lineCountingWidth;
 
@@ -40,10 +41,8 @@ static const CGFloat kShadowWidth = 6;
 }
 
 - (NSColor *)borderColor {
-    if (HFDarkModeEnabled()) {
-        if (@available(macOS 10.14, *)) {
-            return [NSColor separatorColor];
-        }
+    if (@available(macOS 10.14, *)) {
+        return [NSColor separatorColor];
     }
     return [NSColor darkGrayColor];
 }
@@ -55,32 +54,87 @@ static const CGFloat kShadowWidth = 6;
     return [NSColor colorWithCalibratedWhite:0.87 alpha:1];
 }
 
-- (void)drawBackground {
-    NSRect bounds = self.bounds;
-    
-    [self.backgroundColor set];
-    NSRectFillUsingOperation(bounds, NSCompositeSourceOver);
+- (NSColor *)foregroundColor {
+    if (@available(macOS 10.10, *)) {
+        return [NSColor secondaryLabelColor];
+    } else {
+        return [NSColor colorWithCalibratedWhite:(CGFloat).1 alpha:(CGFloat).8];
+    }
+}
 
+- (NSRect)offsetBounds {
+    NSRect bounds = self.bounds;
     bounds.origin.x += self.lineCountingWidth;
     bounds.size.width -= self.lineCountingWidth;
-    
-    NSWindow *window = self.window;
-    BOOL drawActive = window.isKeyWindow || window.isMainWindow;
-    HFDrawShadow(HFGraphicsGetCurrentContext(), bounds, kShadowWidth, NSMinYEdge, drawActive, bounds);
+    return bounds;
+}
+
+- (void)drawBackground {
+    [self.backgroundColor set];
+    NSRectFillUsingOperation(self.bounds, NSCompositeSourceOver);
+
+    const NSRect bounds = self.offsetBounds;
     
 #if 0
+    NSWindow *window = self.window;
+    BOOL drawActive = window.isKeyWindow || window.isMainWindow;
+    HFDrawShadow(HFGraphicsGetCurrentContext(), bounds, kShadowHeight, NSMinYEdge, drawActive, bounds);
+#endif
+    
+#if 1
     [self.borderColor set];
-    NSRect lineRect = self.bounds;
+    NSRect lineRect = bounds;
+    lineRect.origin.x -= 1; lineRect.size.width += 1;
     lineRect.size.height = 1;
     lineRect.origin.y = 0;
-    if (NSIntersectsRect(lineRect, clipRect)) {
-        NSRectFillUsingOperation(lineRect, NSCompositeSourceOver);
-    }
+    NSRectFillUsingOperation(lineRect, NSCompositeSourceOver);
 #endif
+}
+
+- (void)drawText {
+    const NSRect bounds = self.offsetBounds;
+
+    HFController *controller = self.representer.controller;
+    HFFont *font = controller.font;
+    
+    const NSUInteger bytesPerColumn = controller.bytesPerColumn;
+    const NSUInteger bytesPerLine = controller.bytesPerLine;
+    const CGFloat lineHeight = controller.lineHeight;
+    const CGFloat horizontalContainerInset = 4; // matches what HFRepresenterTextView uses
+
+    NSMutableParagraphStyle *mutableStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
+    [mutableStyle setMinimumLineHeight:lineHeight];
+    [mutableStyle setMaximumLineHeight:lineHeight];
+    NSParagraphStyle *paragraphStyle = [mutableStyle copy];
+    NSDictionary *attributes = @{
+        NSFontAttributeName: font,
+        NSForegroundColorAttributeName: self.foregroundColor,
+        NSParagraphStyleAttributeName: paragraphStyle,
+    };
+    
+    NSRect drawRect = NSMakeRect(bounds.origin.x + horizontalContainerInset, bounds.origin.y + (kShadowHeight - ceil(fabs(font.descender)) - 2), 0, 0);
+    NSUInteger bytesInColumn = 0;
+    for (unsigned i = 0; i < (unsigned)bytesPerLine; i++) {
+        NSString *str = [NSString stringWithFormat:@"%02X", i];
+        const NSSize strSize = [str sizeWithAttributes:attributes];
+        const NSSize drawSize = NSMakeSize(ceil(strSize.width), ceil(strSize.height));
+        drawRect.size.width = drawSize.width;
+        drawRect.size.height = drawSize.height;
+        [str drawInRect:drawRect withAttributes:attributes];
+        CGFloat advancement = floor(strSize.width);
+        drawRect.origin.x += advancement;
+
+        ++bytesInColumn;
+        if (bytesInColumn == bytesPerColumn) {
+            drawRect.origin.x += advancement / 2;
+            bytesInColumn = 0;
+        }
+    }
 }
 
 - (void)drawRect:(NSRect __unused)dirtyRect {
     [self drawBackground];
+    [self drawText];
 }
 
 @end
@@ -90,6 +144,7 @@ static const CGFloat kShadowWidth = 6;
 - (NSView *)createView {
     NSRect frame = NSMakeRect(0, 0, 10, 16/*HFLineHeightForFont(self.controller.font)*/);
     HFColumnView *result = [[HFColumnView alloc] initWithFrame:frame];
+    result.representer = self;
     result.autoresizingMask = NSViewWidthSizable;
     return result;
 }
@@ -99,7 +154,10 @@ static const CGFloat kShadowWidth = 6;
 }
 
 - (void)controllerDidChange:(HFControllerPropertyBits)bits {
-    [super controllerDidChange:bits];
+    if (bits & (HFControllerFont|HFControllerLineHeight|HFControllerBytesPerLine|HFControllerBytesPerColumn)) {
+        HFColumnView *view = self.view;
+        [view setNeedsDisplay:YES];
+    }
 }
 
 - (void)setLineCountingWidth:(CGFloat)width {
