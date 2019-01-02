@@ -1013,7 +1013,6 @@ NSUInteger HFLineHeightForFont(HFFont *font) {
     // Make sure there's an even number of spacing on top and bottom so
     // the font centers cleaner.
     if (((defaultLineHeight - (NSUInteger)ceil(font.ascender + fabs(font.descender))) % 2) != 0) {
-        NSLog(@"Adjusted default line height for font %@", font.fontName);
         ++defaultLineHeight;
     }
     return defaultLineHeight;
