@@ -111,6 +111,7 @@ static inline Class preferredByteArrayClass(void) {
         [sRegisteredDefaultsByIdentifier addObject:ident];
         
         NSDictionary *defs = @{
+            USERDEFS_KEY_FOR_REP(columnRepresenter) : @YES,
             USERDEFS_KEY_FOR_REP(lineCountingRepresenter) : @YES,
             USERDEFS_KEY_FOR_REP(hexRepresenter) : @YES,
             USERDEFS_KEY_FOR_REP(asciiRepresenter) : @YES,
@@ -133,6 +134,7 @@ static inline Class preferredByteArrayClass(void) {
             @"DefaultFontSize" : @(HFDEFAULT_FONTSIZE),
             @"BytesPerColumn" : @4,
             @"LineNumberFormat" : @0,
+            USERDEFS_KEY_FOR_REP(columnRepresenter) : @YES,
             USERDEFS_KEY_FOR_REP(lineCountingRepresenter) : @YES,
             USERDEFS_KEY_FOR_REP(hexRepresenter) : @YES,
             USERDEFS_KEY_FOR_REP(asciiRepresenter) : @YES,
@@ -162,14 +164,16 @@ static inline Class preferredByteArrayClass(void) {
 }
 
 - (NSArray *)representers {
-    return @[lineCountingRepresenter,
-             hexRepresenter,
-             asciiRepresenter,
-             scrollRepresenter,
-             dataInspectorRepresenter,
-             statusBarRepresenter,
-             textDividerRepresenter,
-             binaryTemplateRepresenter,
+    return @[
+        lineCountingRepresenter,
+        hexRepresenter,
+        asciiRepresenter,
+        scrollRepresenter,
+        dataInspectorRepresenter,
+        statusBarRepresenter,
+        textDividerRepresenter,
+        binaryTemplateRepresenter,
+        columnRepresenter,
     ];
 }
 
@@ -222,6 +226,8 @@ static inline Class preferredByteArrayClass(void) {
 /* Code to save to user defs (NO) or apply from user defs (YES) the default representers to show. */
 - (void)saveOrApplyDefaultRepresentersToDisplay:(BOOL)isApplying {
     NSMapTable *shownRepresentersData = [NSMapTable strongToWeakObjectsMapTable];
+    [shownRepresentersData setObject:columnRepresenter
+        forKey:USERDEFS_KEY_FOR_REP(columnRepresenter)];
     [shownRepresentersData setObject:lineCountingRepresenter forKey:USERDEFS_KEY_FOR_REP(lineCountingRepresenter)];
     [shownRepresentersData setObject:hexRepresenter forKey:USERDEFS_KEY_FOR_REP(hexRepresenter)];
     [shownRepresentersData setObject:asciiRepresenter forKey:USERDEFS_KEY_FOR_REP(asciiRepresenter)];
@@ -489,6 +495,11 @@ static inline Class preferredByteArrayClass(void) {
     HFASSERT([note object] == lineCountingRepresenter);
     NSView *lineCountingView = [lineCountingRepresenter view];
     
+    CGFloat newWidth = [lineCountingRepresenter preferredWidth];
+    
+    // Always update column representer
+    [columnRepresenter setLineCountingWidth:newWidth];
+
     /* Don't do anything window changing if we're not in a window yet */
     NSWindow *lineCountingViewWindow = [lineCountingView window];
     if (! lineCountingViewWindow) return;
@@ -496,7 +507,6 @@ static inline Class preferredByteArrayClass(void) {
     HFASSERT(lineCountingViewWindow == [self window]);
     
     CGFloat currentWidth = NSWidth([lineCountingView frame]);
-    CGFloat newWidth = [lineCountingRepresenter preferredWidth];
     if (newWidth != currentWidth) {
         CGFloat widthChange = newWidth - currentWidth; //if we shrink, widthChange will be negative
         CGFloat windowWidthChange = [[lineCountingView superview] convertSize:NSMakeSize(widthChange, 0) toView:nil].width;
@@ -546,6 +556,7 @@ static inline Class preferredByteArrayClass(void) {
     /* Make sure we register our defaults for this class */
     [[self class] registerDefaultDefaults];
     
+    columnRepresenter = [[HFColumnRepresenter alloc] init];
     lineCountingRepresenter = [[HFLineCountingRepresenter alloc] init];
     hexRepresenter = [[HFHexTextRepresenter alloc] init];
     asciiRepresenter = [[HFStringEncodingTextRepresenter alloc] init];
@@ -570,6 +581,8 @@ static inline Class preferredByteArrayClass(void) {
     NSUserDefaults *defs = [NSUserDefaults standardUserDefaults];
     
     lineCountingRepresenter.lineNumberFormat = (HFLineNumberFormat)[defs integerForKey:@"LineNumberFormat"];
+    
+    [columnRepresenter setLineCountingWidth:((NSView *)lineCountingRepresenter.view).frame.size.width];
     
     controller = [[HFController alloc] init];
     [controller setShouldAntialias:[defs boolForKey:@"AntialiasText"]];

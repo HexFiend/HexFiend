@@ -80,6 +80,10 @@
 		A57F34831F1EFA6E00234B94 /* DataInspectorView.xib in Resources */ = {isa = PBXBuildFile; fileRef = A57F34851F1EFA6E00234B94 /* DataInspectorView.xib */; };
 		A57F34861F1EFA8800234B94 /* ChooseStringEncodingDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = A57F34881F1EFA8800234B94 /* ChooseStringEncodingDialog.xib */; };
 		A57F34891F1EFA9600234B94 /* OpenDriveDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = A57F348B1F1EFA9600234B94 /* OpenDriveDialog.xib */; };
+		A582748521DC83A100008DBE /* HFColumnRepresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = A582748321DC83A100008DBE /* HFColumnRepresenter.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A582748621DC83A100008DBE /* HFColumnRepresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = A582748321DC83A100008DBE /* HFColumnRepresenter.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A582748721DC83A100008DBE /* HFColumnRepresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = A582748421DC83A100008DBE /* HFColumnRepresenter.m */; };
+		A582748821DC83A100008DBE /* HFColumnRepresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = A582748421DC83A100008DBE /* HFColumnRepresenter.m */; };
 		A59BC5712001AB8C0066860F /* HFBinaryTemplateRepresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = A59BC5702001AB8C0066860F /* HFBinaryTemplateRepresenter.m */; };
 		A59BC5922001FB9A0066860F /* HFTclTemplateController.m in Sources */ = {isa = PBXBuildFile; fileRef = A59BC5912001FB9A0066860F /* HFTclTemplateController.m */; };
 		A59BC5942001FD0F0066860F /* Tcl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A59BC5932001FD0F0066860F /* Tcl.framework */; };
@@ -429,6 +433,8 @@
 		A57F34751F1B2A2B00234B94 /* HFHexPasteboardOwnerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFHexPasteboardOwnerTest.m; sourceTree = "<group>"; };
 		A57F34771F1BCC4B00234B94 /* BigColumnsResult.txt.gz */ = {isa = PBXFileReference; lastKnownFileType = archive.gzip; path = BigColumnsResult.txt.gz; sourceTree = "<group>"; };
 		A57F347B1F1BE7CD00234B94 /* BigResult.txt.gz */ = {isa = PBXFileReference; lastKnownFileType = archive.gzip; path = BigResult.txt.gz; sourceTree = "<group>"; };
+		A582748321DC83A100008DBE /* HFColumnRepresenter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFColumnRepresenter.h; path = sources/BTree/HFColumnRepresenter.h; sourceTree = "<group>"; };
+		A582748421DC83A100008DBE /* HFColumnRepresenter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFColumnRepresenter.m; path = sources/BTree/HFColumnRepresenter.m; sourceTree = "<group>"; };
 		A59BC56F2001AB8C0066860F /* HFBinaryTemplateRepresenter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFBinaryTemplateRepresenter.h; path = app/sources/HFBinaryTemplateRepresenter.h; sourceTree = "<group>"; };
 		A59BC5702001AB8C0066860F /* HFBinaryTemplateRepresenter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFBinaryTemplateRepresenter.m; path = app/sources/HFBinaryTemplateRepresenter.m; sourceTree = "<group>"; };
 		A59BC5902001FB9A0066860F /* HFTclTemplateController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFTclTemplateController.h; path = app/sources/HFTclTemplateController.h; sourceTree = "<group>"; };
@@ -944,6 +950,8 @@
 				D01E7C340CDC646800943F9E /* HFRepresenter.m */,
 				D0A402F10D0D43F4006BC574 /* HFLayoutRepresenter.h */,
 				D0A402F20D0D43F4006BC574 /* HFLayoutRepresenter.m */,
+				A582748321DC83A100008DBE /* HFColumnRepresenter.h */,
+				A582748421DC83A100008DBE /* HFColumnRepresenter.m */,
 			);
 			name = Representers;
 			sourceTree = "<group>";
@@ -1286,6 +1294,7 @@
 				A51D0E7F20F1D04E00B55775 /* HFRepresenter.h in Headers */,
 				A51D0E9520F2BABA00B55775 /* HFRepresenterStringEncodingTextView.h in Headers */,
 				A51D0E9720F2C21500B55775 /* HFTextRepresenter_Internal.h in Headers */,
+				A582748621DC83A100008DBE /* HFColumnRepresenter.h in Headers */,
 				A5EF290120F187B700CA7B39 /* HFAnnotatedTree.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1333,6 +1342,7 @@
 				D07150670D5510CE00573D7A /* HFTextField.h in Headers */,
 				D0422FDF0D62599300F8FCDE /* HFProgressTracker.h in Headers */,
 				D0370A3F0D68307A00B3A8C6 /* HFSharedMemoryByteSlice.h in Headers */,
+				A582748521DC83A100008DBE /* HFColumnRepresenter.h in Headers */,
 				D019B9010D83FEB3005789AA /* HFByteSliceFileOperation.h in Headers */,
 				D019B9550D840FE8005789AA /* HFObjectGraph.h in Headers */,
 				A572614D21D9AA7600970A0E /* HFEncodingManager.h in Headers */,
@@ -1727,6 +1737,7 @@
 				A51D0E8920F1D86F00B55775 /* HFTextVisualStyleRun.m in Sources */,
 				A5EF291420F187B700CA7B39 /* HFFullMemoryByteSlice.m in Sources */,
 				A5EF291520F187B700CA7B39 /* HFFullMemoryByteArray.m in Sources */,
+				A582748821DC83A100008DBE /* HFColumnRepresenter.m in Sources */,
 				A5EF291E20F187B700CA7B39 /* HFControllerCoalescedUndo.m in Sources */,
 				A51D0E8720F1D59200B55775 /* HFRepresenterTextView.m in Sources */,
 				A5EF292020F187B700CA7B39 /* HFByteArray_FindReplace.m in Sources */,
@@ -1774,6 +1785,7 @@
 				D01E7BED0CDC55D000943F9E /* HFController.m in Sources */,
 				D01E7C960CDC700400943F9E /* HFRepresenter.m in Sources */,
 				D0A436590CDC811D000F7550 /* HFFunctions.m in Sources */,
+				A582748721DC83A100008DBE /* HFColumnRepresenter.m in Sources */,
 				D0A4373B0CDD4EDD000F7550 /* HFTextRepresenter.m in Sources */,
 				D026C7B10CDD50ED0082279E /* HFRepresenterTextView.m in Sources */,
 				A5CEA43020D6316600BCA488 /* HFCustomEncoding.m in Sources */,

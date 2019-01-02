@@ -141,10 +141,15 @@ static CGFloat maximumDigitAdvanceForFont(NSFont *font) {
         unsigned long long contentsLengthRoundedToLine = HFProductULL(lineCount, bytesPerLine);
         NSUInteger digitCount = [HFLineCountingView digitsRequiredToDisplayLineNumber:contentsLengthRoundedToLine inFormat:lineNumberFormat];
         NSUInteger digitWidth = MAX(minimumDigitCount, digitCount);
-        if (digitWidth != digitsToRepresentContentsLength) {
+        static BOOL firstTime = YES;
+        if (firstTime || digitWidth != digitsToRepresentContentsLength) {
             digitsToRepresentContentsLength = digitWidth;
             [self postMinimumViewWidthChangedNotification];
         }
+        static dispatch_once_t onceToken;
+        dispatch_once(&onceToken, ^{
+            firstTime = NO;
+        });
     }
 }
 

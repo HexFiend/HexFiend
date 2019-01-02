@@ -29,6 +29,7 @@
 #import <HexFiend/HFFullMemoryByteSlice.h>
 #import <HexFiend/HFHexTextRepresenter.h>
 #if !TARGET_OS_IPHONE
+#import <HexFiend/HFColumnRepresenter.h>
 #import <HexFiend/HFLineCountingRepresenter.h>
 #import <HexFiend/HFStatusBarRepresenter.h>
 #import <HexFiend/HFLayoutRepresenter.h>

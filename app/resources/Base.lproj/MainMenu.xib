@@ -443,6 +443,12 @@
                                     <action selector="toggleVisibleControllerView:" target="-1" id="Z7o-Zg-6Gz"/>
                                 </connections>
                             </menuItem>
+                            <menuItem title="Columns" tag="9" id="l66-Ta-ZGV">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="toggleVisibleControllerView:" target="-1" id="8d4-gv-cJc"/>
+                                </connections>
+                            </menuItem>
                             <menuItem isSeparatorItem="YES" id="482"/>
                             <menuItem title="Line Number Format" id="h60-d7-ETA">
                                 <modifierMask key="keyEquivalentModifierMask"/>
