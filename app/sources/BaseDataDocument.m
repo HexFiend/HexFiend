@@ -382,10 +382,20 @@ static inline Class preferredByteArrayClass(void) {
     [ud setObject:NSStringFromPoint(frame.origin) forKey:@"WindowOrigin"];
 }
 
-/* Relayout the window without increasing its window frame size */
-- (void)relayoutAndResizeWindowPreservingFrame {
+/* Relayout the window, optionally changing its size based on the representer */
+- (void)relayoutAndResizeWindowForRepresenter:(HFRepresenter *)rep {
     NSWindow *window = [self window];
     NSRect windowFrame = [window frame];
+    // hack: expand the window width by the rep's view width for some reps
+    if (rep && ([rep isKindOfClass:[HFBinaryTemplateRepresenter class]] || [rep isKindOfClass:[HFLineCountingRepresenter class]])) {
+        NSView *view = rep.view;
+        CGFloat minWidth = view.frame.size.width;
+        if (view.window) {
+            windowFrame.size.width += minWidth;
+        } else {
+            windowFrame.size.width -= minWidth;
+        }
+    }
     windowFrame.size = [self minimumWindowFrameSizeForProposedSize:windowFrame.size];
     [window setFrame:windowFrame display:YES];
 }
@@ -426,7 +436,7 @@ static inline Class preferredByteArrayClass(void) {
         /* Here we probably get smaller */
         NSNumber *bpl = [ud objectForKey:@"BytesPerLine"];
         if (!bpl || ![bpl isKindOfClass:[NSNumber class]]) {
-            [self relayoutAndResizeWindowPreservingFrame];
+            [self relayoutAndResizeWindowForRepresenter:nil];
         } else {
             [self relayoutAndResizeWindowForBytesPerLine:bpl.integerValue];
         }
@@ -702,12 +712,12 @@ static inline Class preferredByteArrayClass(void) {
         if ([self representerIsShown:rep]) {
             [self hideViewForRepresenter:rep];
             [self showOrHideDividerRepresenter];
-            [self relayoutAndResizeWindowPreservingFrame];
+            [self relayoutAndResizeWindowForRepresenter:rep];
         }
         else {
             [self showViewForRepresenter:rep];
             [self showOrHideDividerRepresenter];
-            [self relayoutAndResizeWindowPreservingFrame];
+            [self relayoutAndResizeWindowForRepresenter:rep];
         }
         [self saveDefaultRepresentersToDisplay];
     }
