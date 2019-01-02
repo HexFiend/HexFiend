@@ -336,13 +336,6 @@ static inline Class preferredByteArrayClass(void) {
     }
 }
 
-- (CGFloat)minimumWindowFrameWidthForBytesPerLine:(NSUInteger)bytesPerLine {
-    NSView *layoutView = [layoutRepresenter view];
-    CGFloat resultingWidthInLayoutCoordinates = [layoutRepresenter minimumViewWidthForBytesPerLine:bytesPerLine];
-    NSSize resultSize = [layoutView convertSize:NSMakeSize(resultingWidthInLayoutCoordinates, 1) toView:nil];
-    return resultSize.width;
-}
-
 - (NSSize)minimumWindowFrameSizeForProposedSize:(NSSize)frameSize {
     NSView *layoutView = [layoutRepresenter view];
     NSSize proposedSizeInLayoutCoordinates = [layoutView convertSize:frameSize fromView:nil];
