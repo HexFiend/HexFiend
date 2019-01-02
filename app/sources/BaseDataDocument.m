@@ -722,15 +722,22 @@ static inline Class preferredByteArrayClass(void) {
     }
     else {
         HFRepresenter *rep = representers[arrayIndex];
+        BOOL isLineCounting = [rep isKindOfClass:[HFLineCountingRepresenter class]];
         if ([self representerIsShown:rep]) {
             [self hideViewForRepresenter:rep];
             [self showOrHideDividerRepresenter];
             [self relayoutAndResizeWindowForRepresenter:rep];
+            if (isLineCounting) {
+                [columnRepresenter setLineCountingWidth:0];
+            }
         }
         else {
             [self showViewForRepresenter:rep];
             [self showOrHideDividerRepresenter];
             [self relayoutAndResizeWindowForRepresenter:rep];
+            if (isLineCounting) {
+                [columnRepresenter setLineCountingWidth:((NSView *)lineCountingRepresenter.view).frame.size.width];
+            }
         }
         [self saveDefaultRepresentersToDisplay];
     }
