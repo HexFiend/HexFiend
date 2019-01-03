@@ -348,10 +348,11 @@ DEFINE_COMMAND(entry)
                 return err;
             }
             if (offset < 0) {
-                Tcl_SetObjResult(_interp, Tcl_NewStringObj("Offset must be >= 0.", -1));
-                return TCL_ERROR;
+                // Negative number is offset from the end
+                [self goTo:self.length - labs(offset)];
+            } else {
+                [self goTo:offset];
             }
-            [self goTo:offset];
             break;
         }
         case command_pos: {
