@@ -223,6 +223,19 @@ DEFINE_COMMAND(entry)
     return err;
 }
 
+- (int)getOffset:(long *)offset objv:(Tcl_Obj *)objPtr {
+    *offset = 0;
+    int err = Tcl_GetLongFromObj(_interp, objPtr, offset);
+    if (err != TCL_OK) {
+        return err;
+    }
+    if (offset < 0) {
+        Tcl_SetObjResult(_interp, Tcl_ObjPrintf("Offset must be >= 0, but was %ld", offset));
+        return TCL_ERROR;
+    }
+    return err;
+}
+
 - (int)runCommand:(enum command)command objc:(int)objc objv:(struct Tcl_Obj * CONST *)objv {
     switch (command) {
         case command_uint64:
@@ -376,13 +389,9 @@ DEFINE_COMMAND(entry)
                 return TCL_ERROR;
             }
             long offset;
-            int err = Tcl_GetLongFromObj(_interp, objv[1], &offset);
+            int err = [self getOffset:&offset objv:objv[1]];
             if (err != TCL_OK) {
                 return err;
-            }
-            if (offset < 0) {
-                Tcl_SetObjResult(_interp, Tcl_NewStringObj("Offset must be >= 0.", -1));
-                return TCL_ERROR;
             }
             NSString *hexvalues = [NSString stringWithUTF8String:Tcl_GetStringFromObj(objv[2], NULL)];
             if (![self requireDataAtOffset:offset toMatchHexValues:hexvalues]) {
