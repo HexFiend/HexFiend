@@ -64,6 +64,6 @@ typedef NS_ENUM(NSUInteger, HFEndian) {
 
 - (void)beginSectionWithLabel:(NSString *)label;
 - (void)endSection;
-- (void)addEntryWithLabel:(NSString *)label value:(NSString *)value;
+- (void)addEntryWithLabel:(NSString *)label value:(NSString *)value length:(unsigned long long *)length offset:(unsigned long long *)offset;
 
 @end
