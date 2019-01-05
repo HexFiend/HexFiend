@@ -204,13 +204,15 @@ DEFINE_COMMAND(entry)
         return TCL_ERROR; \
     }
 
-- (int)getLength:(long *)length objv:(Tcl_Obj *)objPtr {
+- (int)getLength:(long *)length objv:(Tcl_Obj *)objPtr allowEOF:(BOOL)allowEOF {
     _Static_assert(sizeof(long) == sizeof(unsigned long long), "invalid long");
     *length = 0;
-    const char *str = Tcl_GetStringFromObj(objPtr, NULL);
-    if (str && strcmp(str, "eof") == 0) {
-        *length = self.length - (self.anchor + self.position);
-        return TCL_OK;
+    if (allowEOF) {
+        const char *str = Tcl_GetStringFromObj(objPtr, NULL);
+        if (str && strcmp(str, "eof") == 0) {
+            *length = self.length - (self.anchor + self.position);
+            return TCL_OK;
+        }
     }
     int err = Tcl_GetLongFromObj(_interp, objPtr, length);
     if (err != TCL_OK) {
@@ -271,7 +273,7 @@ DEFINE_COMMAND(entry)
                 return TCL_ERROR;
             }
             long len;
-            int err = [self getLength:&len objv:objv[1]];
+            int err = [self getLength:&len objv:objv[1] allowEOF:YES];
             if (err != TCL_OK) {
                 return err;
             }
@@ -321,7 +323,7 @@ DEFINE_COMMAND(entry)
                 return TCL_ERROR;
             }
             long len;
-            int err = [self getLength:&len objv:objv[1]];
+            int err = [self getLength:&len objv:objv[1] allowEOF:YES];
             if (err != TCL_OK) {
                 return err;
             }
