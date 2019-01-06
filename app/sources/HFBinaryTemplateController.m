@@ -245,7 +245,7 @@
 - (void)collapseValuedGroups {
     NSOutlineView *outlineView = self.outlineView;
     NSInteger numberOfRows = outlineView.numberOfRows;
-    for (NSInteger i = numberOfRows - 1; i >=0; --i) {
+    for (NSInteger i = numberOfRows - 1; i >= 0; --i) {
         HFTemplateNode *node = [outlineView itemAtRow:i];
         if (node.isGroup && node.value) {
             [outlineView collapseItem:node];
