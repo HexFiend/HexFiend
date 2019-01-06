@@ -528,6 +528,46 @@ static inline Class preferredByteArrayClass(void) {
     }
 }
 
+- (void)columnRepresenterViewHeightChanged:(NSNotification *)note {
+    USE(note);
+    HFASSERT([note object] == columnRepresenter);
+
+    NSView *columnView = [columnRepresenter view];
+    
+    /* Don't do anything window changing if we're not in a window yet */
+    NSWindow *columnViewWindow = [columnView window];
+    if (!columnViewWindow) {
+        return;
+    }
+    
+    CGFloat newHeight = [columnRepresenter preferredHeight];
+    
+    HFASSERT(columnViewWindow == [self window]);
+    
+    CGFloat currentHeight = columnView.frame.size.height;
+    if (newHeight != currentHeight) {
+        CGFloat heightChange = newHeight - currentHeight; //if we shrink, heightChange will be negative
+        CGFloat windowHeightChange = [columnView.superview convertSize:NSMakeSize(0, heightChange) toView:nil].height;
+        windowHeightChange = (windowHeightChange < 0 ? HFFloor(windowHeightChange) : HFCeil(windowHeightChange));
+        
+        /* convertSize: has a nasty habit of stomping on negatives.  Make our window height change negative if our view-space vertical change was negative. */
+#if CGFLOAT_IS_DOUBLE
+        windowHeightChange = copysign(windowHeightChange, heightChange);
+#else
+        windowHeightChange = copysignf(windowHeightChange, heightChange);
+#endif
+        
+        NSRect windowFrame = columnViewWindow.frame;
+        windowFrame.size.height += windowHeightChange;
+        
+        /* If we are not setting the font, we want to grow the window top, so that the content area is preserved.  If we are setting the font, grow the window bottom. */
+        if (!currentlySettingFont) {
+            windowFrame.origin.y -= windowHeightChange;
+        }
+        [columnViewWindow setFrame:windowFrame display:YES animate:NO];
+    }
+}
+
 - (void)lineCountingRepCycledLineNumberFormat:(NSNotification*)note {
     USE(note);
     [self saveLineNumberFormat];
@@ -575,9 +615,11 @@ static inline Class preferredByteArrayClass(void) {
     
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
     [center addObserver:self selector:@selector(lineCountingViewChangedWidth:) name:HFLineCountingRepresenterMinimumViewWidthChanged object:lineCountingRepresenter];
+    [center addObserver:self selector:@selector(columnRepresenterViewHeightChanged:) name:HFColumnRepresenterViewHeightChanged object:columnRepresenter];
     [center addObserver:self selector:@selector(lineCountingRepCycledLineNumberFormat:) name:HFLineCountingRepresenterCycledLineNumberFormat object:lineCountingRepresenter];
     [center addObserver:self selector:@selector(dataInspectorChangedRowCount:) name:DataInspectorDidChangeRowCount object:dataInspectorRepresenter];
     [center addObserver:self selector:@selector(dataInspectorDeletedAllRows:) name:DataInspectorDidDeleteAllRows object:dataInspectorRepresenter];
+
     NSUserDefaults *defs = [NSUserDefaults standardUserDefaults];
     
     lineCountingRepresenter.lineNumberFormat = (HFLineNumberFormat)[defs integerForKey:@"LineNumberFormat"];

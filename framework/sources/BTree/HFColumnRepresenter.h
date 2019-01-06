@@ -14,6 +14,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)setLineCountingWidth:(CGFloat)width;
 
+@property (readonly) CGFloat preferredHeight;
+
 @end
+
+extern NSString *const HFColumnRepresenterViewHeightChanged;
 
 NS_ASSUME_NONNULL_END

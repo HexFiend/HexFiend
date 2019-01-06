@@ -9,6 +9,8 @@
 #import "HFColumnRepresenter.h"
 #import <HexFiend/HFHexGlyphTable.h>
 
+NSString *const HFColumnRepresenterViewHeightChanged = @"HFColumnRepresenterViewHeightChanged";
+
 static const CGFloat kShadowHeight = 6;
 
 @interface HFColumnView : NSView
@@ -136,9 +138,12 @@ static const CGFloat kShadowHeight = 6;
 @end
 
 @implementation HFColumnRepresenter
+{
+    CGFloat _lineHeight;
+}
 
 - (NSView *)createView {
-    NSRect frame = NSMakeRect(0, 0, 10, 16/*HFLineHeightForFont(self.controller.font)*/);
+    NSRect frame = NSMakeRect(0, 0, 10, 16);
     HFColumnView *result = [[HFColumnView alloc] initWithFrame:frame];
     result.representer = self;
     result.autoresizingMask = NSViewWidthSizable;
@@ -151,13 +156,29 @@ static const CGFloat kShadowHeight = 6;
 
 - (void)controllerDidChange:(HFControllerPropertyBits)bits {
     if (bits & HFControllerFont) {
+        HFFont *font = self.controller.font;
+        _lineHeight = HFLineHeightForFont(font);
         HFColumnView *view = self.view;
-        view.glyphTable = [[HFHexGlyphTable alloc] initWithFont:self.controller.font];
+        view.glyphTable = [[HFHexGlyphTable alloc] initWithFont:font];
         [view setNeedsDisplay:YES];
     }
     if (bits & (HFControllerFont|HFControllerLineHeight|HFControllerBytesPerLine|HFControllerBytesPerColumn)) {
         HFColumnView *view = self.view;
         [view setNeedsDisplay:YES];
+    }
+    if (bits & (HFControllerFont|HFControllerLineHeight)) {
+        HFColumnView *view = self.view;
+        NSRect frame = view.frame;
+        CGFloat oldHeight = frame.size.height;
+        CGFloat newHeight = self.preferredHeight;
+        if (newHeight != oldHeight) {
+            CGFloat change = newHeight - oldHeight;
+            frame.size.height += change;
+            frame.origin.y -= change;
+            view.frame = frame;
+            [view setNeedsDisplay:YES];
+            [[NSNotificationCenter defaultCenter] postNotificationName:HFColumnRepresenterViewHeightChanged object:self];
+        }
     }
 }
 
@@ -167,6 +188,10 @@ static const CGFloat kShadowHeight = 6;
         view.lineCountingWidth = width;
         [view setNeedsDisplay:YES];
     }
+}
+
+- (CGFloat)preferredHeight {
+    return _lineHeight;
 }
 
 @end
