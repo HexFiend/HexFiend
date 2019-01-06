@@ -394,8 +394,15 @@
     self.currentNode.range = range;
 }
 
-- (void)addEntryWithLabel:(NSString *)label value:(NSString *)value {
+- (void)addEntryWithLabel:(NSString *)label value:(NSString *)value length:(unsigned long long *)length offset:(unsigned long long *)offset {
     HFTemplateNode *node = [[HFTemplateNode alloc] initWithLabel:label value:value];
+    if (length && offset) {
+        node.range = HFRangeMake(self.anchor + *offset, *length);
+    } else if (length) {
+        node.range = HFRangeMake(self.anchor + self.position, *length);
+    } else if (offset) {
+        HFASSERT(0); // invalid state
+    }
     [self.currentNode.children addObject:node];
 }
 

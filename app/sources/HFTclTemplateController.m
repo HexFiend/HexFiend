@@ -204,13 +204,15 @@ DEFINE_COMMAND(entry)
         return TCL_ERROR; \
     }
 
-- (int)getLength:(long *)length objv:(Tcl_Obj *)objPtr {
+- (int)getLength:(long *)length objv:(Tcl_Obj *)objPtr allowEOF:(BOOL)allowEOF {
     _Static_assert(sizeof(long) == sizeof(unsigned long long), "invalid long");
     *length = 0;
-    const char *str = Tcl_GetStringFromObj(objPtr, NULL);
-    if (str && strcmp(str, "eof") == 0) {
-        *length = self.length - (self.anchor + self.position);
-        return TCL_OK;
+    if (allowEOF) {
+        const char *str = Tcl_GetStringFromObj(objPtr, NULL);
+        if (str && strcmp(str, "eof") == 0) {
+            *length = self.length - (self.anchor + self.position);
+            return TCL_OK;
+        }
     }
     int err = Tcl_GetLongFromObj(_interp, objPtr, length);
     if (err != TCL_OK) {
@@ -218,6 +220,19 @@ DEFINE_COMMAND(entry)
     }
     if (*length <= 0) {
         Tcl_SetObjResult(_interp, Tcl_ObjPrintf("Length must be greater than 0, but was %ld.", *length));
+        return TCL_ERROR;
+    }
+    return err;
+}
+
+- (int)getOffset:(long *)offset objv:(Tcl_Obj *)objPtr {
+    *offset = 0;
+    int err = Tcl_GetLongFromObj(_interp, objPtr, offset);
+    if (err != TCL_OK) {
+        return err;
+    }
+    if (offset < 0) {
+        Tcl_SetObjResult(_interp, Tcl_ObjPrintf("Offset must be >= 0, but was %ld", offset));
         return TCL_ERROR;
     }
     return err;
@@ -258,7 +273,7 @@ DEFINE_COMMAND(entry)
                 return TCL_ERROR;
             }
             long len;
-            int err = [self getLength:&len objv:objv[1]];
+            int err = [self getLength:&len objv:objv[1] allowEOF:YES];
             if (err != TCL_OK) {
                 return err;
             }
@@ -308,7 +323,7 @@ DEFINE_COMMAND(entry)
                 return TCL_ERROR;
             }
             long len;
-            int err = [self getLength:&len objv:objv[1]];
+            int err = [self getLength:&len objv:objv[1] allowEOF:YES];
             if (err != TCL_OK) {
                 return err;
             }
@@ -348,10 +363,11 @@ DEFINE_COMMAND(entry)
                 return err;
             }
             if (offset < 0) {
-                Tcl_SetObjResult(_interp, Tcl_NewStringObj("Offset must be >= 0.", -1));
-                return TCL_ERROR;
+                // Negative number is offset from the end
+                [self goTo:self.length - labs(offset)];
+            } else {
+                [self goTo:offset];
             }
-            [self goTo:offset];
             break;
         }
         case command_pos: {
@@ -375,13 +391,9 @@ DEFINE_COMMAND(entry)
                 return TCL_ERROR;
             }
             long offset;
-            int err = Tcl_GetLongFromObj(_interp, objv[1], &offset);
+            int err = [self getOffset:&offset objv:objv[1]];
             if (err != TCL_OK) {
                 return err;
-            }
-            if (offset < 0) {
-                Tcl_SetObjResult(_interp, Tcl_NewStringObj("Offset must be >= 0.", -1));
-                return TCL_ERROR;
             }
             NSString *hexvalues = [NSString stringWithUTF8String:Tcl_GetStringFromObj(objv[2], NULL)];
             if (![self requireDataAtOffset:offset toMatchHexValues:hexvalues]) {
@@ -440,13 +452,35 @@ DEFINE_COMMAND(entry)
             break;
         }
         case command_entry: {
-            if (objc != 3) {
-                Tcl_WrongNumArgs(_interp, 1, objv, "label value");
+            if (objc < 3 || objc > 5) {
+                Tcl_WrongNumArgs(_interp, 1, objv, "label value [length [offset]]");
                 return TCL_ERROR;
             }
             NSString *label = [NSString stringWithUTF8String:Tcl_GetStringFromObj(objv[1], NULL)];
             NSString *value = [NSString stringWithUTF8String:Tcl_GetStringFromObj(objv[2], NULL)];
-            [self addEntryWithLabel:label value:value];
+            unsigned long long length = 0;
+            unsigned long long offset = 0;
+            unsigned long long *lengthPtr = NULL;
+            unsigned long long *offsetPtr = NULL;
+            if (objc >= 4) {
+                long len;
+                int err = [self getLength:&len objv:objv[3] allowEOF:NO];
+                if (err != TCL_OK) {
+                    return err;
+                }
+                length = len;
+                lengthPtr = &length;
+            }
+            if (objc == 5) {
+                long off;
+                int err = [self getOffset:&off objv:objv[4]];
+                if (err != TCL_OK) {
+                    return err;
+                }
+                offset = off;
+                offsetPtr = &offset;
+            }
+            [self addEntryWithLabel:label value:value length:lengthPtr offset:offsetPtr];
             break;
         }
     }

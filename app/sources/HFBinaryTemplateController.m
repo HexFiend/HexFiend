@@ -198,7 +198,19 @@
     NSString *errorMessage = nil;
     HFTclTemplateController *templateController = [[HFTclTemplateController alloc] init];
     templateController.anchor = self.anchorPosition;
+    
+    // Change directory to the templates folder so "source" command can use relative paths
+    NSFileManager *fm = NSFileManager.defaultManager;
+    NSString *currentDir = fm.currentDirectoryPath;
+    if (![fm changeCurrentDirectoryPath:self.templatesFolder]) {
+        NSLog(@"Failed to change directory to %@", self.templatesFolder);
+    }
+    
     HFTemplateNode *node = [templateController evaluateScript:self.selectedFile.path forController:controller error:&errorMessage];
+    
+    // Restore current directory
+    (void)[fm changeCurrentDirectoryPath:currentDir];
+    
     [self setRootNode:node error:errorMessage];
     [self updateSelectionColorRange];
 }
