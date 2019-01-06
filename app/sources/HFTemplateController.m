@@ -394,6 +394,10 @@
     self.currentNode.range = range;
 }
 
+- (HFTemplateNode *)currentSection {
+    return self.currentNode;
+}
+
 - (void)addEntryWithLabel:(NSString *)label value:(NSString *)value length:(unsigned long long *)length offset:(unsigned long long *)offset {
     HFTemplateNode *node = [[HFTemplateNode alloc] initWithLabel:label value:value];
     if (length && offset) {

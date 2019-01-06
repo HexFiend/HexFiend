@@ -14,7 +14,7 @@
 - (instancetype)initGroupWithLabel:(NSString *)label parent:(HFTemplateNode *)parent;
 
 @property (readonly) NSString *label;
-@property (readonly) NSString *value;
+@property (readwrite) NSString *value;
 @property (readonly) BOOL isGroup;
 @property (readonly, weak) HFTemplateNode *parent;
 
