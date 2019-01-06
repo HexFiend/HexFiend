@@ -59,6 +59,10 @@
 		A51D0E9620F2C21500B55775 /* HFTextRepresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = D0A437380CDD4EDD000F7550 /* HFTextRepresenter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A51D0E9720F2C21500B55775 /* HFTextRepresenter_Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = D061A28E10042D6A0049B8B8 /* HFTextRepresenter_Internal.h */; };
 		A51D0E9820F2C21500B55775 /* HFTextRepresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = D0A437390CDD4EDD000F7550 /* HFTextRepresenter.m */; };
+		A5328D4721E1898A007C4DB0 /* HFHexGlyphTable.h in Headers */ = {isa = PBXBuildFile; fileRef = A5328D4521E1898A007C4DB0 /* HFHexGlyphTable.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A5328D4821E1898A007C4DB0 /* HFHexGlyphTable.h in Headers */ = {isa = PBXBuildFile; fileRef = A5328D4521E1898A007C4DB0 /* HFHexGlyphTable.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A5328D4921E1898A007C4DB0 /* HFHexGlyphTable.m in Sources */ = {isa = PBXBuildFile; fileRef = A5328D4621E1898A007C4DB0 /* HFHexGlyphTable.m */; };
+		A5328D4A21E1898A007C4DB0 /* HFHexGlyphTable.m in Sources */ = {isa = PBXBuildFile; fileRef = A5328D4621E1898A007C4DB0 /* HFHexGlyphTable.m */; };
 		A53B7D1A1E9185CF00CA3977 /* HFTestHashing.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D149300D8A37580018296B /* HFTestHashing.m */; };
 		A550A7191F7877F8001C79C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = A550A7181F7877F8001C79C7 /* main.m */; };
 		A550A7201F787831001C79C7 /* hexf in Resources */ = {isa = PBXBuildFile; fileRef = A550A7161F7877F8001C79C7 /* hexf */; };
@@ -402,6 +406,8 @@
 		A51D0E8B20F1E56600B55775 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.0.sdk/System/Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
 		A51D0E9020F2A8D200B55775 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.0.sdk/System/Library/Frameworks/CoreText.framework; sourceTree = DEVELOPER_DIR; };
 		A531921B21D585FD006C25D6 /* version.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = version.h; sourceTree = "<group>"; };
+		A5328D4521E1898A007C4DB0 /* HFHexGlyphTable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFHexGlyphTable.h; path = sources/HFHexGlyphTable.h; sourceTree = "<group>"; };
+		A5328D4621E1898A007C4DB0 /* HFHexGlyphTable.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFHexGlyphTable.m; path = sources/HFHexGlyphTable.m; sourceTree = "<group>"; };
 		A550A7161F7877F8001C79C7 /* hexf */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = hexf; sourceTree = BUILT_PRODUCTS_DIR; };
 		A550A7181F7877F8001C79C7 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		A554E0CD20DF2CD3001B4C48 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/OpenDriveDialog.xib; sourceTree = "<group>"; };
@@ -959,6 +965,8 @@
 		D026C7B60CDD54410082279E /* Text Representers */ = {
 			isa = PBXGroup;
 			children = (
+				A5328D4521E1898A007C4DB0 /* HFHexGlyphTable.h */,
+				A5328D4621E1898A007C4DB0 /* HFHexGlyphTable.m */,
 				D026C7B90CDD546C0082279E /* HFRepresenterHexTextView.h */,
 				D026C7BA0CDD546C0082279E /* HFRepresenterHexTextView.m */,
 				D0CDB7520CE735590084926B /* HFRepresenterStringEncodingTextView.h */,
@@ -1273,6 +1281,7 @@
 				A5EF28E820F187B700CA7B39 /* HFNSStringEncoding.h in Headers */,
 				A5EF28EA20F187B700CA7B39 /* HFByteSlice_Private.h in Headers */,
 				A5EF28EB20F187B700CA7B39 /* HFFileReference.h in Headers */,
+				A5328D4821E1898A007C4DB0 /* HFHexGlyphTable.h in Headers */,
 				A5EF28EC20F187B700CA7B39 /* HFFileByteSlice.h in Headers */,
 				A5EF28EE20F187B700CA7B39 /* HFAttributedByteArray.h in Headers */,
 				A5EF28F020F187B700CA7B39 /* HFProgressTracker.h in Headers */,
@@ -1309,6 +1318,7 @@
 				D082ABD40CDEB40F00554EB7 /* HFFullMemoryByteArray.h in Headers */,
 				D082ABCF0CDEB3F800554EB7 /* HFRepresenter_Internal.h in Headers */,
 				D0D828E60CDE89E800C2AB82 /* HFFullMemoryByteSlice.h in Headers */,
+				A5328D4721E1898A007C4DB0 /* HFHexGlyphTable.h in Headers */,
 				D0D829110CDE969F00C2AB82 /* HFByteArray.h in Headers */,
 				D0D828E50CDE89E500C2AB82 /* HFByteSlice.h in Headers */,
 				D0A436310CDC7EB1000F7550 /* HFFunctions.h in Headers */,
@@ -1730,6 +1740,7 @@
 				A5EF290C20F187B700CA7B39 /* HFCustomEncoding.m in Sources */,
 				A5EF290D20F187B700CA7B39 /* HFNSStringEncoding.m in Sources */,
 				A51D0E8520F1D4FA00B55775 /* HFColorRange.m in Sources */,
+				A5328D4A21E1898A007C4DB0 /* HFHexGlyphTable.m in Sources */,
 				A5EF290E20F187B700CA7B39 /* HFStringEncoding.m in Sources */,
 				A5EF291120F187B700CA7B39 /* HFGlyphTrie.m in Sources */,
 				A5EF291220F187B700CA7B39 /* HFByteArray.m in Sources */,
@@ -1815,6 +1826,7 @@
 				D0826EF20D487A000006FB7D /* HFFileByteSlice.m in Sources */,
 				D07150680D5510CE00573D7A /* HFTextField.m in Sources */,
 				A57F34731F1B236E00234B94 /* HFHexPasteboardOwner.m in Sources */,
+				A5328D4921E1898A007C4DB0 /* HFHexGlyphTable.m in Sources */,
 				D0422FE00D62599300F8FCDE /* HFProgressTracker.m in Sources */,
 				D0370A400D68307A00B3A8C6 /* HFSharedMemoryByteSlice.m in Sources */,
 				D019B8C00D83E8D5005789AA /* HFByteArray_FileWriting.m in Sources */,
