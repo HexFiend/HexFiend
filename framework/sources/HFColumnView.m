@@ -44,14 +44,12 @@
     NSRectFillUsingOperation(self.bounds, NSCompositeSourceOver);
 
     const NSRect bounds = self.offsetBounds;
-#if 1
     [self.borderColor set];
     NSRect lineRect = bounds;
     lineRect.origin.x -= 1; lineRect.size.width += 1;
     lineRect.size.height = 1;
     lineRect.origin.y = 0;
     NSRectFillUsingOperation(lineRect, NSCompositeSourceOver);
-#endif
 }
 
 - (void)drawText {
