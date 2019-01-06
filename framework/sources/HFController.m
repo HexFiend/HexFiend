@@ -657,7 +657,7 @@ static inline Class preferredByteArrayClass(void) {
     // Find the minimum move necessary to make range visible
     HFFPRange displayRange = [self displayedLineRange];
     HFFPRange newDisplayRange = displayRange;
-    unsigned long long startLine = range.location / bytesPerLine;
+    unsigned long long startLine = [self lineForRange:range];
     unsigned long long endLine = HFDivideULLRoundingUp(HFRoundUpToNextMultipleSaturate(HFMaxRange(range), bytesPerLine), bytesPerLine);
     HFASSERT(endLine > startLine || endLine == ULLONG_MAX);
     long double linesInRange = HFULToFP(endLine - startLine);
@@ -688,7 +688,7 @@ static inline Class preferredByteArrayClass(void) {
     HFFPRange displayRange = [self displayedLineRange];
     const long double numDisplayedLines = displayRange.length;
     HFFPRange newDisplayRange;
-    unsigned long long startLine = range.location / bytesPerLine;
+    unsigned long long startLine = [self lineForRange:range];
     unsigned long long endLine = HFDivideULLRoundingUp(HFRoundUpToNextMultipleSaturate(HFMaxRange(range), bytesPerLine), bytesPerLine);
     HFASSERT(endLine > startLine || endLine == ULLONG_MAX);
     long double linesInRange = HFULToFP(endLine - startLine);
@@ -703,10 +703,20 @@ static inline Class preferredByteArrayClass(void) {
         newDisplayRange = (HFFPRange){center - numDisplayedLines / 2., numDisplayedLines};
     }
     
-    /* Move the newDisplayRange up or down as necessary */
-    newDisplayRange.location = fmaxl(newDisplayRange.location, (long double)0.);
-    newDisplayRange.location = fminl(newDisplayRange.location, HFULToFP([self totalLineCount]) - numDisplayedLines);
+    [self adjustDisplayRangeAsNeeded:&newDisplayRange];
     [self setDisplayedLineRange:newDisplayRange];
+}
+
+- (void)adjustDisplayRangeAsNeeded:(HFFPRange *)range {
+    /* Move the range up or down as necessary */
+    const long double numDisplayedLines = range->length;
+    range->location = fmaxl(range->location, (long double)0.);
+    range->location = fminl(range->location, HFULToFP([self totalLineCount]) - numDisplayedLines);
+}
+
+- (unsigned long long)lineForRange:(const HFRange)range {
+    unsigned long long line = range.location / bytesPerLine;
+    return line;
 }
 
 /* Clips the selection to a given length.  If this would clip the entire selection, returns a zero length selection at the end.  Indicates HFControllerSelectedRanges if the selection changes. */

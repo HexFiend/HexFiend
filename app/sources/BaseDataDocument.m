@@ -64,6 +64,7 @@ static inline Class preferredByteArrayClass(void) {
 {
     BOOL _inLiveResize;
     HFRange _anchorRange;
+    long double _startLineOffset;
 }
 
 + (NSString *)userDefKeyForRepresenterWithName:(const char *)repName {
@@ -372,9 +373,7 @@ static inline Class preferredByteArrayClass(void) {
 - (void)windowDidResize:(NSNotification * __unused)notification
 {
     [self saveWindowState];
-    if (_inLiveResize) {
-        [controller centerContentsRange:_anchorRange];
-    }
+    [self scrollToAnchoredOffset];
 }
 
 - (void)windowDidMove:(NSNotification * __unused)notification
@@ -384,11 +383,33 @@ static inline Class preferredByteArrayClass(void) {
 
 - (void)windowWillStartLiveResize:(NSNotification * __unused)notification {
     _inLiveResize = YES;
-    _anchorRange = ((HFRangeWrapper *)controller.selectedContentsRanges[0]).HFRange;
+    [self setScrollAnchorToSelection];
 }
 
 - (void)windowDidEndLiveResize:(NSNotification *__unused)notification {
     _inLiveResize = NO;
+}
+
+- (void)setScrollAnchorToSelection {
+    _anchorRange = ((HFRangeWrapper *)controller.selectedContentsRanges[0]).HFRange;
+    [self updateScrollAnchorOffset];
+}
+
+- (void)updateScrollAnchorOffset {
+    const HFFPRange displayedLineRange = controller.displayedLineRange;
+    const unsigned long long startLine = [controller lineForRange:_anchorRange];
+    _startLineOffset = startLine - displayedLineRange.location;
+}
+
+- (void)scrollToAnchoredOffset {
+    if (!_inLiveResize) {
+        return;
+    }
+    HFFPRange displayedLineRange = controller.displayedLineRange;
+    const unsigned long long startLine = [controller lineForRange:_anchorRange];
+    displayedLineRange.location = startLine - _startLineOffset;
+    [controller adjustDisplayRangeAsNeeded:&displayedLineRange];
+    controller.displayedLineRange = displayedLineRange;
 }
 
 - (void)saveWindowState

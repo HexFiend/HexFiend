@@ -261,6 +261,10 @@ You create an HFController via <tt>[[HFController alloc] init]</tt>.  After that
 /*! Modify the displayedLineRange as to center the given contents range.  If the range is near the bottom or top, this will center as close as possible.  If contents range is too large to fit, it centers the top of the range.  contentsRange may be empty. */
 - (void)centerContentsRange:(HFRange)range;
 
+- (void)adjustDisplayRangeAsNeeded:(HFFPRange *)range;
+
+- (unsigned long long)lineForRange:(const HFRange)range;
+
 //@}
 
 /*! The current font. */
