@@ -85,9 +85,7 @@
 		A57F34861F1EFA8800234B94 /* ChooseStringEncodingDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = A57F34881F1EFA8800234B94 /* ChooseStringEncodingDialog.xib */; };
 		A57F34891F1EFA9600234B94 /* OpenDriveDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = A57F348B1F1EFA9600234B94 /* OpenDriveDialog.xib */; };
 		A582748521DC83A100008DBE /* HFColumnRepresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = A582748321DC83A100008DBE /* HFColumnRepresenter.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		A582748621DC83A100008DBE /* HFColumnRepresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = A582748321DC83A100008DBE /* HFColumnRepresenter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A582748721DC83A100008DBE /* HFColumnRepresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = A582748421DC83A100008DBE /* HFColumnRepresenter.m */; };
-		A582748821DC83A100008DBE /* HFColumnRepresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = A582748421DC83A100008DBE /* HFColumnRepresenter.m */; };
 		A59BC5712001AB8C0066860F /* HFBinaryTemplateRepresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = A59BC5702001AB8C0066860F /* HFBinaryTemplateRepresenter.m */; };
 		A59BC5922001FB9A0066860F /* HFTclTemplateController.m in Sources */ = {isa = PBXBuildFile; fileRef = A59BC5912001FB9A0066860F /* HFTclTemplateController.m */; };
 		A59BC5942001FD0F0066860F /* Tcl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A59BC5932001FD0F0066860F /* Tcl.framework */; };
@@ -1303,7 +1301,6 @@
 				A51D0E7F20F1D04E00B55775 /* HFRepresenter.h in Headers */,
 				A51D0E9520F2BABA00B55775 /* HFRepresenterStringEncodingTextView.h in Headers */,
 				A51D0E9720F2C21500B55775 /* HFTextRepresenter_Internal.h in Headers */,
-				A582748621DC83A100008DBE /* HFColumnRepresenter.h in Headers */,
 				A5EF290120F187B700CA7B39 /* HFAnnotatedTree.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1748,7 +1745,6 @@
 				A51D0E8920F1D86F00B55775 /* HFTextVisualStyleRun.m in Sources */,
 				A5EF291420F187B700CA7B39 /* HFFullMemoryByteSlice.m in Sources */,
 				A5EF291520F187B700CA7B39 /* HFFullMemoryByteArray.m in Sources */,
-				A582748821DC83A100008DBE /* HFColumnRepresenter.m in Sources */,
 				A5EF291E20F187B700CA7B39 /* HFControllerCoalescedUndo.m in Sources */,
 				A51D0E8720F1D59200B55775 /* HFRepresenterTextView.m in Sources */,
 				A5EF292020F187B700CA7B39 /* HFByteArray_FindReplace.m in Sources */,
