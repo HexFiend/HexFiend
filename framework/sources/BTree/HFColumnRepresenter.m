@@ -74,13 +74,6 @@ static const CGFloat kShadowHeight = 6;
     NSRectFillUsingOperation(self.bounds, NSCompositeSourceOver);
 
     const NSRect bounds = self.offsetBounds;
-    
-#if 0
-    NSWindow *window = self.window;
-    BOOL drawActive = window.isKeyWindow || window.isMainWindow;
-    HFDrawShadow(HFGraphicsGetCurrentContext(), bounds, kShadowHeight, NSMinYEdge, drawActive, bounds);
-#endif
-    
 #if 1
     [self.borderColor set];
     NSRect lineRect = bounds;

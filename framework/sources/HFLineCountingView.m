@@ -90,14 +90,6 @@ static const CGFloat kShadowWidth = 6;
 - (void)drawGradientWithClip:(NSRect)clip {
     [self.backgroundColor set];
     NSRectFillUsingOperation(clip, NSCompositeSourceOver);
-    
-    NSInteger shadowEdge = _representer.interiorShadowEdge;
-    
-    if (shadowEdge >= 0 && 0) {
-        NSWindow *window = self.window;
-        BOOL drawActive = (window == nil || [window isKeyWindow] || [window isMainWindow]);
-        HFDrawShadow(HFGraphicsGetCurrentContext(), self.bounds, kShadowWidth, shadowEdge, drawActive, clip);
-    }
 }
 
 - (void)drawDividerWithClip:(NSRect)clipRect {
