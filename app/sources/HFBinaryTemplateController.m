@@ -245,15 +245,11 @@
 - (void)collapseValuedGroups {
     NSOutlineView *outlineView = self.outlineView;
     NSInteger numberOfRows = outlineView.numberOfRows;
-    NSMutableArray<HFTemplateNode *> *nodesToCollapse = [NSMutableArray array];
-    for (NSInteger i = 0; i < numberOfRows; ++i) {
+    for (NSInteger i = numberOfRows - 1; i >=0; --i) {
         HFTemplateNode *node = [outlineView itemAtRow:i];
         if (node.isGroup && node.value) {
-            [nodesToCollapse addObject:node];
+            [outlineView collapseItem:node];
         }
-    }
-    for (HFTemplateNode *node in nodesToCollapse) {
-        [outlineView collapseItem:node];
     }
 }
 
