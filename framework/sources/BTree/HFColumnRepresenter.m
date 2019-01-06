@@ -7,6 +7,7 @@
 //
 
 #import "HFColumnRepresenter.h"
+#import <HexFiend/HFHexGlyphTable.h>
 
 static const CGFloat kShadowHeight = 6;
 
@@ -15,6 +16,7 @@ static const CGFloat kShadowHeight = 6;
 @property (weak) HFColumnRepresenter *representer;
 @property BOOL registeredForAppNotifications;
 @property CGFloat lineCountingWidth;
+@property HFHexGlyphTable *glyphTable;
 
 @end
 
@@ -107,6 +109,7 @@ static const CGFloat kShadowHeight = 6;
     
     NSRect drawRect = NSMakeRect(bounds.origin.x + horizontalContainerInset, bounds.origin.y + (kShadowHeight - ceil(fabs(font.descender)) - 2), 0, 0);
     NSUInteger bytesInColumn = 0;
+    const CGFloat advancement = self.glyphTable.advancement;
     for (unsigned i = 0; i < (unsigned)bytesPerLine; i++) {
         NSString *str = [NSString stringWithFormat:@"%02X", i];
         const NSSize strSize = [str sizeWithAttributes:attributes];
@@ -114,12 +117,11 @@ static const CGFloat kShadowHeight = 6;
         drawRect.size.width = drawSize.width;
         drawRect.size.height = drawSize.height;
         [str drawInRect:drawRect withAttributes:attributes];
-        CGFloat advancement = floor(strSize.width);
-        drawRect.origin.x += advancement;
+        drawRect.origin.x += (advancement * 2);
 
         ++bytesInColumn;
         if (bytesInColumn == bytesPerColumn) {
-            drawRect.origin.x += advancement / 2;
+            drawRect.origin.x += advancement;
             bytesInColumn = 0;
         }
     }
@@ -147,6 +149,11 @@ static const CGFloat kShadowHeight = 6;
 }
 
 - (void)controllerDidChange:(HFControllerPropertyBits)bits {
+    if (bits & HFControllerFont) {
+        HFColumnView *view = self.view;
+        view.glyphTable = [[HFHexGlyphTable alloc] initWithFont:self.controller.font];
+        [view setNeedsDisplay:YES];
+    }
     if (bits & (HFControllerFont|HFControllerLineHeight|HFControllerBytesPerLine|HFControllerBytesPerColumn)) {
         HFColumnView *view = self.view;
         [view setNeedsDisplay:YES];
