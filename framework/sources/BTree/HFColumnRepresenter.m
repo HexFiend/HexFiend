@@ -97,21 +97,19 @@ static const CGFloat kShadowHeight = 6;
     const CGFloat lineHeight = controller.lineHeight;
     const CGFloat horizontalContainerInset = 4; // matches what HFRepresenterTextView uses
     const CGFloat advancement = self.glyphTable.advancement;
+    const size_t numGlyphs = bytesPerLine*2;
 
     NSUInteger bytesInColumn = 0;
     CGFloat x = bounds.origin.x + horizontalContainerInset;
-    CGContextRef ctx = HFGraphicsGetCurrentContext();
-    [self.foregroundColor set];
-    CGGlyph glyphs[2];
-    CGPoint positions[2];
-    positions[0].y = descent;
-    positions[1].y = descent;
-    glyphs[0] = self.glyphTable.table[0];
+    CGGlyph glyphs[numGlyphs];
+    CGPoint positions[numGlyphs];
     for (unsigned i = 0; i < (unsigned)bytesPerLine; i++) {
-        glyphs[1] = self.glyphTable.table[i];
-        positions[0].x = x;
-        positions[1].x = x + advancement;
-        CTFontDrawGlyphs(font, glyphs, positions, 2, ctx);
+        glyphs[i*2] = self.glyphTable.table[0];
+        glyphs[i*2+1] = self.glyphTable.table[i];
+        positions[i*2].y = descent;
+        positions[i*2+1].y = descent;
+        positions[i*2].x = x;
+        positions[i*2+1].x = x + advancement;
         x += (advancement * 2);
 
         ++bytesInColumn;
@@ -120,6 +118,10 @@ static const CGFloat kShadowHeight = 6;
             bytesInColumn = 0;
         }
     }
+
+    [self.foregroundColor set];
+    CGContextRef ctx = HFGraphicsGetCurrentContext();
+    CTFontDrawGlyphs(font, glyphs, positions, numGlyphs, ctx);
 }
 
 - (void)drawRect:(NSRect __unused)dirtyRect {
