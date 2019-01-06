@@ -111,7 +111,7 @@ static inline Class preferredByteArrayClass(void) {
         [sRegisteredDefaultsByIdentifier addObject:ident];
         
         NSDictionary *defs = @{
-            USERDEFS_KEY_FOR_REP(columnRepresenter) : @YES,
+            USERDEFS_KEY_FOR_REP(columnRepresenter) : @NO,
             USERDEFS_KEY_FOR_REP(lineCountingRepresenter) : @YES,
             USERDEFS_KEY_FOR_REP(hexRepresenter) : @YES,
             USERDEFS_KEY_FOR_REP(asciiRepresenter) : @YES,
@@ -134,7 +134,7 @@ static inline Class preferredByteArrayClass(void) {
             @"DefaultFontSize" : @(HFDEFAULT_FONTSIZE),
             @"BytesPerColumn" : @4,
             @"LineNumberFormat" : @0,
-            USERDEFS_KEY_FOR_REP(columnRepresenter) : @YES,
+            USERDEFS_KEY_FOR_REP(columnRepresenter) : @NO,
             USERDEFS_KEY_FOR_REP(lineCountingRepresenter) : @YES,
             USERDEFS_KEY_FOR_REP(hexRepresenter) : @YES,
             USERDEFS_KEY_FOR_REP(asciiRepresenter) : @YES,
