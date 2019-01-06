@@ -61,6 +61,10 @@ static inline Class preferredByteArrayClass(void) {
 @end
 
 @implementation BaseDataDocument
+{
+    BOOL _inLiveResize;
+    HFRange _anchorRange;
+}
 
 + (NSString *)userDefKeyForRepresenterWithName:(const char *)repName {
     NSString *result = nil;
@@ -368,11 +372,23 @@ static inline Class preferredByteArrayClass(void) {
 - (void)windowDidResize:(NSNotification * __unused)notification
 {
     [self saveWindowState];
+    if (_inLiveResize) {
+        [controller centerContentsRange:_anchorRange];
+    }
 }
 
 - (void)windowDidMove:(NSNotification * __unused)notification
 {
     [self saveWindowState];
+}
+
+- (void)windowWillStartLiveResize:(NSNotification * __unused)notification {
+    _inLiveResize = YES;
+    _anchorRange = ((HFRangeWrapper *)controller.selectedContentsRanges[0]).HFRange;
+}
+
+- (void)windowDidEndLiveResize:(NSNotification *__unused)notification {
+    _inLiveResize = NO;
 }
 
 - (void)saveWindowState
