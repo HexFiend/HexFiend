@@ -253,7 +253,7 @@
         }
     }
     for (HFTemplateNode *node in nodesToCollapse) {
-        [self.outlineView collapseItem:node];
+        [outlineView collapseItem:node];
     }
 }
 
