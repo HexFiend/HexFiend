@@ -242,6 +242,17 @@
     return nil;
 }
 
+- (void)collapseValuedGroups {
+    NSOutlineView *outlineView = self.outlineView;
+    NSInteger numberOfRows = outlineView.numberOfRows;
+    for (NSInteger i = numberOfRows - 1; i >=0; --i) {
+        HFTemplateNode *node = [outlineView itemAtRow:i];
+        if (node.isGroup && node.value) {
+            [outlineView collapseItem:node];
+        }
+    }
+}
+
 - (void)setRootNode:(HFTemplateNode *)node error:(NSString *)error {
     if (error != nil) {
         self.node = nil;
@@ -253,6 +264,9 @@
     }
     [self.outlineView reloadData];
     [self.outlineView expandItem:nil expandChildren:YES];
+    if ([NSUserDefaults.standardUserDefaults boolForKey:@"BinaryTemplatesAutoCollapseValuedGroups"]) {
+        [self collapseValuedGroups];
+    }
 }
 
 - (NSColor *)selectionColor {

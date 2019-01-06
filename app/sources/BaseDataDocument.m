@@ -97,6 +97,7 @@ static inline Class preferredByteArrayClass(void) {
             @"BinaryTemplateScriptTimeout" : @(10),
             @"BinaryTemplatesSingleClickAction" : @(1), // scroll to offset
             @"BinaryTemplatesDoubleClickAction" : @(0), // do nothing
+            @"BinaryTemplatesAutoCollapseValuedSections" : @NO,
             @"ResolveAliases": @YES,
         };
         [[NSUserDefaults standardUserDefaults] registerDefaults:defs];
