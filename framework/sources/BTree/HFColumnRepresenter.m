@@ -96,7 +96,8 @@ static const CGFloat kShadowHeight = 6;
     const NSUInteger bytesPerLine = controller.bytesPerLine;
     const CGFloat lineHeight = controller.lineHeight;
     const CGFloat horizontalContainerInset = 4; // matches what HFRepresenterTextView uses
-    const CGFloat advancement = self.glyphTable.advancement;
+    const HFHexGlyphTable *glyphTable = self.glyphTable;
+    const CGFloat advancement = glyphTable.advancement;
     const size_t numGlyphs = bytesPerLine*2;
 
     NSUInteger bytesInColumn = 0;
@@ -104,8 +105,8 @@ static const CGFloat kShadowHeight = 6;
     CGGlyph glyphs[numGlyphs];
     CGPoint positions[numGlyphs];
     for (unsigned i = 0; i < (unsigned)bytesPerLine; i++) {
-        glyphs[i*2] = self.glyphTable.table[0];
-        glyphs[i*2+1] = self.glyphTable.table[i];
+        glyphs[i*2] = glyphTable.table[i / 16];
+        glyphs[i*2+1] = glyphTable.table[i % 16];
         positions[i*2].y = descent;
         positions[i*2+1].y = descent;
         positions[i*2].x = x;
