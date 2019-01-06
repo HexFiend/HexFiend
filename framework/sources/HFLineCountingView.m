@@ -7,7 +7,6 @@
 
 #import <HexFiend/HFLineCountingView.h>
 #import <HexFiend/HFLineCountingRepresenter.h>
-#import <HexFiend/HFFunctions.h>
 #import <HexFiend/HFTextRepresenter_Internal.h>
 
 #define INVALID_LINE_COUNT NSUIntegerMax
@@ -15,10 +14,6 @@
 static const CGFloat kShadowWidth = 6;
 
 @implementation HFLineCountingView
-
-- (void)dealloc {
-    HFUnregisterViewForWindowAppearanceChanges(self, registeredForAppNotifications);
-}
 
 - (void)encodeWithCoder:(NSCoder *)coder {
     HFASSERT([coder allowsKeyedCoding]);
@@ -55,22 +50,6 @@ static const CGFloat kShadowWidth = 6;
     else {
         strlcpy(outString, "", length);
     }
-}
-
-- (void)windowDidChangeKeyStatus:(NSNotification *)note {
-    USE(note);
-    [self setNeedsDisplay:YES];
-}
-
-- (void)viewDidMoveToWindow {
-    HFRegisterViewForWindowAppearanceChanges(self, @selector(windowDidChangeKeyStatus:), !registeredForAppNotifications);
-    registeredForAppNotifications = YES;
-    [super viewDidMoveToWindow];
-}
-
-- (void)viewWillMoveToWindow:(NSWindow *)newWindow {
-    HFUnregisterViewForWindowAppearanceChanges(self, NO);
-    [super viewWillMoveToWindow:newWindow];
 }
 
 - (NSColor *)borderColor {

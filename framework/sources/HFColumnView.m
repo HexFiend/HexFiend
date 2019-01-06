@@ -10,26 +10,6 @@
 
 @implementation HFColumnView
 
-- (void)dealloc {
-    HFUnregisterViewForWindowAppearanceChanges(self, self.registeredForAppNotifications);
-}
-
-- (void)windowDidChangeKeyStatus:(NSNotification *)note {
-    USE(note);
-    [self setNeedsDisplay:YES];
-}
-
-- (void)viewDidMoveToWindow {
-    HFRegisterViewForWindowAppearanceChanges(self, @selector(windowDidChangeKeyStatus:), !self.registeredForAppNotifications);
-    self.registeredForAppNotifications = YES;
-    [super viewDidMoveToWindow];
-}
-
-- (void)viewWillMoveToWindow:(NSWindow *)newWindow {
-    HFUnregisterViewForWindowAppearanceChanges(self, NO);
-    [super viewWillMoveToWindow:newWindow];
-}
-
 - (NSColor *)borderColor {
     if (@available(macOS 10.14, *)) {
         return [NSColor separatorColor];

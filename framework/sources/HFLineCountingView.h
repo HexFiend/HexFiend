@@ -9,7 +9,6 @@
 
 @interface HFLineCountingView : NSView {
     NSDictionary *textAttributes;
-    BOOL registeredForAppNotifications;
 }
 
 @property (nullable, nonatomic, copy) NSFont *font;

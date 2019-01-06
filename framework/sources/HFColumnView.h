@@ -15,7 +15,6 @@ NS_ASSUME_NONNULL_BEGIN
 @interface HFColumnView : NSView
 
 @property (weak) HFColumnRepresenter *representer;
-@property BOOL registeredForAppNotifications;
 @property CGFloat lineCountingWidth;
 @property HFHexGlyphTable *glyphTable;
 
