@@ -383,20 +383,24 @@ static inline Class preferredByteArrayClass(void) {
 
 - (void)windowWillStartLiveResize:(NSNotification * __unused)notification {
     _inLiveResize = YES;
-    [self setScrollAnchorToSelection];
+    [self updateScrollAnchorOffset];
 }
 
 - (void)windowDidEndLiveResize:(NSNotification *__unused)notification {
     _inLiveResize = NO;
 }
 
-- (void)setScrollAnchorToSelection {
-    _anchorRange = ((HFRangeWrapper *)controller.selectedContentsRanges[0]).HFRange;
-    [self updateScrollAnchorOffset];
-}
-
 - (void)updateScrollAnchorOffset {
     const HFFPRange displayedLineRange = controller.displayedLineRange;
+    const HFRange selectionRange = ((HFRangeWrapper *)controller.selectedContentsRanges[0]).HFRange;
+    const HFFPRange selectionFPRange = HFFPRangeMake([controller lineForRange:selectionRange], 1);
+    if (HFFPIntersectsRange(selectionFPRange, displayedLineRange)) {
+        _anchorRange = selectionRange;
+    } else {
+        // Selection is not visible, so anchor on the first fully visible line's first byte
+        const unsigned long long loc = (unsigned long long)ceill(displayedLineRange.location) * controller.bytesPerLine;
+        _anchorRange = HFRangeMake(loc, 0);
+    }
     const unsigned long long startLine = [controller lineForRange:_anchorRange];
     _startLineOffset = startLine - displayedLineRange.location;
 }
