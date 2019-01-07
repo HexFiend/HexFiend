@@ -543,14 +543,14 @@ static NSAttributedString *inspectionSuccess(NSString *s) {
         
         case eInspectorTypeSLEB128: {
             int64_t result = 0;
-            int shift = 0;
+            unsigned shift = 0;
             for (size_t i = 0; i < length; i++) {
-                result |= ((bytes[i] & 0x7F) << shift);
+                result |= ((int64_t)(bytes[i] & 0x7F) << shift);
                 shift += 7;
                 
                 if ((bytes[i] & 0x80) == 0) {
                     if (shift < 64 && (bytes[i] & 0x40)) {
-                        result |= -(1 << shift);
+                        result |= -((uint64_t)1 << shift);
                     }
                     return [NSString stringWithFormat:@"%qd (%ld bytes)", result, i + 1];
                 }
@@ -561,9 +561,9 @@ static NSAttributedString *inspectionSuccess(NSString *s) {
         
         case eInspectorTypeULEB128: {
             uint64_t result = 0;
-            int shift = 0;
+            unsigned shift = 0;
             for (size_t i = 0; i < length; i++) {
-                result |= ((bytes[i] & 0x7F) << shift);
+                result |= ((uint64_t)(bytes[i] & 0x7F) << shift);
                 shift += 7;
                 
                 if ((bytes[i] & 0x80) == 0) {
