@@ -339,11 +339,3 @@ NSString * const DataInspectorDidDeleteAllRows = @"DataInspectorDidDeleteAllRows
 }
 
 @end
-
-@implementation DataInspectorTableView
-
-- (void)highlightSelectionInClipRect:(NSRect)clipRect {
-    USE(clipRect);
-}
-
-@end
