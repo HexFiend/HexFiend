@@ -86,6 +86,7 @@
 		A57F34891F1EFA9600234B94 /* OpenDriveDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = A57F348B1F1EFA9600234B94 /* OpenDriveDialog.xib */; };
 		A582748521DC83A100008DBE /* HFColumnRepresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = A582748321DC83A100008DBE /* HFColumnRepresenter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A582748721DC83A100008DBE /* HFColumnRepresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = A582748421DC83A100008DBE /* HFColumnRepresenter.m */; };
+		A591313A21E3079400685B51 /* DataInspector.m in Sources */ = {isa = PBXBuildFile; fileRef = A591313921E3079400685B51 /* DataInspector.m */; };
 		A59BC5712001AB8C0066860F /* HFBinaryTemplateRepresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = A59BC5702001AB8C0066860F /* HFBinaryTemplateRepresenter.m */; };
 		A59BC5922001FB9A0066860F /* HFTclTemplateController.m in Sources */ = {isa = PBXBuildFile; fileRef = A59BC5912001FB9A0066860F /* HFTclTemplateController.m */; };
 		A59BC5942001FD0F0066860F /* Tcl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A59BC5932001FD0F0066860F /* Tcl.framework */; };
@@ -441,6 +442,8 @@
 		A57F347B1F1BE7CD00234B94 /* BigResult.txt.gz */ = {isa = PBXFileReference; lastKnownFileType = archive.gzip; path = BigResult.txt.gz; sourceTree = "<group>"; };
 		A582748321DC83A100008DBE /* HFColumnRepresenter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFColumnRepresenter.h; path = sources/HFColumnRepresenter.h; sourceTree = "<group>"; };
 		A582748421DC83A100008DBE /* HFColumnRepresenter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFColumnRepresenter.m; path = sources/HFColumnRepresenter.m; sourceTree = "<group>"; };
+		A591313821E3079400685B51 /* DataInspector.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DataInspector.h; path = app/sources/DataInspector.h; sourceTree = "<group>"; };
+		A591313921E3079400685B51 /* DataInspector.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = DataInspector.m; path = app/sources/DataInspector.m; sourceTree = "<group>"; };
 		A59BC56F2001AB8C0066860F /* HFBinaryTemplateRepresenter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFBinaryTemplateRepresenter.h; path = app/sources/HFBinaryTemplateRepresenter.h; sourceTree = "<group>"; };
 		A59BC5702001AB8C0066860F /* HFBinaryTemplateRepresenter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFBinaryTemplateRepresenter.m; path = app/sources/HFBinaryTemplateRepresenter.m; sourceTree = "<group>"; };
 		A59BC5902001FB9A0066860F /* HFTclTemplateController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFTclTemplateController.h; path = app/sources/HFTclTemplateController.h; sourceTree = "<group>"; };
@@ -824,8 +827,6 @@
 				D0A8AF7C1467273900387627 /* AppUtilities.m */,
 				D059E1271311C675001493B8 /* AppDebugging.h */,
 				D059E1281311C676001493B8 /* AppDebugging.m */,
-				D03CFA880FC78BCD00EE79E4 /* DataInspectorRepresenter.h */,
-				D03CFA890FC78BCD00EE79E4 /* DataInspectorRepresenter.m */,
 				D01772F30D751DB1002E03DE /* HFDocumentOperationView.h */,
 				D01772F40D751DB1002E03DE /* HFDocumentOperationView.m */,
 				D01773900D7A2F32002E03DE /* HFResizingView.h */,
@@ -846,6 +847,17 @@
 				A550A7181F7877F8001C79C7 /* main.m */,
 			);
 			path = hexf;
+			sourceTree = "<group>";
+		};
+		A591313721E3064900685B51 /* Data Inspector */ = {
+			isa = PBXGroup;
+			children = (
+				D03CFA880FC78BCD00EE79E4 /* DataInspectorRepresenter.h */,
+				D03CFA890FC78BCD00EE79E4 /* DataInspectorRepresenter.m */,
+				A591313821E3079400685B51 /* DataInspector.h */,
+				A591313921E3079400685B51 /* DataInspector.m */,
+			);
+			name = "Data Inspector";
 			sourceTree = "<group>";
 		};
 		A59BC58F2001FB590066860F /* Binary Templates */ = {
@@ -1123,6 +1135,7 @@
 				D0D8C45C12A3EF3F00960FC4 /* Dialogs */,
 				A59BC58F2001FB590066860F /* Binary Templates */,
 				D00122DC0D48A89F00540B10 /* Find_Replace */,
+				A591313721E3064900685B51 /* Data Inspector */,
 				A531921C21D58DC1006C25D6 /* Miscellaneous */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
 			);
@@ -1694,6 +1707,7 @@
 				A59BC59C2002113F0066860F /* HFTemplateNode.m in Sources */,
 				A59BC59F2002E63C0066860F /* HFTemplateController.m in Sources */,
 				D018F153107ABAC600AE805F /* DiffDocument.m in Sources */,
+				A591313A21E3079400685B51 /* DataInspector.m in Sources */,
 				D074B0D5115B2075002D5FA8 /* DiffDocumentWindow.m in Sources */,
 				D084E763115DAEAC004DC181 /* DiffOverlayView.m in Sources */,
 				D0AFA786123C2BDF00CFC513 /* MyDocumentController.m in Sources */,
