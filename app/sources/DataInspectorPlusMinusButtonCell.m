@@ -76,7 +76,6 @@
 - (void)drawWithFrame:(NSRect)cellFrame inView:(NSView *)controlView {
     [super drawWithFrame:cellFrame inView:controlView];
     [self drawDataInspectorTitleWithFrame:cellFrame inView:controlView];
-    
 }
 
 @end

@@ -272,13 +272,13 @@ NSString * const DataInspectorDidDeleteAllRows = @"DataInspectorDidDeleteAllRows
 - (void)removeRow:(id)sender {
     USE(sender);
     if ([self rowCount] == 1) {
-	[[NSNotificationCenter defaultCenter] postNotificationName:DataInspectorDidDeleteAllRows object:self userInfo:nil];
+        [[NSNotificationCenter defaultCenter] postNotificationName:DataInspectorDidDeleteAllRows object:self userInfo:nil];
     }
     else {
-	NSInteger clickedRow = [table clickedRow];
-	[inspectors removeObjectAtIndex:clickedRow];
+        NSInteger clickedRow = [table clickedRow];
+        [inspectors removeObjectAtIndex:clickedRow];
         [self saveDefaultInspectors];
-	[self resizeTableViewAfterChangingRowCount];
+        [self resizeTableViewAfterChangingRowCount];
     }
 }
 
@@ -286,14 +286,14 @@ NSString * const DataInspectorDidDeleteAllRows = @"DataInspectorDidDeleteAllRows
     USE(sender);
     NSInteger column = [table clickedColumn], row = [table clickedRow];
     if (column >= 0 && row >= 0 && [[[table tableColumns][column] identifier] isEqual:kInspectorValueColumnIdentifier]) {
-	BOOL isError;
-	[self valueFromInspector:inspectors[row] isError:&isError];
-	if (! isError) {
-	    [table editColumn:column row:row withEvent:[NSApp currentEvent] select:YES];
-	}
-	else {
-	    NSBeep();
-	}
+        BOOL isError;
+        [self valueFromInspector:inspectors[row] isError:&isError];
+        if (! isError) {
+            [table editColumn:column row:row withEvent:[NSApp currentEvent] select:YES];
+        }
+        else {
+            NSBeep();
+        }
     }
 }
 
@@ -308,7 +308,6 @@ NSString * const DataInspectorDidDeleteAllRows = @"DataInspectorDidDeleteAllRows
     DataInspector *inspector = inspectors[row];
     return [inspector acceptStringValue:[fieldEditor string] replacingByteCount:byteCount intoData:NULL];
 }
-
 
 /* Prevent all row selection */
 
@@ -325,7 +324,6 @@ NSString * const DataInspectorDidDeleteAllRows = @"DataInspectorDidDeleteAllRows
     USE(tableColumn);
     return YES;
 }
-
 
 - (void)refreshTableValues {
     [table reloadData];
