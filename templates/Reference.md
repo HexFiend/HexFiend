@@ -4,7 +4,7 @@ Hex Fiend extends Tcl with additional commands for interacting with the opened f
 
 ## Types
 
-Type commands all have the same structure of `type [label]`. For example:
+Type commands all have the same structure of `type [label]`:
 
 ```tcl
 uint32 "Size"
@@ -31,6 +31,12 @@ set size [uint32]
 | uuid    | Reads 16-byte UUID |
 | macdate | Reads classic Mac OS 4-byte date (seconds since January 1, 1904) |
 
+As of v2.11+, unsigned integer types have an optional parameter `-hex` which causes the displayed value to be in hexadecimal, instead of decimal:
+
+```tcl
+uint32 -hex "CRC"
+```
+
 ## Grouping
 
 Any command that takes a label will create a new entry in the user interface with the label provided and a string representation of the data type. However, this could become a long list of entries. Therefore entries can be grouped via the `section` command.
@@ -53,6 +59,12 @@ section "Header" {
 
 Sections can be nested within each other.
 
+Sections by default don't have any value. To set a value on a section, use the `sectionvalue` command (v2.11+), which works on the current section:
+
+```tcl
+sectionvalue "Example Value"
+```
+
 ## Endian
 
 The default endian mode for the type commands above is little. To interpret types as big endian, use the `big_endian` command. To go back to little, use `little_endian`. No arguments are passed.
@@ -73,10 +85,17 @@ Various commands are provided for reading and interpreting multiple bytes.
 
 | Command  | Description | Example |
 | ------------- | ------------- | ------------- |
-| bytes *len* *label* [v2.10+] | Reads *len* bytes as raw data | `bytes 128 "Data"` |
+| bytes *len* *label* | Reads *len* bytes as raw data [v2.10+] | `bytes 128 "Data"` |
 | hex *len* *label* | Reads *len* bytes as hexadecimal | `hex 16 "UUID"` |
 | ascii *len* *label* | Reads *len* bytes as ASCII | `ascii 32 "Name"` |
 | utf16 *len* *label* | Reads *len* bytes as UTF16 (via current endian) | `utf16 12 "Name"` |
+| str *len* *encoding* *label* | Reads *len* bytes using the specified *encoding* identifier [v2.11+] | `str 8 "utf8" "Name"` |
+
+A special length value `eof` can be used to go to the end of the file (v2.11+):
+
+```tcl
+bytes eof "Compressed Data"
+```
 
 ## Restrictions
 
@@ -94,6 +113,25 @@ requires 510 "55 AA" ;# Master Boot Record
 ```
 
 If the bytes at offset 510 (from the anchor) do not match "55 AA" in hexadecimal, then the template stops executing and errors out. Otherwise execution continues.
+
+## Custom Entries
+
+Occasionally one may need to add entries to the UI not directly related to read data (e.g. programatically calculated values). For this the `entry` command can be used (v2.11+).
+
+| Parameter  | Description |
+| ------------- | ------------- |
+| label | Label to display |
+| value | Value to display |
+| length | Length of entry (optional, relative to current file offset) |
+| offset | Offset of entry (optional) |
+
+If length or offset is specified, the file pointer is not moved forward.
+
+### Example
+
+```tcl
+entry "Channel" $channel
+```
 
 ## Compression
 
