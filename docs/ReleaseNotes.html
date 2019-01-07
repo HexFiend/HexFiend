@@ -22,17 +22,23 @@ body {
     <li>Add <code>eof</code> as a special length parameter to go to the end of the file</li>
     <li>Add optional <code>-hex</code> argument for unsigned integers to display as hexadecimal</li>
     <li>Add <code>str</code> command that takes an encoding identifier</li>
+    <li>Add <code>sectionvalue</code> command that sets the value of the current section</li>
     <li>Sections now auto-expand</li>
-    <li>Added preference for controlling behavior on single and double click of template entries</li>
+    <li>Add preference for controlling behavior on single and double click of template entries</li>
+    <li>Set working directory to templates folder so "source" command can use relative paths</li>
     <li>Performing a copy with a selected entry copies its value to the clipboard</li>
     <li>Fix incorrect anchor usage in some commands</li>
     <li>Fix incorrect error handling with <code>zlib_uncompress</code></li>
+	<li>Fix window width adjustment when showing/hiding templates</li>
     <li>Prefix hexadecimal values with 0x to match Data Inspector</li>
     <li>Improve error messages for read failures</li>
-    <li>Improved documentation</li>
+    <li>Improve documentation</li>
   </ul>
+<li>Add anchored scrolling. When scrolling horizontally, the document will be anchored by the selection offset (if visible) or first visible byte</li>
+<li>Add column view (off by default)</li>
 <li>Add custom byte grouping</li>
 <li>Fix data inspector text alignment (thanks rpendleton)</li>
+<li>Fix plain/ascii text alignment with line numbers</li>
 <li>Fix crash when Color Bytes is enabled with a multi-byte text encoding</li>
 </ul>
 
