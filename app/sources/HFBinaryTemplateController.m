@@ -36,6 +36,7 @@
 
 @property (copy) NSString *path;
 @property (copy) NSString *name;
+@property (copy) NSArray<NSString *> *supportedTypes;
 
 @end
 
@@ -126,6 +127,74 @@
     [self rerunTemplate];
 }
 
+- (NSArray<NSString *> *)readSupportedTypesAtPath:(NSString *)path {
+    static const unsigned long long maxBytes = 512;
+    NSFileHandle *handle = [NSFileHandle fileHandleForReadingAtPath:path];
+    NSData *data = [handle readDataOfLength:maxBytes];
+    NSString *firstBytes = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    [handle closeFile];
+
+    static NSRegularExpression *lineRegex;
+    static dispatch_once_t lineOnceToken;
+    dispatch_once(&lineOnceToken, ^{
+        NSString *regexString = @"^\\h*#\\s*HexFiend\\h+Types:\\h*([\\w.-]+(?:[\\h,]+[\\w.-]+)*)\\h*$";
+        NSError *error;
+        lineRegex = [NSRegularExpression regularExpressionWithPattern:regexString options:NSRegularExpressionAnchorsMatchLines error:&error];
+        if (!lineRegex)
+            NSLog(@"%@", error);
+    });
+
+    static NSRegularExpression *typeRegex;
+    static dispatch_once_t typeOnceToken;
+    dispatch_once(&typeOnceToken, ^{
+        NSError *error;
+        typeRegex = [NSRegularExpression regularExpressionWithPattern:@"[\\w.-]+" options:0 error:&error];
+        if (!typeRegex)
+            NSLog(@"%@", error);
+    });
+
+    NSTextCheckingResult *result = [lineRegex firstMatchInString:firstBytes options:0 range:(NSRange){0, firstBytes.length}];
+
+    if (result && result.numberOfRanges == 2) {
+        NSRange typesRange = [result rangeAtIndex:1];
+        NSString *typesString = [firstBytes substringWithRange:typesRange];
+        NSMutableArray *types = [NSMutableArray array];
+
+        [typeRegex enumerateMatchesInString:typesString options:0 range:(NSRange){0, typesString.length} usingBlock:^(NSTextCheckingResult * _Nullable match, __unused NSMatchingFlags flags, __unused BOOL * _Nonnull stop) {
+            NSString *type = [typesString substringWithRange:match.range];
+            [types addObject:type];
+        }];
+
+        return [types copy];
+    }
+
+    return nil;
+}
+
+- (HFTemplateFile *)defaultTemplateForFileAtURL:(NSURL *)url {
+    NSString *type;
+    NSError *error;
+    [url getResourceValue:&type forKey:NSURLTypeIdentifierKey error:&error];
+    NSString *extension = url.pathExtension;
+
+    for (HFTemplateFile *template in self.templates) {
+        if ([template.supportedTypes containsObject:type] || [template.supportedTypes containsObject:extension])
+            return template;
+    }
+
+    return nil;
+}
+
+- (void)viewWillAppear {
+    NSURL *representedURL = self.view.window.representedURL;
+    HFTemplateFile *template = [self defaultTemplateForFileAtURL:representedURL];
+    if (template) {
+        self.selectedFile = template;
+        [self.templatesPopUp selectItemWithTitle:template.name];
+        [self rerunTemplate];
+    }
+}
+
 - (void)loadTemplates:(id __unused)sender {
     NSFileManager *fm = [NSFileManager defaultManager];
     NSString *dir = self.templatesFolder;
@@ -135,6 +204,7 @@
             HFTemplateFile *file = [[HFTemplateFile alloc] init];
             file.path = [dir stringByAppendingPathComponent:filename];
             file.name = [[filename lastPathComponent] stringByDeletingPathExtension];
+            file.supportedTypes = [self readSupportedTypesAtPath:file.path];
             [templates addObject:file];
         }
     }
