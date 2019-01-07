@@ -61,6 +61,11 @@ static inline Class preferredByteArrayClass(void) {
 @end
 
 @implementation BaseDataDocument
+{
+    BOOL _inLiveResize;
+    HFRange _anchorRange;
+    long double _startLineOffset;
+}
 
 + (NSString *)userDefKeyForRepresenterWithName:(const char *)repName {
     NSString *result = nil;
@@ -369,11 +374,47 @@ static inline Class preferredByteArrayClass(void) {
 - (void)windowDidResize:(NSNotification * __unused)notification
 {
     [self saveWindowState];
+    [self scrollToAnchoredOffset];
 }
 
 - (void)windowDidMove:(NSNotification * __unused)notification
 {
     [self saveWindowState];
+}
+
+- (void)windowWillStartLiveResize:(NSNotification * __unused)notification {
+    _inLiveResize = YES;
+    [self updateScrollAnchorOffset];
+}
+
+- (void)windowDidEndLiveResize:(NSNotification *__unused)notification {
+    _inLiveResize = NO;
+}
+
+- (void)updateScrollAnchorOffset {
+    const HFFPRange displayedLineRange = controller.displayedLineRange;
+    const HFRange selectionRange = ((HFRangeWrapper *)controller.selectedContentsRanges[0]).HFRange;
+    const HFFPRange selectionFPRange = HFFPRangeMake([controller lineForRange:selectionRange], 1);
+    if (HFFPIntersectsRange(selectionFPRange, displayedLineRange)) {
+        _anchorRange = selectionRange;
+    } else {
+        // Selection is not visible, so anchor on the first fully visible line's first byte
+        const unsigned long long loc = (unsigned long long)ceill(displayedLineRange.location) * controller.bytesPerLine;
+        _anchorRange = HFRangeMake(loc, 0);
+    }
+    const unsigned long long startLine = [controller lineForRange:_anchorRange];
+    _startLineOffset = startLine - displayedLineRange.location;
+}
+
+- (void)scrollToAnchoredOffset {
+    if (!_inLiveResize) {
+        return;
+    }
+    HFFPRange displayedLineRange = controller.displayedLineRange;
+    const unsigned long long startLine = [controller lineForRange:_anchorRange];
+    displayedLineRange.location = startLine - _startLineOffset;
+    [controller adjustDisplayRangeAsNeeded:&displayedLineRange];
+    controller.displayedLineRange = displayedLineRange;
 }
 
 - (void)saveWindowState

@@ -24,6 +24,10 @@ static inline BOOL HFLocationInRange(unsigned long long location, HFRange range)
     return location >= range.location && location - range.location < range.length;
 }
 
+static inline HFFPRange HFFPRangeMake(long double loc, long double len) {
+    return (HFFPRange){loc, len};
+}
+
 /*!
   Like NSRangeToString but for HFRanges
 */
