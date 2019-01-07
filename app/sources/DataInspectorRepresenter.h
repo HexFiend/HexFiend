@@ -24,8 +24,5 @@ extern NSString * const DataInspectorDidDeleteAllRows;
 
 @end
 
-@interface DataInspectorScrollView : NSScrollView
-@end
-
 @interface DataInspectorTableView : NSTableView
 @end

@@ -88,6 +88,7 @@
 		A582748721DC83A100008DBE /* HFColumnRepresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = A582748421DC83A100008DBE /* HFColumnRepresenter.m */; };
 		A591313A21E3079400685B51 /* DataInspector.m in Sources */ = {isa = PBXBuildFile; fileRef = A591313921E3079400685B51 /* DataInspector.m */; };
 		A591313D21E3090300685B51 /* DataInspectorPlusMinusButtonCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A591313C21E3090300685B51 /* DataInspectorPlusMinusButtonCell.m */; };
+		A591314021E3098800685B51 /* DataInspectorScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = A591313F21E3098800685B51 /* DataInspectorScrollView.m */; };
 		A59BC5712001AB8C0066860F /* HFBinaryTemplateRepresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = A59BC5702001AB8C0066860F /* HFBinaryTemplateRepresenter.m */; };
 		A59BC5922001FB9A0066860F /* HFTclTemplateController.m in Sources */ = {isa = PBXBuildFile; fileRef = A59BC5912001FB9A0066860F /* HFTclTemplateController.m */; };
 		A59BC5942001FD0F0066860F /* Tcl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A59BC5932001FD0F0066860F /* Tcl.framework */; };
@@ -447,6 +448,8 @@
 		A591313921E3079400685B51 /* DataInspector.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = DataInspector.m; path = app/sources/DataInspector.m; sourceTree = "<group>"; };
 		A591313B21E3090300685B51 /* DataInspectorPlusMinusButtonCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DataInspectorPlusMinusButtonCell.h; path = app/sources/DataInspectorPlusMinusButtonCell.h; sourceTree = "<group>"; };
 		A591313C21E3090300685B51 /* DataInspectorPlusMinusButtonCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = DataInspectorPlusMinusButtonCell.m; path = app/sources/DataInspectorPlusMinusButtonCell.m; sourceTree = "<group>"; };
+		A591313E21E3098800685B51 /* DataInspectorScrollView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DataInspectorScrollView.h; path = app/sources/DataInspectorScrollView.h; sourceTree = "<group>"; };
+		A591313F21E3098800685B51 /* DataInspectorScrollView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = DataInspectorScrollView.m; path = app/sources/DataInspectorScrollView.m; sourceTree = "<group>"; };
 		A59BC56F2001AB8C0066860F /* HFBinaryTemplateRepresenter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFBinaryTemplateRepresenter.h; path = app/sources/HFBinaryTemplateRepresenter.h; sourceTree = "<group>"; };
 		A59BC5702001AB8C0066860F /* HFBinaryTemplateRepresenter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFBinaryTemplateRepresenter.m; path = app/sources/HFBinaryTemplateRepresenter.m; sourceTree = "<group>"; };
 		A59BC5902001FB9A0066860F /* HFTclTemplateController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFTclTemplateController.h; path = app/sources/HFTclTemplateController.h; sourceTree = "<group>"; };
@@ -861,6 +864,8 @@
 				A591313921E3079400685B51 /* DataInspector.m */,
 				A591313B21E3090300685B51 /* DataInspectorPlusMinusButtonCell.h */,
 				A591313C21E3090300685B51 /* DataInspectorPlusMinusButtonCell.m */,
+				A591313E21E3098800685B51 /* DataInspectorScrollView.h */,
+				A591313F21E3098800685B51 /* DataInspectorScrollView.m */,
 			);
 			name = "Data Inspector";
 			sourceTree = "<group>";
@@ -1718,6 +1723,7 @@
 				D084E763115DAEAC004DC181 /* DiffOverlayView.m in Sources */,
 				D0AFA786123C2BDF00CFC513 /* MyDocumentController.m in Sources */,
 				D0CBB240128F78C200989C15 /* StretchableProgressIndicator.m in Sources */,
+				A591314021E3098800685B51 /* DataInspectorScrollView.m in Sources */,
 				D0CBB32A128F906000989C15 /* DiffTextViewContainer.m in Sources */,
 				A5628AAB21D8561D00911ABB /* Tcl_ParseArgsObjv.c in Sources */,
 				D0D8C2BC12A3C10100960FC4 /* ChooseStringEncodingWindowController.m in Sources */,
