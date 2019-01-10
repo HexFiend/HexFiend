@@ -176,10 +176,13 @@
     NSError *error;
     [url getResourceValue:&type forKey:NSURLTypeIdentifierKey error:&error];
     NSString *extension = url.pathExtension;
+    NSWorkspace *workspace = NSWorkspace.sharedWorkspace;
 
     for (HFTemplateFile *template in self.templates) {
-        if ([template.supportedTypes containsObject:type] || [template.supportedTypes containsObject:extension])
-            return template;
+        for (NSString *supportedType in template.supportedTypes) {
+            if ([workspace type:type conformsToType:supportedType] || [supportedType isEqualToString:extension])
+                return template;
+        }
     }
 
     return nil;
