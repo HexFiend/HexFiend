@@ -176,11 +176,18 @@
     NSError *error;
     [url getResourceValue:&type forKey:NSURLTypeIdentifierKey error:&error];
     NSString *extension = url.pathExtension;
-    NSWorkspace *workspace = NSWorkspace.sharedWorkspace;
+
+    // Check for exact UTI/extension match first.
+    for (HFTemplateFile *template in self.templates) {
+        for (NSString *supportedType in template.supportedTypes) {
+            if (UTTypeEqual((__bridge CFStringRef)type, (__bridge CFStringRef)supportedType) || [supportedType caseInsensitiveCompare:extension] == NSOrderedSame)
+                return template;
+        }
+    }
 
     for (HFTemplateFile *template in self.templates) {
         for (NSString *supportedType in template.supportedTypes) {
-            if ([workspace type:type conformsToType:supportedType] || [supportedType isEqualToString:extension])
+            if (UTTypeConformsTo((__bridge CFStringRef)type, (__bridge CFStringRef)supportedType))
                 return template;
         }
     }
