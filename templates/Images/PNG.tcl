@@ -1,3 +1,5 @@
+# HexFiend Types: public.png, png
+
 big_endian
 requires 0 "89 50 4E 47 0D 0A 1A 0A"
 hex 8 "Signature"
