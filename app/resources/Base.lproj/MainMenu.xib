@@ -389,7 +389,7 @@
                                     <action selector="setAntialiasFromMenuItem:" target="-1" id="xJB-SX-oT5"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Color bytes" id="HpS-tB-2Bk">
+                            <menuItem title="Color Bytes" id="HpS-tB-2Bk">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="setColorBytesFromMenuItem:" target="-1" id="rFc-gy-jE3"/>
