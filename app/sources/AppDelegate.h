@@ -12,6 +12,7 @@
 @interface AppDelegate : NSObject {
     IBOutlet NSMenuItem *extendForwardsItem, *extendBackwardsItem;
     IBOutlet NSMenuItem *fontMenuItem;
+    IBOutlet NSMenuItem *fontListPlaceholderMenuItem;
     IBOutlet NSMenuItem *processListMenuItem;
     IBOutlet NSMenu *bookmarksMenu;
     IBOutlet NSMenuItem *noBookmarksMenuItem;

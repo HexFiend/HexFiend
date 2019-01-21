@@ -191,8 +191,9 @@ static NSComparisonResult compareFontDisplayNames(NSFont *a, NSFont *b, void *un
 
 - (void)receiveFonts:(NSArray *)fonts {
     NSMenu *menu = [fontMenuItem submenu];
-    [menu removeItemAtIndex:0];
-    NSUInteger itemIndex = 0;
+    NSMenuItem *placeholderMenuItem = fontListPlaceholderMenuItem;
+    NSUInteger itemIndex = [menu indexOfItem:placeholderMenuItem];
+    [menu removeItemAtIndex:itemIndex];
     for(NSFont *font in fonts) {
         NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:[font displayName] action:@selector(setFontFromMenuItem:) keyEquivalent:@""];
         NSDictionary *attrs = @{
