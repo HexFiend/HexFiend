@@ -172,9 +172,16 @@
 }
 
 - (HFTemplateFile *)defaultTemplateForFileAtURL:(NSURL *)url {
+    if (!url) {
+        return nil;
+    }
     NSString *type;
     NSError *error;
-    [url getResourceValue:&type forKey:NSURLTypeIdentifierKey error:&error];
+    BOOL success = [url getResourceValue:&type forKey:NSURLTypeIdentifierKey error:&error];
+    if (!success) {
+        return nil;
+    }
+    
     NSString *extension = url.pathExtension;
 
     // Check for exact UTI/extension match first.
