@@ -191,8 +191,8 @@ static NSComparisonResult compareFontDisplayNames(NSFont *a, NSFont *b, void *un
 
 - (void)receiveFonts:(NSArray *)fonts {
     NSMenu *menu = [fontMenuItem submenu];
-    [menu removeItemAtIndex:0];
-    NSUInteger itemIndex = 0;
+    NSUInteger indexOfItemToAdd = [menu indexOfItem:fontListPlaceholderMenuItem];
+    [menu removeItem:fontListPlaceholderMenuItem];
     for(NSFont *font in fonts) {
         NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:[font displayName] action:@selector(setFontFromMenuItem:) keyEquivalent:@""];
         NSDictionary *attrs = @{
@@ -202,7 +202,7 @@ static NSComparisonResult compareFontDisplayNames(NSFont *a, NSFont *b, void *un
         [item setAttributedTitle:astr];
         [item setRepresentedObject:font];
         [item setTarget:self];
-        [menu insertItem:item atIndex:itemIndex++];
+        [menu insertItem:item atIndex:indexOfItemToAdd++];
         /* Validate the menu item in case the menu is currently open, so it gets the right check */
         [self validateMenuItem:item];
     }

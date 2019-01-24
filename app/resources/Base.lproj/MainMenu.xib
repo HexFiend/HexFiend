@@ -300,10 +300,6 @@
                 <menuItem title="Font" id="409">
                     <menu key="submenu" title="Font" id="410">
                         <items>
-                            <menuItem title="Building..." enabled="NO" id="411"/>
-                            <menuItem isSeparatorItem="YES" id="414">
-                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
-                            </menuItem>
                             <menuItem title="Size" id="416">
                                 <menu key="submenu" title="Size" id="417">
                                     <items>
@@ -403,6 +399,10 @@
                                     <action selector="showFontPanel:" target="-1" id="456"/>
                                 </connections>
                             </menuItem>
+                            <menuItem isSeparatorItem="YES" id="414">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Building font list…" enabled="NO" id="411"/>
                         </items>
                         <connections>
                             <outlet property="delegate" destination="403" id="412"/>
@@ -657,6 +657,7 @@
                 <outlet property="byteGroupingMenuItem" destination="488" id="U3v-Jk-eKP"/>
                 <outlet property="chooseStringEncoding" destination="680" id="k0D-Q1-3F6"/>
                 <outlet property="extendForwardsItem" destination="397" id="407"/>
+                <outlet property="fontListPlaceholderMenuItem" destination="411" id="LQp-2v-HO1"/>
                 <outlet property="fontMenuItem" destination="409" id="413"/>
                 <outlet property="noBookmarksMenuItem" destination="8Hb-Ga-nGj" id="cOn-oy-A85"/>
                 <outlet property="stringEncodingMenu" destination="684" id="716"/>
