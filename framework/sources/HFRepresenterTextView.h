@@ -24,12 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 /* The base class for HFTextRepresenter views - such as the hex or ASCII text view */
-@interface HFRepresenterTextView :
-#if TARGET_OS_IPHONE
-UIView
-#else
-NSView
-#endif
+@interface HFRepresenterTextView : HFView
 {
 @private;
     HFTextRepresenter *representer;
@@ -68,11 +63,7 @@ NSView
 
 - (HFTextRepresenter *)representer;
 
-#if TARGET_OS_IPHONE
-@property (nonatomic, copy) UIFont *font;
-#else
-@property (nonatomic, copy) NSFont *font;
-#endif
+@property (nonatomic, copy) HFFont *font;
 
 /* Set and get data.  setData: will invalidate the correct regions (perhaps none) */
 @property (nonatomic, copy) NSData *data;
@@ -103,11 +94,7 @@ NSView
 @property (nonatomic) NSUInteger bytesBetweenVerticalGuides;
 
 /* For font substitution.  An index of 0 means the default (base) font. */
-#if TARGET_OS_IPHONE
-- (UIFont *)fontAtSubstitutionIndex:(uint16_t)idx;
-#else
-- (NSFont *)fontAtSubstitutionIndex:(uint16_t)idx;
-#endif
+- (HFFont *)fontAtSubstitutionIndex:(uint16_t)idx;
 
 /* Uniformly "rounds" the byte range so that it contains an integer number of characters.  The algorithm is to "floor:" any character intersecting the min of the range are included, and any character extending beyond the end of the range is excluded. If both the min and the max are within a single character, then an empty range is returned. */
 - (NSRange)roundPartialByteRange:(NSRange)byteRange;
@@ -128,13 +115,8 @@ NSView
 - (CGRect)furthestRectOnEdge:(CGRectEdge)edge forRange:(NSRange)range;
 
 /* The background color for the line at the given index.  You may override this to return different colors.  You may return nil to draw no color in this line (and then the empty space color will appear) */
-#if TARGET_OS_IPHONE
-- (nullable UIColor *)backgroundColorForLine:(NSUInteger)line;
-- (UIColor *)backgroundColorForEmptySpace;
-#else
-- (nullable NSColor *)backgroundColorForLine:(NSUInteger)line;
-- (NSColor *)backgroundColorForEmptySpace;
-#endif
+- (nullable HFColor *)backgroundColorForLine:(NSUInteger)line;
+- (HFColor *)backgroundColorForEmptySpace;
 
 /* Defaults to 1, may override */
 - (NSUInteger)bytesPerCharacter;

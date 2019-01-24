@@ -707,11 +707,7 @@ enum LineCoverage_t {
     return bytesBetweenVerticalGuides;
 }
 
-#if TARGET_OS_IPHONE
-- (void)setFont:(UIFont *)val
-#else
-- (void)setFont:(NSFont *)val
-#endif
+- (void)setFont:(HFFont *)val
 {
     if (val != _font) {
         _font = val;
@@ -729,11 +725,7 @@ enum LineCoverage_t {
 }
 
 /* The base implementation does not support font substitution, so we require that it be the base font. */
-#if TARGET_OS_IPHONE
-- (UIFont *)fontAtSubstitutionIndex:(uint16_t)idx
-#else
-- (NSFont *)fontAtSubstitutionIndex:(uint16_t)idx
-#endif
+- (HFFont *)fontAtSubstitutionIndex:(uint16_t)idx
 {
     HFASSERT(idx == 0);
     USE(idx);
@@ -1422,12 +1414,7 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
             /* Check if this run is finished, or if we are using a substitution font */
             if (i == glyphCount || glyphs[i].fontIndex != runFontIndex || runFontIndex > 0) {
                 /* Draw this run */
-#if TARGET_OS_IPHONE
-                UIFont
-#else
-                NSFont
-#endif
-                *fontToUse = [self fontAtSubstitutionIndex:runFontIndex];
+                HFFont *fontToUse = [self fontAtSubstitutionIndex:runFontIndex];
 #if !TARGET_OS_IPHONE
                 [[fontToUse screenFont] set];
 #endif
