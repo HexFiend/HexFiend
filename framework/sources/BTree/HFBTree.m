@@ -7,7 +7,6 @@
 //
 
 #import "HFBTree.h"
-#include <malloc/malloc.h>
 
 #define FIXUP_LENGTHS 0
 
