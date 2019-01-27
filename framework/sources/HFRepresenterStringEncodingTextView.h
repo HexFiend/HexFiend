@@ -17,6 +17,7 @@
     /* Tier 1 data (computed synchronously on-demand) */
     BOOL tier1DataIsStale;
     struct HFGlyph_t replacementGlyph;
+    struct HFGlyph_t emptyGlyph;
     CGFloat glyphAdvancement;
 
     /* Tier 2 data (computed asynchronously on-demand) */

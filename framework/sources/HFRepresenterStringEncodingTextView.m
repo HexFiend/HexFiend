@@ -364,6 +364,13 @@ static void generateGlyphs(CTFontRef baseFont, NSMutableArray *fonts, struct HFG
     replacementGlyph.fontIndex = 0;
     replacementGlyph.glyph = glyph[0];
     
+    /* Generate emptyGlyph */
+    if (!getGlyphs(glyph, @" ", font)) {
+        [NSException raise:NSInternalInconsistencyException format:@"Unable to find space glyph for font %@", font];
+    }
+    emptyGlyph.fontIndex = 0;
+    emptyGlyph.glyph = glyph[0];
+
     /* We're no longer stale */
     tier1DataIsStale = NO;
 }
@@ -376,7 +383,7 @@ static void generateGlyphs(CTFontRef baseFont, NSMutableArray *fonts, struct HFG
         /* Our font cache is out of date.  Take the lock and update the cache. */
         NSArray *newFonts = nil;
         OSSpinLockLock(&glyphLoadLock);
-        HFASSERT(idx < [fonts count]);
+        //HFASSERT(idx < [fonts count]);
         newFonts = [fonts copy];
         OSSpinLockUnlock(&glyphLoadLock);
         
@@ -384,14 +391,14 @@ static void generateGlyphs(CTFontRef baseFont, NSMutableArray *fonts, struct HFG
         fontCache = newFonts;
         
         /* Now our cache should be up to date */
-        HFASSERT(idx < [fontCache count]);
+        //HFASSERT(idx < [fontCache count]);
     }
     return fontCache[idx];
 }
 
 /* Override of base class method in case we are 16 bit */
 - (NSUInteger)bytesPerCharacter {
-    return maxBytesPerChar;
+    return minBytesPerChar;
 }
 
 - (void)extractGlyphsForBytes:(const unsigned char *)bytes count:(NSUInteger)numBytes offsetIntoLine:(NSUInteger)offsetIntoLine intoArray:(struct HFGlyph_t *)glyphs advances:(CGSize *)advances resultingGlyphCount:(NSUInteger *)resultGlyphCount {
@@ -405,6 +412,72 @@ static void generateGlyphs(CTFontRef baseFont, NSMutableArray *fonts, struct HFG
     if (tier1DataIsStale) [self loadTier1Data];
     
     CGSize advance = CGSizeMake(glyphAdvancement, 0);
+
+    const BOOL isMultiByteEncoding = minBytesPerChar != maxBytesPerChar;
+    if (isMultiByteEncoding) {
+        *resultGlyphCount = 0;
+        NSUInteger bytesRemaining = numBytes;
+        size_t glyphIndex = 0;
+        const unsigned char *bytesPtr = bytes;
+        while (bytesRemaining > 0) {
+            BOOL gotCharacter = NO;
+            const uint8_t maxBytesAvailable = (uint8_t)(MIN(bytesRemaining, maxBytesPerChar));
+            for (uint8_t bytesPerChar = minBytesPerChar; bytesPerChar <= maxBytesAvailable && !gotCharacter; bytesPerChar++) {
+                NSString *mystr = [encoding stringFromBytes:bytesPtr length:bytesPerChar];
+                if (!mystr) {
+                    continue;
+                }
+                NEW_ARRAY(CGGlyph, strGlyphs, mystr.length);
+                CTFontRef baseFont = (__bridge CTFontRef)self.font;
+                CTFontRef font = CFAutorelease(CTFontCreateForString(baseFont, (__bridge CFStringRef)mystr, CFRangeMake(0, mystr.length)));
+                const BOOL gotGlyphs = getGlyphs(strGlyphs, mystr, font);
+                if (gotGlyphs) {
+                    const BOOL substitutionFont = !CFEqual(font, baseFont);
+                    NSUInteger fontIndex = [fonts indexOfObject:(__bridge id)font];
+                    if (fontIndex == NSNotFound) {
+                        [fonts addObject:(__bridge id)font];
+                        fontIndex = fonts.count - 1;
+                    }
+                    unsigned numGlyphsObtained = 0;
+                    for (size_t strGlyphIndex = 0; strGlyphIndex < mystr.length; strGlyphIndex++) {
+                        if (strGlyphs[strGlyphIndex] == 0) {
+                            break;
+                        }
+                        glyphs[glyphIndex].fontIndex = (HFGlyphFontIndex)fontIndex;
+                        glyphs[glyphIndex].glyph = strGlyphs[strGlyphIndex];
+                        advances[glyphIndex] = advance;
+                        (*resultGlyphCount)++;
+                        glyphIndex++;
+                        numGlyphsObtained++;
+                    }
+                    if (numGlyphsObtained == 1) {
+                        bytesRemaining -= bytesPerChar;
+                        bytesPtr += bytesPerChar;
+                        gotCharacter = YES;
+                        // fill in remaining glyphs
+                        for (uint8_t j = bytesPerChar; j > numGlyphsObtained; j--) {
+                            glyphs[glyphIndex] = emptyGlyph;
+                            advances[glyphIndex] = advance;
+                            (*resultGlyphCount)++;
+                            glyphIndex++;
+                        }
+                        break;
+                    }
+                }
+                FREE_ARRAY(strGlyphs);
+            }
+            if (!gotCharacter) {
+                bytesRemaining--;
+                bytesPtr++;
+                glyphs[glyphIndex] = replacementGlyph;
+                advances[glyphIndex] = advance;
+                (*resultGlyphCount)++;
+                glyphIndex++;
+            }
+        }
+        return;
+    }
+    
     NSMutableIndexSet *charactersToLoad = nil; //note: in UTF-32 this may have to move to an NSSet
     
     const uint8_t localBytesPerChar = maxBytesPerChar;
