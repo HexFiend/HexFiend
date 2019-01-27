@@ -177,17 +177,6 @@ static void generateGlyphs(CTFontRef baseFont, NSMutableArray *fonts, struct HFG
     }
 }
 
-static int compareGlyphFontIndexes(const void *p1, const void *p2) {
-    const struct HFGlyph_t *g1 = p1, *g2 = p2;
-    if (g1->fontIndex != g2->fontIndex) {
-        /* Prefer to sort by font index */
-        return (g1->fontIndex > g2->fontIndex) - (g2->fontIndex > g1->fontIndex);
-    } else {	
-        /* If they have equal font indexes, sort by glyph value */
-        return (g1->glyph > g2->glyph) - (g2->glyph > g1->glyph);
-    }
-}
-
 @implementation HFRepresenterStringEncodingTextView
 {
     HFStringEncoding *encoding;
