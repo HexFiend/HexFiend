@@ -377,11 +377,7 @@ static int compareGlyphFontIndexes(const void *p1, const void *p2) {
 }
 
 /* Override of base class method for font substitution */
-#if TARGET_OS_IPHONE
-- (UIFont *)fontAtSubstitutionIndex:(uint16_t)idx
-#else
-- (NSFont *)fontAtSubstitutionIndex:(uint16_t)idx
-#endif
+- (HFFont *)fontAtSubstitutionIndex:(uint16_t)idx
 {
     HFASSERT(idx != kHFGlyphFontIndexInvalid);
     if (idx >= [fontCache count]) {
