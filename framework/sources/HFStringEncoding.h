@@ -14,7 +14,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (readonly) NSString *name;
 @property (readonly) NSString *identifier;
-@property (readonly) uint8_t fixedBytesPerCharacter;
+@property (readonly) uint8_t minimumBytesPerCharacter;
+@property (readonly) uint8_t maximumBytesPerCharacter;
 @property (readonly) BOOL isASCII;
 
 - (NSString *)stringFromBytes:(const unsigned char *)bytes length:(NSUInteger)length;

@@ -202,7 +202,7 @@ static void generateGlyphs(CTFontRef baseFont, NSMutableArray *fonts, struct HFG
     /* Now generate our glyphs */
     NEW_ARRAY(NSUInteger, characters, charCount);
     [charactersToLoad getIndexes:characters maxCount:charCount inIndexRange:NULL];
-    generateGlyphs((__bridge CTFontRef)localFonts[0], localFonts, glyphs, bytesPerChar, self.encoding, characters, charCount, NULL);
+    generateGlyphs((__bridge CTFontRef)localFonts[0], localFonts, glyphs, maxBytesPerChar, self.encoding, characters, charCount, NULL);
     FREE_ARRAY(characters);
     
     /* Replace fonts.  Do this before we insert into the glyph trie, because the glyph trie references fonts that we're just now putting in the fonts array. */
@@ -270,7 +270,7 @@ static void generateGlyphs(CTFontRef baseFont, NSMutableArray *fonts, struct HFG
     [glyphLoader waitUntilAllOperationsAreFinished];
     requestedCancel = NO;
     HFGlyphTreeFree(&glyphTable);
-    HFGlyphTrieInitialize(&glyphTable, bytesPerChar);
+    HFGlyphTrieInitialize(&glyphTable, maxBytesPerChar);
     fonts = nil;
     fontCache = nil;
 }
@@ -288,7 +288,8 @@ static void generateGlyphs(CTFontRef baseFont, NSMutableArray *fonts, struct HFG
     HFASSERT([coder allowsKeyedCoding]);
     self = [super initWithCoder:coder];
     encoding = [coder decodeObjectForKey:@"HFStringEncoding"];
-    bytesPerChar = encoding.fixedBytesPerCharacter;
+    minBytesPerChar = encoding.minimumBytesPerCharacter;
+    maxBytesPerChar = encoding.maximumBytesPerCharacter;
     [self staleTieredProperties];
     return self;
 }
@@ -296,7 +297,8 @@ static void generateGlyphs(CTFontRef baseFont, NSMutableArray *fonts, struct HFG
 - (instancetype)initWithFrame:(CGRect)frameRect {
     self = [super initWithFrame:frameRect];
     encoding = [HFEncodingManager shared].ascii;
-    bytesPerChar = encoding.fixedBytesPerCharacter;
+    minBytesPerChar = encoding.minimumBytesPerCharacter;
+    maxBytesPerChar = encoding.maximumBytesPerCharacter;
     [self staleTieredProperties];
     return self;
 }
@@ -320,11 +322,13 @@ static void generateGlyphs(CTFontRef baseFont, NSMutableArray *fonts, struct HFG
         encoding = val;	
         
         /* Compute bytes per character */
-        bytesPerChar = encoding.fixedBytesPerCharacter;
-        HFASSERT(bytesPerChar > 0);
-        
+        minBytesPerChar = encoding.minimumBytesPerCharacter;
+        maxBytesPerChar = encoding.maximumBytesPerCharacter;
+        HFASSERT(minBytesPerChar > 0);
+        HFASSERT(maxBytesPerChar > 0);
+
         /* Ensure the tree knows about the new bytes per character */
-        HFGlyphTrieInitialize(&glyphTable, bytesPerChar);
+        HFGlyphTrieInitialize(&glyphTable, maxBytesPerChar);
 		
         /* Redraw ourselves with our new glyphs */
 #if TARGET_OS_IPHONE
@@ -387,7 +391,7 @@ static void generateGlyphs(CTFontRef baseFont, NSMutableArray *fonts, struct HFG
 
 /* Override of base class method in case we are 16 bit */
 - (NSUInteger)bytesPerCharacter {
-    return bytesPerChar;
+    return maxBytesPerChar;
 }
 
 - (void)extractGlyphsForBytes:(const unsigned char *)bytes count:(NSUInteger)numBytes offsetIntoLine:(NSUInteger)offsetIntoLine intoArray:(struct HFGlyph_t *)glyphs advances:(CGSize *)advances resultingGlyphCount:(NSUInteger *)resultGlyphCount {
@@ -403,7 +407,7 @@ static void generateGlyphs(CTFontRef baseFont, NSMutableArray *fonts, struct HFG
     CGSize advance = CGSizeMake(glyphAdvancement, 0);
     NSMutableIndexSet *charactersToLoad = nil; //note: in UTF-32 this may have to move to an NSSet
     
-    const uint8_t localBytesPerChar = bytesPerChar;
+    const uint8_t localBytesPerChar = maxBytesPerChar;
     NSUInteger charIndex, numChars = numBytes / localBytesPerChar, byteIndex = 0;
     for (charIndex = 0; charIndex < numChars; charIndex++) {
         NSUInteger character = -1;
@@ -413,6 +417,8 @@ static void generateGlyphs(CTFontRef baseFont, NSMutableArray *fonts, struct HFG
             character = *(const uint16_t *)(bytes + byteIndex);
         } else if (localBytesPerChar == 4) {
             character = *(const uint32_t *)(bytes + byteIndex);	    
+        } else {
+            HFASSERT(0);
         }
         
         struct HFGlyph_t glyph = HFGlyphTrieGet(&glyphTable, character);

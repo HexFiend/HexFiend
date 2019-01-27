@@ -33,7 +33,11 @@
     [coder encodeInteger:self.encoding forKey:@"encoding"];
 }
 
-- (uint8_t)fixedBytesPerCharacter {
+- (uint8_t)minimumBytesPerCharacter {
+    return HFStringEncodingCharacterLength(self.encoding);
+}
+
+- (uint8_t)maximumBytesPerCharacter {
     return HFStringEncodingCharacterLength(self.encoding);
 }
 

@@ -11,8 +11,9 @@
 
 @interface HFRepresenterStringEncodingTextView : HFRepresenterTextView {
     /* Tier 0 data (always up to date) */
-    uint8_t bytesPerChar;
-    
+    uint8_t minBytesPerChar;
+    uint8_t maxBytesPerChar;
+
     /* Tier 1 data (computed synchronously on-demand) */
     BOOL tier1DataIsStale;
     struct HFGlyph_t replacementGlyph;

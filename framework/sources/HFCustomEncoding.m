@@ -84,7 +84,11 @@
     [coder encodeObject:self.path forKey:@"path"];
 }
 
-- (uint8_t)fixedBytesPerCharacter {
+- (uint8_t)minimumBytesPerCharacter {
+    return 1;
+}
+
+- (uint8_t)maximumBytesPerCharacter {
     return 1;
 }
 
