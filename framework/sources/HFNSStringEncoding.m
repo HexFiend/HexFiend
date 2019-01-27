@@ -38,7 +38,11 @@
 }
 
 - (uint8_t)maximumBytesPerCharacter {
-    return HFStringEncodingCharacterLength(self.encoding);
+    switch (self.encoding) {
+        case NSUTF8StringEncoding: return 4;
+        case NSShiftJISStringEncoding: return 2;
+        default: return self.minimumBytesPerCharacter;
+    }
 }
 
 - (BOOL)isASCII {
