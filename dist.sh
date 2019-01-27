@@ -12,7 +12,7 @@
 # Once this is setup, you can run this script with your Developer ID certificate name,
 # and the email address for the App Store Connect account. For example:
 #
-# $ dist.sh "Developer ID Application: My Cool Company" "myself@coolcompany.com"
+# $ ./dist.sh "Developer ID Application: My Cool Company" "myself@coolcompany.com"
 
 set -e
 
