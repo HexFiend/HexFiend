@@ -568,11 +568,7 @@ enum LineCoverage_t {
     [self drawRangesIfNecessary:ranges withClip:clipRect color:[self textSelectionColor] context:ctx];
 }
 
-#if TARGET_OS_IPHONE
-- (void)drawRangesIfNecessary:(NSArray *)ranges withClip:(CGRect)clipRect color:(UIColor *)color context:(CGContextRef)ctx
-#else
-- (void)drawRangesIfNecessary:(NSArray *)ranges withClip:(CGRect)clipRect color:(NSColor *)color context:(CGContextRef)ctx
-#endif
+- (void)drawRangesIfNecessary:(NSArray *)ranges withClip:(CGRect)clipRect color:(HFColor *)color context:(CGContextRef)ctx
 {
     NSUInteger bytesPerLine = [self bytesPerLine];
     [color set];
@@ -921,20 +917,11 @@ enum LineCoverage_t {
     lineRect.origin.y -= [self verticalOffset] * [self lineHeight];
     NSUInteger drawableLineIndex = 0;
     NEW_ARRAY(CGRect, lineRects, maxLines);
-#if TARGET_OS_IPHONE
-    NEW_OBJ_ARRAY(UIColor*, lineColors, maxLines);
-#else
-    NEW_OBJ_ARRAY(NSColor*, lineColors, maxLines);
-#endif
+    NEW_OBJ_ARRAY(HFColor*, lineColors, maxLines);
     for (lineIndex = 0; lineIndex < maxLines; lineIndex++) {
         CGRect clippedLineRect = CGRectIntersection(lineRect, clip);
         if (! CGRectIsEmpty(clippedLineRect)) {
-#if TARGET_OS_IPHONE
-            UIColor
-#else
-            NSColor
-#endif
-            *lineColor = [self backgroundColorForLine:lineIndex];
+            HFColor *lineColor = [self backgroundColorForLine:lineIndex];
             if (lineColor) {
                 lineColors[drawableLineIndex] = lineColor;
                 lineRects[drawableLineIndex] = clippedLineRect;
@@ -1062,11 +1049,7 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
     UNIMPLEMENTED();
 }
 
-#if TARGET_OS_IPHONE
-- (UIColor *)colorForBookmark:(NSUInteger)bookmark withAlpha:(CGFloat)alpha
-#else
-- (NSColor *)colorForBookmark:(NSUInteger)bookmark withAlpha:(CGFloat)alpha
-#endif
+- (HFColor *)colorForBookmark:(NSUInteger)bookmark withAlpha:(CGFloat)alpha
 {
     // OMG this is so clever I'm going to die.  Reverse our bits and use that as a hue lookup into the color wheel.
     NSUInteger v = bookmark - 1; //because bookmarks are indexed from 1
@@ -1087,11 +1070,7 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
 #endif
 }
 
-#if TARGET_OS_IPHONE
-- (UIColor *)colorForBookmark:(NSUInteger)bookmark
-#else
-- (NSColor *)colorForBookmark:(NSUInteger)bookmark
-#endif
+- (HFColor *)colorForBookmark:(NSUInteger)bookmark
 {
     return [self colorForBookmark:bookmark withAlpha:(CGFloat).66];
 }

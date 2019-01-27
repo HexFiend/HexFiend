@@ -268,11 +268,7 @@ You create an HFController via <tt>[[HFController alloc] init]</tt>.  After that
 //@}
 
 /*! The current font. */
-#if TARGET_OS_IPHONE
-@property (nonatomic, copy) UIFont *font;
-#else
-@property (nonatomic, copy) NSFont *font;
-#endif
+@property (nonatomic, copy) HFFont *font;
 
 /*! The undo manager. If no undo manager is set, then undo is not supported. By default the undo manager is nil.
 */

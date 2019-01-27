@@ -10,11 +10,7 @@
 
 @interface HFColorRange : NSObject
 
-#if TARGET_OS_IPHONE
-@property (readwrite) UIColor *color;
-#else
-@property (readwrite) NSColor *color;
-#endif
+@property (readwrite) HFColor *color;
 @property (readwrite) HFRangeWrapper *range;
 
 @end

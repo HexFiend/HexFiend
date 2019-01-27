@@ -285,11 +285,7 @@ static inline Class preferredByteArrayClass(void) {
     return lineHeight;
 }
 
-#if TARGET_OS_IPHONE
-- (void)setFont:(UIFont *)val
-#else
-- (void)setFont:(NSFont *)val
-#endif
+- (void)setFont:(HFFont *)val
 {
     if (val != _font) {
         CGFloat priorLineHeight = [self lineHeight];

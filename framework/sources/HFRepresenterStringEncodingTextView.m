@@ -287,11 +287,7 @@ static int compareGlyphFontIndexes(const void *p1, const void *p2) {
     fontCache = nil;
 }
 
-#if TARGET_OS_IPHONE
-- (void)setFont:(UIFont *)font
-#else
-- (void)setFont:(NSFont *)font
-#endif
+- (void)setFont:(HFFont *)font
 {
     [self staleTieredProperties];
     /* fonts is preloaded with our one font */

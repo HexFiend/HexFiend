@@ -16,11 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface HFRepresenterTextViewCallout : NSObject
 
 @property(nonatomic) NSInteger byteOffset;
-#if TARGET_OS_IPHONE
-@property(nullable, nonatomic, copy) UIColor *color;
-#else
-@property(nullable, nonatomic, copy) NSColor *color;
-#endif
+@property(nullable, nonatomic, copy) HFColor *color;
 @property(nullable, nonatomic, copy) NSString *label;
 @property(nullable, nonatomic, retain) id representedObject;
 @property(readonly) CGRect rect;
