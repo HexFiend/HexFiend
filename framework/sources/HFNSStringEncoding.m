@@ -38,9 +38,9 @@
 }
 
 - (uint8_t)maximumBytesPerCharacter {
-    switch (self.encoding) {
-        case NSUTF8StringEncoding: return 4;
-        case NSShiftJISStringEncoding: return 2;
+    switch (CFStringConvertNSStringEncodingToEncoding(self.encoding)) {
+        case kCFStringEncodingUTF8: return 4;
+        case kCFStringEncodingShiftJIS: return 2;
         default: return self.minimumBytesPerCharacter;
     }
 }
