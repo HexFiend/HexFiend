@@ -77,8 +77,10 @@
     /* Tell the front document (if any) and the app delegate */
     HFStringEncoding *encoding = activeEncodings[row].encoding;
     BaseDataDocument *document = [[NSDocumentController sharedDocumentController] currentDocument];
-    HFASSERT([document isKindOfClass:[BaseDataDocument class]]);
-    [document setStringEncoding:encoding];
+    if (document) {
+        HFASSERT([document isKindOfClass:[BaseDataDocument class]]);
+        [document setStringEncoding:encoding];
+    }
     [(AppDelegate*)[NSApp delegate] setStringEncoding:encoding];
 }
 
