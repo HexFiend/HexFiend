@@ -22,11 +22,7 @@
 - (void)generateGlyphTableForFont:(HFFont *)_font {
     const size_t numGlyphs = sizeof(_table) / sizeof(_table[0]);
     const UniChar hexchars[numGlyphs] = {'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F',' '/* Plus a space char at the end for null bytes. */};
-#if TARGET_OS_IPHONE
     HFFont *font = _font;
-#else
-    HFFont *font = _font.screenFont;
-#endif
     
     CTFontRef ctfont = (__bridge CTFontRef)font;
     bool t = CTFontGetGlyphsForCharacters(ctfont, hexchars, _table, numGlyphs);

@@ -15,7 +15,6 @@ NSString *const HFLineCountingRepresenterCycledLineNumberFormat = @"HFLineCounti
 /* Returns the maximum advance in points for a hexadecimal digit for the given font (interpreted as a screen font) */
 static CGFloat maximumDigitAdvanceForFont(NSFont *font) {
     REQUIRE_NOT_NULL(font);
-    font = [font screenFont];
     CGFloat maxDigitAdvance = 0;
     NSTextStorage *storage = [[NSTextStorage alloc] init];
     NSLayoutManager *manager = [[NSLayoutManager alloc] init];
