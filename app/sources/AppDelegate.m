@@ -103,6 +103,8 @@
         NSISOLatin2StringEncoding,
         NSUTF16LittleEndianStringEncoding,
         NSUTF16BigEndianStringEncoding,
+        NSUTF8StringEncoding,
+        CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingShiftJIS),
     };
     HFEncodingManager *encodingManager = [HFEncodingManager shared];
     for (size_t i = 0; i < sizeof(defaultEncodings) / sizeof(defaultEncodings[0]); ++i) {
