@@ -432,7 +432,6 @@ static void generateGlyphs(CTFontRef baseFont, NSMutableArray *fonts, struct HFG
                 CTFontRef font = CFAutorelease(CTFontCreateForString(baseFont, (__bridge CFStringRef)mystr, CFRangeMake(0, mystr.length)));
                 const BOOL gotGlyphs = getGlyphs(strGlyphs, mystr, font);
                 if (gotGlyphs) {
-                    const BOOL substitutionFont = !CFEqual(font, baseFont);
                     NSUInteger fontIndex = [fonts indexOfObject:(__bridge id)font];
                     if (fontIndex == NSNotFound) {
                         [fonts addObject:(__bridge id)font];
