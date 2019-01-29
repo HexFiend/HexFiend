@@ -351,17 +351,7 @@ static void generateGlyphs(CTFontRef baseFont, NSMutableArray *fonts, struct HFG
 
     /* Generate replacementGlyph */
     CGGlyph glyph[1];
-    BOOL foundReplacement = NO;
-    if (! foundReplacement) foundReplacement = getGlyphs(glyph, @".", font);
-    if (! foundReplacement) foundReplacement = getGlyphs(glyph, @"*", font);
-    if (! foundReplacement) foundReplacement = getGlyphs(glyph, @"!", font);
-    if (! foundReplacement) {
-        /* Really we should just fall back to another font in this case */
-        [NSException raise:NSInternalInconsistencyException format:@"Unable to find replacement glyph for font %@", font];
-    }
-    replacementGlyph.fontIndex = 0;
-    replacementGlyph.glyph = glyph[0];
-    
+
     /* Generate emptyGlyph */
     if (!getGlyphs(glyph, @" ", font)) {
         [NSException raise:NSInternalInconsistencyException format:@"Unable to find space glyph for font %@", font];
@@ -479,7 +469,7 @@ static void generateGlyphs(CTFontRef baseFont, NSMutableArray *fonts, struct HFG
             if (!gotCharacter) {
                 bytesRemaining--;
                 bytesPtr++;
-                glyphs[glyphIndex] = replacementGlyph;
+                glyphs[glyphIndex] = emptyGlyph;
                 advances[glyphIndex] = advance;
                 (*resultGlyphCount)++;
                 glyphIndex++;
@@ -509,10 +499,10 @@ static void generateGlyphs(CTFontRef baseFont, NSMutableArray *fonts, struct HFG
             /* Unloaded glyph, so load it */
             if (! charactersToLoad) charactersToLoad = [[NSMutableIndexSet alloc] init];
             [charactersToLoad addIndex:character];
-            glyph = replacementGlyph;	    
+            glyph = emptyGlyph;
         } else if (glyph.glyph == (uint16_t)-1 && glyph.fontIndex == kHFGlyphFontIndexInvalid) {
             /* Missing glyph, so ignore it */
-            glyph = replacementGlyph;
+            glyph = emptyGlyph;
         } else {
             /* Valid glyph */
         }
