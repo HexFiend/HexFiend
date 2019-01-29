@@ -429,13 +429,13 @@ static void generateGlyphs(CTFontRef baseFont, NSMutableArray *fonts, struct HFG
                 CTFontRef baseFont = (__bridge CTFontRef)self.font;
                 CTFontRef font = CFAutorelease(CTFontCreateForString(baseFont, (__bridge CFStringRef)mystr, CFRangeMake(0, mystr.length)));
                 const BOOL gotGlyphs = getGlyphs(strGlyphs, mystr, font);
+                unsigned numGlyphsObtained = 0;
                 if (gotGlyphs) {
                     NSUInteger fontIndex = [fonts indexOfObject:(__bridge id)font];
                     if (fontIndex == NSNotFound) {
                         [fonts addObject:(__bridge id)font];
                         fontIndex = fonts.count - 1;
                     }
-                    unsigned numGlyphsObtained = 0;
                     for (size_t strGlyphIndex = 0; strGlyphIndex < mystr.length; strGlyphIndex++) {
                         if (strGlyphs[strGlyphIndex] == 0) {
                             break;
@@ -447,21 +447,21 @@ static void generateGlyphs(CTFontRef baseFont, NSMutableArray *fonts, struct HFG
                         glyphIndex++;
                         numGlyphsObtained++;
                     }
-                    if (numGlyphsObtained == 1) {
-                        bytesRemaining -= bytesPerChar;
-                        bytesPtr += bytesPerChar;
-                        gotCharacter = YES;
-                        // fill in remaining glyphs
-                        for (uint8_t j = bytesPerChar; j > numGlyphsObtained; j--) {
-                            glyphs[glyphIndex] = emptyGlyph;
-                            advances[glyphIndex] = advance;
-                            (*resultGlyphCount)++;
-                            glyphIndex++;
-                        }
-                        break;
-                    }
                 }
                 FREE_ARRAY(strGlyphs);
+                if (numGlyphsObtained == 1) {
+                    bytesRemaining -= bytesPerChar;
+                    bytesPtr += bytesPerChar;
+                    gotCharacter = YES;
+                    // fill in remaining glyphs
+                    for (uint8_t j = bytesPerChar; j > numGlyphsObtained; j--) {
+                        glyphs[glyphIndex] = emptyGlyph;
+                        advances[glyphIndex] = advance;
+                        (*resultGlyphCount)++;
+                        glyphIndex++;
+                    }
+                    break;
+                }
             }
             if (!gotCharacter) {
                 bytesRemaining--;
