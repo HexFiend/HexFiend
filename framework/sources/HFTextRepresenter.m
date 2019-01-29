@@ -25,19 +25,16 @@
 }
 
 + (NSArray<HFColor *> *)defaultRowBackgroundColors {
-#if TARGET_OS_IPHONE
-    UIColor *color1 = [UIColor colorWithWhite:1.0 alpha:1.0];
-    UIColor *color2 = [UIColor colorWithRed:.87 green:.89 blue:1. alpha:1.];
-#else
+#if !TARGET_OS_IPHONE
     if (@available(macOS 10.14, *)) {
-        if (HFDarkModeEnabled()) {
-            return [NSColor alternatingContentBackgroundColors];
-        }
+        return NSColor.alternatingContentBackgroundColors;
     }
-    NSColor *color1 = [NSColor colorWithCalibratedWhite:1.0 alpha:1.0];
-    NSColor *color2 = [NSColor colorWithCalibratedRed:.87 green:.89 blue:1. alpha:1.];
 #endif
-    return @[color1, color2];
+    // these colors match NSColor.alternatingContentBackgroundColors
+    return @[
+        HFColorWithWhite(1.0, 1.0),
+        HFColorWithWhite(0.95f, 1.0),
+    ];
 }
 
 - (NSArray<HFColor *> *)rowBackgroundColors {
