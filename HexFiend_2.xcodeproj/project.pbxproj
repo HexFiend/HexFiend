@@ -2417,7 +2417,6 @@
 				INFOPLIST_PREFIX_HEADER = version.h;
 				INFOPLIST_PREPROCESS = YES;
 				INSTALL_PATH = "@loader_path/../Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_DYLIB_INSTALL_NAME = "@loader_path/../Frameworks/HexFiend.framework/Versions/A/HexFiend";
 				OTHER_CFLAGS = (
 					"-fblocks",
@@ -2455,7 +2454,6 @@
 				INFOPLIST_PREFIX_HEADER = version.h;
 				INFOPLIST_PREPROCESS = YES;
 				INSTALL_PATH = "@loader_path/../Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_DYLIB_INSTALL_NAME = "@loader_path/../Frameworks/HexFiend.framework/Versions/A/HexFiend";
 				OTHER_CFLAGS = (
 					"-fblocks",
@@ -2493,7 +2491,6 @@
 				INFOPLIST_PREFIX_HEADER = version.h;
 				INFOPLIST_PREPROCESS = YES;
 				INSTALL_PATH = "@loader_path/../Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_DYLIB_INSTALL_NAME = "@loader_path/../Frameworks/HexFiend.framework/Versions/A/HexFiend";
 				OTHER_CFLAGS = (
 					"-fblocks",
@@ -2530,7 +2527,6 @@
 				INFOPLIST_PREFIX_HEADER = version.h;
 				INFOPLIST_PREPROCESS = YES;
 				INSTALL_PATH = "@loader_path/../Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_DYLIB_INSTALL_NAME = "@loader_path/../Frameworks/HexFiend.framework/Versions/A/HexFiend";
 				OTHER_CFLAGS = (
 					"-fblocks",
@@ -2568,7 +2564,6 @@
 				INFOPLIST_PREFIX_HEADER = version.h;
 				INFOPLIST_PREPROCESS = YES;
 				INSTALL_PATH = "@loader_path/../Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_DYLIB_INSTALL_NAME = "@loader_path/../Frameworks/HexFiend.framework/Versions/A/HexFiend";
 				OTHER_CFLAGS = (
 					"-fblocks",
@@ -2606,7 +2601,6 @@
 				INFOPLIST_PREFIX_HEADER = version.h;
 				INFOPLIST_PREPROCESS = YES;
 				INSTALL_PATH = "@loader_path/../Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_DYLIB_INSTALL_NAME = "@loader_path/../Frameworks/HexFiend.framework/Versions/A/HexFiend";
 				OTHER_CFLAGS = (
 					"-fblocks",
@@ -2644,7 +2638,6 @@
 				INFOPLIST_PREFIX_HEADER = version.h;
 				INFOPLIST_PREPROCESS = YES;
 				INSTALL_PATH = "@loader_path/../Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_DYLIB_INSTALL_NAME = "@loader_path/../Frameworks/HexFiend.framework/Versions/A/HexFiend";
 				OTHER_CFLAGS = (
 					"-fblocks",
@@ -2728,7 +2721,7 @@
 				GCC_WARN_UNUSED_VALUE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INSTALL_PATH = /Applications;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				OTHER_CFLAGS = "";
 				SDKROOT = macosx;
@@ -2902,7 +2895,7 @@
 				GCC_WARN_UNUSED_VALUE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INSTALL_PATH = /Applications;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "";
@@ -3073,7 +3066,7 @@
 				GCC_WARN_UNUSED_VALUE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INSTALL_PATH = /Applications;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				OTHER_CFLAGS = "";
 				SDKROOT = macosx;
@@ -3260,7 +3253,7 @@
 				GCC_WARN_UNUSED_VALUE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INSTALL_PATH = /Applications;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				OTHER_CFLAGS = (
 					"-DMacAppStore=1",
@@ -3463,7 +3456,7 @@
 				GCC_WARN_UNUSED_VALUE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INSTALL_PATH = /Applications;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = (
@@ -3675,7 +3668,7 @@
 				GCC_WARN_UNUSED_VALUE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INSTALL_PATH = /Applications;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "";
@@ -3847,7 +3840,7 @@
 				GCC_WARN_UNUSED_VALUE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INSTALL_PATH = /Applications;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "";
