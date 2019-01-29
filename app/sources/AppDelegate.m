@@ -96,7 +96,7 @@
 }
 
 - (void)buildEncodingMenu {
-    NSStringEncoding defaultEncodings[] = {
+    const NSStringEncoding defaultEncodings[] = {
         NSASCIIStringEncoding,
         NSMacOSRomanStringEncoding,
         NSISOLatin1StringEncoding,
