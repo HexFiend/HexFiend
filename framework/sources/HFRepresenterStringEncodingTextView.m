@@ -419,7 +419,9 @@ static void generateGlyphs(CTFontRef baseFont, NSMutableArray *fonts, struct HFG
         const unsigned char *bytesPtr = bytes;
         while (bytesRemaining > 0) {
             BOOL gotCharacter = NO;
-            const uint8_t maxBytesAvailable = (uint8_t)(MIN(bytesRemaining, maxBytesPerChar));
+            const unsigned long long dataRemainingBytes = (((unsigned char *)self.data.bytes) + self.data.length) - bytesPtr;
+            const uint8_t maxBytesAvailable = (uint8_t)(MIN(dataRemainingBytes, (unsigned long long)maxBytesPerChar));
+            const uint8_t originalMaxBytesAvailable = (uint8_t)(MIN(bytesRemaining, maxBytesPerChar));
             for (uint8_t bytesPerChar = minBytesPerChar; bytesPerChar <= maxBytesAvailable && !gotCharacter; bytesPerChar++) {
                 NSString *mystr = [encoding stringFromBytes:bytesPtr length:bytesPerChar];
                 if (!mystr) {
@@ -450,11 +452,13 @@ static void generateGlyphs(CTFontRef baseFont, NSMutableArray *fonts, struct HFG
                 }
                 FREE_ARRAY(strGlyphs);
                 if (numGlyphsObtained == 1) {
-                    bytesRemaining -= bytesPerChar;
-                    bytesPtr += bytesPerChar;
+                    const uint8_t trueBytesPerChar = (uint8_t)MIN(bytesPerChar, originalMaxBytesAvailable);
+                    const uint8_t extraBytesUsed = bytesPerChar - trueBytesPerChar;
+                    bytesRemaining -= trueBytesPerChar;
+                    bytesPtr += trueBytesPerChar;
                     gotCharacter = YES;
                     // fill in remaining glyphs
-                    for (uint8_t j = bytesPerChar; j > numGlyphsObtained; j--) {
+                    for (uint8_t j = trueBytesPerChar; j > numGlyphsObtained; j--) {
                         glyphs[glyphIndex] = emptyGlyph;
                         advances[glyphIndex] = advance;
                         (*resultGlyphCount)++;
