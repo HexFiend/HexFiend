@@ -413,8 +413,8 @@ static void generateGlyphs(CTFontRef baseFont, NSMutableArray *fonts, struct HFG
     
     CGSize advance = CGSizeMake(glyphAdvancement, 0);
 
-    const BOOL isMultiByteEncoding = minBytesPerChar != maxBytesPerChar;
-    if (isMultiByteEncoding) {
+    const BOOL isVariableByteEncoding = minBytesPerChar != maxBytesPerChar;
+    if (isVariableByteEncoding) {
         *resultGlyphCount = 0;
         NSUInteger bytesRemaining = numBytes;
         size_t glyphIndex = 0;
