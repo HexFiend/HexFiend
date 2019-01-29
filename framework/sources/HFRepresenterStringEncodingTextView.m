@@ -271,8 +271,6 @@ static void generateGlyphs(CTFontRef baseFont, NSMutableArray *fonts, struct HFG
     requestedCancel = NO;
     HFGlyphTreeFree(&glyphTable);
     HFGlyphTrieInitialize(&glyphTable, maxBytesPerChar);
-    fonts = nil;
-    fontCache = nil;
 }
 
 - (void)setFont:(HFFont *)font
