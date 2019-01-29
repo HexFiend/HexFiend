@@ -1439,17 +1439,18 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
 }
 
 
-- (void)extractGlyphsForBytes:(const unsigned char *)bytes count:(NSUInteger)numBytes offsetIntoLine:(NSUInteger)offsetIntoLine intoArray:(struct HFGlyph_t *)glyphs advances:(CGSize *)advances resultingGlyphCount:(NSUInteger *)resultGlyphCount {
+- (void)extractGlyphsForBytes:(const unsigned char *)bytes count:(NSUInteger)numBytes offsetIntoLine:(NSUInteger)offsetIntoLine intoArray:(struct HFGlyph_t *)glyphs advances:(CGSize *)advances resultingGlyphCount:(NSUInteger *)resultGlyphCount numberOfExtraWrappingBytesUsed:(NSUInteger *)numberOfExtraWrappingBytesUsed {
     USE(bytes);
     USE(numBytes);
     USE(offsetIntoLine);
     USE(glyphs);
     USE(advances);
     USE(resultGlyphCount);
+    USE(numberOfExtraWrappingBytesUsed);
     UNIMPLEMENTED_VOID();
 }
 
-- (void)extractGlyphsForBytes:(const unsigned char *)bytePtr range:(NSRange)byteRange intoArray:(struct HFGlyph_t *)glyphs advances:(CGSize *)advances withInclusionRanges:(NSArray *)restrictingToRanges initialTextOffset:(CGFloat *)initialTextOffset resultingGlyphCount:(NSUInteger *)resultingGlyphCount {
+- (void)extractGlyphsForBytes:(const unsigned char *)bytePtr range:(NSRange)byteRange intoArray:(struct HFGlyph_t *)glyphs advances:(CGSize *)advances withInclusionRanges:(NSArray *)restrictingToRanges initialTextOffset:(CGFloat *)initialTextOffset resultingGlyphCount:(NSUInteger *)resultingGlyphCount numberOfExtraWrappingBytesUsed:(NSUInteger *)numberOfExtraWrappingBytesUsed {
     NSParameterAssert(glyphs != NULL && advances != NULL && restrictingToRanges != nil && bytePtr != NULL);
     NSRange priorIntersectionRange = {NSUIntegerMax, NSUIntegerMax};
     NSUInteger glyphBufferIndex = 0;
@@ -1483,7 +1484,7 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
         }
         
         NSUInteger glyphCountForRange = NSUIntegerMax;
-        [self extractGlyphsForBytes:bytePtr + intersectionRange.location count:intersectionRange.length offsetIntoLine:offsetIntoLine intoArray:glyphs + glyphBufferIndex advances:advances + glyphBufferIndex resultingGlyphCount:&glyphCountForRange];
+        [self extractGlyphsForBytes:bytePtr + intersectionRange.location count:intersectionRange.length offsetIntoLine:offsetIntoLine intoArray:glyphs + glyphBufferIndex advances:advances + glyphBufferIndex resultingGlyphCount:&glyphCountForRange numberOfExtraWrappingBytesUsed:numberOfExtraWrappingBytesUsed];
         HFASSERT(glyphCountForRange != NSUIntegerMax);
         glyphBufferIndex += glyphCountForRange;
         priorIntersectionRange = intersectionRange;
@@ -1518,6 +1519,7 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
     const NSUInteger maxGlyphCount = [self maximumGlyphCountForByteCount:bytesPerLine];
     NEW_ARRAY(struct HFGlyph_t, glyphs, maxGlyphCount);
     NEW_ARRAY(CGSize, advances, maxGlyphCount);
+    NSUInteger numberOfExtraWrappingBytesUsed = 0;
     for (lineStartIndex = 0; lineStartIndex < byteCount; lineStartIndex += bytesPerLine) {
         if (lineStartIndex > 0) {
             textTransform.ty += lineHeight;
@@ -1542,10 +1544,10 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
                     NSUInteger resultGlyphCount = 0;
                     CGFloat initialTextOffset = 0;
                     if (restrictingToRanges == nil) {
-                        [self extractGlyphsForBytes:bytePtr + characterRange.location count:characterRange.length offsetIntoLine:byteIndexInLine intoArray:glyphs advances:advances resultingGlyphCount:&resultGlyphCount];
+                        [self extractGlyphsForBytes:bytePtr + characterRange.location count:characterRange.length offsetIntoLine:byteIndexInLine intoArray:glyphs advances:advances resultingGlyphCount:&resultGlyphCount numberOfExtraWrappingBytesUsed:&numberOfExtraWrappingBytesUsed];
                     }
                     else {
-                        [self extractGlyphsForBytes:bytePtr range:NSMakeRange(byteIndex, bytesInThisRun) intoArray:glyphs advances:advances withInclusionRanges:restrictingToRanges initialTextOffset:&initialTextOffset resultingGlyphCount:&resultGlyphCount];
+                        [self extractGlyphsForBytes:bytePtr range:NSMakeRange(byteIndex, bytesInThisRun) intoArray:glyphs advances:advances withInclusionRanges:restrictingToRanges initialTextOffset:&initialTextOffset resultingGlyphCount:&resultGlyphCount numberOfExtraWrappingBytesUsed:&numberOfExtraWrappingBytesUsed];
                     }
                     HFASSERT(resultGlyphCount <= maxGlyphCount);
                     

@@ -30,7 +30,7 @@
 
 //no need for encodeWithCoder
 
-- (void)extractGlyphsForBytes:(const unsigned char *)bytes count:(NSUInteger)numBytes offsetIntoLine:(NSUInteger)offsetIntoLine intoArray:(struct HFGlyph_t *)glyphs advances:(CGSize *)advances resultingGlyphCount:(NSUInteger *)resultGlyphCount {
+- (void)extractGlyphsForBytes:(const unsigned char *)bytes count:(NSUInteger)numBytes offsetIntoLine:(NSUInteger)offsetIntoLine intoArray:(struct HFGlyph_t *)glyphs advances:(CGSize *)advances resultingGlyphCount:(NSUInteger *)resultGlyphCount numberOfExtraWrappingBytesUsed:(NSUInteger * __unused)numberOfExtraWrappingBytesUsed {
     HFASSERT(bytes != NULL);
     HFASSERT(glyphs != NULL);
     HFASSERT(numBytes <= NSUIntegerMax);

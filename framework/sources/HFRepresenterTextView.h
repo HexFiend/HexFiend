@@ -100,9 +100,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSRange)roundPartialByteRange:(NSRange)byteRange;
 
 /* Must be overridden */
-- (void)extractGlyphsForBytes:(const unsigned char *)bytes count:(NSUInteger)numBytes offsetIntoLine:(NSUInteger)offsetIntoLine intoArray:(struct HFGlyph_t *)glyphs advances:(CGSize *)advances resultingGlyphCount:(NSUInteger *)resultGlyphCount;
+- (void)extractGlyphsForBytes:(const unsigned char *)bytes count:(NSUInteger)numBytes offsetIntoLine:(NSUInteger)offsetIntoLine intoArray:(struct HFGlyph_t *)glyphs advances:(CGSize *)advances resultingGlyphCount:(NSUInteger *)resultGlyphCount numberOfExtraWrappingBytesUsed:(NSUInteger *)numberOfExtraWrappingBytesUsed;
 
-- (void)extractGlyphsForBytes:(const unsigned char *)bytePtr range:(NSRange)byteRange intoArray:(struct HFGlyph_t *)glyphs advances:(CGSize *)advances withInclusionRanges:(NSArray *)restrictingToRanges initialTextOffset:(CGFloat *)initialTextOffset resultingGlyphCount:(nullable NSUInteger *)resultingGlyphCount;
+- (void)extractGlyphsForBytes:(const unsigned char *)bytePtr range:(NSRange)byteRange intoArray:(struct HFGlyph_t *)glyphs advances:(CGSize *)advances withInclusionRanges:(NSArray *)restrictingToRanges initialTextOffset:(CGFloat *)initialTextOffset resultingGlyphCount:(nullable NSUInteger *)resultingGlyphCount numberOfExtraWrappingBytesUsed:(NSUInteger *)numberOfExtraWrappingBytesUsed;
 
 /* Must be overridden - returns the max number of glyphs for a given number of bytes */
 - (NSUInteger)maximumGlyphCountForByteCount:(NSUInteger)byteCount;

@@ -399,7 +399,7 @@ static void generateGlyphs(CTFontRef baseFont, NSMutableArray *fonts, struct HFG
     return minBytesPerChar;
 }
 
-- (void)extractGlyphsForBytes:(const unsigned char *)bytes count:(NSUInteger)numBytes offsetIntoLine:(NSUInteger)offsetIntoLine intoArray:(struct HFGlyph_t *)glyphs advances:(CGSize *)advances resultingGlyphCount:(NSUInteger *)resultGlyphCount {
+- (void)extractGlyphsForBytes:(const unsigned char *)bytes count:(NSUInteger)numBytes offsetIntoLine:(NSUInteger)offsetIntoLine intoArray:(struct HFGlyph_t *)glyphs advances:(CGSize *)advances resultingGlyphCount:(NSUInteger *)resultGlyphCount numberOfExtraWrappingBytesUsed:(NSUInteger *)numberOfExtraWrappingBytesUsed {
     HFASSERT(bytes != NULL);
     HFASSERT(glyphs != NULL);
     HFASSERT(resultGlyphCount != NULL);
@@ -417,6 +417,15 @@ static void generateGlyphs(CTFontRef baseFont, NSMutableArray *fonts, struct HFG
         NSUInteger bytesRemaining = numBytes;
         size_t glyphIndex = 0;
         const unsigned char *bytesPtr = bytes;
+        for (NSUInteger i = 0; i < *numberOfExtraWrappingBytesUsed && bytesRemaining > 0; i++) {
+            bytesRemaining--;
+            bytesPtr++;
+            glyphs[glyphIndex] = emptyGlyph;
+            advances[glyphIndex] = advance;
+            (*resultGlyphCount)++;
+            glyphIndex++;
+        }
+        *numberOfExtraWrappingBytesUsed = 0;
         while (bytesRemaining > 0) {
             BOOL gotCharacter = NO;
             const unsigned long long dataRemainingBytes = (((unsigned char *)self.data.bytes) + self.data.length) - bytesPtr;
@@ -453,7 +462,7 @@ static void generateGlyphs(CTFontRef baseFont, NSMutableArray *fonts, struct HFG
                 FREE_ARRAY(strGlyphs);
                 if (numGlyphsObtained == 1) {
                     const uint8_t trueBytesPerChar = (uint8_t)MIN(bytesPerChar, originalMaxBytesAvailable);
-                    const uint8_t extraBytesUsed = bytesPerChar - trueBytesPerChar;
+                    *numberOfExtraWrappingBytesUsed = bytesPerChar - trueBytesPerChar;
                     bytesRemaining -= trueBytesPerChar;
                     bytesPtr += trueBytesPerChar;
                     gotCharacter = YES;
