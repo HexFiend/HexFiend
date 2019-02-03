@@ -137,9 +137,9 @@
     static NSRegularExpression *lineRegex;
     static dispatch_once_t lineOnceToken;
     dispatch_once(&lineOnceToken, ^{
-        NSString *regexString = @"^\\h*#\\s*HexFiend\\h+Types:\\h*([\\w.-]+(?:[\\h,]+[\\w.-]+)*)\\h*$";
+        NSString *regexString = @"^\\h*#\\h*+types:\\h*([\\w.-]+(?:[\\h,]+[\\w.-]+)*)\\h*$";
         NSError *error;
-        lineRegex = [NSRegularExpression regularExpressionWithPattern:regexString options:NSRegularExpressionAnchorsMatchLines error:&error];
+        lineRegex = [NSRegularExpression regularExpressionWithPattern:regexString options:NSRegularExpressionAnchorsMatchLines | NSRegularExpressionCaseInsensitive error:&error];
         if (!lineRegex)
             NSLog(@"%@", error);
     });
