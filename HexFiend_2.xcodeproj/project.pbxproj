@@ -66,6 +66,7 @@
 		A53B7D1A1E9185CF00CA3977 /* HFTestHashing.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D149300D8A37580018296B /* HFTestHashing.m */; };
 		A550A7191F7877F8001C79C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = A550A7181F7877F8001C79C7 /* main.m */; };
 		A550A7201F787831001C79C7 /* hexf in Resources */ = {isa = PBXBuildFile; fileRef = A550A7161F7877F8001C79C7 /* hexf */; };
+		A5589AC92206CFCC000293A4 /* HFExtendedAttributes.m in Sources */ = {isa = PBXBuildFile; fileRef = A5589AC82206CFCC000293A4 /* HFExtendedAttributes.m */; };
 		A5628AAB21D8561D00911ABB /* Tcl_ParseArgsObjv.c in Sources */ = {isa = PBXBuildFile; fileRef = A5628AA921D8561C00911ABB /* Tcl_ParseArgsObjv.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		A567D7D520DA1D7C00F7C0A4 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A567D7D420DA1D7C00F7C0A4 /* Sparkle.framework */; };
 		A567D7D620DA1D9100F7C0A4 /* Sparkle.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = A567D7D420DA1D7C00F7C0A4 /* Sparkle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -428,6 +429,8 @@
 		A554E0D920DF2CD6001B4C48 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/Preferences.xib; sourceTree = "<group>"; };
 		A554E0DA20DF2CD6001B4C48 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/BinaryTemplateController.xib; sourceTree = "<group>"; };
 		A554E0DB20DF2CD7001B4C48 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		A5589AC72206CFCC000293A4 /* HFExtendedAttributes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFExtendedAttributes.h; path = app/sources/HFExtendedAttributes.h; sourceTree = "<group>"; };
+		A5589AC82206CFCC000293A4 /* HFExtendedAttributes.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFExtendedAttributes.m; path = app/sources/HFExtendedAttributes.m; sourceTree = "<group>"; };
 		A5628AA921D8561C00911ABB /* Tcl_ParseArgsObjv.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Tcl_ParseArgsObjv.c; path = app/sources/Tcl_ParseArgsObjv.c; sourceTree = "<group>"; };
 		A5628AAA21D8561C00911ABB /* Tcl_ParseArgsObjv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Tcl_ParseArgsObjv.h; path = app/sources/Tcl_ParseArgsObjv.h; sourceTree = "<group>"; };
 		A567D7D420DA1D7C00F7C0A4 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Sparkle.framework; path = vendor/Sparkle.framework; sourceTree = "<group>"; };
@@ -843,6 +846,8 @@
 				D0CBB23F128F78C200989C15 /* StretchableProgressIndicator.m */,
 				A572614821D8A51B00970A0E /* HFPrompt.h */,
 				A572614921D8A51B00970A0E /* HFPrompt.m */,
+				A5589AC72206CFCC000293A4 /* HFExtendedAttributes.h */,
+				A5589AC82206CFCC000293A4 /* HFExtendedAttributes.m */,
 			);
 			name = Miscellaneous;
 			sourceTree = "<group>";
@@ -1724,6 +1729,7 @@
 				D0AFA786123C2BDF00CFC513 /* MyDocumentController.m in Sources */,
 				D0CBB240128F78C200989C15 /* StretchableProgressIndicator.m in Sources */,
 				A591314021E3098800685B51 /* DataInspectorScrollView.m in Sources */,
+				A5589AC92206CFCC000293A4 /* HFExtendedAttributes.m in Sources */,
 				D0CBB32A128F906000989C15 /* DiffTextViewContainer.m in Sources */,
 				A5628AAB21D8561D00911ABB /* Tcl_ParseArgsObjv.c in Sources */,
 				D0D8C2BC12A3C10100960FC4 /* ChooseStringEncodingWindowController.m in Sources */,
