@@ -91,4 +91,15 @@
     [self.tableView reloadData];
 }
 
+- (NSString *)extendedAttributeName {
+    return self.openAttribute ? self.names[self.tableView.selectedRow] : nil;
+}
+
+- (void)reset {
+    self.openFileButton.state = NSOnState;
+    self.openAttributeButton.state = NSOffState;
+    self.openAttribute = NO;
+    [self enableOrDisableTableView];
+}
+
 @end

@@ -10,4 +10,8 @@
 
 @interface HFOpenAccessoryViewController : NSViewController <NSOpenSavePanelDelegate>
 
+@property (readonly) NSString *extendedAttributeName; // returns nil to open file data
+
+- (void)reset;
+
 @end

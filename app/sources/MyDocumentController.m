@@ -9,6 +9,7 @@
 #import "BaseDataDocument.h"
 #include <sys/stat.h>
 #import "HFOpenAccessoryViewController.h"
+#import "ExtendedAttributeDataDocument.h"
 
 @interface MyDocumentController ()
 
@@ -109,6 +110,24 @@
         openPanel.accessoryViewDisclosed = YES;
     }
     [super beginOpenPanel:openPanel forTypes:inTypes completionHandler:completionHandler];
+}
+
+- (Class)documentClassForType:(NSString *)typeName {
+    NSString *attrName = self.openAccessoryController.extendedAttributeName;
+    if (attrName) {
+        return [ExtendedAttributeDataDocument class];
+    }
+    return [super documentClassForType:typeName];
+}
+
+- (__kindof NSDocument *)makeDocumentWithContentsOfURL:(NSURL *)url ofType:(NSString *)typeName error:(NSError * _Nullable *)outError {
+    NSString *attrName = self.openAccessoryController.extendedAttributeName;
+    if (attrName) {
+        ExtendedAttributeDataDocument *doc = [[ExtendedAttributeDataDocument alloc] initWithAttributeName:self.openAccessoryController.extendedAttributeName forURL:url];
+        [self.openAccessoryController reset];
+        return doc;
+    }
+    return [super makeDocumentWithContentsOfURL:url ofType:typeName error:outError];
 }
 
 @end
