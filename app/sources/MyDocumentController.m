@@ -8,6 +8,13 @@
 #import "MyDocumentController.h"
 #import "BaseDataDocument.h"
 #include <sys/stat.h>
+#import "HFOpenAccessoryViewController.h"
+
+@interface MyDocumentController ()
+
+@property HFOpenAccessoryViewController *openAccessoryController;
+
+@end
 
 @implementation MyDocumentController
 
@@ -93,6 +100,14 @@
     openPanel.treatsFilePackagesAsDirectories = YES;
     openPanel.showsHiddenFiles = YES;
     openPanel.resolvesAliases = [[NSUserDefaults standardUserDefaults] boolForKey:@"ResolveAliases"];
+    if (!self.openAccessoryController) {
+        self.openAccessoryController = [[HFOpenAccessoryViewController alloc] init];
+    }
+    openPanel.delegate = self.openAccessoryController;
+    openPanel.accessoryView = self.openAccessoryController.view;
+    if (@available(macOS 10.11, *)) {
+        openPanel.accessoryViewDisclosed = YES;
+    }
     [super beginOpenPanel:openPanel forTypes:inTypes completionHandler:completionHandler];
 }
 
