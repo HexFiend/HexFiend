@@ -17,8 +17,6 @@
 
 static const NSTimeInterval HFCaretBlinkFrequency = 0.56;
 
-static const CGFloat HFTeardropRadius = 12;
-
 @implementation HFRepresenterTextView
 
 - (NSArray *)displayedSelectedContentsRanges {
@@ -1126,7 +1124,7 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
 #if TARGET_OS_IPHONE
     (void)bookmarkExtents; (void)rect;
 #else
-    NSUInteger idx = 0, numBookmarks = [bookmarkExtents count];
+    NSUInteger numBookmarks = [bookmarkExtents count];
     const CGFloat lineThickness = 1.5;
     [NSBezierPath setDefaultLineWidth:lineThickness];
     
@@ -1393,8 +1391,8 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
             /* Check if this run is finished, or if we are using a substitution font */
             if (i == glyphCount || glyphs[i].fontIndex != runFontIndex || runFontIndex > 0) {
                 /* Draw this run */
-                HFFont *fontToUse = [self fontAtSubstitutionIndex:runFontIndex];
 #if !TARGET_OS_IPHONE
+                HFFont *fontToUse = [self fontAtSubstitutionIndex:runFontIndex];
                 [[fontToUse screenFont] set];
 #endif
                 CGContextSetTextPosition(ctx, point.x + runAdvance, point.y);

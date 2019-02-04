@@ -40,7 +40,7 @@ send_port (mach_port_t remote_port, mach_port_t port, mach_msg_type_name_t send_
 //kern_return_t bootstrap_register2(mach_port_t, name_t, mach_port_t, uint64_t);
 
 
-static int
+__attribute__((used)) static int
 recv_port (mach_port_t recv_port, mach_port_t *port)
 {
     kern_return_t       err;

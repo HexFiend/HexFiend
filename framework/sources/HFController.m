@@ -33,7 +33,9 @@
 #define BEGIN_TRANSACTION() NSUInteger token = [self beginPropertyChangeTransaction]
 #define END_TRANSACTION() [self endPropertyChangeTransaction:token]
 
+#if !TARGET_OS_IPHONE
 static const CGFloat kScrollMultiplier = (CGFloat)1.5;
+#endif
 
 static const CFTimeInterval kPulseDuration = .2;
 

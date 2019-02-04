@@ -914,7 +914,7 @@ static BOOL non_nulls_are_grouped_at_start(const id *ptr, NSUInteger count) {
 }
 
 
-static void btree_recursive_check_integrity(HFBTree *tree, HFBTreeNode *branchOrLeaf, TreeDepth_t depth, __strong HFBTreeNode **linkHelper) {
+__attribute__((used)) static void btree_recursive_check_integrity(HFBTree *tree, HFBTreeNode *branchOrLeaf, TreeDepth_t depth, __strong HFBTreeNode **linkHelper) {
     HFASSERT(linkHelper[0] == branchOrLeaf->left);
     if (linkHelper[0]) HFASSERT(linkHelper[0]->right == branchOrLeaf);
     linkHelper[0] = branchOrLeaf;
@@ -938,7 +938,7 @@ static void btree_recursive_check_integrity(HFBTree *tree, HFBTreeNode *branchOr
     HFASSERT(childCount <= BTREE_ORDER);
 }
 
-static HFBTreeIndex btree_recursive_check_integrity_of_cached_lengths(HFBTreeNode *branchOrLeaf) {
+__attribute__((used)) static HFBTreeIndex btree_recursive_check_integrity_of_cached_lengths(HFBTreeNode *branchOrLeaf) {
     HFBTreeIndex result = 0;
     if (IS_LEAF(branchOrLeaf)) {
         HFBTreeLeaf *leaf = CHECK_CAST(branchOrLeaf, HFBTreeLeaf);

@@ -2431,7 +2431,6 @@
 					"-W",
 					"-Wall",
 					"-Winit-self",
-					"-Wno-unused",
 				);
 			};
 			name = Debug;
@@ -2468,7 +2467,6 @@
 					"-W",
 					"-Wall",
 					"-Winit-self",
-					"-Wno-unused",
 				);
 			};
 			name = "Debug+CodeSign";
@@ -2504,7 +2502,6 @@
 					"-W",
 					"-Wall",
 					"-Winit-self",
-					"-Wno-unused",
 				);
 			};
 			name = "Debug+MAS";
@@ -2541,7 +2538,6 @@
 					"-W",
 					"-Wall",
 					"-Winit-self",
-					"-Wno-unused",
 				);
 			};
 			name = "Debug+UnitTests";
@@ -2578,7 +2574,6 @@
 					"-W",
 					"-Wall",
 					"-Winit-self",
-					"-Wno-unused",
 				);
 			};
 			name = Release;
@@ -2615,7 +2610,6 @@
 					"-W",
 					"-Wall",
 					"-Winit-self",
-					"-Wno-unused",
 				);
 			};
 			name = "Release+CodeSign";
@@ -2652,7 +2646,6 @@
 					"-W",
 					"-Wall",
 					"-Winit-self",
-					"-Wno-unused",
 				);
 			};
 			name = "Release+MAS";
@@ -2796,7 +2789,6 @@
 					"-W",
 					"-Wall",
 					"-Winit-self",
-					"-Wno-unused",
 				);
 			};
 			name = Release;
@@ -2970,7 +2962,6 @@
 					"-W",
 					"-Wall",
 					"-Winit-self",
-					"-Wno-unused",
 				);
 			};
 			name = "Debug+UnitTests";
@@ -3141,7 +3132,6 @@
 					"-W",
 					"-Wall",
 					"-Winit-self",
-					"-Wno-unused",
 				);
 			};
 			name = "Release+CodeSign";
@@ -3327,7 +3317,6 @@
 					"-W",
 					"-Wall",
 					"-Winit-self",
-					"-Wno-unused",
 				);
 			};
 			name = "Release+MAS";
@@ -3530,7 +3519,6 @@
 					"-W",
 					"-Wall",
 					"-Winit-self",
-					"-Wno-unused",
 				);
 			};
 			name = "Debug+MAS";
@@ -3743,7 +3731,6 @@
 					"-W",
 					"-Wall",
 					"-Winit-self",
-					"-Wno-unused",
 				);
 			};
 			name = "Debug+CodeSign";
@@ -3881,7 +3868,6 @@
 					"-W",
 					"-Wall",
 					"-Winit-self",
-					"-Wno-unused",
 				);
 			};
 			name = Debug;

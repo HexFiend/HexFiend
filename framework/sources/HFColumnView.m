@@ -60,7 +60,6 @@
     const CGFloat descent = ceil(fabs(CTFontGetDescent(font)));
     const NSUInteger bytesPerColumn = controller.bytesPerColumn;
     const NSUInteger bytesPerLine = controller.bytesPerLine;
-    const CGFloat lineHeight = controller.lineHeight;
     const CGFloat horizontalContainerInset = 4; // matches what HFRepresenterTextView uses
     const HFHexGlyphTable *glyphTable = self.glyphTable;
     const CGFloat advancement = glyphTable.advancement;

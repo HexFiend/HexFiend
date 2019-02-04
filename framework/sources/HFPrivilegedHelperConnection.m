@@ -26,26 +26,6 @@
     return shared;
 }
 
-static NSString *read_line(FILE *file) {
-    NSMutableString *result = nil;
-    char buffer[256];
-    BOOL done = NO;
-    while (done == NO && fgets(buffer, sizeof buffer, file)) {
-        char *endPtr = strchr(buffer, '\n');
-        if (endPtr) {
-            *endPtr = '\0';
-            done = YES;
-        }
-        if (! result) {
-            result = [NSMutableString stringWithUTF8String:buffer];
-        }
-        else {
-            CFStringAppendCString((CFMutableStringRef)result, buffer, kCFStringEncodingUTF8);
-        }
-    }
-    return result;
-}
-
 - (BOOL)readBytes:(void *)bytes range:(HFRange)range process:(pid_t)process error:(NSError **)error {
     HFASSERT(range.length <= ULONG_MAX);
     HFASSERT(bytes != NULL || range.length > 0);

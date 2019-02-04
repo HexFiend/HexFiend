@@ -559,13 +559,6 @@ BOOL computeMiddleSnakeTraversal_OverlapCheck(HFByteArrayEditScript *self, const
 }
 
 BYTEARRAY_RELEASE_INLINE
-LocalIndex_t ull_to_index(unsigned long long x) {
-    LocalIndex_t result = (LocalIndex_t)x;
-    HFASSERT((unsigned long long)result == x);
-    return result;
-}
-
-BYTEARRAY_RELEASE_INLINE
 struct Snake_t computeActualMiddleSnake(HFByteArrayEditScript *self, struct TLCacheGroup_t * restrict cacheGroup, const unsigned char * restrict directABuff, const unsigned char * restrict directBBuff, LocalIndex_t aLen, LocalIndex_t bLen) {
     
     /* This function wants to "consume" progress equal to aLen * bLen. */
@@ -856,7 +849,7 @@ struct Snake_t computePrettyGoodMiddleSnake(HFByteArrayEditScript *self, struct 
     /* Progress reporting helper block */
     const unsigned long long * const offsetsPtr = offsets;
     unsigned long long (^ const progressHelper)(unsigned long long, unsigned long long) = ^(unsigned long long forwardsMatch, unsigned long long backwardsMatch) {
-        unsigned long long left, top, right, bottom, upperLeft, lowerRight, newProgressConsumed, result;
+        unsigned long long left, top, right, bottom, upperLeft, lowerRight, newProgressConsumed;
         left = offsetsPtr[SourceForwards] + forwardsMatch;
         top = offsetsPtr[DestForwards] + forwardsMatch;
         right = offsetsPtr[SourceBackwards] + backwardsMatch;
