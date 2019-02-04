@@ -11,8 +11,6 @@
 
 NSString *const HFColumnRepresenterViewHeightChanged = @"HFColumnRepresenterViewHeightChanged";
 
-static const CGFloat kShadowHeight = 6;
-
 @implementation HFColumnRepresenter
 {
     CGFloat _lineHeight;

@@ -2457,12 +2457,6 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				VALID_ARCHS = "arm64 armv7 armv7s";
-				WARNING_CFLAGS = (
-					"-W",
-					"-Wall",
-					"-Winit-self",
-					"-Wno-unused",
-				);
 			};
 			name = Debug;
 		};
@@ -2494,12 +2488,6 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				VALID_ARCHS = "arm64 armv7 armv7s";
-				WARNING_CFLAGS = (
-					"-W",
-					"-Wall",
-					"-Winit-self",
-					"-Wno-unused",
-				);
 			};
 			name = "Debug+CodeSign";
 		};
@@ -2530,12 +2518,6 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				VALID_ARCHS = "arm64 armv7 armv7s";
-				WARNING_CFLAGS = (
-					"-W",
-					"-Wall",
-					"-Winit-self",
-					"-Wno-unused",
-				);
 			};
 			name = "Debug+MAS";
 		};
@@ -2567,12 +2549,6 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				VALID_ARCHS = "arm64 armv7 armv7s";
-				WARNING_CFLAGS = (
-					"-W",
-					"-Wall",
-					"-Winit-self",
-					"-Wno-unused",
-				);
 			};
 			name = "Debug+UnitTests";
 		};
@@ -2604,12 +2580,6 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				VALID_ARCHS = "arm64 armv7 armv7s";
-				WARNING_CFLAGS = (
-					"-W",
-					"-Wall",
-					"-Winit-self",
-					"-Wno-unused",
-				);
 			};
 			name = Release;
 		};
@@ -2641,12 +2611,6 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				VALID_ARCHS = "arm64 armv7 armv7s";
-				WARNING_CFLAGS = (
-					"-W",
-					"-Wall",
-					"-Winit-self",
-					"-Wno-unused",
-				);
 			};
 			name = "Release+CodeSign";
 		};
@@ -2678,12 +2642,6 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				VALID_ARCHS = "arm64 armv7 armv7s";
-				WARNING_CFLAGS = (
-					"-W",
-					"-Wall",
-					"-Winit-self",
-					"-Wno-unused",
-				);
 			};
 			name = "Release+MAS";
 		};
@@ -2822,12 +2780,6 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculousfish.HexFiend-Framework";
 				PRODUCT_NAME = HexFiend;
-				WARNING_CFLAGS = (
-					"-W",
-					"-Wall",
-					"-Winit-self",
-					"-Wno-unused",
-				);
 			};
 			name = Release;
 		};
@@ -2996,12 +2948,6 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculousfish.HexFiend-Framework";
 				PRODUCT_NAME = HexFiend;
-				WARNING_CFLAGS = (
-					"-W",
-					"-Wall",
-					"-Winit-self",
-					"-Wno-unused",
-				);
 			};
 			name = "Debug+UnitTests";
 		};
@@ -3167,12 +3113,6 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculousfish.HexFiend-Framework";
 				PRODUCT_NAME = HexFiend;
-				WARNING_CFLAGS = (
-					"-W",
-					"-Wall",
-					"-Winit-self",
-					"-Wno-unused",
-				);
 			};
 			name = "Release+CodeSign";
 		};
@@ -3353,12 +3293,6 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculousfish.HexFiend-Framework";
 				PRODUCT_NAME = HexFiend;
-				WARNING_CFLAGS = (
-					"-W",
-					"-Wall",
-					"-Winit-self",
-					"-Wno-unused",
-				);
 			};
 			name = "Release+MAS";
 		};
@@ -3556,12 +3490,6 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculousfish.HexFiend-Framework";
 				PRODUCT_NAME = HexFiend;
-				WARNING_CFLAGS = (
-					"-W",
-					"-Wall",
-					"-Winit-self",
-					"-Wno-unused",
-				);
 			};
 			name = "Debug+MAS";
 		};
@@ -3769,12 +3697,6 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculousfish.HexFiend-Framework";
 				PRODUCT_NAME = HexFiend;
-				WARNING_CFLAGS = (
-					"-W",
-					"-Wall",
-					"-Winit-self",
-					"-Wno-unused",
-				);
 			};
 			name = "Debug+CodeSign";
 		};
@@ -3907,12 +3829,6 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculousfish.HexFiend-Framework";
 				PRODUCT_NAME = HexFiend;
-				WARNING_CFLAGS = (
-					"-W",
-					"-Wall",
-					"-Winit-self",
-					"-Wno-unused",
-				);
 			};
 			name = Debug;
 		};

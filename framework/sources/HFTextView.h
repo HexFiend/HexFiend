@@ -35,7 +35,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) HFLayoutRepresenter *layoutRepresenter;
 
 /// Returns the HFByteArray for the receiver.  This is equivalent to `[[self controller] byteArray]`.
-@property (nonatomic, strong) HFByteArray *byteArray;
+@property (nonatomic, strong, readonly) HFByteArray *byteArray;
 
 //@}
 
