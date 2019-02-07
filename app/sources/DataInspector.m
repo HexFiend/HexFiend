@@ -249,7 +249,7 @@ static long double ieeeToLD(const void *bytes, unsigned exp, unsigned man) {
 
 static id floatingPointDescription(const unsigned char *bytes, NSUInteger length, enum Endianness_t endianness) {
     switch (length) {
-        case sizeof(short):
+        case sizeof(uint16_t):
         {
             union {
                 uint16_t i;
@@ -258,7 +258,7 @@ static id floatingPointDescription(const unsigned char *bytes, NSUInteger length
             _Static_assert(sizeof temp.f == sizeof temp.i, "sizeof(uint16_t) is not 2!");
             temp.i = *(const uint16_t *)bytes;
             if (endianness != eNativeEndianness) temp.i = (uint16_t)reverse(temp.i, sizeof(uint16_t));
-            return [NSString stringWithFormat:@"%.15g", temp.f];
+            return [NSString stringWithFormat:@"%.15g", (double)temp.f];
         }
         case sizeof(float):
         {
