@@ -30,6 +30,7 @@
     [byteArray insertByteSlice:byteSlice inRange:HFRangeMake(0, 0)];
     [controller setByteArray:byteArray];
     [controller setEditMode:HFReadOnlyMode];
+    controller.savable = NO;
     return YES;
 }
 
