@@ -38,6 +38,11 @@
         self.names = nil;
     }
     [self.tableView reloadData];
+    NSScrollView *scrollView = self.tableView.enclosingScrollView;
+    [scrollView flashScrollers];
+    if ([scrollView.documentView respondsToSelector:@selector(scrollToBeginningOfDocument:)]) {
+        [scrollView.documentView scrollToBeginningOfDocument:nil];
+    }
 }
 
 - (BOOL)panel:(id __unused)sender validateURL:(NSURL * __unused)url error:(NSError ** __unused)outError {
