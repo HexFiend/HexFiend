@@ -2093,7 +2093,7 @@ cancelled:;
 
 - (BOOL)isInViewingMode {
     // NSDocument override
-    return !controller.savable;
+    return !controller.savable || super.isInViewingMode;
 }
 
 @end
