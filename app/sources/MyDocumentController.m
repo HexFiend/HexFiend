@@ -112,14 +112,6 @@
     [super beginOpenPanel:openPanel forTypes:inTypes completionHandler:completionHandler];
 }
 
-- (Class)documentClassForType:(NSString *)typeName {
-    NSString *attrName = self.openAccessoryController.extendedAttributeName;
-    if (attrName) {
-        return [ExtendedAttributeDataDocument class];
-    }
-    return [super documentClassForType:typeName];
-}
-
 - (__kindof NSDocument *)makeDocumentWithContentsOfURL:(NSURL *)url ofType:(NSString *)typeName error:(NSError * _Nullable *)outError {
     NSString *attrName = self.openAccessoryController.extendedAttributeName;
     if (attrName) {
