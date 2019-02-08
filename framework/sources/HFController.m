@@ -94,6 +94,7 @@ static inline Class preferredByteArrayClass(void) {
     _hfflags.showcallouts = YES;
     _hfflags.hideNullBytes = NO;
     _hfflags.selectable = YES;
+    _hfflags.savable = YES;
     representers = [[NSMutableArray alloc] init];
 #if TARGET_OS_IPHONE
     [self setFont:[UIFont monospacedDigitSystemFontOfSize:HFDEFAULT_FONTSIZE weight:UIFontWeightRegular]];
@@ -125,6 +126,7 @@ static inline Class preferredByteArrayClass(void) {
     [coder encodeInt:_hfflags.editMode forKey:@"HFEditMode"];
     [coder encodeBool:_hfflags.editable forKey:@"HFEditable"];
     [coder encodeBool:_hfflags.selectable forKey:@"HFSelectable"];
+    [coder encodeBool:_hfflags.savable forKey:@"HFSavable"];
 }
 
 - (instancetype)initWithCoder:(NSCoder *)coder {
@@ -149,6 +151,7 @@ static inline Class preferredByteArrayClass(void) {
     _hfflags.editable = [coder decodeBoolForKey:@"HFEditable"];
     _hfflags.selectable = [coder decodeBoolForKey:@"HFSelectable"];
     _hfflags.hideNullBytes = [coder decodeBoolForKey:@"HFHidesNullBytes"];
+    _hfflags.savable = [coder decodeBoolForKey:@"HFSavable"];
     representers = [coder decodeObjectForKey:@"HFRepresenters"];
     return self;
 }
@@ -850,6 +853,17 @@ static inline Class preferredByteArrayClass(void) {
     if (flag != _hfflags.editable) {
         _hfflags.editable = flag;
         [self _addPropertyChangeBits:HFControllerEditable];
+    }
+}
+
+- (BOOL)savable {
+    return _hfflags.savable;
+}
+
+- (void)setSavable:(BOOL)flag {
+    if (flag != _hfflags.savable) {
+        _hfflags.savable = flag;
+        [self _addPropertyChangeBits:HFControllerSavable];
     }
 }
 

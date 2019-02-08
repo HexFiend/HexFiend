@@ -997,15 +997,15 @@ static inline Class preferredByteArrayClass(void) {
     else if (action == @selector(setOverwriteMode:)) {
         [item setState:[controller editMode] == HFOverwriteMode];
         /* We can toggle overwrite mode only if the controller doesn't require that it be on */
-        return YES;
+        return controller.savable;
     }
     else if (action == @selector(setInsertMode:)) {
         [item setState:[controller editMode] == HFInsertMode];
-        return ![self requiresOverwriteMode];
+        return controller.savable && ![self requiresOverwriteMode];
     }
     else if (action == @selector(setReadOnlyMode:)) {
         [item setState:[controller editMode] == HFReadOnlyMode];
-        return YES;
+        return controller.savable;
     }
     else if (action == @selector(modifyByteGrouping:)) {
         [item setState:(NSUInteger)[item tag] == [controller bytesPerColumn]];
@@ -2089,6 +2089,11 @@ cancelled:;
     savePanel.showsHiddenFiles = YES;
     savePanel.accessoryView = nil; // defeat useless "File Format" accessory view
     return YES;
+}
+
+- (BOOL)isInViewingMode {
+    // NSDocument override
+    return !controller.savable || super.isInViewingMode;
 }
 
 @end

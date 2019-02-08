@@ -36,6 +36,7 @@ typedef NS_OPTIONS(NSUInteger, HFControllerPropertyBits) {
     HFControllerShowCallouts = 1 << 16, /*!< Indicates that the shouldShowCallouts property has changed. */
     HFControllerHideNullBytes = 1 << 17, /*!< Indicates that the shouldHideNullBytes property has changed. */
     HFControllerColorRanges = 1 << 18, /*!< Indicates that the colorRanges property has changed. */
+    HFControllerSavable = 1 << 19, /*!< Indicates that the document has become (or is no longer) savable. */
 };
 
 /*! @enum HFControllerMovementDirection
@@ -136,6 +137,7 @@ You create an HFController via <tt>[[HFController alloc] init]</tt>.  After that
         BOOL shiftExtendSelection;
         BOOL commandExtendSelection;
         BOOL livereload;
+        BOOL savable;
     } _hfflags;
 }
 
@@ -276,6 +278,9 @@ You create an HFController via <tt>[[HFController alloc] init]</tt>.  After that
 
 /*! Whether the user can edit the document. */
 @property (nonatomic) BOOL editable;
+
+/*! Whether the user can save the document. */
+@property (nonatomic) BOOL savable;
 
 /*! Whether the text should be antialiased. Note that Mac OS X settings may prevent antialiasing text below a certain point size. */
 @property (nonatomic) BOOL shouldAntialias;
