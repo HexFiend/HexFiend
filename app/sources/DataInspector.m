@@ -260,7 +260,7 @@ static id floatingPointDescription(const unsigned char *bytes, NSUInteger length
             if (endianness != eNativeEndianness) temp.i = (uint16_t)reverse(temp.i, sizeof(uint16_t));
             return [NSString stringWithFormat:@"%.15g", (double)temp.f];
         }
-        case sizeof(float):
+        case sizeof(uint32_t):
         {
             union {
                 uint32_t i;
@@ -271,7 +271,7 @@ static id floatingPointDescription(const unsigned char *bytes, NSUInteger length
             if (endianness != eNativeEndianness) temp.i = (uint32_t)reverse(temp.i, sizeof(float));
             return [NSString stringWithFormat:@"%.15g", temp.f];
         }
-        case sizeof(double):
+        case sizeof(uint64_t):
         {
             union {
                 uint64_t i;
