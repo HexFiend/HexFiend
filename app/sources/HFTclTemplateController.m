@@ -54,6 +54,10 @@ enum command {
     command_sectionvalue,
     command_zlib_uncompress,
     command_entry,
+    command_uint8_bits,
+    command_uint16_bits,
+    command_uint32_bits,
+    command_uint64_bits,
 };
 
 @interface HFTclTemplateController ()
@@ -98,6 +102,10 @@ DEFINE_COMMAND(endsection)
 DEFINE_COMMAND(sectionvalue)
 DEFINE_COMMAND(zlib_uncompress)
 DEFINE_COMMAND(entry)
+DEFINE_COMMAND(uint8_bits)
+DEFINE_COMMAND(uint16_bits)
+DEFINE_COMMAND(uint32_bits)
+DEFINE_COMMAND(uint64_bits)
 
 @implementation HFTclTemplateController {
     Tcl_Interp *_interp;
@@ -154,6 +162,10 @@ DEFINE_COMMAND(entry)
         CMD(sectionvalue),
         CMD(zlib_uncompress),
         CMD(entry),
+        CMD(uint8_bits),
+        CMD(uint16_bits),
+        CMD(uint32_bits),
+        CMD(uint64_bits),
     };
 #undef CMD
 #undef CMD_NAMED
@@ -495,6 +507,38 @@ DEFINE_COMMAND(entry)
             [self addEntryWithLabel:label value:value length:lengthPtr offset:offsetPtr];
             break;
         }
+        case command_uint8_bits:
+        case command_uint16_bits:
+        case command_uint32_bits:
+        case command_uint64_bits: {
+            if (objc < 2 || objc > 3) {
+                Tcl_WrongNumArgs(_interp, 1, objv, "bits [label]");
+                return TCL_ERROR;
+            }
+            NSString *bits = [NSString stringWithUTF8String:Tcl_GetStringFromObj(objv[1], NULL)];
+            NSString *label = nil;
+            if (objc == 3) {
+                label = [NSString stringWithUTF8String:Tcl_GetStringFromObj(objv[2], NULL)];
+            }
+            unsigned numBytes = 0;
+            switch (command) {
+                case command_uint8_bits: numBytes = 1; break;
+                case command_uint16_bits: numBytes = 2; break;
+                case command_uint32_bits: numBytes = 4; break;
+                case command_uint64_bits: numBytes = 8; break;
+                default:
+                    Tcl_SetObjResult(_interp, Tcl_NewStringObj("This shouldn't happen.", -1));
+                    return TCL_ERROR;
+            }
+            uint64_t val;
+            NSString *error = nil;
+            if (![self readBits:bits byteCount:numBytes forLabel:label result:&val error:&error]) {
+                Tcl_SetObjResult(_interp, Tcl_NewStringObj(error.UTF8String, -1));
+                return TCL_ERROR;
+            }
+            Tcl_SetObjResult(_interp, tcl_obj_from_uint64(val));
+            return TCL_OK;
+        }
     }
     return TCL_OK;
 }
@@ -508,11 +552,11 @@ DEFINE_COMMAND(entry)
         default:
             break;
     }
-    int asHex = 0;
+    int asHexFlag = 0;
     NSString *label = nil;
     Tcl_Obj **extraArgs = NULL;
     Tcl_ArgvInfo argInfoTable[] = {
-        {TCL_ARGV_CONSTANT, "-hex", (void*)1, &asHex, "display as hexadecimal", NULL},
+        {TCL_ARGV_CONSTANT, "-hex", (void*)1, &asHexFlag, "display as hexadecimal", NULL},
         TCL_ARGV_AUTO_HELP,
         TCL_ARGV_TABLE_END,
     };
@@ -520,6 +564,7 @@ DEFINE_COMMAND(entry)
     if (err != TCL_OK) {
         return err;
     }
+    const BOOL asHex = asHexFlag == 1;
     if (extraArgs && objc > 1) {
         for (int i = 1; i < objc; i++) {
             const char *arg = Tcl_GetStringFromObj(extraArgs[i], NULL);
@@ -556,7 +601,7 @@ DEFINE_COMMAND(entry)
         }
         case command_uint32: {
             uint32_t val;
-            if (![self readUInt32:&val forLabel:label asHex:asHex == 1]) {
+            if (![self readUInt32:&val forLabel:label asHex:asHex]) {
                 Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read uint32 bytes", -1));
                 return TCL_ERROR;
             }
@@ -583,7 +628,7 @@ DEFINE_COMMAND(entry)
         }
         case command_uint16: {
             uint16_t val;
-            if (![self readUInt16:&val forLabel:label asHex:asHex == 1]) {
+            if (![self readUInt16:&val forLabel:label asHex:asHex]) {
                 Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read uint16 bytes", -1));
                 return TCL_ERROR;
             }
@@ -601,7 +646,7 @@ DEFINE_COMMAND(entry)
         }
         case command_uint8: {
             uint8_t val;
-            if (![self readUInt8:&val forLabel:label asHex:asHex == 1]) {
+            if (![self readUInt8:&val forLabel:label asHex:asHex]) {
                 Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read uint8 bytes", -1));
                 return TCL_ERROR;
             }

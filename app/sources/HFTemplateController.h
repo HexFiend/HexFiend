@@ -69,4 +69,6 @@ typedef NS_ENUM(NSUInteger, HFEndian) {
 
 - (void)addEntryWithLabel:(NSString *)label value:(NSString *)value length:(unsigned long long *)length offset:(unsigned long long *)offset;
 
+- (BOOL)readBits:(NSString *)bits byteCount:(unsigned)numberOfBytes forLabel:(NSString *)label result:(uint64 *)result error:(NSString **)error;
+
 @end

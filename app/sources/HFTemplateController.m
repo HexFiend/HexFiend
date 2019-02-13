@@ -410,4 +410,102 @@
     [self.currentNode.children addObject:node];
 }
 
+- (BOOL)readBits:(NSString *)bits byteCount:(unsigned)numberOfBytes forLabel:(NSString *)label result:(uint64 *)result error:(NSString **)error {
+    uint64_t rawValue;
+    switch (numberOfBytes) {
+        case sizeof(uint8_t): {
+            uint8_t u8Value;
+            if (![self readUInt8:&u8Value forLabel:nil asHex:NO]) {
+                if (error) {
+                    *error = @"Failed to read uint8 bytes";
+                }
+                return NO;
+            }
+            rawValue = u8Value;
+            break;
+        }
+        case sizeof(uint16_t): {
+            uint16_t u16Value;
+            if (![self readUInt16:&u16Value forLabel:nil asHex:NO]) {
+                if (error) {
+                    *error = @"Failed to read uint16 bytes";
+                }
+                return NO;
+            }
+            rawValue = u16Value;
+            break;
+        }
+        case sizeof(uint32_t): {
+            uint32_t u32Value;
+            if (![self readUInt32:&u32Value forLabel:nil asHex:NO]) {
+                if (error) {
+                    *error = @"Failed to read uint32 bytes";
+                }
+                return NO;
+            }
+            rawValue = u32Value;
+            break;
+        }
+        case sizeof(uint64_t): {
+            if (![self readUInt64:&rawValue forLabel:nil asHex:NO]) {
+                if (error) {
+                    *error = @"Failed to read uint64 bytes";
+                }
+                return NO;
+            }
+            break;
+        }
+        default:
+            if (error) {
+                *error = [NSString stringWithFormat:@"%u bytes is invalid.", numberOfBytes];
+            }
+            return NO;
+    }
+    NSCharacterSet *numberSet = NSCharacterSet.decimalDigitCharacterSet;
+    NSCharacterSet *spaceSet = [NSCharacterSet characterSetWithCharactersInString:@" "];
+    NSArray<NSString *> *bitNumbers = [bits componentsSeparatedByString:@","];
+    uint64_t val = 0;
+    const unsigned maxBitValue = (numberOfBytes * 8) - 1;
+    NSMutableIndexSet *usedBits = [NSMutableIndexSet indexSet];
+    unsigned index = 0;
+    for (NSString *bitStr in bitNumbers) {
+        NSString *localBitStr = [bitStr stringByTrimmingCharactersInSet:spaceSet];
+        if (localBitStr.length == 0) {
+            if (error) {
+                *error = [NSString stringWithFormat:@"Invalid empty bit at index %u.", index];
+            }
+            return NO;
+        }
+        NSString *trimmedString = [localBitStr stringByTrimmingCharactersInSet:numberSet];
+        if (trimmedString.length > 0) {
+            if (error) {
+                *error = [NSString stringWithFormat:@"Bit is not a valid number: %@", localBitStr];
+            }
+            return NO;
+        }
+        const unsigned bitValue = (unsigned)localBitStr.integerValue;
+        if (bitValue > maxBitValue) {
+            if (error) {
+                *error = [NSString stringWithFormat:@"Bit is out of range: %u", bitValue];
+            }
+            return NO;
+        }
+        if ([usedBits containsIndex:bitValue]) {
+            if (error) {
+                *error = [NSString stringWithFormat:@"Bit already used: %u", bitValue];
+            }
+            return NO;
+        }
+        val = (val << 1) | ((rawValue >> bitValue) & 1);
+        [usedBits addIndex:bitValue];
+        index++;
+    }
+    *result = val;
+    if (label) {
+        NSString *value = [NSString stringWithFormat:@"%" PRIu64, val];
+        [self addNodeWithLabel:label value:value size:numberOfBytes];
+    }
+    return YES;
+}
+
 @end
