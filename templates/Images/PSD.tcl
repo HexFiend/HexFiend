@@ -98,7 +98,7 @@ if {$lars_len > 0} {
 				set layers_count [uint16 "Layers count"]
 
 				for {set i 0} {$i < $layers_count} {incr i} {
-					section "Layers $i" {
+					section "Layer $i" {
 						section "Rect" {
 							uint32 "Top"
 							uint32 "Left"
@@ -107,10 +107,10 @@ if {$lars_len > 0} {
 						}
 
 						section "Channel info" {
-							set channel_count [uint16 "count"]
+							set channel_count [uint16 "Count"]
 							set channel_lengths [list]
 							for {set channel_count_i 0} {$channel_count_i < $channel_count} {incr channel_count_i} {
-								uint16 "ID"
+								int16 "ID"
 								if {$version == 0x02} {
 									set chan_len [uint64 "Length"]
 								} else {
