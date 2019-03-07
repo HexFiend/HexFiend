@@ -101,7 +101,11 @@ if {$imrs_len > 0} {
 		set i 0
 		while {[pos] < $imrs_end} {
 			section "Image resource $i" {
-				ascii 4 "Signature"
+				set signature [ascii 4 "Signature"]
+				if {$signature != "8BIM"} {
+					move -4
+					error "Invalid signature on Image resource $i: $signature, position: [pos]"
+				}
 				uint16 "ID"
 				set name_len [uint8 "Name length"]
 				if {$name_len == 0} {
@@ -143,11 +147,14 @@ if {$lars_len > 0} {
 			if {$layers_info_len == 0} {
 				entry "Layers count" 0
 			} else {
-				set layers_count [uint16 "Layers count"]
+				set layers_count [int16 "Layers count"]; # If it is a negative number, its absolute value is the number of layers and
+				                                         # the first alpha channel contains the transparency data for the merged result.
+				set layers_count [expr abs($layers_count)]
 				sectionvalue $layers_count
 
 				for {set i 0} {$i < $layers_count} {incr i} {
 					section "Layer $i" {
+						set layer_pos [pos]
 						section "Rect" {
 							set top [int32 "Top"]
 							set left [int32 "Left"]
@@ -172,8 +179,14 @@ if {$lars_len > 0} {
 							lappend channel_info $channel_lengths
 						}
 
-						ascii 4  "Blend mode signature"
-						ascii 4  "Blend mode key"
+
+						set signature [ascii 4  "Blend mode signature"]
+						if {$signature != "8BIM"} {
+							move -4
+							error "Invalid signature on layer $i: $signature, position: [pos], layer_pos: $layer_pos"
+						}
+
+						ascii 4  "Blend mode"
 						uint8    "Opacity"
 						uint8    "Clipping"
 						hex   1  "Flags"
