@@ -33,7 +33,7 @@ section "Header" {
 	}
 	move 2
 	bytes 6 "#reserved"
-	uint16 "Number of channels"
+	uint16 "Channels count"
 	uint32 "Height"
 	uint32 "Width"
 	uint16 "Depth"
@@ -53,7 +53,7 @@ if {$imrs_len > 0} {
 	section "Image resources section" {
 		set i 0
 		while {[pos] < $imrs_end} {
-			section "Image Resource $i" {
+			section "Image resource $i" {
 				ascii 4 "Signature"
 				uint16 "ID"
 				set name_len [uint8 "Name length"]
@@ -100,23 +100,23 @@ if {$lars_len > 0} {
 				for {set i 0} {$i < $layers_count} {incr i} {
 					section "Layer $i" {
 						section "Rect" {
-							uint32 "Top"
-							uint32 "Left"
-							uint32 "Bottom"
-							uint32 "Right"
+							int32 "Top"
+							int32 "Left"
+							int32 "Bottom"
+							int32 "Right"
 						}
 
 						section "Channel info" {
 							set channel_count [uint16 "Count"]
 							set channel_lengths [list]
 							for {set channel_count_i 0} {$channel_count_i < $channel_count} {incr channel_count_i} {
-								int16 "ID"
+								set chan_id [int16 "ID"]
 								if {$version == 0x02} {
 									set chan_len [uint64 "Length"]
 								} else {
 									set chan_len [uint32 "Length"]
 								}
-								lappend channel_lengths $chan_len
+								lappend channel_lengths [dict create "id" $chan_id "len" $chan_len]
 							}
 							lappend channel_info $channel_lengths
 						}
@@ -140,9 +140,10 @@ if {$lars_len > 0} {
 		set layer_i 0
 		foreach layer_channels $channel_info {
 			section "Layer $layer_i" {
-				set channel_i 0
-				foreach length $layer_channels {
-					section "Channel $channel_i" {
+				foreach info $layer_channels {
+					set id [dict get $info "id"]
+					set length [dict get $info "len"]
+					section "Channel $id" {
 						hex 2 "Compression method"
 						entry "#Data length" [ expr {$length - 2} ]
 						if {$length > 2} {
@@ -151,7 +152,6 @@ if {$lars_len > 0} {
 							entry "Data" "empty"
 						}
 					}
-					set channel_i [incr channel_i]
 				}
 			}
 			set layer_i [incr layer_i]
