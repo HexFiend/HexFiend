@@ -3,15 +3,34 @@
 
 #PROCEDURES
 
-proc padStrLen {len} {
-	set len_plus_one [expr {$len + 1}]
-	set rem [expr {$len_plus_one % 2}]
-	return [expr {$len_plus_one + $rem - 1}]
-}
-
 proc padto2 {len} {
 	set rem [expr {$len % 2}]
 	return [expr {$len + $rem}]
+}
+
+proc bits {len label} {
+	set data [hex $len]
+	set bytes [binary format H* [string range $data 2 end]]
+	binary scan $bytes B* bits
+	move [expr -$len]
+	entry "$label" "0b$bits" $len
+	move $len
+}
+
+proc pascalString {label {padding 2}} {
+	set len [uint8 "$label length"]
+	if {$len == 0} {
+		entry $label "empty"
+		move [expr $padding - 1]
+	} else {
+		set rem [expr {($len + 1) % $padding}]
+		if {$rem == 0} {
+			set strlen $len
+		} else {
+			set strlen [expr {$len - $rem + $padding}]
+		}
+		ascii $strlen $label
+	}
 }
 
 proc compression {label} {
@@ -107,13 +126,7 @@ if {$imrs_len > 0} {
 					error "Invalid signature on Image resource $i: $signature, position: [pos]"
 				}
 				uint16 "ID"
-				set name_len [uint8 "Name length"]
-				if {$name_len == 0} {
-					entry "Name" "empty"
-					move 1
-				} else {
-					str [padStrLen $name_len] "utf8" "Name"
-				}
+				pascalString "Name" 2
 				set data_len [uint32 "Data length"]
 				set data_len_padded [padto2 $data_len]
 				bytes $data_len_padded "Data"
@@ -189,11 +202,57 @@ if {$lars_len > 0} {
 						ascii 4  "Blend mode"
 						uint8    "Opacity"
 						uint8    "Clipping"
-						hex   1  "Flags"
+						bits  1  "Flags"
 						uint8    "#padding"
 
 						set extra_data_length [uint32 "Extra data length"]
-						bytes $extra_data_length "Extra data"
+						set extra_data_end [expr [pos] + [padto2 $extra_data_length]]
+						section "Extra Data" {
+							set mask_data_length [uint32 "Mask data length"]
+							if {$mask_data_length > 0} {
+								bytes $mask_data_length "Mask data"
+							} else {
+								entry "Mask data" "empty"
+							}
+							set blending_ranges_length [uint32 "Blending ranges length"]
+							set blending_ranges_end [expr [pos] + [padto2 $blending_ranges_length]]
+							if {$blending_ranges_length < 1} {
+								entry "Blending ranges" "empty"
+							} else {
+								section "Blending ranges" {
+									set blending_ranges_i 0
+									while {[pos] < $blending_ranges_end} {
+										section "Blending range $blending_ranges_i" {
+											uint32 "source"
+											uint32 "destination"
+										}
+										set blending_ranges_i [incr blending_ranges_i]
+									}
+								}
+							}
+
+							pascalString "Layer name" 4
+
+							set additional_pos [pos]
+							if {[pos] != $extra_data_end} {
+								section "Additional info" {
+									set entry_i 0
+									while {[pos] < $extra_data_end} {
+										section "Entry $entry_i" {
+											set signature [ascii 4 "Signature"]
+											if {$signature != "8BIM"} {
+												move -4
+												error "Invalid signature on additional info entry $entry_i: $signature, position: [pos]"
+											}
+											ascii 4 "Key"
+											set data_len [uint32 "Length"]
+											bytes [padto2 $data_len] "Data"
+										}
+									}
+								}
+							}
+						}
+						goto $extra_data_end
 					}
 				}
 			}
