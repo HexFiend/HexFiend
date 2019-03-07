@@ -14,6 +14,62 @@ proc padto2 {len} {
 	return [expr {$len + $rem}]
 }
 
+proc compression {label} {
+	set value [uint16]
+	move -2
+	if {$value == 0x00} {
+		entry $label "Raw" 2
+	} elseif {$value == 0x01} {
+		entry $label "RLE" 2
+	} elseif {$value == 0x02} {
+		entry $label "ZIP with prediction" 2
+	} elseif {$value == 0x03} {
+		entry $label "ZIP without prediction" 2
+	} else {
+		entry $label "Unknown" 2
+	}
+	move 2
+}
+
+proc colorMode {label} {
+	set value [uint16]
+	move -2
+	if {$value == 0x00} {
+		entry $label "Bitmap" 2
+	} elseif {$value == 0x01} {
+		entry $label "Grayscale" 2
+	} elseif {$value == 0x02} {
+		entry $label "Indexed" 2
+	} elseif {$value == 0x03} {
+		entry $label "RGB" 2
+	} elseif {$value == 0x04} {
+		entry $label "CMYK" 2
+	} elseif {$value == 0x07} {
+		entry $label "Multichannel" 2
+	} elseif {$value == 0x08} {
+		entry $label "Duotone" 2
+	} elseif {$value == 0x09} {
+		entry $label "LAB" 2
+	} else {
+		entry $label "Unknown" 2
+	}
+	move 2
+}
+
+proc psd_version {label} {
+	set version [uint16]
+	move -2
+	if {$version == 0x01} {
+		entry $label "PSD" 2
+	} elseif {$version == 0x02} {
+		entry $label "PSB" 2
+	} else {
+		entry $label "Unknown" 2
+	}
+	move 2
+	return $version
+}
+
 #TEMPLATE
 
 big_endian
@@ -22,22 +78,13 @@ requires 0 "38 42 50 53"; #8BPS
 
 section "Header" {
 	ascii 4 "Signature"
-	set version [uint16]; #Version
-	move -2
-	if {$version == 0x01} {
-		entry "Version" "PSD" 2
-	} elseif {$version == 0x02} {
-		entry "Version" "PSB" 2
-	} else {
-		entry "Version" "Unknown" 2
-	}
-	move 2
+	set version [psd_version "Version"]
 	bytes 6 "#reserved"
 	uint16 "Channels count"
 	uint32 "Height"
 	uint32 "Width"
 	uint16 "Depth"
-	hex 2 "Color Mode"
+	colorMode "Color Mode"
 }
 
 set cms_len [uint32 "Color mode section length"]
@@ -69,6 +116,7 @@ if {$imrs_len > 0} {
 				set i [incr i]
 			}
 		}
+		sectionvalue $i
 	}
 } else {
 	entry "Image resources section" "empty"
@@ -96,15 +144,18 @@ if {$lars_len > 0} {
 				entry "Layers count" 0
 			} else {
 				set layers_count [uint16 "Layers count"]
+				sectionvalue $layers_count
 
 				for {set i 0} {$i < $layers_count} {incr i} {
 					section "Layer $i" {
 						section "Rect" {
-							int32 "Top"
-							int32 "Left"
-							int32 "Bottom"
-							int32 "Right"
+							set top [int32 "Top"]
+							set left [int32 "Left"]
+							set bottom [int32 "Bottom"]
+							set right [int32 "Right"]
 						}
+
+						sectionvalue "[expr {$bottom - $top}]x[expr {$right - $left}]"
 
 						section "Channel info" {
 							set channel_count [uint16 "Count"]
@@ -144,12 +195,13 @@ if {$lars_len > 0} {
 					set id [dict get $info "id"]
 					set length [dict get $info "len"]
 					section "Channel $id" {
-						hex 2 "Compression method"
-						entry "#Data length" [ expr {$length - 2} ]
-						if {$length > 2} {
-							bytes [ expr {$length - 2} ] "Data"
+						compression "Compression method"
+						set ch_len [ expr {$length - 2} ]
+						if {$ch_len > 0} {
+							sectionvalue $ch_len
+							bytes $ch_len "Data"
 						} else {
-							entry "Data" "empty"
+							sectionvalue "empty"
 						}
 					}
 				}
@@ -178,6 +230,6 @@ if {[expr {$lars_end - [pos]}] > 0} {
 goto $lars_end
 
 section "Image Data" {
-	hex 2 "Compression method"
+	compression "Compression method"
 	bytes eof "Compressed Data"
 }
