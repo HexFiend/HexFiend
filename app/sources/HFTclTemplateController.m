@@ -37,6 +37,8 @@ enum command {
     command_float,
     command_double,
     command_macdate,
+    command_unixtime32,
+    command_unixtime64,
     command_bytes,
     command_hex,
     command_ascii,
@@ -83,6 +85,8 @@ DEFINE_COMMAND(int8)
 DEFINE_COMMAND(float)
 DEFINE_COMMAND(double)
 DEFINE_COMMAND(macdate)
+DEFINE_COMMAND(unixtime32)
+DEFINE_COMMAND(unixtime64)
 DEFINE_COMMAND(big_endian)
 DEFINE_COMMAND(little_endian)
 DEFINE_COMMAND(bytes)
@@ -143,6 +147,8 @@ DEFINE_COMMAND(uint64_bits)
         CMD(float),
         CMD(double),
         CMD(macdate),
+        CMD(unixtime32),
+        CMD(unixtime64),
         CMD(big_endian),
         CMD(little_endian),
         CMD(bytes),
@@ -267,6 +273,8 @@ DEFINE_COMMAND(uint64_bits)
         case command_float:
         case command_double:
         case command_macdate:
+        case command_unixtime32:
+        case command_unixtime64:
         case command_uuid:
             return [self runTypeCommand:command objc:objc objv:objv];
         case command_big_endian: {
@@ -684,6 +692,18 @@ DEFINE_COMMAND(uint64_bits)
             NSDate *date = nil;
             if (![self readMacDate:&date forLabel:label]) {
                 Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read macdate bytes", -1));
+                return TCL_ERROR;
+            }
+            Tcl_SetObjResult(_interp, Tcl_NewDoubleObj(date.timeIntervalSince1970));
+            break;
+        }
+        case command_unixtime32:
+        case command_unixtime64: {
+            const unsigned numBytes = command == command_unixtime32 ? 4 : 8;
+            NSString *dateErr = nil;
+            NSDate *date = [self readUnixTime:numBytes forLabel:label error:&dateErr];
+            if (!date) {
+                Tcl_SetObjResult(_interp, Tcl_NewStringObj(dateErr.UTF8String, -1));
                 return TCL_ERROR;
             }
             Tcl_SetObjResult(_interp, Tcl_NewDoubleObj(date.timeIntervalSince1970));

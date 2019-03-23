@@ -294,6 +294,14 @@
     return YES;
 }
 
+- (NSString *)dateToString:(NSDate *)date {
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    formatter.doesRelativeDateFormatting = YES;
+    formatter.dateStyle = NSDateFormatterShortStyle;
+    formatter.timeStyle = NSDateFormatterShortStyle;
+    return [formatter stringFromDate:date];
+}
+
 - (BOOL)readMacDate:(NSDate **)value forLabel:(NSString *)label {
     uint32_t val;
     if (![self readBytes:&val size:sizeof(val)]) {
@@ -310,13 +318,42 @@
     }
     *value = [NSDate dateWithTimeIntervalSinceReferenceDate:cftime];
     if (label) {
-        NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-        formatter.doesRelativeDateFormatting = YES;
-        formatter.dateStyle = NSDateFormatterShortStyle;
-        formatter.timeStyle = NSDateFormatterShortStyle;
-        [self addNodeWithLabel:label value:[formatter stringFromDate:*value] size:sizeof(val)];
+        [self addNodeWithLabel:label value:[self dateToString:*value] size:sizeof(val)];
     }
     return YES;
+}
+
+- (NSDate *)readUnixTime:(unsigned)numBytes forLabel:(NSString *)label error:(NSString **)error {
+    time_t t;
+    if (numBytes == 4) {
+        int32_t t32;
+        if (![self readInt32:&t32 forLabel:nil]) {
+            if (error) {
+                *error = @"Failed to read int32 bytes";
+            }
+            return nil;
+        }
+        t = t32;
+    } else if (numBytes == 8) {
+        int64_t t64;
+        if (![self readInt64:&t64 forLabel:nil]) {
+            if (error) {
+                *error = @"Failed to read int64 bytes";
+            }
+            return nil;
+        }
+        t = t64;
+    } else {
+        if (error) {
+            *error = [NSString stringWithFormat:@"Unsupported number of bytes: %u", numBytes];
+        }
+        return nil;
+    }
+    NSDate *date = [NSDate dateWithTimeIntervalSince1970:t];
+    if (label) {
+        [self addNodeWithLabel:label value:[self dateToString:date] size:numBytes];
+    }
+    return date;
 }
 
 - (BOOL)readUUID:(NSUUID **)uuid forLabel:(NSString *)label {

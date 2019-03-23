@@ -56,6 +56,7 @@ typedef NS_ENUM(NSUInteger, HFEndian) {
 - (BOOL)readFloat:(float *)value forLabel:(NSString *)label;
 - (BOOL)readDouble:(double *)value forLabel:(NSString *)label;
 - (BOOL)readMacDate:(NSDate **)value forLabel:(NSString *)label;
+- (NSDate *)readUnixTime:(unsigned)numBytes forLabel:(NSString *)label error:(NSString **)error;
 
 - (BOOL)readUUID:(NSUUID **)uuid forLabel:(NSString *)label;
 
