@@ -44,6 +44,7 @@ enum command {
     command_ascii,
     command_utf16,
     command_str,
+    command_cstr,
     command_uuid,
     command_move,
     command_goto,
@@ -94,6 +95,7 @@ DEFINE_COMMAND(hex)
 DEFINE_COMMAND(ascii)
 DEFINE_COMMAND(utf16)
 DEFINE_COMMAND(str)
+DEFINE_COMMAND(cstr)
 DEFINE_COMMAND(uuid)
 DEFINE_COMMAND(move)
 DEFINE_COMMAND(goto)
@@ -156,6 +158,7 @@ DEFINE_COMMAND(uint64_bits)
         CMD(ascii),
         CMD(utf16),
         CMD(str),
+        CMD(cstr),
         CMD(uuid),
         CMD(move),
         CMD(goto),
@@ -363,6 +366,29 @@ DEFINE_COMMAND(uint64_bits)
             NSString *str = [self readStringDataForSize:len encoding:encoding forLabel:label];
             if (!str) {
                 Tcl_SetObjResult(_interp, Tcl_ObjPrintf("Failed to read %ld bytes", len));
+                return TCL_ERROR;
+            }
+            Tcl_SetObjResult(_interp, Tcl_NewStringObj(str.UTF8String, -1));
+            break;
+        }
+        case command_cstr: {
+            if (objc != 2 && objc != 3) {
+                Tcl_WrongNumArgs(_interp, 1, objv, "encoding [label]");
+                return TCL_ERROR;
+            }
+            NSString *encodingIdentifier = [NSString stringWithUTF8String:Tcl_GetStringFromObj(objv[1], NULL)];
+            HFStringEncoding *encoding = [[HFEncodingManager shared] encodingByIdentifier:encodingIdentifier];
+            if (!encoding) {
+                Tcl_SetObjResult(_interp, Tcl_ObjPrintf("Unknown identifier %s", encodingIdentifier.UTF8String));
+                return TCL_ERROR;
+            }
+            NSString *label = nil;
+            if (objc == 3) {
+                label = [NSString stringWithUTF8String:Tcl_GetStringFromObj(objv[2], NULL)];
+            }
+            NSString *str = [self readCStringForEncoding:encoding forLabel:label];
+            if (!str) {
+                Tcl_SetObjResult(_interp, Tcl_ObjPrintf("Failed to read cstr"));
                 return TCL_ERROR;
             }
             Tcl_SetObjResult(_interp, Tcl_NewStringObj(str.UTF8String, -1));

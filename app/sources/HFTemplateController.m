@@ -100,6 +100,32 @@
     return str;
 }
 
+- (NSString *)readCStringForEncoding:(HFStringEncoding *)encoding forLabel:(NSString *)label {
+    const size_t maxBytes = 4096;
+    unsigned char buf[maxBytes];
+    bzero(buf, sizeof(buf));
+    BOOL foundNul = 0;
+    size_t offset = 0;
+    for (; offset < maxBytes; offset++) {
+        if (![self readBytes:buf + offset size:1]) {
+            return nil;
+        }
+        if (buf[offset] == 0) {
+            foundNul = YES;
+            break;
+        }
+    }
+    if (!foundNul) {
+        return nil;
+    }
+    const size_t numBytesRead = offset + 1;
+    NSString *str = [encoding stringFromBytes:buf length:numBytesRead - 1];
+    if (label) {
+        [self addNodeWithLabel:label value:str size:numBytesRead];
+    }
+    return str;
+}
+
 - (BOOL)readUInt64:(uint64_t *)result forLabel:(NSString *)label asHex:(BOOL)asHex {
     uint64_t val;
     if (![self readBytes:&val size:sizeof(val)]) {
