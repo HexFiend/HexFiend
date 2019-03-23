@@ -165,8 +165,12 @@ NSString * const DataInspectorDidDeleteAllRows = @"DataInspectorDidDeleteAllRows
         [self saveDefaultInspectors];
     }
     else if ([ident isEqualToString:kInspectorValueColumnIdentifier]) {
+        // Make sure to avoid modifications if the value didn't actually change,
+        // otherwise the document gets marked as edited/dirty unnecessarily.
+        NSAttributedString *oldValue = [self valueFromInspector:inspector isError:NULL];
+        const BOOL valueChanged = ![oldValue.string isEqual:object];
         NSUInteger byteCount = [self selectedByteCountForEditing];
-        if (byteCount != INVALID_EDITING_BYTE_COUNT) {
+        if (byteCount != INVALID_EDITING_BYTE_COUNT && valueChanged) {
             unsigned char bytes[MAX_EDITABLE_BYTE_COUNT];
             HFASSERT(byteCount <= sizeof(bytes));
             if ([inspector acceptStringValue:object replacingByteCount:byteCount intoData:bytes]) {
