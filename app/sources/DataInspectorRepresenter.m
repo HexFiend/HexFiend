@@ -116,7 +116,7 @@ NSString * const DataInspectorDidDeleteAllRows = @"DataInspectorDidDeleteAllRows
     return ll2l(selectedRange.length);
 }
 
-- (id)valueFromInspector:(DataInspector *)inspector isError:(BOOL *)outIsError{
+- (NSAttributedString *)valueFromInspector:(DataInspector *)inspector isError:(BOOL *)outIsError{
     HFController *controller = [self controller];
     return [inspector valueForController:controller ranges:[controller selectedContentsRanges] isError:outIsError];
 }

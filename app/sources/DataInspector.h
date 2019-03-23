@@ -59,9 +59,9 @@ enum NumberBase_t {
 @property (nonatomic) enum Endianness_t endianness;
 @property (nonatomic) enum NumberBase_t numberBase;
 
-- (id)valueForController:(HFController *)controller ranges:(NSArray*)ranges isError:(BOOL *)outIsError;
-- (id)valueForData:(NSData *)data isError:(BOOL *)outIsError;
-- (id)valueForBytes:(const unsigned char *)bytes length:(NSUInteger)length isError:(BOOL *)outIsError;
+- (NSAttributedString *)valueForController:(HFController *)controller ranges:(NSArray*)ranges isError:(BOOL *)outIsError;
+- (NSAttributedString *)valueForData:(NSData *)data isError:(BOOL *)outIsError;
+- (NSAttributedString *)valueForBytes:(const unsigned char *)bytes length:(NSUInteger)length isError:(BOOL *)outIsError;
 
 /* Returns YES if we can replace the given number of bytes with this string value */
 - (BOOL)acceptStringValue:(NSString *)value replacingByteCount:(NSUInteger)count intoData:(unsigned char *)outData;

@@ -117,7 +117,7 @@ static void flip(void *val, NSUInteger amount) {
 #define FETCH(type) type s = *(const type *)bytes;
 #define FLIP(amount) if (endianness != eNativeEndianness) { flip(&s, amount); }
 #define FORMAT(decSpecifier, hexSpecifier) return [NSString stringWithFormat:numberBase == eNumberBaseDecimal ? decSpecifier : hexSpecifier, s];
-static id signedIntegerDescription(const unsigned char *bytes, NSUInteger length, enum Endianness_t endianness, enum NumberBase_t numberBase) {
+static NSString *signedIntegerDescription(const unsigned char *bytes, NSUInteger length, enum Endianness_t endianness, enum NumberBase_t numberBase) {
     switch (length) {
         case 1:
         {
@@ -166,7 +166,7 @@ static id signedIntegerDescription(const unsigned char *bytes, NSUInteger length
     }
 }
 
-static id unsignedIntegerDescription(const unsigned char *bytes, NSUInteger length, enum Endianness_t endianness, enum NumberBase_t numberBase) {
+static NSString *unsignedIntegerDescription(const unsigned char *bytes, NSUInteger length, enum Endianness_t endianness, enum NumberBase_t numberBase) {
     switch (length) {
         case 1:
         {
@@ -247,7 +247,7 @@ static long double ieeeToLD(const void *bytes, unsigned exp, unsigned man) {
     }
 }
 
-static id floatingPointDescription(const unsigned char *bytes, NSUInteger length, enum Endianness_t endianness) {
+static NSString *floatingPointDescription(const unsigned char *bytes, NSUInteger length, enum Endianness_t endianness) {
     switch (length) {
         case sizeof(uint16_t):
         {
@@ -342,7 +342,7 @@ static NSAttributedString *inspectionSuccess(NSString *s) {
     return formatInspectionString(s, false);
 }
 
-- (id)valueForController:(HFController *)controller ranges:(NSArray *)ranges isError:(BOOL *)outIsError {
+- (NSAttributedString *)valueForController:(HFController *)controller ranges:(NSArray *)ranges isError:(BOOL *)outIsError {
     /* Just do a rough cut on length before going to valueForData. */
     
     if ([ranges count] != 1) {
@@ -386,15 +386,15 @@ static NSAttributedString *inspectionSuccess(NSString *s) {
             return inspectionError(InspectionErrorInternal);
     }
     
-    id result = [self valueForData:[controller dataForRange:range] isError:outIsError];
-    return [result isKindOfClass:[NSString class]] ? inspectionSuccess(result) : result;
+    NSAttributedString *result = [self valueForData:[controller dataForRange:range] isError:outIsError];
+    return result;
 }
 
-- (id)valueForData:(NSData *)data isError:(BOOL *)outIsError {
+- (NSAttributedString *)valueForData:(NSData *)data isError:(BOOL *)outIsError {
     return [self valueForBytes:[data bytes] length:[data length] isError:outIsError];
 }
 
-- (id)valueForBytes:(const unsigned char *)bytes length:(NSUInteger)length isError:(BOOL *)outIsError {
+- (NSAttributedString *)valueForBytes:(const unsigned char *)bytes length:(NSUInteger)length isError:(BOOL *)outIsError {
     if(outIsError) *outIsError = YES;
     
     switch ([self type]) {
@@ -406,9 +406,9 @@ static NSAttributedString *inspectionSuccess(NSString *s) {
                 case 1: case 2: case 4: case 8:
                     if(outIsError) *outIsError = NO;
                     if(inspectorType == eInspectorTypeSignedInteger)
-                        return signedIntegerDescription(bytes, length, endianness, numberBase);
+                        return inspectionSuccess(signedIntegerDescription(bytes, length, endianness, numberBase));
                     else
-                        return unsignedIntegerDescription(bytes, length, endianness, numberBase);
+                        return inspectionSuccess(unsignedIntegerDescription(bytes, length, endianness, numberBase));
                 default:
                     return length > 8 ? inspectionError(InspectionErrorTooMuch) : inspectionError(InspectionErrorNonPwr2);
             }
@@ -421,7 +421,7 @@ static NSAttributedString *inspectionSuccess(NSString *s) {
                     return inspectionError(InspectionErrorTooLittle);
                 case 2: case 4: case 8: case 10: case 16:
                     if(outIsError) *outIsError = NO;
-                    return floatingPointDescription(bytes, length, endianness);
+                    return inspectionSuccess(floatingPointDescription(bytes, length, endianness));
                 default:
                     return length > 16 ? inspectionError(InspectionErrorTooMuch) : inspectionError(InspectionErrorNonPwr2);
             }
@@ -432,7 +432,7 @@ static NSAttributedString *inspectionSuccess(NSString *s) {
             NSString *ret = [[NSString alloc] initWithBytes:bytes length:length encoding:NSUTF8StringEncoding];
             if(ret == nil) return inspectionError(@"(bytes are not valid UTF-8)");
             if(outIsError) *outIsError = NO;
-            return ret;
+            return inspectionSuccess(ret);
         }
         case eInspectorTypeBinary: {
             NSString* ret = @"";
@@ -469,7 +469,7 @@ static NSAttributedString *inspectionSuccess(NSString *s) {
                 ret = [ret stringByAppendingFormat:@"%s ", binary ];
             }
             
-            return  ret;
+            return  inspectionSuccess(ret);
         }
             
         case eInspectorTypeSLEB128: {
@@ -483,7 +483,7 @@ static NSAttributedString *inspectionSuccess(NSString *s) {
                     if (shift < 64 && (bytes[i] & 0x40)) {
                         result |= -((uint64_t)1 << shift);
                     }
-                    return [NSString stringWithFormat:@"%qd (%ld bytes)", result, i + 1];
+                    return inspectionSuccess([NSString stringWithFormat:@"%qd (%ld bytes)", result, i + 1]);
                 }
             }
             
@@ -498,7 +498,7 @@ static NSAttributedString *inspectionSuccess(NSString *s) {
                 shift += 7;
                 
                 if ((bytes[i] & 0x80) == 0) {
-                    return [NSString stringWithFormat:@"%qu (%ld bytes)", result, i + 1];
+                    return inspectionSuccess([NSString stringWithFormat:@"%qu (%ld bytes)", result, i + 1]);
                 }
             }
             
