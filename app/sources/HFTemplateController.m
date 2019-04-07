@@ -9,6 +9,8 @@
 #import "HFTemplateController.h"
 #import "HFFunctions_Private.h"
 
+static const unsigned long long kMaxCacheSize = 1024 * 1024;
+
 @interface HFTemplateController ()
 
 @property HFController *controller;
@@ -17,10 +19,18 @@
 @property HFTemplateNode *root;
 @property (weak) HFTemplateNode *currentNode;
 @property BOOL requireFailed;
+@property NSMutableData *bytesCache;
+@property HFRange bytesCacheRange;
 
 @end
 
 @implementation HFTemplateController
+
+- (instancetype)init {
+    self = [super init];
+    _bytesCache = [NSMutableData dataWithLength:kMaxCacheSize];
+    return self;
+}
 
 - (HFTemplateNode *)evaluateScript:(NSString *)path forController:(HFController *)controller error:(NSString **)error {
     self.controller = controller;
@@ -49,10 +59,24 @@
 
 - (BOOL)readBytes:(void *)buffer size:(size_t)size {
     const HFRange range = HFRangeMake(self.anchor + self.position, size);
-    if (!HFRangeIsSubrangeOfRange(range, HFRangeMake(0, self.controller.contentsLength))) {
+    if (!HFRangeIsSubrangeOfRange(range, HFRangeMake(0, self.length))) {
+        HFASSERT(0);
         return NO;
     }
-    [self.controller copyBytes:buffer range:range];
+    HFASSERT(range.length <= NSUIntegerMax); // it doesn't make sense to ask for a buffer larger than can be stored in memory
+
+    if ((range.location < _bytesCacheRange.location) || (range.location + range.length > _bytesCacheRange.location + _bytesCacheRange.length)) {
+        // Requested range is not cached, so recache
+        _bytesCacheRange.location = range.location;
+        _bytesCacheRange.length = kMaxCacheSize;
+        // If the new cache length goes behind the file end, clip the length
+        if (_bytesCacheRange.location + _bytesCacheRange.length > self.length) {
+            _bytesCacheRange.length = self.length - _bytesCacheRange.location;
+        }
+        [self.controller copyBytes:_bytesCache.mutableBytes range:_bytesCacheRange];
+    }
+    memcpy(buffer, _bytesCache.bytes + range.location - _bytesCacheRange.location, size);
+
     self.position += size;
     return YES;
 }
@@ -404,7 +428,7 @@
 }
 
 - (BOOL)isEOF {
-    return (self.anchor + self.position) >= self.controller.contentsLength;
+    return (self.anchor + self.position) >= self.length;
 }
 
 - (BOOL)requireDataAtOffset:(unsigned long long)offset toMatchHexValues:(NSString *)hexValues {
