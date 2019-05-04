@@ -65,17 +65,22 @@ static const unsigned long long kMaxCacheSize = 1024 * 1024;
     }
     HFASSERT(range.length <= NSUIntegerMax); // it doesn't make sense to ask for a buffer larger than can be stored in memory
 
-    if ((range.location < _bytesCacheRange.location) || (range.location + range.length > _bytesCacheRange.location + _bytesCacheRange.length)) {
-        // Requested range is not cached, so recache
-        _bytesCacheRange.location = range.location;
-        _bytesCacheRange.length = kMaxCacheSize;
-        // If the new cache length goes behind the file end, clip the length
-        if (_bytesCacheRange.location + _bytesCacheRange.length > self.length) {
-            _bytesCacheRange.length = self.length - _bytesCacheRange.location;
+    if (range.length > kMaxCacheSize) {
+        // Don't try to cache if the requested range wouldn't fit
+        [self.controller copyBytes:buffer range:range];
+    } else {
+        if ((range.location < _bytesCacheRange.location) || (range.location + range.length > _bytesCacheRange.location + _bytesCacheRange.length)) {
+            // Requested range is not cached, so recache
+            _bytesCacheRange.location = range.location;
+            _bytesCacheRange.length = kMaxCacheSize;
+            // If the new cache length goes behind the file end, clip the length
+            if (_bytesCacheRange.location + _bytesCacheRange.length > self.length) {
+                _bytesCacheRange.length = self.length - _bytesCacheRange.location;
+            }
+            [self.controller copyBytes:_bytesCache.mutableBytes range:_bytesCacheRange];
         }
-        [self.controller copyBytes:_bytesCache.mutableBytes range:_bytesCacheRange];
+        memcpy(buffer, _bytesCache.bytes + range.location - _bytesCacheRange.location, size);
     }
-    memcpy(buffer, _bytesCache.bytes + range.location - _bytesCacheRange.location, size);
 
     self.position += size;
     return YES;
