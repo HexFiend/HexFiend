@@ -412,11 +412,25 @@ static const unsigned long long kMaxCacheSize = 1024 * 1024;
 }
 
 - (BOOL)readUUID:(NSUUID **)uuid forLabel:(NSString *)label {
-    uuid_t bytes;
+    union {
+        struct {
+            uint32_t data1;
+            uint16_t data2;
+            uint16_t data3;
+            uint8_t data4[8];
+        } swap;
+        uuid_t uuid;
+    } bytes;
     if (![self readBytes:&bytes size:sizeof(bytes)]) {
         return NO;
     }
-    *uuid = [[NSUUID alloc] initWithUUIDBytes:bytes];
+    // NSUUID always reads as big endian, even on little endian platforms
+    if (self.endian == HFEndianLittle) {
+        bytes.swap.data1 = NSSwapInt(bytes.swap.data1);
+        bytes.swap.data2 = NSSwapShort(bytes.swap.data2);
+        bytes.swap.data3 = NSSwapShort(bytes.swap.data3);
+    }
+    *uuid = [[NSUUID alloc] initWithUUIDBytes:bytes.uuid];
     if (label) {
         [self addNodeWithLabel:label value:[*uuid UUIDString] size:sizeof(bytes)];
     }
