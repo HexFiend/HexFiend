@@ -10,6 +10,7 @@
 
 @interface HFCustomEncoding ()
 
+@property uint8_t bytesPerCharacter;
 @property NSString *path;
 @property NSString *nameValue;
 @property NSString *identifierValue;
@@ -37,6 +38,15 @@
     if (!identifier) {
         identifier = name;
     }
+    NSNumber *bytesPerCharacter = dict[@"bytesPerCharacter"];
+    if (!bytesPerCharacter) {
+        bytesPerCharacter = @(1);
+    }
+    _bytesPerCharacter = [bytesPerCharacter unsignedCharValue];
+    if (_bytesPerCharacter < 1 || _bytesPerCharacter > 2) {
+        NSLog(@"Invalid bytes per character %@", bytesPerCharacter);
+        return NO;
+    }
     NSDictionary *map = dict[@"map"];
     if (![map isKindOfClass:[NSDictionary class]]) {
         return NO;
@@ -49,8 +59,12 @@
             NSLog(@"Invalid key %@", key);
             return NO;
         }
-        if (intKey > 0xFF) {
+        if (intKey > 0xFF && _bytesPerCharacter == 1) {
             NSLog(@"Only 8 bit keys are supported: %@", key);
+            return NO;
+        }
+        if (intKey > 0xFFFF) {
+            NSLog(@"Only 16 bit keys are supported: %@", key);
             return NO;
         }
         NSString *value = map[key];
@@ -85,13 +99,19 @@
 }
 
 - (uint8_t)fixedBytesPerCharacter {
-    return 1;
+    return _bytesPerCharacter;
 }
 
 - (NSString *)stringFromBytes:(const unsigned char *)bytes length:(NSUInteger)length {
     NSMutableString *str = [NSMutableString string];
-    for (NSUInteger i = 0; i < length; ++i) {
-        NSString *value = self.charToStringMap[@(bytes[i])];
+    NSUInteger end = length - _bytesPerCharacter + 1;
+    for (NSUInteger i = 0; i < end; i += _bytesPerCharacter) {
+        NSUInteger codepoint = bytes[i];
+        if (_bytesPerCharacter == 2) {
+            codepoint <<= 8;
+            codepoint |= bytes[i + 1];
+        }
+        NSString *value = self.charToStringMap[@(codepoint)];
         if (!value) {
             value = @".";
         }
