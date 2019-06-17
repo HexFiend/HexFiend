@@ -834,7 +834,6 @@ static inline Class preferredByteArrayClass(void) {
     USE(undo);
 
     NSWindow *window = [self window];
-    NSDisableScreenUpdates();
     NSUInteger bytesPerLine = [controller bytesPerLine];
     /* Record that we are currently setting the font.  We use this to decide which direction to grow the window if our line numbers change. */
     currentlySettingFont = YES;
@@ -842,7 +841,6 @@ static inline Class preferredByteArrayClass(void) {
     [self relayoutAndResizeWindowForBytesPerLine:bytesPerLine];
     currentlySettingFont = NO;
     [window display];
-    NSEnableScreenUpdates();
     NSUserDefaults *defs = [NSUserDefaults standardUserDefaults];
     [defs setDouble:[font pointSize] forKey:@"DefaultFontSize"];
     [defs setObject:[font fontName] forKey:@"DefaultFontName"];
