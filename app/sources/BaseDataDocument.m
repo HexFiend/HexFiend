@@ -84,8 +84,6 @@ static inline Class preferredByteArrayClass(void) {
 
 /* Register the default-defaults for this class. */
 + (void)registerDefaultDefaults {
-    static OSSpinLock sLock = OS_SPINLOCK_INIT;
-    OSSpinLockLock(&sLock); //use a spinlock to be safe, but contention should be very low because we only expect to make these on the main thread
     static BOOL sRegisteredGlobalDefaults = NO;
     if (! sRegisteredGlobalDefaults) {
         /* Defaults common to all subclasses */
@@ -127,7 +125,6 @@ static inline Class preferredByteArrayClass(void) {
         };
         [[NSUserDefaults standardUserDefaults] registerDefaults:defs];
     }
-    OSSpinLockUnlock(&sLock);
 }
 
 + (void)initialize {
