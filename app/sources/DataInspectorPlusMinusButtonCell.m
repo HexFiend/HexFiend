@@ -60,7 +60,7 @@
     CGImageRef image = CGImageCreate(width, height, CHAR_BIT, bytesPerPixel * CHAR_BIT, bytesPerPixel * width, space, (CGBitmapInfo)kCGImageAlphaPremultipliedLast, provider, NULL, YES, kCGRenderingIntentDefault);
     CGDataProviderRelease(provider);
     CGColorSpaceRelease(space);
-    [[NSGraphicsContext currentContext] setCompositingOperation:NSCompositeSourceOver];
+    [[NSGraphicsContext currentContext] setCompositingOperation:NSCompositingOperationSourceOver];
     CGContextDrawImage(HFGraphicsGetCurrentContext(), *(CGRect *)&bitmapRect, image);
     CGImageRelease(image);
 }

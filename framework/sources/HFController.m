@@ -989,9 +989,9 @@ static inline Class preferredByteArrayClass(void) {
     /* Determine how to perform the selection - normally, with command key, or with shift key.  Command + shift is the same as command. The shift key closes the selection - the selected range becomes the single range containing the first and last selected character. */
     _hfflags.shiftExtendSelection = NO;
     _hfflags.commandExtendSelection = NO;
-    NSUInteger flags = [event modifierFlags];
-    if (flags & NSCommandKeyMask) _hfflags.commandExtendSelection = YES;
-    else if (flags & NSShiftKeyMask) _hfflags.shiftExtendSelection = YES;
+    NSEventModifierFlags flags = [event modifierFlags];
+    if (flags & NSEventModifierFlagCommand) _hfflags.commandExtendSelection = YES;
+    else if (flags & NSEventModifierFlagCommand) _hfflags.shiftExtendSelection = YES;
     
     selectionAnchor = NO_SELECTION;
     selectionAnchorRange = HFRangeMake(NO_SELECTION, 0);
@@ -1173,7 +1173,7 @@ static inline Class preferredByteArrayClass(void) {
 #if !TARGET_OS_IPHONE
 - (void)scrollWithScrollEvent:(NSEvent *)scrollEvent {
     HFASSERT(scrollEvent != NULL);
-    HFASSERT([scrollEvent type] == NSScrollWheel);
+    HFASSERT([scrollEvent type] == NSEventTypeScrollWheel);
     CGFloat preciseScroll;
     BOOL hasPreciseScroll;
     

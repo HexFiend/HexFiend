@@ -15,7 +15,7 @@
 /* No special NSCoding support needed */
 
 - (NSView *)createView {
-    NSScroller *scroller = [[NSScroller alloc] initWithFrame:NSMakeRect(0, 0, [NSScroller scrollerWidthForControlSize:NSRegularControlSize scrollerStyle:NSScrollerStyleLegacy], 64)];
+    NSScroller *scroller = [[NSScroller alloc] initWithFrame:NSMakeRect(0, 0, [NSScroller scrollerWidthForControlSize:NSControlSizeRegular scrollerStyle:NSScrollerStyleLegacy], 64)];
     [scroller setTarget:self];
     [scroller setContinuous:YES];
     [scroller setEnabled:YES];

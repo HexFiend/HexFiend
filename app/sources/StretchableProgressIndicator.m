@@ -46,13 +46,13 @@ static CGFloat norm(unsigned char x) {
     CGFloat lineHeight = 1;
     NSRect edgeRect = NSMakeRect(NSMinX(bounds), 0, NSWidth(bounds), lineHeight);
     [[NSColor colorWithCalibratedWhite:.5 alpha:.5] set];
-    NSRectFillUsingOperation(edgeRect, NSCompositeSourceOver);
+    NSRectFillUsingOperation(edgeRect, NSCompositingOperationSourceOver);
     
     /* Draw right edge line */
     [[NSColor colorWithCalibratedRed:0. green:0. blue:1. alpha:.15] set];
     NSRect baseRightEdge = NSMakeRect(ceil(NSMaxX(baseRectToFill) - EDGE_WIDTH), NSMinY(baseRectToFill), EDGE_WIDTH, NSHeight(baseRectToFill));
     NSRect localRightEdge = [self convertRectFromBacking:baseRightEdge];
-    NSRectFillUsingOperation(localRightEdge, NSCompositeSourceOver);
+    NSRectFillUsingOperation(localRightEdge, NSCompositingOperationSourceOver);
 }
 
 - (void)setDoubleValue:(double)newValue {

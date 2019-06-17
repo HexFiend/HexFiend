@@ -152,7 +152,7 @@
     } else {
         [[NSColor colorWithCalibratedWhite:.64 alpha:1.] set];
     }
-    NSRectFillUsingOperation(dirtyRect, NSCompositeSourceOver);
+    NSRectFillUsingOperation(dirtyRect, NSCompositingOperationSourceOver);
     
     CGContextRef ctx = HFGraphicsGetCurrentContext();
     CGFloat lineWidth = 1;

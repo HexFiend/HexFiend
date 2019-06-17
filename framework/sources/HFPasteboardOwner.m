@@ -155,7 +155,7 @@ static NSMapTable *byteArrayMap = nil;
         /* We have started the modal session, so end it. */
         [NSApp stopModalWithCode:0];
         //stopModal: won't trigger unless we post a do-nothing event
-        NSEvent *event = [NSEvent otherEventWithType:NSApplicationDefined location:NSZeroPoint modifierFlags:0 timestamp:0 windowNumber:0 context:NULL subtype:0 data1:0 data2:0];
+        NSEvent *event = [NSEvent otherEventWithType:NSEventTypeApplicationDefined location:NSZeroPoint modifierFlags:0 timestamp:0 windowNumber:0 context:NULL subtype:0 data1:0 data2:0];
         [NSApp postEvent:event atStart:NO];
     }
 }

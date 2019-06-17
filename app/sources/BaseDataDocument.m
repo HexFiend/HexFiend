@@ -1213,7 +1213,7 @@ static inline Class preferredByteArrayClass(void) {
         saveResult = [result integerValue];
         
         /* Post an event so our event loop wakes up */
-        [NSApp postEvent:[NSEvent otherEventWithType:NSApplicationDefined location:NSZeroPoint modifierFlags:0 timestamp:0 windowNumber:0 context:NULL subtype:0 data1:0 data2:0] atStart:NO];
+        [NSApp postEvent:[NSEvent otherEventWithType:NSEventTypeApplicationDefined location:NSZeroPoint modifierFlags:0 timestamp:0 windowNumber:0 context:NULL subtype:0 data1:0 data2:0] atStart:NO];
     }];
 
     if (operationError && outError) {
@@ -1223,7 +1223,7 @@ static inline Class preferredByteArrayClass(void) {
     while ([saveView operationIsRunning]) {
         @autoreleasepool {
             @try {  
-                NSEvent *event = [NSApp nextEventMatchingMask:NSAnyEventMask untilDate:[NSDate distantFuture] inMode:NSDefaultRunLoopMode dequeue:YES];
+                NSEvent *event = [NSApp nextEventMatchingMask:NSUIntegerMax untilDate:[NSDate distantFuture] inMode:NSDefaultRunLoopMode dequeue:YES];
                 if (event) [NSApp sendEvent:event];
             }
             @catch (NSException *localException) {
@@ -1718,7 +1718,7 @@ cancelled:;
                 initWithTitle:[NSString stringWithFormat:@"Select Bookmark %lu", (unsigned long)bookmarkIndex]
                 action:@selector(selectBookmark:)
                 keyEquivalent:keString];
-        [item setKeyEquivalentModifierMask:NSCommandKeyMask];
+        [item setKeyEquivalentModifierMask:NSEventModifierFlagCommand];
         [item setAlternate:NO];
         [item setTag:bookmarkIndex];
         [items addObject:item];
@@ -1727,7 +1727,7 @@ cancelled:;
                 initWithTitle:[NSString stringWithFormat:@"Scroll to Bookmark %lu", (unsigned long)bookmarkIndex]
                 action:@selector(scrollToBookmark:)
                 keyEquivalent:keString];
-        [item setKeyEquivalentModifierMask:NSCommandKeyMask | NSShiftKeyMask];
+        [item setKeyEquivalentModifierMask:NSEventModifierFlagCommand | NSEventModifierFlagShift];
         [item setAlternate:YES];
         [item setTag:bookmarkIndex];
         [items addObject:item];

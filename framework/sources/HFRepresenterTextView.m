@@ -449,7 +449,7 @@ enum LineCoverage_t {
                 pulseWindowBaseFrameInScreenCoordinates = [self convertRect:windowFrameInBoundsCoords toView:nil];
                 pulseWindowBaseFrameInScreenCoordinates.origin = [[self window] convertRectToScreen:pulseWindowBaseFrameInScreenCoordinates].origin;
                 
-                pulseWindow = [[NSWindow alloc] initWithContentRect:pulseWindowBaseFrameInScreenCoordinates styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:NO];
+                pulseWindow = [[NSWindow alloc] initWithContentRect:pulseWindowBaseFrameInScreenCoordinates styleMask:NSWindowStyleMaskBorderless backing:NSBackingStoreBuffered defer:NO];
                 [pulseWindow setReleasedWhenClosed:NO];
                 [pulseWindow setOpaque:NO];
                 HFTextSelectionPulseView *pulseView = [[HFTextSelectionPulseView alloc] initWithFrame:[[pulseWindow contentView] frame]];
@@ -931,7 +931,7 @@ enum LineCoverage_t {
     
     if (drawableLineIndex > 0) {
 #if !TARGET_OS_IPHONE
-        NSRectFillListWithColorsUsingOperation(lineRects, lineColors, drawableLineIndex, NSCompositeSourceOver);
+        NSRectFillListWithColorsUsingOperation(lineRects, lineColors, drawableLineIndex, NSCompositingOperationSourceOver);
 #endif
     }
     
@@ -1344,7 +1344,7 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
     p = propertyInfos + 0;
     if (p->count > 0) {
 #if !TARGET_OS_IPHONE
-        NSRectFillListWithColorsUsingOperation(p->rectList, p->propertyValueList, p->count, NSCompositeSourceOver);
+        NSRectFillListWithColorsUsingOperation(p->rectList, p->propertyValueList, p->count, NSCompositingOperationSourceOver);
 #endif
     }
     
@@ -1974,9 +1974,9 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
     NSPoint autoscrollLocation = mouseDownLocation;
     while (! _hftvflags.receivedMouseUp) {
         @autoreleasepool {
-        NSEvent *ev = [NSApp nextEventMatchingMask: NSLeftMouseUpMask | NSLeftMouseDraggedMask | NSPeriodicMask untilDate:endDate inMode:NSEventTrackingRunLoopMode dequeue:YES];
+        NSEvent *ev = [NSApp nextEventMatchingMask: NSEventMaskLeftMouseUp | NSEventMaskLeftMouseDragged | NSEventMaskPeriodic untilDate:endDate inMode:NSEventTrackingRunLoopMode dequeue:YES];
         
-        if ([ev type] == NSPeriodic) {
+        if ([ev type] == NSEventTypePeriodic) {
             // autoscroll if drag is out of view bounds
             CGFloat amountToScroll = 0;
             NSRect bounds = [self bounds];
@@ -1993,7 +1993,7 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
                 [[self representer] continueSelectionWithEvent:ev forCharacterIndex:characterIndex];
             }
         }
-        else if ([ev type] == NSLeftMouseDragged) {
+        else if ([ev type] == NSEventTypeLeftMouseDragged) {
             autoscrollLocation = [self convertPoint:[ev locationInWindow] fromView:nil];
         }
         
