@@ -24,7 +24,7 @@
     NSArray *fontCache;
     
     /* Background thread */
-    OSSpinLock glyphLoadLock;
+    NSLock *glyphLoadLock;
     NSMutableArray *fonts;
     NSMutableIndexSet *requestedCharacters;
     NSOperationQueue *glyphLoader;

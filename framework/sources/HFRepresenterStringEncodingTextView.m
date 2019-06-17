@@ -189,12 +189,12 @@ static void generateGlyphs(CTFontRef baseFont, NSMutableArray *fonts, struct HFG
     /* Do some things under the lock. Someone else may wish to read fonts, and we're going to write to it, so make a local copy.  Also figure out what characters to load. */
     NSMutableArray *localFonts;
     NSIndexSet *charactersToLoad;
-    OSSpinLockLock(&glyphLoadLock);
+    [glyphLoadLock lock];
     localFonts = [fonts mutableCopy];
     charactersToLoad = requestedCharacters;
     /* Set requestedCharacters to nil so that the caller knows we aren't going to check again, and will have to re-invoke us. */
     requestedCharacters = nil;
-    OSSpinLockUnlock(&glyphLoadLock);
+    [glyphLoadLock unlock];
     
     NSUInteger charVal, glyphIdx, charCount = [charactersToLoad count];
     NEW_ARRAY(struct HFGlyph_t, glyphs, charCount);
@@ -206,9 +206,9 @@ static void generateGlyphs(CTFontRef baseFont, NSMutableArray *fonts, struct HFG
     FREE_ARRAY(characters);
     
     /* Replace fonts.  Do this before we insert into the glyph trie, because the glyph trie references fonts that we're just now putting in the fonts array. */
-    OSSpinLockLock(&glyphLoadLock);
+    [glyphLoadLock lock];
     fonts = localFonts;
-    OSSpinLockUnlock(&glyphLoadLock);
+    [glyphLoadLock unlock];
     
     /* Now insert all of the glyphs into the glyph trie */
     glyphIdx = 0;
@@ -241,7 +241,7 @@ static void generateGlyphs(CTFontRef baseFont, NSMutableArray *fonts, struct HFG
     }
     
     BOOL needToStartOperation;    
-    OSSpinLockLock(&glyphLoadLock);
+    [glyphLoadLock lock];
     if (requestedCharacters) {
         /* There's a pending request, so just add to it */
         [requestedCharacters addIndexes:charactersToLoad];
@@ -251,7 +251,7 @@ static void generateGlyphs(CTFontRef baseFont, NSMutableArray *fonts, struct HFG
         requestedCharacters = [charactersToLoad mutableCopy];
         needToStartOperation = YES;
     }
-    OSSpinLockUnlock(&glyphLoadLock);
+    [glyphLoadLock unlock];
     
     if (needToStartOperation) {
         NSInvocationOperation *op = [[NSInvocationOperation alloc] initWithTarget:self selector:@selector(threadedLoadGlyphs:) object:charactersToLoad];
@@ -287,6 +287,7 @@ static void generateGlyphs(CTFontRef baseFont, NSMutableArray *fonts, struct HFG
     self = [super initWithCoder:coder];
     encoding = [coder decodeObjectForKey:@"HFStringEncoding"];
     bytesPerChar = encoding.fixedBytesPerCharacter;
+    glyphLoadLock = [[NSLock alloc] init];
     [self staleTieredProperties];
     return self;
 }
@@ -295,6 +296,7 @@ static void generateGlyphs(CTFontRef baseFont, NSMutableArray *fonts, struct HFG
     self = [super initWithFrame:frameRect];
     encoding = [HFEncodingManager shared].ascii;
     bytesPerChar = encoding.fixedBytesPerCharacter;
+    glyphLoadLock = [[NSLock alloc] init];
     [self staleTieredProperties];
     return self;
 }
@@ -369,10 +371,10 @@ static void generateGlyphs(CTFontRef baseFont, NSMutableArray *fonts, struct HFG
     if (idx >= [fontCache count]) {
         /* Our font cache is out of date.  Take the lock and update the cache. */
         NSArray *newFonts = nil;
-        OSSpinLockLock(&glyphLoadLock);
+        [glyphLoadLock lock];
         HFASSERT(idx < [fonts count]);
         newFonts = [fonts copy];
-        OSSpinLockUnlock(&glyphLoadLock);
+        [glyphLoadLock unlock];
         
         /* Store the new cache */
         fontCache = newFonts;
