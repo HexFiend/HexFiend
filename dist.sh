@@ -16,16 +16,19 @@
 
 set -e
 
+usage() {
+	echo "Usage: ./dist.sh \"Developer ID Application: My Cool Company\" \"myself@coolcompany.com\""
+	exit 1
+}
+
 CODESIGN="${1}"
 if [ -z "${CODESIGN}" ]; then
-	echo "Code signing identity is required."
-	exit 1
+	usage
 fi
 
 APPSTORE_USER="${2}"
 if [ -z "${APPSTORE_USER}" ]; then
-	echo "App Store user is required for notarization."
-	exit 1
+	usage
 fi
 
 DERIVED_DATA_PATH="$(pwd)/DerivedData"
