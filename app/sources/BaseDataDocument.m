@@ -1900,14 +1900,6 @@ cancelled:;
     return result;
 }
 
-
-+ (void)didEndBreakFileDependencySheet:(NSAlert *)alert returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
-    USE(alert);
-    USE(contextInfo);
-    [NSApp stopModalWithCode:returnCode];
-    
-}
-
 + (void)prepareForChangeInFileByBreakingFileDependencies:(NSNotification *)note {
     HFFileReference *fileReference = [note object];
     NSDictionary *userInfo = [note userInfo];
@@ -1949,7 +1941,9 @@ cancelled:;
             [alert setInformativeText:NSLocalizedString(@"To save that document, you must close this one.", "")];
             [alert addButtonWithTitle:NSLocalizedString(@"Cancel Save", "")];
             [alert addButtonWithTitle:NSLocalizedString(@"Close, Discarding Any Changes", "")];
-            [alert beginSheetModalForWindow:[document windowForSheet] modalDelegate:self didEndSelector:@selector(didEndBreakFileDependencySheet:returnCode:contextInfo:) contextInfo:nil];
+            [alert beginSheetModalForWindow:[document windowForSheet] completionHandler:^(NSModalResponse returnCode) {
+                [NSApp stopModalWithCode:returnCode];
+            }];
             NSInteger modalResult = [NSApp runModalForWindow:[alert window]];
             
             BOOL didCancel = (modalResult == NSAlertFirstButtonReturn);
