@@ -21,3 +21,10 @@ typedef struct {
 #define HFView NSView
 #define HFFont NSFont
 #endif
+
+typedef NS_ENUM(NSInteger, HFControllerSelectAction) {
+    eSelectResult,
+    eSelectAfterResult,
+    ePreserveSelection,
+    NUM_SELECTION_ACTIONS
+};

@@ -51,13 +51,6 @@ NSString * const HFControllerDidChangePropertiesNotification = @"HFControllerDid
 NSString * const HFControllerChangedPropertiesKey = @"HFControllerChangedPropertiesKey";
 
 
-typedef NS_ENUM(NSInteger, HFControllerSelectAction) {
-    eSelectResult,
-    eSelectAfterResult,
-    ePreserveSelection,
-    NUM_SELECTION_ACTIONS
-};
-
 @interface HFController (ForwardDeclarations)
 - (void)_commandInsertByteArrays:(NSArray *)byteArrays inRanges:(NSArray *)ranges withSelectionAction:(HFControllerSelectAction)selectionAction;
 - (void)_endTypingUndoCoalescingIfActive;
@@ -123,7 +116,7 @@ static inline Class preferredByteArrayClass(void) {
     [coder encodeBool:_hfflags.showcallouts forKey:@"HFShowCallouts"];
     [coder encodeBool:_hfflags.hideNullBytes forKey:@"HFHidesNullBytes"];
     [coder encodeBool:_hfflags.livereload forKey:@"HFLiveReload"];
-    [coder encodeInt:_hfflags.editMode forKey:@"HFEditMode"];
+    [coder encodeInt:(int)_hfflags.editMode forKey:@"HFEditMode"];
     [coder encodeBool:_hfflags.editable forKey:@"HFEditable"];
     [coder encodeBool:_hfflags.selectable forKey:@"HFSelectable"];
     [coder encodeBool:_hfflags.savable forKey:@"HFSavable"];

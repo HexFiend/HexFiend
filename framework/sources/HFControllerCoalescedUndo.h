@@ -46,14 +46,14 @@ NS_ASSUME_NONNULL_BEGIN
 @interface HFControllerMultiRangeUndo : NSObject {
     NSArray *byteArrays; //retained
     NSArray *replacementRanges; //retained
-    int selectionAction;
+    HFControllerSelectAction selectionAction;
 }
 
-- (instancetype)initForInsertingByteArrays:(NSArray *)arrays inRanges:(NSArray *)ranges withSelectionAction:(int)selectionAction;
+- (instancetype)initForInsertingByteArrays:(NSArray *)arrays inRanges:(NSArray *)ranges withSelectionAction:(HFControllerSelectAction)selectionAction;
 
 - (nullable NSArray *)byteArrays;
 - (nullable NSArray *)replacementRanges;
-- (int)selectionAction;
+- (HFControllerSelectAction)selectionAction;
 
 - (BOOL)clearDependenciesOnRanges:(NSArray *)ranges inFile:(HFFileReference *)reference hint:(nullable NSMutableDictionary *)hint;
 - (void)invalidate;
