@@ -65,6 +65,7 @@
         return activeEncodings[row].encoding.identifier;
     } else {
         HFASSERT(0);
+        return nil;
     }
 }
 
