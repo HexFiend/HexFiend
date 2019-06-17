@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0810"
+   LastUpgradeVersion = "1100"
    version = "1.8">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -26,10 +26,7 @@
       buildConfiguration = "Release+MAS"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
-      language = ""
       shouldUseLaunchSchemeArgsEnv = "YES">
-      <Testables>
-      </Testables>
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
@@ -39,8 +36,8 @@
             ReferencedContainer = "container:HexFiend_2.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
-      <AdditionalOptions>
-      </AdditionalOptions>
+      <Testables>
+      </Testables>
    </TestAction>
    <LaunchAction
       buildConfiguration = "Release+MAS"
@@ -48,7 +45,6 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       displayScaleIsEnabled = "NO"
       displayScale = "1.00"
-      language = ""
       launchStyle = "0"
       useCustomWorkingDirectory = "NO"
       ignoresPersistentStateOnLaunch = "NO"
@@ -75,8 +71,6 @@
             isEnabled = "NO">
          </CommandLineArgument>
       </CommandLineArguments>
-      <AdditionalOptions>
-      </AdditionalOptions>
    </LaunchAction>
    <ProfileAction
       displayScaleIsEnabled = "NO"
