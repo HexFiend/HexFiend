@@ -84,8 +84,8 @@ static inline Class preferredByteArrayClass(void) {
 
 /* Register the default-defaults for this class. */
 + (void)registerDefaultDefaults {
-    static BOOL sRegisteredGlobalDefaults = NO;
-    if (! sRegisteredGlobalDefaults) {
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
         /* Defaults common to all subclasses */
         NSDictionary *defs = @{
             @"AntialiasText"   : @YES,
@@ -104,8 +104,7 @@ static inline Class preferredByteArrayClass(void) {
             @"ResolveAliases": @YES,
         };
         [[NSUserDefaults standardUserDefaults] registerDefaults:defs];
-        sRegisteredGlobalDefaults = YES;
-    }
+    });
     
     static NSMutableArray *sRegisteredDefaultsByIdentifier = nil;
     NSString *ident = [self layoutUserDefaultIdentifier];
