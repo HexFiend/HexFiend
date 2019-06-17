@@ -25,7 +25,6 @@
     
     /* Background thread */
     OSSpinLock glyphLoadLock;
-    BOOL requestedCancel;
     NSMutableArray *fonts;
     NSMutableIndexSet *requestedCharacters;
     NSOperationQueue *glyphLoader;

@@ -266,9 +266,7 @@ static void generateGlyphs(CTFontRef baseFont, NSMutableArray *fonts, struct HFG
 - (void)staleTieredProperties {
     tier1DataIsStale = YES;
     /* We have to free the glyph table */
-    requestedCancel = YES;
     [glyphLoader waitUntilAllOperationsAreFinished];
-    requestedCancel = NO;
     HFGlyphTreeFree(&glyphTable);
     HFGlyphTrieInitialize(&glyphTable, bytesPerChar);
     fonts = nil;
