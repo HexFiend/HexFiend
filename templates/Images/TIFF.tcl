@@ -11,10 +11,11 @@ proc stringSize {} {
   return $size
 }
 
-proc myEntry {label value size} {
-  move -$size
-  entry $label $value $size
-  move $size
+# Like `entry label value length` but the file pointer is moved backward first.
+proc backwardEntry {label value length} {
+  move -$length
+  entry $label $value $length
+  move $length
 }
 
 proc is x {set x}
@@ -162,7 +163,7 @@ proc x2Name {fct typeVal} {
   set size_t [expr {$typeVal == 3 ? 2 : $typeVal}]
   set value [$command]
 
-  myEntry "Value" [$fct $value] $size_t
+  backwardEntry "Value" [$fct $value] $size_t
   padding32 $size_t
 }
 
@@ -239,7 +240,7 @@ proc getCountValues {command count} {
 set lastValue ""
 proc showCountValues {command size_t count} {
   set values [getCountValues $command $count]
-  myEntry "Value" [join $values ", "] [expr $count * $size_t]
+  backwardEntry "Value" [join $values ", "] [expr $count * $size_t]
 
   set ::lastValue $values ; # ugly bypass
 }
@@ -251,7 +252,7 @@ proc showRationalValue {command} {
   goto $offset
   set num [$command "Numerator"]
   set den [$command "Denominator"]
-  myEntry "Value" [expr {$den == 0 ? "DIV BY 0" : $num / $den}] 8
+  backwardEntry "Value" [expr {$den == 0 ? "DIV BY 0" : $num / $den}] 8
   goto $pos
 }
 
@@ -291,7 +292,7 @@ while {$ifdOffset} {
         uint16 "Tag"
 
         set typeVal [uint16]
-        myEntry "Type" [type2Name $typeVal] 2
+        backwardEntry "Type" [type2Name $typeVal] 2
 
         set count [uint32 "Count"]
 
