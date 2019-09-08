@@ -24,7 +24,7 @@
 
 - (void)initializeView {
     [super initializeView];
-    [[self view] setBytesBetweenVerticalGuides:4];
+    [(HFRepresenterTextView *)[self view] setBytesBetweenVerticalGuides:4];
     unpartneredLastNybble = UCHAR_MAX;
     omittedNybbleLocation = ULLONG_MAX;
 }
@@ -101,7 +101,7 @@
 
 - (void)controllerDidChange:(HFControllerPropertyBits)bits {
     if (bits & HFControllerHideNullBytes) {
-        [[self view] setHidesNullBytes:[[self controller] shouldHideNullBytes]];
+        [(HFRepresenterHexTextView *)[self view] setHidesNullBytes:[[self controller] shouldHideNullBytes]];
     }
     [super controllerDidChange:bits];
     if (bits & (HFControllerContentValue | HFControllerContentLength | HFControllerSelectedRanges)) {

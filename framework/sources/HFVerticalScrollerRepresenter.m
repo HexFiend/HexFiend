@@ -82,7 +82,7 @@
 - (void)updateScrollerValue {
     HFController *controller = [self controller];
     CGFloat value, proportion;
-    NSScroller *scroller = [self view];
+    NSScroller *scroller = (NSScroller *)[self view];
     BOOL enable = YES;
     if (controller == nil) {
         value = 0;
@@ -120,7 +120,7 @@
 
 - (CGFloat)minimumViewWidthForBytesPerLine:(NSUInteger)bytesPerLine {
     USE(bytesPerLine);
-    return [NSScroller scrollerWidthForControlSize:[[self view] controlSize] scrollerStyle:NSScrollerStyleLegacy];
+    return [NSScroller scrollerWidthForControlSize:[(NSControl *)[self view] controlSize] scrollerStyle:NSScrollerStyleLegacy];
 }
 
 - (void)controllerDidChange:(HFControllerPropertyBits)bits {

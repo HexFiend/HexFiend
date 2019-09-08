@@ -98,7 +98,7 @@ static CGFloat maximumDigitAdvanceForFont(NSFont *font) {
 }
 
 - (void)updateFontAndLineHeight {
-    HFLineCountingView *view = [self view];
+    HFLineCountingView *view = (HFLineCountingView *)[self view];
     HFController *controller = [self controller];
     NSFont *font = controller ? [controller font] : [NSFont fontWithName:HFDEFAULT_FONT size:HFDEFAULT_FONTSIZE];
     [view setFont:font];
@@ -107,11 +107,11 @@ static CGFloat maximumDigitAdvanceForFont(NSFont *font) {
 }
 
 - (void)updateLineNumberFormat {
-    [[self view] setLineNumberFormat:lineNumberFormat];
+    [(HFLineCountingView *)[self view] setLineNumberFormat:lineNumberFormat];
 }
 
 - (void)updateBytesPerLine {
-    [[self view] setBytesPerLine:[[self controller] bytesPerLine]];
+    [(HFLineCountingView *)[self view] setBytesPerLine:[[self controller] bytesPerLine]];
 }
 
 - (void)updateLineRangeToDraw {
@@ -120,7 +120,7 @@ static CGFloat maximumDigitAdvanceForFont(NSFont *font) {
     if (controller) {
         lineRange = [controller displayedLineRange];
     }
-    [[self view] setLineRangeToDraw:lineRange];
+    [(HFLineCountingView *)[self view] setLineRangeToDraw:lineRange];
 }
 
 - (CGFloat)preferredWidth {

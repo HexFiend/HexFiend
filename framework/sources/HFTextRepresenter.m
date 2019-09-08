@@ -52,7 +52,7 @@
 
 - (void)dealloc {
     if ([self isViewLoaded]) {
-        [[self view] clearRepresenter];
+        [(HFRepresenterTextView *)[self view] clearRepresenter];
     }
 }
 
@@ -113,7 +113,7 @@
     if (intersection.length > 0) {
         NSRange intersectionNSRange = NSMakeRange(ll2l(intersection.location - displayedRange.location), ll2l(intersection.length));
         if (intersectionNSRange.length > 0) {
-            result = [[self view] furthestRectOnEdge:edge forRange:intersectionNSRange];
+            result = [(HFRepresenterTextView *)[self view] furthestRectOnEdge:edge forRange:intersectionNSRange];
         }
     }
     else if (byteRange.location < displayedRange.location) {
@@ -136,7 +136,7 @@
     HFRange displayedRange = [self entireDisplayedRange];
     if (HFLocationInRange(index, displayedRange) || index == HFMaxRange(displayedRange)) {
         NSUInteger location = ll2l(index - displayedRange.location);
-        result = [[self view] originForCharacterAtByteIndex:location];
+        result = [(HFRepresenterTextView *)[self view] originForCharacterAtByteIndex:location];
     }
     else if (index < displayedRange.location) {
         result = CGPointMake(-CGFLOAT_MAX, -CGFLOAT_MAX);
@@ -228,7 +228,7 @@
 
 - (void)updateText {
     HFController *controller = [self controller];
-    HFRepresenterTextView *view = [self view];
+    HFRepresenterTextView *view = (HFRepresenterTextView *)[self view];
     HFRange entireDisplayedRange = [self entireDisplayedRange];
     [view setData:[controller dataForRange:entireDisplayedRange]];
     [view setStyles:[self stylesForRange:entireDisplayedRange]];
@@ -239,7 +239,7 @@
 
 - (void)initializeView {
     [super initializeView];
-    HFRepresenterTextView *view = [self view];
+    HFRepresenterTextView *view = (HFRepresenterTextView *)[self view];
     HFController *controller = [self controller];
     if (controller) {
         [view setFont:[controller font]];
@@ -269,41 +269,41 @@
 
 - (void)controllerDidChange:(HFControllerPropertyBits)bits {
     if (bits & (HFControllerFont | HFControllerLineHeight)) {
-        [[self view] setFont:[[self controller] font]];
+        [(HFRepresenterTextView *)[self view] setFont:[[self controller] font]];
     }
     if (bits & (HFControllerContentValue | HFControllerDisplayedLineRange | HFControllerByteRangeAttributes)) {
         [self updateText];
     }
     if (bits & (HFControllerSelectedRanges | HFControllerDisplayedLineRange)) {
-        [[self view] updateSelectedRanges];
+        [(HFRepresenterTextView *)[self view] updateSelectedRanges];
     }
     if (bits & (HFControllerSelectionPulseAmount)) {
-        [[self view] updateSelectionPulse];
+        [(HFRepresenterTextView *)[self view] updateSelectionPulse];
     }
     if (bits & (HFControllerEditable)) {
-        [[self view] setEditable:[[self controller] editable]];
+        [(HFRepresenterTextView *)[self view] setEditable:[[self controller] editable]];
     }
     if (bits & (HFControllerAntialias)) {
-        [[self view] setShouldAntialias:[[self controller] shouldAntialias]];
+        [(HFRepresenterTextView *)[self view] setShouldAntialias:[[self controller] shouldAntialias]];
     }
     if (bits & (HFControllerShowCallouts)) {
-        [[self view] setShouldDrawCallouts:[[self controller] shouldShowCallouts]];
+        [(HFRepresenterTextView *)[self view] setShouldDrawCallouts:[[self controller] shouldShowCallouts]];
     }
     if (bits & (HFControllerBookmarks | HFControllerDisplayedLineRange | HFControllerContentValue)) {
-        [[self view] setBookmarks:[self displayedBookmarkLocations]];
+        [(HFRepresenterTextView *)[self view] setBookmarks:[self displayedBookmarkLocations]];
     }
     if (bits & (HFControllerColorBytes)) {
         if([[self controller] shouldColorBytes]) {
-            [[self view] setByteColoring: ^(uint8_t byte, uint8_t *r, uint8_t *g, uint8_t *b, uint8_t *a){
+            [(HFRepresenterTextView *)[self view] setByteColoring: ^(uint8_t byte, uint8_t *r, uint8_t *g, uint8_t *b, uint8_t *a){
                 *r = *g = *b = (uint8_t)(255 * ((255-byte)/255.0*0.6+0.4));
                 *a = (uint8_t)(255 * 0.7);
             }];
         } else {
-            [[self view] setByteColoring:NULL];
+            [(HFRepresenterTextView *)[self view] setByteColoring:NULL];
         }
     }
     if (bits & (HFControllerColorRanges)) {
-        [[self view] updateSelectedRanges];
+        [(HFRepresenterTextView *)[self view] updateSelectedRanges];
 #if TARGET_OS_IPHONE
         [[self view] setNeedsDisplay];
 #else
@@ -314,19 +314,19 @@
 }
 
 - (double)maximumAvailableLinesForViewHeight:(CGFloat)viewHeight {
-    return [[self view] maximumAvailableLinesForViewHeight:viewHeight];
+    return [(HFRepresenterTextView *)[self view] maximumAvailableLinesForViewHeight:viewHeight];
 }
 
 - (NSUInteger)maximumBytesPerLineForViewWidth:(CGFloat)viewWidth {
-    return [[self view] maximumBytesPerLineForViewWidth:viewWidth];
+    return [(HFRepresenterTextView *)[self view] maximumBytesPerLineForViewWidth:viewWidth];
 }
 
 - (CGFloat)minimumViewWidthForBytesPerLine:(NSUInteger)bytesPerLine {
-    return [[self view] minimumViewWidthForBytesPerLine:bytesPerLine];
+    return [(HFRepresenterTextView *)[self view] minimumViewWidthForBytesPerLine:bytesPerLine];
 }
 
 - (NSUInteger)byteGranularity {
-    HFRepresenterTextView *view = [self view];
+    HFRepresenterTextView *view = (HFRepresenterTextView *)[self view];
     NSUInteger bytesPerColumn = MAX([view bytesPerColumn], 1u), bytesPerCharacter = [view bytesPerCharacter];
     return HFLeastCommonMultiple(bytesPerColumn, bytesPerCharacter);
 }
@@ -425,7 +425,7 @@
     HFController *controller = [self controller];
     HFFPRange lineRange = [controller displayedLineRange];
     unsigned long long scrollAmount = HFFPToUL(floorl(lineRange.location));
-    unsigned long long byteIndex = HFProductULL(scrollAmount, [controller bytesPerLine]) + characterIndex * [[self view] bytesPerCharacter];
+    unsigned long long byteIndex = HFProductULL(scrollAmount, [controller bytesPerLine]) + characterIndex * [(HFRepresenterTextView *)[self view] bytesPerCharacter];
     return byteIndex;
 }
 

@@ -9,7 +9,7 @@
 
 @implementation HFRepresenter
 
-- (id)view {
+- (HFView *)view {
     if (! view) {
         view = [self createView];
         [self initializeView];
@@ -53,11 +53,7 @@
     return self;
 }
 
-#if TARGET_OS_IPHONE
-- (UIView *)createView
-#else
-- (NSView *)createView
-#endif
+- (HFView *)createView
 {
     UNIMPLEMENTED();
 }
