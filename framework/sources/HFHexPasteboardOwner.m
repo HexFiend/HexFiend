@@ -16,8 +16,6 @@ static inline unsigned char hex2char(NSUInteger c) {
 
 @implementation HFHexPasteboardOwner
 
-@synthesize bytesPerColumn = _bytesPerColumn;
-
 - (unsigned long long)stringLengthForDataLength:(unsigned long long)dataLength {
     if(!dataLength) return 0;
     // -1 because no trailing space for an exact multiple.

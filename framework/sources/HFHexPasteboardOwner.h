@@ -9,9 +9,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface HFHexPasteboardOwner : HFPasteboardOwner {
-    NSUInteger _bytesPerColumn;
-}
+@interface HFHexPasteboardOwner : HFPasteboardOwner
 
 @property (nonatomic) NSUInteger bytesPerColumn;
 
