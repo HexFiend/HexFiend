@@ -255,8 +255,8 @@ DEFINE_COMMAND(uint64_bits)
     if (err != TCL_OK) {
         return err;
     }
-    if (offset < 0) {
-        Tcl_SetObjResult(_interp, Tcl_ObjPrintf("Offset must be >= 0, but was %ld", offset));
+    if (*offset < 0) {
+        Tcl_SetObjResult(_interp, Tcl_ObjPrintf("Offset must be >= 0, but was %ld", *offset));
         return TCL_ERROR;
     }
     return err;
