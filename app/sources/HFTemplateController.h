@@ -10,9 +10,11 @@
 #import "HFTemplateNode.h"
 #import <HexFiend/HFStringEncoding.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface HFTemplateController : NSObject
 
-- (HFTemplateNode *)evaluateScript:(NSString *)path forController:(HFController *)controller error:(NSString **)error;
+- (HFTemplateNode *)evaluateScript:(NSString *)path forController:(HFController *)controller error:(NSString *_Nullable*_Nullable)error;
 
 @property NSUInteger anchor;
 
@@ -20,7 +22,7 @@
 
 @interface HFTemplateController (ProtectedForSubclasses)
 
-- (NSString *)evaluateScript:(NSString *)path;
+- (NSString *_Nullable)evaluateScript:(NSString *)path;
 
 @property BOOL requireFailed;
 
@@ -38,39 +40,41 @@ typedef NS_ENUM(NSUInteger, HFEndian) {
 @property HFEndian endian;
 @property (readonly) BOOL isEOF;
 
-- (NSData *)readBytesForSize:(size_t)size forLabel:(NSString *)label;
-- (NSString *)readHexDataForSize:(size_t)size forLabel:(NSString *)label;
-- (NSString *)readStringDataForSize:(size_t)size encoding:(HFStringEncoding *)encoding forLabel:(NSString *)label;
-- (NSString *)readCStringForEncoding:(HFStringEncoding *)encoding forLabel:(NSString *)label;
+- (NSData *)readBytesForSize:(size_t)size forLabel:(NSString *_Nullable)label;
+- (NSString *)readHexDataForSize:(size_t)size forLabel:(NSString *_Nullable)label;
+- (NSString *)readStringDataForSize:(size_t)size encoding:(HFStringEncoding *)encoding forLabel:(NSString *_Nullable)label;
+- (NSString *)readCStringForEncoding:(HFStringEncoding *)encoding forLabel:(NSString *_Nullable)label;
 
-- (BOOL)requireDataAtOffset:(unsigned long long)offset toMatchHexValues:(NSString *)hexValues;
+- (BOOL)requireDataAtOffset:(unsigned long long)offset toMatchHexValues:(NSString *_Nullable)hexValues;
 
-- (BOOL)readUInt64:(uint64_t *)result forLabel:(NSString *)label asHex:(BOOL)asHex;
-- (BOOL)readInt64:(int64_t *)value forLabel:(NSString *)label;
-- (BOOL)readUInt32:(uint32_t *)result forLabel:(NSString *)label asHex:(BOOL)asHex;
-- (BOOL)readInt32:(int32_t *)value forLabel:(NSString *)label;
-- (BOOL)readUInt24:(uint32_t *)value forLabel:(NSString *)label;
-- (BOOL)readUInt16:(uint16_t *)result forLabel:(NSString *)label asHex:(BOOL)asHex;
-- (BOOL)readInt16:(int16_t *)value forLabel:(NSString *)label;
-- (BOOL)readUInt8:(uint8_t *)result forLabel:(NSString *)label asHex:(BOOL)asHex;
-- (BOOL)readInt8:(int8_t *)value forLabel:(NSString *)label;
-- (BOOL)readFloat:(float *)value forLabel:(NSString *)label;
-- (BOOL)readDouble:(double *)value forLabel:(NSString *)label;
-- (BOOL)readMacDate:(NSDate **)value forLabel:(NSString *)label;
-- (NSDate *)readUnixTime:(unsigned)numBytes forLabel:(NSString *)label error:(NSString **)error;
+- (BOOL)readUInt64:(uint64_t *)result forLabel:(NSString *_Nullable)label asHex:(BOOL)asHex;
+- (BOOL)readInt64:(int64_t *)value forLabel:(NSString *_Nullable)label;
+- (BOOL)readUInt32:(uint32_t *)result forLabel:(NSString *_Nullable)label asHex:(BOOL)asHex;
+- (BOOL)readInt32:(int32_t *)value forLabel:(NSString *_Nullable)label;
+- (BOOL)readUInt24:(uint32_t *)value forLabel:(NSString *_Nullable)label;
+- (BOOL)readUInt16:(uint16_t *)result forLabel:(NSString *_Nullable)label asHex:(BOOL)asHex;
+- (BOOL)readInt16:(int16_t *)value forLabel:(NSString *_Nullable)label;
+- (BOOL)readUInt8:(uint8_t *)result forLabel:(NSString *_Nullable)label asHex:(BOOL)asHex;
+- (BOOL)readInt8:(int8_t *)value forLabel:(NSString *_Nullable)label;
+- (BOOL)readFloat:(float *)value forLabel:(NSString *_Nullable)label;
+- (BOOL)readDouble:(double *)value forLabel:(NSString *_Nullable)label;
+- (BOOL)readMacDate:(NSDate *_Nonnull*_Nonnull)value forLabel:(NSString *_Nullable)label;
+- (NSDate *)readUnixTime:(unsigned)numBytes forLabel:(NSString *_Nullable)label error:(NSString *_Nonnull*_Nonnull)error;
 
-- (BOOL)readUUID:(NSUUID **)uuid forLabel:(NSString *)label;
+- (BOOL)readUUID:(NSUUID *_Nonnull*_Nonnull)uuid forLabel:(NSString *_Nullable)label;
 
 - (void)moveTo:(long long)offset;
 - (void)goTo:(unsigned long long)offset;
 
-- (void)beginSectionWithLabel:(NSString *)label;
+- (void)beginSectionWithLabel:(NSString *_Nullable)label;
 - (void)endSection;
 
 @property (readonly) HFTemplateNode *currentSection;
 
 - (void)addEntryWithLabel:(NSString *)label value:(NSString *)value length:(unsigned long long *)length offset:(unsigned long long *)offset;
 
-- (BOOL)readBits:(NSString *)bits byteCount:(unsigned)numberOfBytes forLabel:(NSString *)label result:(uint64 *)result error:(NSString **)error;
+- (BOOL)readBits:(NSString *)bits byteCount:(unsigned)numberOfBytes forLabel:(NSString *)label result:(uint64 *)result error:(NSString *_Nonnull*_Nonnull)error;
+
+NS_ASSUME_NONNULL_END
 
 @end

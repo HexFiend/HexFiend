@@ -10,6 +10,8 @@
 
 @class HFController;
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface HFBinaryTemplateController : NSViewController
 
 - (void)rerunTemplateWithController:(HFController *)controller;
@@ -17,3 +19,5 @@
 - (void)anchorTo:(NSUInteger)position;
 
 @end
+
+NS_ASSUME_NONNULL_END
