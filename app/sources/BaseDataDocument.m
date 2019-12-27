@@ -1743,6 +1743,15 @@ cancelled:;
     [self setFont:[sender convertFont:[self font]] registeringUndo:YES];
 }
 
+- (NSFontPanelModeMask)validModesForFontPanel:(NSFontPanel * __unused)fontPanel {
+    // NSFontPanel can choose color and style, but Hex Fiend only supports
+    // customizing the font face, so only return that for the mask. This method
+    // is part of the NSFontChanging protocol.
+    // Note: as of 10.15.2, even with no other mask set, the font panel still shows
+    // a gear pop up button that allows bringing up the Color panel.
+    return NSFontPanelModeMaskFace;
+}
+
 - (IBAction)modifyByteGrouping:(id)sender {
     NSUInteger newBytesPerColumn = (NSUInteger)[sender tag];
     [self setByteGrouping:newBytesPerColumn];
