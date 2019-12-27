@@ -12,13 +12,23 @@ body {
 
 <h2>Hex Fiend Release Notes</h2>
 
-<h3>v2.12 [beta]</h3>
+<h3>v2.12</h3>
 <ul>
+<li>macOS 10.9 or later is now required.</li>
 <li>Added basic extended attributes support. The open file dialog will now list the extended attributes for the selected file. This allows opening classic metadata such as resource forks ("com.apple.ResourceFork") and Finder Info ("com.apple.FinderInfo"), and other data (for example "com.apple.quarantine"). Currently extended attributes are read-only and cannot be modified.</li>
 <li>Data Inspector can now view half-precision (2-byte) floats</li>
+<li>Prevent the document from being modified when editing ends with the data inspector</li>
 <li>Binary template improvements:
   <ul>
     <li>Add experimental <code>uint8_bits</code>, <code>uint16_bits</code>, <code>uint32_bits</code>, and <code>uint64_bits</code> commands</li>
+    <li>Add <code>unixtime32</code> and <code>unixtime64</code> for reading unix times</li>
+    <li>Add <code>cstr</code> command for reading NUL-terminated strings</li>
+    <li>Add file caching to improve performance</li>
+    <li>Fix UUID reading for little endian (@tellowkrinkle)</li>
+    <li>Add TIFF template (@denisname)</li>
+    <li>Add PSD template (@Reeywhaar)</li>
+    <li>Add ID3v2 template (@wader)</li>
+    <li>Updated FLAC template (@wader)</li>
   </ul>
 </li>
 </ul>
