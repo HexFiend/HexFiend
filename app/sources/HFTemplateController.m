@@ -317,6 +317,7 @@ static const unsigned long long kMaxCacheSize = 1024 * 1024;
         uint32_t u;
         float f;
     } val;
+    memset(&val, 0, sizeof(val));
     if (![self readBytes:&val.u size:sizeof(val.u)]) {
         return NO;
     }
@@ -336,6 +337,7 @@ static const unsigned long long kMaxCacheSize = 1024 * 1024;
         uint64_t u;
         double f;
     } val;
+    memset(&val, 0, sizeof(val));
     if (![self readBytes:&val.u size:sizeof(val.u)]) {
         return NO;
     }

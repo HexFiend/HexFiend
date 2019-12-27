@@ -40,10 +40,10 @@ typedef NS_ENUM(NSUInteger, HFEndian) {
 @property HFEndian endian;
 @property (readonly) BOOL isEOF;
 
-- (NSData *)readBytesForSize:(size_t)size forLabel:(NSString *_Nullable)label;
-- (NSString *)readHexDataForSize:(size_t)size forLabel:(NSString *_Nullable)label;
-- (NSString *)readStringDataForSize:(size_t)size encoding:(HFStringEncoding *)encoding forLabel:(NSString *_Nullable)label;
-- (NSString *)readCStringForEncoding:(HFStringEncoding *)encoding forLabel:(NSString *_Nullable)label;
+- (NSData *_Nullable)readBytesForSize:(size_t)size forLabel:(NSString *_Nullable)label;
+- (NSString *_Nullable)readHexDataForSize:(size_t)size forLabel:(NSString *_Nullable)label;
+- (NSString *_Nullable)readStringDataForSize:(size_t)size encoding:(HFStringEncoding *)encoding forLabel:(NSString *_Nullable)label;
+- (NSString *_Nullable)readCStringForEncoding:(HFStringEncoding *)encoding forLabel:(NSString *_Nullable)label;
 
 - (BOOL)requireDataAtOffset:(unsigned long long)offset toMatchHexValues:(NSString *_Nullable)hexValues;
 
@@ -59,7 +59,7 @@ typedef NS_ENUM(NSUInteger, HFEndian) {
 - (BOOL)readFloat:(float *)value forLabel:(NSString *_Nullable)label;
 - (BOOL)readDouble:(double *)value forLabel:(NSString *_Nullable)label;
 - (BOOL)readMacDate:(NSDate *_Nonnull*_Nonnull)value forLabel:(NSString *_Nullable)label;
-- (NSDate *)readUnixTime:(unsigned)numBytes forLabel:(NSString *_Nullable)label error:(NSString *_Nonnull*_Nonnull)error;
+- (NSDate *_Nullable)readUnixTime:(unsigned)numBytes forLabel:(NSString *_Nullable)label error:(NSString *_Nonnull*_Nonnull)error;
 
 - (BOOL)readUUID:(NSUUID *_Nonnull*_Nonnull)uuid forLabel:(NSString *_Nullable)label;
 
@@ -71,7 +71,7 @@ typedef NS_ENUM(NSUInteger, HFEndian) {
 
 @property (readonly) HFTemplateNode *currentSection;
 
-- (void)addEntryWithLabel:(NSString *)label value:(NSString *)value length:(unsigned long long *)length offset:(unsigned long long *)offset;
+- (void)addEntryWithLabel:(NSString *)label value:(NSString *)value length:(unsigned long long *_Nullable)length offset:(unsigned long long *_Nullable)offset;
 
 - (BOOL)readBits:(NSString *)bits byteCount:(unsigned)numberOfBytes forLabel:(NSString *)label result:(uint64 *)result error:(NSString *_Nonnull*_Nonnull)error;
 
