@@ -2,6 +2,8 @@
 #
 # Specification can be found at:
 # https://xiph.org/flac/format.html
+# Various example files can be found at:
+# https://github.com/xiph/flac/tree/master/test/flac-to-flac-metadata-test-files
 #
 # Copyright (c) 2019 Mattias Wadman
 #
@@ -67,7 +69,7 @@ set block_type_to_string [dict create  \
     6 Picture \
 ]
 
-proc parse_flac_metdata_block_streaminfo {} {
+proc parse_flac_metdata_block_streaminfo { _len } {
     uint16 "Minimum block size (samples)"
     uint16 "Maximum block size (samples)"
     uint24 "Minimum frame size (bytes)"
@@ -87,7 +89,27 @@ proc parse_flac_metdata_block_streaminfo {} {
     return [expr 2+2+3+3+8+16]
 }
 
-proc parse_flac_metdata_block_vorbis_comment {} {
+proc parse_flac_metdata_block_seektable { len } {
+    set seekpoint_count [expr $len / 18]
+    set seekpoint_len 0
+    for { set i 0 } { $i < $seekpoint_count } { incr i } {
+        section "Seekpoint" {
+            set sample_number [uint64]
+            if { $sample_number == 0xffffffffffffffff } {
+                set sample_number "Placeholder"
+            }
+            entry "Sample number" $sample_number 8 [expr [pos]-8]
+            uint64 "Offset"
+            uint16 "Number of samples"
+        }
+
+        incr seekpoint_len 18
+    }
+
+    return $seekpoint_len
+}
+
+proc parse_flac_metdata_block_vorbis_comment { _len } {
     # vorbis comments uses little endian
     little_endian
 
@@ -110,7 +132,48 @@ proc parse_flac_metdata_block_vorbis_comment {} {
     return [expr 4+$vendor_length+4+$user_comment_bytes]
 }
 
-proc parse_flac_metdata_block_picture {} {
+proc parse_flac_metdata_block_cuesheet { _len } {
+    ascii 128 "Media catalog number"
+    uint64 "Lead-in samples"
+    set compact_disc_rev0 [uint8]
+    set compact_disc [expr ($compact_disc_rev0 & 0x80) == 0x80]
+    entry "Compact disc" $compact_disc 1 [expr [pos]-1]
+    bytes 258 "Reserved"
+    set track_count [uint8 "Number of tracks"]
+
+    set 0 track_len
+    set 0 index_len
+    for { set i 0 } { $i < $track_count } { incr i } {
+        section "Track" {
+            uint64 "Track offset"
+            uint8 "Track number"
+            ascii 12 "ISRC"
+            set track_type_pre_emphasis_rev0 [uint8]
+            set track_type [expr ($track_type_pre_emphasis_rev0 & 0x80) == 0x80]
+            set pre_emphasis [expr ($track_type_pre_emphasis_rev0 & 0x40) == 0x40]
+            entry "Track type" $track_type 1 [expr [pos]-1]
+            entry "Pre-emphasis" $pre_emphasis 1 [expr [pos]-1]
+            bytes 13 "Reserved"
+            set track_index_count [uint8 "Track index count"]
+
+            incr track_len [expr 8+1+12+1+13]
+
+            for { set j 0 } { $j < $track_index_count } { incr j } {
+                section "Index" {
+                    uint64 "Offset"
+                    uint8 "Index number"
+                    bytes 3 "Reserved"
+                }
+
+                incr index_len [expr 8+1+4]
+            }
+        }
+    }
+
+    return [expr 128+8+1+258+1+$track_len+$index_len]
+}
+
+proc parse_flac_metdata_block_picture { _len } {
     uint32 "The picture type"
     set mime_length [uint32 "MIME length"]
     ascii_maybe_empty $mime_length "MIME type"
@@ -147,9 +210,11 @@ proc parse_flac_metadata_block {} {
 
         set parsed_len [
                 switch $type {
-                0 { parse_flac_metdata_block_streaminfo }
-                4 { parse_flac_metdata_block_vorbis_comment }
-                6 { parse_flac_metdata_block_picture }
+                0 { parse_flac_metdata_block_streaminfo $len }
+                3 { parse_flac_metdata_block_seektable $len }
+                4 { parse_flac_metdata_block_vorbis_comment $len }
+                5 { parse_flac_metdata_block_cuesheet $len }
+                6 { parse_flac_metdata_block_picture $len }
                 default {
                     bytes_maybe_empty $len "Data"
                     expr $len
