@@ -315,12 +315,6 @@ static NSString *floatingPointDescription(const unsigned char *bytes, NSUInteger
     }
 }
 
-static NSString * const InspectionErrorNoData =  @"(select some data)";
-static NSString * const InspectionErrorTooMuch = @"(select less data)";
-static NSString * const InspectionErrorTooLittle = @"(select more data)";
-static NSString * const InspectionErrorNonPwr2 = @"(select a power of 2 bytes)";
-static NSString * const InspectionErrorInternal = @"(internal error)";
-
 static NSAttributedString *formatInspectionString(NSString *s, BOOL isError) {
     NSMutableParagraphStyle *paragraphStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
     [paragraphStyle setMinimumLineHeight:(CGFloat)16.];
@@ -334,12 +328,49 @@ static NSAttributedString *formatInspectionString(NSString *s, BOOL isError) {
                                                                      }];
 }
 
-static NSAttributedString *inspectionError(NSString *s) {
-    return formatInspectionString(s, true);
+typedef NS_ENUM(NSInteger, InspectionError) {
+    InspectionErrorNoData,
+    InspectionErrorTooMuch,
+    InspectionErrorTooLittle,
+    InspectionErrorNonPwr2,
+    InspectionErrorInternal,
+    InspectionErrorMultipleRanges,
+    InspectionErrorInvalidUTF8,
+};
+
+static NSAttributedString *inspectionError(InspectionError err) {
+    NSString *s = nil;
+    switch (err) {
+        case InspectionErrorNoData:
+            s = NSLocalizedString(@"(select some data)", "");
+            break;
+        case InspectionErrorTooMuch:
+            s = NSLocalizedString(@"(select less data)", "");
+            break;
+        case InspectionErrorTooLittle:
+            s = NSLocalizedString(@"(select more data)", "");
+            break;
+        case InspectionErrorNonPwr2:
+            s = NSLocalizedString(@"(select a power of 2 bytes)", "");
+            break;
+        case InspectionErrorInternal:
+            s = NSLocalizedString(@"(internal error)", "");
+            break;
+        case InspectionErrorMultipleRanges:
+            s = NSLocalizedString(@"(select a contiguous range)", "");
+            break;
+        case InspectionErrorInvalidUTF8:
+            s = NSLocalizedString(@"(bytes are not valid UTF-8)", "");
+            break;
+        default:
+            s = [NSString stringWithFormat:NSLocalizedString(@"(error %d)", ""), err];
+            break;
+    }
+    return formatInspectionString(s, YES);
 }
 
 static NSAttributedString *inspectionSuccess(NSString *s) {
-    return formatInspectionString(s, false);
+    return formatInspectionString(s, NO);
 }
 
 - (NSAttributedString *)valueForController:(HFController *)controller ranges:(NSArray *)ranges isError:(BOOL *)outIsError {
@@ -347,7 +378,7 @@ static NSAttributedString *inspectionSuccess(NSString *s) {
     
     if ([ranges count] != 1) {
         if(outIsError) *outIsError = YES;
-        return inspectionError(NSLocalizedString(@"(select a contiguous range)", ""));
+        return inspectionError(InspectionErrorMultipleRanges);
     }
     HFRange range = [ranges[0] HFRange];
     
@@ -430,7 +461,7 @@ static NSAttributedString *inspectionSuccess(NSString *s) {
             if(length == 0) return inspectionError(InspectionErrorNoData);
             if(length > MAX_EDITABLE_BYTE_COUNT) return inspectionError(InspectionErrorTooMuch);
             NSString *ret = [[NSString alloc] initWithBytes:bytes length:length encoding:NSUTF8StringEncoding];
-            if(ret == nil) return inspectionError(@"(bytes are not valid UTF-8)");
+            if(ret == nil) return inspectionError(InspectionErrorInvalidUTF8);
             if(outIsError) *outIsError = NO;
             return inspectionSuccess(ret);
         }
