@@ -20,7 +20,9 @@ static void skew(HFAnnotatedTreeNode *node, HFAnnotatedTree *tree);
 static BOOL split(HFAnnotatedTreeNode *oldparent, HFAnnotatedTree *tree);
 static void rebalanceAfterLeafAdd(HFAnnotatedTreeNode *n, HFAnnotatedTree *tree);
 static void delete(HFAnnotatedTreeNode *n, HFAnnotatedTree *tree);
+#if ! NDEBUG
 static void verify_integrity(HFAnnotatedTreeNode *n);
+#endif
 
 static HFAnnotatedTreeNode *next_node(HFAnnotatedTreeNode *node);
 
@@ -384,6 +386,7 @@ static HFAnnotatedTreeNode *get_parent(HFAnnotatedTreeNode *node) {
     return node->parent;
 }
 
+#if ! NDEBUG
 static void verify_integrity(HFAnnotatedTreeNode *n) {
     HFASSERT(!n->left || n->left->parent == n);
     HFASSERT(!n->right || n->right->parent == n);
@@ -402,7 +405,6 @@ static void verify_integrity(HFAnnotatedTreeNode *n) {
              n->parent->parent->level > n->level);
 }
 
-#if ! NDEBUG
 - (void)verifyIntegrity {
     [left verifyIntegrity];
     [right verifyIntegrity];
