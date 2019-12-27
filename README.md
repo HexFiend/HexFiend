@@ -4,7 +4,7 @@
 
 A fast and clever open source hex editor for macOS.
 
-Download the latest version for macOS 10.8 or greater from the [releases](https://github.com/ridiculousfish/HexFiend/releases) page.
+Download the latest version for from the [releases](https://github.com/ridiculousfish/HexFiend/releases) page.
 
 ## Features
 
