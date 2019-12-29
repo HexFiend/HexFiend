@@ -191,7 +191,6 @@ static BOOL returnFTruncateError(NSError **error) {
 @implementation HFConcreteFileReference
 
 - (BOOL)initSharedWithPath:(NSString *)path error:(NSError **)error {
-    int result;
     REQUIRE_NOT_NULL(path);
     const char* p = [path fileSystemRepresentation];
     if (isWritable) {
@@ -218,7 +217,7 @@ static BOOL returnFTruncateError(NSError **error) {
     }
 
     struct stat sb;
-    result = fstat(fileDescriptor, &sb);
+    const int result = fstat(fileDescriptor, &sb);
 
     if (result != 0) {
         int err = errno;
