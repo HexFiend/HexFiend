@@ -6,6 +6,17 @@
 		<description>HexFiend 2 Release Notes</description>
 		<language>en</language>
 		<item>
+			<title>HexFiend 2.12</title>
+			<sparkle:releaseNotesLink>https://ridiculousfish.github.io/HexFiend/ReleaseNotes.html</sparkle:releaseNotesLink>
+			<enclosure
+				url="https://github.com/ridiculousfish/HexFiend/releases/download/v2.12.0/Hex_Fiend_2.12.dmg"
+				sparkle:version="1577426716"
+				sparkle:shortVersionString="2.12"
+				sparkle:dsaSignature="MCwCFGwTu1y2SGQvE9DcZXbtYx/T40FwAhQiR95Y2eG6ESUfRtN6B0EhJ9DyJA=="
+			/>
+			<sparkle:minimumSystemVersion>10.9</sparkle:minimumSystemVersion>
+		</item>
+		<item>
 			<title>HexFiend 2.11</title>
 			<sparkle:releaseNotesLink>https://ridiculousfish.github.io/HexFiend/ReleaseNotes.html</sparkle:releaseNotesLink>
 			<enclosure
