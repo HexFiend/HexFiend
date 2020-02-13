@@ -380,6 +380,26 @@ static const unsigned long long kMaxCacheSize = 1024 * 1024;
     return YES;
 }
 
+- (NSString *)readFatDateWithLabel:(NSString *)label error:(NSString **)error {
+    int16_t val;
+    if (![self readInt16:&val forLabel:nil]) {
+        if (error) {
+            *error = @"Failed to read int16 bytes";
+        }
+        return nil;
+    }
+
+    NSInteger day = val & 0x1F;
+    NSInteger month = val >> 5 & 0xF;
+    NSInteger year = 1980 + ((val >> 9) & 0x7F);
+    NSString *date = [NSString stringWithFormat:@"%d-%02d-%02d", year, month, day];
+
+    if (label) {
+        [self addNodeWithLabel:label value:date size:sizeof(val)];
+    }
+    return date;
+}
+
 - (NSDate *)readUnixTime:(unsigned)numBytes forLabel:(NSString *)label error:(NSString **)error {
     time_t t;
     if (numBytes == 4) {
