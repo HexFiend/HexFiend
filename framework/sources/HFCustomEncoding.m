@@ -63,8 +63,8 @@
         NSLog(@"map is not a dictionary");
         return NO;
     }
-    NSMutableDictionary *nsMap = [NSMutableDictionary dictionary];
-    NSMutableDictionary *nsMapInverted = [NSMutableDictionary dictionary];
+    NSMutableDictionary<NSNumber *, NSString *> *nsMap = [NSMutableDictionary dictionary];
+    NSMutableDictionary<NSString *, NSNumber *> *nsMapInverted = [NSMutableDictionary dictionary];
     for (NSString *key in map) {
         NSScanner *scanner = [NSScanner scannerWithString:key];
         unsigned int intKey = 0;
