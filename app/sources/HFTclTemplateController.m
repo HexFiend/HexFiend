@@ -37,6 +37,7 @@ enum command {
     command_float,
     command_double,
     command_macdate,
+    command_fatdate,
     command_unixtime32,
     command_unixtime64,
     command_bytes,
@@ -86,6 +87,7 @@ DEFINE_COMMAND(int8)
 DEFINE_COMMAND(float)
 DEFINE_COMMAND(double)
 DEFINE_COMMAND(macdate)
+DEFINE_COMMAND(fatdate)
 DEFINE_COMMAND(unixtime32)
 DEFINE_COMMAND(unixtime64)
 DEFINE_COMMAND(big_endian)
@@ -149,6 +151,7 @@ DEFINE_COMMAND(uint64_bits)
         CMD(float),
         CMD(double),
         CMD(macdate),
+        CMD(fatdate),
         CMD(unixtime32),
         CMD(unixtime64),
         CMD(big_endian),
@@ -276,6 +279,7 @@ DEFINE_COMMAND(uint64_bits)
         case command_float:
         case command_double:
         case command_macdate:
+        case command_fatdate:
         case command_unixtime32:
         case command_unixtime64:
         case command_uuid:
@@ -721,6 +725,16 @@ DEFINE_COMMAND(uint64_bits)
                 return TCL_ERROR;
             }
             Tcl_SetObjResult(_interp, Tcl_NewDoubleObj(date.timeIntervalSince1970));
+            break;
+        }
+        case command_fatdate: {
+            NSString *dateErr = nil;
+            NSString *date = [self readFatDateWithLabel:label error:&dateErr];
+            if (!date) {
+                Tcl_SetObjResult(_interp, Tcl_NewStringObj(dateErr.UTF8String, -1));
+                return TCL_ERROR;
+            }
+            Tcl_SetObjResult(_interp, Tcl_NewStringObj(date.UTF8String, -1));
             break;
         }
         case command_unixtime32:
