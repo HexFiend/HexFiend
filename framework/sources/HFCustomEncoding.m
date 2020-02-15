@@ -105,12 +105,12 @@
 }
 
 - (NSData *)dataFromString:(NSString *)string {
-    NSMutableData *bytes = [NSMutableData dataWithLength: 0];
+    NSMutableData *bytes = NSMutableData.data;
     for (NSUInteger i = 0; i < string.length; ++i) {
-        NSString *str = [NSString stringWithFormat:@"%C", [string characterAtIndex: i]];
+        NSString *str = [NSString stringWithFormat:@"%C", [string characterAtIndex:i]];
         unsigned char byte = self.stringToCharMap[str].unsignedCharValue;
         if (byte) {
-            [bytes appendBytes: &byte length: sizeof(byte)];
+            [bytes appendBytes:&byte length:sizeof(byte)];
         }
     }
     return bytes;
