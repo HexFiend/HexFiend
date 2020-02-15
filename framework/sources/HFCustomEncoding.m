@@ -139,9 +139,20 @@
     NSMutableData *bytes = [NSMutableData dataWithLength:string.length * _bytesPerCharacter];
     for (NSUInteger i = 0; i < string.length; ++i) {
         NSString *str = [NSString stringWithFormat:@"%C", [string characterAtIndex:i]];
-        unsigned char byte = self.stringToCharMap[str].unsignedCharValue;
-        if (byte) {
-            [bytes appendBytes:&byte length:sizeof(byte)];
+        NSNumber *codepointNumber = self.stringToCharMap[str];
+        if (_bytesPerCharacter == 1) {
+            const uint8_t byte = codepointNumber.unsignedCharValue;
+            if (byte) {
+                [bytes appendBytes:&byte length:sizeof(byte)];
+            }
+        } else if (_bytesPerCharacter == 2) {
+            const uint16_t byte = codepointNumber.unsignedShortValue;
+            if (byte) {
+                // XXX: we're assuming host endian
+                [bytes appendBytes:&byte length:sizeof(byte)];
+            }
+        } else {
+            HFASSERT(0);
         }
     }
     return bytes;
