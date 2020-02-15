@@ -437,7 +437,7 @@
                                     <action selector="toggleVisibleControllerView:" target="-1" id="503"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Binary Templates (beta)" tag="8" id="dvS-dZ-9CX">
+                            <menuItem title="Binary Templates" tag="8" id="dvS-dZ-9CX">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="toggleVisibleControllerView:" target="-1" id="Z7o-Zg-6Gz"/>
