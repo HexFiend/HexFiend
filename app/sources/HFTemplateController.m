@@ -389,9 +389,9 @@ static const unsigned long long kMaxCacheSize = 1024 * 1024;
         return nil;
     }
 
-    NSInteger day = val & 0x1F;
-    NSInteger month = val >> 5 & 0xF;
-    NSInteger year = 1980 + ((val >> 9) & 0x7F);
+    int day = val & 0x1F;
+    int month = (val >> 5) & 0xF;
+    int year = 1980 + ((val >> 9) & 0x7F);
     NSString *date = [NSString stringWithFormat:@"%d-%02d-%02d", year, month, day];
 
     if (label) {

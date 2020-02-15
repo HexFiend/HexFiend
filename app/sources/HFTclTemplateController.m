@@ -151,7 +151,7 @@ DEFINE_COMMAND(uint64_bits)
         CMD(float),
         CMD(double),
         CMD(macdate),
-        CMD(fatdate)
+        CMD(fatdate),
         CMD(unixtime32),
         CMD(unixtime64),
         CMD(big_endian),
