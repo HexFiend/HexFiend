@@ -14,6 +14,7 @@
 @property NSString *nameValue;
 @property NSString *identifierValue;
 @property NSDictionary<NSNumber *, NSString *> *charToStringMap;
+@property NSDictionary<NSString *, NSNumber *> *stringToCharMap;
 
 @end
 
@@ -42,6 +43,7 @@
         return NO;
     }
     NSMutableDictionary *nsMap = [NSMutableDictionary dictionary];
+    NSMutableDictionary *nsMapInverted = [NSMutableDictionary dictionary];
     for (NSString *key in map) {
         NSScanner *scanner = [NSScanner scannerWithString:key];
         unsigned int intKey = 0;
@@ -59,11 +61,13 @@
             return NO;
         }
         nsMap[@(intKey)] = value;
+        nsMapInverted[value] = @(intKey);
     }
     _path = path;
     _nameValue = name;
     _identifierValue = identifier;
     _charToStringMap = nsMap;
+    _stringToCharMap = nsMapInverted;
     return YES;
 }
 
@@ -101,8 +105,15 @@
 }
 
 - (NSData *)dataFromString:(NSString *)string {
-    NSLog(@"UNIMPLEMENTED: %@", string);
-    return nil;
+    NSMutableData *bytes = NSMutableData.data;
+    for (NSUInteger i = 0; i < string.length; ++i) {
+        NSString *str = [NSString stringWithFormat:@"%C", [string characterAtIndex:i]];
+        unsigned char byte = self.stringToCharMap[str].unsignedCharValue;
+        if (byte) {
+            [bytes appendBytes:&byte length:sizeof(byte)];
+        }
+    }
+    return bytes;
 }
 
 - (NSString *)name {
