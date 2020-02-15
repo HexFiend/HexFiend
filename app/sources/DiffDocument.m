@@ -308,13 +308,13 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
         } else {
             /* Don't handle it if it's in our scroll view */
             if (NSMouseInRect(location, [scrollView convertRect:[scrollView bounds] toView:nil], NO /* flipped */)) {
-                handled = false;
+                handled = NO;
             } else {
                 NSView *layoutView = [layoutRepresenter view];
                 if (layoutView && NSMouseInRect(location, [layoutView convertRect:[layoutView bounds] toView:nil], NO)) {
-                    handled = false;
+                    handled = NO;
                 } else {
-                    handled = true;
+                    handled = YES;
                 }
             }
         }

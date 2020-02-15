@@ -207,10 +207,10 @@ NSString * const DataInspectorDidDeleteAllRows = @"DataInspectorDidDeleteAllRows
         [popUpCell itemAtIndex:2].state = NSOffState;
         [popUpCell itemAtIndex:4].state = NSOffState;
         [popUpCell itemAtIndex:5].state = NSOffState;
-        [popUpCell itemAtIndex:1].enabled = false;
-        [popUpCell itemAtIndex:2].enabled = false;
-        [popUpCell itemAtIndex:4].enabled = false;
-        [popUpCell itemAtIndex:5].enabled = false;
+        [popUpCell itemAtIndex:1].enabled = NO;
+        [popUpCell itemAtIndex:2].enabled = NO;
+        [popUpCell itemAtIndex:4].enabled = NO;
+        [popUpCell itemAtIndex:5].enabled = NO;
         NSMutableArray *titleItems = [NSMutableArray array];
         if (allowsEndianness) {
             NSInteger endianIndex;
@@ -222,8 +222,8 @@ NSString * const DataInspectorDidDeleteAllRows = @"DataInspectorDidDeleteAllRows
                 [titleItems addObject:@"be"];
             }
             [popUpCell itemAtIndex:endianIndex].state = NSOnState;
-            [popUpCell itemAtIndex:1].enabled = true;
-            [popUpCell itemAtIndex:2].enabled = true;
+            [popUpCell itemAtIndex:1].enabled = YES;
+            [popUpCell itemAtIndex:2].enabled = YES;
         }
         if (allowsNumberBase) {
             NSInteger numberBaseIndex;
@@ -235,8 +235,8 @@ NSString * const DataInspectorDidDeleteAllRows = @"DataInspectorDidDeleteAllRows
                 [titleItems addObject:@"hex"];
             }
             [popUpCell itemAtIndex:numberBaseIndex].state = NSOnState;
-            [popUpCell itemAtIndex:4].enabled = true;
-            [popUpCell itemAtIndex:5].enabled = true;
+            [popUpCell itemAtIndex:4].enabled = YES;
+            [popUpCell itemAtIndex:5].enabled = YES;
         }
         NSMenuItem* titleMenuItem = [popUpCell itemAtIndex:0];
         if (titleItems.count > 1) {

@@ -459,7 +459,7 @@ static inline Class preferredByteArrayClass(void) {
 - (void)setupWindowEnforcingBytesPerLine:(NSUInteger)bplOrZero {
     NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
 
-    loadingWindow = true;
+    loadingWindow = YES;
 
     layoutRepresenter = [[HFLayoutRepresenter alloc] init];
     [controller addRepresenter:layoutRepresenter];
@@ -493,7 +493,7 @@ static inline Class preferredByteArrayClass(void) {
         [[self window] setFrame:frame display:YES];
     }
 
-    loadingWindow = false;
+    loadingWindow = NO;
 }
 
 - (void)windowControllerDidLoadNib:(NSWindowController *)windowController {
