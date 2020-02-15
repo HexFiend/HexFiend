@@ -35,13 +35,23 @@
         NSLog(@"Missing \"name\" field");
         return NO;
     }
+    if (![name isKindOfClass:[NSString class]]) {
+        NSLog(@"name is not a string");
+        return NO;
+    }
     NSString *identifier = dict[@"identifier"];
     if (!identifier) {
         identifier = name;
+    } else if (![identifier isKindOfClass:[NSString class]]) {
+        NSLog(@"identifier is not a string");
+        return NO;
     }
     NSNumber *bytesPerCharacter = dict[@"bytesPerCharacter"];
     if (!bytesPerCharacter) {
         bytesPerCharacter = @(1);
+    } else if (![bytesPerCharacter isKindOfClass:[NSNumber class]]) {
+        NSLog(@"bytesPerCharacter is not a number");
+        return NO;
     }
     _bytesPerCharacter = [bytesPerCharacter unsignedCharValue];
     if (_bytesPerCharacter < 1 || _bytesPerCharacter > 2) {
@@ -50,6 +60,7 @@
     }
     NSDictionary *map = dict[@"map"];
     if (![map isKindOfClass:[NSDictionary class]]) {
+        NSLog(@"map is not a dictionary");
         return NO;
     }
     NSMutableDictionary *nsMap = [NSMutableDictionary dictionary];
