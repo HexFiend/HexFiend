@@ -15,5 +15,5 @@ Download the latest version from the [releases](https://github.com/ridiculousfis
 - **Binary diff.**  Hex Fiend can show the differences between files, taking into account insertions or deletions. Simply open two files in Hex Fiend and then use the File > Compare menus.
 - **Smart saving.**  Hex Fiend knows not to waste time overwriting the parts of your files that haven’t changed, and never needs temporary disk space.
 - **Data inspector.**  Interpret data as integer or floating point, signed or unsigned, big or little endian.
-- **Binary templates (beta).**  See [documentation](https://github.com/ridiculousfish/HexFiend/tree/master/templates).
+- **Binary templates.**  See [documentation](https://github.com/ridiculousfish/HexFiend/tree/master/templates).
 - **Embeddable!**  It’s really easy to incorporate Hex Fiend’s hex or data views into your app using the Hex Fiend framework.  Its permissive BSD-style license won’t burden you. See the [API reference](http://ridiculousfish.com/hexfiend/docs/) for details.
