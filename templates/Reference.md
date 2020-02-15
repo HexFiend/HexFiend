@@ -1,6 +1,6 @@
 # Reference
 
-Hex Fiend extends Tcl with additional commands for interacting with the opened file. Many of these commands were heavily inspired by [WinHex](https://www.x-ways.net/winhex/templates/).
+Hex Fiend extends [Tcl](https://www.tcl.tk/) with additional commands for interacting with the opened file. Many of these commands were heavily inspired by [WinHex](https://www.x-ways.net/winhex/templates/).
 
 ## Types
 
