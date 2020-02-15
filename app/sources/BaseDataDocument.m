@@ -519,9 +519,7 @@ static inline Class preferredByteArrayClass(void) {
     containerView = contentView;
     
     /* Remove all of its subviews */
-    for (NSView *view in contentView.subviews) {
-        [view removeFromSuperview];
-    }
+    contentView.subviews = @[];
 
     /* Set up the window */
     [self setupWindowEnforcingBytesPerLine:oldBPL];
