@@ -60,7 +60,6 @@ static const unsigned long long kMaxCacheSize = 1024 * 1024;
 - (BOOL)readBytes:(void *)buffer size:(size_t)size {
     const HFRange range = HFRangeMake(self.anchor + self.position, size);
     if (!HFRangeIsSubrangeOfRange(range, HFRangeMake(0, self.length))) {
-        HFASSERT(0);
         return NO;
     }
     HFASSERT(range.length <= NSUIntegerMax); // it doesn't make sense to ask for a buffer larger than can be stored in memory
