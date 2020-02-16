@@ -155,7 +155,7 @@
             HFASSERT(0);
         }
     }
-    return bytes;
+    return bytes.length > 0 ? bytes : nil;
 }
 
 - (NSString *)name {
