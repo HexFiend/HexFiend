@@ -7,5 +7,7 @@ jobs:
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Build
+    - name: Build Hex Fiend
       run: xcodebuild -scheme Release
+    - name: Build Documentation
+      run: xcodebuild -scheme "Documentation Generation"
