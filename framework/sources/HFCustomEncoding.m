@@ -136,7 +136,7 @@
 }
 
 - (NSData *)dataFromString:(NSString *)string {
-    NSMutableData *bytes = [NSMutableData dataWithLength:string.length * _bytesPerCharacter];
+    NSMutableData *bytes = [NSMutableData dataWithCapacity:string.length * _bytesPerCharacter];
     for (NSUInteger i = 0; i < string.length; ++i) {
         NSString *str = [NSString stringWithFormat:@"%C", [string characterAtIndex:i]];
         NSNumber *codepointNumber = self.stringToCharMap[str];
@@ -155,7 +155,7 @@
             HFASSERT(0);
         }
     }
-    return bytes;
+    return bytes.length > 0 ? bytes : nil;
 }
 
 - (NSString *)name {
