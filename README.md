@@ -6,6 +6,8 @@ A fast and clever open source hex editor for macOS.
 
 Download the latest version from the [releases](https://github.com/ridiculousfish/HexFiend/releases) page.
 
+![CI](https://github.com/ridiculousfish/HexFiend/workflows/CI/badge.svg)
+
 ## Features
 
 - **Insert, delete, rearrange.**  Hex Fiend does not limit you to in-place changes like some hex editors.
