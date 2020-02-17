@@ -14,6 +14,7 @@
 				D01D1D711489D208008212BB /* ShellScript */,
 			);
 			dependencies = (
+				D0F6FE120FFF679D00C609F0 /* PBXTargetDependency */,
 			);
 			name = "Documentation Generation";
 			productName = "Documentation Generation";
@@ -341,6 +342,13 @@
 			remoteInfo = Fortunate_Son;
 		};
 		D05E7A880FF615D800767D95 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D01E7BB70CDC530C00943F9E;
+			remoteInfo = HexFiend_Framework;
+		};
+		D0F6FE110FFF679D00C609F0 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
 			proxyType = 1;
@@ -1675,7 +1683,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "'documentation_tools/build_documentation.py'\n";
+			shellScript = "'documentation_tools/build_documentation.py'";
 		};
 		D05390401E2192AE00F9AAC1 /* Optionally Postprocess for Mac App Store */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1925,6 +1933,11 @@
 			isa = PBXTargetDependency;
 			target = D01E7BB70CDC530C00943F9E /* HexFiend_Framework */;
 			targetProxy = D05E7A880FF615D800767D95 /* PBXContainerItemProxy */;
+		};
+		D0F6FE120FFF679D00C609F0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D01E7BB70CDC530C00943F9E /* HexFiend_Framework */;
+			targetProxy = D0F6FE110FFF679D00C609F0 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
