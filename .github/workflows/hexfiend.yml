@@ -10,7 +10,7 @@ jobs:
     - name: Build Hex Fiend
       run: xcodebuild -scheme Release
     - name: Build Tests
-      run: xcodebuild build-without-testing -scheme "Framework CI Tests"
+      run: xcodebuild build-for-testing -scheme "Framework CI Tests"
     - name: Run Tests
       run: xcodebuild test-without-building -scheme "Framework CI Tests"
     - name: Install Doxygen
