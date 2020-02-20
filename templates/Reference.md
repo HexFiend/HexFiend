@@ -31,6 +31,7 @@ set size [uint32]
 | uuid    | Reads 16-byte UUID |
 | macdate | Reads classic Mac OS 4-byte date (seconds since January 1, 1904) |
 | fatdate | Reads FAT, or DOS, 2-byte date (v2.13+) |
+| fattime | Reads FAT, or DOS, 2-byte time (v2.13+) |
 
 As of v2.11+, unsigned integer types have an optional parameter `-hex` which causes the displayed value to be in hexadecimal, instead of decimal:
 

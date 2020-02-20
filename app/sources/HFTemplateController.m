@@ -399,6 +399,26 @@ static const unsigned long long kMaxCacheSize = 1024 * 1024;
     return date;
 }
 
+- (NSString *)readFatTimeWithLabel:(NSString *)label error:(NSString **)error {
+    int16_t val;
+    if (![self readInt16:&val forLabel:nil]) {
+        if (error) {
+            *error = @"Failed to read int16 bytes";
+        }
+        return nil;
+    }
+
+    int sec = (val & 0x1F) * 2;
+    int min = (val >> 5) & 0x3F;
+    int hour = (val >> 11) & 0x1F;
+    NSString *time = [NSString stringWithFormat:@"%02d:%02d:%02d UTC", hour, min, sec];
+
+    if (label) {
+        [self addNodeWithLabel:label value:time size:sizeof(val)];
+    }
+    return time;
+}
+
 - (NSDate *)readUnixTime:(unsigned)numBytes forLabel:(NSString *)label error:(NSString **)error {
     time_t t;
     if (numBytes == 4) {
