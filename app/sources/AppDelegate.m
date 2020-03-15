@@ -61,6 +61,8 @@
 
     NSDistributedNotificationCenter *ndc = [NSDistributedNotificationCenter defaultCenter];
     
+    __weak typeof(self) weakSelf = self;
+
     [ndc addObserverForName:@"HFOpenFileNotification" object:nil queue:nil usingBlock:^(NSNotification * _Nonnull notification) {
         [NSApp activateIgnoringOtherApps:YES];
         NSDictionary *userInfo = notification.userInfo;
@@ -68,7 +70,7 @@
         if ([files isKindOfClass:[NSArray class]]) {
             for (NSString *file in files) {
                 if ([file isKindOfClass:[NSString class]]) {
-                    [self openFile:file];
+                    [weakSelf openFile:file];
                 }
             }
         }
@@ -82,7 +84,7 @@
             NSString *file1 = [files objectAtIndex:0];
             NSString *file2 = [files objectAtIndex:1];
             if ([file1 isKindOfClass:[NSString class]] && [file2 isKindOfClass:[NSString class]]) {
-                [self compareLeftFile:file1 againstRightFile:file2];
+                [weakSelf compareLeftFile:file1 againstRightFile:file2];
             }
         }
     }];
@@ -91,7 +93,7 @@
         [NSApp activateIgnoringOtherApps:YES];
         NSDictionary *userInfo = notification.userInfo;
         NSData *data = [userInfo objectForKey:@"data"];
-        [self openData:data];
+        [weakSelf openData:data];
     }];
 }
 
