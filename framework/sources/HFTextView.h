@@ -52,7 +52,7 @@ NS_ASSUME_NONNULL_BEGIN
 //@}
 
 /// The delegate, which may implement the methods in HFTextViewDelegate. Initially nil.
-@property (nullable, nonatomic, assign) id delegate;
+@property (nullable, nonatomic, weak) id delegate;
 
 /*! Access the contents of the HFTextView's HFByteArray as an NSData.
     When setting, the data is copied via the `-copy` message, so prefer to pass an immutable `NSData` when possible.

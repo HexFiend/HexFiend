@@ -16,7 +16,7 @@
 @property (nonatomic) HFFPRange lineRangeToDraw;
 @property (nonatomic) NSUInteger bytesPerLine;
 @property (nonatomic) HFLineNumberFormat lineNumberFormat;
-@property (nullable, nonatomic, assign) HFLineCountingRepresenter *representer;
+@property (nullable, nonatomic, weak) HFLineCountingRepresenter *representer;
 
 + (NSUInteger)digitsRequiredToDisplayLineNumber:(unsigned long long)lineNumber inFormat:(HFLineNumberFormat)format;
 
