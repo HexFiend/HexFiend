@@ -13,5 +13,5 @@
 @end
 
 @interface DocumentWindow : NSWindow
-@property (assign) id<NSWindowDelegate, DragDropDelegate>delegate;
+@property (weak) id<NSWindowDelegate, DragDropDelegate>delegate;
 @end

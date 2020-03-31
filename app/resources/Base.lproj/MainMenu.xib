@@ -656,6 +656,7 @@
                 <outlet property="bookmarksMenu" destination="569" id="623"/>
                 <outlet property="byteGroupingMenuItem" destination="488" id="U3v-Jk-eKP"/>
                 <outlet property="chooseStringEncoding" destination="680" id="k0D-Q1-3F6"/>
+                <outlet property="cliController" destination="Zzl-4N-uHo" id="2fL-Ue-kWP"/>
                 <outlet property="extendForwardsItem" destination="397" id="407"/>
                 <outlet property="fontListPlaceholderMenuItem" destination="411" id="LQp-2v-HO1"/>
                 <outlet property="fontMenuItem" destination="409" id="413"/>

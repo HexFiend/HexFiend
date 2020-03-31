@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1130"
+   LastUpgradeVersion = "1140"
    version = "1.8">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -73,8 +73,18 @@
       </CommandLineArguments>
       <AdditionalOptions>
          <AdditionalOption
+            key = "MallocStackLogging"
+            value = ""
+            isEnabled = "YES">
+         </AdditionalOption>
+         <AdditionalOption
             key = "DYLD_INSERT_LIBRARIES"
             value = "/usr/lib/libgmalloc.dylib"
+            isEnabled = "YES">
+         </AdditionalOption>
+         <AdditionalOption
+            key = "PrefersMallocStackLoggingLite"
+            value = ""
             isEnabled = "YES">
          </AdditionalOption>
          <AdditionalOption

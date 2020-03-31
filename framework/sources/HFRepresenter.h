@@ -30,7 +30,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface HFRepresenter : NSObject <NSCoding> {
     @private
     HFView *view;
-    HFController *controller;
+    __weak HFController *controller;
 #if !TARGET_OS_IPHONE
     NSPoint layoutPosition;
 #endif

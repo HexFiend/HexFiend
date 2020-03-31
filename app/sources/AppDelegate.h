@@ -8,6 +8,7 @@
 #import <Cocoa/Cocoa.h>
 
 @class ChooseStringEncodingWindowController;
+@class CLIController;
 
 @interface AppDelegate : NSObject {
     IBOutlet NSMenuItem *extendForwardsItem, *extendBackwardsItem;
@@ -20,6 +21,7 @@
     IBOutlet NSMenu *stringEncodingMenu;
     IBOutlet ChooseStringEncodingWindowController *chooseStringEncoding;
     IBOutlet NSMenuItem *byteGroupingMenuItem;
+    IBOutlet CLIController *cliController; // unused, prevents leak
 }
 
 - (IBAction)diffFrontDocuments:(id)sender;
