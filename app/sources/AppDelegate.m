@@ -268,8 +268,8 @@ static NSComparisonResult compareFontDisplayNames(NSFont *a, NSFont *b, void *un
 
 - (IBAction)diffFrontDocumentsByRange:(id)sender {
     USE(sender);
-    DiffRangeWindowController* range = [[DiffRangeWindowController alloc] initWithWindowNibName:@"DiffRangeDialog"];
-    [range showWindow:self];
+    diffRangeWindowController = [[DiffRangeWindowController alloc] initWithWindowNibName:@"DiffRangeDialog"];
+    [diffRangeWindowController showWindow:self];
 }
 
 - (void)menuNeedsUpdate:(NSMenu *)menu {
