@@ -7,16 +7,9 @@
 //
 
 #import "DiffRangeWindowController.h"
-
 #import "DiffDocument.h"
 
 @implementation DiffRangeWindowController
-
-- (instancetype)initWithWindow:(NSWindow *)window {
-    self = [super initWithWindow:window];
-    if (!self) return self;
-    return self;
-}
 
 - (IBAction)compareRange:(id)sender {
     USE(sender);
