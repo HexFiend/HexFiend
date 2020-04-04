@@ -9,6 +9,7 @@
 
 @class ChooseStringEncodingWindowController;
 @class CLIController;
+@class DiffRangeWindowController;
 
 @interface AppDelegate : NSObject {
     IBOutlet NSMenuItem *extendForwardsItem, *extendBackwardsItem;
@@ -22,6 +23,7 @@
     IBOutlet ChooseStringEncodingWindowController *chooseStringEncoding;
     IBOutlet NSMenuItem *byteGroupingMenuItem;
     IBOutlet CLIController *cliController; // unused, prevents leak
+    IBOutlet DiffRangeWindowController *diffRangeWindowController;
 }
 
 - (IBAction)diffFrontDocuments:(id)sender;
