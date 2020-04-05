@@ -60,6 +60,7 @@ typedef NS_ENUM(NSUInteger, HFEndian) {
 - (BOOL)readDouble:(double *)value forLabel:(NSString *_Nullable)label;
 - (BOOL)readMacDate:(NSDate *_Nonnull*_Nonnull)value forLabel:(NSString *_Nullable)label;
 - (NSString *_Nullable)readFatDateWithLabel:(NSString *_Nullable)label error:(NSString *_Nonnull*_Nonnull)error;
+- (NSString *_Nullable)readFatTimeWithLabel:(NSString *_Nullable)label error:(NSString *_Nonnull*_Nonnull)error;
 - (NSDate *_Nullable)readUnixTime:(unsigned)numBytes forLabel:(NSString *_Nullable)label error:(NSString *_Nonnull*_Nonnull)error;
 
 - (BOOL)readUUID:(NSUUID *_Nonnull*_Nonnull)uuid forLabel:(NSString *_Nullable)label;
