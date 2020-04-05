@@ -411,7 +411,7 @@ static const unsigned long long kMaxCacheSize = 1024 * 1024;
     int sec = (val & 0x1F) * 2;
     int min = (val >> 5) & 0x3F;
     int hour = (val >> 11) & 0x1F;
-    NSString *time = [NSString stringWithFormat:@"%02d:%02d:%02d UTC", hour, min, sec];
+    NSString *time = [NSString stringWithFormat:@"%02d:%02d:%02d", hour, min, sec];
 
     if (label) {
         [self addNodeWithLabel:label value:time size:sizeof(val)];
