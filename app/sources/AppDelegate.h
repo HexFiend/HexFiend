@@ -23,7 +23,6 @@
     IBOutlet ChooseStringEncodingWindowController *chooseStringEncoding;
     IBOutlet NSMenuItem *byteGroupingMenuItem;
     IBOutlet CLIController *cliController; // unused, prevents leak
-    IBOutlet DiffRangeWindowController *diffRangeWindowController;
 }
 
 - (IBAction)diffFrontDocuments:(id)sender;

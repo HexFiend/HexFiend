@@ -22,9 +22,16 @@
     
     HFRange range = HFRangeMake(start, len);
     
-    [DiffDocument compareFrontTwoDocumentsUsingRange:range];
-    
+    [NSApp stopModal];
     [self close];
+
+    [DiffDocument compareFrontTwoDocumentsUsingRange:range];
+}
+
+- (void)runModal
+{
+    [self showWindow:self];
+    [NSApp runModalForWindow:self.window];
 }
 
 @end

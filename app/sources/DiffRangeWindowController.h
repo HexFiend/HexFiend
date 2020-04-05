@@ -15,4 +15,6 @@
 
 - (IBAction)compareRange:(id)sender;
 
+- (void)runModal;
+
 @end
