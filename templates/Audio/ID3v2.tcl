@@ -573,8 +573,24 @@ proc parse_frame { version } {
                 # Flags         $xx xx
                 set id [ascii 4 "ID"]
                 set data_size [syncsafeint32 "Size"]
-                set flags [uint16 "Flags"]
-                set size [expr $data_size+10]
+                set flags [uint16]
+                set header_len 10
+
+                set flags_unsync 0x2
+                set flags_data_len 0x1
+                set flags_names []
+                if { $flags & $flags_data_len } {
+                    lappend flags_names "datalen"
+                    syncsafeint32 "Data length indicator"
+                    incr data_size -4
+                    incr header_len 4
+                }
+                if { $flags & $flags_unsync } {
+                    lappend flags_names "unsync"
+                }
+                entry "Flags" [format "%s (%d)" $flags_names $flags] 2 [expr [pos]-2]
+
+                set size [expr $data_size+$header_len]
             }
         }
 
