@@ -289,7 +289,7 @@ NSString * const DataInspectorDidDeleteAllRows = @"DataInspectorDidDeleteAllRows
 - (IBAction)doubleClickedTable:(id)sender {
     USE(sender);
     NSInteger column = [table clickedColumn], row = [table clickedRow];
-    if (column >= 0 && row >= 0 && [[[table tableColumns][column] identifier] isEqual:kInspectorValueColumnIdentifier]) {
+    if (self.controller.editable && column >= 0 && row >= 0 && [[[table tableColumns][column] identifier] isEqual:kInspectorValueColumnIdentifier]) {
         BOOL isError;
         [self valueFromInspector:inspectors[row] isError:&isError];
         if (! isError) {
