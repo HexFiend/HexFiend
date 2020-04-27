@@ -612,15 +612,20 @@ DEFINE_COMMAND(uint64_bits)
             const char *arg = Tcl_GetStringFromObj(extraArgs[i], NULL);
             if (arg && arg[0] == '-') {
                 Tcl_SetObjResult(_interp, Tcl_ObjPrintf("Unknown option %s", arg));
+                ckfree((char *)extraArgs);
                 return TCL_ERROR;
             }
         }
         if (objc > 2) {
             const char *usage = hexSwitchAllowed ? "[-hex] [label]" : "[label";
             Tcl_WrongNumArgs(_interp, 0, objv, usage);
+            ckfree((char *)extraArgs);
             return TCL_ERROR;
         }
         label = [NSString stringWithUTF8String:Tcl_GetStringFromObj(extraArgs[1], NULL)];
+    }
+    if (objc > 0) {
+        ckfree((char *)extraArgs);
     }
     switch (command) {
         case command_uint64: {
