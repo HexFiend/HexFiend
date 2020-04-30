@@ -425,6 +425,36 @@
     [self rerunTemplate];
 }
 
+- (HFTemplateNode *)findAndExpandDeepestNodeForPosition:(NSUInteger)position startAt:(HFTemplateNode *)node {
+    if (node.children == nil) {
+        return node;
+    }
+    
+    for (HFTemplateNode *childNode in node.children) {
+        if (HFLocationInRange(position, childNode.range)) {
+            [self.outlineView expandItem:childNode];
+            return [self findAndExpandDeepestNodeForPosition:position startAt:childNode];
+        }
+    }
+    
+    return node;
+}
+
+- (void)showInTemplateAt:(NSUInteger)position {
+    if (self.node == nil) {
+        return;
+    }
+    
+    HFTemplateNode *deepest = [self findAndExpandDeepestNodeForPosition:position startAt:self.node];
+    NSInteger itemIndex = [self.outlineView rowForItem:deepest];
+    if (itemIndex < 0) {
+        return;
+    }
+    
+    [self.outlineView selectRowIndexes:[NSIndexSet indexSetWithIndex:itemIndex] byExtendingSelection:NO];
+    [self.outlineView scrollRowToVisible:itemIndex];
+}
+
 - (void)copyValue:(id __unused)sender {
     HFTemplateNode *node = [self.outlineView itemAtRow:[self.outlineView selectedRow]];
     NSPasteboard *pboard = [NSPasteboard generalPasteboard];
@@ -442,6 +472,10 @@
     if (self.outlineView.numberOfSelectedRows > 0) {
         [self copyValue:sender];
     }
+}
+
+- (BOOL)hasTemplate {
+    return self.node != nil;
 }
 
 @end
