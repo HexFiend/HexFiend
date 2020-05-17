@@ -80,6 +80,8 @@ The file pointer is automatically moved forward for any command that reads data.
 | move *len* | Moves the file pointer *len* bytes, can be negative | `move -4` |
 | goto *position* | Moves the file pointer to absolute *position*, relative to the anchor | `goto 10` |
 | end | Returns true if the file is at the end (beyond the file length) | `while {![end]} { ... }` |
+| pos | Return current file pointer position | `entry label $v 4 [expr [pos]-4]` |
+| len | Return file length in bytes ||
 
 ## Raw Bytes
 
