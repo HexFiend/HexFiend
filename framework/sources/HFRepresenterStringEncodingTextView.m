@@ -189,6 +189,7 @@ static void generateGlyphs(CTFontRef baseFont, NSMutableArray *fonts, struct HFG
     /* Do some things under the lock. Someone else may wish to read fonts, and we're going to write to it, so make a local copy.  Also figure out what characters to load. */
     NSMutableArray *localFonts;
     NSIndexSet *charactersToLoad;
+    HFASSERT(glyphLoadLock != nil);
     [glyphLoadLock lock];
     localFonts = [fonts mutableCopy];
     charactersToLoad = requestedCharacters;
@@ -206,6 +207,7 @@ static void generateGlyphs(CTFontRef baseFont, NSMutableArray *fonts, struct HFG
     FREE_ARRAY(characters);
     
     /* Replace fonts.  Do this before we insert into the glyph trie, because the glyph trie references fonts that we're just now putting in the fonts array. */
+    HFASSERT(glyphLoadLock != nil);
     [glyphLoadLock lock];
     fonts = localFonts;
     [glyphLoadLock unlock];
@@ -241,6 +243,7 @@ static void generateGlyphs(CTFontRef baseFont, NSMutableArray *fonts, struct HFG
     }
     
     BOOL needToStartOperation;    
+    HFASSERT(glyphLoadLock != nil);
     [glyphLoadLock lock];
     if (requestedCharacters) {
         /* There's a pending request, so just add to it */
@@ -280,6 +283,16 @@ static void generateGlyphs(CTFontRef baseFont, NSMutableArray *fonts, struct HFG
     if (! fonts) fonts = [[NSMutableArray alloc] init];
     [fonts addObject:font];
     [super setFont:font];
+}
+
+- (instancetype)initWithRepresenter:(HFTextRepresenter *)rep
+{
+    self = [super initWithRepresenter:rep];
+    encoding = [HFEncodingManager shared].ascii;
+    bytesPerChar = encoding.fixedBytesPerCharacter;
+    glyphLoadLock = [[NSLock alloc] init];
+    [self staleTieredProperties];
+    return self;
 }
 
 - (instancetype)initWithCoder:(NSCoder *)coder {
@@ -371,6 +384,7 @@ static void generateGlyphs(CTFontRef baseFont, NSMutableArray *fonts, struct HFG
     if (idx >= [fontCache count]) {
         /* Our font cache is out of date.  Take the lock and update the cache. */
         NSArray *newFonts = nil;
+        HFASSERT(glyphLoadLock != nil);
         [glyphLoadLock lock];
         HFASSERT(idx < [fonts count]);
         newFonts = [fonts copy];
