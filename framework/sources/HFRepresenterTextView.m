@@ -469,7 +469,7 @@ enum LineCoverage_t {
                 } else {
                     [[NSColor blackColor] set];
                 }
-                [[self.font screenFont] set];
+                [self.font set];
                 if (! [self shouldAntialias]) CGContextSetShouldAntialias(ctx, NO);
                 CGContextScaleCTM(ctx, imageScale, imageScale);
                 CGContextTranslateCTM(ctx, -windowFrameInBoundsCoords.origin.x, -windowFrameInBoundsCoords.origin.y);
@@ -1393,7 +1393,7 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
                 /* Draw this run */
 #if !TARGET_OS_IPHONE
                 HFFont *fontToUse = [self fontAtSubstitutionIndex:runFontIndex];
-                [[fontToUse screenFont] set];
+                [fontToUse set];
 #endif
                 CGContextSetTextPosition(ctx, point.x + runAdvance, point.y);
                 
@@ -1498,11 +1498,7 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
     
     NSUInteger lineStartIndex, bytesPerLine = [self bytesPerLine];
     NSData *dataObject = [self data];
-#if TARGET_OS_IPHONE
-    UIFont *fontObject = [self font];
-#else
-    NSFont *fontObject = [[self font] screenFont];
-#endif
+    HFFont *fontObject = [self font];
     //const NSUInteger bytesPerChar = [self bytesPerCharacter];
     const NSUInteger byteCount = [dataObject length];
     
@@ -1680,8 +1676,7 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
     BOOL antialias = [self shouldAntialias];
     
 #if !TARGET_OS_IPHONE
-    [[self.font screenFont] set];
-    
+    [self.font set];
     if ([self showsFocusRing]) {
         NSWindow *window = [self window];
         if (self == [window firstResponder] && [window isKeyWindow]) {
