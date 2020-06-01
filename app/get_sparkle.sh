@@ -4,7 +4,7 @@
 set -e
 
 # Configure our variables
-URL="https://github.com/sparkle-project/Sparkle/releases/download/1.19.0/Sparkle-1.19.0.tar.bz2"
+URL="https://github.com/sparkle-project/Sparkle/releases/download/1.23.0/Sparkle-1.23.0.tar.bz2"
 OUTPUT_DIR="vendor"
 ARCHIVE="Sparkle.tar.bz2"
 FRAMEWORK="Sparkle.framework"
