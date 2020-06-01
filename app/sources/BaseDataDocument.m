@@ -84,10 +84,8 @@ static inline Class preferredByteArrayClass(void) {
 
 /* Register the default-defaults for this class. */
 + (void)registerDefaultDefaults {
-    static OSSpinLock sLock = OS_SPINLOCK_INIT;
-    OSSpinLockLock(&sLock); //use a spinlock to be safe, but contention should be very low because we only expect to make these on the main thread
-    static BOOL sRegisteredGlobalDefaults = NO;
-    if (! sRegisteredGlobalDefaults) {
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
         /* Defaults common to all subclasses */
         NSDictionary *defs = @{
             @"AntialiasText"   : @YES,
@@ -106,8 +104,7 @@ static inline Class preferredByteArrayClass(void) {
             @"ResolveAliases": @YES,
         };
         [[NSUserDefaults standardUserDefaults] registerDefaults:defs];
-        sRegisteredGlobalDefaults = YES;
-    }
+    });
     
     static NSMutableArray *sRegisteredDefaultsByIdentifier = nil;
     NSString *ident = [self layoutUserDefaultIdentifier];
@@ -127,7 +124,6 @@ static inline Class preferredByteArrayClass(void) {
         };
         [[NSUserDefaults standardUserDefaults] registerDefaults:defs];
     }
-    OSSpinLockUnlock(&sLock);
 }
 
 + (void)initialize {
@@ -463,7 +459,7 @@ static inline Class preferredByteArrayClass(void) {
 - (void)setupWindowEnforcingBytesPerLine:(NSUInteger)bplOrZero {
     NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
 
-    loadingWindow = true;
+    loadingWindow = YES;
 
     layoutRepresenter = [[HFLayoutRepresenter alloc] init];
     [controller addRepresenter:layoutRepresenter];
@@ -497,7 +493,7 @@ static inline Class preferredByteArrayClass(void) {
         [[self window] setFrame:frame display:YES];
     }
 
-    loadingWindow = false;
+    loadingWindow = NO;
 }
 
 - (void)windowControllerDidLoadNib:(NSWindowController *)windowController {
@@ -523,9 +519,7 @@ static inline Class preferredByteArrayClass(void) {
     containerView = contentView;
     
     /* Remove all of its subviews */
-    for (NSView *view in contentView.subviews) {
-        [view removeFromSuperview];
-    }
+    contentView.subviews = @[];
 
     /* Set up the window */
     [self setupWindowEnforcingBytesPerLine:oldBPL];
@@ -834,7 +828,6 @@ static inline Class preferredByteArrayClass(void) {
     USE(undo);
 
     NSWindow *window = [self window];
-    NSDisableScreenUpdates();
     NSUInteger bytesPerLine = [controller bytesPerLine];
     /* Record that we are currently setting the font.  We use this to decide which direction to grow the window if our line numbers change. */
     currentlySettingFont = YES;
@@ -842,7 +835,6 @@ static inline Class preferredByteArrayClass(void) {
     [self relayoutAndResizeWindowForBytesPerLine:bytesPerLine];
     currentlySettingFont = NO;
     [window display];
-    NSEnableScreenUpdates();
     NSUserDefaults *defs = [NSUserDefaults standardUserDefaults];
     [defs setDouble:[font pointSize] forKey:@"DefaultFontSize"];
     [defs setObject:[font fontName] forKey:@"DefaultFontName"];
@@ -997,22 +989,22 @@ static inline Class preferredByteArrayClass(void) {
     else if (action == @selector(setOverwriteMode:)) {
         [item setState:[controller editMode] == HFOverwriteMode];
         /* We can toggle overwrite mode only if the controller doesn't require that it be on */
-        return YES;
+        return controller.savable;
     }
     else if (action == @selector(setInsertMode:)) {
         [item setState:[controller editMode] == HFInsertMode];
-        return ![self requiresOverwriteMode];
+        return controller.savable && ![self requiresOverwriteMode];
     }
     else if (action == @selector(setReadOnlyMode:)) {
         [item setState:[controller editMode] == HFReadOnlyMode];
-        return YES;
+        return controller.savable;
     }
     else if (action == @selector(modifyByteGrouping:)) {
         [item setState:(NSUInteger)[item tag] == [controller bytesPerColumn]];
         return YES;
     }
     else if (action == @selector(setLineNumberFormat:)) {
-        item.state = item.tag == lineCountingRepresenter.lineNumberFormat ? NSOnState : NSOffState;
+        item.state = item.tag == (NSInteger)lineCountingRepresenter.lineNumberFormat ? NSOnState : NSOffState;
         return YES;
     }
     else if (action == @selector(scrollToBookmark:) || action == @selector(selectBookmark:)) {
@@ -1215,7 +1207,7 @@ static inline Class preferredByteArrayClass(void) {
         saveResult = [result integerValue];
         
         /* Post an event so our event loop wakes up */
-        [NSApp postEvent:[NSEvent otherEventWithType:NSApplicationDefined location:NSZeroPoint modifierFlags:0 timestamp:0 windowNumber:0 context:NULL subtype:0 data1:0 data2:0] atStart:NO];
+        [NSApp postEvent:[NSEvent otherEventWithType:NSEventTypeApplicationDefined location:NSZeroPoint modifierFlags:0 timestamp:0 windowNumber:0 context:NULL subtype:0 data1:0 data2:0] atStart:NO];
     }];
 
     if (operationError && outError) {
@@ -1225,7 +1217,7 @@ static inline Class preferredByteArrayClass(void) {
     while ([saveView operationIsRunning]) {
         @autoreleasepool {
             @try {  
-                NSEvent *event = [NSApp nextEventMatchingMask:NSAnyEventMask untilDate:[NSDate distantFuture] inMode:NSDefaultRunLoopMode dequeue:YES];
+                NSEvent *event = [NSApp nextEventMatchingMask:NSUIntegerMax untilDate:[NSDate distantFuture] inMode:NSDefaultRunLoopMode dequeue:YES];
                 if (event) [NSApp sendEvent:event];
             }
             @catch (NSException *localException) {
@@ -1720,7 +1712,7 @@ cancelled:;
                 initWithTitle:[NSString stringWithFormat:@"Select Bookmark %lu", (unsigned long)bookmarkIndex]
                 action:@selector(selectBookmark:)
                 keyEquivalent:keString];
-        [item setKeyEquivalentModifierMask:NSCommandKeyMask];
+        [item setKeyEquivalentModifierMask:NSEventModifierFlagCommand];
         [item setAlternate:NO];
         [item setTag:bookmarkIndex];
         [items addObject:item];
@@ -1729,7 +1721,7 @@ cancelled:;
                 initWithTitle:[NSString stringWithFormat:@"Scroll to Bookmark %lu", (unsigned long)bookmarkIndex]
                 action:@selector(scrollToBookmark:)
                 keyEquivalent:keString];
-        [item setKeyEquivalentModifierMask:NSCommandKeyMask | NSShiftKeyMask];
+        [item setKeyEquivalentModifierMask:NSEventModifierFlagCommand | NSEventModifierFlagShift];
         [item setAlternate:YES];
         [item setTag:bookmarkIndex];
         [items addObject:item];
@@ -1747,6 +1739,15 @@ cancelled:;
 
 - (void)changeFont:(id)sender {
     [self setFont:[sender convertFont:[self font]] registeringUndo:YES];
+}
+
+- (NSFontPanelModeMask)validModesForFontPanel:(NSFontPanel * __unused)fontPanel {
+    // NSFontPanel can choose color and style, but Hex Fiend only supports
+    // customizing the font face, so only return that for the mask. This method
+    // is part of the NSFontChanging protocol.
+    // Note: as of 10.15.2, even with no other mask set, the font panel still shows
+    // a gear pop up button that allows bringing up the Color panel.
+    return NSFontPanelModeMaskFace;
 }
 
 - (IBAction)modifyByteGrouping:(id)sender {
@@ -1900,14 +1901,6 @@ cancelled:;
     return result;
 }
 
-
-+ (void)didEndBreakFileDependencySheet:(NSAlert *)alert returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
-    USE(alert);
-    USE(contextInfo);
-    [NSApp stopModalWithCode:returnCode];
-    
-}
-
 + (void)prepareForChangeInFileByBreakingFileDependencies:(NSNotification *)note {
     HFFileReference *fileReference = [note object];
     NSDictionary *userInfo = [note userInfo];
@@ -1949,7 +1942,9 @@ cancelled:;
             [alert setInformativeText:NSLocalizedString(@"To save that document, you must close this one.", "")];
             [alert addButtonWithTitle:NSLocalizedString(@"Cancel Save", "")];
             [alert addButtonWithTitle:NSLocalizedString(@"Close, Discarding Any Changes", "")];
-            [alert beginSheetModalForWindow:[document windowForSheet] modalDelegate:self didEndSelector:@selector(didEndBreakFileDependencySheet:returnCode:contextInfo:) contextInfo:nil];
+            [alert beginSheetModalForWindow:[document windowForSheet] completionHandler:^(NSModalResponse returnCode) {
+                [NSApp stopModalWithCode:returnCode];
+            }];
             NSInteger modalResult = [NSApp runModalForWindow:[alert window]];
             
             BOOL didCancel = (modalResult == NSAlertFirstButtonReturn);
@@ -2089,6 +2084,11 @@ cancelled:;
     savePanel.showsHiddenFiles = YES;
     savePanel.accessoryView = nil; // defeat useless "File Format" accessory view
     return YES;
+}
+
+- (BOOL)isInViewingMode {
+    // NSDocument override
+    return !controller.savable || super.isInViewingMode;
 }
 
 @end

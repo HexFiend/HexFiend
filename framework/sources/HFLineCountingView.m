@@ -68,7 +68,7 @@ static const CGFloat kShadowWidth = 6;
 
 - (void)drawGradientWithClip:(NSRect)clip {
     [self.backgroundColor set];
-    NSRectFillUsingOperation(clip, NSCompositeSourceOver);
+    NSRectFillUsingOperation(clip, NSCompositingOperationSourceOver);
 }
 
 - (void)drawDividerWithClip:(NSRect)clipRect {
@@ -90,7 +90,7 @@ static const CGFloat kShadowWidth = 6;
         lineRect.size.width = 1;
         lineRect.origin.x = 0;
         if (NSIntersectsRect(lineRect, clipRect)) {
-            NSRectFillUsingOperation(lineRect, NSCompositeSourceOver);
+            NSRectFillUsingOperation(lineRect, NSCompositingOperationSourceOver);
         }
     }
     
@@ -99,7 +99,7 @@ static const CGFloat kShadowWidth = 6;
         lineRect.size.width = 1;
         lineRect.origin.x = NSMaxX(bounds) - lineRect.size.width;
         if (NSIntersectsRect(lineRect, clipRect)) {
-            NSRectFillUsingOperation(lineRect, NSCompositeSourceOver);
+            NSRectFillUsingOperation(lineRect, NSCompositingOperationSourceOver);
         }
     }
     
@@ -108,7 +108,7 @@ static const CGFloat kShadowWidth = 6;
         lineRect.size.height = 1;
         lineRect.origin.y = 0;
         if (NSIntersectsRect(lineRect, clipRect)) {
-            NSRectFillUsingOperation(lineRect, NSCompositeSourceOver);
+            NSRectFillUsingOperation(lineRect, NSCompositingOperationSourceOver);
         }
     }
     
@@ -117,7 +117,7 @@ static const CGFloat kShadowWidth = 6;
         lineRect.size.height = 1;
         lineRect.origin.y = NSMaxY(bounds) - lineRect.size.height;
         if (NSIntersectsRect(lineRect, clipRect)) {
-            NSRectFillUsingOperation(lineRect, NSCompositeSourceOver);
+            NSRectFillUsingOperation(lineRect, NSCompositingOperationSourceOver);
         }
     }
     
@@ -136,7 +136,7 @@ static const CGFloat kShadowWidth = 6;
     }
     
     if (NSIntersectsRect(lineRect, clipRect)) {
-        NSRectFillUsingOperation(lineRect, NSCompositeSourceOver);
+        NSRectFillUsingOperation(lineRect, NSCompositingOperationSourceOver);
     }
 }
 
@@ -213,7 +213,7 @@ static const CGFloat kShadowWidth = 6;
     
     if (! textAttributes) {
         NSMutableParagraphStyle *mutableStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
-        [mutableStyle setAlignment:NSRightTextAlignment];
+        [mutableStyle setAlignment:NSTextAlignmentRight];
         [mutableStyle setMinimumLineHeight:_lineHeight];
         [mutableStyle setMaximumLineHeight:_lineHeight];
         NSParagraphStyle *paragraphStyle = [mutableStyle copy];

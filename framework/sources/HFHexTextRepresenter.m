@@ -24,7 +24,7 @@
 
 - (void)initializeView {
     [super initializeView];
-    [[self view] setBytesBetweenVerticalGuides:4];
+    [(HFRepresenterTextView *)[self view] setBytesBetweenVerticalGuides:4];
     unpartneredLastNybble = UCHAR_MAX;
     omittedNybbleLocation = ULLONG_MAX;
 }
@@ -101,7 +101,7 @@
 
 - (void)controllerDidChange:(HFControllerPropertyBits)bits {
     if (bits & HFControllerHideNullBytes) {
-        [[self view] setHidesNullBytes:[[self controller] shouldHideNullBytes]];
+        [(HFRepresenterHexTextView *)[self view] setHidesNullBytes:[[self controller] shouldHideNullBytes]];
     }
     [super controllerDidChange:bits];
     if (bits & (HFControllerContentValue | HFControllerContentLength | HFControllerSelectedRanges)) {
@@ -119,9 +119,23 @@
     } else {
         HFHexPasteboardOwner *owner = [HFHexPasteboardOwner ownPasteboard:pb forByteArray:selection withTypes:@[HFPrivateByteArrayPboardType, NSStringPboardType]];
         [owner setBytesPerLine:[self bytesPerLine]];
-        owner.bytesPerColumn = self.bytesPerColumn;
+        owner.bytesPerColumn = [self hexPasteboardBytesPerColumn];
     }
 }
 #endif
+
+- (NSUInteger)hexPasteboardBytesPerColumn {
+    NSUInteger pasteboardBytesPerColumn = self.bytesPerColumn;
+    const NSInteger copyByteGrouping = [NSUserDefaults.standardUserDefaults integerForKey:@"CopyByteGrouping"];
+    if (copyByteGrouping == 0) {
+        // Same as View
+    } else if (copyByteGrouping < 0) {
+        NSLog(@"Invalid copy byte grouping value %ld", copyByteGrouping);
+    } else {
+        // Otherwise the value is off by 1 what the actual spacing is
+        pasteboardBytesPerColumn = (NSUInteger)copyByteGrouping - 1;
+    }
+    return pasteboardBytesPerColumn;
+}
 
 @end

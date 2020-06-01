@@ -892,13 +892,13 @@ NSString *HFDescribeByteCountWithPrefixAndSuffix(const char *stringPrefix, unsig
     return [[NSString alloc] initWithBytesNoCopy:resultPointer length:numChars encoding:NSASCIIStringEncoding freeWhenDone:YES];
 }
 
+#if !TARGET_OS_IPHONE
 static CGFloat interpolateShadow(CGFloat val) {
     //A value of 1 means we are at the rightmost, and should return our max value.  By adjusting the scale, we control how quickly the shadow drops off.
     CGFloat scale = 1.4;
     return (CGFloat)(expm1(val * scale) / expm1(scale));
 }
 
-#if !TARGET_OS_IPHONE
 void HFDrawShadow(CGContextRef ctx, NSRect rect, CGFloat shadowSize, NSRectEdge rectEdge, BOOL drawActive, NSRect clip) {
     NSRect remainingRect, unused;
     NSDivideRect(rect, &remainingRect, &unused, shadowSize, rectEdge);

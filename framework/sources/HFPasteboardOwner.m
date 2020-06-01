@@ -155,7 +155,7 @@ static NSMapTable *byteArrayMap = nil;
         /* We have started the modal session, so end it. */
         [NSApp stopModalWithCode:0];
         //stopModal: won't trigger unless we post a do-nothing event
-        NSEvent *event = [NSEvent otherEventWithType:NSApplicationDefined location:NSZeroPoint modifierFlags:0 timestamp:0 windowNumber:0 context:NULL subtype:0 data1:0 data2:0];
+        NSEvent *event = [NSEvent otherEventWithType:NSEventTypeApplicationDefined location:NSZeroPoint modifierFlags:0 timestamp:0 windowNumber:0 context:NULL subtype:0 data1:0 data2:0];
         [NSApp postEvent:event atStart:NO];
     }
 }
@@ -283,7 +283,6 @@ static NSMapTable *byteArrayMap = nil;
 
 - (unsigned long long)amountToCopyForDataLength:(unsigned long long)numBytes stringLength:(unsigned long long)stringLength {
     unsigned long long dataLengthResult, stringLengthResult;
-    NSInteger alertReturn = NSIntegerMax;
     const unsigned long long copyOption1 = MAXIMUM_PASTEBOARD_SIZE_TO_EXPORT;
     const unsigned long long copyOption2 = MINIMUM_PASTEBOARD_SIZE_TO_WARN_ABOUT;
     NSString *option1String = HFDescribeByteCount(copyOption1);
@@ -292,16 +291,22 @@ static NSMapTable *byteArrayMap = nil;
     if (stringLength >= MAXIMUM_PASTEBOARD_SIZE_TO_EXPORT) {
         NSString *option1 = [@"Copy " stringByAppendingString:option1String];
         NSString *option2 = [@"Copy " stringByAppendingString:option2String];
-        alertReturn = NSRunAlertPanel(@"Large Clipboard", @"The copied data would occupy %@ if written to the clipboard.  This is larger than the system clipboard supports.  Do you want to copy only part of the data?", @"Cancel",  option1, option2, dataSizeDescription);
+        NSAlert *alert = [[NSAlert alloc] init];
+        alert.messageText = NSLocalizedString(@"Large Clipboard", nil);
+        alert.informativeText = [NSString stringWithFormat:@"The copied data would occupy %@ if written to the clipboard.  This is larger than the system clipboard supports.  Do you want to copy only part of the data?", dataSizeDescription];
+        [alert addButtonWithTitle:NSLocalizedString(@"Cancel", nil)];
+        [alert addButtonWithTitle:option1];
+        [alert addButtonWithTitle:option2];
+        NSModalResponse alertReturn = [alert runModal];
         switch (alertReturn) {
-            case NSAlertDefaultReturn:
+            case NSAlertFirstButtonReturn:
             default:
                 stringLengthResult = 0;
                 break;
-            case NSAlertAlternateReturn:
+            case NSAlertSecondButtonReturn:
                 stringLengthResult = copyOption1;
                 break;
-            case NSAlertOtherReturn:
+            case NSAlertThirdButtonReturn:
                 stringLengthResult = copyOption2;
                 break;
         }
@@ -310,16 +315,22 @@ static NSMapTable *byteArrayMap = nil;
     else if (stringLength >= MINIMUM_PASTEBOARD_SIZE_TO_WARN_ABOUT) {
         NSString *option1 = [@"Copy " stringByAppendingString:HFDescribeByteCount(stringLength)];
         NSString *option2 = [@"Copy " stringByAppendingString:HFDescribeByteCount(copyOption2)];
-        alertReturn = NSRunAlertPanel(@"Large Clipboard", @"The copied data would occupy %@ if written to the clipboard.  Performing this copy may take a long time.  Do you want to copy only part of the data?", @"Cancel",  option1, option2, dataSizeDescription);
+        NSAlert *alert = [[NSAlert alloc] init];
+        alert.messageText = NSLocalizedString(@"Large Clipboard", nil);
+        alert.informativeText = [NSString stringWithFormat:@"The copied data would occupy %@ if written to the clipboard.  Performing this copy may take a long time.  Do you want to copy only part of the data?", dataSizeDescription];
+        [alert addButtonWithTitle:NSLocalizedString(@"Cancel", nil)];
+        [alert addButtonWithTitle:option1];
+        [alert addButtonWithTitle:option2];
+        NSModalResponse alertReturn = [alert runModal];
         switch (alertReturn) {
-            case NSAlertDefaultReturn:
+            case NSAlertFirstButtonReturn:
             default:
                 stringLengthResult = 0;
                 break;
-            case NSAlertAlternateReturn:
+            case NSAlertSecondButtonReturn:
                 stringLengthResult = stringLength;
                 break;
-            case NSAlertOtherReturn:
+            case NSAlertThirdButtonReturn:
                 stringLengthResult = copyOption2;
                 break;
         }

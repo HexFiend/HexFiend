@@ -11,8 +11,6 @@
 
 NSString *const HFColumnRepresenterViewHeightChanged = @"HFColumnRepresenterViewHeightChanged";
 
-static const CGFloat kShadowHeight = 6;
-
 @implementation HFColumnRepresenter
 {
     CGFloat _lineHeight;
@@ -34,16 +32,16 @@ static const CGFloat kShadowHeight = 6;
     if (bits & HFControllerFont) {
         HFFont *font = self.controller.font;
         _lineHeight = HFLineHeightForFont(font);
-        HFColumnView *view = self.view;
+        HFColumnView *view = (HFColumnView *)self.view;
         view.glyphTable = [[HFHexGlyphTable alloc] initWithFont:font];
         [view setNeedsDisplay:YES];
     }
     if (bits & (HFControllerFont|HFControllerLineHeight|HFControllerBytesPerLine|HFControllerBytesPerColumn)) {
-        HFColumnView *view = self.view;
+        HFColumnView *view = (HFColumnView *)self.view;
         [view setNeedsDisplay:YES];
     }
     if (bits & (HFControllerFont|HFControllerLineHeight)) {
-        HFColumnView *view = self.view;
+        HFColumnView *view = (HFColumnView *)self.view;
         NSRect frame = view.frame;
         CGFloat oldHeight = frame.size.height;
         CGFloat newHeight = self.preferredHeight;
@@ -59,7 +57,7 @@ static const CGFloat kShadowHeight = 6;
 }
 
 - (void)setLineCountingWidth:(CGFloat)width {
-    HFColumnView *view = self.view;
+    HFColumnView *view = (HFColumnView *)self.view;
     if (view.lineCountingWidth != width) {
         view.lineCountingWidth = width;
         [view setNeedsDisplay:YES];

@@ -75,14 +75,6 @@ static BOOL returnUnsupportedFileTypeError(NSError **error, mode_t mode) {
     return NO;
 }
 
-static BOOL returnFortunateSonError(NSError **error) {
-    if (! error) return NO;
-    NSString *errorDescription = @"There was an error communicating with the privileged helper process.";
-    NSDictionary *errorDict = @{NSLocalizedFailureReasonErrorKey: errorDescription};
-    *error = [NSError errorWithDomain:NSCocoaErrorDomain code:NSFileReadUnknownError userInfo:errorDict];    
-    return NO;
-}
-
 static BOOL isFileTypeSupported(mode_t mode) {
     /* We support regular and block file types */
     return S_ISREG(mode) || S_ISBLK(mode) || S_ISCHR(mode);
@@ -199,7 +191,6 @@ static BOOL returnFTruncateError(NSError **error) {
 @implementation HFConcreteFileReference
 
 - (BOOL)initSharedWithPath:(NSString *)path error:(NSError **)error {
-    int result;
     REQUIRE_NOT_NULL(path);
     const char* p = [path fileSystemRepresentation];
     if (isWritable) {
@@ -226,7 +217,7 @@ static BOOL returnFTruncateError(NSError **error) {
     }
 
     struct stat sb;
-    result = fstat(fileDescriptor, &sb);
+    const int result = fstat(fileDescriptor, &sb);
 
     if (result != 0) {
         int err = errno;

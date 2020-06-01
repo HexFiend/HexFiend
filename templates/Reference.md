@@ -1,6 +1,6 @@
 # Reference
 
-Hex Fiend extends Tcl with additional commands for interacting with the opened file. Many of these commands were heavily inspired by [WinHex](https://www.x-ways.net/winhex/templates/).
+Hex Fiend extends [Tcl](https://www.tcl.tk/) with additional commands for interacting with the opened file. Many of these commands were heavily inspired by [WinHex](https://www.x-ways.net/winhex/templates/).
 
 ## Types
 
@@ -30,6 +30,8 @@ set size [uint32]
 | double  | Reads a 64-bit floating point |
 | uuid    | Reads 16-byte UUID |
 | macdate | Reads classic Mac OS 4-byte date (seconds since January 1, 1904) |
+| fatdate | Reads FAT, or DOS, 2-byte date (v2.13+) |
+| fattime | Reads FAT, or DOS, 2-byte time (v2.13+) |
 
 As of v2.11+, unsigned integer types have an optional parameter `-hex` which causes the displayed value to be in hexadecimal, instead of decimal:
 
@@ -78,6 +80,8 @@ The file pointer is automatically moved forward for any command that reads data.
 | move *len* | Moves the file pointer *len* bytes, can be negative | `move -4` |
 | goto *position* | Moves the file pointer to absolute *position*, relative to the anchor | `goto 10` |
 | end | Returns true if the file is at the end (beyond the file length) | `while {![end]} { ... }` |
+| pos | Return current file pointer position | `entry label $v 4 [expr [pos]-4]` |
+| len | Return file length in bytes ||
 
 ## Raw Bytes
 

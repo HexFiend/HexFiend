@@ -33,7 +33,9 @@
 #define BEGIN_TRANSACTION() NSUInteger token = [self beginPropertyChangeTransaction]
 #define END_TRANSACTION() [self endPropertyChangeTransaction:token]
 
+#if !TARGET_OS_IPHONE
 static const CGFloat kScrollMultiplier = (CGFloat)1.5;
+#endif
 
 static const CFTimeInterval kPulseDuration = .2;
 
@@ -48,13 +50,6 @@ NSString * const HFChangeInFileHintKey = @"HFChangeInFileHintKey";
 NSString * const HFControllerDidChangePropertiesNotification = @"HFControllerDidChangePropertiesNotification";
 NSString * const HFControllerChangedPropertiesKey = @"HFControllerChangedPropertiesKey";
 
-
-typedef NS_ENUM(NSInteger, HFControllerSelectAction) {
-    eSelectResult,
-    eSelectAfterResult,
-    ePreserveSelection,
-    NUM_SELECTION_ACTIONS
-};
 
 @interface HFController (ForwardDeclarations)
 - (void)_commandInsertByteArrays:(NSArray *)byteArrays inRanges:(NSArray *)ranges withSelectionAction:(HFControllerSelectAction)selectionAction;
@@ -92,6 +87,7 @@ static inline Class preferredByteArrayClass(void) {
     _hfflags.showcallouts = YES;
     _hfflags.hideNullBytes = NO;
     _hfflags.selectable = YES;
+    _hfflags.savable = YES;
     representers = [[NSMutableArray alloc] init];
 #if TARGET_OS_IPHONE
     [self setFont:[UIFont monospacedDigitSystemFontOfSize:HFDEFAULT_FONTSIZE weight:UIFontWeightRegular]];
@@ -120,9 +116,10 @@ static inline Class preferredByteArrayClass(void) {
     [coder encodeBool:_hfflags.showcallouts forKey:@"HFShowCallouts"];
     [coder encodeBool:_hfflags.hideNullBytes forKey:@"HFHidesNullBytes"];
     [coder encodeBool:_hfflags.livereload forKey:@"HFLiveReload"];
-    [coder encodeInt:_hfflags.editMode forKey:@"HFEditMode"];
+    [coder encodeInt:(int)_hfflags.editMode forKey:@"HFEditMode"];
     [coder encodeBool:_hfflags.editable forKey:@"HFEditable"];
     [coder encodeBool:_hfflags.selectable forKey:@"HFSelectable"];
+    [coder encodeBool:_hfflags.savable forKey:@"HFSavable"];
 }
 
 - (instancetype)initWithCoder:(NSCoder *)coder {
@@ -147,6 +144,7 @@ static inline Class preferredByteArrayClass(void) {
     _hfflags.editable = [coder decodeBoolForKey:@"HFEditable"];
     _hfflags.selectable = [coder decodeBoolForKey:@"HFSelectable"];
     _hfflags.hideNullBytes = [coder decodeBoolForKey:@"HFHidesNullBytes"];
+    _hfflags.savable = [coder decodeBoolForKey:@"HFSavable"];
     representers = [coder decodeObjectForKey:@"HFRepresenters"];
     return self;
 }
@@ -851,6 +849,17 @@ static inline Class preferredByteArrayClass(void) {
     }
 }
 
+- (BOOL)savable {
+    return _hfflags.savable;
+}
+
+- (void)setSavable:(BOOL)flag {
+    if (flag != _hfflags.savable) {
+        _hfflags.savable = flag;
+        [self _addPropertyChangeBits:HFControllerSavable];
+    }
+}
+
 - (void)_updateBytesPerLine {
     NSUInteger newBytesPerLine = NSUIntegerMax;
     for(HFRepresenter* rep in representers) {
@@ -980,9 +989,9 @@ static inline Class preferredByteArrayClass(void) {
     /* Determine how to perform the selection - normally, with command key, or with shift key.  Command + shift is the same as command. The shift key closes the selection - the selected range becomes the single range containing the first and last selected character. */
     _hfflags.shiftExtendSelection = NO;
     _hfflags.commandExtendSelection = NO;
-    NSUInteger flags = [event modifierFlags];
-    if (flags & NSCommandKeyMask) _hfflags.commandExtendSelection = YES;
-    else if (flags & NSShiftKeyMask) _hfflags.shiftExtendSelection = YES;
+    NSEventModifierFlags flags = [event modifierFlags];
+    if (flags & NSEventModifierFlagCommand) _hfflags.commandExtendSelection = YES;
+    else if (flags & NSEventModifierFlagShift) _hfflags.shiftExtendSelection = YES;
     
     selectionAnchor = NO_SELECTION;
     selectionAnchorRange = HFRangeMake(NO_SELECTION, 0);
@@ -1164,7 +1173,7 @@ static inline Class preferredByteArrayClass(void) {
 #if !TARGET_OS_IPHONE
 - (void)scrollWithScrollEvent:(NSEvent *)scrollEvent {
     HFASSERT(scrollEvent != NULL);
-    HFASSERT([scrollEvent type] == NSScrollWheel);
+    HFASSERT([scrollEvent type] == NSEventTypeScrollWheel);
     CGFloat preciseScroll;
     BOOL hasPreciseScroll;
     

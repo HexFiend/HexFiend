@@ -117,7 +117,7 @@ static void flip(void *val, NSUInteger amount) {
 #define FETCH(type) type s = *(const type *)bytes;
 #define FLIP(amount) if (endianness != eNativeEndianness) { flip(&s, amount); }
 #define FORMAT(decSpecifier, hexSpecifier) return [NSString stringWithFormat:numberBase == eNumberBaseDecimal ? decSpecifier : hexSpecifier, s];
-static id signedIntegerDescription(const unsigned char *bytes, NSUInteger length, enum Endianness_t endianness, enum NumberBase_t numberBase) {
+static NSString *signedIntegerDescription(const unsigned char *bytes, NSUInteger length, enum Endianness_t endianness, enum NumberBase_t numberBase) {
     switch (length) {
         case 1:
         {
@@ -166,7 +166,7 @@ static id signedIntegerDescription(const unsigned char *bytes, NSUInteger length
     }
 }
 
-static id unsignedIntegerDescription(const unsigned char *bytes, NSUInteger length, enum Endianness_t endianness, enum NumberBase_t numberBase) {
+static NSString *unsignedIntegerDescription(const unsigned char *bytes, NSUInteger length, enum Endianness_t endianness, enum NumberBase_t numberBase) {
     switch (length) {
         case 1:
         {
@@ -247,9 +247,20 @@ static long double ieeeToLD(const void *bytes, unsigned exp, unsigned man) {
     }
 }
 
-static id floatingPointDescription(const unsigned char *bytes, NSUInteger length, enum Endianness_t endianness) {
+static NSString *floatingPointDescription(const unsigned char *bytes, NSUInteger length, enum Endianness_t endianness) {
     switch (length) {
-        case sizeof(float):
+        case sizeof(uint16_t):
+        {
+            union {
+                uint16_t i;
+                __fp16 f;
+            } temp;
+            _Static_assert(sizeof temp.f == sizeof temp.i, "sizeof(uint16_t) is not 2!");
+            temp.i = *(const uint16_t *)bytes;
+            if (endianness != eNativeEndianness) temp.i = (uint16_t)reverse(temp.i, sizeof(uint16_t));
+            return [NSString stringWithFormat:@"%.15g", (double)temp.f];
+        }
+        case sizeof(uint32_t):
         {
             union {
                 uint32_t i;
@@ -260,7 +271,7 @@ static id floatingPointDescription(const unsigned char *bytes, NSUInteger length
             if (endianness != eNativeEndianness) temp.i = (uint32_t)reverse(temp.i, sizeof(float));
             return [NSString stringWithFormat:@"%.15g", temp.f];
         }
-        case sizeof(double):
+        case sizeof(uint64_t):
         {
             union {
                 uint64_t i;
@@ -304,12 +315,6 @@ static id floatingPointDescription(const unsigned char *bytes, NSUInteger length
     }
 }
 
-static NSString * const InspectionErrorNoData =  @"(select some data)";
-static NSString * const InspectionErrorTooMuch = @"(select less data)";
-static NSString * const InspectionErrorTooLittle = @"(select more data)";
-static NSString * const InspectionErrorNonPwr2 = @"(select a power of 2 bytes)";
-static NSString * const InspectionErrorInternal = @"(internal error)";
-
 static NSAttributedString *formatInspectionString(NSString *s, BOOL isError) {
     NSMutableParagraphStyle *paragraphStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
     [paragraphStyle setMinimumLineHeight:(CGFloat)16.];
@@ -323,20 +328,57 @@ static NSAttributedString *formatInspectionString(NSString *s, BOOL isError) {
                                                                      }];
 }
 
-static NSAttributedString *inspectionError(NSString *s) {
-    return formatInspectionString(s, true);
+typedef NS_ENUM(NSInteger, InspectionError) {
+    InspectionErrorNoData,
+    InspectionErrorTooMuch,
+    InspectionErrorTooLittle,
+    InspectionErrorNonPwr2,
+    InspectionErrorInternal,
+    InspectionErrorMultipleRanges,
+    InspectionErrorInvalidUTF8,
+};
+
+static NSAttributedString *inspectionError(InspectionError err) {
+    NSString *s = nil;
+    switch (err) {
+        case InspectionErrorNoData:
+            s = NSLocalizedString(@"(select some data)", "");
+            break;
+        case InspectionErrorTooMuch:
+            s = NSLocalizedString(@"(select less data)", "");
+            break;
+        case InspectionErrorTooLittle:
+            s = NSLocalizedString(@"(select more data)", "");
+            break;
+        case InspectionErrorNonPwr2:
+            s = NSLocalizedString(@"(select a power of 2 bytes)", "");
+            break;
+        case InspectionErrorInternal:
+            s = NSLocalizedString(@"(internal error)", "");
+            break;
+        case InspectionErrorMultipleRanges:
+            s = NSLocalizedString(@"(select a contiguous range)", "");
+            break;
+        case InspectionErrorInvalidUTF8:
+            s = NSLocalizedString(@"(bytes are not valid UTF-8)", "");
+            break;
+        default:
+            s = [NSString stringWithFormat:NSLocalizedString(@"(error %d)", ""), err];
+            break;
+    }
+    return formatInspectionString(s, YES);
 }
 
 static NSAttributedString *inspectionSuccess(NSString *s) {
-    return formatInspectionString(s, false);
+    return formatInspectionString(s, NO);
 }
 
-- (id)valueForController:(HFController *)controller ranges:(NSArray *)ranges isError:(BOOL *)outIsError {
+- (NSAttributedString *)valueForController:(HFController *)controller ranges:(NSArray *)ranges isError:(BOOL *)outIsError {
     /* Just do a rough cut on length before going to valueForData. */
     
     if ([ranges count] != 1) {
         if(outIsError) *outIsError = YES;
-        return inspectionError(NSLocalizedString(@"(select a contiguous range)", ""));
+        return inspectionError(InspectionErrorMultipleRanges);
     }
     HFRange range = [ranges[0] HFRange];
     
@@ -375,15 +417,15 @@ static NSAttributedString *inspectionSuccess(NSString *s) {
             return inspectionError(InspectionErrorInternal);
     }
     
-    id result = [self valueForData:[controller dataForRange:range] isError:outIsError];
-    return [result isKindOfClass:[NSString class]] ? inspectionSuccess(result) : result;
+    NSAttributedString *result = [self valueForData:[controller dataForRange:range] isError:outIsError];
+    return result;
 }
 
-- (id)valueForData:(NSData *)data isError:(BOOL *)outIsError {
+- (NSAttributedString *)valueForData:(NSData *)data isError:(BOOL *)outIsError {
     return [self valueForBytes:[data bytes] length:[data length] isError:outIsError];
 }
 
-- (id)valueForBytes:(const unsigned char *)bytes length:(NSUInteger)length isError:(BOOL *)outIsError {
+- (NSAttributedString *)valueForBytes:(const unsigned char *)bytes length:(NSUInteger)length isError:(BOOL *)outIsError {
     if(outIsError) *outIsError = YES;
     
     switch ([self type]) {
@@ -395,9 +437,9 @@ static NSAttributedString *inspectionSuccess(NSString *s) {
                 case 1: case 2: case 4: case 8:
                     if(outIsError) *outIsError = NO;
                     if(inspectorType == eInspectorTypeSignedInteger)
-                        return signedIntegerDescription(bytes, length, endianness, numberBase);
+                        return inspectionSuccess(signedIntegerDescription(bytes, length, endianness, numberBase));
                     else
-                        return unsignedIntegerDescription(bytes, length, endianness, numberBase);
+                        return inspectionSuccess(unsignedIntegerDescription(bytes, length, endianness, numberBase));
                 default:
                     return length > 8 ? inspectionError(InspectionErrorTooMuch) : inspectionError(InspectionErrorNonPwr2);
             }
@@ -406,11 +448,11 @@ static NSAttributedString *inspectionSuccess(NSString *s) {
             switch (length) {
                 case 0:
                     return inspectionError(InspectionErrorNoData);
-                case 1: case 2: case 3:
+                case 1: case 3:
                     return inspectionError(InspectionErrorTooLittle);
-                case 4: case 8: case 10: case 16:
+                case 2: case 4: case 8: case 10: case 16:
                     if(outIsError) *outIsError = NO;
-                    return floatingPointDescription(bytes, length, endianness);
+                    return inspectionSuccess(floatingPointDescription(bytes, length, endianness));
                 default:
                     return length > 16 ? inspectionError(InspectionErrorTooMuch) : inspectionError(InspectionErrorNonPwr2);
             }
@@ -419,9 +461,9 @@ static NSAttributedString *inspectionSuccess(NSString *s) {
             if(length == 0) return inspectionError(InspectionErrorNoData);
             if(length > MAX_EDITABLE_BYTE_COUNT) return inspectionError(InspectionErrorTooMuch);
             NSString *ret = [[NSString alloc] initWithBytes:bytes length:length encoding:NSUTF8StringEncoding];
-            if(ret == nil) return inspectionError(@"(bytes are not valid UTF-8)");
+            if(ret == nil) return inspectionError(InspectionErrorInvalidUTF8);
             if(outIsError) *outIsError = NO;
-            return ret;
+            return inspectionSuccess(ret);
         }
         case eInspectorTypeBinary: {
             NSString* ret = @"";
@@ -458,7 +500,7 @@ static NSAttributedString *inspectionSuccess(NSString *s) {
                 ret = [ret stringByAppendingFormat:@"%s ", binary ];
             }
             
-            return  ret;
+            return  inspectionSuccess(ret);
         }
             
         case eInspectorTypeSLEB128: {
@@ -472,7 +514,7 @@ static NSAttributedString *inspectionSuccess(NSString *s) {
                     if (shift < 64 && (bytes[i] & 0x40)) {
                         result |= -((uint64_t)1 << shift);
                     }
-                    return [NSString stringWithFormat:@"%qd (%ld bytes)", result, i + 1];
+                    return inspectionSuccess([NSString stringWithFormat:@"%qd (%ld bytes)", result, i + 1]);
                 }
             }
             
@@ -487,7 +529,7 @@ static NSAttributedString *inspectionSuccess(NSString *s) {
                 shift += 7;
                 
                 if ((bytes[i] & 0x80) == 0) {
-                    return [NSString stringWithFormat:@"%qu (%ld bytes)", result, i + 1];
+                    return inspectionSuccess([NSString stringWithFormat:@"%qu (%ld bytes)", result, i + 1]);
                 }
             }
             

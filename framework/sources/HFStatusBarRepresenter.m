@@ -58,7 +58,7 @@
     _statusView.selectable = NO;
     _statusView.bordered = NO;
     _statusView.bezeled = NO;
-    _statusView.alignment = NSCenterTextAlignment;
+    _statusView.alignment = NSTextAlignmentCenter;
     NSColor *foregroundColor = [NSColor colorWithCalibratedWhite:(CGFloat).15 alpha:1];
     if (@available(macOS 10.10, *)) {
         foregroundColor = [NSColor secondaryLabelColor];

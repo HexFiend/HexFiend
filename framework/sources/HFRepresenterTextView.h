@@ -27,7 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface HFRepresenterTextView : HFView
 {
 @private;
-    HFTextRepresenter *representer;
+    __weak HFTextRepresenter *representer;
     NSArray *cachedSelectedRanges;
     NSArray<NSDictionary*> *cachedColorRanges;
     CGFloat verticalOffset;

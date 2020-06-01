@@ -41,7 +41,7 @@
 
 - (void)drawBackground {
     [self.backgroundColor set];
-    NSRectFillUsingOperation(self.bounds, NSCompositeSourceOver);
+    NSRectFillUsingOperation(self.bounds, NSCompositingOperationSourceOver);
 
     const NSRect bounds = self.offsetBounds;
     [self.borderColor set];
@@ -49,7 +49,7 @@
     lineRect.origin.x -= 1; lineRect.size.width += 1;
     lineRect.size.height = 1;
     lineRect.origin.y = 0;
-    NSRectFillUsingOperation(lineRect, NSCompositeSourceOver);
+    NSRectFillUsingOperation(lineRect, NSCompositingOperationSourceOver);
 }
 
 - (void)drawText {
@@ -60,7 +60,6 @@
     const CGFloat descent = ceil(fabs(CTFontGetDescent(font)));
     const NSUInteger bytesPerColumn = controller.bytesPerColumn;
     const NSUInteger bytesPerLine = controller.bytesPerLine;
-    const CGFloat lineHeight = controller.lineHeight;
     const CGFloat horizontalContainerInset = 4; // matches what HFRepresenterTextView uses
     const HFHexGlyphTable *glyphTable = self.glyphTable;
     const CGFloat advancement = glyphTable.advancement;

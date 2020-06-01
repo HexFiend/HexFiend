@@ -10,10 +10,12 @@
 
 @interface HFCustomEncoding ()
 
+@property uint8_t bytesPerCharacter;
 @property NSString *path;
 @property NSString *nameValue;
 @property NSString *identifierValue;
 @property NSDictionary<NSNumber *, NSString *> *charToStringMap;
+@property NSDictionary<NSString *, NSNumber *> *stringToCharMap;
 
 @end
 
@@ -33,15 +35,36 @@
         NSLog(@"Missing \"name\" field");
         return NO;
     }
+    if (![name isKindOfClass:[NSString class]]) {
+        NSLog(@"name is not a string");
+        return NO;
+    }
     NSString *identifier = dict[@"identifier"];
     if (!identifier) {
         identifier = name;
+    } else if (![identifier isKindOfClass:[NSString class]]) {
+        NSLog(@"identifier is not a string");
+        return NO;
+    }
+    NSNumber *bytesPerCharacter = dict[@"bytesPerCharacter"];
+    if (!bytesPerCharacter) {
+        bytesPerCharacter = @(1);
+    } else if (![bytesPerCharacter isKindOfClass:[NSNumber class]]) {
+        NSLog(@"bytesPerCharacter is not a number");
+        return NO;
+    }
+    _bytesPerCharacter = [bytesPerCharacter unsignedCharValue];
+    if (_bytesPerCharacter < 1 || _bytesPerCharacter > 2) {
+        NSLog(@"Invalid bytes per character %@", bytesPerCharacter);
+        return NO;
     }
     NSDictionary *map = dict[@"map"];
     if (![map isKindOfClass:[NSDictionary class]]) {
+        NSLog(@"map is not a dictionary");
         return NO;
     }
-    NSMutableDictionary *nsMap = [NSMutableDictionary dictionary];
+    NSMutableDictionary<NSNumber *, NSString *> *nsMap = [NSMutableDictionary dictionary];
+    NSMutableDictionary<NSString *, NSNumber *> *nsMapInverted = [NSMutableDictionary dictionary];
     for (NSString *key in map) {
         NSScanner *scanner = [NSScanner scannerWithString:key];
         unsigned int intKey = 0;
@@ -49,8 +72,12 @@
             NSLog(@"Invalid key %@", key);
             return NO;
         }
-        if (intKey > 0xFF) {
+        if (intKey > 0xFF && _bytesPerCharacter == 1) {
             NSLog(@"Only 8 bit keys are supported: %@", key);
+            return NO;
+        }
+        if (intKey > 0xFFFF) {
+            NSLog(@"Only 16 bit keys are supported: %@", key);
             return NO;
         }
         NSString *value = map[key];
@@ -59,11 +86,13 @@
             return NO;
         }
         nsMap[@(intKey)] = value;
+        nsMapInverted[value] = @(intKey);
     }
     _path = path;
     _nameValue = name;
     _identifierValue = identifier;
     _charToStringMap = nsMap;
+    _stringToCharMap = nsMapInverted;
     return YES;
 }
 
@@ -92,10 +121,20 @@
     return 1;
 }
 
+- (uint8_t)fixedBytesPerCharacter {
+    return _bytesPerCharacter;
+}
+
 - (NSString *)stringFromBytes:(const unsigned char *)bytes length:(NSUInteger)length {
     NSMutableString *str = [NSMutableString string];
-    for (NSUInteger i = 0; i < length; ++i) {
-        NSString *value = self.charToStringMap[@(bytes[i])];
+    NSUInteger end = length - _bytesPerCharacter + 1;
+    for (NSUInteger i = 0; i < end; i += _bytesPerCharacter) {
+        NSUInteger codepoint = bytes[i];
+        if (_bytesPerCharacter == 2) {
+            codepoint <<= 8;
+            codepoint |= bytes[i + 1];
+        }
+        NSString *value = self.charToStringMap[@(codepoint)];
         if (!value) {
             value = @".";
         }
@@ -105,8 +144,26 @@
 }
 
 - (NSData *)dataFromString:(NSString *)string {
-    NSLog(@"UNIMPLEMENTED: %@", string);
-    return nil;
+    NSMutableData *bytes = [NSMutableData dataWithCapacity:string.length * _bytesPerCharacter];
+    for (NSUInteger i = 0; i < string.length; ++i) {
+        NSString *str = [NSString stringWithFormat:@"%C", [string characterAtIndex:i]];
+        NSNumber *codepointNumber = self.stringToCharMap[str];
+        if (_bytesPerCharacter == 1) {
+            const uint8_t byte = codepointNumber.unsignedCharValue;
+            if (byte) {
+                [bytes appendBytes:&byte length:sizeof(byte)];
+            }
+        } else if (_bytesPerCharacter == 2) {
+            const uint16_t byte = codepointNumber.unsignedShortValue;
+            if (byte) {
+                // XXX: we're assuming host endian
+                [bytes appendBytes:&byte length:sizeof(byte)];
+            }
+        } else {
+            HFASSERT(0);
+        }
+    }
+    return bytes.length > 0 ? bytes : nil;
 }
 
 - (NSString *)name {

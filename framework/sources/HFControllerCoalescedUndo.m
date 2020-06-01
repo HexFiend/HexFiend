@@ -168,7 +168,7 @@
 
 @implementation HFControllerMultiRangeUndo
 
-- (instancetype)initForInsertingByteArrays:(NSArray *)arrays inRanges:(NSArray *)ranges withSelectionAction:(int)action {
+- (instancetype)initForInsertingByteArrays:(NSArray *)arrays inRanges:(NSArray *)ranges withSelectionAction:(HFControllerSelectAction)action {
     REQUIRE_NOT_NULL(arrays);
     REQUIRE_NOT_NULL(ranges);
     self = [super init];
@@ -187,7 +187,7 @@
     return replacementRanges;
 }
 
-- (int)selectionAction {
+- (HFControllerSelectAction)selectionAction {
     return selectionAction;
 }
 

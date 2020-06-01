@@ -29,8 +29,8 @@ NS_ASSUME_NONNULL_BEGIN
 */
 @interface HFRepresenter : NSObject <NSCoding> {
     @private
-    id view;
-    HFController *controller;
+    HFView *view;
+    __weak HFController *controller;
 #if !TARGET_OS_IPHONE
     NSPoint layoutPosition;
 #endif
@@ -42,7 +42,7 @@ NS_ASSUME_NONNULL_BEGIN
 //@{
 /*! Returns the view for the receiver, creating it if necessary.  The view for the HFRepresenter is initially nil.  When the \c -view method is called, if the view is nil, \c -createView is called and then the result is stored.  This method should not be overridden; however you may want to call it to access the view.
 */
-- (id)view;
+- (HFView *)view;
 
 /*! Returns YES if the view has been created, NO if it has not.  To create the view, call the view method.
  */
@@ -50,11 +50,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /*! Override point for creating the view displaying this representation.  This is called on your behalf the first time the \c -view method is called, so you would not want to call this explicitly; however this method must be overridden.  This follows the "create" rule, and so it should return a retained view.
 */
-#if TARGET_OS_IPHONE
-- (UIView *)createView;
-#else
-- (NSView *)createView;
-#endif
+- (HFView *)createView;
 
 /*! Override point for initialization of view, after the HFRepresenter has the view set as its -view property.  The default implementation does nothing.
 */

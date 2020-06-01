@@ -257,6 +257,7 @@ LocalIndex_t match_backwards(const unsigned char * restrict a, const unsigned ch
 
 @implementation HFByteArrayEditScript
 
+#if ! NDEBUG
 static BOOL validate_instructions(const struct HFEditInstruction_t *insns, size_t insnCount) {
     struct HFEditInstruction_t prevInsn;
     for (size_t i=0; i < insnCount; i++) {
@@ -271,6 +272,7 @@ static BOOL validate_instructions(const struct HFEditInstruction_t *insns, size_
     }
     return YES;
 }
+#endif
 
 /* The entry point for appending a snake to the instruction list (that is, splitting instructions that contain the snake) */
 BYTEARRAY_RELEASE_INLINE
@@ -556,13 +558,6 @@ BOOL computeMiddleSnakeTraversal_OverlapCheck(HFByteArrayEditScript *self, const
     } else {
         return NO;
     }
-}
-
-BYTEARRAY_RELEASE_INLINE
-LocalIndex_t ull_to_index(unsigned long long x) {
-    LocalIndex_t result = (LocalIndex_t)x;
-    HFASSERT((unsigned long long)result == x);
-    return result;
 }
 
 BYTEARRAY_RELEASE_INLINE
@@ -856,7 +851,7 @@ struct Snake_t computePrettyGoodMiddleSnake(HFByteArrayEditScript *self, struct 
     /* Progress reporting helper block */
     const unsigned long long * const offsetsPtr = offsets;
     unsigned long long (^ const progressHelper)(unsigned long long, unsigned long long) = ^(unsigned long long forwardsMatch, unsigned long long backwardsMatch) {
-        unsigned long long left, top, right, bottom, upperLeft, lowerRight, newProgressConsumed, result;
+        unsigned long long left, top, right, bottom, upperLeft, lowerRight, newProgressConsumed;
         left = offsetsPtr[SourceForwards] + forwardsMatch;
         top = offsetsPtr[DestForwards] + forwardsMatch;
         right = offsetsPtr[SourceBackwards] + backwardsMatch;

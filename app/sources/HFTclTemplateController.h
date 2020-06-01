@@ -8,6 +8,10 @@
 
 #import "HFTemplateController.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface HFTclTemplateController : HFTemplateController
 
 @end
+
+NS_ASSUME_NONNULL_END

@@ -1,0 +1,19 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build Hex Fiend
+      run: xcodebuild -scheme Release
+    - name: Build Tests
+      run: xcodebuild build-for-testing -scheme "Framework CI Tests"
+    - name: Run Tests
+      run: xcodebuild test-without-building -scheme "Framework CI Tests"
+    - name: Install Doxygen
+      run: brew install doxygen
+    - name: Build Documentation
+      run: xcodebuild -scheme "Documentation Generation"

@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 51;
+	objectVersion = 53;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -66,6 +66,10 @@
 		A53B7D1A1E9185CF00CA3977 /* HFTestHashing.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D149300D8A37580018296B /* HFTestHashing.m */; };
 		A550A7191F7877F8001C79C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = A550A7181F7877F8001C79C7 /* main.m */; };
 		A550A7201F787831001C79C7 /* hexf in Resources */ = {isa = PBXBuildFile; fileRef = A550A7161F7877F8001C79C7 /* hexf */; };
+		A5589AC92206CFCC000293A4 /* HFExtendedAttributes.m in Sources */ = {isa = PBXBuildFile; fileRef = A5589AC82206CFCC000293A4 /* HFExtendedAttributes.m */; };
+		A5589ACC2206D238000293A4 /* OpenAccessoryView.xib in Resources */ = {isa = PBXBuildFile; fileRef = A5589ACA2206D238000293A4 /* OpenAccessoryView.xib */; };
+		A5589ACF2206D3C8000293A4 /* HFOpenAccessoryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A5589ACE2206D3C8000293A4 /* HFOpenAccessoryViewController.m */; };
+		A5589AD22206E1C4000293A4 /* ExtendedAttributeDataDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = A5589AD12206E1C4000293A4 /* ExtendedAttributeDataDocument.m */; };
 		A5628AAB21D8561D00911ABB /* Tcl_ParseArgsObjv.c in Sources */ = {isa = PBXBuildFile; fileRef = A5628AA921D8561C00911ABB /* Tcl_ParseArgsObjv.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		A567D7D520DA1D7C00F7C0A4 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A567D7D420DA1D7C00F7C0A4 /* Sparkle.framework */; };
 		A567D7D620DA1D9100F7C0A4 /* Sparkle.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = A567D7D420DA1D7C00F7C0A4 /* Sparkle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -428,6 +432,13 @@
 		A554E0D920DF2CD6001B4C48 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/Preferences.xib; sourceTree = "<group>"; };
 		A554E0DA20DF2CD6001B4C48 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/BinaryTemplateController.xib; sourceTree = "<group>"; };
 		A554E0DB20DF2CD7001B4C48 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		A5589AC72206CFCC000293A4 /* HFExtendedAttributes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFExtendedAttributes.h; path = app/sources/HFExtendedAttributes.h; sourceTree = "<group>"; };
+		A5589AC82206CFCC000293A4 /* HFExtendedAttributes.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFExtendedAttributes.m; path = app/sources/HFExtendedAttributes.m; sourceTree = "<group>"; };
+		A5589ACB2206D238000293A4 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = app/resources/Base.lproj/OpenAccessoryView.xib; sourceTree = "<group>"; };
+		A5589ACD2206D3C8000293A4 /* HFOpenAccessoryViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFOpenAccessoryViewController.h; path = app/sources/HFOpenAccessoryViewController.h; sourceTree = "<group>"; };
+		A5589ACE2206D3C8000293A4 /* HFOpenAccessoryViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFOpenAccessoryViewController.m; path = app/sources/HFOpenAccessoryViewController.m; sourceTree = "<group>"; };
+		A5589AD02206E1C4000293A4 /* ExtendedAttributeDataDocument.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ExtendedAttributeDataDocument.h; path = app/sources/ExtendedAttributeDataDocument.h; sourceTree = "<group>"; };
+		A5589AD12206E1C4000293A4 /* ExtendedAttributeDataDocument.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = ExtendedAttributeDataDocument.m; path = app/sources/ExtendedAttributeDataDocument.m; sourceTree = "<group>"; };
 		A5628AA921D8561C00911ABB /* Tcl_ParseArgsObjv.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Tcl_ParseArgsObjv.c; path = app/sources/Tcl_ParseArgsObjv.c; sourceTree = "<group>"; };
 		A5628AAA21D8561C00911ABB /* Tcl_ParseArgsObjv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Tcl_ParseArgsObjv.h; path = app/sources/Tcl_ParseArgsObjv.h; sourceTree = "<group>"; };
 		A567D7D420DA1D7C00F7C0A4 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Sparkle.framework; path = vendor/Sparkle.framework; sourceTree = "<group>"; };
@@ -774,6 +785,7 @@
 				D04A6BA9100EA7B800704963 /* MainMenu.xib */,
 				A57F34821F1EF47700234B94 /* Preferences.xib */,
 				A59DFE65200BE7A800FEA540 /* BinaryTemplateController.xib */,
+				A5589ACA2206D238000293A4 /* OpenAccessoryView.xib */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -843,6 +855,10 @@
 				D0CBB23F128F78C200989C15 /* StretchableProgressIndicator.m */,
 				A572614821D8A51B00970A0E /* HFPrompt.h */,
 				A572614921D8A51B00970A0E /* HFPrompt.m */,
+				A5589AC72206CFCC000293A4 /* HFExtendedAttributes.h */,
+				A5589AC82206CFCC000293A4 /* HFExtendedAttributes.m */,
+				A5589ACD2206D3C8000293A4 /* HFOpenAccessoryViewController.h */,
+				A5589ACE2206D3C8000293A4 /* HFOpenAccessoryViewController.m */,
 			);
 			name = Miscellaneous;
 			sourceTree = "<group>";
@@ -1030,6 +1046,8 @@
 				D01E7C150CDC58AA00943F9E /* BaseDataDocument.m */,
 				D02BD6DE10545E9000535EDE /* FileDataDocument.h */,
 				D02BD6DF10545E9000535EDE /* FileDataDocument.m */,
+				A5589AD02206E1C4000293A4 /* ExtendedAttributeDataDocument.h */,
+				A5589AD12206E1C4000293A4 /* ExtendedAttributeDataDocument.m */,
 			);
 			name = DocumentTypes;
 			sourceTree = "<group>";
@@ -1541,8 +1559,7 @@
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 0930;
+				LastUpgradeCheck = 1150;
 				ORGANIZATIONNAME = ridiculous_fish;
 				TargetAttributes = {
 					9408FBF919DD72DE004F800E = {
@@ -1555,14 +1572,10 @@
 				};
 			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "HexFiend_2" */;
-			compatibilityVersion = "Xcode 10.0";
-			developmentRegion = English;
+			compatibilityVersion = "Xcode 11.4";
+			developmentRegion = en;
 			hasScannedForEncodings = 1;
 			knownRegions = (
-				English,
-				Japanese,
-				French,
-				German,
 				en,
 				Base,
 			);
@@ -1601,6 +1614,7 @@
 				D018F139107AB64900AE805F /* DiffDocument.xib in Resources */,
 				D0B47FEF1272427B0095120E /* DiffComputationBanner.xib in Resources */,
 				A57F34861F1EFA8800234B94 /* ChooseStringEncodingDialog.xib in Resources */,
+				A5589ACC2206D238000293A4 /* OpenAccessoryView.xib in Resources */,
 				A57F34891F1EFA9600234B94 /* OpenDriveDialog.xib in Resources */,
 				D8C1F92C16F278BA00A4C36E /* DiffRangeDialog.xib in Resources */,
 				A57F34801F1EF47700234B94 /* Preferences.xib in Resources */,
@@ -1724,13 +1738,16 @@
 				D0AFA786123C2BDF00CFC513 /* MyDocumentController.m in Sources */,
 				D0CBB240128F78C200989C15 /* StretchableProgressIndicator.m in Sources */,
 				A591314021E3098800685B51 /* DataInspectorScrollView.m in Sources */,
+				A5589AC92206CFCC000293A4 /* HFExtendedAttributes.m in Sources */,
 				D0CBB32A128F906000989C15 /* DiffTextViewContainer.m in Sources */,
+				A5589ACF2206D3C8000293A4 /* HFOpenAccessoryViewController.m in Sources */,
 				A5628AAB21D8561D00911ABB /* Tcl_ParseArgsObjv.c in Sources */,
 				D0D8C2BC12A3C10100960FC4 /* ChooseStringEncodingWindowController.m in Sources */,
 				A59BC5922001FB9A0066860F /* HFTclTemplateController.m in Sources */,
 				A56D78161E7EF088001D1892 /* CLIController.m in Sources */,
 				D059E1291311C676001493B8 /* AppDebugging.m in Sources */,
 				D01EF15413B2A0D300CC9283 /* TextDividerRepresenter.m in Sources */,
+				A5589AD22206E1C4000293A4 /* ExtendedAttributeDataDocument.m in Sources */,
 				D0A8AF7D1467273900387627 /* AppUtilities.m in Sources */,
 				D0D0536E1487FF2500704643 /* HFFindReplaceOperationView.m in Sources */,
 				A59BC59820020B480066860F /* HFBinaryTemplateController.m in Sources */,
@@ -1931,6 +1948,14 @@
 			);
 			name = InfoPlist.strings;
 			path = app/resources;
+			sourceTree = "<group>";
+		};
+		A5589ACA2206D238000293A4 /* OpenAccessoryView.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				A5589ACB2206D238000293A4 /* Base */,
+			);
+			name = OpenAccessoryView.xib;
 			sourceTree = "<group>";
 		};
 		A57F34821F1EF47700234B94 /* Preferences.xib */ = {
@@ -2427,12 +2452,6 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				VALID_ARCHS = "arm64 armv7 armv7s";
-				WARNING_CFLAGS = (
-					"-W",
-					"-Wall",
-					"-Winit-self",
-					"-Wno-unused",
-				);
 			};
 			name = Debug;
 		};
@@ -2464,12 +2483,6 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				VALID_ARCHS = "arm64 armv7 armv7s";
-				WARNING_CFLAGS = (
-					"-W",
-					"-Wall",
-					"-Winit-self",
-					"-Wno-unused",
-				);
 			};
 			name = "Debug+CodeSign";
 		};
@@ -2500,12 +2513,6 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				VALID_ARCHS = "arm64 armv7 armv7s";
-				WARNING_CFLAGS = (
-					"-W",
-					"-Wall",
-					"-Winit-self",
-					"-Wno-unused",
-				);
 			};
 			name = "Debug+MAS";
 		};
@@ -2537,12 +2544,6 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				VALID_ARCHS = "arm64 armv7 armv7s";
-				WARNING_CFLAGS = (
-					"-W",
-					"-Wall",
-					"-Winit-self",
-					"-Wno-unused",
-				);
 			};
 			name = "Debug+UnitTests";
 		};
@@ -2574,12 +2575,6 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				VALID_ARCHS = "arm64 armv7 armv7s";
-				WARNING_CFLAGS = (
-					"-W",
-					"-Wall",
-					"-Winit-self",
-					"-Wno-unused",
-				);
 			};
 			name = Release;
 		};
@@ -2611,12 +2606,6 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				VALID_ARCHS = "arm64 armv7 armv7s";
-				WARNING_CFLAGS = (
-					"-W",
-					"-Wall",
-					"-Winit-self",
-					"-Wno-unused",
-				);
 			};
 			name = "Release+CodeSign";
 		};
@@ -2648,12 +2637,6 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				VALID_ARCHS = "arm64 armv7 armv7s";
-				WARNING_CFLAGS = (
-					"-W",
-					"-Wall",
-					"-Winit-self",
-					"-Wno-unused",
-				);
 			};
 			name = "Release+MAS";
 		};
@@ -2722,7 +2705,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INSTALL_PATH = /Applications;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				OTHER_CFLAGS = "";
 				SDKROOT = macosx;
 				WARNING_CFLAGS = (
@@ -2792,12 +2775,6 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculousfish.HexFiend-Framework";
 				PRODUCT_NAME = HexFiend;
-				WARNING_CFLAGS = (
-					"-W",
-					"-Wall",
-					"-Winit-self",
-					"-Wno-unused",
-				);
 			};
 			name = Release;
 		};
@@ -2896,7 +2873,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INSTALL_PATH = /Applications;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "";
 				SDKROOT = macosx;
@@ -2966,12 +2943,6 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculousfish.HexFiend-Framework";
 				PRODUCT_NAME = HexFiend;
-				WARNING_CFLAGS = (
-					"-W",
-					"-Wall",
-					"-Winit-self",
-					"-Wno-unused",
-				);
 			};
 			name = "Debug+UnitTests";
 		};
@@ -3067,7 +3038,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INSTALL_PATH = /Applications;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				OTHER_CFLAGS = "";
 				SDKROOT = macosx;
 				WARNING_CFLAGS = (
@@ -3137,12 +3108,6 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculousfish.HexFiend-Framework";
 				PRODUCT_NAME = HexFiend;
-				WARNING_CFLAGS = (
-					"-W",
-					"-Wall",
-					"-Winit-self",
-					"-Wno-unused",
-				);
 			};
 			name = "Release+CodeSign";
 		};
@@ -3170,6 +3135,7 @@
 		D039DC1614835A1400364FA6 /* Release+CodeSign */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				INFOPLIST_FILE = sample_code/HexFiendling/Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
@@ -3254,7 +3220,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INSTALL_PATH = /Applications;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				OTHER_CFLAGS = (
 					"-DMacAppStore=1",
 					"-DHF_NO_PRIVILEGED_FILE_OPERATIONS=1",
@@ -3323,12 +3289,6 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculousfish.HexFiend-Framework";
 				PRODUCT_NAME = HexFiend;
-				WARNING_CFLAGS = (
-					"-W",
-					"-Wall",
-					"-Winit-self",
-					"-Wno-unused",
-				);
 			};
 			name = "Release+MAS";
 		};
@@ -3358,6 +3318,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_IDENTITY = "-";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				INFOPLIST_FILE = sample_code/HexFiendling/Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
@@ -3457,7 +3418,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INSTALL_PATH = /Applications;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = (
 					"-DMacAppStore=1",
@@ -3526,12 +3487,6 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculousfish.HexFiend-Framework";
 				PRODUCT_NAME = HexFiend;
-				WARNING_CFLAGS = (
-					"-W",
-					"-Wall",
-					"-Winit-self",
-					"-Wno-unused",
-				);
 			};
 			name = "Debug+MAS";
 		};
@@ -3669,7 +3624,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INSTALL_PATH = /Applications;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "";
 				SDKROOT = macosx;
@@ -3739,12 +3694,6 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculousfish.HexFiend-Framework";
 				PRODUCT_NAME = HexFiend;
-				WARNING_CFLAGS = (
-					"-W",
-					"-Wall",
-					"-Winit-self",
-					"-Wno-unused",
-				);
 			};
 			name = "Debug+CodeSign";
 		};
@@ -3841,7 +3790,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INSTALL_PATH = /Applications;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "";
 				SDKROOT = macosx;
@@ -3877,12 +3826,6 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculousfish.HexFiend-Framework";
 				PRODUCT_NAME = HexFiend;
-				WARNING_CFLAGS = (
-					"-W",
-					"-Wall",
-					"-Winit-self",
-					"-Wno-unused",
-				);
 			};
 			name = Debug;
 		};

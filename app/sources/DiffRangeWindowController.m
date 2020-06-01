@@ -7,16 +7,9 @@
 //
 
 #import "DiffRangeWindowController.h"
-
 #import "DiffDocument.h"
 
 @implementation DiffRangeWindowController
-
-- (instancetype)initWithWindow:(NSWindow *)window {
-    self = [super initWithWindow:window];
-    if (!self) return self;
-    return self;
-}
 
 - (IBAction)compareRange:(id)sender {
     USE(sender);
@@ -29,9 +22,16 @@
     
     HFRange range = HFRangeMake(start, len);
     
-    [DiffDocument compareFrontTwoDocumentsUsingRange:range];
-    
+    [NSApp stopModal];
     [self close];
+
+    [DiffDocument compareFrontTwoDocumentsUsingRange:range];
+}
+
+- (void)runModal
+{
+    [self showWindow:self];
+    [NSApp runModalForWindow:self.window];
 }
 
 @end

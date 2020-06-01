@@ -8,10 +8,12 @@
 
 #import <Foundation/Foundation.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface HFTemplateNode : NSObject
 
 - (instancetype)initWithLabel:(NSString *)label value:(NSString *)value;
-- (instancetype)initGroupWithLabel:(NSString *)label parent:(HFTemplateNode *)parent;
+- (instancetype)initGroupWithLabel:(NSString *_Nullable)label parent:(HFTemplateNode *_Nullable)parent;
 
 @property (readonly) NSString *label;
 @property (copy) NSString *value;
@@ -24,3 +26,4 @@
 
 @end
 
+NS_ASSUME_NONNULL_END

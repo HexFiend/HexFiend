@@ -36,24 +36,24 @@ static NSString *copy1CharStringForByteValue(unsigned long long byteValue, NSUIn
         encodingOK = NO;
     }
 
-    
-    
+
+
     /* Now create a string from these bytes */
     if (encodingOK) {
         result = [encoding stringFromBytes:bytes length:bytesPerChar];
-        
+
         if ([result length] > 1) {
             /* Try precomposing it */
             NSString *temp = [[result precomposedStringWithCompatibilityMapping] copy];
             result = temp;
         }
-        
+
         /* Ensure it has exactly one character */
         if ([result length] != 1) {
             result = nil;
         }
     }
-    
+
     /* All done */
     return result;
 }
@@ -65,7 +65,7 @@ static BOOL getGlyphs(CGGlyph *glyphs, NSString *string, CTFontRef inputFont) {
     [string getCharacters:chars range:NSMakeRange(0, length)];
     bool result = CTFontGetGlyphsForCharacters(inputFont, chars, glyphs, length);
     /* A NO return means some or all characters were not mapped.  This is OK.  We'll use the replacement glyph.  Unless we're calculating the replacement glyph!  Hmm...maybe we should have a series of replacement glyphs that we try? */
-    
+
     ////////////////////////
     // Workaround for a Mavericks bug. Still present as of 10.9.5
     // TODO: Hmm, still? Should look into this again, either it's not a bug or Apple needs a poke.
@@ -76,7 +76,7 @@ static BOOL getGlyphs(CGGlyph *glyphs, NSString *string, CTFontRef inputFont) {
         if(!result) break;
     }
     ////////////////////////
-    
+
     FREE_ARRAY(chars);
     return result;
 }
@@ -84,16 +84,16 @@ static BOOL getGlyphs(CGGlyph *glyphs, NSString *string, CTFontRef inputFont) {
 static void generateGlyphs(CTFontRef baseFont, NSMutableArray *fonts, struct HFGlyph_t *outGlyphs, NSInteger bytesPerChar, HFStringEncoding *encoding, const NSUInteger *charactersToLoad, NSUInteger charactersToLoadCount, CGFloat *outMaxAdvance) {
     /* If the caller wants the advance, initialize it to 0 */
     if (outMaxAdvance) *outMaxAdvance = 0;
-    
+
     /* Invalid glyph marker */
     const struct HFGlyph_t invalidGlyph = {.fontIndex = kHFGlyphFontIndexInvalid, .glyph = -1};
-    
+
     NSCharacterSet *coveredSet = (__bridge_transfer NSCharacterSet *)CTFontCopyCharacterSet(baseFont);
     NSMutableString *coveredGlyphFetchingString = [[NSMutableString alloc] init];
     NSMutableIndexSet *coveredGlyphIndexes = [[NSMutableIndexSet alloc] init];
     NSMutableString *substitutionFontsGlyphFetchingString = [[NSMutableString alloc] init];
     NSMutableIndexSet *substitutionGlyphIndexes = [[NSMutableIndexSet alloc] init];
-    
+
     /* Loop over all the characters, appending them to our glyph fetching string */
     NSUInteger idx;
     for (idx = 0; idx < charactersToLoadCount; idx++) {
@@ -113,21 +113,21 @@ static void generateGlyphs(CTFontRef baseFont, NSMutableArray *fonts, struct HFG
             }
         }
     }
-    
-    
+
+
     /* Fetch the non-substitute glyphs */
     {
         NEW_ARRAY(CGGlyph, cgglyphs, [coveredGlyphFetchingString length]);
         BOOL success = getGlyphs(cgglyphs, coveredGlyphFetchingString, baseFont);
         HFASSERT(success == YES);
         NSUInteger numGlyphs = [coveredGlyphFetchingString length];
-        
+
         /* Fill in our glyphs array */
         NSUInteger coveredGlyphIdx = [coveredGlyphIndexes firstIndex];
         for (NSUInteger i=0; i < numGlyphs; i++) {
             outGlyphs[coveredGlyphIdx] = (struct HFGlyph_t){.fontIndex = 0, .glyph = cgglyphs[i]};
             coveredGlyphIdx = [coveredGlyphIndexes indexGreaterThanIndex:coveredGlyphIdx];
-            
+
             /* Record the advancement.  Note that this may be more efficient to do in bulk. */
             if (outMaxAdvance) {
                 CGSize advance;
@@ -138,7 +138,7 @@ static void generateGlyphs(CTFontRef baseFont, NSMutableArray *fonts, struct HFG
         HFASSERT(coveredGlyphIdx == NSNotFound); //we must have exhausted the table
         FREE_ARRAY(cgglyphs);
     }
-    
+
     /* Now do substitution glyphs. */
     {
         NSUInteger substitutionGlyphIndex = [substitutionGlyphIndexes firstIndex], numSubstitutionChars = [substitutionFontsGlyphFetchingString length];
@@ -150,7 +150,7 @@ static void generateGlyphs(CTFontRef baseFont, NSMutableArray *fonts, struct HFG
                 unichar c = [substitutionFontsGlyphFetchingString characterAtIndex:i];
                 NSString *substring = [[NSString alloc] initWithCharacters:&c length:1];
                 BOOL success = getGlyphs(&glyph, substring, substitutionFont);
-                
+
                 if (! success) {
                     /* Turns out there wasn't a glyph like we thought there would be, so set an invalid glyph marker */
                     outGlyphs[substitutionGlyphIndex] = invalidGlyph;
@@ -162,15 +162,15 @@ static void generateGlyphs(CTFontRef baseFont, NSMutableArray *fonts, struct HFG
                         [fonts addObject:(__bridge id)substitutionFont];
                         fontIndex = [fonts count] - 1;
                     }
-                    
+
                     /* Now make the glyph */
                     HFASSERT(fontIndex < UINT16_MAX);
                     outGlyphs[substitutionGlyphIndex] = (struct HFGlyph_t){.fontIndex = (uint16_t)fontIndex, .glyph = glyph};
                 }
-                
+
                 /* We're done with this */
                 CFRelease(substitutionFont);
-                
+
             }
             substitutionGlyphIndex = [substitutionGlyphIndexes indexGreaterThanIndex:substitutionGlyphIndex];
         }
@@ -185,38 +185,40 @@ static void generateGlyphs(CTFontRef baseFont, NSMutableArray *fonts, struct HFG
 - (void)threadedLoadGlyphs:(id)unused {
     /* Note that this is running on a background thread */
     USE(unused);
-    
+
     /* Do some things under the lock. Someone else may wish to read fonts, and we're going to write to it, so make a local copy.  Also figure out what characters to load. */
     NSMutableArray *localFonts;
     NSIndexSet *charactersToLoad;
-    OSSpinLockLock(&glyphLoadLock);
+    HFASSERT(glyphLoadLock != nil);
+    [glyphLoadLock lock];
     localFonts = [fonts mutableCopy];
     charactersToLoad = requestedCharacters;
     /* Set requestedCharacters to nil so that the caller knows we aren't going to check again, and will have to re-invoke us. */
     requestedCharacters = nil;
-    OSSpinLockUnlock(&glyphLoadLock);
-    
+    [glyphLoadLock unlock];
+
     NSUInteger charVal, glyphIdx, charCount = [charactersToLoad count];
     NEW_ARRAY(struct HFGlyph_t, glyphs, charCount);
-    
+
     /* Now generate our glyphs */
     NEW_ARRAY(NSUInteger, characters, charCount);
     [charactersToLoad getIndexes:characters maxCount:charCount inIndexRange:NULL];
     generateGlyphs((__bridge CTFontRef)localFonts[0], localFonts, glyphs, maxBytesPerChar, self.encoding, characters, charCount, NULL);
     FREE_ARRAY(characters);
-    
+
     /* Replace fonts.  Do this before we insert into the glyph trie, because the glyph trie references fonts that we're just now putting in the fonts array. */
-    OSSpinLockLock(&glyphLoadLock);
+    HFASSERT(glyphLoadLock != nil);
+    [glyphLoadLock lock];
     fonts = localFonts;
-    OSSpinLockUnlock(&glyphLoadLock);
-    
+    [glyphLoadLock unlock];
+
     /* Now insert all of the glyphs into the glyph trie */
     glyphIdx = 0;
     for (charVal = [charactersToLoad firstIndex]; charVal != NSNotFound; charVal = [charactersToLoad indexGreaterThanIndex:charVal]) {
         HFGlyphTrieInsert(&glyphTable, charVal, glyphs[glyphIdx++]);
     }
     FREE_ARRAY(glyphs);
-    
+
     /* Trigger a redisplay */
     [self performSelectorOnMainThread:@selector(triggerRedisplay:) withObject:nil waitUntilDone:NO];
 }
@@ -239,9 +241,10 @@ static void generateGlyphs(CTFontRef baseFont, NSMutableArray *fonts, struct HFG
     if (! fonts) {
         fonts = [NSMutableArray arrayWithObject:self.font];
     }
-    
-    BOOL needToStartOperation;    
-    OSSpinLockLock(&glyphLoadLock);
+
+    BOOL needToStartOperation;
+    HFASSERT(glyphLoadLock != nil);
+    [glyphLoadLock lock];
     if (requestedCharacters) {
         /* There's a pending request, so just add to it */
         [requestedCharacters addIndexes:charactersToLoad];
@@ -251,8 +254,8 @@ static void generateGlyphs(CTFontRef baseFont, NSMutableArray *fonts, struct HFG
         requestedCharacters = [charactersToLoad mutableCopy];
         needToStartOperation = YES;
     }
-    OSSpinLockUnlock(&glyphLoadLock);
-    
+    [glyphLoadLock unlock];
+
     if (needToStartOperation) {
         NSInvocationOperation *op = [[NSInvocationOperation alloc] initWithTarget:self selector:@selector(threadedLoadGlyphs:) object:charactersToLoad];
         [glyphLoader addOperation:op];
@@ -266,9 +269,7 @@ static void generateGlyphs(CTFontRef baseFont, NSMutableArray *fonts, struct HFG
 - (void)staleTieredProperties {
     tier1DataIsStale = YES;
     /* We have to free the glyph table */
-    requestedCancel = YES;
     [glyphLoader waitUntilAllOperationsAreFinished];
-    requestedCancel = NO;
     HFGlyphTreeFree(&glyphTable);
     HFGlyphTrieInitialize(&glyphTable, maxBytesPerChar);
 }
@@ -282,12 +283,24 @@ static void generateGlyphs(CTFontRef baseFont, NSMutableArray *fonts, struct HFG
     [super setFont:font];
 }
 
+- (instancetype)initWithRepresenter:(HFTextRepresenter *)rep
+{
+    self = [super initWithRepresenter:rep];
+    encoding = [HFEncodingManager shared].ascii;
+    bytesPerChar = encoding.fixedBytesPerCharacter;
+    glyphLoadLock = [[NSLock alloc] init];
+    [self staleTieredProperties];
+    return self;
+}
+
 - (instancetype)initWithCoder:(NSCoder *)coder {
     HFASSERT([coder allowsKeyedCoding]);
     self = [super initWithCoder:coder];
     encoding = [coder decodeObjectForKey:@"HFStringEncoding"];
     minBytesPerChar = encoding.minimumBytesPerCharacter;
     maxBytesPerChar = encoding.maximumBytesPerCharacter;
+    bytesPerChar = encoding.fixedBytesPerCharacter;
+    glyphLoadLock = [[NSLock alloc] init];
     [self staleTieredProperties];
     return self;
 }
@@ -297,6 +310,8 @@ static void generateGlyphs(CTFontRef baseFont, NSMutableArray *fonts, struct HFG
     encoding = [HFEncodingManager shared].ascii;
     minBytesPerChar = encoding.minimumBytesPerCharacter;
     maxBytesPerChar = encoding.maximumBytesPerCharacter;
+    bytesPerChar = encoding.fixedBytesPerCharacter;
+    glyphLoadLock = [[NSLock alloc] init];
     [self staleTieredProperties];
     return self;
 }
@@ -315,10 +330,10 @@ static void generateGlyphs(CTFontRef baseFont, NSMutableArray *fonts, struct HFG
     if (encoding != val) {
         /* Our glyph table is now stale. Call this first to ensure our background operation is complete. */
         [self staleTieredProperties];
-        
+
         /* Store the new encoding. */
-        encoding = val;	
-        
+        encoding = val;
+
         /* Compute bytes per character */
         minBytesPerChar = encoding.minimumBytesPerCharacter;
         maxBytesPerChar = encoding.maximumBytesPerCharacter;
@@ -327,7 +342,7 @@ static void generateGlyphs(CTFontRef baseFont, NSMutableArray *fonts, struct HFG
 
         /* Ensure the tree knows about the new bytes per character */
         HFGlyphTrieInitialize(&glyphTable, maxBytesPerChar);
-		
+
         /* Redraw ourselves with our new glyphs */
 #if TARGET_OS_IPHONE
         [self setNeedsDisplay];
@@ -339,7 +354,7 @@ static void generateGlyphs(CTFontRef baseFont, NSMutableArray *fonts, struct HFG
 
 - (void)loadTier1Data {
     CTFontRef font = (__bridge CTFontRef)[self font];
-    
+
     /* Use the max advance as the glyph advance */
 #if !TARGET_OS_IPHONE
     glyphAdvancement = HFCeil([(__bridge NSFont *)font maximumAdvancement].width);
@@ -370,14 +385,15 @@ static void generateGlyphs(CTFontRef baseFont, NSMutableArray *fonts, struct HFG
     if (idx >= [fontCache count]) {
         /* Our font cache is out of date.  Take the lock and update the cache. */
         NSArray *newFonts = nil;
-        OSSpinLockLock(&glyphLoadLock);
+        HFASSERT(glyphLoadLock != nil);
+        [glyphLoadLock lock];
         //HFASSERT(idx < [fonts count]);
         newFonts = [fonts copy];
-        OSSpinLockUnlock(&glyphLoadLock);
-        
+        [glyphLoadLock unlock];
+
         /* Store the new cache */
         fontCache = newFonts;
-        
+
         /* Now our cache should be up to date */
         //HFASSERT(idx < [fontCache count]);
     }
@@ -395,10 +411,10 @@ static void generateGlyphs(CTFontRef baseFont, NSMutableArray *fonts, struct HFG
     HFASSERT(resultGlyphCount != NULL);
     HFASSERT(advances != NULL);
     USE(offsetIntoLine);
-    
+
     /* Ensure we have advance, etc. before trying to use it */
     if (tier1DataIsStale) [self loadTier1Data];
-    
+
     CGSize advance = CGSizeMake(glyphAdvancement, 0);
 
     const BOOL isVariableByteEncoding = minBytesPerChar != maxBytesPerChar;
@@ -477,9 +493,9 @@ static void generateGlyphs(CTFontRef baseFont, NSMutableArray *fonts, struct HFG
         }
         return;
     }
-    
+
     NSMutableIndexSet *charactersToLoad = nil; //note: in UTF-32 this may have to move to an NSSet
-    
+
     const uint8_t localBytesPerChar = maxBytesPerChar;
     NSUInteger charIndex, numChars = numBytes / localBytesPerChar, byteIndex = 0;
     for (charIndex = 0; charIndex < numChars; charIndex++) {
@@ -489,11 +505,11 @@ static void generateGlyphs(CTFontRef baseFont, NSMutableArray *fonts, struct HFG
         } else if (localBytesPerChar == 2) {
             character = *(const uint16_t *)(bytes + byteIndex);
         } else if (localBytesPerChar == 4) {
-            character = *(const uint32_t *)(bytes + byteIndex);	    
+            character = *(const uint32_t *)(bytes + byteIndex);
         } else {
             HFASSERT(0);
         }
-        
+
         struct HFGlyph_t glyph = HFGlyphTrieGet(&glyphTable, character);
         if (glyph.glyph == 0 && glyph.fontIndex == 0) {
             /* Unloaded glyph, so load it */
@@ -506,15 +522,15 @@ static void generateGlyphs(CTFontRef baseFont, NSMutableArray *fonts, struct HFG
         } else {
             /* Valid glyph */
         }
-        
+
         HFASSERT(glyph.fontIndex != kHFGlyphFontIndexInvalid);
-        
+
         advances[charIndex] = advance;
         glyphs[charIndex] = glyph;
         byteIndex += localBytesPerChar;
     }
     *resultGlyphCount = numChars;
-    
+
     if (charactersToLoad) {
         [self beginLoadGlyphsForCharacters:charactersToLoad];
     }

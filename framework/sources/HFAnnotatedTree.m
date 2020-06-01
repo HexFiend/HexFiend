@@ -20,7 +20,9 @@ static void skew(HFAnnotatedTreeNode *node, HFAnnotatedTree *tree);
 static BOOL split(HFAnnotatedTreeNode *oldparent, HFAnnotatedTree *tree);
 static void rebalanceAfterLeafAdd(HFAnnotatedTreeNode *n, HFAnnotatedTree *tree);
 static void delete(HFAnnotatedTreeNode *n, HFAnnotatedTree *tree);
+#if ! NDEBUG
 static void verify_integrity(HFAnnotatedTreeNode *n);
+#endif
 
 static HFAnnotatedTreeNode *next_node(HFAnnotatedTreeNode *node);
 
@@ -31,7 +33,6 @@ static inline HFAnnotatedTreeNode *get_root(HFAnnotatedTree *tree);
 static inline HFAnnotatedTreeNode *create_root(void);
 static inline HFAnnotatedTreeAnnotaterFunction_t get_annotater(HFAnnotatedTree *tree);
 
-static void update_annotation(HFAnnotatedTreeNode *node, HFAnnotatedTree *tree);
 static void reannotate(HFAnnotatedTreeNode *node, HFAnnotatedTree *tree);
 
 static HFAnnotatedTreeNode *first_node(HFAnnotatedTreeNode *node);
@@ -153,15 +154,6 @@ static void reannotate(HFAnnotatedTreeNode *node, HFAnnotatedTree *tree) {
     node->annotation = annotater(node->left, node->right);
 }
 
-
-static void update_annotation(HFAnnotatedTreeNode *node, HFAnnotatedTree *tree) {
-    const HFAnnotatedTreeAnnotaterFunction_t annotater = get_annotater(tree);
-    HFAnnotatedTreeNode * const root = get_root(tree);
-    while (node != root) {
-        node->annotation = annotater(node->left, node->right);
-        node = node->parent;
-    }
-}
 
 static void insert(HFAnnotatedTreeNode *root, HFAnnotatedTreeNode *node, HFAnnotatedTree *tree) {
     /* Insert node at the proper place in the tree.  root is the root node, and we always insert to the left of root */
@@ -394,6 +386,7 @@ static HFAnnotatedTreeNode *get_parent(HFAnnotatedTreeNode *node) {
     return node->parent;
 }
 
+#if ! NDEBUG
 static void verify_integrity(HFAnnotatedTreeNode *n) {
     HFASSERT(!n->left || n->left->parent == n);
     HFASSERT(!n->right || n->right->parent == n);
@@ -412,7 +405,6 @@ static void verify_integrity(HFAnnotatedTreeNode *n) {
              n->parent->parent->level > n->level);
 }
 
-#if ! NDEBUG
 - (void)verifyIntegrity {
     [left verifyIntegrity];
     [right verifyIntegrity];

@@ -116,7 +116,7 @@ NSString * const DataInspectorDidDeleteAllRows = @"DataInspectorDidDeleteAllRows
     return ll2l(selectedRange.length);
 }
 
-- (id)valueFromInspector:(DataInspector *)inspector isError:(BOOL *)outIsError{
+- (NSAttributedString *)valueFromInspector:(DataInspector *)inspector isError:(BOOL *)outIsError{
     HFController *controller = [self controller];
     return [inspector valueForController:controller ranges:[controller selectedContentsRanges] isError:outIsError];
 }
@@ -165,8 +165,12 @@ NSString * const DataInspectorDidDeleteAllRows = @"DataInspectorDidDeleteAllRows
         [self saveDefaultInspectors];
     }
     else if ([ident isEqualToString:kInspectorValueColumnIdentifier]) {
+        // Make sure to avoid modifications if the value didn't actually change,
+        // otherwise the document gets marked as edited/dirty unnecessarily.
+        NSAttributedString *oldValue = [self valueFromInspector:inspector isError:NULL];
+        const BOOL valueChanged = ![oldValue.string isEqual:object];
         NSUInteger byteCount = [self selectedByteCountForEditing];
-        if (byteCount != INVALID_EDITING_BYTE_COUNT) {
+        if (byteCount != INVALID_EDITING_BYTE_COUNT && valueChanged) {
             unsigned char bytes[MAX_EDITABLE_BYTE_COUNT];
             HFASSERT(byteCount <= sizeof(bytes));
             if ([inspector acceptStringValue:object replacingByteCount:byteCount intoData:bytes]) {
@@ -203,10 +207,10 @@ NSString * const DataInspectorDidDeleteAllRows = @"DataInspectorDidDeleteAllRows
         [popUpCell itemAtIndex:2].state = NSOffState;
         [popUpCell itemAtIndex:4].state = NSOffState;
         [popUpCell itemAtIndex:5].state = NSOffState;
-        [popUpCell itemAtIndex:1].enabled = false;
-        [popUpCell itemAtIndex:2].enabled = false;
-        [popUpCell itemAtIndex:4].enabled = false;
-        [popUpCell itemAtIndex:5].enabled = false;
+        [popUpCell itemAtIndex:1].enabled = NO;
+        [popUpCell itemAtIndex:2].enabled = NO;
+        [popUpCell itemAtIndex:4].enabled = NO;
+        [popUpCell itemAtIndex:5].enabled = NO;
         NSMutableArray *titleItems = [NSMutableArray array];
         if (allowsEndianness) {
             NSInteger endianIndex;
@@ -218,8 +222,8 @@ NSString * const DataInspectorDidDeleteAllRows = @"DataInspectorDidDeleteAllRows
                 [titleItems addObject:@"be"];
             }
             [popUpCell itemAtIndex:endianIndex].state = NSOnState;
-            [popUpCell itemAtIndex:1].enabled = true;
-            [popUpCell itemAtIndex:2].enabled = true;
+            [popUpCell itemAtIndex:1].enabled = YES;
+            [popUpCell itemAtIndex:2].enabled = YES;
         }
         if (allowsNumberBase) {
             NSInteger numberBaseIndex;
@@ -231,8 +235,8 @@ NSString * const DataInspectorDidDeleteAllRows = @"DataInspectorDidDeleteAllRows
                 [titleItems addObject:@"hex"];
             }
             [popUpCell itemAtIndex:numberBaseIndex].state = NSOnState;
-            [popUpCell itemAtIndex:4].enabled = true;
-            [popUpCell itemAtIndex:5].enabled = true;
+            [popUpCell itemAtIndex:4].enabled = YES;
+            [popUpCell itemAtIndex:5].enabled = YES;
         }
         NSMenuItem* titleMenuItem = [popUpCell itemAtIndex:0];
         if (titleItems.count > 1) {
@@ -285,8 +289,8 @@ NSString * const DataInspectorDidDeleteAllRows = @"DataInspectorDidDeleteAllRows
 - (IBAction)doubleClickedTable:(id)sender {
     USE(sender);
     NSInteger column = [table clickedColumn], row = [table clickedRow];
-    if (column >= 0 && row >= 0 && [[[table tableColumns][column] identifier] isEqual:kInspectorValueColumnIdentifier]) {
-        BOOL isError;
+    if (self.controller.editable && column >= 0 && row >= 0 && [[[table tableColumns][column] identifier] isEqual:kInspectorValueColumnIdentifier]) {
+        BOOL isError = NO;
         [self valueFromInspector:inspectors[row] isError:&isError];
         if (! isError) {
             [table editColumn:column row:row withEvent:[NSApp currentEvent] select:YES];

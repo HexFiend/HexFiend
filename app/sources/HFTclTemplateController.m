@@ -37,11 +37,16 @@ enum command {
     command_float,
     command_double,
     command_macdate,
+    command_fatdate,
+    command_fattime,
+    command_unixtime32,
+    command_unixtime64,
     command_bytes,
     command_hex,
     command_ascii,
     command_utf16,
     command_str,
+    command_cstr,
     command_uuid,
     command_move,
     command_goto,
@@ -54,6 +59,10 @@ enum command {
     command_sectionvalue,
     command_zlib_uncompress,
     command_entry,
+    command_uint8_bits,
+    command_uint16_bits,
+    command_uint32_bits,
+    command_uint64_bits,
 };
 
 @interface HFTclTemplateController ()
@@ -79,6 +88,10 @@ DEFINE_COMMAND(int8)
 DEFINE_COMMAND(float)
 DEFINE_COMMAND(double)
 DEFINE_COMMAND(macdate)
+DEFINE_COMMAND(fatdate)
+DEFINE_COMMAND(fattime)
+DEFINE_COMMAND(unixtime32)
+DEFINE_COMMAND(unixtime64)
 DEFINE_COMMAND(big_endian)
 DEFINE_COMMAND(little_endian)
 DEFINE_COMMAND(bytes)
@@ -86,6 +99,7 @@ DEFINE_COMMAND(hex)
 DEFINE_COMMAND(ascii)
 DEFINE_COMMAND(utf16)
 DEFINE_COMMAND(str)
+DEFINE_COMMAND(cstr)
 DEFINE_COMMAND(uuid)
 DEFINE_COMMAND(move)
 DEFINE_COMMAND(goto)
@@ -98,6 +112,10 @@ DEFINE_COMMAND(endsection)
 DEFINE_COMMAND(sectionvalue)
 DEFINE_COMMAND(zlib_uncompress)
 DEFINE_COMMAND(entry)
+DEFINE_COMMAND(uint8_bits)
+DEFINE_COMMAND(uint16_bits)
+DEFINE_COMMAND(uint32_bits)
+DEFINE_COMMAND(uint64_bits)
 
 @implementation HFTclTemplateController {
     Tcl_Interp *_interp;
@@ -135,6 +153,10 @@ DEFINE_COMMAND(entry)
         CMD(float),
         CMD(double),
         CMD(macdate),
+        CMD(fatdate),
+        CMD(fattime),
+        CMD(unixtime32),
+        CMD(unixtime64),
         CMD(big_endian),
         CMD(little_endian),
         CMD(bytes),
@@ -142,6 +164,7 @@ DEFINE_COMMAND(entry)
         CMD(ascii),
         CMD(utf16),
         CMD(str),
+        CMD(cstr),
         CMD(uuid),
         CMD(move),
         CMD(goto),
@@ -154,6 +177,10 @@ DEFINE_COMMAND(entry)
         CMD(sectionvalue),
         CMD(zlib_uncompress),
         CMD(entry),
+        CMD(uint8_bits),
+        CMD(uint16_bits),
+        CMD(uint32_bits),
+        CMD(uint64_bits),
     };
 #undef CMD
 #undef CMD_NAMED
@@ -234,8 +261,8 @@ DEFINE_COMMAND(entry)
     if (err != TCL_OK) {
         return err;
     }
-    if (offset < 0) {
-        Tcl_SetObjResult(_interp, Tcl_ObjPrintf("Offset must be >= 0, but was %ld", offset));
+    if (*offset < 0) {
+        Tcl_SetObjResult(_interp, Tcl_ObjPrintf("Offset must be >= 0, but was %ld", *offset));
         return TCL_ERROR;
     }
     return err;
@@ -255,6 +282,10 @@ DEFINE_COMMAND(entry)
         case command_float:
         case command_double:
         case command_macdate:
+        case command_fatdate:
+        case command_fattime:
+        case command_unixtime32:
+        case command_unixtime64:
         case command_uuid:
             return [self runTypeCommand:command objc:objc objv:objv];
         case command_big_endian: {
@@ -343,6 +374,29 @@ DEFINE_COMMAND(entry)
             NSString *str = [self readStringDataForSize:len encoding:encoding forLabel:label];
             if (!str) {
                 Tcl_SetObjResult(_interp, Tcl_ObjPrintf("Failed to read %ld bytes", len));
+                return TCL_ERROR;
+            }
+            Tcl_SetObjResult(_interp, Tcl_NewStringObj(str.UTF8String, -1));
+            break;
+        }
+        case command_cstr: {
+            if (objc != 2 && objc != 3) {
+                Tcl_WrongNumArgs(_interp, 1, objv, "encoding [label]");
+                return TCL_ERROR;
+            }
+            NSString *encodingIdentifier = [NSString stringWithUTF8String:Tcl_GetStringFromObj(objv[1], NULL)];
+            HFStringEncoding *encoding = [[HFEncodingManager shared] encodingByIdentifier:encodingIdentifier];
+            if (!encoding) {
+                Tcl_SetObjResult(_interp, Tcl_ObjPrintf("Unknown identifier %s", encodingIdentifier.UTF8String));
+                return TCL_ERROR;
+            }
+            NSString *label = nil;
+            if (objc == 3) {
+                label = [NSString stringWithUTF8String:Tcl_GetStringFromObj(objv[2], NULL)];
+            }
+            NSString *str = [self readCStringForEncoding:encoding forLabel:label];
+            if (!str) {
+                Tcl_SetObjResult(_interp, Tcl_ObjPrintf("Failed to read cstr"));
                 return TCL_ERROR;
             }
             Tcl_SetObjResult(_interp, Tcl_NewStringObj(str.UTF8String, -1));
@@ -495,6 +549,38 @@ DEFINE_COMMAND(entry)
             [self addEntryWithLabel:label value:value length:lengthPtr offset:offsetPtr];
             break;
         }
+        case command_uint8_bits:
+        case command_uint16_bits:
+        case command_uint32_bits:
+        case command_uint64_bits: {
+            if (objc < 2 || objc > 3) {
+                Tcl_WrongNumArgs(_interp, 1, objv, "bits [label]");
+                return TCL_ERROR;
+            }
+            NSString *bits = [NSString stringWithUTF8String:Tcl_GetStringFromObj(objv[1], NULL)];
+            NSString *label = nil;
+            if (objc == 3) {
+                label = [NSString stringWithUTF8String:Tcl_GetStringFromObj(objv[2], NULL)];
+            }
+            unsigned numBytes = 0;
+            switch (command) {
+                case command_uint8_bits: numBytes = 1; break;
+                case command_uint16_bits: numBytes = 2; break;
+                case command_uint32_bits: numBytes = 4; break;
+                case command_uint64_bits: numBytes = 8; break;
+                default:
+                    Tcl_SetObjResult(_interp, Tcl_NewStringObj("This shouldn't happen.", -1));
+                    return TCL_ERROR;
+            }
+            uint64_t val;
+            NSString *error = nil;
+            if (![self readBits:bits byteCount:numBytes forLabel:label result:&val error:&error]) {
+                Tcl_SetObjResult(_interp, Tcl_NewStringObj(error.UTF8String, -1));
+                return TCL_ERROR;
+            }
+            Tcl_SetObjResult(_interp, tcl_obj_from_uint64(val));
+            return TCL_OK;
+        }
     }
     return TCL_OK;
 }
@@ -508,11 +594,11 @@ DEFINE_COMMAND(entry)
         default:
             break;
     }
-    int asHex = 0;
+    int asHexFlag = 0;
     NSString *label = nil;
     Tcl_Obj **extraArgs = NULL;
     Tcl_ArgvInfo argInfoTable[] = {
-        {TCL_ARGV_CONSTANT, "-hex", (void*)1, &asHex, "display as hexadecimal", NULL},
+        {TCL_ARGV_CONSTANT, "-hex", (void*)1, &asHexFlag, "display as hexadecimal", NULL},
         TCL_ARGV_AUTO_HELP,
         TCL_ARGV_TABLE_END,
     };
@@ -520,20 +606,26 @@ DEFINE_COMMAND(entry)
     if (err != TCL_OK) {
         return err;
     }
+    const BOOL asHex = asHexFlag == 1;
     if (extraArgs && objc > 1) {
         for (int i = 1; i < objc; i++) {
             const char *arg = Tcl_GetStringFromObj(extraArgs[i], NULL);
             if (arg && arg[0] == '-') {
                 Tcl_SetObjResult(_interp, Tcl_ObjPrintf("Unknown option %s", arg));
+                ckfree((char *)extraArgs);
                 return TCL_ERROR;
             }
         }
         if (objc > 2) {
             const char *usage = hexSwitchAllowed ? "[-hex] [label]" : "[label";
             Tcl_WrongNumArgs(_interp, 0, objv, usage);
+            ckfree((char *)extraArgs);
             return TCL_ERROR;
         }
         label = [NSString stringWithUTF8String:Tcl_GetStringFromObj(extraArgs[1], NULL)];
+    }
+    if (objc > 0) {
+        ckfree((char *)extraArgs);
     }
     switch (command) {
         case command_uint64: {
@@ -556,7 +648,7 @@ DEFINE_COMMAND(entry)
         }
         case command_uint32: {
             uint32_t val;
-            if (![self readUInt32:&val forLabel:label asHex:asHex == 1]) {
+            if (![self readUInt32:&val forLabel:label asHex:asHex]) {
                 Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read uint32 bytes", -1));
                 return TCL_ERROR;
             }
@@ -583,7 +675,7 @@ DEFINE_COMMAND(entry)
         }
         case command_uint16: {
             uint16_t val;
-            if (![self readUInt16:&val forLabel:label asHex:asHex == 1]) {
+            if (![self readUInt16:&val forLabel:label asHex:asHex]) {
                 Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read uint16 bytes", -1));
                 return TCL_ERROR;
             }
@@ -601,7 +693,7 @@ DEFINE_COMMAND(entry)
         }
         case command_uint8: {
             uint8_t val;
-            if (![self readUInt8:&val forLabel:label asHex:asHex == 1]) {
+            if (![self readUInt8:&val forLabel:label asHex:asHex]) {
                 Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read uint8 bytes", -1));
                 return TCL_ERROR;
             }
@@ -639,6 +731,38 @@ DEFINE_COMMAND(entry)
             NSDate *date = nil;
             if (![self readMacDate:&date forLabel:label]) {
                 Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read macdate bytes", -1));
+                return TCL_ERROR;
+            }
+            Tcl_SetObjResult(_interp, Tcl_NewDoubleObj(date.timeIntervalSince1970));
+            break;
+        }
+        case command_fatdate: {
+            NSString *dateErr = nil;
+            NSString *date = [self readFatDateWithLabel:label error:&dateErr];
+            if (!date) {
+                Tcl_SetObjResult(_interp, Tcl_NewStringObj(dateErr.UTF8String, -1));
+                return TCL_ERROR;
+            }
+            Tcl_SetObjResult(_interp, Tcl_NewStringObj(date.UTF8String, -1));
+            break;
+        }
+        case command_fattime: {
+            NSString *timeErr = nil;
+            NSString *time = [self readFatTimeWithLabel:label error:&timeErr];
+            if (!time) {
+                Tcl_SetObjResult(_interp, Tcl_NewStringObj(timeErr.UTF8String, -1));
+                return TCL_ERROR;
+            }
+            Tcl_SetObjResult(_interp, Tcl_NewStringObj(time.UTF8String, -1));
+            break;
+        }
+        case command_unixtime32:
+        case command_unixtime64: {
+            const unsigned numBytes = command == command_unixtime32 ? 4 : 8;
+            NSString *dateErr = nil;
+            NSDate *date = [self readUnixTime:numBytes forLabel:label error:&dateErr];
+            if (!date) {
+                Tcl_SetObjResult(_interp, Tcl_NewStringObj(dateErr.UTF8String, -1));
                 return TCL_ERROR;
             }
             Tcl_SetObjResult(_interp, Tcl_NewDoubleObj(date.timeIntervalSince1970));

@@ -119,7 +119,7 @@ static NSView *searchForViewWithIdentifier(NSView *view, NSString *identifier) {
     
     if (HFDarkModeEnabled()) {
         [[NSColor controlBackgroundColor] set];
-        NSRectFillUsingOperation(self.bounds, NSCompositeSourceOver);
+        NSRectFillUsingOperation(self.bounds, NSCompositingOperationSourceOver);
         return;
     }
 
@@ -134,7 +134,7 @@ static NSView *searchForViewWithIdentifier(NSView *view, NSString *identifier) {
     
     [[NSColor lightGrayColor] set];
     NSRect line = NSMakeRect(NSMinX(bounds), NSMinY(bounds), NSWidth(bounds), 1.0);
-    NSFrameRectWithWidthUsingOperation(line, 1.0, NSCompositeSourceOver);
+    NSFrameRectWithWidthUsingOperation(line, 1.0, NSCompositingOperationSourceOver);
 }
 
 - (BOOL)isOpaque {
