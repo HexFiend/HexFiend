@@ -2451,7 +2451,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculousfish.HexFiend-Framework-iOS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
-				VALID_ARCHS = "arm64 armv7 armv7s";
 			};
 			name = Debug;
 		};
@@ -2482,7 +2481,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculousfish.HexFiend-Framework-iOS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
-				VALID_ARCHS = "arm64 armv7 armv7s";
 			};
 			name = "Debug+CodeSign";
 		};
@@ -2512,7 +2510,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculousfish.HexFiend-Framework-iOS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
-				VALID_ARCHS = "arm64 armv7 armv7s";
 			};
 			name = "Debug+MAS";
 		};
@@ -2543,7 +2540,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculousfish.HexFiend-Framework-iOS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
-				VALID_ARCHS = "arm64 armv7 armv7s";
 			};
 			name = "Debug+UnitTests";
 		};
@@ -2574,7 +2570,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculousfish.HexFiend-Framework-iOS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
-				VALID_ARCHS = "arm64 armv7 armv7s";
 			};
 			name = Release;
 		};
@@ -2605,7 +2600,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculousfish.HexFiend-Framework-iOS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
-				VALID_ARCHS = "arm64 armv7 armv7s";
 			};
 			name = "Release+CodeSign";
 		};
@@ -2636,7 +2630,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculousfish.HexFiend-Framework-iOS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
-				VALID_ARCHS = "arm64 armv7 armv7s";
 			};
 			name = "Release+MAS";
 		};
