@@ -662,9 +662,9 @@ enum LineCoverage_t {
     [coder encodeInt64:bytesBetweenVerticalGuides forKey:@"HFBytesBetweenVerticalGuides"];
     [coder encodeInt64:startingLineBackgroundColorIndex forKey:@"HFStartingLineBackgroundColorIndex"];
     [coder encodeObject:rowBackgroundColors forKey:@"HFRowBackgroundColors"];
-    [coder encodeBool:_hftvflags.antialias forKey:@"HFAntialias"];
-    [coder encodeBool:_hftvflags.drawCallouts forKey:@"HFDrawCallouts"];
-    [coder encodeBool:_hftvflags.editable forKey:@"HFEditable"];
+    [coder encodeBool:_hftvflags.antialias ? YES : NO forKey:@"HFAntialias"];
+    [coder encodeBool:_hftvflags.drawCallouts ? YES : NO forKey:@"HFDrawCallouts"];
+    [coder encodeBool:_hftvflags.editable ? YES : NO forKey:@"HFEditable"];
 }
 
 - (instancetype)initWithCoder:(NSCoder *)coder {
@@ -864,7 +864,7 @@ enum LineCoverage_t {
 
 - (void)dealloc {
 #if !TARGET_OS_IPHONE
-    HFUnregisterViewForWindowAppearanceChanges(self, _hftvflags.registeredForAppNotifications /* appToo */);
+    HFUnregisterViewForWindowAppearanceChanges(self, _hftvflags.registeredForAppNotifications ? YES : NO /* appToo */);
 #endif
     [caretTimer invalidate];
 }
@@ -1626,7 +1626,7 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
 }
 
 - (BOOL)shouldDrawCallouts {
-    return _hftvflags.drawCallouts;
+    return _hftvflags.drawCallouts ? YES : NO;
 }
 
 - (void)setShouldDrawCallouts:(BOOL)val {
@@ -1866,7 +1866,7 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
 }
 
 - (BOOL)isEditable {
-    return _hftvflags.editable;
+    return _hftvflags.editable ? YES : NO;
 }
 
 - (void)setEditable:(BOOL)val {
@@ -1879,7 +1879,7 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
 }
 
 - (BOOL)shouldAntialias {
-    return _hftvflags.antialias;
+    return _hftvflags.antialias ? YES : NO;
 }
 
 - (void)setShouldAntialias:(BOOL)val {
@@ -1900,7 +1900,7 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
 }
 
 - (BOOL)isWithinMouseDown {
-    return _hftvflags.withinMouseDown;
+    return _hftvflags.withinMouseDown ? YES : NO;
 }
 
 #if !TARGET_OS_IPHONE
