@@ -1417,7 +1417,21 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
                 }
                 
                 /* Draw the glyphs */
-                CGContextShowGlyphsWithAdvances(ctx, cgglyphs + runStart, advances + runStart, i - runStart);
+                const CGGlyph *glyphsPtr = cgglyphs + runStart;
+                const CGSize *advancesPtr = advances + runStart;
+                const size_t numGlyphs = i - runStart;
+#if 0
+                CGContextShowGlyphsWithAdvances(ctx, glyphsPtr, advancesPtr, numGlyphs);
+#else
+                CGPoint positions[numGlyphs];
+                memset(positions, 0, sizeof(positions));
+                CGFloat x = 0;
+                for (size_t p = 0; p < numGlyphs; p++) {
+                    positions[p].x = x;
+                    x += advancesPtr[p].width;
+                }
+                CTFontDrawGlyphs((CTFontRef)fontToUse, glyphsPtr, positions, numGlyphs, ctx);
+#endif
                 
                 /* Record the new run */
                 if (i < glyphCount) {                    
