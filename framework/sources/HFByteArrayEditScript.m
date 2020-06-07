@@ -1104,7 +1104,10 @@ static inline unsigned long long change_progress(HFByteArrayEditScript *self, un
 static void computeLongestCommonSubsequence(HFByteArrayEditScript *self, struct TLCacheGroup_t *restrict cacheGroup, OSQueueHead * restrict cacheQueueHead, dispatch_group_t dispatchGroup, HFRange rangeInA, HFRange rangeInB, uint32_t recursionDepth) {
     if (recursionDepth >= MAX_RECURSION_DEPTH) {
         /* Oops! */
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         OSAtomicIncrement32(&self->concurrentProcesses);
+#pragma clang diagnostic pop
         dispatch_group_async(dispatchGroup, dispatch_get_global_queue(0, 0), ^{
             /* We can't re-use cacheGroup because our caller may want to use it again.  So get a new group. */
             struct TLCacheGroup_t *newGroup = dequeueOrCreateCacheGroup(cacheQueueHead);
@@ -1114,7 +1117,10 @@ static void computeLongestCommonSubsequence(HFByteArrayEditScript *self, struct 
             
             /* Put the group on the queue (either back or fresh) so others can use it */
             OSAtomicEnqueue(cacheQueueHead, newGroup, offsetof(struct TLCacheGroup_t, next));
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
             OSAtomicDecrement32(&self->concurrentProcesses);
+#pragma clang diagnostic pop
         });
         return;
     }
@@ -1225,7 +1231,10 @@ static void computeLongestCommonSubsequence(HFByteArrayEditScript *self, struct 
     if ((asyncA && asyncB && self->concurrentProcesses < CONCURRENT_PROCESS_COUNT)) {
         
         /* Compute the suffix in the background */
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         OSAtomicIncrement32(&self->concurrentProcesses);
+#pragma clang diagnostic pop
         dispatch_group_async(dispatchGroup, dispatch_get_global_queue(0, 0), ^{
             
             /* Attempt to dequeue a group. If we can't, we'll have to make one. */
@@ -1238,7 +1247,10 @@ static void computeLongestCommonSubsequence(HFByteArrayEditScript *self, struct 
             OSAtomicEnqueue(cacheQueueHead, newGroup, offsetof(struct TLCacheGroup_t, next));
             
             /* We're done */
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
             OSAtomicDecrement32(&self->concurrentProcesses);
+#pragma clang diagnostic pop
         });
         
         /* Compute the prefix now. We don't return our group to the queue - our caller does that.  */

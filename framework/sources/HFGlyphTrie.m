@@ -39,7 +39,10 @@ static void insertTrie(void *node, uint8_t branchingDepth, NSUInteger key, struc
                 child = calloc(1, sizeof(struct HFGlyphTrieBranch_t));
             }
             /* We just zeroed out a block of memory and we are about to write its address somewhere where another thread could read it, so we need a memory barrier. */
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
             OSMemoryBarrier();
+#pragma clang diagnostic pop
             branch->children[keySlice] = child;
         }
         insertTrie(child, branchingDepth - 1, keyRemainder, value);

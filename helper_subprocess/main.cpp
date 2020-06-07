@@ -108,22 +108,31 @@ static mach_port_t get_hex_fiend_receive_port(void) {
     int err = 0;
     
     /* Check in with launchd */
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     msg = launch_data_new_string(LAUNCH_KEY_CHECKIN);
 	resp = launch_msg(msg);
+#pragma clang diagnostic pop
 	if (resp == NULL) {
 		if (ERR_FILE) fprintf(ERR_FILE, "launch_msg(): %s\n", strerror(errno));
 		exit(EXIT_FAILURE);
 	}
     
     /* Guard against errors */
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 	if (launch_data_get_type(resp) == LAUNCH_DATA_ERRNO) {
 		errno = launch_data_get_errno(resp);
+#pragma clang diagnostic pop
 		if (ERR_FILE) fprintf(ERR_FILE, "launch_msg() response: %s\n", strerror(errno));
 		exit(EXIT_FAILURE);
 	}
     
     /* Get our MachServices dictioanry */
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 	machServices = launch_data_dict_lookup(resp, LAUNCH_JOBKEY_MACHSERVICES);
+#pragma clang diagnostic pop
     
     /* Die if it's not there */
 	if (machServices == NULL) {
@@ -132,20 +141,29 @@ static mach_port_t get_hex_fiend_receive_port(void) {
 	}
     
     /* Get the one we care about */
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     service = launch_data_dict_lookup(machServices, kPrivilegedHelperLaunchdLabel);
+#pragma clang diagnostic pop
     if (service == NULL) {
 		if (ERR_FILE) fprintf(ERR_FILE, "Mach service %s not found!\n", kPrivilegedHelperLaunchdLabel);
 		exit(EXIT_FAILURE);
     }
     
     /* Make sure we've got a mach port */
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     if (launch_data_get_type(service) != LAUNCH_DATA_MACHPORT) {
+#pragma clang diagnostic pop
         if (ERR_FILE) fprintf(ERR_FILE, "%s: not a mach port\n", kPrivilegedHelperLaunchdLabel);
         exit(EXIT_FAILURE);
     }
     
     /* Now get the launchd mach port */
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     launchdReceivePort = launch_data_get_machport(service);
+#pragma clang diagnostic pop
     
     /* We don't want to use launchd's port - we want one from Hex Fiend (so we can get a no senders notification). So receive a port from Hex Fiend on our launchd port. */
     hexFiendReceivePort = MACH_PORT_NULL;
@@ -161,8 +179,11 @@ static mach_port_t get_hex_fiend_receive_port(void) {
     }
     
     /* Clean up */
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     if (msg) launch_data_free(msg);
     if (resp) launch_data_free(resp);
+#pragma clang diagnostic pop
     
     return hexFiendReceivePort;
 }

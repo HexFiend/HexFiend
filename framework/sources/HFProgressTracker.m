@@ -76,7 +76,10 @@
 - (void)requestCancel:(id)sender {
     USE(sender);
     cancelRequested = 1;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     OSMemoryBarrier();
+#pragma clang diagnostic pop
 }
 
 - (void)dealloc {

@@ -751,10 +751,16 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
 }
 
 - (void)setFont:(NSFont *)font registeringUndo:(BOOL)undo {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     [[self window] disableFlushWindow];
+#pragma clang diagnostic pop
     [super setFont:font registeringUndo:undo];
     [[leftTextView controller] setFont:font];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     [[self window] enableFlushWindow];
+#pragma clang diagnostic pop
 }
 
 #pragma mark NSTableView methods
