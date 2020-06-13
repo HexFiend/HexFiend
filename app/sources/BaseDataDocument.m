@@ -65,6 +65,9 @@ static inline Class preferredByteArrayClass(void) {
     BOOL _inLiveResize;
     HFRange _anchorRange;
     long double _startLineOffset;
+    BOOL _resizeBinaryTemplate;
+    NSRect _windowFrameBeforeResize;
+    CGFloat _binaryTemplateWidthBeforeResize;
 }
 
 + (NSString *)userDefKeyForRepresenterWithName:(const char *)repName {
@@ -82,6 +85,10 @@ static inline Class preferredByteArrayClass(void) {
     return NSStringFromClass(self);
 }
 
++ (CGFloat)binaryTemplateDefaultWidth {
+    return 250;
+}
+
 /* Register the default-defaults for this class. */
 + (void)registerDefaultDefaults {
     static dispatch_once_t onceToken;
@@ -96,7 +103,7 @@ static inline Class preferredByteArrayClass(void) {
             @"BytesPerColumn"  : @4,
             @"DefaultEditMode" : @(HFInsertMode),
             @"BinaryTemplateSelectionColor" : [NSArchiver archivedDataWithRootObject:[NSColor lightGrayColor]],
-            @"BinaryTemplateRepresenterWidth" : @(250),
+            @"BinaryTemplateRepresenterWidth" : @(self.class.binaryTemplateDefaultWidth),
             @"BinaryTemplateScriptTimeout" : @(10),
             @"BinaryTemplatesSingleClickAction" : @(1), // scroll to offset
             @"BinaryTemplatesDoubleClickAction" : @(0), // do nothing
@@ -345,6 +352,21 @@ static inline Class preferredByteArrayClass(void) {
 }
 
 - (NSSize)minimumWindowFrameSizeForProposedSize:(NSSize)frameSize {
+    // If the command key was held down at the start of the window resize, and the binary templates
+    // are visible, only resize the binary templates view. Otherwise, resize the layout.
+    if (_resizeBinaryTemplate) {
+        const CGFloat widthDiff = frameSize.width - _windowFrameBeforeResize.size.width;
+        const CGFloat minBinaryTemplateWidth = self.class.binaryTemplateDefaultWidth;
+        const CGFloat minFrameWidth = (_windowFrameBeforeResize.size.width - _binaryTemplateWidthBeforeResize) + minBinaryTemplateWidth;
+        CGFloat binaryTemplateWidth = _binaryTemplateWidthBeforeResize + widthDiff;
+        NSSize resultSize = frameSize;
+        if (binaryTemplateWidth < minBinaryTemplateWidth) {
+            binaryTemplateWidth = minBinaryTemplateWidth;
+            resultSize.width = minFrameWidth;
+        }
+        binaryTemplateRepresenter.viewWidth = binaryTemplateWidth;
+        return resultSize;
+    }
     NSView *layoutView = [layoutRepresenter view];
     NSSize proposedSizeInLayoutCoordinates = [layoutView convertSize:frameSize fromView:nil];
     CGFloat resultingWidthInLayoutCoordinates = [layoutRepresenter minimumViewWidthForLayoutInProposedWidth:proposedSizeInLayoutCoordinates.width];
@@ -379,11 +401,19 @@ static inline Class preferredByteArrayClass(void) {
 }
 
 - (void)windowWillStartLiveResize:(NSNotification * __unused)notification {
+    const BOOL isOptionKeyDown = (self.window.currentEvent.modifierFlags & NSEventModifierFlagCommand) != 0;
+    _resizeBinaryTemplate = isOptionKeyDown && [NSUserDefaults.standardUserDefaults boolForKey:USERDEFS_KEY_FOR_REP(binaryTemplateRepresenter)];
+    _windowFrameBeforeResize = self.window.frame;
+    _binaryTemplateWidthBeforeResize = binaryTemplateRepresenter.viewWidth;
     _inLiveResize = YES;
     [self updateScrollAnchorOffset];
 }
 
 - (void)windowDidEndLiveResize:(NSNotification *__unused)notification {
+    if (_resizeBinaryTemplate) {
+        [NSUserDefaults.standardUserDefaults setDouble:binaryTemplateRepresenter.viewWidth forKey:@"BinaryTemplateRepresenterWidth"];
+        _resizeBinaryTemplate = NO;
+    }
     _inLiveResize = NO;
 }
 
@@ -641,6 +671,7 @@ static inline Class preferredByteArrayClass(void) {
     dataInspectorRepresenter = [[DataInspectorRepresenter alloc] init];
     textDividerRepresenter = [[TextDividerRepresenter alloc] init];
     binaryTemplateRepresenter = [[HFBinaryTemplateRepresenter alloc] init];
+    binaryTemplateRepresenter.viewWidth = [NSUserDefaults.standardUserDefaults doubleForKey:@"BinaryTemplateRepresenterWidth"];
 
     /* We will create layoutRepresenter when the window is actually shown
      * so that it will never exist in an inconsistent state */

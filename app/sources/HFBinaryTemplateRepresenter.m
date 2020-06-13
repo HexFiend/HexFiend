@@ -36,7 +36,7 @@
 }
 
 - (CGFloat)minimumViewWidthForBytesPerLine:(NSUInteger __unused)bytesPerLine {
-    return ceil([[NSUserDefaults standardUserDefaults] doubleForKey:@"BinaryTemplateRepresenterWidth"]);
+    return ceil(self.viewWidth);
 }
 
 - (void)controllerDidChange:(HFControllerPropertyBits)bits {
