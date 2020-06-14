@@ -93,6 +93,8 @@
 		A591313A21E3079400685B51 /* DataInspector.m in Sources */ = {isa = PBXBuildFile; fileRef = A591313921E3079400685B51 /* DataInspector.m */; };
 		A591313D21E3090300685B51 /* DataInspectorPlusMinusButtonCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A591313C21E3090300685B51 /* DataInspectorPlusMinusButtonCell.m */; };
 		A591314021E3098800685B51 /* DataInspectorScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = A591313F21E3098800685B51 /* DataInspectorScrollView.m */; };
+		A594F04F24959F6400DCACD3 /* BinaryTemplatePopover.xib in Resources */ = {isa = PBXBuildFile; fileRef = A594F04D24959F6400DCACD3 /* BinaryTemplatePopover.xib */; };
+		A594F0522495A82400DCACD3 /* HFClickableTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = A594F0512495A82300DCACD3 /* HFClickableTextField.m */; };
 		A59BC5712001AB8C0066860F /* HFBinaryTemplateRepresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = A59BC5702001AB8C0066860F /* HFBinaryTemplateRepresenter.m */; };
 		A59BC5922001FB9A0066860F /* HFTclTemplateController.m in Sources */ = {isa = PBXBuildFile; fileRef = A59BC5912001FB9A0066860F /* HFTclTemplateController.m */; };
 		A59BC5942001FD0F0066860F /* Tcl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A59BC5932001FD0F0066860F /* Tcl.framework */; };
@@ -461,6 +463,9 @@
 		A591313C21E3090300685B51 /* DataInspectorPlusMinusButtonCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = DataInspectorPlusMinusButtonCell.m; path = app/sources/DataInspectorPlusMinusButtonCell.m; sourceTree = "<group>"; };
 		A591313E21E3098800685B51 /* DataInspectorScrollView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DataInspectorScrollView.h; path = app/sources/DataInspectorScrollView.h; sourceTree = "<group>"; };
 		A591313F21E3098800685B51 /* DataInspectorScrollView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = DataInspectorScrollView.m; path = app/sources/DataInspectorScrollView.m; sourceTree = "<group>"; };
+		A594F04E24959F6400DCACD3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = app/resources/Base.lproj/BinaryTemplatePopover.xib; sourceTree = "<group>"; };
+		A594F0502495A82300DCACD3 /* HFClickableTextField.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFClickableTextField.h; path = app/sources/HFClickableTextField.h; sourceTree = "<group>"; };
+		A594F0512495A82300DCACD3 /* HFClickableTextField.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFClickableTextField.m; path = app/sources/HFClickableTextField.m; sourceTree = "<group>"; };
 		A59BC56F2001AB8C0066860F /* HFBinaryTemplateRepresenter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFBinaryTemplateRepresenter.h; path = app/sources/HFBinaryTemplateRepresenter.h; sourceTree = "<group>"; };
 		A59BC5702001AB8C0066860F /* HFBinaryTemplateRepresenter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFBinaryTemplateRepresenter.m; path = app/sources/HFBinaryTemplateRepresenter.m; sourceTree = "<group>"; };
 		A59BC5902001FB9A0066860F /* HFTclTemplateController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFTclTemplateController.h; path = app/sources/HFTclTemplateController.h; sourceTree = "<group>"; };
@@ -785,6 +790,7 @@
 				D04A6BA9100EA7B800704963 /* MainMenu.xib */,
 				A57F34821F1EF47700234B94 /* Preferences.xib */,
 				A59DFE65200BE7A800FEA540 /* BinaryTemplateController.xib */,
+				A594F04D24959F6400DCACD3 /* BinaryTemplatePopover.xib */,
 				A5589ACA2206D238000293A4 /* OpenAccessoryView.xib */,
 			);
 			name = Resources;
@@ -897,6 +903,8 @@
 				A59BC5912001FB9A0066860F /* HFTclTemplateController.m */,
 				A59BC59520020B480066860F /* HFBinaryTemplateController.h */,
 				A59BC59620020B480066860F /* HFBinaryTemplateController.m */,
+				A594F0502495A82300DCACD3 /* HFClickableTextField.h */,
+				A594F0512495A82300DCACD3 /* HFClickableTextField.m */,
 				A59BC59A2002113F0066860F /* HFTemplateNode.h */,
 				A59BC59B2002113F0066860F /* HFTemplateNode.m */,
 				A5628AAA21D8561C00911ABB /* Tcl_ParseArgsObjv.h */,
@@ -1618,6 +1626,7 @@
 				A57F34891F1EFA9600234B94 /* OpenDriveDialog.xib in Resources */,
 				D8C1F92C16F278BA00A4C36E /* DiffRangeDialog.xib in Resources */,
 				A57F34801F1EF47700234B94 /* Preferences.xib in Resources */,
+				A594F04F24959F6400DCACD3 /* BinaryTemplatePopover.xib in Resources */,
 				79E2FF201745A2B300FA8F12 /* dsa_pub.pem in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1721,6 +1730,7 @@
 			files = (
 				8D11072D0486CEB800E47090 /* main.m in Sources */,
 				D01E7C160CDC58AA00943F9E /* BaseDataDocument.m in Sources */,
+				A594F0522495A82400DCACD3 /* HFClickableTextField.m in Sources */,
 				A591313D21E3090300685B51 /* DataInspectorPlusMinusButtonCell.m in Sources */,
 				A59BC5712001AB8C0066860F /* HFBinaryTemplateRepresenter.m in Sources */,
 				D00122E30D48A8D400540B10 /* HFFindReplaceBackgroundView.m in Sources */,
@@ -1992,6 +2002,14 @@
 			);
 			name = OpenDriveDialog.xib;
 			path = app/resources;
+			sourceTree = "<group>";
+		};
+		A594F04D24959F6400DCACD3 /* BinaryTemplatePopover.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				A594F04E24959F6400DCACD3 /* Base */,
+			);
+			name = BinaryTemplatePopover.xib;
 			sourceTree = "<group>";
 		};
 		A59DFE65200BE7A800FEA540 /* BinaryTemplateController.xib */ = {
