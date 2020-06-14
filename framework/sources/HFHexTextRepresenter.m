@@ -30,7 +30,7 @@
 }
 
 + (CGPoint)defaultLayoutPosition {
-    return CGPointMake(0, 0);
+    return CGPointMake(1, 0);
 }
 
 - (void)_clearOmittedNybble {

@@ -128,7 +128,7 @@
 }
 
 + (NSPoint)defaultLayoutPosition {
-    return NSMakePoint(2, 0);
+    return NSMakePoint(4, 0);
 }
 
 @end

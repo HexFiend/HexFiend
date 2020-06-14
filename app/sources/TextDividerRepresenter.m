@@ -92,5 +92,9 @@
     return DIVIDER_WIDTH;
 }
 
++ (NSPoint)defaultLayoutPosition {
+    return NSMakePoint(2, 0);
+}
+
 @end
 
