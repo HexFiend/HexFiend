@@ -77,12 +77,7 @@
     }
     
     CGContextAddPath(ctx, path);
-    NSColor *color;
-    if (@available(macOS 10.10, *)) {
-        color = [NSColor systemRedColor];
-    } else {
-        color = [NSColor redColor];
-    }
+    NSColor *color = NSColor.systemRedColor;
     [[color colorWithAlphaComponent:0.5] set];
     CGContextSetBlendMode(ctx, kCGBlendModeNormal);
     CGContextSetLineWidth(ctx, 2.);

@@ -14,6 +14,7 @@
 #import <HexFiend/HFFunctions.h>
 #import "HFRepresenterTextViewCallout.h"
 #import <objc/message.h>
+#import <CoreText/CoreText.h>
 
 static const NSTimeInterval HFCaretBlinkFrequency = 0.56;
 
@@ -377,12 +378,7 @@ enum LineCoverage_t {
     CGContextRef ctx = HFGraphicsGetCurrentContext();
     CGContextSaveGState(ctx);
     [[NSBezierPath bezierPathWithRoundedRect:pulseRect xRadius:25 yRadius:25] addClip];
-    NSColor *yellow;
-    if (@available(macOS 10.10, *)) {
-        yellow = [NSColor systemYellowColor];
-    } else {
-        yellow = [NSColor yellowColor];
-    }
+    NSColor *yellow = NSColor.systemYellowColor;
     NSGradient *gradient = [[NSGradient alloc] initWithStartingColor:yellow endingColor:[NSColor colorWithCalibratedRed:(CGFloat)1. green:(CGFloat).75 blue:0 alpha:1]];
     [gradient drawInRect:pulseRect angle:90];
     CGContextRestoreGState(ctx);
@@ -464,11 +460,7 @@ enum LineCoverage_t {
                 CGContextRef ctx = HFGraphicsGetCurrentContext();
                 CGContextClearRect(ctx, *(CGRect *)&imageRect);
                 [self drawPulseBackgroundInRect:imageRect];
-                if (@available(macOS 10.10, *)) {
-                    [[NSColor labelColor] set];
-                } else {
-                    [[NSColor blackColor] set];
-                }
+                [NSColor.labelColor set];
                 [self.font set];
                 if (! [self shouldAntialias]) CGContextSetShouldAntialias(ctx, NO);
                 CGContextScaleCTM(ctx, imageScale, imageScale);
@@ -499,15 +491,7 @@ enum LineCoverage_t {
 - (void)drawCaretIfNecessaryWithClip:(CGRect)clipRect context:(CGContextRef)ctx {
     CGRect caretRect = CGRectIntersection(caretRectToDraw, clipRect);
     if (! CGRectIsEmpty(caretRect)) {
-#if TARGET_OS_IPHONE
-        [[UIColor blackColor] set];
-#else
-        if (@available(macOS 10.10, *)) {
-            [[NSColor labelColor] set];
-        } else {
-            [[NSColor blackColor] set];
-        }
-#endif
+        [HFColor.labelColor set];
         CGContextFillRect(ctx, caretRect);
         lastDrawnCaretRect = caretRect;
     }
@@ -1391,8 +1375,8 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
             /* Check if this run is finished, or if we are using a substitution font */
             if (i == glyphCount || glyphs[i].fontIndex != runFontIndex || runFontIndex > 0) {
                 /* Draw this run */
-#if !TARGET_OS_IPHONE
                 HFFont *fontToUse = [self fontAtSubstitutionIndex:runFontIndex];
+#if !TARGET_OS_IPHONE
                 [fontToUse set];
 #endif
                 CGContextSetTextPosition(ctx, point.x + runAdvance, point.y);

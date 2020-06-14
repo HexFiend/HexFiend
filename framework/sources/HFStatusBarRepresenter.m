@@ -59,11 +59,7 @@
     _statusView.bordered = NO;
     _statusView.bezeled = NO;
     _statusView.alignment = NSTextAlignmentCenter;
-    NSColor *foregroundColor = [NSColor colorWithCalibratedWhite:(CGFloat).15 alpha:1];
-    if (@available(macOS 10.10, *)) {
-        foregroundColor = [NSColor secondaryLabelColor];
-    }
-    _statusView.textColor = foregroundColor;
+    _statusView.textColor = NSColor.secondaryLabelColor;
     _statusView.font = [NSFont labelFontOfSize:10];
     _statusView.rep = self;
     _statusView.autoresizingMask = NSViewWidthSizable;

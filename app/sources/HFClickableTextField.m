@@ -11,20 +11,14 @@
 @implementation HFClickableTextField
 
 - (void)awakeFromNib {
-    if (@available(macOS 10.10, *)) {
-        self.textColor = NSColor.linkColor;
-    } else {
-        self.textColor = NSColor.blueColor;
-    }
+    self.textColor = NSColor.linkColor;
 }
 
 - (void)viewDidMoveToWindow {
-    if (@available(macOS 10.10, *)) {
-        NSClickGestureRecognizer *gesture = [[NSClickGestureRecognizer alloc] init];
-        gesture.action = @selector(handleGesture);
-        gesture.target = self;
-        [self addGestureRecognizer:gesture];
-    }
+    NSClickGestureRecognizer *gesture = [[NSClickGestureRecognizer alloc] init];
+    gesture.action = @selector(handleGesture);
+    gesture.target = self;
+    [self addGestureRecognizer:gesture];
 }
 
 - (void)handleGesture {

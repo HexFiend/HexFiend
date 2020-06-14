@@ -64,12 +64,7 @@
 }
 
 - (void)tableView:(NSTableView * __unused)tableView willDisplayCell:(id)cell forTableColumn:(NSTableColumn * __unused)tableColumn row:(NSInteger __unused)row {
-    NSColor *enabledColor = nil;
-    if (@available(macOS 10.10, *)) {
-        enabledColor = NSColor.labelColor;
-    } else {
-        enabledColor = NSColor.controlTextColor;
-    }
+    NSColor *enabledColor = NSColor.labelColor;
     NSColor *color = self.openAttribute ? enabledColor : NSColor.disabledControlTextColor;
     [cell setTextColor:color];
 }

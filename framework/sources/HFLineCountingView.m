@@ -141,11 +141,7 @@ static const CGFloat kShadowWidth = 6;
 }
 
 - (NSColor *)foregroundColor {
-    if (@available(macOS 10.10, *)) {
-        return [NSColor secondaryLabelColor];
-    } else {
-        return [NSColor colorWithCalibratedWhite:(CGFloat).1 alpha:(CGFloat).8];
-    }
+    return [NSColor secondaryLabelColor];
 }
 
 - (NSUInteger)characterCountForLineRange:(HFRange)range {
