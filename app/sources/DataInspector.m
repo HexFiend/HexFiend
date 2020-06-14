@@ -466,6 +466,7 @@ static NSAttributedString *inspectionSuccess(NSString *s) {
             return inspectionSuccess(ret);
         }
         case eInspectorTypeBinary: {
+            if(outIsError) *outIsError = NO;
             NSString* ret = @"";
             
             for (NSUInteger i = 0; i < length; ++i) {
@@ -732,10 +733,39 @@ static BOOL stringRangeIsNullBytes(NSString *string, NSRange range) {
         free(buffer);
         return ret;
     }
+    else if (inspectorType == eInspectorTypeBinary) {
+        if (value.length != (count * 8)) {
+            return NO;
+        }
+        for (NSUInteger i = 0; i < value.length; i++) {
+            const unichar ch = [value characterAtIndex:i];
+            if (ch != '0' && ch != '1') {
+                return NO;
+            }
+        }
+        if (outData) {
+            for (NSUInteger byteIndex = 0; byteIndex < count; byteIndex++) {
+                NSString *bitsStr = [value substringWithRange:NSMakeRange(byteIndex * 8, 8)];
+                outData[byteIndex] = bitStringToValue(bitsStr);
+            }
+        }
+        return YES;
+    }
     else {
         /* Unknown inspector type */
         return NO;
     }
+}
+
+static uint8_t bitStringToValue(NSString *value) {
+    HFASSERT(value.length == 8);
+    uint8_t byte = 0;
+    NSRange range = NSMakeRange(0, 1);
+    for (NSUInteger stringIndex = 0; stringIndex < value.length; stringIndex++, range.location++) {
+        const uint8_t bitValue = (uint8_t)[value substringWithRange:range].intValue;
+        byte |= bitValue << ((value.length - 1) - stringIndex);
+    }
+    return byte;
 }
 
 - (id)propertyListRepresentation {
