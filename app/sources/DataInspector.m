@@ -497,7 +497,7 @@ static NSAttributedString *inspectionSuccess(NSString *s) {
                 if ( input & 0x01 )
                     binary[7] = '1';
                 
-                ret = [ret stringByAppendingFormat:@"%s ", binary ];
+                ret = [ret stringByAppendingFormat:@"%s", binary];
             }
             
             return  inspectionSuccess(ret);
