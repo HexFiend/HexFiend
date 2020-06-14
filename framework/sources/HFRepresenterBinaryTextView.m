@@ -8,6 +8,8 @@
 #import "HFRepresenterBinaryTextView.h"
 #import <HexFiend/HFBinaryGlyphTable.h>
 
+static const CGFloat kHFBitAdvancementFactor = 1.25;
+
 @implementation HFRepresenterBinaryTextView {
     HFBinaryGlyphTable *glyphTable;
 }
@@ -34,7 +36,7 @@
     NSUInteger glyphIndex = 0, byteIndex = 0;
     NSUInteger remainingBytesInThisColumn = (bytesPerColumn ? bytesPerColumn - offsetIntoLine % bytesPerColumn : NSUIntegerMax);
     const CGFloat advanceBetweenColumns = [self advanceBetweenColumns];
-    const CGFloat glyphAdvancement = glyphTable.advancement;
+    const CGFloat glyphAdvancement = glyphTable.advancement * kHFBitAdvancementFactor;
     while (byteIndex < numBytes) {
         const uint8_t byte = bytes[byteIndex++];
         
@@ -55,7 +57,7 @@
 }
 
 - (CGFloat)advancePerCharacter {
-    return 8 * glyphTable.advancement;
+    return (8 * glyphTable.advancement) * kHFBitAdvancementFactor;
 }
 
 - (CGFloat)advanceBetweenColumns {
