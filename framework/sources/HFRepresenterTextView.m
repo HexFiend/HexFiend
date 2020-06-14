@@ -1420,7 +1420,7 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
                 const CGGlyph *glyphsPtr = cgglyphs + runStart;
                 const CGSize *advancesPtr = advances + runStart;
                 const size_t numGlyphs = i - runStart;
-#if 0
+#if 1
                 CGContextShowGlyphsWithAdvances(ctx, glyphsPtr, advancesPtr, numGlyphs);
 #else
                 CGPoint positions[numGlyphs];
