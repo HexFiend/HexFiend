@@ -1005,16 +1005,16 @@ proc parse_atom {} {
         sectionvalue $fullname
         switch $size {
             0 {
-                # 64 bit length
-                uint32 "Size (use Size64)"
-                ascii 4 "Type"
-                set size [uint64 "Size64"]
-            }
-            1 {
                 # rest of file
                 uint32 "Size (rest of file)"
                 ascii 4 "Type"
                 set size [expr [len]-[pos]+8]
+            }
+            1 {
+                # 64 bit length
+                uint32 "Size (use Size64)"
+                ascii 4 "Type"
+                set size [uint64 "Size64"]
             }
             default {
                 uint32 "Size"
