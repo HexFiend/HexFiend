@@ -1,176 +1,212 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-<title>Hex Fiend Release Notes</title>
-<style>
-body {
-	font-family: Helvetica, ArialMT, Arial, sans-serif;
-}
-</style>
+  <title>Hex Fiend Release Notes</title>
+  <style>
+    body {
+      font-family: Helvetica, ArialMT, Arial, sans-serif;
+    }
+  </style>
 </head>
+
 <body>
 
-<h2>Hex Fiend Release Notes</h2>
+  <h2>Hex Fiend Release Notes</h2>
 
-<h3>v2.12</h3>
-<ul>
-<li>macOS 10.9 or later is now required.</li>
-<li>Added basic extended attributes support. The open file dialog will now list the extended attributes for the selected file. This allows opening classic metadata such as resource forks ("com.apple.ResourceFork") and Finder Info ("com.apple.FinderInfo"), and other data (for example "com.apple.quarantine"). Currently extended attributes are read-only and cannot be modified.</li>
-<li>Data Inspector can now view half-precision (2-byte) floats</li>
-<li>Prevent the document from being modified when editing ends with the data inspector</li>
-<li>Binary template improvements:
+  <h3>v2.13</h3>
   <ul>
-    <li>Add experimental <code>uint8_bits</code>, <code>uint16_bits</code>, <code>uint32_bits</code>, and <code>uint64_bits</code> commands</li>
-    <li>Add <code>unixtime32</code> and <code>unixtime64</code> for reading unix times</li>
-    <li>Add <code>cstr</code> command for reading NUL-terminated strings</li>
-    <li>Add file caching to improve performance</li>
-    <li>Fix UUID reading for little endian (@tellowkrinkle)</li>
-    <li>Add TIFF template (@denisname)</li>
-    <li>Add PSD template (@Reeywhaar)</li>
-    <li>Add ID3v2 template (@wader)</li>
-    <li>Updated FLAC template (@wader)</li>
+    <li>Add preference to control the byte grouping when copying data as hex</li>
+    <li>Add support for 2-byte custom encodings (thanks @tellowkrinkle)</li>
+    <li>Add <code>fatdate</code>/<code>fattime</code> templates command for reading FAT/DOS 2-byte dates (thanks
+      @denisname)</li>
+    <li>Custom binary template entries using <code>len</code> are now included with the parent selection (thanks
+      @kumowoon1025)
+    </li>
+    <li>Improve Color Bytes when in Dark Mode</li>
+    <li>Improve diff range prompt UI</li>
+    <li>Fix text search when using a custom encoding (thanks @svendahlstrand)</li>
+    <li>Fix scrolling templates view in the diff viewer (thanks @andryblack)</li>
+    <li>Fix read-only bug with data inspectors (thanks @kumowoon1025)</li>
+    <li>Fix <code>hexf</code> handling of piped input</li>
+    <li>Fix crash when opening a file while search is active</li>
+    <li>Fix Hex Fiend holding on to files after they are closed</li>
   </ul>
-</li>
-</ul>
 
-<h3>v2.11</h3>
-<ul>
-<li>Hex Fiend is notarized for added security on 10.14+</li>
-<li>Binary template improvements:
+  <h3>v2.12</h3>
   <ul>
-    <li>Add section selection</li>
-    <li>Add <code>entry</code> command for arbitrary key/value fields</li>
-    <li>Add <code>eof</code> as a special length parameter to go to the end of the file</li>
-    <li>Add optional <code>-hex</code> argument for unsigned integers to display as hexadecimal</li>
-    <li>Add <code>str</code> command that takes an encoding identifier</li>
-    <li>Add <code>sectionvalue</code> command that sets the value of the current section</li>
-    <li>Sections now auto-expand</li>
-    <li>Add preference for controlling behavior on single and double click of template entries</li>
-    <li>Set working directory to templates folder so "source" command can use relative paths</li>
-    <li>Performing a copy with a selected entry copies its value to the clipboard</li>
-    <li>Fix incorrect anchor usage in some commands</li>
-    <li>Fix incorrect error handling with <code>zlib_uncompress</code></li>
-	<li>Fix window width adjustment when showing/hiding templates</li>
-    <li>Prefix hexadecimal values with 0x to match Data Inspector</li>
-    <li>Improve error messages for read failures</li>
-    <li>Improve documentation</li>
+    <li>macOS 10.9 or later is now required.</li>
+    <li>Added basic extended attributes support. The open file dialog will now list the extended attributes for the
+      selected file. This allows opening classic metadata such as resource forks ("com.apple.ResourceFork") and Finder
+      Info ("com.apple.FinderInfo"), and other data (for example "com.apple.quarantine"). Currently extended attributes
+      are read-only and cannot be modified.</li>
+    <li>Data Inspector can now view half-precision (2-byte) floats</li>
+    <li>Prevent the document from being modified when editing ends with the data inspector</li>
+    <li>Binary template improvements:
+      <ul>
+        <li>Add experimental <code>uint8_bits</code>, <code>uint16_bits</code>, <code>uint32_bits</code>, and
+          <code>uint64_bits</code> commands</li>
+        <li>Add <code>unixtime32</code> and <code>unixtime64</code> for reading unix times</li>
+        <li>Add <code>cstr</code> command for reading NUL-terminated strings</li>
+        <li>Add file caching to improve performance</li>
+        <li>Fix UUID reading for little endian (@tellowkrinkle)</li>
+        <li>Add TIFF template (@denisname)</li>
+        <li>Add PSD template (@Reeywhaar)</li>
+        <li>Add ID3v2 template (@wader)</li>
+        <li>Updated FLAC template (@wader)</li>
+      </ul>
+    </li>
   </ul>
-<li>Add anchored scrolling. When scrolling horizontally, the document will be anchored by the selection offset (if visible) or first visible byte</li>
-<li>Add column view (off by default)</li>
-<li>Add custom byte grouping</li>
-<li>Fix data inspector text alignment (thanks rpendleton)</li>
-<li>Fix plain/ascii text alignment with line numbers</li>
-<li>Fix crash when Color Bytes is enabled with a multi-byte text encoding</li>
-<li>Fix incorrect parsing of large ULEB128/SLEB128 values</li>
-<li>Move fonts in Font menu to bottom to improve handling for a large number of fonts</li>
-</ul>
 
-<h3>v2.10</h3>
-<ul>
-<li>Add dark mode for 10.14 Mojave</li>
-<li>Initial tabbed windows support (thanks saagarjha)</li>
-<li>Binary template improvements:
-<ul>
-  <li>Template label argument is now optional. When the label argument is not passed, no entry in the UI will be created.</li>
-  <li>The selected template is now remembered</li>
-  <li>"Refresh" also reloads the selected template</li>
-  <li>Add "Copy Value" to binary template item</li>
-  <li>Increased script timeout to 10 seconds</li>
-  <li>Add "Select Bytes" context menu</li>
-  <li>Fix template variables persisting between runs</li>
-  <li>Improve "requires" error message</li>
-  <li>Add "bytes" command</li>
-  <li>Add "zlib_uncompress" command</li>
-</ul>
-<li>hexf improvements:
-<ul>
-  <li>hexf can open documents from stdin (for example "echo hello | hexf")</li>
-  <li>hexf brings Hex Fiend to front</li>
-</ul>
-<li>Experimental <a href="https://github.com/ridiculousfish/HexFiend/issues/95#issuecomment-397858715">custom string encoding</a> support</li>
-</ul>
+  <h3>v2.11</h3>
+  <ul>
+    <li>Hex Fiend is notarized for added security on 10.14+</li>
+    <li>Binary template improvements:
+      <ul>
+        <li>Add section selection</li>
+        <li>Add <code>entry</code> command for arbitrary key/value fields</li>
+        <li>Add <code>eof</code> as a special length parameter to go to the end of the file</li>
+        <li>Add optional <code>-hex</code> argument for unsigned integers to display as hexadecimal</li>
+        <li>Add <code>str</code> command that takes an encoding identifier</li>
+        <li>Add <code>sectionvalue</code> command that sets the value of the current section</li>
+        <li>Sections now auto-expand</li>
+        <li>Add preference for controlling behavior on single and double click of template entries</li>
+        <li>Set working directory to templates folder so "source" command can use relative paths</li>
+        <li>Performing a copy with a selected entry copies its value to the clipboard</li>
+        <li>Fix incorrect anchor usage in some commands</li>
+        <li>Fix incorrect error handling with <code>zlib_uncompress</code></li>
+        <li>Fix window width adjustment when showing/hiding templates</li>
+        <li>Prefix hexadecimal values with 0x to match Data Inspector</li>
+        <li>Improve error messages for read failures</li>
+        <li>Improve documentation</li>
+      </ul>
+    <li>Add anchored scrolling. When scrolling horizontally, the document will be anchored by the selection offset (if
+      visible) or first visible byte</li>
+    <li>Add column view (off by default)</li>
+    <li>Add custom byte grouping</li>
+    <li>Fix data inspector text alignment (thanks rpendleton)</li>
+    <li>Fix plain/ascii text alignment with line numbers</li>
+    <li>Fix crash when Color Bytes is enabled with a multi-byte text encoding</li>
+    <li>Fix incorrect parsing of large ULEB128/SLEB128 values</li>
+    <li>Move fonts in Font menu to bottom to improve handling for a large number of fonts</li>
+  </ul>
 
-<h3>v2.9</h3>
-<ul>
-<li>Binary Templates are here! Note this is an early beta, and fields are currently read-only.</li>
-<li>New high-resolution app icon!</li>
-<li>Highlight selected bytes with a custom color via the "Highlight Selection" contextual menu</li>
-<li>Fix Find controls clipped on macOS 10.13</li>
-<li>Change banner views (Find, Jump to Offset, etc) to fixed heights to fix weird resizing</li>
-<li>hexf can write to a non-existent file and diff two files via "hexf -d file1 file2"</li>
-<li>hexf is now installed with escalated privileges</li>
-<li>Fixed hexf with relative paths</li>
-<li>Make file permissions on save more secure (thanks wesdawg)</li>
-<li>Added preference to disable alias resolving</li>
-<li>Added nullability annotations to the Framework for better Swift interoperability (thanks Ben10do)</li>
-<li>Hex Fiend is now fully converted to Automatic Reference Counting</li>
-</ul>
+  <h3>v2.10</h3>
+  <ul>
+    <li>Add dark mode for 10.14 Mojave</li>
+    <li>Initial tabbed windows support (thanks saagarjha)</li>
+    <li>Binary template improvements:
+      <ul>
+        <li>Template label argument is now optional. When the label argument is not passed, no entry in the UI will be
+          created.</li>
+        <li>The selected template is now remembered</li>
+        <li>"Refresh" also reloads the selected template</li>
+        <li>Add "Copy Value" to binary template item</li>
+        <li>Increased script timeout to 10 seconds</li>
+        <li>Add "Select Bytes" context menu</li>
+        <li>Fix template variables persisting between runs</li>
+        <li>Improve "requires" error message</li>
+        <li>Add "bytes" command</li>
+        <li>Add "zlib_uncompress" command</li>
+      </ul>
+    <li>hexf improvements:
+      <ul>
+        <li>hexf can open documents from stdin (for example "echo hello | hexf")</li>
+        <li>hexf brings Hex Fiend to front</li>
+      </ul>
+    <li>Experimental <a href="https://github.com/ridiculousfish/HexFiend/issues/95#issuecomment-397858715">custom string
+        encoding</a> support</li>
+  </ul>
 
-<h3>v2.8</h3>
-<ul>
-<li>Add "Copy as ASCII" menu for always copying plain text as ASCII instead of the current encoding</li>
-<li>Add preference to control default edit mode</li>
-<li>Add search field to encodings window</li>
-<li>When Find is activated its text field's text is now selected</li>
-<li>Fix crash when copying more than 32KB of text</li>
-<li>Fix <code>hexf</code> missing shebang (thanks Misty De Meo)</li>
-</ul>
+  <h3>v2.9</h3>
+  <ul>
+    <li>Binary Templates are here! Note this is an early beta, and fields are currently read-only.</li>
+    <li>New high-resolution app icon!</li>
+    <li>Highlight selected bytes with a custom color via the "Highlight Selection" contextual menu</li>
+    <li>Fix Find controls clipped on macOS 10.13</li>
+    <li>Change banner views (Find, Jump to Offset, etc) to fixed heights to fix weird resizing</li>
+    <li>hexf can write to a non-existent file and diff two files via "hexf -d file1 file2"</li>
+    <li>hexf is now installed with escalated privileges</li>
+    <li>Fixed hexf with relative paths</li>
+    <li>Make file permissions on save more secure (thanks wesdawg)</li>
+    <li>Added preference to disable alias resolving</li>
+    <li>Added nullability annotations to the Framework for better Swift interoperability (thanks Ben10do)</li>
+    <li>Hex Fiend is now fully converted to Automatic Reference Counting</li>
+  </ul>
 
-<h3>v2.7</h3>
-<ul>
-<li>Add option to show data inspector ints as hexadecimal or decimal</li>
-<li>Fix line number format not saving when clicking the column directly</li>
-<li>Window now auto saves its position (thanks Daniele Cattaneo)</li>
-<li>95% of code has been updated for Automatic Reference Counting</li>
-<li>Removed File > Open Path. Use the standard open dialog's command-shift-G feature to open paths directly</li>
-</ul>
+  <h3>v2.8</h3>
+  <ul>
+    <li>Add "Copy as ASCII" menu for always copying plain text as ASCII instead of the current encoding</li>
+    <li>Add preference to control default edit mode</li>
+    <li>Add search field to encodings window</li>
+    <li>When Find is activated its text field's text is now selected</li>
+    <li>Fix crash when copying more than 32KB of text</li>
+    <li>Fix <code>hexf</code> missing shebang (thanks Misty De Meo)</li>
+  </ul>
 
-<h3>v2.6</h3>
-<ul>
-<li>Add <code>hexf</code> command line tool, which can be installed via the menu Hex Fiend > Install Command Line Tool. This is a simpler convience wrapper around the <code>open</code> command.</li>
-<li>Fix showing the last line number with certain fonts (thanks Daniele Cattaneo)</li>
-</ul>
+  <h3>v2.7</h3>
+  <ul>
+    <li>Add option to show data inspector ints as hexadecimal or decimal</li>
+    <li>Fix line number format not saving when clicking the column directly</li>
+    <li>Window now auto saves its position (thanks Daniele Cattaneo)</li>
+    <li>95% of code has been updated for Automatic Reference Counting</li>
+    <li>Removed File > Open Path. Use the standard open dialog's command-shift-G feature to open paths directly</li>
+  </ul>
 
-<h3>v2.5</h3>
-<ul>
-<li>Add Line Number Format menu</li>
-<li>Font menu items display using font</li>
-<li>Remove File Format option when saving</li>
-<li>Fix broken read-only mode</li>
-<li>Fix error messages not showing when files can't be opened</li>
-</ul>
+  <h3>v2.6</h3>
+  <ul>
+    <li>Add <code>hexf</code> command line tool, which can be installed via the menu Hex Fiend > Install Command Line
+      Tool. This is a simpler convience wrapper around the <code>open</code> command.</li>
+    <li>Fix showing the last line number with certain fonts (thanks Daniele Cattaneo)</li>
+  </ul>
 
-<h3>v2.4</h3>
-<ul>
-<li>Added binary and SLEB128 and ULEB128 int inspector</li>
-<li>Added hide null bytes option</li>
-<li>Added text encodings table</li>
-<li>Allow selecting packages and hidden files</li>
-<li>Fixed many bugs and memory leaks</li>
-</ul>
+  <h3>v2.5</h3>
+  <ul>
+    <li>Add Line Number Format menu</li>
+    <li>Font menu items display using font</li>
+    <li>Remove File Format option when saving</li>
+    <li>Fix broken read-only mode</li>
+    <li>Fix error messages not showing when files can't be opened</li>
+  </ul>
 
-<h3>v2.1.2</h3>
-<ul>
-<li>Fixed Jump to Offset</li>
-</ul>
+  <h3>v2.4</h3>
+  <ul>
+    <li>Added binary and SLEB128 and ULEB128 int inspector</li>
+    <li>Added hide null bytes option</li>
+    <li>Added text encodings table</li>
+    <li>Allow selecting packages and hidden files</li>
+    <li>Fixed many bugs and memory leaks</li>
+  </ul>
 
-<h3>v2.1.1</h3>
-<ul>
-<li>Fixed a bug that caused exceptions when scrolling with a non-precise scrolling device (like a classic scroll wheel mouse).</li>
-<li>Removed an .xcconfig file that was inadvertently being copied into Resources</li>
-</ul>
+  <h3>v2.1.2</h3>
+  <ul>
+    <li>Fixed Jump to Offset</li>
+  </ul>
 
-<h3>v2.1.0</h3>
-<ul>
-<li>Support for computing a binary diff between two files. This is a "true" LCS-based diff. Support for computing the diff lives in HexFiend.framework, while the document that presents it is in HexFiend.app.</li>
-<li>Bookmark support. Bookmarks are little balloons that point at a range of bytes. They are not saved with the document.</li>
-<li>Some support for attributes on ranges of bytes, which then can be translated into visual styles (such as colors).</li>
-<li>Hex Fiend now has a privileged helper process ("Fortunate Son"), which can be used to read raw devices, root owned files, etc. Communication is via MIG.</li>
-<li>Transient untitled document support. That is, if there is an untitled document that has never been edited, its window gets used by any document that's opened.</li>
-<li>Undo can now be preserved across saves, when doing so doesn't require too much memory.</li>
-<li>It looks more 3D. It's like you're really inside a hex editor!</li>
-<li>Many more bug fixes representing a few years of work.</li>
-</ul>
+  <h3>v2.1.1</h3>
+  <ul>
+    <li>Fixed a bug that caused exceptions when scrolling with a non-precise scrolling device (like a classic scroll
+      wheel mouse).</li>
+    <li>Removed an .xcconfig file that was inadvertently being copied into Resources</li>
+  </ul>
+
+  <h3>v2.1.0</h3>
+  <ul>
+    <li>Support for computing a binary diff between two files. This is a "true" LCS-based diff. Support for computing
+      the diff lives in HexFiend.framework, while the document that presents it is in HexFiend.app.</li>
+    <li>Bookmark support. Bookmarks are little balloons that point at a range of bytes. They are not saved with the
+      document.</li>
+    <li>Some support for attributes on ranges of bytes, which then can be translated into visual styles (such as
+      colors).</li>
+    <li>Hex Fiend now has a privileged helper process ("Fortunate Son"), which can be used to read raw devices, root
+      owned files, etc. Communication is via MIG.</li>
+    <li>Transient untitled document support. That is, if there is an untitled document that has never been edited, its
+      window gets used by any document that's opened.</li>
+    <li>Undo can now be preserved across saves, when doing so doesn't require too much memory.</li>
+    <li>It looks more 3D. It's like you're really inside a hex editor!</li>
+    <li>Many more bug fixes representing a few years of work.</li>
+  </ul>
 
 </body>
+
 </html>
