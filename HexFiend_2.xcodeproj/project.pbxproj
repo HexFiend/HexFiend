@@ -71,8 +71,6 @@
 		A5589ACF2206D3C8000293A4 /* HFOpenAccessoryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A5589ACE2206D3C8000293A4 /* HFOpenAccessoryViewController.m */; };
 		A5589AD22206E1C4000293A4 /* ExtendedAttributeDataDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = A5589AD12206E1C4000293A4 /* ExtendedAttributeDataDocument.m */; };
 		A5628AAB21D8561D00911ABB /* Tcl_ParseArgsObjv.c in Sources */ = {isa = PBXBuildFile; fileRef = A5628AA921D8561C00911ABB /* Tcl_ParseArgsObjv.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		A567D7D520DA1D7C00F7C0A4 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A567D7D420DA1D7C00F7C0A4 /* Sparkle.framework */; };
-		A567D7D620DA1D9100F7C0A4 /* Sparkle.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = A567D7D420DA1D7C00F7C0A4 /* Sparkle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A56D78161E7EF088001D1892 /* CLIController.m in Sources */ = {isa = PBXBuildFile; fileRef = A56D78151E7EF088001D1892 /* CLIController.m */; };
 		A572614A21D8A51B00970A0E /* HFPrompt.m in Sources */ = {isa = PBXBuildFile; fileRef = A572614921D8A51B00970A0E /* HFPrompt.m */; };
 		A572614D21D9AA7600970A0E /* HFEncodingManager.h in Headers */ = {isa = PBXBuildFile; fileRef = A572614B21D9AA7600970A0E /* HFEncodingManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -90,6 +88,8 @@
 		A57F34891F1EFA9600234B94 /* OpenDriveDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = A57F348B1F1EFA9600234B94 /* OpenDriveDialog.xib */; };
 		A582748521DC83A100008DBE /* HFColumnRepresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = A582748321DC83A100008DBE /* HFColumnRepresenter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A582748721DC83A100008DBE /* HFColumnRepresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = A582748421DC83A100008DBE /* HFColumnRepresenter.m */; };
+		A589789024A8296600D3BB0C /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A589788F24A8296600D3BB0C /* Sparkle.framework */; };
+		A589789124A8296600D3BB0C /* Sparkle.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = A589788F24A8296600D3BB0C /* Sparkle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A591313A21E3079400685B51 /* DataInspector.m in Sources */ = {isa = PBXBuildFile; fileRef = A591313921E3079400685B51 /* DataInspector.m */; };
 		A591313D21E3090300685B51 /* DataInspectorPlusMinusButtonCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A591313C21E3090300685B51 /* DataInspectorPlusMinusButtonCell.m */; };
 		A591314021E3098800685B51 /* DataInspectorScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = A591313F21E3098800685B51 /* DataInspectorScrollView.m */; };
@@ -379,7 +379,7 @@
 			dstSubfolderSpec = 10;
 			files = (
 				D047E4CA1022E1CA00EF307B /* HexFiend.framework in Copy Frameworks */,
-				A567D7D620DA1D9100F7C0A4 /* Sparkle.framework in Copy Frameworks */,
+				A589789124A8296600D3BB0C /* Sparkle.framework in Copy Frameworks */,
 			);
 			name = "Copy Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -469,6 +469,7 @@
 		A57F347B1F1BE7CD00234B94 /* BigResult.txt.gz */ = {isa = PBXFileReference; lastKnownFileType = archive.gzip; path = BigResult.txt.gz; sourceTree = "<group>"; };
 		A582748321DC83A100008DBE /* HFColumnRepresenter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFColumnRepresenter.h; path = sources/HFColumnRepresenter.h; sourceTree = "<group>"; };
 		A582748421DC83A100008DBE /* HFColumnRepresenter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFColumnRepresenter.m; path = sources/HFColumnRepresenter.m; sourceTree = "<group>"; };
+		A589788F24A8296600D3BB0C /* Sparkle.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Sparkle.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A591313821E3079400685B51 /* DataInspector.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DataInspector.h; path = app/sources/DataInspector.h; sourceTree = "<group>"; };
 		A591313921E3079400685B51 /* DataInspector.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = DataInspector.m; path = app/sources/DataInspector.m; sourceTree = "<group>"; };
 		A591313B21E3090300685B51 /* DataInspectorPlusMinusButtonCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DataInspectorPlusMinusButtonCell.h; path = app/sources/DataInspectorPlusMinusButtonCell.h; sourceTree = "<group>"; };
@@ -689,9 +690,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				A5D8C8F220E9E58000103D60 /* libz.1.tbd in Frameworks */,
+				A589789024A8296600D3BB0C /* Sparkle.framework in Frameworks */,
 				A59BC5942001FD0F0066860F /* Tcl.framework in Frameworks */,
 				795F46C314BAADB600EB2F7D /* DiskArbitration.framework in Frameworks */,
-				A567D7D520DA1D7C00F7C0A4 /* Sparkle.framework in Frameworks */,
 				8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */,
 				94ECCBC01BDF7DD2007FF44E /* HexFiend.framework in Frameworks */,
 			);
@@ -817,6 +818,7 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A589788F24A8296600D3BB0C /* Sparkle.framework */,
 				A51D0E9020F2A8D200B55775 /* CoreText.framework */,
 				A51D0E8B20F1E56600B55775 /* CoreGraphics.framework */,
 				A51D0E7D20F1D01A00B55775 /* UIKit.framework */,
@@ -1465,7 +1467,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = C01FCF4A08A954540054247B /* Build configuration list for PBXNativeTarget "HexFiend_2" */;
 			buildPhases = (
-				D05390581E21AB5800F9AAC1 /* Get Sparkle */,
 				D01E7BDA0CDC540700943F9E /* Copy Frameworks */,
 				8D1107290486CEB800E47090 /* Resources */,
 				8D11072C0486CEB800E47090 /* Sources */,
@@ -1736,20 +1737,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "${SRCROOT}/configs/postprocess_for_mas.sh\n";
-		};
-		D05390581E21AB5800F9AAC1 /* Get Sparkle */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Get Sparkle";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"$PROJECT_DIR/app/get_sparkle.sh\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
