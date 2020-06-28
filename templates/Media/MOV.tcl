@@ -511,8 +511,8 @@ proc atom_moov { data_size } {
 proc atom_mvhd { data_size } {
     uint8 "Version"
     bytes 3 "Flags"
-    uint32 "Creation time"
-    uint32 "Modification time"
+    macdate "Creation time"
+    macdate "Modification time"
     uint32 "Time scale"
     uint32 "Duration"
     fixedpoint32 "Preferred rate"
@@ -531,8 +531,8 @@ proc atom_mvhd { data_size } {
 proc atom_mdhd { data_size } {
     uint8 "Version"
     bytes 3 "Flags"
-    uint32 "Creation time"
-    uint32 "Modification time"
+    macdate "Creation time"
+    macdate "Modification time"
     uint32 "Time scale"
     uint32 "Duration"
     uint16 "Language"
@@ -783,8 +783,8 @@ proc atom_tkhd { data_size } {
     uint8 "Version"
     # TODO: values
     bytes 3 "Flags"
-    uint32 "Creation time"
-    uint32 "Modification time"
+    macdate "Creation time"
+    macdate "Modification time"
     uint32 "Track ID"
     uint32 "Reserved"
     uint32 "Duration"
@@ -1005,16 +1005,16 @@ proc parse_atom {} {
         sectionvalue $fullname
         switch $size {
             0 {
-                # 64 bit length
-                uint32 "Size (use Size64)"
-                ascii 4 "Type"
-                set size [uint64 "Size64"]
-            }
-            1 {
                 # rest of file
                 uint32 "Size (rest of file)"
                 ascii 4 "Type"
                 set size [expr [len]-[pos]+8]
+            }
+            1 {
+                # 64 bit length
+                uint32 "Size (use Size64)"
+                ascii 4 "Type"
+                set size [uint64 "Size64"]
             }
             default {
                 uint32 "Size"
