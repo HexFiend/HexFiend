@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1150"
+   LastUpgradeVersion = "1200"
    version = "1.8">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -27,15 +27,6 @@
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.GDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
-      <MacroExpansion>
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "8D1107260486CEB800E47090"
-            BuildableName = "Hex Fiend.app"
-            BlueprintName = "HexFiend_2"
-            ReferencedContainer = "container:HexFiend_2.xcodeproj">
-         </BuildableReference>
-      </MacroExpansion>
       <Testables>
       </Testables>
    </TestAction>
