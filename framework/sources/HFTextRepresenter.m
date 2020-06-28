@@ -29,13 +29,20 @@
     UIColor *color1 = [UIColor colorWithWhite:1.0 alpha:1.0];
     UIColor *color2 = [UIColor colorWithRed:.87 green:.89 blue:1. alpha:1.];
 #else
+    const BOOL useHFBlue = [NSUserDefaults.standardUserDefaults boolForKey:@"UseBlueAlternatingColor"];
     if (@available(macOS 10.14, *)) {
-        if (HFDarkModeEnabled()) {
+        if (HFDarkModeEnabled() || !useHFBlue) {
             return [NSColor alternatingContentBackgroundColors];
         }
     }
     NSColor *color1 = [NSColor colorWithCalibratedWhite:1.0 alpha:1.0];
-    NSColor *color2 = [NSColor colorWithCalibratedRed:.87 green:.89 blue:1. alpha:1.];
+    NSColor *color2;
+    if (useHFBlue) {
+        color2 = [NSColor colorWithCalibratedRed:.87 green:.89 blue:1. alpha:1.];
+    } else {
+        // try to match alternatingContentBackgroundColors in light mode
+        color2 = [NSColor colorWithCalibratedWhite:245/255.0 alpha:1.0];
+    }
 #endif
     return @[color1, color2];
 }
