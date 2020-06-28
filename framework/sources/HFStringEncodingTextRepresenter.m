@@ -123,7 +123,7 @@
 }
 
 + (NSPoint)defaultLayoutPosition {
-    return NSMakePoint(1, 0);
+    return NSMakePoint(3, 0);
 }
 
 - (void)copySelectedBytesToPasteboard:(NSPasteboard *)pb {

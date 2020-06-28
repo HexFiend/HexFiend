@@ -11,6 +11,7 @@
 @class HFByteArray, HFRepresenter, HFHexTextRepresenter, HFLineCountingRepresenter, HFLayoutRepresenter, HFDocumentOperationView, DataInspectorRepresenter;
 @class HFBinaryTemplateRepresenter;
 @class HFColumnRepresenter;
+@class HFBinaryTextRepresenter;
 
 extern NSString * const BaseDataDocumentDidChangeStringEncodingNotification;
 
@@ -20,6 +21,7 @@ extern NSString * const BaseDataDocumentDidChangeStringEncodingNotification;
     
     HFColumnRepresenter *columnRepresenter;
     HFLineCountingRepresenter *lineCountingRepresenter;
+    HFBinaryTextRepresenter *binaryRepresenter;
     HFHexTextRepresenter *hexRepresenter;
     HFRepresenter *asciiRepresenter;
     HFRepresenter *scrollRepresenter;

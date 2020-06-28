@@ -172,6 +172,7 @@ NSString * const DataInspectorDidDeleteAllRows = @"DataInspectorDidDeleteAllRows
         NSUInteger byteCount = [self selectedByteCountForEditing];
         if (byteCount != INVALID_EDITING_BYTE_COUNT && valueChanged) {
             unsigned char bytes[MAX_EDITABLE_BYTE_COUNT];
+            memset(bytes, 0, sizeof(bytes));
             HFASSERT(byteCount <= sizeof(bytes));
             if ([inspector acceptStringValue:object replacingByteCount:byteCount intoData:bytes]) {
                 HFController *controller = [self controller];

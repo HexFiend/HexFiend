@@ -155,12 +155,7 @@
         [run setBackgroundColor:[HFColor orangeColor]];
     }
     else {
-        HFColor *foregroundColor = [HFColor blackColor];
-#if !TARGET_OS_IPHONE
-        if (@available(macOS 10.10, *)) {
-            foregroundColor = [NSColor labelColor];
-        }
-#endif
+        HFColor *foregroundColor = [HFColor labelColor];
         [run setForegroundColor:foregroundColor];
     }
     if ([attributes containsObject:kHFAttributeUnmapped]) {

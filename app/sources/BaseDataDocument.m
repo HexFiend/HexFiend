@@ -65,6 +65,9 @@ static inline Class preferredByteArrayClass(void) {
     BOOL _inLiveResize;
     HFRange _anchorRange;
     long double _startLineOffset;
+    BOOL _resizeBinaryTemplate;
+    NSRect _windowFrameBeforeResize;
+    CGFloat _binaryTemplateWidthBeforeResize;
 }
 
 + (NSString *)userDefKeyForRepresenterWithName:(const char *)repName {
@@ -82,6 +85,10 @@ static inline Class preferredByteArrayClass(void) {
     return NSStringFromClass(self);
 }
 
++ (CGFloat)binaryTemplateDefaultWidth {
+    return 250;
+}
+
 /* Register the default-defaults for this class. */
 + (void)registerDefaultDefaults {
     static dispatch_once_t onceToken;
@@ -96,7 +103,7 @@ static inline Class preferredByteArrayClass(void) {
             @"BytesPerColumn"  : @4,
             @"DefaultEditMode" : @(HFInsertMode),
             @"BinaryTemplateSelectionColor" : [NSArchiver archivedDataWithRootObject:[NSColor lightGrayColor]],
-            @"BinaryTemplateRepresenterWidth" : @(250),
+            @"BinaryTemplateRepresenterWidth" : @(self.class.binaryTemplateDefaultWidth),
             @"BinaryTemplateScriptTimeout" : @(10),
             @"BinaryTemplatesSingleClickAction" : @(1), // scroll to offset
             @"BinaryTemplatesDoubleClickAction" : @(0), // do nothing
@@ -116,6 +123,7 @@ static inline Class preferredByteArrayClass(void) {
         NSDictionary *defs = @{
             USERDEFS_KEY_FOR_REP(columnRepresenter) : @NO,
             USERDEFS_KEY_FOR_REP(lineCountingRepresenter) : @YES,
+            USERDEFS_KEY_FOR_REP(binaryRepresenter) : @YES,
             USERDEFS_KEY_FOR_REP(hexRepresenter) : @YES,
             USERDEFS_KEY_FOR_REP(asciiRepresenter) : @YES,
             USERDEFS_KEY_FOR_REP(dataInspectorRepresenter) : @YES,
@@ -138,6 +146,7 @@ static inline Class preferredByteArrayClass(void) {
             @"LineNumberFormat" : @0,
             USERDEFS_KEY_FOR_REP(columnRepresenter) : @NO,
             USERDEFS_KEY_FOR_REP(lineCountingRepresenter) : @YES,
+            USERDEFS_KEY_FOR_REP(binaryRepresenter) : @YES,
             USERDEFS_KEY_FOR_REP(hexRepresenter) : @YES,
             USERDEFS_KEY_FOR_REP(asciiRepresenter) : @YES,
             USERDEFS_KEY_FOR_REP(dataInspectorRepresenter) : @YES,
@@ -168,6 +177,7 @@ static inline Class preferredByteArrayClass(void) {
 - (NSArray *)representers {
     return @[
         lineCountingRepresenter,
+        binaryRepresenter,
         hexRepresenter,
         asciiRepresenter,
         scrollRepresenter,
@@ -211,7 +221,7 @@ static inline Class preferredByteArrayClass(void) {
 }
 
 - (BOOL)dividerRepresenterShouldBeShown {
-    return [self representerIsShown:hexRepresenter] && [self representerIsShown:asciiRepresenter];
+    return ([self representerIsShown:binaryRepresenter] || [self representerIsShown:hexRepresenter]) && [self representerIsShown:asciiRepresenter];
 }
 
 /* Called to show or hide the divider representer. This should be shown when both our text representers are visible */
@@ -231,6 +241,7 @@ static inline Class preferredByteArrayClass(void) {
     [shownRepresentersData setObject:columnRepresenter
         forKey:USERDEFS_KEY_FOR_REP(columnRepresenter)];
     [shownRepresentersData setObject:lineCountingRepresenter forKey:USERDEFS_KEY_FOR_REP(lineCountingRepresenter)];
+    [shownRepresentersData setObject:binaryRepresenter forKey:USERDEFS_KEY_FOR_REP(binaryRepresenter)];
     [shownRepresentersData setObject:hexRepresenter forKey:USERDEFS_KEY_FOR_REP(hexRepresenter)];
     [shownRepresentersData setObject:asciiRepresenter forKey:USERDEFS_KEY_FOR_REP(asciiRepresenter)];
     [shownRepresentersData setObject:dataInspectorRepresenter forKey:USERDEFS_KEY_FOR_REP(dataInspectorRepresenter)];
@@ -345,6 +356,21 @@ static inline Class preferredByteArrayClass(void) {
 }
 
 - (NSSize)minimumWindowFrameSizeForProposedSize:(NSSize)frameSize {
+    // If the command key was held down at the start of the window resize, and the binary templates
+    // are visible, only resize the binary templates view. Otherwise, resize the layout.
+    if (_resizeBinaryTemplate) {
+        const CGFloat widthDiff = frameSize.width - _windowFrameBeforeResize.size.width;
+        const CGFloat minBinaryTemplateWidth = self.class.binaryTemplateDefaultWidth;
+        const CGFloat minFrameWidth = (_windowFrameBeforeResize.size.width - _binaryTemplateWidthBeforeResize) + minBinaryTemplateWidth;
+        CGFloat binaryTemplateWidth = _binaryTemplateWidthBeforeResize + widthDiff;
+        NSSize resultSize = frameSize;
+        if (binaryTemplateWidth < minBinaryTemplateWidth) {
+            binaryTemplateWidth = minBinaryTemplateWidth;
+            resultSize.width = minFrameWidth;
+        }
+        binaryTemplateRepresenter.viewWidth = binaryTemplateWidth;
+        return resultSize;
+    }
     NSView *layoutView = [layoutRepresenter view];
     NSSize proposedSizeInLayoutCoordinates = [layoutView convertSize:frameSize fromView:nil];
     CGFloat resultingWidthInLayoutCoordinates = [layoutRepresenter minimumViewWidthForLayoutInProposedWidth:proposedSizeInLayoutCoordinates.width];
@@ -379,11 +405,19 @@ static inline Class preferredByteArrayClass(void) {
 }
 
 - (void)windowWillStartLiveResize:(NSNotification * __unused)notification {
+    const BOOL isOptionKeyDown = (self.window.currentEvent.modifierFlags & NSEventModifierFlagCommand) != 0;
+    _resizeBinaryTemplate = isOptionKeyDown && [NSUserDefaults.standardUserDefaults boolForKey:USERDEFS_KEY_FOR_REP(binaryTemplateRepresenter)];
+    _windowFrameBeforeResize = self.window.frame;
+    _binaryTemplateWidthBeforeResize = binaryTemplateRepresenter.viewWidth;
     _inLiveResize = YES;
     [self updateScrollAnchorOffset];
 }
 
 - (void)windowDidEndLiveResize:(NSNotification *__unused)notification {
+    if (_resizeBinaryTemplate) {
+        [NSUserDefaults.standardUserDefaults setDouble:binaryTemplateRepresenter.viewWidth forKey:@"BinaryTemplateRepresenterWidth"];
+        _resizeBinaryTemplate = NO;
+    }
     _inLiveResize = NO;
 }
 
@@ -634,6 +668,7 @@ static inline Class preferredByteArrayClass(void) {
     
     columnRepresenter = [[HFColumnRepresenter alloc] init];
     lineCountingRepresenter = [[HFLineCountingRepresenter alloc] init];
+    binaryRepresenter = [[HFBinaryTextRepresenter alloc] init];
     hexRepresenter = [[HFHexTextRepresenter alloc] init];
     asciiRepresenter = [[HFStringEncodingTextRepresenter alloc] init];
     scrollRepresenter = [[HFVerticalScrollerRepresenter alloc] init];
@@ -641,10 +676,12 @@ static inline Class preferredByteArrayClass(void) {
     dataInspectorRepresenter = [[DataInspectorRepresenter alloc] init];
     textDividerRepresenter = [[TextDividerRepresenter alloc] init];
     binaryTemplateRepresenter = [[HFBinaryTemplateRepresenter alloc] init];
+    binaryTemplateRepresenter.viewWidth = [NSUserDefaults.standardUserDefaults doubleForKey:@"BinaryTemplateRepresenterWidth"];
 
     /* We will create layoutRepresenter when the window is actually shown
      * so that it will never exist in an inconsistent state */
     
+    [(NSView *)[binaryRepresenter view] setAutoresizingMask:NSViewHeightSizable];
     [(NSView *)[hexRepresenter view] setAutoresizingMask:NSViewHeightSizable];
     [(NSView *)[asciiRepresenter view] setAutoresizingMask:NSViewHeightSizable];
     [(NSView *)[lineCountingRepresenter view] setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];

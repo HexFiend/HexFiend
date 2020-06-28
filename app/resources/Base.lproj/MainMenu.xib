@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="16097" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14460.31"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="16097"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication"/>
@@ -417,33 +417,38 @@
                                     <action selector="toggleVisibleControllerView:" target="-1" id="386"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Hexadecimal" tag="2" id="378">
-                                <connections>
-                                    <action selector="toggleVisibleControllerView:" target="-1" id="382"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem title="Plain Text" tag="3" id="379">
+                            <menuItem title="Binary" tag="2" id="379">
                                 <connections>
                                     <action selector="toggleVisibleControllerView:" target="-1" id="383"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Data Inspector" tag="5" id="387">
+                            <menuItem title="Hexadecimal" tag="3" id="378">
+                                <connections>
+                                    <action selector="toggleVisibleControllerView:" target="-1" id="382"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Plain Text" tag="4" id="wtl-Pb-7yS">
+                                <connections>
+                                    <action selector="toggleVisibleControllerView:" target="-1" id="SpM-hv-uYy"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Data Inspector" tag="6" id="387">
                                 <connections>
                                     <action selector="toggleVisibleControllerView:" target="-1" id="388"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Status Bar" tag="6" id="502">
+                            <menuItem title="Status Bar" tag="7" id="502">
                                 <connections>
                                     <action selector="toggleVisibleControllerView:" target="-1" id="503"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Binary Templates" tag="8" id="dvS-dZ-9CX">
+                            <menuItem title="Binary Templates" tag="9" id="dvS-dZ-9CX">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="toggleVisibleControllerView:" target="-1" id="Z7o-Zg-6Gz"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Columns" tag="9" id="l66-Ta-ZGV">
+                            <menuItem title="Columns" tag="10" id="l66-Ta-ZGV">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="toggleVisibleControllerView:" target="-1" id="8d4-gv-cJc"/>
@@ -650,6 +655,7 @@
                     </menu>
                 </menuItem>
             </items>
+            <point key="canvasLocation" x="139" y="154"/>
         </menu>
         <customObject id="403" userLabel="App Delegate" customClass="AppDelegate">
             <connections>

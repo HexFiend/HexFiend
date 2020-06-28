@@ -82,6 +82,33 @@
     [[NSUserDefaults standardUserDefaults] removeObserver:self forKeyPath:@"BinaryTemplateSelectionColor" context:NULL];
 }
 
+- (void)viewDidAppear {
+    [super viewDidAppear];
+
+    [self showPopoverOnce];
+}
+
+- (void)showPopoverOnce {
+    NSString *key = @"BinaryTemplatesDisplayedWelcomePopover1";
+    NSUserDefaults *userDefaults = NSUserDefaults.standardUserDefaults;
+    id obj = [userDefaults objectForKey:key];
+    if (!obj || ![obj isKindOfClass:[NSNumber class]] || ![obj boolValue]) {
+        const NSTimeInterval popoverDelay = 0.25; // give the UI time to show
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(popoverDelay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [self showPopover];
+        });
+        [userDefaults setBool:YES forKey:key];
+    }
+}
+
+- (void)showPopover {
+    NSViewController *viewController = [[NSViewController alloc] initWithNibName:@"BinaryTemplatePopover" bundle:nil];
+    NSPopover *popover = [[NSPopover alloc] init];
+    popover.contentViewController = viewController;
+    popover.behavior = NSPopoverBehaviorSemitransient;
+    [popover showRelativeToRect:self.templatesPopUp.frame ofView:self.view preferredEdge:NSRectEdgeMinY];
+}
+
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> * __unused)change context:(void * __unused)context {
     if (object == [NSUserDefaults standardUserDefaults]) {
         if ([keyPath isEqualToString:@"BinaryTemplateSelectionColor"]) {
@@ -107,6 +134,10 @@
     }
 }
 
+- (void)reselectLastTemplate {
+    [self.templatesPopUp selectItemWithTitle:self.titleOfLastTemplate];
+}
+
 - (void)openTemplatesFolder:(id __unused)sender {
     NSString *dir = self.templatesFolder;
     NSError *error = nil;
@@ -118,12 +149,17 @@
         alert.messageText = NSLocalizedString(@"Failed to open folder.", nil);
         [alert runModal];
     }
-    [self.templatesPopUp selectItemWithTitle:self.titleOfLastTemplate];
+    [self reselectLastTemplate];
 }
 
 - (void)refresh:(id __unused)sender {
     [self loadTemplates:sender];
     [self rerunTemplate];
+}
+
+- (void)showPopover:(id)sender {
+    [self showPopover];
+    [self reselectLastTemplate];
 }
 
 - (void)loadTemplates:(id __unused)sender {
@@ -158,12 +194,19 @@
         }
         [self.templatesPopUp.menu addItem:[NSMenuItem separatorItem]];
     }
+
     NSMenuItem *refreshItem = [[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Refresh", nil) action:@selector(refresh:) keyEquivalent:@""];
     refreshItem.target = self;
     [self.templatesPopUp.menu addItem:refreshItem];
+
     NSMenuItem *openFolderItem = [[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Open Templates Folder", nil) action:@selector(openTemplatesFolder:) keyEquivalent:@""];
     openFolderItem.target = self;
     [self.templatesPopUp.menu addItem:openFolderItem];
+
+    NSMenuItem *showPopoverItem = [[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Show Welcome", nil) action:@selector(showPopover:) keyEquivalent:@""];
+    showPopoverItem.target = self;
+    [self.templatesPopUp.menu addItem:showPopoverItem];
+
     [self.templatesPopUp selectItem:itemToSelect];
     self.templates = templates;
     [self saveTitleOfLastTemplate:itemToSelect.title];

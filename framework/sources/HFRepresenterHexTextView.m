@@ -6,7 +6,6 @@
 //
 
 #import "HFRepresenterHexTextView.h"
-#import <HexFiend/HFHexTextRepresenter.h>
 #import <HexFiend/HFHexGlyphTable.h>
 
 @implementation HFRepresenterHexTextView {

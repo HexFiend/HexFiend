@@ -106,9 +106,7 @@
     }
     openPanel.delegate = self.openAccessoryController;
     openPanel.accessoryView = self.openAccessoryController.view;
-    if (@available(macOS 10.11, *)) {
-        openPanel.accessoryViewDisclosed = YES;
-    }
+    openPanel.accessoryViewDisclosed = YES;
     [super beginOpenPanel:openPanel forTypes:inTypes completionHandler:completionHandler];
 }
 

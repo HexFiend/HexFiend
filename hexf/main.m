@@ -69,13 +69,7 @@ static NSString *kAppIdentifier = @"com.ridiculousfish.HexFiend";
         return YES;
     }
     // App isn't running so launch it with custom args
-    NSString *base64Str = nil;
-    if (@available(macOS 10.9, *)) {
-        base64Str = [data base64EncodedStringWithOptions:0];
-    } else {
-        NSLog(@"Feature not available on 10.8");
-        return NO;
-    }
+    NSString *base64Str = [data base64EncodedStringWithOptions:0];
     NSArray *launchArgs = @[
         @"-HFOpenData",
         base64Str,

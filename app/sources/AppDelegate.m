@@ -387,12 +387,7 @@ static NSComparisonResult compareFontDisplayNames(NSFont *a, NSFont *b, void *un
                     self.diffRightFile = args[i + 1];
                 } else if ([arg isEqualToString:@"-HFOpenData"]) {
                     NSString *base64 = args[i + 1];
-                    NSData *data = nil;
-                    if (@available(macOS 10.9, *)) {
-                        data = [[NSData alloc] initWithBase64EncodedString:base64 options:0];
-                    } else {
-                        NSLog(@"Feature not available on 10.8");
-                    }
+                    NSData *data = [[NSData alloc] initWithBase64EncodedString:base64 options:0];
                     self.dataToOpen = data;
                 }
             }

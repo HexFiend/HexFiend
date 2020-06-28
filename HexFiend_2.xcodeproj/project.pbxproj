@@ -93,6 +93,20 @@
 		A591313A21E3079400685B51 /* DataInspector.m in Sources */ = {isa = PBXBuildFile; fileRef = A591313921E3079400685B51 /* DataInspector.m */; };
 		A591313D21E3090300685B51 /* DataInspectorPlusMinusButtonCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A591313C21E3090300685B51 /* DataInspectorPlusMinusButtonCell.m */; };
 		A591314021E3098800685B51 /* DataInspectorScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = A591313F21E3098800685B51 /* DataInspectorScrollView.m */; };
+		A594F04F24959F6400DCACD3 /* BinaryTemplatePopover.xib in Resources */ = {isa = PBXBuildFile; fileRef = A594F04D24959F6400DCACD3 /* BinaryTemplatePopover.xib */; };
+		A594F0522495A82400DCACD3 /* HFClickableTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = A594F0512495A82300DCACD3 /* HFClickableTextField.m */; };
+		A594F0552495E52200DCACD3 /* HFRepresenterBinaryTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = A594F0532495E52200DCACD3 /* HFRepresenterBinaryTextView.m */; };
+		A594F0562495E52200DCACD3 /* HFRepresenterBinaryTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = A594F0532495E52200DCACD3 /* HFRepresenterBinaryTextView.m */; };
+		A594F0572495E52200DCACD3 /* HFRepresenterBinaryTextView.h in Headers */ = {isa = PBXBuildFile; fileRef = A594F0542495E52200DCACD3 /* HFRepresenterBinaryTextView.h */; };
+		A594F0582495E52200DCACD3 /* HFRepresenterBinaryTextView.h in Headers */ = {isa = PBXBuildFile; fileRef = A594F0542495E52200DCACD3 /* HFRepresenterBinaryTextView.h */; };
+		A594F05B2495E61700DCACD3 /* HFBinaryTextRepresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = A594F0592495E61700DCACD3 /* HFBinaryTextRepresenter.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A594F05C2495E61700DCACD3 /* HFBinaryTextRepresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = A594F0592495E61700DCACD3 /* HFBinaryTextRepresenter.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A594F05D2495E61700DCACD3 /* HFBinaryTextRepresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = A594F05A2495E61700DCACD3 /* HFBinaryTextRepresenter.m */; };
+		A594F05E2495E61700DCACD3 /* HFBinaryTextRepresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = A594F05A2495E61700DCACD3 /* HFBinaryTextRepresenter.m */; };
+		A594F0612495EAD900DCACD3 /* HFBinaryGlyphTable.m in Sources */ = {isa = PBXBuildFile; fileRef = A594F05F2495EAD800DCACD3 /* HFBinaryGlyphTable.m */; };
+		A594F0622495EAD900DCACD3 /* HFBinaryGlyphTable.m in Sources */ = {isa = PBXBuildFile; fileRef = A594F05F2495EAD800DCACD3 /* HFBinaryGlyphTable.m */; };
+		A594F0632495EAD900DCACD3 /* HFBinaryGlyphTable.h in Headers */ = {isa = PBXBuildFile; fileRef = A594F0602495EAD800DCACD3 /* HFBinaryGlyphTable.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A594F0642495EAD900DCACD3 /* HFBinaryGlyphTable.h in Headers */ = {isa = PBXBuildFile; fileRef = A594F0602495EAD800DCACD3 /* HFBinaryGlyphTable.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A59BC5712001AB8C0066860F /* HFBinaryTemplateRepresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = A59BC5702001AB8C0066860F /* HFBinaryTemplateRepresenter.m */; };
 		A59BC5922001FB9A0066860F /* HFTclTemplateController.m in Sources */ = {isa = PBXBuildFile; fileRef = A59BC5912001FB9A0066860F /* HFTclTemplateController.m */; };
 		A59BC5942001FD0F0066860F /* Tcl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A59BC5932001FD0F0066860F /* Tcl.framework */; };
@@ -461,6 +475,15 @@
 		A591313C21E3090300685B51 /* DataInspectorPlusMinusButtonCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = DataInspectorPlusMinusButtonCell.m; path = app/sources/DataInspectorPlusMinusButtonCell.m; sourceTree = "<group>"; };
 		A591313E21E3098800685B51 /* DataInspectorScrollView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DataInspectorScrollView.h; path = app/sources/DataInspectorScrollView.h; sourceTree = "<group>"; };
 		A591313F21E3098800685B51 /* DataInspectorScrollView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = DataInspectorScrollView.m; path = app/sources/DataInspectorScrollView.m; sourceTree = "<group>"; };
+		A594F04E24959F6400DCACD3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = app/resources/Base.lproj/BinaryTemplatePopover.xib; sourceTree = "<group>"; };
+		A594F0502495A82300DCACD3 /* HFClickableTextField.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFClickableTextField.h; path = app/sources/HFClickableTextField.h; sourceTree = "<group>"; };
+		A594F0512495A82300DCACD3 /* HFClickableTextField.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFClickableTextField.m; path = app/sources/HFClickableTextField.m; sourceTree = "<group>"; };
+		A594F0532495E52200DCACD3 /* HFRepresenterBinaryTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFRepresenterBinaryTextView.m; path = sources/HFRepresenterBinaryTextView.m; sourceTree = "<group>"; };
+		A594F0542495E52200DCACD3 /* HFRepresenterBinaryTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFRepresenterBinaryTextView.h; path = sources/HFRepresenterBinaryTextView.h; sourceTree = "<group>"; };
+		A594F0592495E61700DCACD3 /* HFBinaryTextRepresenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFBinaryTextRepresenter.h; path = sources/HFBinaryTextRepresenter.h; sourceTree = "<group>"; };
+		A594F05A2495E61700DCACD3 /* HFBinaryTextRepresenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFBinaryTextRepresenter.m; path = sources/HFBinaryTextRepresenter.m; sourceTree = "<group>"; };
+		A594F05F2495EAD800DCACD3 /* HFBinaryGlyphTable.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFBinaryGlyphTable.m; path = sources/HFBinaryGlyphTable.m; sourceTree = "<group>"; };
+		A594F0602495EAD800DCACD3 /* HFBinaryGlyphTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFBinaryGlyphTable.h; path = sources/HFBinaryGlyphTable.h; sourceTree = "<group>"; };
 		A59BC56F2001AB8C0066860F /* HFBinaryTemplateRepresenter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFBinaryTemplateRepresenter.h; path = app/sources/HFBinaryTemplateRepresenter.h; sourceTree = "<group>"; };
 		A59BC5702001AB8C0066860F /* HFBinaryTemplateRepresenter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFBinaryTemplateRepresenter.m; path = app/sources/HFBinaryTemplateRepresenter.m; sourceTree = "<group>"; };
 		A59BC5902001FB9A0066860F /* HFTclTemplateController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFTclTemplateController.h; path = app/sources/HFTclTemplateController.h; sourceTree = "<group>"; };
@@ -785,6 +808,7 @@
 				D04A6BA9100EA7B800704963 /* MainMenu.xib */,
 				A57F34821F1EF47700234B94 /* Preferences.xib */,
 				A59DFE65200BE7A800FEA540 /* BinaryTemplateController.xib */,
+				A594F04D24959F6400DCACD3 /* BinaryTemplatePopover.xib */,
 				A5589ACA2206D238000293A4 /* OpenAccessoryView.xib */,
 			);
 			name = Resources;
@@ -897,6 +921,8 @@
 				A59BC5912001FB9A0066860F /* HFTclTemplateController.m */,
 				A59BC59520020B480066860F /* HFBinaryTemplateController.h */,
 				A59BC59620020B480066860F /* HFBinaryTemplateController.m */,
+				A594F0502495A82300DCACD3 /* HFClickableTextField.h */,
+				A594F0512495A82300DCACD3 /* HFClickableTextField.m */,
 				A59BC59A2002113F0066860F /* HFTemplateNode.h */,
 				A59BC59B2002113F0066860F /* HFTemplateNode.m */,
 				A5628AAA21D8561C00911ABB /* Tcl_ParseArgsObjv.h */,
@@ -1007,6 +1033,8 @@
 		D026C7B60CDD54410082279E /* Text Representers */ = {
 			isa = PBXGroup;
 			children = (
+				A594F0602495EAD800DCACD3 /* HFBinaryGlyphTable.h */,
+				A594F05F2495EAD800DCACD3 /* HFBinaryGlyphTable.m */,
 				A5328D4521E1898A007C4DB0 /* HFHexGlyphTable.h */,
 				A5328D4621E1898A007C4DB0 /* HFHexGlyphTable.m */,
 				D026C7B90CDD546C0082279E /* HFRepresenterHexTextView.h */,
@@ -1017,6 +1045,10 @@
 				D026C7AF0CDD50ED0082279E /* HFRepresenterTextView.m */,
 				D026C7BE0CDD54D00082279E /* HFHexTextRepresenter.h */,
 				D026C7BF0CDD54D00082279E /* HFHexTextRepresenter.m */,
+				A594F0592495E61700DCACD3 /* HFBinaryTextRepresenter.h */,
+				A594F05A2495E61700DCACD3 /* HFBinaryTextRepresenter.m */,
+				A594F0542495E52200DCACD3 /* HFRepresenterBinaryTextView.h */,
+				A594F0532495E52200DCACD3 /* HFRepresenterBinaryTextView.m */,
 				D0CDB77B0CE737130084926B /* HFStringEncodingTextRepresenter.h */,
 				D0CDB77C0CE737130084926B /* HFStringEncodingTextRepresenter.m */,
 				D0A437380CDD4EDD000F7550 /* HFTextRepresenter.h */,
@@ -1307,6 +1339,7 @@
 			files = (
 				A51D0E9620F2C21500B55775 /* HFTextRepresenter.h in Headers */,
 				A5EF28CA20F187B700CA7B39 /* HexFiend.h in Headers */,
+				A594F0582495E52200DCACD3 /* HFRepresenterBinaryTextView.h in Headers */,
 				A5EF28CB20F187B700CA7B39 /* HFByteArrayEditScript.h in Headers */,
 				A51D0E8620F1D58F00B55775 /* HFRepresenterTextView.h in Headers */,
 				A5EF28CC20F187B700CA7B39 /* HFGlyphTrie.h in Headers */,
@@ -1319,11 +1352,13 @@
 				A5EF28DB20F187B700CA7B39 /* HFByteArray_Internal.h in Headers */,
 				A5EF28DE20F187B700CA7B39 /* HFStringEncoding.h in Headers */,
 				A572614E21D9AA7600970A0E /* HFEncodingManager.h in Headers */,
+				A594F0642495EAD900DCACD3 /* HFBinaryGlyphTable.h in Headers */,
 				A5EF28E120F187B700CA7B39 /* HFFunctions_Private.h in Headers */,
 				A51D0E9220F2B74C00B55775 /* HFRepresenterHexTextView.h in Headers */,
 				A5EF28E420F187B700CA7B39 /* HFCustomEncoding.h in Headers */,
 				A5EF28E720F187B700CA7B39 /* HFControllerCoalescedUndo.h in Headers */,
 				A5EF28E820F187B700CA7B39 /* HFNSStringEncoding.h in Headers */,
+				A594F05C2495E61700DCACD3 /* HFBinaryTextRepresenter.h in Headers */,
 				A5EF28EA20F187B700CA7B39 /* HFByteSlice_Private.h in Headers */,
 				A5EF28EB20F187B700CA7B39 /* HFFileReference.h in Headers */,
 				A5328D4821E1898A007C4DB0 /* HFHexGlyphTable.h in Headers */,
@@ -1365,6 +1400,7 @@
 				A5328D4721E1898A007C4DB0 /* HFHexGlyphTable.h in Headers */,
 				D0D829110CDE969F00C2AB82 /* HFByteArray.h in Headers */,
 				D0D828E50CDE89E500C2AB82 /* HFByteSlice.h in Headers */,
+				A594F0632495EAD900DCACD3 /* HFBinaryGlyphTable.h in Headers */,
 				D0A436310CDC7EB1000F7550 /* HFFunctions.h in Headers */,
 				9408FC1019DD8669004F800E /* HFPrivilegedHelperConnection.h in Headers */,
 				D01E7C3D0CDC6A3100943F9E /* HFTypes.h in Headers */,
@@ -1373,6 +1409,7 @@
 				D026C7B00CDD50ED0082279E /* HFRepresenterTextView.h in Headers */,
 				D026C7BB0CDD546C0082279E /* HFRepresenterHexTextView.h in Headers */,
 				D026C7C00CDD54D00082279E /* HFHexTextRepresenter.h in Headers */,
+				A594F0572495E52200DCACD3 /* HFRepresenterBinaryTextView.h in Headers */,
 				D082AC910CDEBD5300554EB7 /* HFByteArray_Internal.h in Headers */,
 				D0CDB7540CE735590084926B /* HFRepresenterStringEncodingTextView.h in Headers */,
 				A5ED2A85200BD8F0004AD7A4 /* HFColorRange.h in Headers */,
@@ -1413,6 +1450,7 @@
 				D0114CA91006D1DF00DAF4CE /* HFByteArrayProxiedData.h in Headers */,
 				D04D90531023AAEE0013A2A1 /* HFHelperProcessSharedCode.h in Headers */,
 				D08943F81042B57800AB9141 /* HFByteRangeAttribute.h in Headers */,
+				A594F05B2495E61700DCACD3 /* HFBinaryTextRepresenter.h in Headers */,
 				D089443C1042BA7100AB9141 /* HFByteRangeAttributeArray.h in Headers */,
 				D01D1D721489DFE5008212BB /* HFAnnotatedTree.h in Headers */,
 				D010173610491BB200536FBC /* HFTextVisualStyleRun.h in Headers */,
@@ -1618,6 +1656,7 @@
 				A57F34891F1EFA9600234B94 /* OpenDriveDialog.xib in Resources */,
 				D8C1F92C16F278BA00A4C36E /* DiffRangeDialog.xib in Resources */,
 				A57F34801F1EF47700234B94 /* Preferences.xib in Resources */,
+				A594F04F24959F6400DCACD3 /* BinaryTemplatePopover.xib in Resources */,
 				79E2FF201745A2B300FA8F12 /* dsa_pub.pem in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1721,6 +1760,7 @@
 			files = (
 				8D11072D0486CEB800E47090 /* main.m in Sources */,
 				D01E7C160CDC58AA00943F9E /* BaseDataDocument.m in Sources */,
+				A594F0522495A82400DCACD3 /* HFClickableTextField.m in Sources */,
 				A591313D21E3090300685B51 /* DataInspectorPlusMinusButtonCell.m in Sources */,
 				A59BC5712001AB8C0066860F /* HFBinaryTemplateRepresenter.m in Sources */,
 				D00122E30D48A8D400540B10 /* HFFindReplaceBackgroundView.m in Sources */,
@@ -1792,6 +1832,7 @@
 				A5EF291120F187B700CA7B39 /* HFGlyphTrie.m in Sources */,
 				A5EF291220F187B700CA7B39 /* HFByteArray.m in Sources */,
 				A5EF291320F187B700CA7B39 /* HFByteSlice.m in Sources */,
+				A594F0622495EAD900DCACD3 /* HFBinaryGlyphTable.m in Sources */,
 				A51D0E8920F1D86F00B55775 /* HFTextVisualStyleRun.m in Sources */,
 				A5EF291420F187B700CA7B39 /* HFFullMemoryByteSlice.m in Sources */,
 				A5EF291520F187B700CA7B39 /* HFFullMemoryByteArray.m in Sources */,
@@ -1802,6 +1843,7 @@
 				A5EF292320F187B700CA7B39 /* HFFileByteSlice.m in Sources */,
 				A5EF292620F187B700CA7B39 /* HFProgressTracker.m in Sources */,
 				A5EF292720F187B700CA7B39 /* HFSharedMemoryByteSlice.m in Sources */,
+				A594F0562495E52200DCACD3 /* HFRepresenterBinaryTextView.m in Sources */,
 				A5EF292820F187B700CA7B39 /* HFByteArray_FileWriting.m in Sources */,
 				A572615021D9AA7600970A0E /* HFEncodingManager.m in Sources */,
 				A51D0E8120F1D05200B55775 /* HFRepresenter.m in Sources */,
@@ -1813,6 +1855,7 @@
 				A5EF292D20F187B700CA7B39 /* HFFastMemchr.m in Sources */,
 				A51D0E7C20F1CB7F00B55775 /* HFController.m in Sources */,
 				A5EF293020F187B700CA7B39 /* HFRandomDataByteSlice.m in Sources */,
+				A594F05E2495E61700DCACD3 /* HFBinaryTextRepresenter.m in Sources */,
 				A51D0E9820F2C21500B55775 /* HFTextRepresenter.m in Sources */,
 				A51D0E8D20F2A40C00B55775 /* HFRepresenterTextViewCallout.m in Sources */,
 				A5EF293120F187B700CA7B39 /* HFBTree.m in Sources */,
@@ -1843,8 +1886,10 @@
 				D01E7C960CDC700400943F9E /* HFRepresenter.m in Sources */,
 				D0A436590CDC811D000F7550 /* HFFunctions.m in Sources */,
 				A582748721DC83A100008DBE /* HFColumnRepresenter.m in Sources */,
+				A594F0552495E52200DCACD3 /* HFRepresenterBinaryTextView.m in Sources */,
 				D0A4373B0CDD4EDD000F7550 /* HFTextRepresenter.m in Sources */,
 				D026C7B10CDD50ED0082279E /* HFRepresenterTextView.m in Sources */,
+				A594F05D2495E61700DCACD3 /* HFBinaryTextRepresenter.m in Sources */,
 				A5CEA43020D6316600BCA488 /* HFCustomEncoding.m in Sources */,
 				A5CEA42B20D5E0F500BCA488 /* HFNSStringEncoding.m in Sources */,
 				A5CEA41D20D5DF4400BCA488 /* HFStringEncoding.m in Sources */,
@@ -1852,6 +1897,7 @@
 				D026C7C10CDD54D00082279E /* HFHexTextRepresenter.m in Sources */,
 				D08B2B9B12B06835004995A2 /* HFGlyphTrie.m in Sources */,
 				D08F5E4F0CDE872C007EFFE8 /* HFByteArray.m in Sources */,
+				A594F0612495EAD900DCACD3 /* HFBinaryGlyphTable.m in Sources */,
 				D08F5E500CDE872C007EFFE8 /* HFByteSlice.m in Sources */,
 				D08F5E510CDE872C007EFFE8 /* HFFullMemoryByteSlice.m in Sources */,
 				D082AB440CDE97DC00554EB7 /* HFFullMemoryByteArray.m in Sources */,
@@ -1992,6 +2038,14 @@
 			);
 			name = OpenDriveDialog.xib;
 			path = app/resources;
+			sourceTree = "<group>";
+		};
+		A594F04D24959F6400DCACD3 /* BinaryTemplatePopover.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				A594F04E24959F6400DCACD3 /* Base */,
+			);
+			name = BinaryTemplatePopover.xib;
 			sourceTree = "<group>";
 		};
 		A59DFE65200BE7A800FEA540 /* BinaryTemplateController.xib */ = {
@@ -2669,8 +2723,8 @@
 				GCC_WARN_UNUSED_VALUE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INSTALL_PATH = /Applications;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				OTHER_CFLAGS = "";
 				SDKROOT = macosx;
 				WARNING_CFLAGS = (
@@ -2833,8 +2887,8 @@
 				GCC_WARN_UNUSED_VALUE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INSTALL_PATH = /Applications;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "";
 				SDKROOT = macosx;
@@ -2994,8 +3048,8 @@
 				GCC_WARN_UNUSED_VALUE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INSTALL_PATH = /Applications;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				OTHER_CFLAGS = "";
 				SDKROOT = macosx;
 				WARNING_CFLAGS = (
@@ -3172,8 +3226,8 @@
 				GCC_WARN_UNUSED_VALUE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INSTALL_PATH = /Applications;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				OTHER_CFLAGS = (
 					"-DMacAppStore=1",
 					"-DHF_NO_PRIVILEGED_FILE_OPERATIONS=1",
@@ -3366,8 +3420,8 @@
 				GCC_WARN_UNUSED_VALUE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INSTALL_PATH = /Applications;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = (
 					"-DMacAppStore=1",
@@ -3568,8 +3622,8 @@
 				GCC_WARN_UNUSED_VALUE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INSTALL_PATH = /Applications;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "";
 				SDKROOT = macosx;
@@ -3730,8 +3784,8 @@
 				GCC_WARN_UNUSED_VALUE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INSTALL_PATH = /Applications;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "";
 				SDKROOT = macosx;
