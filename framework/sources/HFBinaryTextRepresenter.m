@@ -33,24 +33,20 @@
     REQUIRE_NOT_NULL(text);
     if (! [self _canInsertText:text]) {
         /* The user typed invalid data, and we can ignore it */
-        NSBeep();
         return;
     }
     
-    NSBeep();
     // TODO
 }
 
 - (NSData *)dataFromPasteboardString:(NSString *)string {
     REQUIRE_NOT_NULL(string);
-    NSBeep();
     // TODO
     return nil;
 }
 
 #if !TARGET_OS_IPHONE
 - (void)copySelectedBytesToPasteboard:(NSPasteboard *)pb {
-    NSBeep();
     // TODO
 }
 #endif

@@ -1375,8 +1375,8 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
             /* Check if this run is finished, or if we are using a substitution font */
             if (i == glyphCount || glyphs[i].fontIndex != runFontIndex || runFontIndex > 0) {
                 /* Draw this run */
-                HFFont *fontToUse = [self fontAtSubstitutionIndex:runFontIndex];
 #if !TARGET_OS_IPHONE
+                HFFont *fontToUse = [self fontAtSubstitutionIndex:runFontIndex];
                 [fontToUse set];
 #endif
                 CGContextSetTextPosition(ctx, point.x + runAdvance, point.y);
