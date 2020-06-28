@@ -273,12 +273,7 @@ static CFURLRef copyCharacterDevicePathForPossibleBlockDevice(NSURL *url)
                                    [delegate methodSignatureForSelector:didRecoverSelector]];
     [invoke setSelector:didRecoverSelector];
     [invoke setArgument:(void *)&success atIndex:2];
-    if (error) {
-        [invoke setArgument:&error atIndex:3];
-    }
-    if (contextInfo) {
-        [invoke setArgument:&contextInfo atIndex:4];
-    }
+    [invoke setArgument:&contextInfo atIndex:3];
     [invoke invokeWithTarget:delegate];
 }
 
