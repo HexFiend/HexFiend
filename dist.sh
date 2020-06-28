@@ -5,7 +5,7 @@
 # 2. An account with App Store Connect access for notarization
 #
 # For the account, you may need to create an app-specific password at appleid.apple.com.
-# 
+#
 # Once you have the password for the account, add it to Keychain Access' Passwords
 # using the name "HexFiendNotarization".
 #
@@ -31,18 +31,20 @@ if [ -z "${APPSTORE_USER}" ]; then
 	usage
 fi
 
-DERIVED_DATA_PATH="$(pwd)/DerivedData"
+PWD="$(pwd)"
+DERIVED_DATA_PATH="${PWD}/DerivedData"
 SCHEME="Release + CodeSign"
 CONFIG="Release+CodeSign"
 
-rm -rf "vendor" "${DERIVED_DATA_PATH}"
+rm -rf "vendor/applenotary" "${DERIVED_DATA_PATH}"
+git submodule update -f --init # reset Sparkle submodule
 
 xcodebuild \
 	-scheme "${SCHEME}" \
 	-derivedDataPath "${DERIVED_DATA_PATH}" \
 	"CODE_SIGN_IDENTITY=${CODESIGN}" \
 	"OTHER_CODE_SIGN_FLAGS=--timestamp --options runtime" \
-	"CODE_SIGN_ENTITLEMENTS=app/Notarization.entitlements"
+	"CODE_SIGN_ENTITLEMENTS=${PWD}/app/Notarization.entitlements"
 
 APPNAME="Hex Fiend"
 APP="${DERIVED_DATA_PATH}/Build/Products/${CONFIG}/${APPNAME}.app"
