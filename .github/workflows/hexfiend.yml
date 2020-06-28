@@ -7,6 +7,8 @@ jobs:
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v2
+      with:
+        submodules: recursive
     - name: Build Hex Fiend
       run: xcodebuild -scheme Release
     - name: Build Tests
