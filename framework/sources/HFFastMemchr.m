@@ -84,6 +84,7 @@ unsigned char *HFFastMemchr(const unsigned char *haystack, unsigned char needle,
 #if defined(__i386__) || defined(__x86_64__)
     return sse_memchr(haystack, needle, length);
 #else
-#error UNKNOWN ARCHITECTURE
+    // TODO: Can we use Accelerate framework?
+    return memchr(haystack, needle, length);
 #endif
 }
