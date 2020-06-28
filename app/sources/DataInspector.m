@@ -363,7 +363,7 @@ static NSAttributedString *inspectionError(InspectionError err) {
             s = NSLocalizedString(@"(bytes are not valid UTF-8)", "");
             break;
         default:
-            s = [NSString stringWithFormat:NSLocalizedString(@"(error %d)", ""), err];
+            s = [NSString stringWithFormat:NSLocalizedString(@"(error %ld)", ""), (long)err];
             break;
     }
     return formatInspectionString(s, YES);
