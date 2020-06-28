@@ -6,7 +6,7 @@
 //  Copyright © 2018 ridiculous_fish. All rights reserved.
 //
 
-#import "HFStringEncoding.h"
+#import <HexFiend/HFStringEncoding.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

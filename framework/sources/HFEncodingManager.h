@@ -7,8 +7,8 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "HFNSStringEncoding.h"
-#import "HFCustomEncoding.h"
+#import <HexFiend/HFNSStringEncoding.h>
+#import <HexFiend/HFCustomEncoding.h>
 
 @interface HFEncodingManager : NSObject
 
