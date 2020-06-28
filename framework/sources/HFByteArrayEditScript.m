@@ -573,7 +573,7 @@ struct Snake_t computeActualMiddleSnake(HFByteArrayEditScript *self, struct TLCa
     
     /* Adding delta to k in the forwards direction gives you k in the backwards direction */
     const LocalIndex_t delta = bLen - aLen;
-    const BOOL oddDelta = (delta & 1); 
+    const BOOL oddDelta = (delta & 1) ? YES : NO; 
     
     LocalIndex_t *restrict forwardsVector = cacheGroup->forwardsArray.ptr;
     LocalIndex_t *restrict backwardsVector = cacheGroup->backwardsArray.ptr;

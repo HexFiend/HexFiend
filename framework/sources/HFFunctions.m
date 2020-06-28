@@ -727,7 +727,7 @@ NSData *HFDataFromHexString(NSString *string, BOOL* isMissingLastNybble) {
         }
     }
     
-    if (isMissingLastNybble) *isMissingLastNybble = (numNybbles % 2);
+    if (isMissingLastNybble) *isMissingLastNybble = (numNybbles % 2) ? YES : NO;
     
     //final nibble
     if (numNybbles % 2) {
