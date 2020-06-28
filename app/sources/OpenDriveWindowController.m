@@ -9,7 +9,6 @@
 #import "OpenDriveWindowController.h"
 #import "AppUtilities.h"
 #include <sys/stat.h>
-#include <objc/message.h>
 
 /* A key used to store the new URL for recovery suggestions for certain errors */
 #define kNewURLErrorKey @"NewURL"
@@ -268,8 +267,19 @@ static CFURLRef copyCharacterDevicePathForPossibleBlockDevice(NSURL *url)
 }
 
 - (void)attemptRecoveryFromError:(NSError *)error optionIndex:(NSUInteger)recoveryOptionIndex delegate:(id)delegate didRecoverSelector:(SEL)didRecoverSelector contextInfo:(void *)contextInfo {
-    BOOL success = [self attemptRecoveryFromError:error optionIndex:recoveryOptionIndex];
-    objc_msgSend(delegate, didRecoverSelector, success, contextInfo);
+    const BOOL success = [self attemptRecoveryFromError:error optionIndex:recoveryOptionIndex];
+
+    NSInvocation *invoke = [NSInvocation invocationWithMethodSignature:
+                                   [delegate methodSignatureForSelector:didRecoverSelector]];
+    [invoke setSelector:didRecoverSelector];
+    [invoke setArgument:(void *)&success atIndex:2];
+    if (error) {
+        [invoke setArgument:&error atIndex:3];
+    }
+    if (contextInfo) {
+        [invoke setArgument:&contextInfo atIndex:4];
+    }
+    [invoke invokeWithTarget:delegate];
 }
 
 - (void)openURL:(NSURL *)url completionHandler:(OpenURLCompletionHandler)completionHandler {
