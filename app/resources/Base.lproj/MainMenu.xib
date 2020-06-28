@@ -417,7 +417,7 @@
                                     <action selector="toggleVisibleControllerView:" target="-1" id="386"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Binary" tag="2" id="379">
+                            <menuItem title="Binary (Experimental)" tag="2" id="379">
                                 <connections>
                                     <action selector="toggleVisibleControllerView:" target="-1" id="383"/>
                                 </connections>
