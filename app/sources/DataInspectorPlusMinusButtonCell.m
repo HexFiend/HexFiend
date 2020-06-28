@@ -19,11 +19,7 @@
     const BOOL isPlus = [[self title] isEqual:@"+"];
     const unsigned char grayColor = 0x73;
     const unsigned char alpha = 0xFF;
-#if __BIG_ENDIAN__
-    const unsigned short X = (grayColor << 8) | alpha ;
-#else
     const unsigned short X = (alpha << 8) | grayColor;
-#endif
     const NSUInteger bytesPerPixel = sizeof X;
     const unsigned short plusData[] = {
         0,0,0,X,X,0,0,0,

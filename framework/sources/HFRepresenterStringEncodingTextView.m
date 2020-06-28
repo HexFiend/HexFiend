@@ -14,21 +14,7 @@ static NSString *copy1CharStringForByteValue(unsigned long long byteValue, NSUIn
     NSString *result = nil;
     unsigned char bytes[sizeof byteValue];
     /* If we are little endian, then the bytesPerChar doesn't matter, because it will all come out the same.  If we are big endian, then it does matter. */
-#if ! __BIG_ENDIAN__
     *(unsigned long long *)bytes = byteValue;
-#else
-    if (bytesPerChar == sizeof(uint8_t)) {
-        *(uint8_t *)bytes = (uint8_t)byteValue;
-    } else if (bytesPerChar == sizeof(uint16_t)) {
-        *(uint16_t *)bytes = (uint16_t)byteValue;
-    } else if (bytesPerChar == sizeof(uint32_t)) {
-        *(uint32_t *)bytes = (uint32_t)byteValue;
-    } else if (bytesPerChar == sizeof(uint64_t)) {
-        *(uint64_t *)bytes = (uint64_t)byteValue;
-    } else {
-        [NSException raise:NSInvalidArgumentException format:@"Unsupported bytesPerChar of %u", bytesPerChar];
-    }
-#endif
 
     /* ASCII is mishandled :( */
     BOOL encodingOK = YES;
@@ -36,8 +22,6 @@ static NSString *copy1CharStringForByteValue(unsigned long long byteValue, NSUIn
         encodingOK = NO;
     }
 
-    
-    
     /* Now create a string from these bytes */
     if (encodingOK) {
         result = [encoding stringFromBytes:bytes length:bytesPerChar];

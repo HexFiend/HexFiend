@@ -33,11 +33,7 @@ enum Endianness_t {
     // Total number of endiannesses.
     eEndianCount,
     
-#if __BIG_ENDIAN__
-    eNativeEndianness = eEndianBig
-#else
     eNativeEndianness = eEndianLittle
-#endif
 };
 
 enum NumberBase_t {
