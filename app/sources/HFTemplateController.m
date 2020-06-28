@@ -325,7 +325,7 @@ static const unsigned long long kMaxCacheSize = 1024 * 1024;
     }
     *value = val.f;
     if (label) {
-        [self addNodeWithLabel:label value:[NSString stringWithFormat:@"%f", val.f] size:sizeof(val)];
+        [self addNodeWithLabel:label value:[NSString stringWithFormat:@"%.*g", FLT_DECIMAL_DIG, val.f] size:sizeof(val)];
     }
     return YES;
 }
@@ -345,7 +345,7 @@ static const unsigned long long kMaxCacheSize = 1024 * 1024;
     }
     *value = val.f;
     if (label) {
-        [self addNodeWithLabel:label value:[NSString stringWithFormat:@"%f", val.f] size:sizeof(val)];
+        [self addNodeWithLabel:label value:[NSString stringWithFormat:@"%.*g", DBL_DECIMAL_DIG, val.f] size:sizeof(val)];
     }
     return YES;
 }

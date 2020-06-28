@@ -269,7 +269,7 @@ static NSString *floatingPointDescription(const unsigned char *bytes, NSUInteger
             _Static_assert(sizeof temp.f == sizeof temp.i, "sizeof(float) is not 4!");
             temp.i = *(const uint32_t *)bytes;
             if (endianness != eNativeEndianness) temp.i = (uint32_t)reverse(temp.i, sizeof(float));
-            return [NSString stringWithFormat:@"%.15g", temp.f];
+            return [NSString stringWithFormat:@"%.*g", FLT_DECIMAL_DIG, temp.f];
         }
         case sizeof(uint64_t):
         {
@@ -280,7 +280,7 @@ static NSString *floatingPointDescription(const unsigned char *bytes, NSUInteger
             _Static_assert(sizeof temp.f == sizeof temp.i, "sizeof(double) is not 8!");
             temp.i = *(const uint64_t *)bytes;
             if (endianness != eNativeEndianness) temp.i = reverse(temp.i, sizeof(double));
-            return [NSString stringWithFormat:@"%.15g", temp.f];
+            return [NSString stringWithFormat:@"%.*g", DBL_DECIMAL_DIG, temp.f];
         }
 #ifndef __arm64__ // TODO
         case 10:
