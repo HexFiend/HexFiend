@@ -282,6 +282,7 @@ static NSString *floatingPointDescription(const unsigned char *bytes, NSUInteger
             if (endianness != eNativeEndianness) temp.i = reverse(temp.i, sizeof(double));
             return [NSString stringWithFormat:@"%.15g", temp.f];
         }
+#ifndef __arm64__ // TODO
         case 10:
         {
             typedef float __attribute__((mode(XF))) float80;
@@ -298,6 +299,7 @@ static NSString *floatingPointDescription(const unsigned char *bytes, NSUInteger
             }
             return [NSString stringWithFormat:@"%.15Lg", (long double)temp.f];
         }
+#endif
         case 16:
         {
             //typedef float __attribute__((mode(TF))) float128; // Here's to hoping clang support comes one day.
@@ -647,7 +649,9 @@ static BOOL stringRangeIsNullBytes(NSString *string, NSRange range) {
         union {
             float  f;
             double d;
+#ifndef __arm64__ // TODO
             float __attribute__((mode(XF))) x;
+#endif
             __uint128_t t; // Maybe clang will support mode(TF) one day.
         } val;
         
@@ -657,12 +661,14 @@ static BOOL stringRangeIsNullBytes(NSString *string, NSRange range) {
         switch(count) {
             case 4: val.f = strtof(buffer, &endPtr); break;
             case 8: val.d = strtod(buffer, &endPtr); break;
+#ifndef __arm64__ // TODO
             case 10: val.x = strtold(buffer, &endPtr); break;
             case 16: {
                 val.x = strtold(buffer, &endPtr);
                 val.t = (val.t >> 64 << 112) | (val.t << 48 << 17 >> 16);
                 break;
             }
+#endif
             default: return NO;
         }
         
