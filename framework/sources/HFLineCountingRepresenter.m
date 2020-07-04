@@ -7,40 +7,17 @@
 
 #import <HexFiend/HFLineCountingRepresenter.h>
 #import <HexFiend/HFLineCountingView.h>
+#import <HexFiend/HFHexGlyphTable.h>
 
 NSString *const HFLineCountingRepresenterMinimumViewWidthChanged = @"HFLineCountingRepresenterMinimumViewWidthChanged";
 NSString *const HFLineCountingRepresenterCycledLineNumberFormat = @"HFLineCountingRepresenterCycledLineNumberFormat";
 
 
-/* Returns the maximum advance in points for a hexadecimal digit for the given font (interpreted as a screen font) */
+/* Returns the maximum advance in points for a hexadecimal digit for the given font */
 static CGFloat maximumDigitAdvanceForFont(NSFont *font) {
     REQUIRE_NOT_NULL(font);
-    CGFloat maxDigitAdvance = 0;
-    NSTextStorage *storage = [[NSTextStorage alloc] init];
-    NSLayoutManager *manager = [[NSLayoutManager alloc] init];
-    [storage setFont:font];
-    [storage addLayoutManager:manager];
-    
-    NSSize advancements[16] = {};
-    NSGlyph glyphs[16];
-    
-    /* Generate a glyph for every hex digit */
-    for (NSUInteger i=0; i < 16; i++) {
-        char c = "0123456789ABCDEF"[i];
-        NSString *string = [[NSString alloc] initWithBytes:&c length:1 encoding:NSASCIIStringEncoding];
-        [storage replaceCharactersInRange:NSMakeRange(0, (i ? 1 : 0)) withString:string];
-        glyphs[i] = [manager glyphAtIndex:0 isValidIndex:NULL];
-        HFASSERT(glyphs[i] != NSNullGlyph);
-    }
-    
-    /* Get the advancements of each of those glyphs */
-    [font getAdvancements:advancements forGlyphs:glyphs count:sizeof glyphs / sizeof *glyphs];
-    
-    /* Find the widest digit */
-    for (NSUInteger i=0; i < sizeof glyphs / sizeof *glyphs; i++) {
-        maxDigitAdvance = HFMax(maxDigitAdvance, advancements[i].width);
-    }
-    return maxDigitAdvance;
+    HFHexGlyphTable *table = [[HFHexGlyphTable alloc] initWithFont:font];
+    return table.advancement;
 }
 
 @implementation HFLineCountingRepresenter
