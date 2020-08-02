@@ -27,11 +27,12 @@ section "Flags" {
     entry "Reserved" [expr $flags >> 5 & 7] 1 [expr [pos]-1]
 }
 
-set mtime [unixtime32]
+set mtime [uint32]
 if {$mtime == 0} {
     entry "Modification timestamp" "---" 4 [expr [pos]-4]
 } else {
-    entry "Modification timestamp" $mtime 4 [expr [pos]-4]
+    move -4
+    unixtime32 "Modification timestamp"
 }
 
 set extra_flags [hex 1 "Extra flags"]
