@@ -33,7 +33,7 @@
 }
 
 - (NSComparisonResult)compare:(HFStringEncoding *)other {
-    return [self.name compare: other.name];
+    return [self.name compare:other.name];
 }
 
 @end
