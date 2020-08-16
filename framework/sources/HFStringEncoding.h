@@ -20,7 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSString *)stringFromBytes:(const unsigned char *)bytes length:(NSUInteger)length;
 - (nullable NSData *)dataFromString:(NSString *)string;
 
--(NSComparisonResult)compare: (HFStringEncoding *)other;
+- (NSComparisonResult)compare:(HFStringEncoding *)other;
 
 @end
 
