@@ -696,8 +696,8 @@ static inline Class preferredByteArrayClass(void) {
     NSUserDefaults *defs = [NSUserDefaults standardUserDefaults];
     
     lineCountingRepresenter.lineNumberFormat = (HFLineNumberFormat)[defs integerForKey:@"LineNumberFormat"];
-    
-    [columnRepresenter setLineCountingWidth:((NSView *)lineCountingRepresenter.view).frame.size.width];
+
+    [columnRepresenter setLineCountingWidth:lineCountingRepresenter.preferredWidth];
     
     controller = [[HFController alloc] init];
     [controller setShouldAntialias:[defs boolForKey:@"AntialiasText"]];
