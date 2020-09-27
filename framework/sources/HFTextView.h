@@ -20,7 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
     HFController *dataController;
     HFLayoutRepresenter *layoutRepresenter;
     BOOL bordered;
-    IBOutlet id delegate;
+    IBOutlet __weak id delegate;
     NSData *cachedData;
 }
 
