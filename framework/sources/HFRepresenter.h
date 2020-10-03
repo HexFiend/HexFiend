@@ -7,6 +7,8 @@
 
 #import <HexFiend/HFController.h>
 
+@class NSView;
+
 NS_ASSUME_NONNULL_BEGIN
 
 /*! @class HFRepresenter

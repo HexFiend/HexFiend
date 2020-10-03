@@ -7,6 +7,8 @@
 
 #import "DataInspectorScrollView.h"
 
+#import <HexFiend/HFFunctions.h>
+
 @implementation DataInspectorScrollView
 
 - (void)drawDividerWithClip:(NSRect)clipRect {

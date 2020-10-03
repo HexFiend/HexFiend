@@ -5,7 +5,11 @@
 //  Copyright 2007 ridiculous_fish. All rights reserved.
 //
 
+#import <HexFiend/HFTypes.h>
+
 NS_ASSUME_NONNULL_BEGIN
+
+@class NSEvent;
 
 /*! @header HFController
     @abstract The HFController.h header contains the HFController class, which is a central class in Hex Fiend. 

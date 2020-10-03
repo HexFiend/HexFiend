@@ -5,6 +5,13 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+#if !TARGET_OS_IPHONE
+@class NSView;
+@class NSColor;
+#else
+@class UIColor;
+#endif
+
 #define HFDEFAULT_FONT (@"Monaco")
 #define HFDEFAULT_FONTSIZE ((CGFloat)10.)
 

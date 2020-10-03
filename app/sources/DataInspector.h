@@ -7,6 +7,8 @@
 
 #import <Foundation/Foundation.h>
 
+@class HFController;
+
 /* The largest number of bytes that any inspector type can edit */
 #define MAX_EDITABLE_BYTE_COUNT 128
 

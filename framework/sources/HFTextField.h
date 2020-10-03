@@ -6,6 +6,7 @@
 //
 
 #import <HexFiend/HFStringEncoding.h>
+#import <AppKit/AppKit.h>
 
 @class HFLayoutRepresenter, HFRepresenter, HFController, HFHexTextRepresenter, HFStringEncodingTextRepresenter;
 

@@ -8,6 +8,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class NSProgressIndicator;
+
 /*!
 @class HFProgressTracker
 @brief A class that helps handle progress indication and cancellation for long running threaded operations.
