@@ -542,4 +542,9 @@ CGContextRef HFGraphicsGetCurrentContext(void);
 HFColor* HFColorWithWhite(CGFloat white, CGFloat alpha);
 HFColor* HFColorWithRGB(CGFloat red, CGFloat green, CGFloat blue, CGFloat alpha);
 
+/* Returns an NSData from an NSString containing hexadecimal characters.  Characters that are not hexadecimal digits are silently skipped.  Returns by reference whether the last byte contains only one nybble, in which case it will be returned in the low 4 bits of the last byte. */
+NSData *HFDataFromHexString(NSString *string, BOOL *_Nullable isMissingLastNybble);
+
+NSString *HFHexStringFromData(NSData *data, BOOL includePrefix);
+
 NS_ASSUME_NONNULL_END

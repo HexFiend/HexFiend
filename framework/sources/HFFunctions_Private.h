@@ -26,11 +26,6 @@ static inline unsigned long long llmin(unsigned long long a, unsigned long long 
     return a < b ? a : b;
 }
 
-/* Returns an NSData from an NSString containing hexadecimal characters.  Characters that are not hexadecimal digits are silently skipped.  Returns by reference whether the last byte contains only one nybble, in which case it will be returned in the low 4 bits of the last byte. */
-__private_extern__ NSData *HFDataFromHexString(NSString *string, BOOL *_Nullable isMissingLastNybble);
-
-__private_extern__ NSString *HFHexStringFromData(NSData *data, BOOL includePrefix);
-
 __private_extern__ unsigned char *_Nullable HFFastMemchr(const unsigned char *s, unsigned char c, size_t n);
 
 /* Modifies F_NOCACHE for a given file descriptor */
