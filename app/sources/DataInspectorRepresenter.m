@@ -87,6 +87,9 @@ NSString * const DataInspectorDidDeleteAllRows = @"DataInspectorDidDeleteAllRows
     [table setRefusesFirstResponder:YES];
     [table setTarget:self];
     [table setDoubleAction:@selector(doubleClickedTable:)];    
+    if (@available(macOS 11.0, *)) {
+        table.style = NSTableViewStyleFullWidth;
+    }
     return resultView;
 }
 
