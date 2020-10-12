@@ -10,6 +10,12 @@
 #import <HexFiend/HFController.h>
 #import <HexFiend/HFByteArray.h>
 
+//What's the smallest clipboard data size we should offer to avoid copying when quitting?  This is 5 MB
+#define MINIMUM_PASTEBOARD_SIZE_TO_WARN_ABOUT (5UL << 20)
+
+//What's the largest clipboard data size we should support exporting (at all?)  This is 500 MB.  Note that we can still copy more data than this internally, we just can't put it in, say, TextEdit.
+#define MAXIMUM_PASTEBOARD_SIZE_TO_EXPORT (500UL << 20)
+
 NSString *const HFPrivateByteArrayPboardType = @"HFPrivateByteArrayPboardType";
 
 static NSMapTable *byteArrayMap = nil;

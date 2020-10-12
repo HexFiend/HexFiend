@@ -87,18 +87,6 @@
     #define MAX(A,B)	({ __typeof__(A) __a = (A); __typeof__(B) __b = (B); __a < __b ? __b : __a; })
 #endif
 
-//How many bytes should we read at a time when doing a find/replace?
-#define SEARCH_CHUNK_SIZE 32768
-
-//What's the smallest clipboard data size we should offer to avoid copying when quitting?  This is 5 MB
-#define MINIMUM_PASTEBOARD_SIZE_TO_WARN_ABOUT (5UL << 20)
-
-//What's the largest clipboard data size we should support exporting (at all?)  This is 500 MB.  Note that we can still copy more data than this internally, we just can't put it in, say, TextEdit.
-#define MAXIMUM_PASTEBOARD_SIZE_TO_EXPORT (500UL << 20)
-
-// When we save a file, and other byte arrays need to break their dependencies on the file by copying some of its data into memory, what's the max amount we should copy (per byte array)?  We currently don't show any progress for this, so this should be a smaller value
-#define MAX_MEMORY_TO_USE_FOR_BREAKING_FILE_DEPENDENCIES_ON_SAVE (16 * 1024 * 1024)
-
 #ifdef __OBJC__
     #import <HexFiend/HFFunctions.h>
     #import "HFFunctions_Private.h"
