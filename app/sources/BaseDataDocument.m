@@ -123,7 +123,7 @@ static inline Class preferredByteArrayClass(void) {
         NSDictionary *defs = @{
             USERDEFS_KEY_FOR_REP(columnRepresenter) : @NO,
             USERDEFS_KEY_FOR_REP(lineCountingRepresenter) : @YES,
-            USERDEFS_KEY_FOR_REP(binaryRepresenter) : @YES,
+            USERDEFS_KEY_FOR_REP(binaryRepresenter) : @NO,
             USERDEFS_KEY_FOR_REP(hexRepresenter) : @YES,
             USERDEFS_KEY_FOR_REP(asciiRepresenter) : @YES,
             USERDEFS_KEY_FOR_REP(dataInspectorRepresenter) : @YES,
@@ -146,7 +146,7 @@ static inline Class preferredByteArrayClass(void) {
             @"LineNumberFormat" : @0,
             USERDEFS_KEY_FOR_REP(columnRepresenter) : @NO,
             USERDEFS_KEY_FOR_REP(lineCountingRepresenter) : @YES,
-            USERDEFS_KEY_FOR_REP(binaryRepresenter) : @YES,
+            USERDEFS_KEY_FOR_REP(binaryRepresenter) : @NO,
             USERDEFS_KEY_FOR_REP(hexRepresenter) : @YES,
             USERDEFS_KEY_FOR_REP(asciiRepresenter) : @YES,
             USERDEFS_KEY_FOR_REP(dataInspectorRepresenter) : @YES,
