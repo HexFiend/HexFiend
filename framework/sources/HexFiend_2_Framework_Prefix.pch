@@ -12,8 +12,6 @@
     #import <HexFiend/HFTypes.h>
 #endif
 
-#define PRIVATE_EXTERN __private_extern__
-
 #include <assert.h>
 
 #if ! NDEBUG
