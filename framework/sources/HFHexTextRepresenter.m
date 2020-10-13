@@ -11,6 +11,7 @@
 #import <HexFiend/HFHexPasteboardOwner.h>
 #endif
 #import <HexFiend/HFFunctions.h>
+#import <HexFiend/HFAssert.h>
 
 @implementation HFHexTextRepresenter {
     unsigned long long omittedNybbleLocation;

@@ -8,6 +8,7 @@
 #import <HexFiend/HFFileReference.h>
 #import <HexFiend/HFFunctions.h>
 #import <HexFiend/HFFunctions_Private.h>
+#import <HexFiend/HFAssert.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <fcntl.h>

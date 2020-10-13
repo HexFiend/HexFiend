@@ -7,6 +7,7 @@
 
 #import "HFRepresenterBinaryTextView.h"
 #import <HexFiend/HFBinaryGlyphTable.h>
+#import <HexFiend/HFAssert.h>
 
 static const CGFloat kHFBitAdvancementFactor = 1.25;
 

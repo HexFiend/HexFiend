@@ -8,6 +8,7 @@
 
 #import "HFBTree.h"
 #import <HexFiend/HFFunctions.h>
+#import <HexFiend/HFAssert.h>
 
 #define FIXUP_LENGTHS 0
 

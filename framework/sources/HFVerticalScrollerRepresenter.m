@@ -9,7 +9,7 @@
 
 #import <HexFiend/HFVerticalScrollerRepresenter.h>
 #import <HexFiend/HFFunctions.h>
-
+#import <HexFiend/HFAssert.h>
 
 @implementation HFVerticalScrollerRepresenter
 

@@ -11,6 +11,7 @@
 #import <HexFiend/HFLayoutRepresenter.h>
 #import <HexFiend/HFHexTextRepresenter.h>
 #import <HexFiend/HFStringEncodingTextRepresenter.h>
+#import <HexFiend/HFAssert.h>
 
 @implementation HFTextField
 

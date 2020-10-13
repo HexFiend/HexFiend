@@ -11,6 +11,7 @@
 #import <HexFiend/HFFileReference.h>
 #import <HexFiend/HFFunctions.h>
 #import <HexFiend/HFFunctions_Private.h>
+#import <HexFiend/HFAssert.h>
 #import "HFByteSliceFileOperationQueueEntry.h"
 #include <malloc/malloc.h>
 

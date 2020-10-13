@@ -187,6 +187,8 @@
 		A5EF293B20F187B700CA7B39 /* HFAnnotatedTree.m in Sources */ = {isa = PBXBuildFile; fileRef = D0315BEB1225C553008C9EAB /* HFAnnotatedTree.m */; };
 		A5FCE63A25351DA600043F1D /* HFFrameworkPrefix.h in Headers */ = {isa = PBXBuildFile; fileRef = D01E7BC60CDC53B300943F9E /* HFFrameworkPrefix.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A5FCE63B25351DA800043F1D /* HFFrameworkPrefix.h in Headers */ = {isa = PBXBuildFile; fileRef = D01E7BC60CDC53B300943F9E /* HFFrameworkPrefix.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A5FCE677253526FF00043F1D /* HFAssert.h in Headers */ = {isa = PBXBuildFile; fileRef = A5FCE676253526FF00043F1D /* HFAssert.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A5FCE678253526FF00043F1D /* HFAssert.h in Headers */ = {isa = PBXBuildFile; fileRef = A5FCE676253526FF00043F1D /* HFAssert.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D00122E30D48A8D400540B10 /* HFFindReplaceBackgroundView.m in Sources */ = {isa = PBXBuildFile; fileRef = D00122E20D48A8D400540B10 /* HFFindReplaceBackgroundView.m */; };
 		D00C16790FF4925A006D021F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D00C16750FF4925A006D021F /* main.m */; };
 		D00EBA730CE866D50020E2D7 /* HFVerticalScrollerRepresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = D00EBA710CE866D50020E2D7 /* HFVerticalScrollerRepresenter.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -603,6 +605,7 @@
 		A5ED2A84200BD8F0004AD7A4 /* HFColorRange.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFColorRange.m; path = sources/HFColorRange.m; sourceTree = "<group>"; };
 		A5EF294A20F187B700CA7B39 /* HexFiend_Framework_iOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = HexFiend_Framework_iOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A5EF294B20F187B700CA7B39 /* HexFiend_Framework_iOS-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "HexFiend_Framework_iOS-Info.plist"; sourceTree = "<group>"; };
+		A5FCE676253526FF00043F1D /* HFAssert.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFAssert.h; path = sources/HFAssert.h; sourceTree = "<group>"; };
 		D00122E10D48A8D400540B10 /* HFFindReplaceBackgroundView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFFindReplaceBackgroundView.h; path = app/sources/HFFindReplaceBackgroundView.h; sourceTree = "<group>"; };
 		D00122E20D48A8D400540B10 /* HFFindReplaceBackgroundView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFFindReplaceBackgroundView.m; path = app/sources/HFFindReplaceBackgroundView.m; sourceTree = "<group>"; };
 		D00C15E50FF091FF006D021F /* HexFiendling.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HexFiendling.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1255,6 +1258,7 @@
 			children = (
 				D0A436300CDC7EAA000F7550 /* HFFunctions.h */,
 				D04327A30CF081CD00C14250 /* HFFunctions_Private.h */,
+				A5FCE676253526FF00043F1D /* HFAssert.h */,
 				D0A436570CDC8115000F7550 /* HFFunctions.m */,
 				D08491FE0DBB60C700C7195C /* HFFastMemchr.m */,
 				D0315BEA1225C553008C9EAB /* HFAnnotatedTree.h */,
@@ -1476,6 +1480,7 @@
 				A5EF28E720F187B700CA7B39 /* HFControllerCoalescedUndo.h in Headers */,
 				A5EF28E820F187B700CA7B39 /* HFNSStringEncoding.h in Headers */,
 				A594F05C2495E61700DCACD3 /* HFBinaryTextRepresenter.h in Headers */,
+				A5FCE678253526FF00043F1D /* HFAssert.h in Headers */,
 				A5EF28EA20F187B700CA7B39 /* HFByteSlice_Private.h in Headers */,
 				A5EF28EB20F187B700CA7B39 /* HFFileReference.h in Headers */,
 				A5328D4821E1898A007C4DB0 /* HFHexGlyphTable.h in Headers */,
@@ -1548,6 +1553,7 @@
 				D0826EAB0D4855900006FB7D /* HFFileReference.h in Headers */,
 				D0826EF10D487A000006FB7D /* HFFileByteSlice.h in Headers */,
 				A57F34741F1B236E00234B94 /* HFHexPasteboardOwner.h in Headers */,
+				A5FCE677253526FF00043F1D /* HFAssert.h in Headers */,
 				D0A05C0113BBE48800553980 /* HFAttributedByteArray.h in Headers */,
 				D07150670D5510CE00573D7A /* HFTextField.h in Headers */,
 				D0422FDF0D62599300F8FCDE /* HFProgressTracker.h in Headers */,

@@ -9,6 +9,7 @@
 #import "HFAnnotatedTree.h"
 #import <HexFiend/HFByteRangeAttribute.h>
 #import <HexFiend/HFFunctions.h>
+#import <HexFiend/HFAssert.h>
 
 #if NDEBUG
 #define VERIFY_INTEGRITY(x) do { } while (0)

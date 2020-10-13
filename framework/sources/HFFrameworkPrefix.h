@@ -12,17 +12,6 @@
     #import <HexFiend/HFTypes.h>
 #endif
 
-#include <assert.h>
-
-#if ! NDEBUG
-#define HFASSERT(a) assert(a)
-#else
-#define HFASSERT(a) if (0 && ! (a)) abort() 
-#endif
-
-#define HFASSERT_MAIN_THREAD() HFASSERT([[NSThread currentThread] isMainThread]) 
-
-
 #define UNIMPLEMENTED_VOID() [NSException raise:NSGenericException \
                                          format:@"Message %@ sent to instance of class %@, "\
                                                 @"which does not implement that method",\

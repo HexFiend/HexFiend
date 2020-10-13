@@ -10,6 +10,7 @@
 
 #import "HFRandomDataByteSlice.h"
 #import <HexFiend/HFFunctions.h>
+#import <HexFiend/HFAssert.h>
 
 //#if ! NDEBUG
 

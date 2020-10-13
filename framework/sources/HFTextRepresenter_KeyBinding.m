@@ -9,6 +9,7 @@
 #import <HexFiend/HFRepresenterTextView.h>
 #import <HexFiend/HFController.h>
 #import <HexFiend/HFFunctions.h>
+#import <HexFiend/HFAssert.h>
 
 #define FORWARD(x) - (void)x : sender { USE(sender); UNIMPLEMENTED_VOID(); }
 

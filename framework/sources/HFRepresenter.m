@@ -6,6 +6,7 @@
 //
 
 #import "HFRepresenter.h"
+#import <HexFiend/HFAssert.h>
 
 @implementation HFRepresenter
 

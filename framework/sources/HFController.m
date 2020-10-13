@@ -20,6 +20,7 @@
 #import <HexFiend/HFByteRangeAttributeArray.h>
 #import <HexFiend/HFFunctions.h>
 #import <HexFiend/HFFunctions_Private.h>
+#import <HexFiend/HFAssert.h>
 
 /* Used for the anchor range and location */
 #define NO_SELECTION ULLONG_MAX

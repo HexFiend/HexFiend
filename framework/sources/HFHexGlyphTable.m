@@ -6,6 +6,7 @@
 //
 
 #import "HFHexGlyphTable.h"
+#import <HexFiend/HFAssert.h>
 #import <CoreText/CoreText.h>
 
 @implementation HFHexGlyphTable {

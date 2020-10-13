@@ -10,6 +10,7 @@
 #import <HexFiend/HFByteSlice.h>
 #import <HexFiend/HFBTreeByteArray.h>
 #import <HexFiend/HFFunctions.h>
+#import <HexFiend/HFAssert.h>
 #import "HFBTree.h"
 
 @implementation HFBTreeByteArray

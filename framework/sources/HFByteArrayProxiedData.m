@@ -9,6 +9,7 @@
 #import <HexFiend/HFByteArray.h>
 #import <HexFiend/HFFrameworkPrefix.h>
 #import <HexFiend/HFFunctions.h>
+#import <HexFiend/HFAssert.h>
 
 static BOOL backingIsByteArray(id val) {
     return [val isKindOfClass:[HFByteArray class]];

@@ -1,6 +1,6 @@
 #import <HexFiend/HFFunctions.h>
-
-#import "HFFunctions_Private.h"
+#import <HexFiend/HFFunctions_Private.h>
+#import <HexFiend/HFAssert.h>
 
 @implementation HFRangeWrapper
 

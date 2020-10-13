@@ -11,6 +11,7 @@
 #import <HexFiend/HFByteRangeAttributeArray.h>
 #import <HexFiend/HFByteRangeAttribute.h>
 #import <HexFiend/HFFunctions.h>
+#import <HexFiend/HFAssert.h>
 
 @implementation HFAttributedByteArray
 

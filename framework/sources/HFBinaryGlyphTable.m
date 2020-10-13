@@ -7,6 +7,7 @@
 
 #import "HFBinaryGlyphTable.h"
 #import <HexFiend/HFFunctions.h>
+#import <HexFiend/HFAssert.h>
 #import <CoreText/CoreText.h>
 
 @implementation HFBinaryGlyphTable {

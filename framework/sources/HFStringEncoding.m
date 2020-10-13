@@ -7,6 +7,7 @@
 //
 
 #import <HexFiend/HFFrameworkPrefix.h>
+#import <HexFiend/HFAssert.h>
 #import "HFStringEncoding.h"
 
 @implementation HFStringEncoding

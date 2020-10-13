@@ -8,6 +8,7 @@
 
 #import <HexFiend/HFCancelButton.h>
 #import <HexFiend/HFFrameworkPrefix.h>
+#import <HexFiend/HFAssert.h>
 
 #define kHFCancelButtonIdentifier @"cancelButton"
 

@@ -8,9 +8,3 @@
     #import <Cocoa/Cocoa.h>
     #import <HexFiend/HexFiend.h>
 #endif
-
-#if ! NDEBUG
-#define HFASSERT(a) assert(a)
-#else
-#define HFASSERT(a) if (0 && !(a)) abort()
-#endif

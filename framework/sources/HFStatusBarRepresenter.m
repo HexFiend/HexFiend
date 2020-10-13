@@ -7,6 +7,7 @@
 
 #import <HexFiend/HFStatusBarRepresenter.h>
 #import <HexFiend/HFFunctions.h>
+#import <HexFiend/HFAssert.h>
 
 #define kHFStatusBarDefaultModeUserDefaultsKey @"HFStatusBarDefaultMode"
 

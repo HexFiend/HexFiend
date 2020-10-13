@@ -9,6 +9,7 @@
 #import <HexFiend/HFLineCountingRepresenter.h>
 #import <HexFiend/HFTextRepresenter_Internal.h>
 #import <HexFiend/HFFunctions.h>
+#import <HexFiend/HFAssert.h>
 
 #define INVALID_LINE_COUNT NSUIntegerMax
 

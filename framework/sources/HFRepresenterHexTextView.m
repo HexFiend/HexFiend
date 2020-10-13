@@ -7,6 +7,7 @@
 
 #import "HFRepresenterHexTextView.h"
 #import <HexFiend/HFHexGlyphTable.h>
+#import <HexFiend/HFAssert.h>
 
 @implementation HFRepresenterHexTextView {
     HFHexGlyphTable *glyphTable;
