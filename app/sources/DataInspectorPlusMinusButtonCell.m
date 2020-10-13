@@ -6,6 +6,7 @@
 //
 
 #import "DataInspectorPlusMinusButtonCell.h"
+#import <HexFiend/HexFiend.h>
 
 @implementation DataInspectorPlusMinusButtonCell
 

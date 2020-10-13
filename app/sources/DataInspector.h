@@ -5,7 +5,7 @@
 //  Copyright © 2019 ridiculous_fish. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import <HexFiend/HexFiend.h>
 
 /* The largest number of bytes that any inspector type can edit */
 #define MAX_EDITABLE_BYTE_COUNT 128

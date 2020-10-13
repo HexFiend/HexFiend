@@ -7,6 +7,7 @@
 //
 
 #import "DocumentWindow.h"
+#import <HexFiend/HexFiend.h>
 
 @implementation DocumentWindow
 

@@ -6,13 +6,13 @@
 //
 
 #import "DiffOverlayView.h"
+#import <HexFiend/HexFiend.h>
 
 @implementation DiffOverlayView
 
 - (BOOL)isFlipped {
     return YES;
 }
-
 
 - (void)drawRect:(NSRect)rect {
     USE(rect);
@@ -117,6 +117,5 @@
 - (void)setRightView:(NSView *)view {
     rightView = view;
 }
-
 
 @end

@@ -6,7 +6,7 @@
 //  Copyright © 2019 ridiculous_fish. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import <AppKit/AppKit.h>
 
 @interface HFOpenAccessoryViewController : NSViewController <NSOpenSavePanelDelegate>
 

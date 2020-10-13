@@ -7,6 +7,7 @@
 //
 
 #import "HFPrompt.h"
+#import <AppKit/AppKit.h>
 
 NSString *HFPromptForValue(NSString *promptText) {
     NSAlert *alert = [[NSAlert alloc] init];

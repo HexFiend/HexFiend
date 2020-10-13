@@ -6,7 +6,7 @@
 //
 
 #import "HFDocumentOperationView.h"
-#import <HexFiend/HFProgressTracker.h>
+#import <HexFiend/HexFiend.h>
 
 static NSString *sNibName;
 

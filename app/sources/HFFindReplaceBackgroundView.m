@@ -6,6 +6,7 @@
 //
 
 #import "HFFindReplaceBackgroundView.h"
+#import <HexFiend/HexFiend.h>
 
 static CGFloat roundTowardsInfinity(CGFloat x) {
     return HFFloor(x + (CGFloat).5);

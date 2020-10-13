@@ -5,7 +5,7 @@
 //  Copyright 2010 ridiculous_fish. All rights reserved.
 //
 
-#import <AppKit/NSView.h>
+#import <AppKit/AppKit.h>
 
 
 @interface StretchableProgressIndicator : NSProgressIndicator {

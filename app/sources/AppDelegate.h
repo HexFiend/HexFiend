@@ -5,7 +5,7 @@
 //  Copyright 2008 ridiculous_fish. All rights reserved.
 //
 
-#import <Cocoa/Cocoa.h>
+#import <HexFiend/HexFiend.h>
 
 @class ChooseStringEncodingWindowController;
 @class CLIController;
