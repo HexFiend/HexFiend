@@ -1,4 +1,4 @@
-#import "HFFunctions_Private.h"
+#import "HFFastMemchr.h"
 
 #if defined(__i386__) || defined(__x86_64__)
 
