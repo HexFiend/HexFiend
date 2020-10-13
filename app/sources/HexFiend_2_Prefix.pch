@@ -14,7 +14,3 @@
 #else
 #define HFASSERT(a) if (0 && !(a)) abort()
 #endif
-
-
-/* Macro to "use" a variable to prevent unused variable warnings. */
-#define USE(x) (void)(x)
