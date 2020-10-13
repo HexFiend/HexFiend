@@ -418,6 +418,10 @@ static inline NSUInteger ll2l(unsigned long long val) { assert(val <= ULONG_MAX)
 /*! Converts an unsigned long long to uintptr_t.  The unsigned long long should be no more than UINTPTR_MAX. */
 static inline uintptr_t ll2p(unsigned long long val) { assert(val <= UINTPTR_MAX); return (uintptr_t)val; }
 
+static inline unsigned long long llmin(unsigned long long a, unsigned long long b) {
+    return a < b ? a : b;
+}
+
 /*! Returns an unsigned long long, which must be no more than ULLONG_MAX, as an unsigned long. */
 static inline CGFloat ld2f(long double val) {
 #if ! NDEBUG

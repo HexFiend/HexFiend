@@ -2,10 +2,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-static inline unsigned long long llmin(unsigned long long a, unsigned long long b) {
-    return a < b ? a : b;
-}
-
 __private_extern__ unsigned char *_Nullable HFFastMemchr(const unsigned char *s, unsigned char c, size_t n);
 
 __private_extern__ NSString *HFDescribeByteCountWithPrefixAndSuffix(const char *_Nullable stringPrefix, unsigned long long count, const char *_Nullable stringSuffix);
