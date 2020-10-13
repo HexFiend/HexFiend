@@ -13,6 +13,9 @@
 /* A key used to store the new URL for recovery suggestions for certain errors */
 #define kNewURLErrorKey @"NewURL"
 
+/* Macro to specify functions and function parameters as unused. */
+#define UNUSED __attribute__((unused))
+
 /* Recovery option indexes */
 enum {
     eOpenCharacterFile,

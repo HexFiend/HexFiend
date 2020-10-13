@@ -18,6 +18,3 @@
 
 /* Macro to "use" a variable to prevent unused variable warnings. */
 #define USE(x) (void)(x)
-
-/* Macro to specify functions and function parameters as unused. */
-#define UNUSED __attribute__((unused))
