@@ -2,8 +2,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class HFController;
-
 static inline unsigned long long llmin(unsigned long long a, unsigned long long b) {
     return a < b ? a : b;
 }
