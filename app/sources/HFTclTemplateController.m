@@ -10,7 +10,6 @@
 #import <tcl.h>
 #import <tclTomMath.h>
 #import <zlib.h>
-#import "HFFunctions_Private.h"
 #import <HexFiend/HFEncodingManager.h>
 
 // Tcl_ParseArgsObjv was added in Tcl 8.6, but macOS ships with Tcl 8.5

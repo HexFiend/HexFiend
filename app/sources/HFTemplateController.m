@@ -7,7 +7,6 @@
 //
 
 #import "HFTemplateController.h"
-#import "HFFunctions_Private.h"
 
 static const unsigned long long kMaxCacheSize = 1024 * 1024;
 

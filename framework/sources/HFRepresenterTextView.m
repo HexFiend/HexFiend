@@ -12,8 +12,8 @@
 #endif
 #import "HFTextVisualStyleRun.h"
 #import <HexFiend/HFFunctions.h>
-#import <HexFiend/HFFunctions_Private.h>
 #import <HexFiend/HFAssert.h>
+#import <HexFiend/HFUIUtils.h>
 #import "HFRepresenterTextViewCallout.h"
 #import <objc/message.h>
 #import <CoreText/CoreText.h>

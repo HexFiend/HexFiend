@@ -1,5 +1,4 @@
 #import <HexFiend/HFFunctions.h>
-#import <HexFiend/HFFunctions_Private.h>
 #import <HexFiend/HFAssert.h>
 
 @implementation HFRangeWrapper
@@ -976,20 +975,4 @@ HFColor* HFColorWithRGB(CGFloat red, CGFloat green, CGFloat blue, CGFloat alpha)
 #else
     return [NSColor colorWithCalibratedRed:red green:green blue:blue alpha:alpha];
 #endif
-}
-
-
-NSUInteger HFLineHeightForFont(HFFont *font) {
-#if TARGET_OS_IPHONE
-    NSUInteger defaultLineHeight = (NSUInteger)ceil(font.lineHeight);
-#else
-    NSLayoutManager *manager = [[NSLayoutManager alloc] init];
-    NSUInteger defaultLineHeight = (NSUInteger)ceil([manager defaultLineHeightForFont:font]);
-#endif
-    // Make sure there's an even number of spacing on top and bottom so
-    // the font centers cleaner.
-    if (((defaultLineHeight - (NSUInteger)ceil(font.ascender + fabs(font.descender))) % 2) != 0) {
-        ++defaultLineHeight;
-    }
-    return defaultLineHeight;
 }

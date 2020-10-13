@@ -136,7 +136,7 @@
 		A5EF28D420F187B700CA7B39 /* HFTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = D01E7C3B0CDC69E500943F9E /* HFTypes.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A5EF28DB20F187B700CA7B39 /* HFByteArray_Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = D082AC900CDEBD5300554EB7 /* HFByteArray_Internal.h */; };
 		A5EF28DE20F187B700CA7B39 /* HFStringEncoding.h in Headers */ = {isa = PBXBuildFile; fileRef = A5CEA41A20D5DF4400BCA488 /* HFStringEncoding.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		A5EF28E120F187B700CA7B39 /* HFFunctions_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = D04327A30CF081CD00C14250 /* HFFunctions_Private.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A5EF28E120F187B700CA7B39 /* HFUIUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = D04327A30CF081CD00C14250 /* HFUIUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A5EF28E420F187B700CA7B39 /* HFCustomEncoding.h in Headers */ = {isa = PBXBuildFile; fileRef = A5CEA42D20D6316600BCA488 /* HFCustomEncoding.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A5EF28E720F187B700CA7B39 /* HFControllerCoalescedUndo.h in Headers */ = {isa = PBXBuildFile; fileRef = D0A47C0F0D288EDF00CB9BB9 /* HFControllerCoalescedUndo.h */; };
 		A5EF28E820F187B700CA7B39 /* HFNSStringEncoding.h in Headers */ = {isa = PBXBuildFile; fileRef = A5CEA42820D5E0F500BCA488 /* HFNSStringEncoding.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -191,6 +191,8 @@
 		A5FCE678253526FF00043F1D /* HFAssert.h in Headers */ = {isa = PBXBuildFile; fileRef = A5FCE676253526FF00043F1D /* HFAssert.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A5FCE6862535301500043F1D /* HFFastMemchr.h in Headers */ = {isa = PBXBuildFile; fileRef = A5FCE6852535301500043F1D /* HFFastMemchr.h */; };
 		A5FCE6872535301500043F1D /* HFFastMemchr.h in Headers */ = {isa = PBXBuildFile; fileRef = A5FCE6852535301500043F1D /* HFFastMemchr.h */; };
+		A5FCE695253530DF00043F1D /* HFUIUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = A5FCE694253530DB00043F1D /* HFUIUtils.m */; };
+		A5FCE69C253530E000043F1D /* HFUIUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = A5FCE694253530DB00043F1D /* HFUIUtils.m */; };
 		D00122E30D48A8D400540B10 /* HFFindReplaceBackgroundView.m in Sources */ = {isa = PBXBuildFile; fileRef = D00122E20D48A8D400540B10 /* HFFindReplaceBackgroundView.m */; };
 		D00C16790FF4925A006D021F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D00C16750FF4925A006D021F /* main.m */; };
 		D00EBA730CE866D50020E2D7 /* HFVerticalScrollerRepresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = D00EBA710CE866D50020E2D7 /* HFVerticalScrollerRepresenter.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -236,7 +238,7 @@
 		D041D1C10D397E1A00C28345 /* HFPasteboardOwner.m in Sources */ = {isa = PBXBuildFile; fileRef = D041D1BF0D397E1A00C28345 /* HFPasteboardOwner.m */; };
 		D0422FDF0D62599300F8FCDE /* HFProgressTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = D0422FDD0D62599300F8FCDE /* HFProgressTracker.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D0422FE00D62599300F8FCDE /* HFProgressTracker.m in Sources */ = {isa = PBXBuildFile; fileRef = D0422FDE0D62599300F8FCDE /* HFProgressTracker.m */; };
-		D04327A40CF081CD00C14250 /* HFFunctions_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = D04327A30CF081CD00C14250 /* HFFunctions_Private.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D04327A40CF081CD00C14250 /* HFUIUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = D04327A30CF081CD00C14250 /* HFUIUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D047E3401022CFA800EF307B /* FortunateSon.defs in Sources */ = {isa = PBXBuildFile; fileRef = D047E33F1022CFA800EF307B /* FortunateSon.defs */; settings = {ATTRIBUTES = (Server, ); }; };
 		D047E48C1022E09300EF307B /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D047E48B1022E09300EF307B /* main.cpp */; };
 		D047E4CA1022E1CA00EF307B /* HexFiend.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = D01E7BB80CDC530C00943F9E /* HexFiend.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
@@ -609,6 +611,7 @@
 		A5EF294B20F187B700CA7B39 /* HexFiend_Framework_iOS-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "HexFiend_Framework_iOS-Info.plist"; sourceTree = "<group>"; };
 		A5FCE676253526FF00043F1D /* HFAssert.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFAssert.h; path = sources/HFAssert.h; sourceTree = "<group>"; };
 		A5FCE6852535301500043F1D /* HFFastMemchr.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFFastMemchr.h; path = sources/HFFastMemchr.h; sourceTree = "<group>"; };
+		A5FCE694253530DB00043F1D /* HFUIUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFUIUtils.m; path = sources/HFUIUtils.m; sourceTree = "<group>"; };
 		D00122E10D48A8D400540B10 /* HFFindReplaceBackgroundView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFFindReplaceBackgroundView.h; path = app/sources/HFFindReplaceBackgroundView.h; sourceTree = "<group>"; };
 		D00122E20D48A8D400540B10 /* HFFindReplaceBackgroundView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFFindReplaceBackgroundView.m; path = app/sources/HFFindReplaceBackgroundView.m; sourceTree = "<group>"; };
 		D00C15E50FF091FF006D021F /* HexFiendling.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HexFiendling.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -668,7 +671,7 @@
 		D041D1BF0D397E1A00C28345 /* HFPasteboardOwner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFPasteboardOwner.m; path = sources/HFPasteboardOwner.m; sourceTree = "<group>"; };
 		D0422FDD0D62599300F8FCDE /* HFProgressTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFProgressTracker.h; path = sources/HFProgressTracker.h; sourceTree = "<group>"; };
 		D0422FDE0D62599300F8FCDE /* HFProgressTracker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFProgressTracker.m; path = sources/HFProgressTracker.m; sourceTree = "<group>"; };
-		D04327A30CF081CD00C14250 /* HFFunctions_Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFFunctions_Private.h; path = sources/HFFunctions_Private.h; sourceTree = "<group>"; };
+		D04327A30CF081CD00C14250 /* HFUIUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFUIUtils.h; path = sources/HFUIUtils.h; sourceTree = "<group>"; };
 		D047E3151022CEFE00EF307B /* com.ridiculousfish.HexFiend.PrivilegedHelper */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = com.ridiculousfish.HexFiend.PrivilegedHelper; sourceTree = BUILT_PRODUCTS_DIR; };
 		D047E33F1022CFA800EF307B /* FortunateSon.defs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.mig; name = FortunateSon.defs; path = helper_subprocess/FortunateSon.defs; sourceTree = "<group>"; };
 		D047E4431022DF6F00EF307B /* FortunateSonIPCTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FortunateSonIPCTypes.h; path = helper_subprocess/FortunateSonIPCTypes.h; sourceTree = "<group>"; };
@@ -1260,7 +1263,6 @@
 			isa = PBXGroup;
 			children = (
 				D0A436300CDC7EAA000F7550 /* HFFunctions.h */,
-				D04327A30CF081CD00C14250 /* HFFunctions_Private.h */,
 				A5FCE676253526FF00043F1D /* HFAssert.h */,
 				D0A436570CDC8115000F7550 /* HFFunctions.m */,
 				A5FCE6852535301500043F1D /* HFFastMemchr.h */,
@@ -1269,6 +1271,8 @@
 				D0315BEB1225C553008C9EAB /* HFAnnotatedTree.m */,
 				D08B2AC912B03C86004995A2 /* HFGlyphTrie.h */,
 				D08B2ACA12B03C86004995A2 /* HFGlyphTrie.m */,
+				D04327A30CF081CD00C14250 /* HFUIUtils.h */,
+				A5FCE694253530DB00043F1D /* HFUIUtils.m */,
 			);
 			name = Utilities;
 			sourceTree = "<group>";
@@ -1477,7 +1481,7 @@
 				A5EF28DE20F187B700CA7B39 /* HFStringEncoding.h in Headers */,
 				A572614E21D9AA7600970A0E /* HFEncodingManager.h in Headers */,
 				A594F0642495EAD900DCACD3 /* HFBinaryGlyphTable.h in Headers */,
-				A5EF28E120F187B700CA7B39 /* HFFunctions_Private.h in Headers */,
+				A5EF28E120F187B700CA7B39 /* HFUIUtils.h in Headers */,
 				A51D0E9220F2B74C00B55775 /* HFRepresenterHexTextView.h in Headers */,
 				A5EF28E420F187B700CA7B39 /* HFCustomEncoding.h in Headers */,
 				A5FCE63B25351DA800043F1D /* HFFrameworkPrefix.h in Headers */,
@@ -1544,7 +1548,7 @@
 				A5CEA41C20D5DF4400BCA488 /* HFStringEncoding.h in Headers */,
 				D0CDB77D0CE737130084926B /* HFStringEncodingTextRepresenter.h in Headers */,
 				D00EBA730CE866D50020E2D7 /* HFVerticalScrollerRepresenter.h in Headers */,
-				D04327A40CF081CD00C14250 /* HFFunctions_Private.h in Headers */,
+				D04327A40CF081CD00C14250 /* HFUIUtils.h in Headers */,
 				D0A9F3F10CFBEA9F0077D577 /* HFLineCountingRepresenter.h in Headers */,
 				D0A9F3FD0CFBEAD50077D577 /* HFLineCountingView.h in Headers */,
 				A5FCE6862535301500043F1D /* HFFastMemchr.h in Headers */,
@@ -2067,6 +2071,7 @@
 				A594F05E2495E61700DCACD3 /* HFBinaryTextRepresenter.m in Sources */,
 				A51D0E9820F2C21500B55775 /* HFTextRepresenter.m in Sources */,
 				A51D0E8D20F2A40C00B55775 /* HFRepresenterTextViewCallout.m in Sources */,
+				A5FCE69C253530E000043F1D /* HFUIUtils.m in Sources */,
 				A5EF293120F187B700CA7B39 /* HFBTree.m in Sources */,
 				A5EF293220F187B700CA7B39 /* HFBTreeByteArray.m in Sources */,
 				A5EF293420F187B700CA7B39 /* HFByteArrayProxiedData.m in Sources */,
@@ -2130,6 +2135,7 @@
 				A5328D4921E1898A007C4DB0 /* HFHexGlyphTable.m in Sources */,
 				D0422FE00D62599300F8FCDE /* HFProgressTracker.m in Sources */,
 				D0370A400D68307A00B3A8C6 /* HFSharedMemoryByteSlice.m in Sources */,
+				A5FCE695253530DF00043F1D /* HFUIUtils.m in Sources */,
 				D019B8C00D83E8D5005789AA /* HFByteArray_FileWriting.m in Sources */,
 				D0A1F31211439E3F008BB3BA /* HFByteArrayEditScript.m in Sources */,
 				D019B9020D83FEB3005789AA /* HFByteSliceFileOperation.m in Sources */,
