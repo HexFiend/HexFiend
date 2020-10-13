@@ -461,6 +461,7 @@ void HFUnregisterViewForWindowAppearanceChanges(NSView *view, BOOL appToo);
 
 /*! Returns a description of the given byte count (e.g. "24 kilobytes") */
 NSString *HFDescribeByteCount(unsigned long long count);
+NSString *HFDescribeByteCountWithPrefixAndSuffix(const char *_Nullable stringPrefix, unsigned long long count, const char *_Nullable stringSuffix);
 
 /*! @brief An object wrapper for the HFRange type.
 

@@ -4,8 +4,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 __private_extern__ unsigned char *_Nullable HFFastMemchr(const unsigned char *s, unsigned char c, size_t n);
 
-__private_extern__ NSString *HFDescribeByteCountWithPrefixAndSuffix(const char *_Nullable stringPrefix, unsigned long long count, const char *_Nullable stringSuffix);
-
 /* Function for OSAtomicAdd64 that just does a non-atomic add on PowerPC.  This should not be used where atomicity is critical; an example where this is used is updating a progress bar. */
 static inline int64_t HFAtomicAdd64(int64_t a, volatile int64_t *b) {
 #pragma clang diagnostic push
