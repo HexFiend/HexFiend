@@ -9,7 +9,6 @@
 #import <HexFiend/HFByteArray.h>
 #import <HexFiend/HFProgressTracker.h>
 #import <HexFiend/HFFunctions.h>
-#import <HexFiend/HFFunctions_Private.h>
 #import <HexFiend/HFAssert.h>
 #import "HFByteArray_Internal.h"
 #include <malloc/malloc.h>

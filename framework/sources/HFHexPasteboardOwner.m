@@ -9,7 +9,6 @@
 #import <HexFiend/HFProgressTracker.h>
 #import <HexFiend/HFByteArray.h>
 #import <HexFiend/HFFunctions.h>
-#import <HexFiend/HFFunctions_Private.h>
 #import <HexFiend/HFAssert.h>
 
 static inline unsigned char hex2char(NSUInteger c) {

@@ -359,6 +359,11 @@ static inline NSUInteger HFAtomicDecrement(volatile NSUInteger *ptr, BOOL barrie
 #endif
         volatile unsigned long long *: (barrier ? OSAtomicDecrement64Barrier : OSAtomicDecrement64)((volatile int64_t *)ptr));
 }
+
+/* Function for OSAtomicAdd64 that just does a non-atomic add on PowerPC.  This should not be used where atomicity is critical; an example where this is used is updating a progress bar. */
+static inline int64_t HFAtomicAdd64(int64_t a, volatile int64_t *b) {
+    return OSAtomicAdd64(a, b);
+}
 #pragma clang diagnostic pop
 
 /*! Converts a long double to unsigned long long.  Assumes that val is already an integer - use floorl or ceill */
