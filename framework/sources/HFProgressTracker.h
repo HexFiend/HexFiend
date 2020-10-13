@@ -6,6 +6,8 @@
 //  Copyright 2008 ridiculous_fish. All rights reserved.
 //
 
+#import <HexFiend/HFFrameworkPrefix.h>
+
 NS_ASSUME_NONNULL_BEGIN
 
 /*!

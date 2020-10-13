@@ -5,6 +5,7 @@
 //  Copyright 2008 ridiculous_fish. All rights reserved.
 //
 
+#import <HexFiend/HFFrameworkPrefix.h>
 #import <HexFiend/HFStringEncoding.h>
 
 @class HFLayoutRepresenter, HFRepresenter, HFController, HFHexTextRepresenter, HFStringEncodingTextRepresenter;

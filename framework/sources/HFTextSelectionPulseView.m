@@ -6,6 +6,7 @@
 //
 
 #import <HexFiend/HFTextSelectionPulseView.h>
+#import <HexFiend/HFFunctions.h>
 
 
 @implementation HFTextSelectionPulseView

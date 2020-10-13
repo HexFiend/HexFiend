@@ -5,7 +5,7 @@
 //  Copyright © 2020 ridiculous_fish. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import <HexFiend/HFFrameworkPrefix.h>
 
 @interface HFBinaryGlyphTable : NSObject
 

@@ -8,6 +8,7 @@
 /* Note that on Tiger, NSScroller did not support double in any meaningful way; [scroller doubleValue] always returns 0, and setDoubleValue: doesn't look like it works either. */
 
 #import <HexFiend/HFVerticalScrollerRepresenter.h>
+#import <HexFiend/HFFunctions.h>
 
 
 @implementation HFVerticalScrollerRepresenter

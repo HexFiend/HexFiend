@@ -10,6 +10,7 @@
 #if !TARGET_OS_IPHONE
 #import <HexFiend/HFHexPasteboardOwner.h>
 #endif
+#import <HexFiend/HFFunctions.h>
 
 @implementation HFHexTextRepresenter {
     unsigned long long omittedNybbleLocation;

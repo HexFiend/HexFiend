@@ -10,6 +10,8 @@
 #import <HexFiend/HFFullMemoryByteSlice.h>
 #import <HexFiend/HFByteSlice.h>
 #import <HexFiend/HFByteRangeAttributeArray.h>
+#import <HexFiend/HFFunctions.h>
+#import <HexFiend/HFFunctions_Private.h>
 
 @implementation HFFullMemoryByteArray
 

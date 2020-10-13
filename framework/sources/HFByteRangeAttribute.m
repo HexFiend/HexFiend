@@ -6,6 +6,7 @@
 //
 
 #import <HexFiend/HFByteRangeAttribute.h>
+#import <HexFiend/HFFunctions.h>
 
 NSString * const kHFAttributeDiffInsertion = @"HFAttributeDiffInsertion";
 NSString * const kHFAttributeFocused = @"HFAttributeFocused";

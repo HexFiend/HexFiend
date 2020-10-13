@@ -5,6 +5,8 @@
 //  Copyright 2009 ridiculous_fish. All rights reserved.
 //
 
+#import <HexFiend/HFFrameworkPrefix.h>
+
 @interface HFTextVisualStyleRun : NSObject
 
 @property (nonatomic, copy) HFColor *foregroundColor;

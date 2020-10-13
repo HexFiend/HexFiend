@@ -8,6 +8,7 @@
 #import <HexFiend/HFLineCountingRepresenter.h>
 #import <HexFiend/HFLineCountingView.h>
 #import <HexFiend/HFHexGlyphTable.h>
+#import <HexFiend/HFFunctions.h>
 
 NSString *const HFLineCountingRepresenterMinimumViewWidthChanged = @"HFLineCountingRepresenterMinimumViewWidthChanged";
 NSString *const HFLineCountingRepresenterCycledLineNumberFormat = @"HFLineCountingRepresenterCycledLineNumberFormat";

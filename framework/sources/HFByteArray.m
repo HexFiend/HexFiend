@@ -7,6 +7,7 @@
 
 #import "HFByteArray_Internal.h"
 #import <HexFiend/HFFullMemoryByteSlice.h>
+#import <HexFiend/HFFunctions.h>
 
 
 @implementation HFByteArray

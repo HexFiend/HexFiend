@@ -10,6 +10,7 @@
 #import <HexFiend/HFFileReference.h>
 #import <HexFiend/HFByteRangeAttribute.h>
 #import <HexFiend/HFByteRangeAttributeArray.h>
+#import <HexFiend/HFFunctions.h>
 
 @implementation HFFileByteSlice
 

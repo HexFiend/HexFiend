@@ -86,8 +86,3 @@
 #if !defined(MAX)
     #define MAX(A,B)	({ __typeof__(A) __a = (A); __typeof__(B) __b = (B); __a < __b ? __b : __a; })
 #endif
-
-#ifdef __OBJC__
-    #import <HexFiend/HFFunctions.h>
-    #import "HFFunctions_Private.h"
-#endif

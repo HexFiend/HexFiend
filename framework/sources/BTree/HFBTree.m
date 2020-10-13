@@ -7,6 +7,7 @@
 //
 
 #import "HFBTree.h"
+#import <HexFiend/HFFunctions.h>
 
 #define FIXUP_LENGTHS 0
 

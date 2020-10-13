@@ -8,6 +8,8 @@
 
 #import "HFColumnRepresenter.h"
 #import <HexFiend/HFColumnView.h>
+#import <HexFiend/HFFunctions.h>
+#import <HexFiend/HFFunctions_Private.h>
 
 NSString *const HFColumnRepresenterViewHeightChanged = @"HFColumnRepresenterViewHeightChanged";
 

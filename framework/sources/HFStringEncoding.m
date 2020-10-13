@@ -6,6 +6,7 @@
 //  Copyright © 2018 ridiculous_fish. All rights reserved.
 //
 
+#import <HexFiend/HFFrameworkPrefix.h>
 #import "HFStringEncoding.h"
 
 @implementation HFStringEncoding

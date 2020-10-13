@@ -6,7 +6,7 @@
 //  Copyright 2008 ridiculous_fish. All rights reserved.
 //
 
-#import <AppKit/NSButton.h>
+#import <AppKit/AppKit.h>
 
 /*! @class HFCancelButton
     @brief A simple subclass of NSButton that has the correct appearance for cancelling.  This is not a generally useful class. */

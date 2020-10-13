@@ -9,6 +9,8 @@
 #import <HexFiend/HFProgressTracker.h>
 #import <HexFiend/HFController.h>
 #import <HexFiend/HFByteArray.h>
+#import <HexFiend/HFFunctions.h>
+#import <HexFiend/HFFunctions_Private.h>
 
 //What's the smallest clipboard data size we should offer to avoid copying when quitting?  This is 5 MB
 #define MINIMUM_PASTEBOARD_SIZE_TO_WARN_ABOUT (5UL << 20)

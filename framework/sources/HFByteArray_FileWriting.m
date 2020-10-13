@@ -9,6 +9,7 @@
 #import <HexFiend/HFFileReference.h>
 #import <HexFiend/HFProgressTracker.h>
 #import <HexFiend/HFByteSlice.h>
+#import <HexFiend/HFFunctions.h>
 #import "HFByteSliceFileOperation.h"
 #import "HFObjectGraph.h"
 #import <HexFiend/HFSharedMemoryByteSlice.h>

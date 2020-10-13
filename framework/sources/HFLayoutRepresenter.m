@@ -6,6 +6,7 @@
 //
 
 #import <HexFiend/HFLayoutRepresenter.h>
+#import <HexFiend/HFFunctions.h>
 
 @interface HFRepresenterLayoutViewInfo : NSObject {
 @public

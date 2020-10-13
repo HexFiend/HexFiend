@@ -10,6 +10,7 @@
 #import <HexFiend/HFByteSlice.h>
 #import <HexFiend/HFByteRangeAttributeArray.h>
 #import <HexFiend/HFByteRangeAttribute.h>
+#import <HexFiend/HFFunctions.h>
 
 @implementation HFAttributedByteArray
 

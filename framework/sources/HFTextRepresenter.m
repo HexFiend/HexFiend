@@ -14,6 +14,7 @@
 #import <HexFiend/HFByteRangeAttributeArray.h>
 #import "HFTextVisualStyleRun.h"
 #import <HexFiend/HFByteRangeAttribute.h>
+#import <HexFiend/HFFunctions.h>
 #import "HFColorRange.h"
 
 @implementation HFTextRepresenter {

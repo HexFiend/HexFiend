@@ -1,3 +1,5 @@
+#import <HexFiend/HFFrameworkPrefix.h>
+
 NS_ASSUME_NONNULL_BEGIN
 
 @class HFController;

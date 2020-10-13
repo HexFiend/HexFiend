@@ -13,6 +13,7 @@
 #import <HexFiend/HFVerticalScrollerRepresenter.h>
 #import <HexFiend/HFSharedMemoryByteSlice.h>
 #import <HexFiend/HFFullMemoryByteSlice.h>
+#import <HexFiend/HFFunctions.h>
 #import "HFByteArrayProxiedData.h"
 
 @implementation HFTextView

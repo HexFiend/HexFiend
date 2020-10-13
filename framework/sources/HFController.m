@@ -18,6 +18,8 @@
 #import "HFRandomDataByteSlice.h"
 #import <HexFiend/HFFileReference.h>
 #import <HexFiend/HFByteRangeAttributeArray.h>
+#import <HexFiend/HFFunctions.h>
+#import <HexFiend/HFFunctions_Private.h>
 
 /* Used for the anchor range and location */
 #define NO_SELECTION ULLONG_MAX

@@ -5,6 +5,8 @@
 //  Copyright 2008 ridiculous_fish. All rights reserved.
 //
 
+#import <Foundation/Foundation.h>
+
 NS_ASSUME_NONNULL_BEGIN
 
 @interface HFObjectGraph : NSObject

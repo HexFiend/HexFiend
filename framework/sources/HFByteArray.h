@@ -5,6 +5,8 @@
 //  Copyright 2007 ridiculous_fish. All rights reserved.
 //
 
+#import <HexFiend/HFFrameworkPrefix.h>
+
 NS_ASSUME_NONNULL_BEGIN
 
 @class HFByteSlice, HFProgressTracker, HFFileReference, HFByteRangeAttributeArray;

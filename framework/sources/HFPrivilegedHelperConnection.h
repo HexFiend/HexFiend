@@ -5,6 +5,7 @@
 //  Copyright 2009 __MyCompanyName__. All rights reserved.
 //
 
+#import <HexFiend/HFFrameworkPrefix.h>
 #import "FortunateSonIPCTypes.h"
 
 NS_ASSUME_NONNULL_BEGIN

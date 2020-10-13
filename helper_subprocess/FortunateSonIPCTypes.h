@@ -1,3 +1,5 @@
+#include <stdint.h>
+
 typedef const char *FilePath;
 typedef unsigned char *VarData_t;
 typedef long long FileOffset_t;

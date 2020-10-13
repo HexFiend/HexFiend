@@ -1,3 +1,5 @@
+#import <HexFiend/HFFrameworkPrefix.h>
+
 /* HFGlyphTrie is used to represent a trie of glyphs that allows multiple concurrent readers, along with one writer. */
 
 

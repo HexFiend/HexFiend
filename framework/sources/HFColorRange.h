@@ -6,6 +6,8 @@
 //  Copyright © 2018 ridiculous_fish. All rights reserved.
 //
 
+#import <HexFiend/HFFrameworkPrefix.h>
+
 @class HFRangeWrapper;
 
 @interface HFColorRange : NSObject

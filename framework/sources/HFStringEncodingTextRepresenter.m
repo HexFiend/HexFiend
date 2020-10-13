@@ -10,6 +10,8 @@
 #import <HexFiend/HFPasteboardOwner.h>
 #import <HexFiend/HFProgressTracker.h>
 #import <HexFiend/HFEncodingManager.h>
+#import <HexFiend/HFFunctions.h>
+#import <HexFiend/HFFunctions_Private.h>
 
 @interface HFStringEncodingPasteboardOwner : HFPasteboardOwner
 @property HFStringEncoding* encoding;
