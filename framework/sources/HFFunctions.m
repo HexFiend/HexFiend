@@ -757,14 +757,6 @@ NSString *HFHexStringFromData(NSData *data, BOOL includePrefix) {
     return hex;
 }
 
-void HFSetFDShouldCache(int fd, BOOL shouldCache) {
-    int result = fcntl(fd, F_NOCACHE, !shouldCache);
-    if (result == -1) {
-        int err = errno;
-        NSLog(@"fcntl(%d, F_NOCACHE, %d) returned error %d: %s", fd, !shouldCache, err, strerror(err));
-    }
-}
-
 NSString *HFDescribeByteCount(unsigned long long count) {
     return HFDescribeByteCountWithPrefixAndSuffix(NULL, count, NULL);
 }

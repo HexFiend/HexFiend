@@ -106,6 +106,15 @@ static BOOL returnFTruncateError(NSError **error) {
     return YES;
 }
 
+/* Modifies F_NOCACHE for a given file descriptor */
+static void HFSetFDShouldCache(int fd, BOOL shouldCache) {
+    int result = fcntl(fd, F_NOCACHE, !shouldCache);
+    if (result == -1) {
+        int err = errno;
+        NSLog(@"fcntl(%d, F_NOCACHE, %d) returned error %d: %s", fd, !shouldCache, err, strerror(err));
+    }
+}
+
 @implementation HFFileReference {
 @protected
     int fileDescriptor;

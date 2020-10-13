@@ -30,9 +30,6 @@ static inline unsigned long long llmin(unsigned long long a, unsigned long long 
 
 __private_extern__ unsigned char *_Nullable HFFastMemchr(const unsigned char *s, unsigned char c, size_t n);
 
-/* Modifies F_NOCACHE for a given file descriptor */
-__private_extern__ void HFSetFDShouldCache(int fd, BOOL shouldCache);
-
 __private_extern__ NSString *HFDescribeByteCountWithPrefixAndSuffix(const char *_Nullable stringPrefix, unsigned long long count, const char *_Nullable stringSuffix);
 
 /* Function for OSAtomicAdd64 that just does a non-atomic add on PowerPC.  This should not be used where atomicity is critical; an example where this is used is updating a progress bar. */
