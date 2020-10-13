@@ -67,11 +67,3 @@
         name[__Free_Index] = nil; \
     } \
     free(name);
-
-#if !defined(MIN)
-    #define MIN(A,B)	({ __typeof__(A) __a = (A); __typeof__(B) __b = (B); __a < __b ? __a : __b; })
-#endif
-
-#if !defined(MAX)
-    #define MAX(A,B)	({ __typeof__(A) __a = (A); __typeof__(B) __b = (B); __a < __b ? __b : __a; })
-#endif
