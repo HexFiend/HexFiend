@@ -8,11 +8,10 @@
 #import <XCTest/XCTest.h>
 #include <sys/stat.h>
 
-#import "HexFiend_2_Framework_Prefix.pch"
 #import <HexFiend/HexFiend.h>
+#import <HexFiend/HFFastMemchr.h>
 #import "HFByteArray_Internal.h"
 #import "HFTestHashing.h"
-#import "HFFunctions_Private.h"
 #import <HexFiend/HFByteArrayEditScript.h>
 #import "HFRandomDataByteSlice.h"
 #import "HFPrivilegedHelperConnection.h"

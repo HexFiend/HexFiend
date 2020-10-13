@@ -1,4 +1,4 @@
-#import "HFFastMemchr.h"
+#import <HexFiend/HFFastMemchr.h>
 
 #if defined(__i386__) || defined(__x86_64__)
 

@@ -7,10 +7,8 @@
 //
 
 #import <XCTest/XCTest.h>
+#import <HexFiend/HexFiend.h>
 #import <HexFiend/HFHexPasteboardOwner.h>
-#import <HexFiend/HFBTreeByteArray.h>
-#import <HexFiend/HFSharedMemoryByteSlice.h>
-#import <HexFiend/HFProgressTracker.h>
 #import <zlib.h>
 
 @interface HFHexPasteboardOwnerTest : XCTestCase

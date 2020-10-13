@@ -8,7 +8,7 @@
 #import "HFByteArray_Internal.h"
 #import <HexFiend/HFProgressTracker.h>
 #import <HexFiend/HFFunctions.h>
-#import "HFFastMemchr.h"
+#import <HexFiend/HFFastMemchr.h>
 #import <HexFiend/HFAssert.h>
 
 //How many bytes should we read at a time when doing a find/replace?

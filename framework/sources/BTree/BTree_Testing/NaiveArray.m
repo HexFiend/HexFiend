@@ -7,7 +7,7 @@
 //
 
 #import "NaiveArray.h"
-#import "HFFunctions.h"
+#import <HexFiend/HexFiend.h>
 #import "TreeEntry.h"
 
 #define HFBTreeLength_Fast(a) (((TreeEntry *)(a))->length)

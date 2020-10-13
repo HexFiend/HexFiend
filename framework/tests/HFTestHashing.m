@@ -6,7 +6,7 @@
 //
 
 #import "HFTestHashing.h"
-#import <HexFiend/HFByteArray.h>
+#import <HexFiend/HexFiend.h>
 #include <CommonCrypto/CommonDigest.h>
 
 NSData *HFHashFile(NSURL *url) {

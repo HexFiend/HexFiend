@@ -189,8 +189,8 @@
 		A5FCE63B25351DA800043F1D /* HFFrameworkPrefix.h in Headers */ = {isa = PBXBuildFile; fileRef = D01E7BC60CDC53B300943F9E /* HFFrameworkPrefix.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A5FCE677253526FF00043F1D /* HFAssert.h in Headers */ = {isa = PBXBuildFile; fileRef = A5FCE676253526FF00043F1D /* HFAssert.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A5FCE678253526FF00043F1D /* HFAssert.h in Headers */ = {isa = PBXBuildFile; fileRef = A5FCE676253526FF00043F1D /* HFAssert.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		A5FCE6862535301500043F1D /* HFFastMemchr.h in Headers */ = {isa = PBXBuildFile; fileRef = A5FCE6852535301500043F1D /* HFFastMemchr.h */; };
-		A5FCE6872535301500043F1D /* HFFastMemchr.h in Headers */ = {isa = PBXBuildFile; fileRef = A5FCE6852535301500043F1D /* HFFastMemchr.h */; };
+		A5FCE6862535301500043F1D /* HFFastMemchr.h in Headers */ = {isa = PBXBuildFile; fileRef = A5FCE6852535301500043F1D /* HFFastMemchr.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A5FCE6872535301500043F1D /* HFFastMemchr.h in Headers */ = {isa = PBXBuildFile; fileRef = A5FCE6852535301500043F1D /* HFFastMemchr.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A5FCE695253530DF00043F1D /* HFUIUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = A5FCE694253530DB00043F1D /* HFUIUtils.m */; };
 		A5FCE69C253530E000043F1D /* HFUIUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = A5FCE694253530DB00043F1D /* HFUIUtils.m */; };
 		D00122E30D48A8D400540B10 /* HFFindReplaceBackgroundView.m in Sources */ = {isa = PBXBuildFile; fileRef = D00122E20D48A8D400540B10 /* HFFindReplaceBackgroundView.m */; };
@@ -2383,8 +2383,6 @@
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = framework/sources/HexFiend_2_Framework_Prefix.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -2422,8 +2420,6 @@
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = framework/sources/HexFiend_2_Framework_Prefix.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -2461,8 +2457,6 @@
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = framework/sources/HexFiend_2_Framework_Prefix.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -2500,8 +2494,6 @@
 					"$(inherited)",
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = framework/sources/HexFiend_2_Framework_Prefix.pch;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				INFOPLIST_FILE = "framework/tests/Framework_Tests-Info.plist";
@@ -2534,8 +2526,6 @@
 					"$(inherited)",
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = framework/sources/HexFiend_2_Framework_Prefix.pch;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				INFOPLIST_FILE = "framework/tests/Framework_Tests-Info.plist";
@@ -3561,8 +3551,6 @@
 					"$(inherited)",
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = framework/sources/HexFiend_2_Framework_Prefix.pch;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				INFOPLIST_FILE = "framework/tests/Framework_Tests-Info.plist";
@@ -3752,8 +3740,6 @@
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = framework/sources/HexFiend_2_Framework_Prefix.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
