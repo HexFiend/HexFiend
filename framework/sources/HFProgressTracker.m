@@ -7,7 +7,6 @@
 //
 
 #import <HexFiend/HFProgressTracker.h>
-#include <pthread.h>
 #import <HexFiend/HFAssert.h>
 
 @implementation HFProgressTracker
@@ -98,7 +97,7 @@
 
 - (void)noteFinished:(id)sender {
     if (delegate != nil) {   
-        if (! pthread_main_np()) { // [NSThread isMainThread] is not available on Tiger
+        if (!NSThread.isMainThread) {
             [self performSelectorOnMainThread:@selector(noteFinished:) withObject:sender waitUntilDone:NO];
         }
         else {
