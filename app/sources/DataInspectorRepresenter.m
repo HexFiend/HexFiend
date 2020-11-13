@@ -87,9 +87,12 @@ NSString * const DataInspectorDidDeleteAllRows = @"DataInspectorDidDeleteAllRows
     [table setRefusesFirstResponder:YES];
     [table setTarget:self];
     [table setDoubleAction:@selector(doubleClickedTable:)];    
+#if defined(MAC_OS_X_VERSION_10_15) && MAC_OS_X_VERSION_MAX_ALLOWED > MAC_OS_X_VERSION_10_15
+    // TODO: remove once GitHub supports Xcode 12.2+
     if (@available(macOS 11.0, *)) {
         table.style = NSTableViewStyleFullWidth;
     }
+#endif
     return resultView;
 }
 
