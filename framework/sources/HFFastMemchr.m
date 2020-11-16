@@ -41,6 +41,10 @@ static unsigned char* sse_memchr(const unsigned char* haystack, unsigned char ne
     return NULL;
 }
 
+#else
+
+#include <string.h>
+
 #endif
 
 unsigned char *HFFastMemchr(const unsigned char *haystack, unsigned char needle, size_t length) {
