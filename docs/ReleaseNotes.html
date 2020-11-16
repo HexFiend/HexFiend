@@ -14,6 +14,29 @@
 
   <h2>Hex Fiend Release Notes</h2>
 
+  <h3>v2.14</h3>
+  <ul>
+    <li>Hex Fiend is built as a universal binary for native ARM support on Apple Silicon Macs<ul>
+        <li>80-bit floats in the data inspector are currently disabled as they rely on Intel instruction</li>
+      </ul>
+    </li>
+    <li>Fix the data inspector's plus and minus buttons not rendering correctly on Big Sur</li>
+    <li>The default alternating row color in light mode is now the system color, like dark mode<ul>
+        <li>To use the classic blue color, run in Terminal:
+          <code>defaults write com.ridiculousfish.HexFiend UseBlueAlternatingColor -bool true</code></li>
+      </ul>
+    </li>
+    <li>The binary templates view can be resized by holding down the Command key when resizing the window. The manual
+      size field in Preferences has been removed</li>
+    <li>Add an informative &quot;Welcome&quot; popover when Binary Templates are first shown</li>
+    <li>Binary template column state is now saved and restored</li>
+    <li>Allow the Binary data inspector to be editable</li>
+    <li>Add an experimental read-only Binary view</li>
+    <li>Improve 4 and 8-bit decimal formatting (thanks @wader)</li>
+    <li>Add a &quot;Show in Template&quot; feature which selects the deepest template node for a given position (thanks
+      @wader)</li>
+  </ul>
+
   <h3>v2.13.1</h3>
   <ul>
     <li>Fix line numbers not expanding</li>
