@@ -12,7 +12,7 @@
 				url="https://github.com/ridiculousfish/HexFiend/releases/download/v2.14.0/Hex_Fiend_2.14.dmg"
 				sparkle:version="1605491578"
 				sparkle:shortVersionString="2.14"
-				sparkle:dsaSignature="MC4CFQCAvl6SYr5CiYlJeLEKo/VArFGLigIVALIC2elW5qT2OwiDdAnk8UnZWFzO"
+				sparkle:dsaSignature="MCwCFBwmzzHwNXQi7HyyO3HH1vEncf1tAhRU9pYwSNl4addaLHGiLbgUyGrmUw=="
 			/>
 			<sparkle:minimumSystemVersion>10.11</sparkle:minimumSystemVersion>
 		</item>
