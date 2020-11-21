@@ -31,6 +31,21 @@ if [ -z "${APPSTORE_USER}" ]; then
 	usage
 fi
 
+# Xcode can find a certificate name by just matching by prefix, but this fails
+# when it's used in the code requirements for SMJobBless, so make sure the certificate
+# exists exactly in Keychain.
+set +e
+security find-identity -p codesigning -v | grep "\"${CODESIGN}\"" > /dev/null
+SECURITY_RET=$?
+set -e
+if [ "${SECURITY_RET}" != "0" ]; then
+	echo "\"${CODESIGN}\" is not valid. Please use an exact certificate name."
+	echo
+	echo "Here are the valid code signing identities:"
+	set +e; security find-identity -p codesigning -v; set -e;
+	exit 1
+fi
+
 PWD="$(pwd)"
 DERIVED_DATA_PATH="${PWD}/DerivedData"
 SCHEME="Release + CodeSign"
