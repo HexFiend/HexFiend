@@ -2,14 +2,14 @@
 <rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" xmlns:dc="http://purl.org/dc/elements/1.1/">
 	<channel>
 		<title>HexFiend</title>
-		<link>https://raw.github.com/ridiculousfish/HexFiend/master/app/appcast.xml</link>
+		<link>https://raw.github.com/HexFiend/HexFiend/master/app/appcast.xml</link>
 		<description>HexFiend 2 Release Notes</description>
 		<language>en</language>
 		<item>
 			<title>HexFiend 2.14.0</title>
-			<sparkle:releaseNotesLink>https://ridiculousfish.github.io/HexFiend/ReleaseNotes.html</sparkle:releaseNotesLink>
+			<sparkle:releaseNotesLink>https://hexfiend.github.io/HexFiend/ReleaseNotes.html</sparkle:releaseNotesLink>
 			<enclosure
-				url="https://github.com/ridiculousfish/HexFiend/releases/download/v2.14.0/Hex_Fiend_2.14.dmg"
+				url="https://github.com/HexFiend/HexFiend/releases/download/v2.14.0/Hex_Fiend_2.14.dmg"
 				sparkle:version="1605491578"
 				sparkle:shortVersionString="2.14"
 				sparkle:dsaSignature="MCwCFBwmzzHwNXQi7HyyO3HH1vEncf1tAhRU9pYwSNl4addaLHGiLbgUyGrmUw=="
@@ -18,9 +18,9 @@
 		</item>
 		<item>
 			<title>HexFiend 2.13.1</title>
-			<sparkle:releaseNotesLink>https://ridiculousfish.github.io/HexFiend/ReleaseNotes.html</sparkle:releaseNotesLink>
+			<sparkle:releaseNotesLink>https://hexfiend.github.io/HexFiend/ReleaseNotes.html</sparkle:releaseNotesLink>
 			<enclosure
-				url="https://github.com/ridiculousfish/HexFiend/releases/download/v2.13.1/Hex_Fiend_2.13.1.dmg"
+				url="https://github.com/HexFiend/HexFiend/releases/download/v2.13.1/Hex_Fiend_2.13.1.dmg"
 				sparkle:version="1593833290"
 				sparkle:shortVersionString="2.13.1"
 				sparkle:dsaSignature="MCwCFCDCGZkLM4f3hayEkcA+SjDDezvVAhQbkuHO+ZSbEjjBIWR2eoKw7vjVZQ=="
@@ -29,9 +29,9 @@
 		</item>
 		<item>
 			<title>HexFiend 2.13</title>
-			<sparkle:releaseNotesLink>https://ridiculousfish.github.io/HexFiend/ReleaseNotes.html</sparkle:releaseNotesLink>
+			<sparkle:releaseNotesLink>https://hexfiend.github.io/HexFiend/ReleaseNotes.html</sparkle:releaseNotesLink>
 			<enclosure
-				url="https://github.com/ridiculousfish/HexFiend/releases/download/v2.13.0/Hex_Fiend_2.13.dmg"
+				url="https://github.com/HexFiend/HexFiend/releases/download/v2.13.0/Hex_Fiend_2.13.dmg"
 				sparkle:version="1593301800"
 				sparkle:shortVersionString="2.13"
 				sparkle:dsaSignature="MC4CFQCsfQHyEGpc9d1yWDJv2lmAwGdS8gIVAI7xdBZ4BYyPNM0KA4IMG41QwRx5"
@@ -40,9 +40,9 @@
 		</item>
 		<item>
 			<title>HexFiend 2.12</title>
-			<sparkle:releaseNotesLink>https://ridiculousfish.github.io/HexFiend/ReleaseNotes.html</sparkle:releaseNotesLink>
+			<sparkle:releaseNotesLink>https://hexfiend.github.io/HexFiend/ReleaseNotes.html</sparkle:releaseNotesLink>
 			<enclosure
-				url="https://github.com/ridiculousfish/HexFiend/releases/download/v2.12.0/Hex_Fiend_2.12.dmg"
+				url="https://github.com/HexFiend/HexFiend/releases/download/v2.12.0/Hex_Fiend_2.12.dmg"
 				sparkle:version="1577426716"
 				sparkle:shortVersionString="2.12"
 				sparkle:dsaSignature="MCwCFGwTu1y2SGQvE9DcZXbtYx/T40FwAhQiR95Y2eG6ESUfRtN6B0EhJ9DyJA=="
@@ -51,9 +51,9 @@
 		</item>
 		<item>
 			<title>HexFiend 2.11</title>
-			<sparkle:releaseNotesLink>https://ridiculousfish.github.io/HexFiend/ReleaseNotes.html</sparkle:releaseNotesLink>
+			<sparkle:releaseNotesLink>https://hexfiend.github.io/HexFiend/ReleaseNotes.html</sparkle:releaseNotesLink>
 			<enclosure
-				url="https://github.com/ridiculousfish/HexFiend/releases/download/v2.11.0/Hex_Fiend_2.11.0.dmg"
+				url="https://github.com/HexFiend/HexFiend/releases/download/v2.11.0/Hex_Fiend_2.11.0.dmg"
 				sparkle:version="1549175187"
 				sparkle:shortVersionString="2.11"
 				sparkle:dsaSignature="MC0CFQCqSroBi30+5ZWGU931d95rsQHVNAIUA1Z2zryk+aboZPLFGQbBh+JPu1w="
@@ -62,9 +62,9 @@
 		</item>
 		<item>
 			<title>HexFiend 2.8</title>
-			<sparkle:releaseNotesLink>https://ridiculousfish.github.io/HexFiend/ReleaseNotes.html</sparkle:releaseNotesLink>
+			<sparkle:releaseNotesLink>https://hexfiend.github.io/HexFiend/ReleaseNotes.html</sparkle:releaseNotesLink>
 			<enclosure
-				url="https://github.com/ridiculousfish/HexFiend/releases/download/v2.8.0/Hex_Fiend_2.8.dmg"
+				url="https://github.com/HexFiend/HexFiend/releases/download/v2.8.0/Hex_Fiend_2.8.dmg"
 				sparkle:version="170719"
 				sparkle:shortVersionString="2.8"
 				sparkle:dsaSignature="MCwCFAumBhb7Bq74AQ0QAAtxzT0uHUs3AhQUH2IxG5aFVRS9gS9aUU+3hCKdiw=="
