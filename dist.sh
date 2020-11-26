@@ -34,6 +34,7 @@ fi
 # Xcode can find a certificate name by just matching by prefix, but this fails
 # when it's used in the code requirements for SMJobBless, so make sure the certificate
 # exists exactly in Keychain.
+# See https://github.com/HexFiend/HexFiend/issues/257#issuecomment-729330382 for details.
 set +e
 security find-identity -p codesigning -v | grep "\"${CODESIGN}\"" > /dev/null
 SECURITY_RET=$?
