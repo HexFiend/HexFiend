@@ -1,13 +1,5 @@
-requires 0 "52 49 46 46" ;# RIFF
-requires 8 "57 41 56 45" ;# WAVE
-ascii 4 "Header Chunk ID"
-uint32 "File Size"
-ascii 4 "Header Chunk Type"
-while {![end]} {
-    set chunk_id [ascii 4]
-    section $chunk_id
-    set chunk_size [uint32 "Chunk Size"]
-    if {$chunk_id == "fmt "} {
+proc parse_fmt {} {
+    section "Format Descriptor" {
         sectionvalue "Wave sample format"
         set format [uint16 -hex "Format"]
         set num_channels [int16 "# of Channels"]
@@ -23,10 +15,13 @@ while {![end]} {
                 uuid "Format GUID"
             }
 	    } else {
-            entry "Extended Format" "(Not Applicable)"
-            move [expr $chunk_size - 16]
+            entry "Extended Format" "(Not Present)"
         }
-    } elseif { $chunk_id == "PEAK" } {
+    }
+}
+
+proc parse_peak {} {
+    section "Channel Peak Descriptor" {
         uint32 "PEAK chunk version"
         uint32 "Timestamp"
         for {set i 0} {$i < $num_channels} {incr i} {
@@ -35,19 +30,12 @@ while {![end]} {
                 uint32 "Position"
             }            
         }
-    } elseif { $chunk_id == "fact" } {
-        hex 4 "Data"
-    } elseif { $chunk_id == "data" } {
-        sectionvalue "Interleaved audio data"
-        set num_samples [expr $chunk_size / $bytes_per_sample]
-        entry "# of Samples" $num_samples
-        set duration [expr double($num_samples) / double($sample_rate)]
-        entry "Duration" [format "%0.3f s" $duration]
-        move $chunk_size
-        move [expr $chunk_size % 2]
-    } elseif {$chunk_id == "bext"} {
-        sectionvalue "Broadcast Wave metadata"
-        ascii 256 "Description" 
+    }
+}
+
+proc parse_bext {chunk_size} {
+    section "Broadcast-Wave Metadata" {
+       ascii 256 "Description" 
         ascii 32 "Originator"
         ascii 32 "Originator Ref" 
         ascii 10 "Date"
@@ -77,8 +65,10 @@ while {![end]} {
                 }
             }
         } else {
+            entry "UMID Field" "(Not Present)"
             hex 64
         }
+
         if {$bext_version > 1} {
             section "EBU Loudness Metadata" { 
                 entry "Integrated Loudness" [expr double([uint16]) / double(100)] 
@@ -103,38 +93,90 @@ while {![end]} {
         } else {
             entry "Coding History" "(Not Present)"
         }
-    } elseif {$chunk_id == "LIST"} {
-        set list_form [ascii 4 "LIST Form"]
-
-        if {$list_form == "INFO"} {
-            set remain [expr $chunk_size - 4]
-            section "INFO Metadata" {
-                set info_item 0
-                while {$remain > 0} { 
-                    section $info_item
-                    ascii 4 "Key"
-                    set field_length [uint32 "Value Length"]
-                    ascii $field_length "Value"
-                    endsection
-                    set remain [expr $remain - 8 - $field_length - ($field_length % 2)]
-                    set info_item [expr $info_item + 1]
-                    move [expr $field_length % 2]
-                }
-            }       
-        } else {
-            move [expr $chunk_size - 4]
-        }
-    } elseif {$chunk_id == "umid"} {
-        hex 8 "?"
-        hex 8 "Time Snap"
-        hex 8 "?"
-    } else {
-        if {$chunk_size % 2 == 1} {
-            move [expr $chunk_size + 1]
-        } else {
-            move $chunk_size
-        }
-        
     }
-    endsection
+}
+
+proc parse_fact {} {
+    uint32 "Sample Count"
+}
+
+proc parse_chunk {signature length} {
+    entry "Chunk Contents" "" $length
+    set content_start [pos]
+    switch $signature {
+        "fmt " { parse_fmt }
+        "PEAK" { parse_peak }
+        "bext" { parse_bext $length}
+        "fact" { parse_fact }
+    }
+    goto [expr $content_start + $length + ($length % 2)]
+}
+
+proc parse_list {length ds64} {
+    section "Chunk List" {
+        set remain $length
+        set index 0
+        while {$remain > 0} {
+            section $index {
+                set chunk_signature [ascii 4 "Chunk Signature"]
+                
+                if {[dict exists $ds64 $chunk_signature]} {
+                    uint32 ;# Will be 0xFFFFFFFF
+                    set chunk_size [dict get $ds64 $chunk_signature]
+                    entry "Chunk Size DS64" $chunk_size
+                } else {
+                    set chunk_size [uint32 "Chunk Size"]
+                }
+
+                set chunk_displancement [expr $chunk_size + $chunk_size % 2 ]
+
+                if {$chunk_signature == "LIST"} {
+                    ascii 4 "LIST Form"
+                    parse_list [expr $chunk_size - 4] $ds64
+                } else {
+                    parse_chunk $chunk_signature $chunk_size
+                }
+            }
+            incr index
+            set remain [expr $remain - ($chunk_displancement + 8) ]
+        }
+    }
+}
+
+proc parse_rf64 {} {
+    section "RF64 Extended Header" {
+        ascii 4 "DS64 Header Signature"
+        set ds64_length [uint32 "DS64 Header Size"]
+        set ds64_start [pos]
+
+        set rf64_size [uint64 "Form Size"]
+        set data_size [uint64 "Data Chunk Size"]
+        uint64; # dead value, historically was frame count
+        
+        set ds64_dict [dict create "data" $data_size]
+        set count [uint32 "Long Chunk Table Length"]
+
+        for {set i 0} {$i < $count} {incr i}  {
+            dict set $ds64_dict [ascii 4 "Long Chunk ID"] [uint64 "Long Chunk Size"]
+        }
+    }
+    goto [expr $ds64_start + $ds64_length]
+    parse_list [expr $rf64_size - ( 12 + $ds64_length )] $ds64_dict
+}
+
+proc parse_wave length {
+    set remain [expr $length - 4]
+    set empty_ds64 [dict create]
+    parse_list $remain $empty_ds64
+}
+
+little_endian
+requires 8 "57 41 56 45" ;# WAVE
+set header_signature [ascii 4 "Header Signature"]
+set riff_size [uint32 "RIFF Size"]
+set riff_form [ascii 4 "RIFF Form"]
+if {$header_signature == "RF64" || $header_signature == "BW64"} {
+    parse_rf64 
+} elseif {$header_signature == "RIFF" } {
+    parse_wave $riff_size
 }
