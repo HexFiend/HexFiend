@@ -93,6 +93,12 @@ enum {
     return @"OpenDriveDialog";
 }
 
+- (void)awakeFromNib
+{
+    table.doubleAction = @selector(selectDrive:);
+    table.target = self;
+}
+
 - (BOOL)validateMenuItem:(NSMenuItem *)menuItem {
     // Hide Open Drive if we are sandboxed
     if ([menuItem action] == @selector(showWindow:) && isSandboxed()) {
