@@ -33,6 +33,45 @@ proc parse_peak {} {
     }
 }
 
+proc parse_cue {} {
+    section "Cue List" {
+        set count [uint32 "List Count"]
+        for {set i 0} { $i < $count } { incr i } {
+            section $i {
+                uint32 "Cue Point ID"
+                uint32 "Sample Position"
+                ascii 4 "Sited Chunk ID"
+                uint32 "Chunk Start"
+                uint32 "Block Start"
+                uint32 "Sample Offset"
+            }
+        }
+    }
+}
+
+proc parse_labl {length} {
+    section "Simple Label" {
+        uint32 "Cue Point ID"
+        ascii [expr $length - 4] "Name"
+    }
+}
+
+proc parse_ltxt {length} {
+    section "Labeled Range" {
+        uint32 "Cue Point ID"
+        uint32 "Sample Length"
+        ascii 4 "Purpose Code"
+        hex 2 "Country"
+        hex 2 "Language"
+        hex 2 "Dialect"
+        hex 2 "Code Page"
+        set text_length [expr $length - 20]
+        if {$text_length > 0} {
+            ascii $text_length "Name"
+        }
+    }
+}
+
 proc parse_bext {chunk_size} {
     section "Broadcast-Wave Metadata" {
        ascii 256 "Description" 
@@ -108,6 +147,9 @@ proc parse_chunk {signature length} {
         "PEAK" { parse_peak }
         "bext" { parse_bext $length}
         "fact" { parse_fact }
+        "cue " { parse_cue }
+        "labl" { parse_labl $length}
+        "ltxt" { parse_ltxt $length}
     }
     goto [expr $content_start + $length + ($length % 2)]
 }
