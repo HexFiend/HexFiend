@@ -19,8 +19,8 @@ section "BITMAPINFOHEADER" {
 	uint32 "biSize"
 	uint32 "biWidth"
 	int32 "biHeight"	; # signed; heights can be negative
-	uint8 "biPlanes"
-	uint8 "biBitCount"
+	uint16 "biPlanes"
+	uint16 "biBitCount"
 	uint32 "biCompression"
 	uint32 "biSizeImage"
 	uint32 "biXPelsPerMeter"
