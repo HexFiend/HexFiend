@@ -221,4 +221,6 @@ if {$header_signature == "RF64" || $header_signature == "BW64"} {
     parse_rf64 
 } elseif {$header_signature == "RIFF" } {
     parse_wave $riff_size
+} else {
+    error "Not a WAVE file"
 }
