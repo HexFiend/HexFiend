@@ -55,16 +55,30 @@
 @property HFTemplateFile *selectedFile;
 @property HFColorRange *colorRange;
 @property NSUInteger anchorPosition;
+@property FSEventStreamRef fsStream;
 
+- (void)rerunTemplate;
 @end
+
+void HFBinaryTemplateFSEvent(__unused ConstFSEventStreamRef streamRef,
+                             void *clientCallBackInfo,
+                             __unused size_t numEvents,
+                             __unused void *eventPaths,
+                             __unused const __unused FSEventStreamEventFlags *eventFlags,
+                             __unused const FSEventStreamEventId *eventIds) {
+    HFBinaryTemplateController* controller = (__bridge HFBinaryTemplateController *)clientCallBackInfo;
+    [controller rerunTemplate];
+}
 
 @implementation HFBinaryTemplateController
 
 - (instancetype)init {
     if ((self = [super initWithNibName:@"BinaryTemplateController" bundle:nil]) != nil) {
+        [self setupFSEventStream];
     }
     return self;
 }
+
 
 - (void)awakeFromNib {
     self.outlineView.doubleAction = @selector(outlineViewDoubleAction:);
@@ -80,6 +94,7 @@
 
 - (void)dealloc {
     [[NSUserDefaults standardUserDefaults] removeObserver:self forKeyPath:@"BinaryTemplateSelectionColor" context:NULL];
+    [self stopFSEventStream];
 }
 
 - (void)viewDidAppear {
@@ -87,6 +102,32 @@
 
     [self showPopoverOnce];
 }
+
+- (void)stopFSEventStream {
+    if (self.fsStream) {
+        FSEventStreamUnscheduleFromRunLoop(self.fsStream, CFRunLoopGetMain(), kCFRunLoopDefaultMode);
+        FSEventStreamStop(self.fsStream);
+    }
+}
+
+- (void)setupFSEventStream {
+    if (self.selectedFile) {
+        FSEventStreamContext context = {0, (__bridge void *)self, NULL, NULL, NULL};
+        self.fsStream = FSEventStreamCreate(kCFAllocatorDefault,
+                                            HFBinaryTemplateFSEvent,
+                                            &context,
+                                            (__bridge CFArrayRef _Nonnull)(@[self.selectedFile.path]),
+                                            kFSEventStreamEventIdSinceNow,
+                                            0.1, // Avoid events from "Safe Save"
+                                            kFSEventStreamCreateFlagFileEvents|
+                                            kFSEventStreamCreateFlagIgnoreSelf|
+                                            kFSEventStreamCreateFlagUseCFTypes);
+
+        FSEventStreamSetDispatchQueue(self.fsStream, dispatch_get_main_queue());
+        FSEventStreamStart(self.fsStream);
+    }
+}
+
 
 - (void)showPopoverOnce {
     NSString *key = @"BinaryTemplatesDisplayedWelcomePopover1";
@@ -211,18 +252,24 @@
     self.templates = templates;
     [self saveTitleOfLastTemplate:itemToSelect.title];
     self.selectedFile = itemToSelect.representedObject;
+    [self setupFSEventStream];
 }
 
 - (void)noTemplate:(id __unused)sender {
     self.selectedFile = nil;
+    [self setupFSEventStream];
     [self setRootNode:nil error:nil];
     [self saveTitleOfLastTemplate:nil];
 }
 
+
 - (void)selectTemplateFile:(id)sender {
     HFASSERT([sender isKindOfClass:[NSMenuItem class]]);
     NSMenuItem *item = (NSMenuItem *)sender;
+
     self.selectedFile = item.representedObject;
+    [self setupFSEventStream];
+
     [self rerunTemplate];
     [self saveTitleOfLastTemplate:item.title];
 }
