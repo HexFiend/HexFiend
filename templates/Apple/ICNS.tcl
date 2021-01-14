@@ -15,6 +15,7 @@ while {![end]} {
 	if {$chunk_type == "TOC "} {
 		section "table of contents" {
 			chunk_head
+			entry "chunk data" "" $chunk_data_length
 			move $chunk_data_length
 		}
 	} elseif {$chunk_type == "info"} {
@@ -31,6 +32,7 @@ while {![end]} {
 	} elseif {$chunk_type == "name"} {
 		section "“name” chunk" {
 			chunk_head
+			entry "chunk data" "" $chunk_data_length
 			move $chunk_data_length
 		}
 	} elseif {$chunk_type == "icnV"} {
@@ -40,7 +42,6 @@ while {![end]} {
 		}
 	} else {
 		section "icon" {
-			sectionvalue $chunk_type
 			ascii 4 "icon type"
 			set icon_size ""
 			set icon_target_size ""
@@ -253,6 +254,13 @@ while {![end]} {
 				}
 				default {
 					set unknown_icon_type 1
+				}
+			}
+			if {$icon_size != "" || $icon_target_size != ""} {
+				if {$icon_target_size != ""} {
+					sectionvalue "$chunk_type ($icon_target_size@2×)"
+				} else {
+					sectionvalue "$chunk_type ($icon_size@2×)"
 				}
 			}
 			if {$unknown_icon_type == 0} {
