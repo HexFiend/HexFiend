@@ -2,10 +2,10 @@
 big_endian
 requires 0 "69 63 6E 73"
 ascii 4 "magic number"
-uint32 "file size (b)"
+uint32 "file size (B)"
 proc chunk_head {} {
 	ascii 4 "chunk type"
-	uint32 "chunk length (b)"
+	uint32 "chunk length (B)"
 }
 while {![end]} {
 	set chunk_type [ascii 4]
@@ -303,7 +303,7 @@ while {![end]} {
 			} else {
 				entry "warning" "unrecognised icon type"
 			}
-			uint32 "chunk length (b)"
+			uint32 "chunk length (B)"
 			entry "chunk data" "" $chunk_data_length
 			move $chunk_data_length
 		}
