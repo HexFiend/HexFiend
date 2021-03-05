@@ -16,22 +16,29 @@ As of v2.10+ the label argument is optional. When the label is not passed, no en
 set size [uint32]
 ```
 
-| Type | Description |
-| --------| ----------- |
-| uint64  | Reads an unsigned 64-bit integer |
-| int64   | Reads a signed 64-bit integer |
-| uint32  | Reads an unsigned 32-bit integer |
-| int32   | Reads a signed 32-bit integer |
-| uint16  | Reads an unsigned 16-bit integer |
-| int16   | Reads a signed 16-bit integer |
-| uint8   | Reads an unsigned 8-bit integer |
-| int8    | Reads a signed 8-bit integer |
-| float   | Reads a 32-bit floating point |
-| double  | Reads a 64-bit floating point |
-| uuid    | Reads 16-byte UUID |
-| macdate | Reads classic Mac OS 4-byte date (seconds since January 1, 1904) |
-| fatdate | Reads FAT, or DOS, 2-byte date (v2.13+) |
-| fattime | Reads FAT, or DOS, 2-byte time (v2.13+) |
+| Type        | Description |
+| ------------| ----------- |
+| uint64      | Reads an unsigned 64-bit integer |
+| int64       | Reads a signed 64-bit integer |
+| uint32      | Reads an unsigned 32-bit integer |
+| int32       | Reads a signed 32-bit integer |
+| uint24      | Reads an unsigned 24-bit integer |
+| uint16      | Reads an unsigned 16-bit integer |
+| int16       | Reads a signed 16-bit integer |
+| uint8       | Reads an unsigned 8-bit integer |
+| int8        | Reads a signed 8-bit integer |
+| uint8_bits  | Read some number of `bits` out of an unsigned 8-bit integer |
+| uint16_bits | Read some number of `bits` out of an unsigned 16-bit integer |
+| uint32_bits | Read some number of `bits` out of an unsigned 32-bit integer |
+| uint64_bits | Read some number of `bits` out of an unsigned 64-bit integer |
+| float       | Reads a 32-bit floating point |
+| double      | Reads a 64-bit floating point |
+| uuid        | Reads 16-byte UUID |
+| macdate     | Reads classic Mac OS 4-byte date (seconds since January 1, 1904) |
+| fatdate     | Reads FAT, or DOS, 2-byte date (v2.13+) |
+| fattime     | Reads FAT, or DOS, 2-byte time (v2.13+) |
+| unixtime32  | Reads a UNIX time in (seconds since 00:00:00 UTC on 1 January 1970) |
+| unixtime64  | Reads a UNIX time in (seconds since 00:00:00 UTC on 1 January 1970) |
 
 As of v2.11+, unsigned integer types have an optional parameter `-hex` which causes the displayed value to be in hexadecimal, instead of decimal:
 
@@ -94,6 +101,7 @@ Various commands are provided for reading and interpreting multiple bytes.
 | ascii *len* *label* | Reads *len* bytes as ASCII | `ascii 32 "Name"` |
 | utf16 *len* *label* | Reads *len* bytes as UTF16 (via current endian) | `utf16 12 "Name"` |
 | str *len* *encoding* *label* | Reads *len* bytes using the specified *encoding* identifier [v2.11+] | `str 8 "utf8" "Name"` |
+| cstr *encoding* *label* | Reads a sequence of zero-termited bytes using the specified *encoding* identifier | `cstr "utf8" "Name"` |
 
 A special length value `eof` can be used to go to the end of the file (v2.11+):
 
