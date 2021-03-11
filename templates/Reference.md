@@ -37,7 +37,7 @@ set size [uint32]
 | macdate     | Reads classic Mac OS 4-byte date (seconds since January 1, 1904) |
 | fatdate     | Reads FAT, or DOS, 2-byte date (v2.13+) |
 | fattime     | Reads FAT, or DOS, 2-byte time (v2.13+) |
-| unixtime32  | Reads a UNIX time in (seconds since 00:00:00 UTC on 1 January 1970) |
+| unixtime32  | Reads a UNIX time in (seconds since January 1, 1970) |
 | unixtime64  | Reads a UNIX time in (seconds since 00:00:00 UTC on 1 January 1970) |
 
 As of v2.11+, unsigned integer types have an optional parameter `-hex` which causes the displayed value to be in hexadecimal, instead of decimal:
