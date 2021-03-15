@@ -6,6 +6,17 @@
 		<description>HexFiend 2 Release Notes</description>
 		<language>en</language>
 		<item>
+			<title>HexFiend 2.14.1</title>
+			<sparkle:releaseNotesLink>https://hexfiend.github.io/HexFiend/ReleaseNotes.html</sparkle:releaseNotesLink>
+			<enclosure
+				url="https://github.com/HexFiend/HexFiend/releases/download/v2.14.1/Hex_Fiend_2.14.1.dmg"
+				sparkle:version="1615771335"
+				sparkle:shortVersionString="2.14.1"
+				sparkle:dsaSignature="MCwCFALk1/LbHbeqPT+iH9jhdCeo3S/1AhQblOIM1tQ2gmm0h+7uCwxjsL9V6w=="
+			/>
+			<sparkle:minimumSystemVersion>10.11</sparkle:minimumSystemVersion>
+		</item>
+		<item>
 			<title>HexFiend 2.14.0</title>
 			<sparkle:releaseNotesLink>https://hexfiend.github.io/HexFiend/ReleaseNotes.html</sparkle:releaseNotesLink>
 			<enclosure
