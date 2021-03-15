@@ -97,7 +97,7 @@ Various commands are provided for reading and interpreting multiple bytes.
 | ascii *len* *label* | Reads *len* bytes as ASCII | `ascii 32 "Name"` |
 | utf16 *len* *label* | Reads *len* bytes as UTF16 (via current endian) | `utf16 12 "Name"` |
 | str *len* *encoding* *label* | Reads *len* bytes using the specified *encoding* identifier [v2.11+] | `str 8 "utf8" "Name"` |
-| cstr *encoding* *label* | Reads a sequence of zero-terminated bytes using the specified *encoding* identifier | `cstr "utf8" "Name"` |
+| cstr *encoding* *label* | Reads a sequence of null-terminated bytes using the specified *encoding* identifier | `cstr "utf8" "Name"` |
 
 A special length value `eof` can be used to go to the end of the file (v2.11+):
 
