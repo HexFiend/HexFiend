@@ -129,8 +129,6 @@ section "Resource Fork" {
                                 set name_length [uint8 "Length"]
                                 set name [str $name_length "macRoman" "Name"]
                             }
-                        } else {
-                            set name ""
                         }
 
                         link_to_section "Data" [expr {$header_data_offset + $data_offset}] {
