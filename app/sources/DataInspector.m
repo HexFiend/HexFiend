@@ -282,7 +282,12 @@ static NSString *floatingPointDescription(const unsigned char *bytes, NSUInteger
             if (endianness != eNativeEndianness) temp.i = reverse(temp.i, sizeof(double));
             return [NSString stringWithFormat:@"%.*g", DBL_DECIMAL_DIG, temp.f];
         }
-#ifndef __arm64__ // TODO
+#ifdef __arm64__ // TODO
+        case 10:
+        {
+            return [NSString stringWithFormat:@"10bit float incompatible on arm"];
+        }
+#else
         case 10:
         {
             typedef float __attribute__((mode(XF))) float80;
