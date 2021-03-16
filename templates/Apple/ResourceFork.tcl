@@ -1,4 +1,10 @@
 # WORK IN PROGRESS!
+proc link_to_section {label offset body} {
+    set saved_pos [pos]
+    goto $offset
+    uplevel 1 [list section $label $body]
+    goto $saved_pos
+}
 
 big_endian
 
@@ -54,17 +60,27 @@ section "File Format" {
                 for {set j 0} {$j < $count} {incr j} {
                     section $i {
                         uint16 "Resource ID"
-                        uint16 "Name List Offset"
+                        set name_offset [int16 "Name List Offset"]
                         uint8 "Attributes"
                         set data_offset [uint24 "Data Offset"]
-                        section "Data" {
-                            set save_pos [pos]
-                            goto [expr {$header_data_offset + $data_offset}]
+
+                        if {$name_offset > -1} {
+                            set name_pos [expr {$map_offset + $name_list_offset + $name_offset}]
+
+                            # Short digression to get the name.
+                            link_to_section "Name" $name_pos {
+                                set name_length [uint8 "Length"]
+                                set name [str $name_length "macRoman" "Name"]
+                            }
+                        } else {
+                            set name ""
+                        }
+
+                        link_to_section "Data" [expr {$header_data_offset + $data_offset}] {
                             set data_len [uint32 "Data Length"]
                             if {$data_len > 0} {
                                 hex $data_len "Data" ;# TODO: region
                             }
-                            goto $save_pos
                         }
                         uint32 "Handle"
                     }
