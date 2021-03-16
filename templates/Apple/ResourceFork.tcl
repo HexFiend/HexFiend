@@ -151,7 +151,7 @@ section "Resource Fork" {
             for {set i 0} {![end]} {incr i} {
                 section "Name $i" {
                     set num_name_bytes [uint8 "Length"]
-                    ascii $num_name_bytes "Name"
+                    str $num_name_bytes "macRoman" "Name"
                 }
             }
         }
