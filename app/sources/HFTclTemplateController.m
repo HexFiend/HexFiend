@@ -56,6 +56,7 @@ enum command {
     command_section,
     command_endsection,
     command_sectionvalue,
+    command_sectioncollapse,
     command_zlib_uncompress,
     command_entry,
     command_uint8_bits,
@@ -109,6 +110,7 @@ DEFINE_COMMAND(requires)
 DEFINE_COMMAND(section)
 DEFINE_COMMAND(endsection)
 DEFINE_COMMAND(sectionvalue)
+DEFINE_COMMAND(sectioncollapse)
 DEFINE_COMMAND(zlib_uncompress)
 DEFINE_COMMAND(entry)
 DEFINE_COMMAND(uint8_bits)
@@ -174,6 +176,7 @@ DEFINE_COMMAND(uint64_bits)
         CMD(section),
         CMD(endsection),
         CMD(sectionvalue),
+        CMD(sectioncollapse),
         CMD(zlib_uncompress),
         CMD(entry),
         CMD(uint8_bits),
@@ -458,14 +461,19 @@ DEFINE_COMMAND(uint64_bits)
             break;
         }
         case command_section: {
-            if (objc != 2 && objc != 3) {
-                Tcl_WrongNumArgs(_interp, 1, objv, "label [body]");
+            if (objc < 2 || objc > 4) {
+                Tcl_WrongNumArgs(_interp, 1, objv, " [-collapsed] label [body]");
                 return TCL_ERROR;
             }
-            NSString *label = [NSString stringWithUTF8String:Tcl_GetStringFromObj(objv[1], NULL)];
-            [self beginSectionWithLabel:label];
-            if (objc == 3) {
-                const int err = Tcl_EvalObjEx(_interp, objv[2], 0);
+            int labelArg = 1;
+            if (0 == strcmp("-collapsed", Tcl_GetString(objv[labelArg]))) {
+                labelArg++;
+            }
+
+            NSString *label = [NSString stringWithUTF8String:Tcl_GetString(objv[labelArg])];
+            [self beginSectionWithLabel:label collapsed:(labelArg > 1)];
+            if (objc == labelArg + 2) {
+                const int err = Tcl_EvalObjEx(_interp, objv[labelArg + 1], 0);
                 if (err != TCL_OK) {
                     return err;
                 }
@@ -485,6 +493,11 @@ DEFINE_COMMAND(uint64_bits)
             }
             NSString *value = [NSString stringWithUTF8String:Tcl_GetStringFromObj(objv[1], NULL)];
             self.currentSection.value = value;
+            break;
+        }
+        case command_sectioncollapse: {
+            CHECK_NO_ARG;
+            [self.initiallyCollapsed addObject:self.currentSection];
             break;
         }
         case command_zlib_uncompress: {

@@ -17,6 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (HFTemplateNode *)evaluateScript:(NSString *)path forController:(HFController *)controller error:(NSString *_Nullable*_Nullable)error;
 
 @property NSUInteger anchor;
+@property NSMutableArray *initiallyCollapsed;
 
 @end
 
@@ -68,7 +69,7 @@ typedef NS_ENUM(NSUInteger, HFEndian) {
 - (void)moveTo:(long long)offset;
 - (void)goTo:(unsigned long long)offset;
 
-- (void)beginSectionWithLabel:(NSString *_Nullable)label;
+- (void)beginSectionWithLabel:(NSString *_Nullable)label collapsed:(BOOL)collapsed;
 - (void)endSection;
 
 @property (readonly) HFTemplateNode *currentSection;

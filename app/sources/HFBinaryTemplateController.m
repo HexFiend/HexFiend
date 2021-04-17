@@ -250,11 +250,12 @@
     }
     
     HFTemplateNode *node = [templateController evaluateScript:self.selectedFile.path forController:controller error:&errorMessage];
-    
+
     // Restore current directory
     (void)[fm changeCurrentDirectoryPath:currentDir];
     
     [self setRootNode:node error:errorMessage];
+    [self collapseInitiallyCollapsedGroups:templateController.initiallyCollapsed];
     [self updateSelectionColorRange];
 }
 
@@ -293,6 +294,13 @@
         if (node.isGroup && node.value) {
             [outlineView collapseItem:node];
         }
+    }
+}
+
+- (void)collapseInitiallyCollapsedGroups:(NSArray *)initiallyCollapsed {
+    NSOutlineView *outlineView = self.outlineView;
+    for (HFTemplateNode *node in initiallyCollapsed) {
+        [outlineView collapseItem:node];
     }
 }
 

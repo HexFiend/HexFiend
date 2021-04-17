@@ -46,6 +46,14 @@ uint32 -hex "CRC"
 
 Any command that takes a label will create a new entry in the user interface with the label provided and a string representation of the data type. However, this could become a long list of entries. Therefore entries can be grouped via the `section` command.
 
+    section [-collapsed] label [body]
+
+| Parameter  | Description |
+| ------------- | ------------- |
+| -collapsed | Collapse this section when initially presented  |
+| label |  Label to display |
+| body | |
+
 `section` takes a label argument, just like types do. However, no value is associated with the group. To end grouping, use the `endsection` command. Here's an example:
 
 ```tcl
@@ -69,6 +77,13 @@ Sections by default don't have any value. To set a value on a section, use the `
 ```tcl
 sectionvalue "Example Value"
 ```
+
+Sections may be created in the collapsed state by adding the `-collapsed` flag argument
+ahead of the `section` command's other arguments.  If a section should normally be
+presented in an `expanded` mode but during the process of applying a template it becomes
+clear that the current section is too large to initially display, the `sectioncollapse`
+command can be used to mark the section as initially `-collapsed`.
+
 
 ## Endian
 
