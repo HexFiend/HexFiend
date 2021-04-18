@@ -42,6 +42,29 @@ As of v2.11+, unsigned integer types have an optional parameter `-hex` which cau
 uint32 -hex "CRC"
 ```
 
+The `..._bits` commands are particularly complex types.  These commands read an
+unsigned integer of the given size and then extract and permute a specific list
+of bits.  For example, suppose the byte `0x05` was read with `uint8_bits` as
+follows:
+
+    ```tcl
+    uint8_bits 0,1,2,3 "Reversed Low Nybble"
+    ```
+
+This produces a new value from the bits of the low nybble and reverses those bits
+for presentation to the user.  In the above case, the resulting byte would be
+`0x0A`.
+
+| Command                                      | Description                                                            |
+| -------------------------------------------- | ---------------------------------------------------------------------- |
+| `uint8_bits   *bit#[,bit#[,...]]* *[label]*` | Read an unsigned -bit integer, extract and permute the specified bits. |
+| `uint16_bits  *bit#[,bit#[,...]]* *[label]*` | Read an unsigned -bit integer, extract and permute the specified bits. |
+| `uint32_bits  *bit#[,bit#[,...]]* *[label]*` | Read an unsigned -bit integer, extract and permute the specified bits. |
+| `uint64_bits  *bit#[,bit#[,...]]* *[label]*` | Read an unsigned -bit integer, extract and permute the specified bits. |
+
+Bits are numbered starting with 0 from least-significant on the right to most-significant on the left.
+
+
 ## Grouping
 
 Any command that takes a label will create a new entry in the user interface with the label provided and a string representation of the data type. However, this could become a long list of entries. Therefore entries can be grouped via the `section` command.
