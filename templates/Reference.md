@@ -55,12 +55,12 @@ This produces a new value from the bits of the low nybble and reverses those bit
 for presentation to the user.  In the above case, the resulting byte would be
 `0x0A`.
 
-| Command                                      | Description                                                            |
-| -------------------------------------------- | ---------------------------------------------------------------------- |
-| `uint8_bits   *bit#[,bit#[,...]]* *[label]*` | Read an unsigned -bit integer, extract and permute the specified bits. |
-| `uint16_bits  *bit#[,bit#[,...]]* *[label]*` | Read an unsigned -bit integer, extract and permute the specified bits. |
-| `uint32_bits  *bit#[,bit#[,...]]* *[label]*` | Read an unsigned -bit integer, extract and permute the specified bits. |
-| `uint64_bits  *bit#[,bit#[,...]]* *[label]*` | Read an unsigned -bit integer, extract and permute the specified bits. |
+| Command                                      | Description                                                              |
+| -------------------------------------------- | ------------------------------------------------------------------------ |
+| `uint8_bits   *bit#[,bit#[,...]]* *[label]*` | Read an unsigned 8-bit  integer, extract and permute the specified bits. |
+| `uint16_bits  *bit#[,bit#[,...]]* *[label]*` | Read an unsigned 16-bit integer, extract and permute the specified bits. |
+| `uint32_bits  *bit#[,bit#[,...]]* *[label]*` | Read an unsigned 32-bit integer, extract and permute the specified bits. |
+| `uint64_bits  *bit#[,bit#[,...]]* *[label]*` | Read an unsigned 64-bit integer, extract and permute the specified bits. |
 
 Bits are numbered starting with 0 from least-significant on the right to most-significant on the left.
 
