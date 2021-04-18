@@ -47,9 +47,9 @@ unsigned integer of the given size and then extract and permute a specific list
 of bits.  For example, suppose the byte `0x05` was read with `uint8_bits` as
 follows:
 
-    ```tcl
-    uint8_bits 0,1,2,3 "Reversed Low Nybble"
-    ```
+```tcl
+uint8_bits 0,1,2,3 "Reversed Low Nybble"
+```
 
 This produces a new value from the bits of the low nybble and reverses those bits
 for presentation to the user.  In the above case, the resulting byte would be
@@ -57,10 +57,10 @@ for presentation to the user.  In the above case, the resulting byte would be
 
 | Command                                      | Description                                                              |
 | -------------------------------------------- | ------------------------------------------------------------------------ |
-| `uint8_bits   *bit#[,bit#[,...]]* *[label]*` | Read an unsigned 8-bit  integer, extract and permute the specified bits. |
-| `uint16_bits  *bit#[,bit#[,...]]* *[label]*` | Read an unsigned 16-bit integer, extract and permute the specified bits. |
-| `uint32_bits  *bit#[,bit#[,...]]* *[label]*` | Read an unsigned 32-bit integer, extract and permute the specified bits. |
-| `uint64_bits  *bit#[,bit#[,...]]* *[label]*` | Read an unsigned 64-bit integer, extract and permute the specified bits. |
+| uint8_bits   *bit#[,bit#[,...]]* *[label]* | Read an unsigned 8-bit  integer, extract and permute the specified bits. |
+| uint16_bits  *bit#[,bit#[,...]]* *[label]* | Read an unsigned 16-bit integer, extract and permute the specified bits. |
+| uint32_bits  *bit#[,bit#[,...]]* *[label]* | Read an unsigned 32-bit integer, extract and permute the specified bits. |
+| uint64_bits  *bit#[,bit#[,...]]* *[label]* | Read an unsigned 64-bit integer, extract and permute the specified bits. |
 
 Bits are numbered starting with 0 from least-significant on the right to most-significant on the left.
 
