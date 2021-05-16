@@ -36,6 +36,7 @@ static const unsigned long long kMaxCacheSize = 1024 * 1024;
     self.position = 0;
     self.root = [[HFTemplateNode alloc] initGroupWithLabel:nil parent:nil];
     self.currentNode = self.root;
+    self.initiallyCollapsed = [[NSMutableArray alloc] init];
     if (error) {
         *error = nil;
     }
@@ -524,11 +525,14 @@ static const unsigned long long kMaxCacheSize = 1024 * 1024;
     return self.controller.contentsLength;
 }
 
-- (void)beginSectionWithLabel:(NSString *)label {
+- (void)beginSectionWithLabel:(NSString *)label collapsed:(BOOL)collapsed {
     HFTemplateNode *node = [[HFTemplateNode alloc] initGroupWithLabel:label parent:self.currentNode];
     node.range = HFRangeMake(self.anchor + self.position, 0);
     [self.currentNode.children addObject:node];
     self.currentNode = node;
+    if (collapsed) {
+        [self.initiallyCollapsed addObject:node];
+    }
 }
 
 - (void)endSection {
