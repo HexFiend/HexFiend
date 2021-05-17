@@ -452,7 +452,11 @@ static NSAttributedString *inspectionSuccess(NSString *s) {
                     return inspectionError(InspectionErrorNoData);
                 case 1: case 3:
                     return inspectionError(InspectionErrorTooLittle);
+#ifndef __arm64__ // arm 64 doesn't support 80 bit float values
                 case 2: case 4: case 8: case 10: case 16:
+#else
+                case 2: case 4: case 8: case 16:
+#endif
                     if(outIsError) *outIsError = NO;
                     return inspectionSuccess(floatingPointDescription(bytes, length, endianness));
                 default:
