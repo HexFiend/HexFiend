@@ -2945,7 +2945,6 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/vendor",
-					"$(BUILD_DIR)/Release/",
 				);
 				INFOPLIST_FILE = app/Info.plist;
 				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-traditional";
@@ -3108,7 +3107,6 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/vendor",
-					"$(BUILD_DIR)/Release/",
 				);
 				INFOPLIST_FILE = app/Info.plist;
 				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-traditional";
@@ -3268,7 +3266,6 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/vendor",
-					"$(BUILD_DIR)/Release/",
 				);
 				INFOPLIST_FILE = app/Info.plist;
 				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-traditional";
@@ -3448,7 +3445,6 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/vendor",
-					"$(BUILD_DIR)/Release/",
 				);
 				INFOPLIST_FILE = app/Info_MAS.plist;
 				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-traditional";
@@ -3639,7 +3635,6 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/vendor",
-					"$(BUILD_DIR)/Release/",
 				);
 				INFOPLIST_FILE = app/Info_MAS.plist;
 				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-traditional";
@@ -3835,7 +3830,6 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/vendor",
-					"$(BUILD_DIR)/Release/",
 				);
 				INFOPLIST_FILE = app/Info.plist;
 				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-traditional";
@@ -4019,7 +4013,6 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/vendor",
-					"$(BUILD_DIR)/Release/",
 				);
 				INFOPLIST_FILE = app/Info.plist;
 				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-traditional";
