@@ -1729,7 +1729,7 @@
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1220;
+				LastUpgradeCheck = 1250;
 				ORGANIZATIONNAME = ridiculous_fish;
 				TargetAttributes = {
 					9408FBF919DD72DE004F800E = {
