@@ -26,7 +26,7 @@ proc parse_fmt {} {
         } elseif {$bytes_per_sample == 0x4} {
             entry "Block Align" "16 bit stereo" 2 [expr [pos]-2]
         } else {
-           entry "Block Align" $bytes_per_sample 2 [expr [pos]-2]
+           entry "Block Align" [format 0x%x $bytes_per_sample] 2 [expr [pos]-2]
         }
         uint16 "Bits per sample"
         if {$format == 0xFFFE} {
