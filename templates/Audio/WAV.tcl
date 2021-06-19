@@ -1,11 +1,33 @@
 proc parse_fmt {} {
     section "Format Descriptor" {
         sectionvalue "Wave sample format"
-        set format [uint16 -hex "Format"]
+        set format [uint16]
+        if {$format == 0x1} {
+            entry "Format" "PCM" 2 [expr [pos]-2]
+        } elseif {$format == 0x3} {
+            entry "Format" "IEEE_FLOAT" 2 [expr [pos]-2]
+        } elseif {$format == 0x6} {
+            entry "Format" "ALAW" 2 [expr [pos]-2]
+        } elseif {$format == 0x7} {
+            entry "Format" "MULAW" 2 [expr [pos]-2]
+        } elseif {$format == 0xFFFE} {
+            entry "Format" "EXTENSIBLE" 2 [expr [pos]-2]
+        } else {
+            entry "Format" [format 0x%x $format] 2 [expr [pos]-2]
+        }
         set num_channels [int16 "# of Channels"]
         set sample_rate [uint32 "Sample Rate"]
         uint32 "Bytes per second"
-        set bytes_per_sample [uint16 "Block Align"]
+        set bytes_per_sample [uint16]
+        if {$bytes_per_sample == 0x1} {
+            entry "Block Align" "8 bit mono" 2 [expr [pos]-2]
+        } elseif {$bytes_per_sample == 0x2} {
+            entry "Block Align" "8 bit stereo / 16 bit mono" 2 [expr [pos]-2]
+        } elseif {$bytes_per_sample == 0x4} {
+            entry "Block Align" "16 bit stereo" 2 [expr [pos]-2]
+        } else {
+           entry "Block Align" [format 0x%x $bytes_per_sample] 2 [expr [pos]-2]
+        }
         uint16 "Bits per sample"
         if {$format == 0xFFFE} {
             section "Extended Format" {
@@ -14,7 +36,7 @@ proc parse_fmt {} {
                 uint32 -hex "Channel Map"
                 uuid "Format GUID"
             }
-	    } else {
+        } else {
             entry "Extended Format" "(Not Present)"
         }
     }
