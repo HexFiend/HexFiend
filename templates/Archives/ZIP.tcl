@@ -1,4 +1,5 @@
 # Quick and Dirty ZIP Format by Lemnet
+# Expanded by fosterbrereton
 # https://en.wikipedia.org/wiki/Zip_(file_format)
 
 little_endian
@@ -157,9 +158,7 @@ while {![end]} {
             uint16 "Total number of central directory records"
             uint32 "Size of central directory"
             uint32 "Offset of start of central directory"
-            set cl [uint16]
-            move -2
-            uint16  "Comment length"
+            set cl [uint16  "Comment length"]            
             if {$cl > 0} {
                 hex $cl "Comment"
             }
