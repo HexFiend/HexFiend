@@ -83,7 +83,7 @@
                     <rect key="frame" x="4" y="0.0" width="287" height="130"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                     <textFieldCell key="cell" controlSize="small" sendsActionOnEndEditing="YES" alignment="left" title="Label" id="3tC-5d-kwc">
-                        <font key="font" size="12" name="Menlo-Regular"/>
+                        <font key="font" size="12" metaFont="fixedUser"/>
                         <color key="textColor" red="0.37603222150259064" green="0.37603222150259064" blue="0.37603222150259064" alpha="0.84999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
