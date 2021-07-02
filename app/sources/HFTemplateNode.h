@@ -15,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithLabel:(NSString *)label value:(NSString *)value;
 - (instancetype)initGroupWithLabel:(NSString *_Nullable)label parent:(HFTemplateNode *_Nullable)parent;
 
-@property (readonly) NSString *label;
+@property (copy) NSString *label;
 @property (copy) NSString *value;
 @property (readonly) BOOL isGroup;
 @property (readonly, weak) HFTemplateNode *parent;
