@@ -55,6 +55,7 @@ enum command {
     command_requires,
     command_section,
     command_endsection,
+    command_sectionname,
     command_sectionvalue,
     command_sectioncollapse,
     command_zlib_uncompress,
@@ -109,6 +110,7 @@ DEFINE_COMMAND(end)
 DEFINE_COMMAND(requires)
 DEFINE_COMMAND(section)
 DEFINE_COMMAND(endsection)
+DEFINE_COMMAND(sectionname)
 DEFINE_COMMAND(sectionvalue)
 DEFINE_COMMAND(sectioncollapse)
 DEFINE_COMMAND(zlib_uncompress)
@@ -175,6 +177,7 @@ DEFINE_COMMAND(uint64_bits)
         CMD(requires),
         CMD(section),
         CMD(endsection),
+        CMD(sectionname),
         CMD(sectionvalue),
         CMD(sectioncollapse),
         CMD(zlib_uncompress),
@@ -484,6 +487,15 @@ DEFINE_COMMAND(uint64_bits)
         case command_endsection: {
             CHECK_NO_ARG;
             [self endSection];
+            break;
+        }
+        case command_sectionname: {
+            if (objc != 2) {
+                Tcl_WrongNumArgs(_interp, 1, objv, "value");
+                return TCL_ERROR;
+            }
+            NSString *name = [NSString stringWithUTF8String:Tcl_GetStringFromObj(objv[1], NULL)];
+            self.currentSection.label = name;
             break;
         }
         case command_sectionvalue: {
