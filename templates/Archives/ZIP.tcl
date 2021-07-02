@@ -51,7 +51,7 @@ proc gp_bit_flags {} {
         sectionvalue $flgs
     }
 
-    return $flgs;
+    return $flgs
 }
 
 proc extra_fields {sz} {
@@ -60,9 +60,39 @@ proc extra_fields {sz} {
         set count 0
         while {[expr [pos]] < $end} {
             section "\[$count\]" {
-                uint16 -hex "Identifier";
-                set exl [uint16 "Extra field length"]         
-                hex $exl "Extra field value"
+                set id [uint16 -hex "Identifier"]
+                set exl [uint16 "Extra field length"]
+                set inner_end [expr [pos] + $exl]
+                if {$id == 0x5455} {
+                    set flags [uint8 "Flags"]
+                    if {($flags & (1 << 0)) != 0} {
+                        if {[expr [pos] + 4] <= $inner_end } {
+                            unixtime32 "Mod time"
+                        }
+                    } else {
+                        entry "" "Warning: flag bitset is incorrect"
+                    }
+                    if {($flags & (1 << 1)) != 0} {
+                        if {[expr [pos] + 4] <= $inner_end } {
+                            unixtime32 "Access time"
+                        } else {
+                            entry "" "Warning: flag bitset is incorrect"
+                        }
+                    }
+                    if {($flags & (1 << 2)) != 0} {
+                        if {[expr [pos] + 4] <= $inner_end } {
+                            unixtime32 "Create time"
+                        } else {
+                            entry "" "Warning: flag bitset is incorrect"
+                        }
+                    }
+                } else {
+                    if {[expr [pos] + $exl] <= $inner_end} {
+                        hex $exl "Raw bytes"
+                    } else {
+                        entry "" "Warning: flag bitset is incorrect"
+                    }
+                }
             }
             set count [expr $count + 1]
         }
@@ -160,7 +190,7 @@ while {![end]} {
             uint32 "Offset of start of central directory"
             set cl [uint16  "Comment length"]            
             if {$cl > 0} {
-                hex $cl "Comment"
+                ascii $cl "Comment"
             }
         }
     } else {
