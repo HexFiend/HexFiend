@@ -17,6 +17,7 @@ proc host {} {
     }
 
     entry "Host" "$description ($host)" 1 [expr [pos] - 1]
+    return $description
 }
 
 proc version {name} {
@@ -25,7 +26,8 @@ proc version {name} {
         set major [expr $version / 10]
         set minor [expr $version % 10]
         entry "Version" "$major.$minor" 1 [expr [pos] - 1]
-        host
+        set host [host]
+        sectionvalue "$major.$minor, $host"
     }
 }
 
@@ -192,6 +194,7 @@ while {![end]} {
             if {$cl > 0} {
                 ascii $cl "Comment"
             }
+            sectionvalue ""
         }
     } else {
         entry "error" "sig not recognised"
