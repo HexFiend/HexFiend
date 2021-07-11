@@ -21,3 +21,45 @@ uint32 "UInt32"
 4. Open any file and change the selection cursor to new locations. You'll see the "UInt32" field update.
 
 Congrats, you've written the most basic and simplest template that actually does something! Visit the [reference](Reference.md) for details on other commands available.
+
+## Development and debug tips
+
+### How to see debug logs
+
+Run application directly in a terminal:
+```sh
+$ /Applications/Hex\ Fiend.app/Contents/MacOS/Hex\ Fiend
+```
+Now in a template do `puts test` and you will see `test` on the terminal.
+
+### Keep partial template tree on error
+
+Wrap parse code in a `catch` and print error on crash. This will hide the error from Hex Fiend and show the partial tree.
+
+```tcl
+if [catch {
+    # call parse code
+}] {
+    puts $errorInfo
+}
+```
+
+### Automatically reload template on save
+
+You can use `osascript` to make Hex Fiend reload a template and then use a file change notification tool to trigger.
+
+Here is an example using [modd](https://github.com/cortesi/modd) configuration to reload the template "WAV" when `WAV.tcl` changes:
+
+```
+WAV.tcl {
+    prep: osascript \
+        -e 'tell application "System Events"' \
+	    -e '    tell process "Hex Fiend"' \
+	    -e '        click pop up button 1 of window 1' \
+	    -e '        click menu item "WAV" of menu 1 of pop up button 1 of window 1' \
+	    -e '    end tell' \
+        -e 'end tell'
+}
+```
+
+It shouldn't be much trouble doing the same with `watchexec` or other tools.
