@@ -101,6 +101,12 @@ Sections by default don't have any value. To set a value on a section, use the `
 sectionvalue "Example Value"
 ```
 
+Sections can also be renamed (v2.14.2+). This can be useful for adding details to elements found within an array. For example, the PNG file format is chunk based; by using `sectionname` each chunk can be renamed to its derived type (e.g., IHDR, IEND, etc.) This also frees up the section value to contain additional information about that element (e.g., the dimensions of the PNG file as found in the IHDR chunk.)
+
+```tcl
+sectionname "Example New Name"
+```
+
 Sections may be created in the collapsed state by adding the `-collapsed` flag argument
 ahead of the `section` command's other arguments.  If a section should normally be
 presented in an `expanded` mode but during the process of applying a template it becomes
