@@ -294,29 +294,81 @@ proc ExifIFDTagName {tag_number} {
 }
 
 proc ExifIFDFieldByte {count} {
+    if {$count <= 16} {
+        hex $count "Value"
+    } else {
+        bytes $count "Value"
+    }
+}
+
+proc ExifIFDFieldAscii {count} {
     ascii $count "Value"
 }
 
 proc ExifIFDFieldWord {count} {
-    uint16 "Value"
+    if {$count == 1} {
+        uint16 "Value"
+    } else {
+        for {set i 0} {$i < $count} {incr i} {
+            uint16 "Value\[ $i \]"
+        }
+        return "$count words"
+    }
 }
 
 proc ExifIFDFieldLong {count} {
-    uint32 "Value"
+    if {$count == 1} {
+        uint32 "Value"
+    } else {
+        for {set i 0} {$i < $count} {incr i} {
+            uint32 "Value\[ $i \]"
+        }
+        return "$count longs"
+    }
 }
 
 proc ExifIFDFieldRational {count} {
-    set num [uint32 "Value (Numerator)"]
-    set den [uint32 "Value (Denominator)"]
-    return [expr double($num) / $den]
+    if {$count == 1} {
+        set num [uint32]
+        set den [uint32]
+        set value [expr double($num) / $den]
+        entry "Value" "$value ($num / $den)" 8 [expr [pos] - 8]
+        return $value
+    } else {
+        for {set i 0} {$i < $count} {incr i} {
+            set num [uint32]
+            set den [uint32]
+            if {$den != 0} {
+                set value [expr double($num) / $den]
+                entry "Value\[ $i \]" "$value ($num / $den)" 8 [expr [pos] - 8]
+            } else {
+                entry "Value\[ $i \]" "NaN ($num / $den)" 8 [expr [pos] - 8]
+            }
+        }
+        return "$count rationals"
+    }
 }
 
 proc ExifIFDFieldFloat {count} {
-    float "Value"
+    if {$count == 1} {
+        float "Value"
+    } else {
+        for {set i 0} {$i < $count} {incr i} {
+            float "Value\[ $i \]"
+        }
+        return "$count floats"
+    }
 }
 
 proc ExifIFDFieldDouble {count} {
-    double "Value"
+    if {$count == 1} {
+        double "Value"
+    } else {
+        for {set i 0} {$i < $count} {incr i} {
+            double "Value\[ $i \]"
+        }
+        return "$count doubles"
+    }
 }
 
 proc ExifIFDField {header_pos field_size component_count read_proc} {
@@ -358,7 +410,7 @@ proc ExifIFDEntry {header_pos count} {
         set component_count [uint32 "Component Count"]
         switch $field_type {
             1  { set tag_value [ExifIFDField $header_pos 1 $component_count ExifIFDFieldByte] }
-            2  { set tag_value [ExifIFDField $header_pos 1 $component_count ExifIFDFieldByte] }
+            2  { set tag_value [ExifIFDField $header_pos 1 $component_count ExifIFDFieldAscii] }
             3  { set tag_value [ExifIFDField $header_pos 2 $component_count ExifIFDFieldWord] }
             4  { set tag_value [ExifIFDField $header_pos 4 $component_count ExifIFDFieldLong] }
             5  { set tag_value [ExifIFDField $header_pos 8 $component_count ExifIFDFieldRational] }
