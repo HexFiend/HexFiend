@@ -1,3 +1,7 @@
+# PNG.tcl
+# 2018 Jan 20 | kainjow | Initial implementation
+# 2021 Jul 13 | fosterbrereton | Added several chunk-specific fields and details
+
 big_endian
 requires 0 "89 50 4E 47 0D 0A 1A 0A"
 bytes 8 "Signature"
@@ -63,120 +67,11 @@ proc ChunksRGB {} {
     sectionvalue "Intent: $intent_str"
 }
 
-proc IFDFieldByte {count} {
-    ascii $count "Value"
-}
-
-proc IFDFieldWord {count} {
-    uint16 "Word"
-}
-
-proc IFDFieldLong {count} {
-    uint32 "Long"
-}
-
-proc IFDFieldRational {count} {
-    uint32 "Numerator"
-    uint32 "Denominator"
-}
-
-proc IFDFieldFloat {count} {
-    float "Float"
-}
-
-proc IFDFieldDouble {count} {
-    double "Double"
-}
-
-proc ChunkeXIfIFDField {header_pos field_size component_count read_proc} {
-    set total_size [expr $component_count * $field_size]
-    set is_remote [expr $total_size > 4]
-    set read_pos 0
-
-    if {$is_remote} {
-        set offset [uint32 "Remote Offset"]
-        set read_pos [pos]
-        goto [expr $header_pos + $offset]
-    }
-
-    set result [$read_proc $component_count]
-
-    if {$is_remote} {
-        goto $read_pos
-    } else {
-        set leftovers [expr 4 - $total_size]
-        if {$leftovers > 0} {
-            bytes $leftovers "Extra ($leftovers bytes)"
-        }
-    }
-
-    return $result
-}
-
-proc ChunkeXIfIFDEntry {header_pos count} {
-    section "\[ $count \]" {
-        set tag_number [uint16 "Tag Number"]
-        set field_type [uint16 "Field Type"]
-        set component_count [uint32 "Component Count"]
-        switch $field_type {
-            1  { set tag_value [ChunkeXIfIFDField $header_pos 1 $component_count IFDFieldByte] }
-            2  { set tag_value [ChunkeXIfIFDField $header_pos 1 $component_count IFDFieldByte] }
-            3  { set tag_value [ChunkeXIfIFDField $header_pos 2 $component_count IFDFieldWord] }
-            4  { set tag_value [ChunkeXIfIFDField $header_pos 4 $component_count IFDFieldLong] }
-            5  { set tag_value [ChunkeXIfIFDField $header_pos 8 $component_count IFDFieldRational] }
-            6  { set tag_value [ChunkeXIfIFDField $header_pos 1 $component_count IFDFieldByte] }
-            7  { set tag_value [ChunkeXIfIFDField $header_pos 1 $component_count IFDFieldByte] }
-            8  { set tag_value [ChunkeXIfIFDField $header_pos 2 $component_count IFDFieldWord] }
-            9  { set tag_value [ChunkeXIfIFDField $header_pos 4 $component_count IFDFieldLong] }
-            10 { set tag_value [ChunkeXIfIFDField $header_pos 8 $component_count IFDFieldRational] }
-            11 { set tag_value [ChunkeXIfIFDField $header_pos 4 $component_count IFDFieldFloat] }
-            12 { set tag_value [ChunkeXIfIFDField $header_pos 8 $component_count IFDFieldDouble] }
-        }
-        sectionname $tag_number
-        sectionvalue $tag_value
-    }
-}
-
-proc ChunkeXIfIFD {header_pos} {
-    set count [uint16 "Entry Count"]
-    section "Entries" {
-        for {set i 0} {$i < $count} {incr i} {
-            ChunkeXIfIFDEntry $header_pos $i
-            if {$i == 3} {
-                # return
-            }
-        }
-        # sectionvalue "$count entries"
-    }
-    set next_offset [uint32 "Next IFD Offset"]
-    return
-    if {$next_offset != 0} {
-        set marker [pos]
-        move $next_offset
-        ChunkeXIfIFD $header_pos
-        goto $marker
-    }
-}
-
 proc ChunkeXIf {length} {
-    set header_pos [pos]
-    set header [uint16 Header]
-
-    if {$header == 0x4D4D} {
-        big_endian
-        entry "" "(Big Endian)" 2 [expr [pos] - 2]
-    } else {
-        little_endian
-        entry "" "(Little Endian)" 2 [expr [pos] - 2]
-    }
-
-    uint16 "Tag Mark"
-    set ifd_offset [uint32 "IFD Offset"]
-    if {$ifd_offset != 8} {
-        entry "" "WARNING: Unsupported IFD offset (but may be well-formed)"
-        return
-    }
-    ChunkeXIfIFD $header_pos
+    # in Metadata/Exif.tcl
+    set end_of_chunk [expr [pos] + $length]
+    Exif
+    goto $end_of_chunk
 }
 
 proc ChunkbKGD {length} {
@@ -268,6 +163,11 @@ proc ChunkzTXt {length} {
     sectionvalue "\'$keyword\'"
 }
 
+set where [file dirname [info script]]
+set root [file dirname $where]
+set include_exif [file join $root Metadata Exif.tcl]
+source $include_exif
+
 while {![end]} {
 	section "Chunk" {
 		set length [uint32 "Length"]
@@ -298,7 +198,6 @@ while {![end]} {
             ChunkbKGD $length
         } elseif {$type == "eXIf"} {
             ChunkeXIf $length
-            return
         } else {
             if {$length > 0 } {
     			bytes $length "Raw Data"
@@ -307,5 +206,6 @@ while {![end]} {
 		}
 		hex 4 "CRC"
         sectionname $type
+        #if {$type == "eXIf"} { return }
 	}
 }
