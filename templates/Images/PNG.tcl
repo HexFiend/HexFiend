@@ -2,12 +2,8 @@
 # 2018 Jan 20 | kainjow | Initial implementation
 # 2021 Jul 13 | fosterbrereton | Added several chunk-specific fields and details
 
-# REVISIT: (fosterbrereton) It'd be nice if the environment included a global variable
-# to the templates directory, making this kind of derivation would unnecessary.
-set where [file dirname [info script]]
-set root [file dirname $where]
-source [file join $root Metadata Exif.tcl]
-source [file join $root Utility General.tcl]
+include "Metadata/Exif.tcl"
+include "Utility/General.tcl"
 
 big_endian
 requires 0 "89 50 4E 47 0D 0A 1A 0A"
@@ -18,9 +14,11 @@ proc ChunkIHDR {} {
     set height [uint32 "Height"]
     set bpp [uint8 "Bit Depth"]
     set color_mode [uint8 "Color Type"]
-    uint8 "Compression Method"
+    set compression_method [uint8 "Compression Method"]
     uint8 "Filter Method"
     uint8 "Interlace Method"
+
+    check { $compression_method == 0 }
 
     switch $color_mode {
         0 { set color_mode_str "Grayscale" }
@@ -80,7 +78,26 @@ proc ChunkeXIf {length} {
     # note of where the end of the block should be, and jump there when it's done.
     set end_of_chunk [expr [pos] + $length]
     Exif
+    sectionvalue "Exif Metadata"
     goto $end_of_chunk
+}
+
+proc ChunktIME {} {
+    set year [uint16 Year]
+    set month [uint8 Month]
+    set day [uint8 Day]
+    set hour [uint8 Hour]
+    set minute [uint8 Minute]
+    set second [uint8 Second]
+
+    check { $month >= 1 && $month <= 12 }
+    check { $day >= 1 && $day <= 31 }
+    check { $hour >= 0 && $hour <= 23 }
+    check { $minute >= 0 && $minute <= 59 }
+    # 60 is valid here to account for leap seconds
+    check { $second >= 0 && $second <= 60 }
+
+    sectionvalue "$year-$month-$day $hour:$minute:$second"
 }
 
 proc ChunkbKGD {length} {
@@ -205,6 +222,8 @@ while {![end]} {
                 ChunkbKGD $length
             } elseif {$type == "eXIf"} {
                 ChunkeXIf $length
+            } elseif {$type == "tIME"} {
+                ChunktIME
             } else {
                 if {$length > 0 } {
                     hex $length "Raw Data"

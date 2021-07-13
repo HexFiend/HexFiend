@@ -1,11 +1,7 @@
 # Metadata/Exif.tcl
 # 2021 Jul 13 | fosterbrereton | Initial implementation
 
-# REVISIT: (fosterbrereton) It'd be nice if the environment included a global variable
-# to the templates directory, making this kind of derivation would unnecessary.
-set where [file dirname [info script]]
-set root [file dirname $where]
-source [file join $root Utility General.tcl]
+include "Utility/General.tcl"
 
 proc ExifIFDTagName {tag_number} {
     switch $tag_number {
