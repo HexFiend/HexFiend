@@ -1,5 +1,11 @@
-# Exif.tcl
+# Metadata/Exif.tcl
 # 2021 Jul 13 | fosterbrereton | Initial implementation
+
+# REVISIT: (fosterbrereton) It'd be nice if the environment included a global variable
+# to the templates directory, making this kind of derivation would unnecessary.
+set where [file dirname [info script]]
+set root [file dirname $where]
+source [file join $root Utility General.tcl]
 
 proc ExifIFDTagName {tag_number} {
     switch $tag_number {
@@ -296,26 +302,25 @@ proc ExifIFDFieldByte {count} {
 }
 
 proc ExifIFDFieldWord {count} {
-    uint16 "Word"
+    uint16 "Value"
 }
 
 proc ExifIFDFieldLong {count} {
-    uint32 "Long"
+    uint32 "Value"
 }
 
 proc ExifIFDFieldRational {count} {
-    set num [uint32 "Numerator"]
-    set den [uint32 "Denominator"]
-    return [expr $num / $den]
-
+    set num [uint32 "Value (Numerator)"]
+    set den [uint32 "Value (Denominator)"]
+    return [expr double($num) / $den]
 }
 
 proc ExifIFDFieldFloat {count} {
-    float "Float"
+    float "Value"
 }
 
 proc ExifIFDFieldDouble {count} {
-    double "Double"
+    double "Value"
 }
 
 proc ExifIFDField {header_pos field_size component_count read_proc} {
@@ -329,14 +334,17 @@ proc ExifIFDField {header_pos field_size component_count read_proc} {
         goto [expr $header_pos + $offset]
     }
 
-    set result [$read_proc $component_count]
+    sentry $total_size {
+        set result [$read_proc $component_count]
+    }
 
     if {$is_remote} {
         goto $read_pos
     } else {
         set leftovers [expr 4 - $total_size]
         if {$leftovers > 0} {
-            hex $leftovers "Extra ($leftovers bytes)"
+            set padding_value [hex $leftovers "Padding ($leftovers bytes)"]
+            check { $padding_value == 0 }
         }
     }
 
@@ -388,14 +396,11 @@ proc ExifIFD {header_pos} {
         section "Entries" {
             for {set i 0} {$i < $count} {incr i} {
                 ExifIFDEntry $header_pos $i
-                if {$i == 3} {
-                    # return
-                }
             }
             sectionvalue "$count entries"
         }
-        set next_offset [uint32 "Next IFD Offset"]
 
+        set next_offset [uint32 "Next IFD Offset"]
         if {$next_offset != 0} {
             set marker [pos]
             goto [expr $header_pos + $next_offset]
@@ -414,18 +419,25 @@ proc Exif {} {
     if {$header == 0x4D4D} {
         big_endian
         entry "Header" "$header (Big Endian)" 2 [expr [pos] - 2]
-    } else {
+    } elseif {$header == 0x4949} {
         little_endian
         entry "Header" "$header (Little Endian)" 2 [expr [pos] - 2]
+    } else {
+        die "bad header"
     }
 
-    uint16 "Tag Mark"
+    set tag_mark [uint16 "Tag Mark"]
+    check { $tag_mark == 42 }
+
     set ifd_offset [uint32 "IFD Offset"]
     set read_pos [pos]
+
     if {$ifd_offset != 8} {
         goto [expr $header_pos + $offset]
     }
+
     ExifIFD $header_pos
+
     if {$ifd_offset != 8} {
         goto $read_pos
     }

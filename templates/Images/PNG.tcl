@@ -1,6 +1,13 @@
-# PNG.tcl
+# Images/PNG.tcl
 # 2018 Jan 20 | kainjow | Initial implementation
 # 2021 Jul 13 | fosterbrereton | Added several chunk-specific fields and details
+
+# REVISIT: (fosterbrereton) It'd be nice if the environment included a global variable
+# to the templates directory, making this kind of derivation would unnecessary.
+set where [file dirname [info script]]
+set root [file dirname $where]
+source [file join $root Metadata Exif.tcl]
+source [file join $root Utility General.tcl]
 
 big_endian
 requires 0 "89 50 4E 47 0D 0A 1A 0A"
@@ -38,6 +45,7 @@ proc ChunkPLTEEntry {count} {
 
 proc ChunkPLTE {length} {
     set entry_count [expr $length / 3]
+    assert { $length % 3 == 0 }
     section "Palette" {
         for {set i 0} {$i < $entry_count} {incr i} {
             ChunkPLTEEntry $i
@@ -49,7 +57,7 @@ proc ChunkPLTE {length} {
 
 proc ChunkgAMA {} {
     set gamma [uint32 Gamma]
-    set derived_gamma [expr 100000 / $gamma]
+    set derived_gamma [expr double(100000) / $gamma]
     sectionvalue "Gamma: $derived_gamma"
 }
 
@@ -68,7 +76,8 @@ proc ChunksRGB {} {
 }
 
 proc ChunkeXIf {length} {
-    # in Metadata/Exif.tcl
+    # `Exif` is in Metadata/Exif.tcl. Exif jumps around all over the place while reading, so we take
+    # note of where the end of the block should be, and jump there when it's done.
     set end_of_chunk [expr [pos] + $length]
     Exif
     goto $end_of_chunk
@@ -84,7 +93,8 @@ proc ChunkbKGD {length} {
         uint16 "Green"
         uint16 "Blue"
     } else {
-        entry "" "WARNING: Unknown bKGD chunk length"
+        report "Invalid bKGD chunk length ($length)"
+        hex $length "Bad bytes"
     }
 
     sectionvalue "Background Color"
@@ -106,7 +116,8 @@ proc ChunksBIT {length} {
         uint8 "Blue"
         uint8 "Alpha"
     } else {
-        entry "" "WARNING: Unknown sBIT chunk length"
+        report "Invalid sBIT chunk length ($length)"
+        hex $length "Bad bytes"
     }
 
     sectionvalue "Significant Bits"
@@ -163,49 +174,45 @@ proc ChunkzTXt {length} {
     sectionvalue "\'$keyword\'"
 }
 
-set where [file dirname [info script]]
-set root [file dirname $where]
-set include_exif [file join $root Metadata Exif.tcl]
-source $include_exif
-
 while {![end]} {
-	section "Chunk" {
-		set length [uint32 "Length"]
-		set type [ascii 4 "Type"]
-		if {$type == "IHDR"} {
-            ChunkIHDR
-        } elseif {$type == "PLTE"} {
-            set entry_count [ChunkPLTE $length]
-            sectionvalue "$entry_count entries"
-        } elseif {$type == "IDAT"} {
-            bytes $length "Datastream Segment"
-            sectionvalue "Image Data"
-        } elseif {$type == "iTXt"} {
-            ChunkiTXt $length
-        } elseif {$type == "zTXt"} {
-            ChunkzTXt $length
-        } elseif {$type == "pHYs"} {
-            ChunkpHYs
-        } elseif {$type == "gAMA"} {
-            ChunkgAMA
-        } elseif {$type == "sRGB"} {
-            ChunksRGB
-        } elseif {$type == "cHRM"} {
-            ChunkcHRM
-        } elseif {$type == "sBIT"} {
-            ChunksBIT $length
-        } elseif {$type == "bKGD"} {
-            ChunkbKGD $length
-        } elseif {$type == "eXIf"} {
-            ChunkeXIf $length
-        } else {
-            if {$length > 0 } {
-    			bytes $length "Raw Data"
+    section "Chunk" {
+        set length [uint32 "Length"]
+        set type [ascii 4 "Type"]
+        sentry $length {
+            if {$type == "IHDR"} {
+                ChunkIHDR
+            } elseif {$type == "PLTE"} {
+                set entry_count [ChunkPLTE $length]
+                sectionvalue "$entry_count entries"
+            } elseif {$type == "IDAT"} {
+                bytes $length "Datastream Segment"
+                sectionvalue "Image Data"
+            } elseif {$type == "iTXt"} {
+                ChunkiTXt $length
+            } elseif {$type == "zTXt"} {
+                ChunkzTXt $length
+            } elseif {$type == "pHYs"} {
+                ChunkpHYs
+            } elseif {$type == "gAMA"} {
+                ChunkgAMA
+            } elseif {$type == "sRGB"} {
+                ChunksRGB
+            } elseif {$type == "cHRM"} {
+                ChunkcHRM
+            } elseif {$type == "sBIT"} {
+                ChunksBIT $length
+            } elseif {$type == "bKGD"} {
+                ChunkbKGD $length
+            } elseif {$type == "eXIf"} {
+                ChunkeXIf $length
+            } else {
+                if {$length > 0 } {
+                    hex $length "Raw Data"
+                }
+                sectionvalue "$length bytes"
             }
-            sectionvalue "$length bytes"
-		}
-		hex 4 "CRC"
+        }
+        hex 4 "CRC"
         sectionname $type
-        #if {$type == "eXIf"} { return }
-	}
+    }
 }
