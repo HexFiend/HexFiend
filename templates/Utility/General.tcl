@@ -72,3 +72,33 @@ proc sentry {length body} {
     set read_length [expr $sentry_end - $sentry_start]
     assert { $read_length == $length } "Expected to read $length bytes; read $read_length instead"
 }
+
+# `jumpa` and `jumpr` may be used to temporarily move the read position during binary file
+# interpretation. An example here is reading Exif data, where longer metadata values are stored at
+# a remote offset instead of inline. `jumpa` takes an absolute offset from the anchor point;
+# `jumpr` takes a relative one from the current read position (and therefore can be a negative
+# number.) At the end of the body the read position is restored to its original offset.
+#
+# Example:
+#     set header_pos [...] # Some absolute header offset
+#     set offset [uint32 "Remote Offset"]
+#     jumpa [expr $header_pos + $offset] {
+#         set result [$read_proc $component_count] # Remote read
+#     }
+#     # At this point the read head is restored to just after the read of $offset
+
+proc jumpa {position body} {
+    set marker [pos]
+    goto $position
+    uplevel 1 $body
+    goto $marker
+    return $marker
+}
+
+proc jumpr {position body} {
+    set marker [pos]
+    move $position
+    uplevel 1 $body
+    goto $marker
+    return $marker
+}

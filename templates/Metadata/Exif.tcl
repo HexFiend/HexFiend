@@ -5,7 +5,7 @@ include "Utility/General.tcl"
 
 proc ExifIFDTagName {tag_number} {
     switch $tag_number {
-        11 { return "ProcessingSoftware" }
+        11  { return "ProcessingSoftware" }
         254 { return "NewSubfileType" }
         255 { return "SubfileType" }
         256 { return "ImageWidth" }
@@ -13,7 +13,7 @@ proc ExifIFDTagName {tag_number} {
         258 { return "BitsPerSample" }
         259 { return "Compression" }
         262 { return "PhotometricInterpretation" }
-        263 { return "Threshholding" }
+        263 { return "Thresholding" }
         264 { return "CellWidth" }
         265 { return "CellLength" }
         266 { return "FillOrder" }
@@ -26,16 +26,9 @@ proc ExifIFDTagName {tag_number} {
         277 { return "SamplesPerPixel" }
         278 { return "RowsPerStrip" }
         279 { return "StripByteCounts" }
-        280 { return "MinSampleValue" }
-        281 { return "MaxSampleValue" }
         282 { return "XResolution" }
         283 { return "YResolution" }
         284 { return "PlanarConfiguration" }
-        285 { return "PageName" }
-        286 { return "XPosition" }
-        287 { return "YPosition" }
-        288 { return "FreeOffsets" }
-        289 { return "FreeByteCounts" }
         290 { return "GrayResponseUnit" }
         291 { return "GrayResponseCurve" }
         292 { return "T4Options" }
@@ -56,9 +49,6 @@ proc ExifIFDTagName {tag_number} {
         323 { return "TileLength" }
         324 { return "TileOffsets" }
         325 { return "TileByteCounts" }
-        326 { return "BadFaxLines" }
-        327 { return "CleanFaxData" }
-        328 { return "ConsecutiveBadFaxLines" }
         330 { return "SubIFDs" }
         332 { return "InkSet" }
         333 { return "InkNames" }
@@ -76,14 +66,6 @@ proc ExifIFDTagName {tag_number} {
         346 { return "Indexed" }
         347 { return "JPEGTables" }
         351 { return "OPIProxy" }
-        400 { return "GlobalParametersIFD" }
-        401 { return "ProfileType" }
-        402 { return "FaxProfile" }
-        403 { return "CodingMethods" }
-        404 { return "VersionYear" }
-        405 { return "ModeNumber" }
-        433 { return "Decode" }
-        434 { return "DefaultImageColor" }
         512 { return "JPEGProc" }
         513 { return "JPEGInterchangeFormat" }
         514 { return "JPEGInterchangeFormatLength" }
@@ -97,10 +79,12 @@ proc ExifIFDTagName {tag_number} {
         530 { return "YCbCrSubSampling" }
         531 { return "YCbCrPositioning" }
         532 { return "ReferenceBlackWhite" }
-        559 { return "StripRowCounts" }
-        700 { return "XMP" }
+        700 { return "XMLPacket" }
         18246 { return "Rating" }
         18249 { return "RatingPercent" }
+        28722 { return "VignettingCorrParams" }
+        28725 { return "ChromaticAberrationCorrParams" }
+        28727 { return "DistortionCorrParams" }
         32781 { return "ImageID" }
         33421 { return "CFARepeatPatternDim" }
         33422 { return "CFAPattern" }
@@ -112,7 +96,6 @@ proc ExifIFDTagName {tag_number} {
         34377 { return "ImageResources" }
         34665 { return "ExifTag" }
         34675 { return "InterColorProfile" }
-        34732 { return "ImageLayer" }
         34850 { return "ExposureProgram" }
         34852 { return "SpectralSensitivity" }
         34853 { return "GPSTag" }
@@ -154,15 +137,22 @@ proc ExifIFDTagName {tag_number} {
         37393 { return "ImageNumber" }
         37394 { return "SecurityClassification" }
         37395 { return "ImageHistory" }
+        37396 { return "SubjectArea" }
         37396 { return "SubjectLocation" }
         37397 { return "ExposureIndex" }
         37398 { return "TIFFEPStandardID" }
         37399 { return "SensingMethod" }
         37500 { return "MakerNote" }
         37510 { return "UserComment" }
-        37520 { return "SubsecTime" }
-        37521 { return "SubsecTimeOriginal" }
-        37522 { return "SubsecTimeDigitized" }
+        37520 { return "SubSecTime" }
+        37521 { return "SubSecTimeOriginal" }
+        37522 { return "SubSecTimeDigitized" }
+        37888 { return "Temperature" }
+        37889 { return "Humidity" }
+        37890 { return "Pressure" }
+        37891 { return "WaterDepth" }
+        37892 { return "Acceleration" }
+        37893 { return "CameraElevationAngle" }
         40091 { return "XPTitle" }
         40092 { return "XPComment" }
         40093 { return "XPAuthor" }
@@ -200,11 +190,13 @@ proc ExifIFDTagName {tag_number} {
         42016 { return "ImageUniqueID" }
         42032 { return "CameraOwnerName" }
         42033 { return "BodySerialNumber" }
-        42033 { return "LensSpecification" }
         42034 { return "LensSpecification" }
         42035 { return "LensMake" }
         42036 { return "LensModel" }
         42037 { return "LensSerialNumber" }
+        42080 { return "CompositeImage" }
+        42081 { return "SourceImageNumberOfCompositeImage" }
+        42082 { return "SourceExposureTimesOfCompositeImage" }
         50341 { return "PrintImageMatching" }
         50706 { return "DNGVersion" }
         50707 { return "DNGBackwardVersion" }
@@ -257,6 +249,7 @@ proc ExifIFDTagName {tag_number} {
         50879 { return "ColorimetricReference" }
         50931 { return "CameraCalibrationSignature" }
         50932 { return "ProfileCalibrationSignature" }
+        50933 { return "ExtraCameraProfiles" }
         50934 { return "AsShotProfileName" }
         50935 { return "NoiseReductionApplied" }
         50936 { return "ProfileName" }
@@ -284,10 +277,42 @@ proc ExifIFDTagName {tag_number} {
         51009 { return "OpcodeList2" }
         51022 { return "OpcodeList3" }
         51041 { return "NoiseProfile" }
-
-        34665 { return "ExifIFD" }
-        34853 { return "GPSIFD" }
-        40965 { return "InteroperabilityIFD" }
+        51043 { return "TimeCodes" }
+        51044 { return "FrameRate" }
+        51058 { return "TStop" }
+        51081 { return "ReelName" }
+        51089 { return "OriginalDefaultFinalSize" }
+        51090 { return "OriginalBestQualityFinalSize" }
+        51091 { return "OriginalDefaultCropSize" }
+        51105 { return "CameraLabel" }
+        51107 { return "ProfileHueSatMapEncoding" }
+        51108 { return "ProfileLookTableEncoding" }
+        51109 { return "BaselineExposureOffset" }
+        51110 { return "DefaultBlackRender" }
+        51111 { return "NewRawImageDigest" }
+        51112 { return "RawToPreviewGain" }
+        51113 { return "CacheBlob" }
+        51114 { return "CacheVersion" }
+        51125 { return "DefaultUserCrop" }
+        51177 { return "DepthFormat" }
+        51178 { return "DepthNear" }
+        51179 { return "DepthFar" }
+        51180 { return "DepthUnits" }
+        51181 { return "DepthMeasureType" }
+        51182 { return "EnhanceParams" }
+        52525 { return "ProfileGainTableMap" }
+        52526 { return "SemanticName" }
+        52528 { return "SemanticInstanceID" }
+        52529 { return "CalibrationIlluminant3" }
+        52530 { return "CameraCalibration3" }
+        52531 { return "ColorMatrix3" }
+        52532 { return "ForwardMatrix3" }
+        52533 { return "IlluminantData1" }
+        52534 { return "IlluminantData2" }
+        52535 { return "IlluminantData3" }
+        52537 { return "ProfileHueSatMapData3" }
+        52538 { return "ReductionMatrix3" }
+        65024 { return "KodakKDCPrivateIFD" }
 
         default { return $tag_number }
     }
@@ -297,7 +322,9 @@ proc ExifIFDFieldByte {count} {
     if {$count <= 16} {
         hex $count "Value"
     } else {
-        bytes $count "Value"
+        entry "Value" "$count bytes" $count
+        bytes $count
+        return "$count bytes"
     }
 }
 
@@ -316,12 +343,34 @@ proc ExifIFDFieldWord {count} {
     }
 }
 
+proc ExifIFDFieldSWord {count} {
+    if {$count == 1} {
+        int16 "Value"
+    } else {
+        for {set i 0} {$i < $count} {incr i} {
+            int16 "Value\[ $i \]"
+        }
+        return "$count words"
+    }
+}
+
 proc ExifIFDFieldLong {count} {
     if {$count == 1} {
         uint32 "Value"
     } else {
         for {set i 0} {$i < $count} {incr i} {
             uint32 "Value\[ $i \]"
+        }
+        return "$count longs"
+    }
+}
+
+proc ExifIFDFieldSLong {count} {
+    if {$count == 1} {
+        int32 "Value"
+    } else {
+        for {set i 0} {$i < $count} {incr i} {
+            int32 "Value\[ $i \]"
         }
         return "$count longs"
     }
@@ -338,6 +387,28 @@ proc ExifIFDFieldRational {count} {
         for {set i 0} {$i < $count} {incr i} {
             set num [uint32]
             set den [uint32]
+            if {$den != 0} {
+                set value [expr double($num) / $den]
+                entry "Value\[ $i \]" "$value ($num / $den)" 8 [expr [pos] - 8]
+            } else {
+                entry "Value\[ $i \]" "NaN ($num / $den)" 8 [expr [pos] - 8]
+            }
+        }
+        return "$count rationals"
+    }
+}
+
+proc ExifIFDFieldSRational {count} {
+    if {$count == 1} {
+        set num [int32]
+        set den [int32]
+        set value [expr double($num) / $den]
+        entry "Value" "$value ($num / $den)" 8 [expr [pos] - 8]
+        return $value
+    } else {
+        for {set i 0} {$i < $count} {incr i} {
+            set num [int32]
+            set den [int32]
             if {$den != 0} {
                 set value [expr double($num) / $den]
                 entry "Value\[ $i \]" "$value ($num / $den)" 8 [expr [pos] - 8]
@@ -373,22 +444,16 @@ proc ExifIFDFieldDouble {count} {
 
 proc ExifIFDField {header_pos field_size component_count read_proc} {
     set total_size [expr $component_count * $field_size]
-    set is_remote [expr $total_size > 4]
-    set read_pos 0
-
-    if {$is_remote} {
+    if {$total_size == 0} {
+        set result "(Empty)"
+    } elseif {$total_size > 4} {
         set offset [uint32 "Remote Offset"]
-        set read_pos [pos]
-        goto [expr $header_pos + $offset]
-    }
-
-    sentry $total_size {
-        set result [$read_proc $component_count]
-    }
-
-    if {$is_remote} {
-        goto $read_pos
+        jumpa [expr $header_pos + $offset] {
+            set result [$read_proc $component_count]
+            set result "$result (Remote)"
+        }
     } else {
+        set result [$read_proc $component_count]
         set leftovers [expr 4 - $total_size]
         if {$leftovers > 0} {
             set padding_value [hex $leftovers "Padding ($leftovers bytes)"]
@@ -399,15 +464,57 @@ proc ExifIFDField {header_pos field_size component_count read_proc} {
     return $result
 }
 
+proc ExifJumpToIFD {header_pos offset} {
+    jumpa [expr $header_pos + $offset] {
+        ExifIFD $header_pos
+    }
+}
+
+proc ExifHandleSubIFDTag {header_pos tag_pos} {
+    jumpa $tag_pos {
+        assert { [uint16] == 330 } "expected SubIFD tag number"
+        assert { [uint16] == 4 } "expected uint32 component type"
+        set count [uint32]
+        set total_size [expr 4 * $count]
+        set offset [uint32]
+        if {$total_size <= 4} {
+            ExifJumpToIFD $header_pos $offset
+        } else {
+            jumpa [expr $header_pos + $offset] {
+                for {set i 0} {$i < $count} {incr i} {
+                    ExifJumpToIFD $header_pos [uint32]
+                }
+            }
+        }
+    }
+}
+
 proc ExifIFDEntry {header_pos count} {
     # REVISIT: (fosterbrereton) Because of the remote nature of some of these IFD values, the range
     # of the fields can get misinterpreted (because there are multiple ranges, not a single
     # contiguous one.) Selecting the IFD entry in the template breakdown, then, may highlight bytes
     # that are not actually part of the selected IFD entry.
     section "\[ $count \]" {
+        set tag_pos [pos]
         set tag_number [uint16 "Tag Number"]
-        set field_type [uint16 "Field Type"]
-        set component_count [uint32 "Component Count"]
+        set field_type [uint16]
+        set field_type_str "unknown"
+        switch $field_type {
+            1  { set field_type_str "uint8" }
+            2  { set field_type_str "ascii" }
+            3  { set field_type_str "uint16" }
+            4  { set field_type_str "uint32" }
+            5  { set field_type_str "urational" }
+            6  { set field_type_str "sint8" }
+            7  { set field_type_str "undefined" }
+            8  { set field_type_str "sint16" }
+            9  { set field_type_str "sint32" }
+            10 { set field_type_str "srational" }
+            11 { set field_type_str "float" }
+            12 { set field_type_str "double" }
+        }
+        entry "Type" "$field_type_str" 2 [expr [pos] - 2]
+        set component_count [uint32 "Count"]
         switch $field_type {
             1  { set tag_value [ExifIFDField $header_pos 1 $component_count ExifIFDFieldByte] }
             2  { set tag_value [ExifIFDField $header_pos 1 $component_count ExifIFDFieldAscii] }
@@ -416,20 +523,20 @@ proc ExifIFDEntry {header_pos count} {
             5  { set tag_value [ExifIFDField $header_pos 8 $component_count ExifIFDFieldRational] }
             6  { set tag_value [ExifIFDField $header_pos 1 $component_count ExifIFDFieldByte] }
             7  { set tag_value [ExifIFDField $header_pos 1 $component_count ExifIFDFieldByte] }
-            8  { set tag_value [ExifIFDField $header_pos 2 $component_count ExifIFDFieldWord] }
-            9  { set tag_value [ExifIFDField $header_pos 4 $component_count ExifIFDFieldLong] }
-            10 { set tag_value [ExifIFDField $header_pos 8 $component_count ExifIFDFieldRational] }
+            8  { set tag_value [ExifIFDField $header_pos 2 $component_count ExifIFDFieldSWord] }
+            9  { set tag_value [ExifIFDField $header_pos 4 $component_count ExifIFDFieldSLong] }
+            10 { set tag_value [ExifIFDField $header_pos 8 $component_count ExifIFDFieldSRational] }
             11 { set tag_value [ExifIFDField $header_pos 4 $component_count ExifIFDFieldFloat] }
             12 { set tag_value [ExifIFDField $header_pos 8 $component_count ExifIFDFieldDouble] }
+            default { die "Bad field_type: $field_type" }
         }
 
         # Exif has this weird nesting structure that we account for here. IFDs also contain an
         # offset to the _next_ IFD, which is another implicit data structure within Exif.
-        if {$tag_number == 34665 || $tag_number == 34853 || $tag_number == 40965} {
-            set marker [pos]
-            goto [expr $header_pos + $tag_value]
-            ExifIFD $header_pos
-            goto $marker
+        if {$tag_number == 34665 || $tag_number == 34853 || $tag_number == 40965 || $tag_number == 65024} {
+            ExifJumpToIFD $header_pos $tag_value
+        } elseif {$tag_number == 330} {
+            ExifHandleSubIFDTag $header_pos $tag_pos
         }
 
         # REVISIT: (fosterbrereton) We need to switch to GPS and interop tag names for those IFDs.
@@ -450,10 +557,7 @@ proc ExifIFD {header_pos} {
 
         set next_offset [uint32 "Next IFD Offset"]
         if {$next_offset != 0} {
-            set marker [pos]
-            goto [expr $header_pos + $next_offset]
-            ExifIFD $header_pos
-            goto $marker
+            ExifJumpToIFD $header_pos $next_offset
         }
 
         sectionvalue "$count entries"
@@ -478,15 +582,5 @@ proc Exif {} {
     check { $tag_mark == 42 }
 
     set ifd_offset [uint32 "IFD Offset"]
-    set read_pos [pos]
-
-    if {$ifd_offset != 8} {
-        goto [expr $header_pos + $offset]
-    }
-
-    ExifIFD $header_pos
-
-    if {$ifd_offset != 8} {
-        goto $read_pos
-    }
+    ExifJumpToIFD $header_pos $ifd_offset
 }
