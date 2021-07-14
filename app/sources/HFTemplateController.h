@@ -17,6 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (HFTemplateNode *)evaluateScript:(NSString *)path forController:(HFController *)controller error:(NSString *_Nullable*_Nullable)error;
 
 @property NSUInteger anchor;
+@property NSString *templatesFolder;
 @property NSMutableArray *initiallyCollapsed;
 
 @end

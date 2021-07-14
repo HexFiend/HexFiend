@@ -4,6 +4,8 @@
 big_endian
 requires 0 "FF D8 FF"
 
+include "Metadata/Exif.tcl"
+
 proc is x {set x}
 proc secName {value} {
   return [switch -- $value {
@@ -48,173 +50,10 @@ proc secName {value} {
   }]
 }
 
-proc tag2Name {value} {
-  return [switch -- $value {
-    254 {is NewSubfileType}
-    255 {is SubfileType}
-    256 {is ImageWidth}
-    257 {is ImageLength}
-    258 {is BitsPerSample}
-    259 {is Compression}
-    262 {is PhotometricInterpretation}
-    266 {is FillOrder}
-    269 {is DocumentName}
-    270 {is ImageDescription}
-    271 {is Make}
-    272 {is Model}
-    273 {is StripOffsets}
-    274 {is Orientation}
-    277 {is SamplesPerPixel}
-    278 {is RowsPerStrip}
-    279 {is StripByteCounts}
-    282 {is XResolution}
-    283 {is YResolution}
-    284 {is PlanarConfiguration}
-    296 {is ResolutionUnit}
-    305 {is Software}
-    306 {is DateTime}
-    315 {is Artist}
-    316 {is HostComputer}
-    317 {is Predictor}
-    320 {is ColorMap}
-    322 {is TileWidth}
-    323 {is TileLength}
-    324 {is TileOffsets}
-    325 {is TileByteCounts}
-    338 {is ExtraSamples}
-    339 {is SampleFormat}
-    34377 {is Photoshop}
-    33432 {is Copyright}
-    318 { is "WhiteColor"}
-    319 { is "MainColor"}
-    529 { is "YCbCr Coefficient"}
-    531 { is "YCbCr Position"}
-    532 { is "Black/White Reference"}
-    33434 { is "Exposure time"}
-    33437 { is "F-Aperture number"}
-    34850 { is "F-Aperture Type"}
-    34855 { is "ISO Exposure"}
-    36864 { is "Exif Version"}
-    36867 { is "Created"}
-    36868 { is "Digitalized"}
-    37121 { is "Color Order"}
-    37122 { is "Compression"}
-    37377 { is "Exposure APEX"}
-    37378 { is "Aperture APEX"}
-    37379 { is "Brightness APEX"}
-    37380 { is "Brightness Compensation APEX"}
-    37381 { is "Max Aperture APEX"}
-    37382 { is "Distance m"}
-    37383 { is "Exposure Type"}
-    37384 { is "Light Source"}
-    37385 { is "Flash Light"}
-    37386 { is "Focal length"}
-    37500 { is "Custom Data"}
-    37510 { is "User Comment"}
-    37520 { is "Time"}
-    37521 { is "Time Series"}
-    37522 { is "Time Series 2"}
-    40960 { is "FlashPix Version"}
-    40961 { is "Color Room"}
-    40962 { is "Resolution X"}
-    40963 { is "Resolution Y"}
-    40964 { is "Audio Name"}
-    41486 { is "Resolution CCD X"}
-    41487 { is "Resolution CCD Y"}
-    41488 { is "Resolution Unit CCD"}
-    default {is [format "Unknown(%d)" $value ]}
-  }]
-}
-
-proc ifd {base_pos} {
-    set entries [uint16 "Entries"]
-    for {set i 0} {$i < $entries} {incr i} {
-        set type [uint16]
-        set dtype [uint16]
-        set l [uint32]
-        set label [tag2Name $type]
-        if {$l > 4 } {
-            set offset [uint32]
-            set last_pos [pos]
-            goto [expr $base_pos + $offset]
-        }
-        if {$type == 34665} {
-            set offset [uint32]
-            set last_pos [pos]
-            goto [expr $base_pos + $offset]
-            ifd $base_pos
-            goto $last_pos
-            continue
-        }
-        if {[end]} break
-        switch $dtype {
-            1 {
-                uint8 $label
-                move 3
-            }
-            2 {
-                ascii $l $label
-                move 1
-                if {$l < 3} { move [expr 3 - $l] } 
-            }
-            3 {
-                uint16 $label
-                move 2
-            }
-            4 {
-                uint32 $label
-            }
-            5 {
-                if {$l < 8} { uint32 $label}
-                if {$l > 7} { entry $label [format "%d/%d" [uint32] [uint32] ] }
-            }
-            6 {
-                int8 $label
-                move 3
-            }
-            7 {
-                hex $l $label
-                if {$l < 3} { move [expr 3 - $l] } 
-            }
-            8 {
-                int16 $label
-                move 2
-            }
-            9 {
-                int32 $label
-            }
-            10 {
-                entry $label [format "%d/%d" [int32] [int32] ]
-            }
-            11 {
-                float $label
-            }
-            12 {
-                double $label
-            }
-        }
-       if {$l > 4 } {
-            goto $last_pos
-        }
-    }
-}
-
 proc do_exif {} {
     section "EXIF" {
         ascii 6 "Exif Marker"
-        set tt [uint16 -hex "TIFF Format"]
-        if {$tt == 18761} {
-            entry "Format" "Intel"
-            little_endian
-        }
-        if {$tt == 19789} {
-            entry "Format" "Motorola"
-            big_endian
-        }
-        uint16 "16Bit Coding"
-        uint32 "tiff offset"
-        set base_pos [expr [pos] - 8]
-        ifd $base_pos
+        Exif
         big_endian
     }
 }
