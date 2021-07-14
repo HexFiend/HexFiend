@@ -191,47 +191,49 @@ proc ChunkzTXt {length} {
     sectionvalue "\'$keyword\'"
 }
 
-while {![end]} {
-    section "Chunk" {
-        set length [uint32 "Length"]
-        set type [ascii 4 "Type"]
-        sentry $length {
-            if {$type == "IHDR"} {
-                ChunkIHDR
-            } elseif {$type == "PLTE"} {
-                set entry_count [ChunkPLTE $length]
-                sectionvalue "$entry_count entries"
-            } elseif {$type == "IDAT"} {
-                bytes $length "Datastream Segment"
-                sectionvalue "Image Data"
-            } elseif {$type == "iTXt"} {
-                ChunkiTXt $length
-            } elseif {$type == "zTXt"} {
-                ChunkzTXt $length
-            } elseif {$type == "pHYs"} {
-                ChunkpHYs
-            } elseif {$type == "gAMA"} {
-                ChunkgAMA
-            } elseif {$type == "sRGB"} {
-                ChunksRGB
-            } elseif {$type == "cHRM"} {
-                ChunkcHRM
-            } elseif {$type == "sBIT"} {
-                ChunksBIT $length
-            } elseif {$type == "bKGD"} {
-                ChunkbKGD $length
-            } elseif {$type == "eXIf"} {
-                ChunkeXIf $length
-            } elseif {$type == "tIME"} {
-                ChunktIME
-            } else {
-                if {$length > 0 } {
-                    hex $length "Raw Data"
+main_guard {
+    while {![end]} {
+        section "Chunk" {
+            set length [uint32 "Length"]
+            set type [ascii 4 "Type"]
+            sentry $length {
+                if {$type == "IHDR"} {
+                    ChunkIHDR
+                } elseif {$type == "PLTE"} {
+                    set entry_count [ChunkPLTE $length]
+                    sectionvalue "$entry_count entries"
+                } elseif {$type == "IDAT"} {
+                    bytes $length "Datastream Segment"
+                    sectionvalue "Image Data"
+                } elseif {$type == "iTXt"} {
+                    ChunkiTXt $length
+                } elseif {$type == "zTXt"} {
+                    ChunkzTXt $length
+                } elseif {$type == "pHYs"} {
+                    ChunkpHYs
+                } elseif {$type == "gAMA"} {
+                    ChunkgAMA
+                } elseif {$type == "sRGB"} {
+                    ChunksRGB
+                } elseif {$type == "cHRM"} {
+                    ChunkcHRM
+                } elseif {$type == "sBIT"} {
+                    ChunksBIT $length
+                } elseif {$type == "bKGD"} {
+                    ChunkbKGD $length
+                } elseif {$type == "eXIf"} {
+                    ChunkeXIf $length
+                } elseif {$type == "tIME"} {
+                    ChunktIME
+                } else {
+                    if {$length > 0 } {
+                        hex $length "Raw Data"
+                    }
+                    sectionvalue "$length bytes"
                 }
-                sectionvalue "$length bytes"
             }
+            hex 4 "CRC"
+            sectionname $type
         }
-        hex 4 "CRC"
-        sectionname $type
     }
 }

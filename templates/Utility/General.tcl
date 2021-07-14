@@ -102,3 +102,24 @@ proc jumpr {position body} {
     goto $marker
     return $marker
 }
+
+# `main_guard` may be used as a high-level error/exception catch-all. Without this proc, template
+# evaluations that error out discard the entry tree that's been constructed, and shows just the
+# error in the template area. This proc will capture the error and dump it as a final entry to the
+# template evaluation, and preserve any entries that have already been added. The intent is to give
+# template users a better understanding of what was interpreted correctly before things went off
+# the rails. You should only use `main_guard` once, at the start of processing of your main
+# template file.
+#
+# Example:
+#     # Within DNG.tcl:
+#     main_guard {
+#         Exif
+#     }
+proc main_guard {body} {
+    if [catch {
+        uplevel 1 $body
+    }] {
+        uplevel 1 { entry "FATAL" $errorInfo }
+    }
+}

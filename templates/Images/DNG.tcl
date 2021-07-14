@@ -2,5 +2,8 @@
 # 2021 Jul 14 | fosterbrereton | Initial implementation
 
 include "Metadata/Exif.tcl"
+include "Utility/General.tcl"
 
-Exif
+main_guard {
+    Exif
+}
