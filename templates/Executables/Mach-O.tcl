@@ -364,9 +364,10 @@ proc macho_lc_load_dylib {main_offset command_pos command_size} {
 }
 
 proc macho_lc_idfvmlib {main_offset command_size} {
-    macho_lc_str
-    uint32 minor_version
-    uint32 header_addr
+    macho_lc_str $command_pos $command_size {
+        uint32 minor_version
+        uint32 header_addr
+    }
 }
 
 proc macho_lc_linkedit_data {main_offset command_size} {
