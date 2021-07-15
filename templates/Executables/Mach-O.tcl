@@ -13,6 +13,8 @@ include "Utility/General.tcl"
 #     - https://h3adsh0tzz.com/2020/01/macho-file-format/
 #     - https://lowlevelbits.org/parsing-mach-o-files/
 #     - https://eclecticlight.co/2020/07/28/universal-binaries-inside-fat-headers/
+#     - https://www.objc.io/issues/6-build-tools/mach-o-executables/#mach-o
+#     - https://medium.com/tokopedia-engineering/a-curious-case-of-mach-o-executable-26d5ecadd995
 #
 ####################################################################################################
 
@@ -313,7 +315,7 @@ proc lc_segment_64 {main_offset command_size} {
             }
         }
     }
-    return $hsize
+    sectionvalue $hsize
 }
 
 ####################################################################################################
@@ -323,14 +325,16 @@ proc nibbled_version {label} {
         set dot [uint8 dot]
         set minor [uint8 minor]
         set major [uint16 major]
-        sectionvalue "$major.$minor.$dot"
+        set result "$major.$minor.$dot"
+        sectionvalue "$result"
     }
+    return $result
 }
 
 ####################################################################################################
 
 proc lc_version_min_macosx {main_offset command_size} {
-    nibbled_version version
+    sectionvalue [nibbled_version version]
     nibbled_version sdk
 }
 
@@ -372,13 +376,21 @@ proc lc_symtab {main_offset command_size} {
     # The strings are pooled together at the end of the section, but they are referenced by each of
     # the symbols above (by n_strx, the byte offset of the string within this pool.) We do not need
     # to iterate all the strings here, as they will be covered by the symbol table above.
-    return [human_size $strsize]
+    sectionvalue [human_size $strsize]
 }
 
 ####################################################################################################
 
 proc lc_source_version {} {
-    uint64 version;
+    set version [uint64]
+    set a [expr $version >> 40]
+    set b [expr ($version >> 30) & 0x3ff]
+    set c [expr ($version >> 20) & 0x3ff]
+    set d [expr ($version >> 10) & 0x3ff]
+    set e [expr $version & 0x3ff]
+    set version_str "$a.$b.$c.$d.$e"
+    entry "version" $version_str
+    sectionvalue $version_str
 }
 
 ####################################################################################################
@@ -399,8 +411,15 @@ proc lc_build_tool_version {count} {
 
 ####################################################################################################
 
+proc lc_main {} {
+    uint64 entryoff
+    uint64 stacksize
+}
+
+####################################################################################################
+
 proc lc_uuid {} {
-    uuid uuid
+    sectionvalue [uuid uuid]
 }
 
 ####################################################################################################
@@ -421,12 +440,13 @@ proc lc_build_version {} {
         default { die "unknown platform ($platform)" }
     }
     entry "platform" "$platform_str" 4 [expr [pos] - 4]
-    nibbled_version minos
+    set minos [nibbled_version minos]
     nibbled_version sdk
     set ntools [uint32 ntools]
     for {set i 0} {$i < $ntools} {incr i} {
         lc_build_tool_version $i
     }
+    sectionvalue "$platform_str $minos"
 }
 
 ####################################################################################################
@@ -455,17 +475,17 @@ proc lc_str {command_pos command_size body} {
 ####################################################################################################
 
 proc lc_str_only {command_pos command_size} {
-    lc_str $command_pos $command_size {}
+    sectionvalue [lc_str $command_pos $command_size {}]
 }
 
 ####################################################################################################
 
 proc lc_load_dylib {main_offset command_pos command_size} {
-    lc_str $command_pos $command_size {
+    sectionvalue [lc_str $command_pos $command_size {
         uint32 timestamp
-        uint32 current_version
-        uint32 compatibility_version
-    }
+        nibbled_version current_version
+        nibbled_version compatibility_version
+    }]
 }
 
 ####################################################################################################
@@ -482,12 +502,8 @@ proc lc_idfvmlib {main_offset command_size} {
 proc lc_linkedit_data {main_offset command_size} {
     set dataoff [uint32 dataoff]
     set datasize [uint32 datasize]
-    if {$datasize != 0} {
-        # entry "absolute_offset" [expr $main_offset + $dataoff]
-        jumpa [expr $main_offset + $dataoff] {
-            bytes $datasize data
-        }
-    }
+    # the offset is relative to the __LINKEDIT segment, which we do not have here.
+    sectionvalue "__LINKEDIT data"
 }
 
 ####################################################################################################
@@ -524,12 +540,13 @@ proc load_command {main_offset count} {
         set command_size [uint32 "cmdsize"]
         sectionvalue ""
         switch $command_str {
-            "LC_SEGMENT_64" { sectionvalue [lc_segment_64 $main_offset $command_size] }
-            "LC_SYMTAB" { sectionvalue [lc_symtab $main_offset $command_size] }
+            "LC_SEGMENT_64" { lc_segment_64 $main_offset $command_size }
+            "LC_SYMTAB" { lc_symtab $main_offset $command_size }
             "LC_DYSYMTAB" { lc_dysymtab $main_offset $command_size }
             "LC_SOURCE_VERSION" { lc_source_version }
             "LC_BUILD_VERSION" { lc_build_version }
             "LC_UUID" { lc_uuid }
+            "LC_MAIN" { lc_main }
 
             "LC_VERSION_MIN_MACOSX" -
             "LC_VERSION_MIN_IPHONEOS" -
@@ -551,12 +568,12 @@ proc load_command {main_offset count} {
             "LC_ID_DYLIB" -
             "LC_LOAD_DYLIB" -
             "LC_LOAD_WEAK_DYLIB" -
-            "LC_REEXPORT_DYLIB" { sectionvalue [lc_load_dylib $main_offset $command_pos $command_size] }
+            "LC_REEXPORT_DYLIB" { lc_load_dylib $main_offset $command_pos $command_size }
 
             "LC_ID_DYLINKER" -
             "LC_LOAD_DYLINKER" -
             "LC_DYLD_ENVIRONMENT" -
-            "LC_RPATH" { sectionvalue [lc_str_only $command_pos $command_size] }
+            "LC_RPATH" { lc_str_only $command_pos $command_size }
 
             default {
                 set command_leftovers [expr $command_size - 8]
