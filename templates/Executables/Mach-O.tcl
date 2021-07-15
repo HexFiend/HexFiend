@@ -1,17 +1,26 @@
+####################################################################################################
 # Executables/Mach-O.tcl
 # 2021 Jul 14 | fosterbrereton | Initial implementation
+####################################################################################################
 
 big_endian
 
 include "Utility/General.tcl"
 
+####################################################################################################
 #
 # Helpful Documentation:
 #     - https://h3adsh0tzz.com/2020/01/macho-file-format/
 #     - https://lowlevelbits.org/parsing-mach-o-files/
 #     - https://eclecticlight.co/2020/07/28/universal-binaries-inside-fat-headers/
+#
+####################################################################################################
 
-proc macho_flags_name {flags} {    
+namespace eval macho {
+
+####################################################################################################
+
+proc flags_name {flags} {    
     set result ""
 
     if { ($flags & 0x1) != 0 } { set result "$result MH_NOUNDEFS" }
@@ -51,7 +60,9 @@ proc macho_flags_name {flags} {
     }
 }
 
-proc macho_segment_command_flags_name {flags} {    
+####################################################################################################
+
+proc segment_command_flags_name {flags} {    
     set result ""
 
     if { ($flags & 0x1) != 0 } { set result "$result SG_HIGHVM" }
@@ -67,7 +78,9 @@ proc macho_segment_command_flags_name {flags} {
     }
 }
 
-proc macho_filetype_name {filetype} {
+####################################################################################################
+
+proc filetype_name {filetype} {
     if {$filetype == 0x1} { return "MH_OBJECT" }
     if {$filetype == 0x2} { return "MH_EXECUTE" }
     if {$filetype == 0x3} { return "MH_FVMLIB" }
@@ -84,7 +97,9 @@ proc macho_filetype_name {filetype} {
     die "unknown filetype ($filetype)"
 }
 
-proc macho_signature_name {signature} {
+####################################################################################################
+
+proc signature_name {signature} {
     if {$signature == 0xfeedface} { big_endian; return "MH_MAGIC" }
     if {$signature == 0xcefaedfe} { little_endian; return "MH_CIGAM" }
     if {$signature == 0xfeedfacf} { big_endian; return "MH_MAGIC_64" }
@@ -97,7 +112,9 @@ proc macho_signature_name {signature} {
     die "unknown signature ($signature)"
 }
 
-proc macho_load_command_name {command} {
+####################################################################################################
+
+proc load_command_name {command} {
     set LC_REQ_DYLD 0x80000000
 
     if {$command == 0x80000000} { return "LC_REQ_DYLD" }
@@ -159,30 +176,34 @@ proc macho_load_command_name {command} {
     die "unknown command ($command)"
 }
 
-proc macho_lc_segment_section_64_flags_name {flags} {
-    if {($flags & 0xff) == 0x0}  { entry "" "S_REGULAR" 1 [expr [pos] - 4]}
-    if {($flags & 0xff) == 0x1}  { entry "" "S_ZEROFILL" 1 [expr [pos] - 4]}
-    if {($flags & 0xff) == 0x2}  { entry "" "S_CSTRING_LITERALS" 1 [expr [pos] - 4]}
-    if {($flags & 0xff) == 0x3}  { entry "" "S_4BYTE_LITERALS" 1 [expr [pos] - 4]}
-    if {($flags & 0xff) == 0x4}  { entry "" "S_8BYTE_LITERALS" 1 [expr [pos] - 4]}
-    if {($flags & 0xff) == 0x5}  { entry "" "S_LITERAL_POINTERS" 1 [expr [pos] - 4]}
-    if {($flags & 0xff) == 0x6}  { entry "" "S_NON_LAZY_SYMBOL_POINTERS" 1 [expr [pos] - 4]}
-    if {($flags & 0xff) == 0x7}  { entry "" "S_LAZY_SYMBOL_POINTERS" 1 [expr [pos] - 4]}
-    if {($flags & 0xff) == 0x8}  { entry "" "S_SYMBOL_STUBS" 1 [expr [pos] - 4]}
-    if {($flags & 0xff) == 0x9}  { entry "" "S_MOD_INIT_FUNC_POINTERS" 1 [expr [pos] - 4]}
-    if {($flags & 0xff) == 0xa}  { entry "" "S_MOD_TERM_FUNC_POINTERS" 1 [expr [pos] - 4]}
-    if {($flags & 0xff) == 0xb}  { entry "" "S_COALESCED" 1 [expr [pos] - 4]}
-    if {($flags & 0xff) == 0xc}  { entry "" "S_GB_ZEROFILL" 1 [expr [pos] - 4]}
-    if {($flags & 0xff) == 0xd}  { entry "" "S_INTERPOSING" 1 [expr [pos] - 4]}
-    if {($flags & 0xff) == 0xe}  { entry "" "S_16BYTE_LITERALS" 1 [expr [pos] - 4]}
-    if {($flags & 0xff) == 0xf}  { entry "" "S_DTRACE_DOF" 1 [expr [pos] - 4]}
-    if {($flags & 0xff) == 0x10} { entry "" "S_LAZY_DYLIB_SYMBOL_POINTERS" 1 [expr [pos] - 4]}
-    if {($flags & 0xff) == 0x11} { entry "" "S_THREAD_LOCAL_REGULAR" 1 [expr [pos] - 4]}
-    if {($flags & 0xff) == 0x12} { entry "" "S_THREAD_LOCAL_ZEROFILL" 1 [expr [pos] - 4]}
-    if {($flags & 0xff) == 0x13} { entry "" "S_THREAD_LOCAL_VARIABLES" 1 [expr [pos] - 4]}
-    if {($flags & 0xff) == 0x14} { entry "" "S_THREAD_LOCAL_VARIABLE_POINTERS" 1 [expr [pos] - 4]}
-    if {($flags & 0xff) == 0x15} { entry "" "S_THREAD_LOCAL_INIT_FUNCTION_POINTERS" 1 [expr [pos] - 4]}
-    if {($flags & 0xff) == 0x16} { entry "" "S_INIT_FUNC_OFFSETS" 1 [expr [pos] - 4]}
+####################################################################################################
+
+proc lc_segment_section_64_flags_name {flags} {
+    set section_type [expr $flags & 0xff]
+
+    if {$section_type == 0x0}  { entry "" "S_REGULAR" 1 [expr [pos] - 4]}
+    if {$section_type == 0x1}  { entry "" "S_ZEROFILL" 1 [expr [pos] - 4]}
+    if {$section_type == 0x2}  { entry "" "S_CSTRING_LITERALS" 1 [expr [pos] - 4]}
+    if {$section_type == 0x3}  { entry "" "S_4BYTE_LITERALS" 1 [expr [pos] - 4]}
+    if {$section_type == 0x4}  { entry "" "S_8BYTE_LITERALS" 1 [expr [pos] - 4]}
+    if {$section_type == 0x5}  { entry "" "S_LITERAL_POINTERS" 1 [expr [pos] - 4]}
+    if {$section_type == 0x6}  { entry "" "S_NON_LAZY_SYMBOL_POINTERS" 1 [expr [pos] - 4]}
+    if {$section_type == 0x7}  { entry "" "S_LAZY_SYMBOL_POINTERS" 1 [expr [pos] - 4]}
+    if {$section_type == 0x8}  { entry "" "S_SYMBOL_STUBS" 1 [expr [pos] - 4]}
+    if {$section_type == 0x9}  { entry "" "S_MOD_INIT_FUNC_POINTERS" 1 [expr [pos] - 4]}
+    if {$section_type == 0xa}  { entry "" "S_MOD_TERM_FUNC_POINTERS" 1 [expr [pos] - 4]}
+    if {$section_type == 0xb}  { entry "" "S_COALESCED" 1 [expr [pos] - 4]}
+    if {$section_type == 0xc}  { entry "" "S_GB_ZEROFILL" 1 [expr [pos] - 4]}
+    if {$section_type == 0xd}  { entry "" "S_INTERPOSING" 1 [expr [pos] - 4]}
+    if {$section_type == 0xe}  { entry "" "S_16BYTE_LITERALS" 1 [expr [pos] - 4]}
+    if {$section_type == 0xf}  { entry "" "S_DTRACE_DOF" 1 [expr [pos] - 4]}
+    if {$section_type == 0x10} { entry "" "S_LAZY_DYLIB_SYMBOL_POINTERS" 1 [expr [pos] - 4]}
+    if {$section_type == 0x11} { entry "" "S_THREAD_LOCAL_REGULAR" 1 [expr [pos] - 4]}
+    if {$section_type == 0x12} { entry "" "S_THREAD_LOCAL_ZEROFILL" 1 [expr [pos] - 4]}
+    if {$section_type == 0x13} { entry "" "S_THREAD_LOCAL_VARIABLES" 1 [expr [pos] - 4]}
+    if {$section_type == 0x14} { entry "" "S_THREAD_LOCAL_VARIABLE_POINTERS" 1 [expr [pos] - 4]}
+    if {$section_type == 0x15} { entry "" "S_THREAD_LOCAL_INIT_FUNCTION_POINTERS" 1 [expr [pos] - 4]}
+    if {$section_type == 0x16} { entry "" "S_INIT_FUNC_OFFSETS" 1 [expr [pos] - 4]}
 
     if {($flags & 0x80000000) != 0} { entry "" "S_ATTR_PURE_INSTRUCTIONS" 3 [expr [pos] - 3]}
     if {($flags & 0x40000000) != 0} { entry "" "S_ATTR_NO_TOC" 3 [expr [pos] - 3]}
@@ -194,50 +215,108 @@ proc macho_lc_segment_section_64_flags_name {flags} {
     if {($flags & 0x00000400) != 0} { entry "" "S_ATTR_SOME_INSTRUCTIONS" 3 [expr [pos] - 3]}
     if {($flags & 0x00000200) != 0} { entry "" "S_ATTR_EXT_RELOC" 3 [expr [pos] - 3]}
     if {($flags & 0x00000100) != 0} { entry "" "S_ATTR_LOC_RELOC" 3 [expr [pos] - 3]}
+
+    return $section_type
 }
 
-proc macho_lc_segment_section_64 {main_offset count} {
+####################################################################################################
+
+proc human_size {size} {
+    if {$size == 0} { return "0 bytes" }
+
+    switch [::tcl::mathfunc::int [::tcl::mathfunc::floor [::tcl::mathfunc::log10 $size]]] {
+        3 -
+        4 -
+        5 {
+            set size [expr $size / 1024.0]
+            return [format "%.2f KB" $size]
+        }
+        6 -
+        7 -
+        8 {
+            set size [expr $size / (1024.0 * 1024.0)]
+            return [format "%.2f MB" $size]
+        }
+        9 -
+        10 -
+        11 {
+            set size [expr $size / (1024.0 * 1024.0 * 1024.0)]
+            return [format "%.2f GB" $size]
+        }
+        default { return "$size bytes"}
+    }
+}
+
+####################################################################################################
+
+proc lc_segment_section_64 {main_offset count} {
     section "\[ $count \]" {
         set sectname [ascii 16 sectname]
         set segname [ascii 16 segname]
-        sectionvalue "$segname.$sectname"
+        sectionname "$segname.$sectname"
         uint64 addr
         set size [uint64 size]
+        sectionvalue "[human_size $size]"
         set offset [uint32 offset]
         uint32 align
         uint32 reloff
         uint32 nreloc
         set flags [uint32 -hex flags]
-        macho_lc_segment_section_64_flags_name $flags
+        set section_type [lc_segment_section_64_flags_name $flags]
         uint32 reserved1
         uint32 reserved2
         uint32 reserved3
         jumpa [expr $main_offset + $offset] {
-            bytes $size "data"
-        }
-    }
-}
-
-proc macho_lc_segment_64 {main_offset command_size} {
-    ascii 16 segname
-    uint64 vmaddr
-    uint64 vmsize
-    uint64 fileoff
-    uint64 filesize
-    int32 maxprot
-    int32 initprot
-    set nsects [uint32 nsects]
-    set flags [uint32]
-    set flags_str [macho_segment_command_flags_name $flags]
-    entry "flags" $flags_str 4 [expr [pos] - 4]
-    if {$nsects != 0} {
-        section "sections" {
-            for {set i 0} {$i < $nsects} {incr i} {
-                macho_lc_segment_section_64 $main_offset $i
+            if {$section_type == 2} {
+                set count 0
+                set cur_size 0
+                section "literals" {
+                    while {$cur_size < $size} {
+                        set cur_string [cstr "ascii" "\[ $count \]"]
+                        set cur_string_len [expr [string length $cur_string] + 1]
+                        set cur_size [expr $cur_size + $cur_string_len]
+                        incr count
+                        if {$count >= 5000} {
+                            entry "" "(remainder of strings elided)"
+                            break
+                        }
+                    }
+                    sectionvalue "$count entries"
+                }
+            } else {
+                bytes $size "data"
             }
         }
     }
 }
+
+####################################################################################################
+
+proc lc_segment_64 {main_offset command_size} {
+    ascii 16 segname
+    uint64 vmaddr
+    uint64 vmsize
+    uint64 fileoff
+    set filesize [uint64]
+    set hsize [human_size $filesize]
+    entry "filesize" $hsize 8 [expr [pos] - 8]
+    int32 maxprot
+    int32 initprot
+    set nsects [uint32 nsects]
+    set flags [uint32]
+    set flags_str [segment_command_flags_name $flags]
+    entry "flags" $flags_str 4 [expr [pos] - 4]
+    if {$nsects != 0} {
+        section "sections" {
+            for {set i 0} {$i < $nsects} {incr i} {
+                lc_segment_section_64 $main_offset $i
+            }
+        }
+    }
+    return $hsize
+}
+
+####################################################################################################
 
 proc nibbled_version {label} {
     section $label {
@@ -248,12 +327,16 @@ proc nibbled_version {label} {
     }
 }
 
-proc macho_lc_version_min_macosx {main_offset command_size} {
+####################################################################################################
+
+proc lc_version_min_macosx {main_offset command_size} {
     nibbled_version version
     nibbled_version sdk
 }
 
-proc macho_lc_symtab_nlist_64 {stroff count} {
+####################################################################################################
+
+proc lc_symtab_nlist_64 {stroff count} {
     section "\[ $count \]" {
         set n_strx [uint32 n_strx]
         set n_type [uint8 n_type]
@@ -261,35 +344,46 @@ proc macho_lc_symtab_nlist_64 {stroff count} {
         set n_desc [uint16 n_desc]
         set n_value [uint64 n_value]
         jumpa [expr $stroff + $n_strx] {
-            set symbol_name [cstr "utf8" symbol_name]
+            set symbol_name [cstr "ascii" symbol_name]
         }
         sectionvalue "$symbol_name"
     }
 }
 
-proc macho_lc_symtab {main_offset command_size} {
+####################################################################################################
+
+proc lc_symtab {main_offset command_size} {
     set symoff [uint32 symoff]
     set nsyms [uint32 nsyms]
     set stroff [uint32 stroff]
     set strsize [uint32 strsize]
-    jumpa [expr $main_offset + $symoff] {
-        section "symbols" {
-            for {set i 0} {$i < $nsyms} {incr i} {
-                macho_lc_symtab_nlist_64 [expr $main_offset + $stroff] $i
+    if {$nsyms < 10000} {
+        jumpa [expr $main_offset + $symoff] {
+            section "symbols" {
+                for {set i 0} {$i < $nsyms} {incr i} {
+                    lc_symtab_nlist_64 [expr $main_offset + $stroff] $i
+                }
+                sectionvalue "$nsyms entries"
             }
-            sectionvalue "$nsyms entries"
         }
+    } else {
+        entry "symbols" "$nsyms entries (elided)" $strsize [expr $main_offset + $stroff]
     }
     # The strings are pooled together at the end of the section, but they are referenced by each of
     # the symbols above (by n_strx, the byte offset of the string within this pool.) We do not need
     # to iterate all the strings here, as they will be covered by the symbol table above.
+    return [human_size $strsize]
 }
 
-proc macho_lc_source_version {} {
+####################################################################################################
+
+proc lc_source_version {} {
     uint64 version;
 }
 
-proc macho_lc_build_tool_version {count} {
+####################################################################################################
+
+proc lc_build_tool_version {count} {
     section "\[ $count \]" {
         set tool [uint32]
         switch $tool {
@@ -303,11 +397,15 @@ proc macho_lc_build_tool_version {count} {
     }
 }
 
-proc macho_lc_uuid {} {
+####################################################################################################
+
+proc lc_uuid {} {
     uuid uuid
 }
 
-proc macho_lc_build_version {} {
+####################################################################################################
+
+proc lc_build_version {} {
     set platform [uint32]
     switch $platform {
         1 { set platform_str "PLATFORM_MACOS" }
@@ -327,10 +425,11 @@ proc macho_lc_build_version {} {
     nibbled_version sdk
     set ntools [uint32 ntools]
     for {set i 0} {$i < $ntools} {incr i} {
-        macho_lc_build_tool_version $i
+        lc_build_tool_version $i
     }
 }
 
+####################################################################################################
 # The way lc_str is stored in the binary, the string is appended to the end of the data structure it
 # is a part of. The offset determines where that string starts relative to the load command, but
 # jumping there, reading the string, and jumping back puts the read position in a funky state when
@@ -339,38 +438,48 @@ proc macho_lc_build_version {} {
 # an unorthodox approach here, by reading the offset, then the rest of the load command fields, and
 # then finally the string (with necessary padding at the end) so the read position is ready to go
 # for the next load command.
-proc macho_lc_str {command_pos command_size body} {
+
+proc lc_str {command_pos command_size body} {
     uint32 lc_str_offset
     uplevel 1 $body
-    cstr "utf8" lc_str_string
+    set result [cstr "ascii" lc_str_string]
     set cur_size [expr [pos] - $command_pos]
     # entry "cur_size" $cur_size
     set leftovers [expr $command_size - $cur_size]
     if {$leftovers != 0} {
         bytes $leftovers padding
     }
+    return $result
 }
 
-proc macho_lc_str_only {command_pos command_size} {
-    macho_lc_str $command_pos $command_size {}
+####################################################################################################
+
+proc lc_str_only {command_pos command_size} {
+    lc_str $command_pos $command_size {}
 }
 
-proc macho_lc_load_dylib {main_offset command_pos command_size} {
-    macho_lc_str $command_pos $command_size {
+####################################################################################################
+
+proc lc_load_dylib {main_offset command_pos command_size} {
+    lc_str $command_pos $command_size {
         uint32 timestamp
         uint32 current_version
         uint32 compatibility_version
     }
 }
 
-proc macho_lc_idfvmlib {main_offset command_size} {
-    macho_lc_str $command_pos $command_size {
+####################################################################################################
+
+proc lc_idfvmlib {main_offset command_size} {
+    lc_str $command_pos $command_size {
         uint32 minor_version
         uint32 header_addr
     }
 }
 
-proc macho_lc_linkedit_data {main_offset command_size} {
+####################################################################################################
+
+proc lc_linkedit_data {main_offset command_size} {
     set dataoff [uint32 dataoff]
     set datasize [uint32 datasize]
     if {$datasize != 0} {
@@ -381,7 +490,9 @@ proc macho_lc_linkedit_data {main_offset command_size} {
     }
 }
 
-proc macho_lc_dysymtab {main_offset command_size} {
+####################################################################################################
+
+proc lc_dysymtab {main_offset command_size} {
     uint32 ilocalsym
     uint32 nlocalsym
     uint32 iextdefsym
@@ -402,25 +513,28 @@ proc macho_lc_dysymtab {main_offset command_size} {
     uint32 nlocrel
 }
 
-proc macho_load_command {main_offset count} {
+####################################################################################################
+
+proc load_command {main_offset count} {
     section "\[ $count \]" {
         set command_pos [pos]
         set command [uint32 -hex "cmd"]
-        set command_str [macho_load_command_name $command]
-        sectionvalue $command_str
+        set command_str [load_command_name $command]
+        sectionname $command_str
         set command_size [uint32 "cmdsize"]
+        sectionvalue ""
         switch $command_str {
-            "LC_SEGMENT_64" { macho_lc_segment_64 $main_offset $command_size }
-            "LC_SYMTAB" { macho_lc_symtab $main_offset $command_size }
-            "LC_DYSYMTAB" { macho_lc_dysymtab $main_offset $command_size }
-            "LC_SOURCE_VERSION" { macho_lc_source_version }
-            "LC_BUILD_VERSION" { macho_lc_build_version }
-            "LC_UUID" { macho_lc_uuid }
+            "LC_SEGMENT_64" { sectionvalue [lc_segment_64 $main_offset $command_size] }
+            "LC_SYMTAB" { sectionvalue [lc_symtab $main_offset $command_size] }
+            "LC_DYSYMTAB" { lc_dysymtab $main_offset $command_size }
+            "LC_SOURCE_VERSION" { lc_source_version }
+            "LC_BUILD_VERSION" { lc_build_version }
+            "LC_UUID" { lc_uuid }
 
             "LC_VERSION_MIN_MACOSX" -
             "LC_VERSION_MIN_IPHONEOS" -
             "LC_VERSION_MIN_WATCHOS" -
-            "LC_VERSION_MIN_TVOS" { macho_lc_version_min_macosx $main_offset $command_size }
+            "LC_VERSION_MIN_TVOS" { lc_version_min_macosx $main_offset $command_size }
 
             "LC_CODE_SIGNATURE" -
             "LC_SEGMENT_SPLIT_INFO" -
@@ -429,20 +543,20 @@ proc macho_load_command {main_offset count} {
             "LC_DYLIB_CODE_SIGN_DRS" -
             "LC_LINKER_OPTIMIZATION_HINT" -
             "LC_DYLD_EXPORTS_TRIE" -
-            "LC_DYLD_CHAINED_FIXUPS" { macho_lc_linkedit_data $main_offset $command_size }
+            "LC_DYLD_CHAINED_FIXUPS" { lc_linkedit_data $main_offset $command_size }
 
             "LC_IDFVMLIB" -
-            "LC_LOADFVMLIB" { macho_lc_idfvmlib $main_offset $command_size }
+            "LC_LOADFVMLIB" { lc_idfvmlib $main_offset $command_size }
 
             "LC_ID_DYLIB" -
             "LC_LOAD_DYLIB" -
             "LC_LOAD_WEAK_DYLIB" -
-            "LC_REEXPORT_DYLIB" { macho_lc_load_dylib $main_offset $command_pos $command_size }
+            "LC_REEXPORT_DYLIB" { sectionvalue [lc_load_dylib $main_offset $command_pos $command_size] }
 
             "LC_ID_DYLINKER" -
             "LC_LOAD_DYLINKER" -
             "LC_DYLD_ENVIRONMENT" -
-            "LC_RPATH" { macho_lc_str_only $command_pos $command_size }
+            "LC_RPATH" { sectionvalue [lc_str_only $command_pos $command_size] }
 
             default {
                 set command_leftovers [expr $command_size - 8]
@@ -452,15 +566,19 @@ proc macho_load_command {main_offset count} {
     }
 }
 
-proc macho_load_commands {main_offset ncmds} {
+####################################################################################################
+
+proc load_commands {main_offset ncmds} {
     section "load commands" {
         for {set i 0} {$i < $ncmds} {incr i} {
-            macho_load_command $main_offset $i
+            load_command $main_offset $i
         }
     }
 }
 
-proc macho_cputype_name {cputype} {
+####################################################################################################
+
+proc cputype_name {cputype} {
     if {$cputype == 1} { return "CPU_TYPE_VAX" }
     if {$cputype == 6} { return "CPU_TYPE_MC680x0" }
     if {$cputype == 7} { return "CPU_TYPE_X86" }
@@ -479,27 +597,32 @@ proc macho_cputype_name {cputype} {
     die "unknown cputype ($cputype)"
 }
 
+####################################################################################################
+
 proc fat_arch {count} {
     section "arch\[ $count \]" {
         big_endian
         set cputype [int32]
-        set cputype_str [macho_cputype_name $cputype]
+        set cputype_str [cputype_name $cputype]
         entry "cputype" $cputype_str 4 [expr [pos] - 4]
-        sectionvalue $cputype_str
+        sectionname $cputype_str
         uint32 -hex "cpusubtype"
         set offset [uint32 offset]
         set size [uint32 size]
+        sectionvalue [human_size $size]
         uint32 align
         jumpa $offset {
-            macho_container $offset
+            container $offset
         }
     }
 }
 
+####################################################################################################
+
 proc fat_header {} {
     section "header" {
         set signature [uint32]
-        set signature_str [macho_signature_name $signature]
+        set signature_str [signature_name $signature]
         entry "signature" $signature_str 4 [expr [pos] - 4]
         sectionvalue $signature_str
 
@@ -512,28 +635,30 @@ proc fat_header {} {
     }
 }
 
-proc macho_container {main_offset} {
+####################################################################################################
+
+proc container {main_offset} {
     section "header" {
         set signature [uint32]
-        set signature_str [macho_signature_name $signature]
+        set signature_str [signature_name $signature]
         entry "signature" $signature_str 4 [expr [pos] - 4]
         sectionvalue $signature_str
 
         set cputype [int32]
-        set cputype_str [macho_cputype_name $cputype]
+        set cputype_str [cputype_name $cputype]
         entry "cputype" $cputype_str 4 [expr [pos] - 4]
 
         uint32 -hex "cpusubtype"
 
         set filetype [uint32]
-        set filetype_str [macho_filetype_name $filetype]
+        set filetype_str [filetype_name $filetype]
         entry "filetype" $filetype_str 4 [expr [pos] - 4]
 
         set ncmds [uint32 "ncmds"]
         uint32 "sizeofcmds"
 
         set flags [uint32]
-        set flags_str [macho_flags_name $flags]
+        set flags_str [flags_name $flags]
         entry "flags" $flags_str 4 [expr [pos] - 4]
 
         if {$signature == 0xfeedfacf || $signature == 0xcffaedfe} {
@@ -541,17 +666,25 @@ proc macho_container {main_offset} {
         }
     }
 
-    macho_load_commands $main_offset $ncmds
+    load_commands $main_offset $ncmds
 }
+
+####################################################################################################
+# end of namespace macho
+}
+####################################################################################################
 
 main_guard {
     set signature [uint32]
     # Rewind to the top of the file
     move -4
 
-    if {$signature == 0xcafebabf || $signature == 0xbfbafeca || $signature == 0xcafebabe || $signature == 0xbebafeca} {
-        fat_header
+    if {$signature == 0xcafebabf || $signature == 0xbfbafeca ||
+        $signature == 0xcafebabe || $signature == 0xbebafeca} {
+        macho::fat_header
     } else {
-        macho_container 0
+        macho::container 0
     }
 }
+
+####################################################################################################
