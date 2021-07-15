@@ -196,7 +196,7 @@ proc macho_lc_segment_section_64_flags_name {flags} {
     if {($flags & 0x00000100) != 0} { entry "" "S_ATTR_LOC_RELOC" 3 [expr [pos] - 3]}
 }
 
-proc macho_lc_segment_section_64 {count} {
+proc macho_lc_segment_section_64 {main_offset count} {
     section "\[ $count \]" {
         set sectname [ascii 16 sectname]
         set segname [ascii 16 segname]
@@ -212,13 +212,13 @@ proc macho_lc_segment_section_64 {count} {
         uint32 reserved1
         uint32 reserved2
         uint32 reserved3
-        jumpa $offset {
+        jumpa [expr $main_offset + $offset] {
             bytes $size "data"
         }
     }
 }
 
-proc macho_lc_segment_64 {command_size} {
+proc macho_lc_segment_64 {main_offset command_size} {
     ascii 16 segname
     uint64 vmaddr
     uint64 vmsize
@@ -233,25 +233,24 @@ proc macho_lc_segment_64 {command_size} {
     if {$nsects != 0} {
         section "sections" {
             for {set i 0} {$i < $nsects} {incr i} {
-                macho_lc_segment_section_64 $i
+                macho_lc_segment_section_64 $main_offset $i
             }
         }
     }
 }
 
+proc nibbled_version {label} {
+    section $label {
+        set dot [uint8 dot]
+        set minor [uint8 minor]
+        set major [uint16 major]
+        sectionvalue "$major.$minor.$dot"
+    }
+}
+
 proc macho_lc_version_min_macosx {main_offset command_size} {
-    section "version" {
-        set dot [uint8 dot]
-        set minor [uint8 minor]
-        set major [uint16 major]
-        sectionvalue "$major.$minor.$dot"
-    }
-    section "sdk" {
-        set dot [uint8 dot]
-        set minor [uint8 minor]
-        set major [uint16 major]
-        sectionvalue "$major.$minor.$dot"
-    }
+    nibbled_version version
+    nibbled_version sdk
 }
 
 proc macho_lc_symtab_nlist_64 {stroff count} {
@@ -281,10 +280,104 @@ proc macho_lc_symtab {main_offset command_size} {
             sectionvalue "$nsyms entries"
         }
     }
-    # The strings are pooled together at the end of the section, but they are
-    # referenced by each of the symbols above (by n_strx, the byte offset of the
-    # string within this pool.) We do not need to iterate all the strings here,
-    # as they will be covered by the symbol table above.
+    # The strings are pooled together at the end of the section, but they are referenced by each of
+    # the symbols above (by n_strx, the byte offset of the string within this pool.) We do not need
+    # to iterate all the strings here, as they will be covered by the symbol table above.
+}
+
+proc macho_lc_source_version {} {
+    uint64 version;
+}
+
+proc macho_lc_build_tool_version {count} {
+    section "\[ $count \]" {
+        set tool [uint32]
+        switch $tool {
+            1 { set tool_str "TOOL_CLANG" }
+            2 { set tool_str "TOOL_SWIFT" }
+            3 { set tool_str "TOOL_LD" }
+            default { die "unknown platform ($platform)" }
+        }
+        entry "tool" "$tool_str" 4 [expr [pos] - 4]
+        nibbled_version version
+    }
+}
+
+proc macho_lc_uuid {} {
+    uuid uuid
+}
+
+proc macho_lc_build_version {} {
+    set platform [uint32]
+    switch $platform {
+        1 { set platform_str "PLATFORM_MACOS" }
+        2 { set platform_str "PLATFORM_IOS" }
+        3 { set platform_str "PLATFORM_TVOS" }
+        4 { set platform_str "PLATFORM_WATCHOS" }
+        5 { set platform_str "PLATFORM_BRIDGEOS" }
+        6 { set platform_str "PLATFORM_MACCATALYST" }
+        7 { set platform_str "PLATFORM_IOSSIMULATOR" }
+        8 { set platform_str "PLATFORM_TVOSSIMULATOR" }
+        9 { set platform_str "PLATFORM_WATCHOSSIMULATOR" }
+        10 { set platform_str "PLATFORM_DRIVERKIT" }
+        default { die "unknown platform ($platform)" }
+    }
+    entry "platform" "$platform_str" 4 [expr [pos] - 4]
+    nibbled_version minos
+    nibbled_version sdk
+    set ntools [uint32 ntools]
+    for {set i 0} {$i < $ntools} {incr i} {
+        macho_lc_build_tool_version $i
+    }
+}
+
+# The way lc_str is stored in the binary, the string is appended to the end of the data structure it
+# is a part of. The offset determines where that string starts relative to the load command, but
+# jumping there, reading the string, and jumping back puts the read position in a funky state when
+# the load command structure has finished reading (that is, it'll be at the start of the string,
+# when it needs to be past it to resume reading the next load command.) Therefore we take a bit of
+# an unorthodox approach here, by reading the offset, then the rest of the load command fields, and
+# then finally the string (with necessary padding at the end) so the read position is ready to go
+# for the next load command.
+proc macho_lc_str {command_pos command_size body} {
+    uint32 lc_str_offset
+    uplevel 1 $body
+    cstr "utf8" lc_str_string
+    set cur_size [expr [pos] - $command_pos]
+    # entry "cur_size" $cur_size
+    set leftovers [expr $command_size - $cur_size]
+    if {$leftovers != 0} {
+        bytes $leftovers padding
+    }
+}
+
+proc macho_lc_str_only {command_pos command_size} {
+    macho_lc_str $command_pos $command_size {}
+}
+
+proc macho_lc_load_dylib {main_offset command_pos command_size} {
+    macho_lc_str $command_pos $command_size {
+        uint32 timestamp
+        uint32 current_version
+        uint32 compatibility_version
+    }
+}
+
+proc macho_lc_idfvmlib {main_offset command_size} {
+    macho_lc_str
+    uint32 minor_version
+    uint32 header_addr
+}
+
+proc macho_lc_linkedit_data {main_offset command_size} {
+    set dataoff [uint32 dataoff]
+    set datasize [uint32 datasize]
+    if {$datasize != 0} {
+        # entry "absolute_offset" [expr $main_offset + $dataoff]
+        jumpa [expr $main_offset + $dataoff] {
+            bytes $datasize data
+        }
+    }
 }
 
 proc macho_lc_dysymtab {main_offset command_size} {
@@ -310,21 +403,49 @@ proc macho_lc_dysymtab {main_offset command_size} {
 
 proc macho_load_command {main_offset count} {
     section "\[ $count \]" {
-        set command [uint32 "command"]
+        set command_pos [pos]
+        set command [uint32 -hex "cmd"]
         set command_str [macho_load_command_name $command]
         sectionvalue $command_str
-        set command_size [uint32 "command_size"]
+        set command_size [uint32 "cmdsize"]
         switch $command_str {
-            "LC_SEGMENT_64" { macho_lc_segment_64 $command_size }
+            "LC_SEGMENT_64" { macho_lc_segment_64 $main_offset $command_size }
+            "LC_SYMTAB" { macho_lc_symtab $main_offset $command_size }
+            "LC_DYSYMTAB" { macho_lc_dysymtab $main_offset $command_size }
+            "LC_SOURCE_VERSION" { macho_lc_source_version }
+            "LC_BUILD_VERSION" { macho_lc_build_version }
+            "LC_UUID" { macho_lc_uuid }
+
             "LC_VERSION_MIN_MACOSX" -
             "LC_VERSION_MIN_IPHONEOS" -
             "LC_VERSION_MIN_WATCHOS" -
             "LC_VERSION_MIN_TVOS" { macho_lc_version_min_macosx $main_offset $command_size }
-            "LC_SYMTAB" { macho_lc_symtab $main_offset $command_size }
-            "LC_DYSYMTAB" { macho_lc_dysymtab $main_offset $command_size }
+
+            "LC_CODE_SIGNATURE" -
+            "LC_SEGMENT_SPLIT_INFO" -
+            "LC_FUNCTION_STARTS" -
+            "LC_DATA_IN_CODE" -
+            "LC_DYLIB_CODE_SIGN_DRS" -
+            "LC_LINKER_OPTIMIZATION_HINT" -
+            "LC_DYLD_EXPORTS_TRIE" -
+            "LC_DYLD_CHAINED_FIXUPS" { macho_lc_linkedit_data $main_offset $command_size }
+
+            "LC_IDFVMLIB" -
+            "LC_LOADFVMLIB" { macho_lc_idfvmlib $main_offset $command_size }
+
+            "LC_ID_DYLIB" -
+            "LC_LOAD_DYLIB" -
+            "LC_LOAD_WEAK_DYLIB" -
+            "LC_REEXPORT_DYLIB" { macho_lc_load_dylib $main_offset $command_pos $command_size }
+
+            "LC_ID_DYLINKER" -
+            "LC_LOAD_DYLINKER" -
+            "LC_DYLD_ENVIRONMENT" -
+            "LC_RPATH" { macho_lc_str_only $command_pos $command_size }
+
             default {
                 set command_leftovers [expr $command_size - 8]
-                bytes $command_leftovers "command_details"
+                bytes $command_leftovers "cmddata"
             }
         }
     }
@@ -364,7 +485,7 @@ proc fat_arch {count} {
         set cputype_str [macho_cputype_name $cputype]
         entry "cputype" $cputype_str 4 [expr [pos] - 4]
         sectionvalue $cputype_str
-        int32 "cpusubtype"
+        uint32 -hex "cpusubtype"
         set offset [uint32 offset]
         set size [uint32 size]
         uint32 align
@@ -401,7 +522,7 @@ proc macho_container {main_offset} {
         set cputype_str [macho_cputype_name $cputype]
         entry "cputype" $cputype_str 4 [expr [pos] - 4]
 
-        int32 "cpusubtype"
+        uint32 -hex "cpusubtype"
 
         set filetype [uint32]
         set filetype_str [macho_filetype_name $filetype]
