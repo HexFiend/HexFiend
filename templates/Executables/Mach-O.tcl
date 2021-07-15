@@ -239,7 +239,7 @@ proc macho_lc_segment_64 {command_size} {
     }
 }
 
-proc macho_lc_version_min_macosx {command_size} {
+proc macho_lc_version_min_macosx {main_offset command_size} {
     section "version" {
         set dot [uint8 dot]
         set minor [uint8 minor]
@@ -268,15 +268,15 @@ proc macho_lc_symtab_nlist_64 {stroff count} {
     }
 }
 
-proc macho_lc_symtab {command_size} {
+proc macho_lc_symtab {main_offset command_size} {
     set symoff [uint32 symoff]
     set nsyms [uint32 nsyms]
     set stroff [uint32 stroff]
     set strsize [uint32 strsize]
-    jumpa $symoff {
+    jumpa [expr $main_offset + $symoff] {
         section "symbols" {
             for {set i 0} {$i < $nsyms} {incr i} {
-                macho_lc_symtab_nlist_64 $stroff $i
+                macho_lc_symtab_nlist_64 [expr $main_offset + $stroff] $i
             }
             sectionvalue "$nsyms entries"
         }
@@ -287,7 +287,7 @@ proc macho_lc_symtab {command_size} {
     # as they will be covered by the symbol table above.
 }
 
-proc macho_lc_dysymtab {command_size} {
+proc macho_lc_dysymtab {main_offset command_size} {
     uint32 ilocalsym
     uint32 nlocalsym
     uint32 iextdefsym
@@ -308,32 +308,32 @@ proc macho_lc_dysymtab {command_size} {
     uint32 nlocrel
 }
 
-proc macho_load_command {count} {
+proc macho_load_command {main_offset count} {
     section "\[ $count \]" {
         set command [uint32 "command"]
         set command_str [macho_load_command_name $command]
+        sectionvalue $command_str
         set command_size [uint32 "command_size"]
         switch $command_str {
             "LC_SEGMENT_64" { macho_lc_segment_64 $command_size }
             "LC_VERSION_MIN_MACOSX" -
             "LC_VERSION_MIN_IPHONEOS" -
             "LC_VERSION_MIN_WATCHOS" -
-            "LC_VERSION_MIN_TVOS" { macho_lc_version_min_macosx $command_size }
-            "LC_SYMTAB" { macho_lc_symtab $command_size }
-            "LC_DYSYMTAB" { macho_lc_dysymtab $command_size }
+            "LC_VERSION_MIN_TVOS" { macho_lc_version_min_macosx $main_offset $command_size }
+            "LC_SYMTAB" { macho_lc_symtab $main_offset $command_size }
+            "LC_DYSYMTAB" { macho_lc_dysymtab $main_offset $command_size }
             default {
                 set command_leftovers [expr $command_size - 8]
                 bytes $command_leftovers "command_details"
             }
         }
-        sectionvalue $command_str
     }
 }
 
-proc macho_load_commands {ncmds} {
+proc macho_load_commands {main_offset ncmds} {
     section "load commands" {
         for {set i 0} {$i < $ncmds} {incr i} {
-            macho_load_command $i
+            macho_load_command $main_offset $i
         }
     }
 }
@@ -346,7 +346,7 @@ proc macho_cputype_name {cputype} {
     if {$cputype == 10} { return "CPU_TYPE_MC98000" }
     if {$cputype == 11} { return "CPU_TYPE_HPPA" }
     if {$cputype == 12} { return "CPU_TYPE_ARM" }
-    if {$cputype == [expr 12 | 0x01000000]} { return "CPU_TYPE_ARM64" }
+    if {$cputype == [expr 12 | 0x01000000] } { return "CPU_TYPE_ARM64" }
     if {$cputype == [expr 12 | 0x02000000]} { return "CPU_TYPE_ARM64_32" }
     if {$cputype == 13} { return "CPU_TYPE_MC88000" }
     if {$cputype == 14} { return "CPU_TYPE_SPARC" }
@@ -358,7 +358,8 @@ proc macho_cputype_name {cputype} {
 }
 
 proc fat_arch {count} {
-    section "\[ $count \]" {
+    section "arch\[ $count \]" {
+        big_endian
         set cputype [int32]
         set cputype_str [macho_cputype_name $cputype]
         entry "cputype" $cputype_str 4 [expr [pos] - 4]
@@ -368,9 +369,7 @@ proc fat_arch {count} {
         set size [uint32 size]
         uint32 align
         jumpa $offset {
-            sentry $size {
-                macho_container
-            }
+            macho_container $offset
         }
     }
 }
@@ -391,7 +390,7 @@ proc fat_header {} {
     }
 }
 
-proc macho_container {} {
+proc macho_container {main_offset} {
     section "header" {
         set signature [uint32]
         set signature_str [macho_signature_name $signature]
@@ -420,7 +419,7 @@ proc macho_container {} {
         }
     }
 
-    macho_load_commands $ncmds
+    macho_load_commands $main_offset $ncmds
 }
 
 main_guard {
@@ -431,6 +430,6 @@ main_guard {
     if {$signature == 0xcafebabf || $signature == 0xbfbafeca || $signature == 0xcafebabe || $signature == 0xbebafeca} {
         fat_header
     } else {
-        macho_container
+        macho_container 0
     }
 }
