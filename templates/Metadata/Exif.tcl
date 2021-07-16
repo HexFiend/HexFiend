@@ -4,8 +4,42 @@
 include "Utility/General.tcl"
 
 proc ExifIFDTagName {tag_number} {
+    # Tags 0 - 30 are for the GPS IFD. There's one collision between GPSIFD and the ExifIFD
+    # names - number 11 - which I think is acceptable.
+    # 11 in the ExifIFD is "ProcessingSoftware"
     switch $tag_number {
-        11  { return "ProcessingSoftware" }
+        0 { return "GPSVersionID" }
+        1 { return "GPSLatitudeRef" }
+        2 { return "GPSLatitude" }
+        3 { return "GPSLongitudeRef" }
+        4 { return "GPSLongitude" }
+        5 { return "GPSAltitudeRef" }
+        6 { return "GPSAltitude" }
+        7 { return "GPSTimeStamp" }
+        8 { return "GPSSatellites" }
+        9 { return "GPSStatus" }
+        10 { return "GPSMeasureMode" }
+        11 { return "GPSDOP" } 
+        12 { return "GPSSpeedRef" }
+        13 { return "GPSSpeed" }
+        14 { return "GPSTrackRef" }
+        15 { return "GPSTrack" }
+        16 { return "GPSImgDirectionRef" }
+        17 { return "GPSImgDirection" }
+        18 { return "GPSMapDatum" }
+        19 { return "GPSDestLatitudeRef" }
+        20 { return "GPSDestLatitude" }
+        21 { return "GPSDestLongitudeRef" }
+        22 { return "GPSDestLongitude" }
+        23 { return "GPSDestBearingRef" }
+        24 { return "GPSDestBearing" }
+        25 { return "GPSDestDistanceRef" }
+        26 { return "GPSDestDistance" }
+        27 { return "GPSProcessingMethod" }
+        28 { return "GPSAreaInformation" }
+        29 { return "GPSDateStamp" }
+        30 { return "GPSDifferential" }
+        31 { return "GPSHPositioningError" }
         254 { return "NewSubfileType" }
         255 { return "SubfileType" }
         256 { return "ImageWidth" }
@@ -314,7 +348,7 @@ proc ExifIFDTagName {tag_number} {
         52538 { return "ReductionMatrix3" }
         65024 { return "KodakKDCPrivateIFD" }
 
-        default { return $tag_number }
+        default { return "Unknown ($tag_number)" }
     }
 }
 

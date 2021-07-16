@@ -223,34 +223,6 @@ proc lc_segment_section_64_flags_name {flags} {
 
 ####################################################################################################
 
-proc human_size {size} {
-    if {$size == 0} { return "0 bytes" }
-
-    switch [::tcl::mathfunc::int [::tcl::mathfunc::floor [::tcl::mathfunc::log10 $size]]] {
-        3 -
-        4 -
-        5 {
-            set size [expr $size / 1024.0]
-            return [format "%.2f KB" $size]
-        }
-        6 -
-        7 -
-        8 {
-            set size [expr $size / (1024.0 * 1024.0)]
-            return [format "%.2f MB" $size]
-        }
-        9 -
-        10 -
-        11 {
-            set size [expr $size / (1024.0 * 1024.0 * 1024.0)]
-            return [format "%.2f GB" $size]
-        }
-        default { return "$size bytes"}
-    }
-}
-
-####################################################################################################
-
 proc lc_segment_section_64 {main_offset count} {
     section "\[ $count \]" {
         set sectname [ascii 16 sectname]
