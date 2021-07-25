@@ -1,3 +1,0 @@
-[submodule "vendor/Sparkle"]
-	path = vendor/Sparkle
-	url = https://github.com/sparkle-project/Sparkle.git
