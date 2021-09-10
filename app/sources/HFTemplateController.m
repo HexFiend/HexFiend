@@ -1,4 +1,4 @@
-//
+ //
 //  HFTemplateController.m
 //  HexFiend_2
 //
@@ -19,6 +19,7 @@ static const unsigned long long kMaxCacheSize = 1024 * 1024;
 @property (weak) HFTemplateNode *currentNode;
 @property BOOL requireFailed;
 @property NSMutableData *bytesCache;
+@property NSMutableData *cstrCache;
 @property HFRange bytesCacheRange;
 
 @end
@@ -28,6 +29,7 @@ static const unsigned long long kMaxCacheSize = 1024 * 1024;
 - (instancetype)init {
     self = [super init];
     _bytesCache = [NSMutableData dataWithLength:kMaxCacheSize];
+    _cstrCache = [NSMutableData dataWithLength:kMaxCacheSize];
     return self;
 }
 
@@ -129,12 +131,10 @@ static const unsigned long long kMaxCacheSize = 1024 * 1024;
 }
 
 - (NSString *)readCStringForEncoding:(HFStringEncoding *)encoding forLabel:(NSString *)label {
-    const size_t maxBytes = 4096;
-    unsigned char buf[maxBytes];
-    bzero(buf, sizeof(buf));
+    unsigned char* buf = _cstrCache.mutableBytes;
     BOOL foundNul = 0;
     size_t offset = 0;
-    for (; offset < maxBytes; offset++) {
+    for (; offset < kMaxCacheSize; offset++) {
         if (![self readBytes:buf + offset size:1]) {
             return nil;
         }

@@ -52,6 +52,7 @@ enum command {
     command_pos,
     command_len,
     command_end,
+    command_include,
     command_requires,
     command_section,
     command_endsection,
@@ -107,6 +108,7 @@ DEFINE_COMMAND(goto)
 DEFINE_COMMAND(pos)
 DEFINE_COMMAND(len)
 DEFINE_COMMAND(end)
+DEFINE_COMMAND(include)
 DEFINE_COMMAND(requires)
 DEFINE_COMMAND(section)
 DEFINE_COMMAND(endsection)
@@ -174,6 +176,7 @@ DEFINE_COMMAND(uint64_bits)
         CMD(pos),
         CMD(len),
         CMD(end),
+        CMD(include),
         CMD(requires),
         CMD(section),
         CMD(endsection),
@@ -447,6 +450,23 @@ DEFINE_COMMAND(uint64_bits)
             Tcl_SetObjResult(_interp, Tcl_NewBooleanObj(self.isEOF));
             break;
         }
+        case command_include: {
+            CHECK_SINGLE_ARG("relative_path")
+            NSString *path = [NSString stringWithUTF8String:Tcl_GetStringFromObj(objv[1], NULL)];
+            NSString *fullPath = [self.templatesFolder stringByAppendingPathComponent:path];
+            if (![[NSFileManager defaultManager] fileExistsAtPath:fullPath]) {
+                NSString* message = [NSString stringWithFormat:@"Include file not found: \"%@\"", fullPath];
+                Tcl_SetErrno(ENOENT);
+                Tcl_AddErrorInfo(_interp, [message UTF8String]);
+                return TCL_ERROR;
+            }
+            NSString* error = [self evaluateScript:fullPath];
+            if (error) {
+                Tcl_AddErrorInfo(_interp, [error UTF8String]);
+                return TCL_ERROR;
+            }
+            break;
+        }
         case command_requires: {
             if (objc != 3) {
                 Tcl_WrongNumArgs(_interp, 1, objv, "offset \"hex values\"");
@@ -490,19 +510,13 @@ DEFINE_COMMAND(uint64_bits)
             break;
         }
         case command_sectionname: {
-            if (objc != 2) {
-                Tcl_WrongNumArgs(_interp, 1, objv, "value");
-                return TCL_ERROR;
-            }
+            CHECK_SINGLE_ARG("value")
             NSString *name = [NSString stringWithUTF8String:Tcl_GetStringFromObj(objv[1], NULL)];
             self.currentSection.label = name;
             break;
         }
         case command_sectionvalue: {
-            if (objc != 2) {
-                Tcl_WrongNumArgs(_interp, 1, objv, "value");
-                return TCL_ERROR;
-            }
+            CHECK_SINGLE_ARG("value")
             NSString *value = [NSString stringWithUTF8String:Tcl_GetStringFromObj(objv[1], NULL)];
             self.currentSection.value = value;
             break;
@@ -513,10 +527,7 @@ DEFINE_COMMAND(uint64_bits)
             break;
         }
         case command_zlib_uncompress: {
-            if (objc != 2) {
-                Tcl_WrongNumArgs(_interp, 1, objv, "data");
-                return TCL_ERROR;
-            }
+            CHECK_SINGLE_ARG("data")
             int numBytes = 0;
             const unsigned char *bytes = Tcl_GetByteArrayFromObj(objv[1], &numBytes);
             if (!bytes) {
