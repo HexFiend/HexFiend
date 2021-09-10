@@ -257,7 +257,7 @@ proc lc_segment_section_64 {main_offset count} {
                     }
                     sectionvalue "$count entries"
                 }
-            } else {
+            } elseif {$size != 0} {
                 bytes $size "data"
             }
         }
