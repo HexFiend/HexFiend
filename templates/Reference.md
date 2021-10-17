@@ -190,3 +190,15 @@ entry "Channel" $channel
 | Command  | Description | Example |
 | ------------- | ------------- | ------------- |
 | zlib_uncompress *data* | Decompress *data* via zlib | `zlib_uncompress $compressed_data` |
+
+## Including Other Templates
+
+It is possible for one template to include another in its evaluation with the `include` command (v2.14.2+). This can be useful to define common commands or template subcomponents once, and reuse them across multiple templates (for example, defining the Exif metadata format, and reusing it across PNG, JPEG, PSD, etc.) The `include` command takes a path relative to the `Templates` folder. If the file cannot be found or evaluation of the file fails, the command will return an error.
+
+### Example
+
+```tcl
+include "Utilities/General.tcl"
+
+# This script can now use commands defined in the above file, like `assert` and `check`
+```

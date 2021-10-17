@@ -162,6 +162,10 @@
     [self reselectLastTemplate];
 }
 
+- (NSString *)resolvePath:(NSString *)path {
+    return [NSURL fileURLWithPath:path].URLByResolvingSymlinksInPath.path;
+}
+
 - (void)traversePath:(NSString *)dir intoTemplates:(NSMutableArray<HFTemplateFile*> *)templates {
     NSFileManager *fm = [NSFileManager defaultManager];
     for (NSString *filename in [fm enumeratorAtPath:dir]) {
@@ -171,17 +175,21 @@
             file.name = [[filename lastPathComponent] stringByDeletingPathExtension];
             [templates addObject:file];
         } else {
-            NSURL *url = [NSURL fileURLWithPath:[dir stringByAppendingPathComponent:filename]];
-            NSURL *resolved = url.URLByResolvingSymlinksInPath;
-            if (![url isEqual:resolved] && [resolved hasDirectoryPath]) {
-                [self traversePath:resolved.path intoTemplates:templates];
+            NSString *original = [dir stringByAppendingPathComponent:filename];
+            NSString *resolved = [self resolvePath:original];
+            BOOL isDir = NO;
+            if (![original isEqual:resolved] &&
+                [NSFileManager.defaultManager fileExistsAtPath:resolved isDirectory:&isDir] &&
+                isDir) {
+                [self traversePath:resolved intoTemplates:templates];
             }
         }
     }
 }
 
 - (void)loadTemplates:(id __unused)sender {
-    NSString *dir = self.templatesFolder;
+    // We resolve the templatesFolder in case it's a symlink
+    NSString *dir = [self resolvePath:self.templatesFolder];
     NSMutableArray<HFTemplateFile*> *templates = [NSMutableArray array];
     [self traversePath:dir intoTemplates:templates];
     [templates sortUsingDescriptors:@[[[NSSortDescriptor alloc] initWithKey:@"name" ascending:YES]]];
@@ -251,7 +259,8 @@
     NSString *errorMessage = nil;
     HFTclTemplateController *templateController = [[HFTclTemplateController alloc] init];
     templateController.anchor = self.anchorPosition;
-    
+    templateController.templatesFolder = self.templatesFolder;
+
     // Change directory to the templates folder so "source" command can use relative paths
     NSFileManager *fm = NSFileManager.defaultManager;
     NSString *currentDir = fm.currentDirectoryPath;
