@@ -175,8 +175,8 @@
             file.name = [[filename lastPathComponent] stringByDeletingPathExtension];
             [templates addObject:file];
         } else {
-            NSString* original = [dir stringByAppendingPathComponent:filename];
-            NSString* resolved = [self resolvePath:original];
+            NSString *original = [dir stringByAppendingPathComponent:filename];
+            NSString *resolved = [self resolvePath:original];
             BOOL isDir = NO;
             if (![original isEqual:resolved] &&
                 [NSFileManager.defaultManager fileExistsAtPath:resolved isDirectory:&isDir] &&
