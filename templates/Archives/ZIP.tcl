@@ -157,7 +157,9 @@ while {![end]} {
             if {$exl > 0} {
                 extra_fields $exl
             }
-            bytes $cs "File data"
+            if {$cs > 0} {	
+	            bytes $cs "File data"
+	        }
             if {$flgs == 8} {
                 section "Data descriptor" {
                     set sig [uint32 -hex "Signature or CRC"]                    
