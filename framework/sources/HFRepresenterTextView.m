@@ -1427,7 +1427,10 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
                 const CGSize *advancesPtr = advances + runStart;
                 const size_t numGlyphs = i - runStart;
 #if 1
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
                 CGContextShowGlyphsWithAdvances(ctx, glyphsPtr, advancesPtr, numGlyphs);
+#pragma clang diagnostic pop
 #else
                 CGPoint positions[numGlyphs];
                 memset(positions, 0, sizeof(positions));

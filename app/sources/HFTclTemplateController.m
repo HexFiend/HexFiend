@@ -454,15 +454,15 @@ DEFINE_COMMAND(uint64_bits)
             CHECK_SINGLE_ARG("relative_path")
             NSString *path = [NSString stringWithUTF8String:Tcl_GetStringFromObj(objv[1], NULL)];
             NSString *fullPath = [self.templatesFolder stringByAppendingPathComponent:path];
-            if (![[NSFileManager defaultManager] fileExistsAtPath:fullPath]) {
-                NSString* message = [NSString stringWithFormat:@"Include file not found: \"%@\"", fullPath];
+            if (![NSFileManager.defaultManager fileExistsAtPath:fullPath]) {
+                NSString *message = [NSString stringWithFormat:@"Include file not found: \"%@\"", fullPath];
                 Tcl_SetErrno(ENOENT);
-                Tcl_AddErrorInfo(_interp, [message UTF8String]);
+                Tcl_AddErrorInfo(_interp, message.UTF8String);
                 return TCL_ERROR;
             }
-            NSString* error = [self evaluateScript:fullPath];
+            NSString *error = [self evaluateScript:fullPath];
             if (error) {
-                Tcl_AddErrorInfo(_interp, [error UTF8String]);
+                Tcl_AddErrorInfo(_interp, error.UTF8String);
                 return TCL_ERROR;
             }
             break;
