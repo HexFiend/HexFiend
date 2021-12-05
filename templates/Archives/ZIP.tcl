@@ -127,8 +127,27 @@ while {![end]} {
             compression_method
             fattime "File last modification time"
             fatdate "File last modification date"
-            uint32 -hex "CRC-32"
-            set cs [uint32 "Compressed size"]           
+            if {$flgs != 8} {
+                uint32 -hex "CRC-32"
+                set cs [uint32 "Compressed size"]
+            } else {
+                entry "CRC-32" "unknow"
+                entry "Compressed size" "unknow"
+                move 5
+                set mv 0
+                while {![end]} {
+                    set sig [uint32]
+                    incr mv
+                    if {$sig == 134695760} {
+                        move 4
+                        set cs [uint32]
+                        incr mv 8
+                        break
+                    }
+                    move -3
+                }
+                move -$mv
+            }
             uint32 "Uncompressed size"
             set fnl [uint16 "File name length"]         
             set exl [uint16 "Extra field length"]
@@ -138,8 +157,10 @@ while {![end]} {
             if {$exl > 0} {
                 extra_fields $exl
             }
-            bytes $cs "File data"
-            if {$flgs & 0x01} {
+            if {$cs > 0} {	
+	            bytes $cs "File data"
+	        }
+            if {$flgs == 8} {
                 section "Data descriptor" {
                     set sig [uint32 -hex "Signature or CRC"]                    
                     if {$sig == 134695760} {
