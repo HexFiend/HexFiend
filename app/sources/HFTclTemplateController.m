@@ -11,6 +11,7 @@
 #import <tclTomMath.h>
 #import <zlib.h>
 #import <HexFiend/HFEncodingManager.h>
+#include "version.h"
 
 // Tcl_ParseArgsObjv was added in Tcl 8.6, but macOS ships with Tcl 8.5
 #import "Tcl_ParseArgsObjv.h"
@@ -65,6 +66,7 @@ enum command {
     command_uint16_bits,
     command_uint32_bits,
     command_uint64_bits,
+    command_hfversion,
 };
 
 @interface HFTclTemplateController ()
@@ -121,6 +123,7 @@ DEFINE_COMMAND(uint8_bits)
 DEFINE_COMMAND(uint16_bits)
 DEFINE_COMMAND(uint32_bits)
 DEFINE_COMMAND(uint64_bits)
+DEFINE_COMMAND(hfversion)
 
 @implementation HFTclTemplateController {
     Tcl_Interp *_interp;
@@ -189,6 +192,7 @@ DEFINE_COMMAND(uint64_bits)
         CMD(uint16_bits),
         CMD(uint32_bits),
         CMD(uint64_bits),
+        CMD(hfversion),
     };
 #undef CMD
 #undef CMD_NAMED
@@ -463,6 +467,46 @@ DEFINE_COMMAND(uint64_bits)
             NSString *error = [self evaluateScript:fullPath];
             if (error) {
                 Tcl_AddErrorInfo(_interp, error.UTF8String);
+                return TCL_ERROR;
+            }
+            break;
+        }
+        case command_hfversion: {
+            if (objc != 4) {
+                Tcl_WrongNumArgs(_interp, 0, objv, "major minor patch");
+                return TCL_ERROR;
+            }
+            long major;
+            int err = Tcl_GetLongFromObj(_interp, objv[1], &major);
+            if (err != TCL_OK) {
+                return err;
+            }
+            long minor;
+            err = Tcl_GetLongFromObj(_interp, objv[2], &minor);
+            if (err != TCL_OK) {
+                return err;
+            }
+            long patch;
+            err = Tcl_GetLongFromObj(_interp, objv[3], &patch);
+            if (err != TCL_OK) {
+                return err;
+            }
+            /*
+                In order for this check to work:
+                    - `major` has no practical limitation
+                    - `minor` cannot be greater than 999
+                    - `patch` cannot be greater than 99
+            */
+            static const long hf_have_k = HEXFIEND_VERSION_MAJOR * 100000 +
+                                          HEXFIEND_VERSION_MINOR * 100 +
+                                          HEXFIEND_VERSION_PATCH;
+            long hf_required = major * 100000 + minor * 100 + patch;
+            if (hf_have_k < hf_required) {
+                NSString *message = [NSString stringWithFormat:@"This build of HexFiend (v%d.%d.%d) does not meet this template's minimum requirement (v%ld.%ld.%ld)",
+                                        HEXFIEND_VERSION_MAJOR, HEXFIEND_VERSION_MINOR, HEXFIEND_VERSION_PATCH,
+                                        major, minor, patch];
+                Tcl_SetErrno(ENOENT);
+                Tcl_AddErrorInfo(_interp, message.UTF8String);
                 return TCL_ERROR;
             }
             break;

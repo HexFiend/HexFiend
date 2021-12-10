@@ -1,6 +1,8 @@
 # Utility/General.tcl
 # 2021 Jul 13 | fosterbrereton | Initial implementation
 
+hfversion 2 14 2
+
 ####################################################################################################
 # `die` may be used to preemptively terminate a template evaluation. This can be useful when the
 # file being analyzed is in some unknown state and recovery is not possible. The command takes an
