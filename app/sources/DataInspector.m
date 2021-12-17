@@ -130,16 +130,22 @@ static NSString *signedIntegerDescription(const unsigned char *bytes, NSUInteger
             FLIP(2)
             FORMAT(@"%" PRId16, @"0x%" PRIX16)
         }
+        case 3:
         case 4:
         {
             FETCH(int32_t)
             FLIP(4)
+            s >>= 8 * (4 - length);
             FORMAT(@"%" PRId32, @"0x%" PRIX32)
         }
+        case 5:
+        case 6:
+        case 7:
         case 8:
         {
             FETCH(int64_t)
             FLIP(8)
+            s >>= 8 * (8 - length);
             FORMAT(@"%" PRId64, @"0x%" PRIX64)
         }
         case 16:
@@ -179,16 +185,22 @@ static NSString *unsignedIntegerDescription(const unsigned char *bytes, NSUInteg
             FLIP(2)
             FORMAT(@"%" PRIu16, @"0x%" PRIX16)
         }
+        case 3:
         case 4:
         {
             FETCH(uint32_t)
             FLIP(4)
+            s >>= 8 * (4 - length);
             FORMAT(@"%" PRIu32, @"0x%" PRIX32)
         }
+        case 5:
+        case 6:
+        case 7:
         case 8:
         {
             FETCH(uint64_t)
             FLIP(8)
+            s >>= 8 * (8 - length);
             FORMAT(@"%" PRIu64, @"0x%" PRIX64)
         }
         case 16:
@@ -204,7 +216,7 @@ static NSString *unsignedIntegerDescription(const unsigned char *bytes, NSUInteg
             flip(buf, b-buf);
             return [NSString stringWithFormat:@"%s", buf];
         }
-        default: return nil;
+        default: return @"UNKNOWN";
     }
 }
 #undef FETCH
@@ -433,19 +445,18 @@ static NSAttributedString *inspectionSuccess(NSString *s) {
     switch ([self type]) {
         case eInspectorTypeUnsignedInteger:
         case eInspectorTypeSignedInteger:
-            /* Only allow powers of 2 up to 8 */
-            switch (length) {
-                case 0: return inspectionError(InspectionErrorNoData);
-                case 1: case 2: case 4: case 8:
-                    if(outIsError) *outIsError = NO;
-                    if(inspectorType == eInspectorTypeSignedInteger)
-                        return inspectionSuccess(signedIntegerDescription(bytes, length, endianness, numberBase));
-                    else
-                        return inspectionSuccess(unsignedIntegerDescription(bytes, length, endianness, numberBase));
-                default:
-                    return length > 8 ? inspectionError(InspectionErrorTooMuch) : inspectionError(InspectionErrorNonPwr2);
+            if(length == 0) {
+                return inspectionError(InspectionErrorNoData);
+            } else if(length > 8) {
+                return inspectionError(InspectionErrorTooMuch);
             }
-            
+
+            if(outIsError) *outIsError = NO;
+
+            return inspectionSuccess(inspectorType == eInspectorTypeSignedInteger ?
+                                         signedIntegerDescription(bytes, length, endianness, numberBase) :
+                                         unsignedIntegerDescription(bytes, length, endianness, numberBase));
+
         case eInspectorTypeFloatingPoint:
             switch (length) {
                 case 0:
