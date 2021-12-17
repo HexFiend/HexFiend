@@ -216,7 +216,7 @@ static NSString *unsignedIntegerDescription(const unsigned char *bytes, NSUInteg
             flip(buf, b-buf);
             return [NSString stringWithFormat:@"%s", buf];
         }
-        default: return @"UNKNOWN";
+        default: return nil;
     }
 }
 #undef FETCH
