@@ -116,6 +116,7 @@ static void flip(void *val, NSUInteger amount) {
 
 #define FETCH(type) type s = *(const type *)bytes;
 #define FLIP(amount) if (endianness != eNativeEndianness) { flip(&s, amount); }
+#define SHIFT(amount) s >>= 8 * (amount - length);
 #define FORMAT(decSpecifier, hexSpecifier) return [NSString stringWithFormat:numberBase == eNumberBaseDecimal ? decSpecifier : hexSpecifier, s];
 static NSString *signedIntegerDescription(const unsigned char *bytes, NSUInteger length, enum Endianness_t endianness, enum NumberBase_t numberBase) {
     switch (length) {
@@ -135,7 +136,7 @@ static NSString *signedIntegerDescription(const unsigned char *bytes, NSUInteger
         {
             FETCH(int32_t)
             FLIP(4)
-            s >>= 8 * (4 - length);
+            SHIFT(4);
             FORMAT(@"%" PRId32, @"0x%" PRIX32)
         }
         case 5:
@@ -145,13 +146,21 @@ static NSString *signedIntegerDescription(const unsigned char *bytes, NSUInteger
         {
             FETCH(int64_t)
             FLIP(8)
-            s >>= 8 * (8 - length);
+            SHIFT(8);
             FORMAT(@"%" PRId64, @"0x%" PRIX64)
         }
+        case 9:
+        case 10:
+        case 11:
+        case 12:
+        case 13:
+        case 14:
+        case 15:
         case 16:
         {
             FETCH(__int128_t)
             FLIP(16)
+            SHIFT(16)
             BOOL neg;
             if (s < 0) {
                 s=-s;
@@ -190,7 +199,7 @@ static NSString *unsignedIntegerDescription(const unsigned char *bytes, NSUInteg
         {
             FETCH(uint32_t)
             FLIP(4)
-            s >>= 8 * (4 - length);
+            SHIFT(4);
             FORMAT(@"%" PRIu32, @"0x%" PRIX32)
         }
         case 5:
@@ -200,13 +209,21 @@ static NSString *unsignedIntegerDescription(const unsigned char *bytes, NSUInteg
         {
             FETCH(uint64_t)
             FLIP(8)
-            s >>= 8 * (8 - length);
+            SHIFT(8);
             FORMAT(@"%" PRIu64, @"0x%" PRIX64)
         }
+        case 9:
+        case 10:
+        case 11:
+        case 12:
+        case 13:
+        case 14:
+        case 15:
         case 16:
         {
             FETCH(__uint128_t)
             FLIP(16)
+            SHIFT(16)
             char buf[50], *b = buf;
             while(s) {
                 *(b++) = (char)(s%10)+'0';
@@ -221,6 +238,7 @@ static NSString *unsignedIntegerDescription(const unsigned char *bytes, NSUInteg
 }
 #undef FETCH
 #undef FLIP
+#undef SHIFT
 #undef FORMAT
 
 static long double ieeeToLD(const void *bytes, unsigned exp, unsigned man) {
@@ -447,7 +465,7 @@ static NSAttributedString *inspectionSuccess(NSString *s) {
         case eInspectorTypeSignedInteger:
             if(length == 0) {
                 return inspectionError(InspectionErrorNoData);
-            } else if(length > 8) {
+            } else if(length > 16) {
                 return inspectionError(InspectionErrorTooMuch);
             }
 
