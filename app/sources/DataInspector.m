@@ -115,8 +115,7 @@ static void flip(void *val, NSUInteger amount) {
 }
 
 #define FETCH(type) type s = *(const type *)bytes;
-#define FLIP(amount) if (endianness != eNativeEndianness) { flip(&s, amount); }
-#define SHIFT(amount) s >>= 8 * (amount - length);
+#define FLIP_AND_SHIFT(amount) if (endianness != eNativeEndianness) { flip(&s, amount); s >>= 8 * (amount - length); }
 #define FORMAT(decSpecifier, hexSpecifier) return [NSString stringWithFormat:numberBase == eNumberBaseDecimal ? decSpecifier : hexSpecifier, s];
 static NSString *signedIntegerDescription(const unsigned char *bytes, NSUInteger length, enum Endianness_t endianness, enum NumberBase_t numberBase) {
     switch (length) {
@@ -128,15 +127,14 @@ static NSString *signedIntegerDescription(const unsigned char *bytes, NSUInteger
         case 2:
         {
             FETCH(int16_t)
-            FLIP(2)
+            FLIP_AND_SHIFT(2)
             FORMAT(@"%" PRId16, @"0x%" PRIX16)
         }
         case 3:
         case 4:
         {
             FETCH(int32_t)
-            FLIP(4)
-            SHIFT(4);
+            FLIP_AND_SHIFT(4)
             FORMAT(@"%" PRId32, @"0x%" PRIX32)
         }
         case 5:
@@ -145,8 +143,7 @@ static NSString *signedIntegerDescription(const unsigned char *bytes, NSUInteger
         case 8:
         {
             FETCH(int64_t)
-            FLIP(8)
-            SHIFT(8);
+            FLIP_AND_SHIFT(8)
             FORMAT(@"%" PRId64, @"0x%" PRIX64)
         }
         case 9:
@@ -159,23 +156,28 @@ static NSString *signedIntegerDescription(const unsigned char *bytes, NSUInteger
         case 16:
         {
             FETCH(__int128_t)
-            FLIP(16)
-            SHIFT(16)
-            BOOL neg;
-            if (s < 0) {
-                s=-s;
-                neg = YES;
+            FLIP_AND_SHIFT(16)
+            if (numberBase == eNumberBaseDecimal) {
+                BOOL neg;
+                if (s < 0) {
+                    s=-s;
+                    neg = YES;
+                } else {
+                    neg = NO;
+                }
+                char buf[50], *b = buf;
+                while(s) {
+                    *(b++) = (char)(s%10)+'0';
+                    s /= 10;
+                }
+                *b = 0;
+                flip(buf, b-buf);
+                return [NSString stringWithFormat:@"%s%s", (neg?"-":""), buf];
             } else {
-                neg = NO;
+                uint64_t hi = (uint64_t)(s >> 64);
+                uint64_t lo = (uint64_t)(s);
+                return [NSString stringWithFormat:@"0x%" PRIX64 "%0.16" PRIX64, hi, lo];
             }
-            char buf[50], *b = buf;
-            while(s) {
-                *(b++) = (char)(s%10)+'0';
-                s /= 10;
-            }
-            *b = 0;
-            flip(buf, b-buf);
-            return [NSString stringWithFormat:@"%s%s", (neg?"-":""), buf];
         }
         default: return nil;
     }
@@ -191,15 +193,13 @@ static NSString *unsignedIntegerDescription(const unsigned char *bytes, NSUInteg
         case 2:
         {
             FETCH(uint16_t)
-            FLIP(2)
             FORMAT(@"%" PRIu16, @"0x%" PRIX16)
         }
         case 3:
         case 4:
         {
             FETCH(uint32_t)
-            FLIP(4)
-            SHIFT(4);
+            FLIP_AND_SHIFT(4)
             FORMAT(@"%" PRIu32, @"0x%" PRIX32)
         }
         case 5:
@@ -208,8 +208,7 @@ static NSString *unsignedIntegerDescription(const unsigned char *bytes, NSUInteg
         case 8:
         {
             FETCH(uint64_t)
-            FLIP(8)
-            SHIFT(8);
+            FLIP_AND_SHIFT(8)
             FORMAT(@"%" PRIu64, @"0x%" PRIX64)
         }
         case 9:
@@ -222,16 +221,21 @@ static NSString *unsignedIntegerDescription(const unsigned char *bytes, NSUInteg
         case 16:
         {
             FETCH(__uint128_t)
-            FLIP(16)
-            SHIFT(16)
-            char buf[50], *b = buf;
-            while(s) {
-                *(b++) = (char)(s%10)+'0';
-                s /= 10;
+            FLIP_AND_SHIFT(16)
+            if (numberBase == eNumberBaseDecimal) {
+                char buf[50], *b = buf;
+                while(s) {
+                    *(b++) = (char)(s%10)+'0';
+                    s /= 10;
+                }
+                *b = 0;
+                flip(buf, b-buf);
+                return [NSString stringWithFormat:@"%s", buf];
+            } else {
+                uint64_t hi = (uint64_t)(s >> 64);
+                uint64_t lo = (uint64_t)(s);
+                return [NSString stringWithFormat:@"0x%" PRIX64 "%0.16" PRIX64, hi, lo];
             }
-            *b = 0;
-            flip(buf, b-buf);
-            return [NSString stringWithFormat:@"%s", buf];
         }
         default: return nil;
     }
