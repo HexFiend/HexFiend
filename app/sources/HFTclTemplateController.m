@@ -69,6 +69,57 @@ enum command {
     command_hfversion,
 };
 
+bool parseVersionString(const char* s, long* major, long* minor, long* patch) {
+    if (!s || !major || !minor || !patch) return false;
+
+    *major = *minor = *patch = 0;
+
+    const char* begin = s;
+    char* end = NULL;
+
+    *major = strtol(begin, &end, 10);
+    if (begin == end) return false;
+    begin = ++end;
+
+    *minor = strtol(begin, &end, 10);
+    if (begin == end) return true;
+    begin = ++end;
+
+    *patch = strtol(begin, &end, 10);
+
+    return true;
+}
+
+long versionInteger(long major, long minor, long patch) {
+    return major * 100000 + minor * 100 + patch;
+}
+
+#define HF_XSTR(s) HF_STR(s)
+#define HF_STR(s) #s
+static const char* kVersionString = HF_XSTR(HEXFIEND_VERSION);
+#undef HF_STR
+#undef HF_XSTR
+
+long haveVersion(void) {
+    static bool inited_s = false;
+    static long have_version_s;
+
+    if (inited_s) return have_version_s;
+
+    long have_major;
+    long have_minor;
+    long have_patch;
+
+    if (!parseVersionString(kVersionString, &have_major, &have_minor, &have_patch)) {
+        return -1;
+    }
+
+    have_version_s = versionInteger(have_major, have_minor, have_patch);
+    inited_s = true;
+
+    return have_version_s;
+}
+
 @interface HFTclTemplateController ()
 
 - (int)runCommand:(enum command)command objc:(int)objc objv:(struct Tcl_Obj * CONST *)objv;
@@ -472,40 +523,26 @@ DEFINE_COMMAND(hfversion)
             break;
         }
         case command_hfversion: {
-            if (objc != 4) {
-                Tcl_WrongNumArgs(_interp, 0, objv, "major minor patch");
-                return TCL_ERROR;
-            }
-            long major;
-            int err = Tcl_GetLongFromObj(_interp, objv[1], &major);
-            if (err != TCL_OK) {
-                return err;
-            }
-            long minor;
-            err = Tcl_GetLongFromObj(_interp, objv[2], &minor);
-            if (err != TCL_OK) {
-                return err;
-            }
-            long patch;
-            err = Tcl_GetLongFromObj(_interp, objv[3], &patch);
-            if (err != TCL_OK) {
-                return err;
-            }
             /*
                 In order for this check to work:
                     - `major` has no practical limitation
                     - `minor` cannot be greater than 999
                     - `patch` cannot be greater than 99
             */
-            static const long hf_have_k = HEXFIEND_VERSION_MAJOR * 100000 +
-                                          HEXFIEND_VERSION_MINOR * 100 +
-                                          HEXFIEND_VERSION_PATCH;
-            long hf_required = major * 100000 + minor * 100 + patch;
-            if (hf_have_k < hf_required) {
-                NSString *message = [NSString stringWithFormat:@"This build of HexFiend (v%d.%d.%d) does not meet this template's minimum requirement (v%ld.%ld.%ld)",
-                                        HEXFIEND_VERSION_MAJOR, HEXFIEND_VERSION_MINOR, HEXFIEND_VERSION_PATCH,
-                                        major, minor, patch];
-                Tcl_SetErrno(ENOENT);
+            CHECK_SINGLE_ARG("major.minor.patch");
+            long major;
+            long minor;
+            long patch;
+            if (!parseVersionString(Tcl_GetString(objv[1]), &major, &minor, &patch)) {
+                Tcl_SetErrno(EIO);
+                Tcl_AddErrorInfo(_interp, "Could not parse minimum version information");
+                return TCL_ERROR;
+            }
+            const long need_version = versionInteger(major, minor, patch);
+            if (haveVersion() < need_version) {
+                NSString *message = [NSString stringWithFormat:@"This build of HexFiend (v%s) does not meet this template's minimum requirement (v%ld.%ld.%ld)",
+                                        kVersionString, major, minor, patch];
+                Tcl_SetErrno(EIO);
                 Tcl_AddErrorInfo(_interp, message.UTF8String);
                 return TCL_ERROR;
             }
