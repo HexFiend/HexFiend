@@ -3,7 +3,7 @@
 # 2021 Jul 14 | fosterbrereton | Initial implementation
 ####################################################################################################
 
-hfversion 2.14.2
+hf_min_version_required 2.14.2
 big_endian
 
 include "Utility/General.tcl"

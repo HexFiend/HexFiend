@@ -66,7 +66,7 @@ enum command {
     command_uint16_bits,
     command_uint32_bits,
     command_uint64_bits,
-    command_hfversion,
+    command_hf_min_version_required,
 };
 
 bool parseVersionString(const char* s, long* major, long* minor, long* patch) {
@@ -174,7 +174,7 @@ DEFINE_COMMAND(uint8_bits)
 DEFINE_COMMAND(uint16_bits)
 DEFINE_COMMAND(uint32_bits)
 DEFINE_COMMAND(uint64_bits)
-DEFINE_COMMAND(hfversion)
+DEFINE_COMMAND(hf_min_version_required)
 
 @implementation HFTclTemplateController {
     Tcl_Interp *_interp;
@@ -243,7 +243,7 @@ DEFINE_COMMAND(hfversion)
         CMD(uint16_bits),
         CMD(uint32_bits),
         CMD(uint64_bits),
-        CMD(hfversion),
+        CMD(hf_min_version_required),
     };
 #undef CMD
 #undef CMD_NAMED
@@ -522,7 +522,7 @@ DEFINE_COMMAND(hfversion)
             }
             break;
         }
-        case command_hfversion: {
+        case command_hf_min_version_required: {
             /*
                 In order for this check to work:
                     - `major` has no practical limitation

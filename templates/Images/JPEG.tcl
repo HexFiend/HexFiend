@@ -1,7 +1,7 @@
 # JPEG Format
 # Author: Simon Jentzsch
 
-hfversion 2.14.2
+hf_min_version_required 2.14.2
 big_endian
 requires 0 "FF D8 FF"
 

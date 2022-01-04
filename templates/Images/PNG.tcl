@@ -2,7 +2,7 @@
 # 2018 Jan 20 | kainjow | Initial implementation
 # 2021 Jul 13 | fosterbrereton | Added several chunk-specific fields and details
 
-hfversion 2.14.2
+hf_min_version_required 2.14.2
 
 include "Metadata/Exif.tcl"
 include "Utility/General.tcl"

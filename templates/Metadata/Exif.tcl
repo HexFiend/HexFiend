@@ -1,7 +1,7 @@
 # Metadata/Exif.tcl
 # 2021 Jul 13 | fosterbrereton | Initial implementation
 
-hfversion 2.14.2
+hf_min_version_required 2.14.2
 
 include "Utility/General.tcl"
 
