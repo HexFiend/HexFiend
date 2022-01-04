@@ -11,7 +11,7 @@
 #import <tclTomMath.h>
 #import <zlib.h>
 #import <HexFiend/HFEncodingManager.h>
-#include "version.h"
+#import "version.h"
 
 // Tcl_ParseArgsObjv was added in Tcl 8.6, but macOS ships with Tcl 8.5
 #import "Tcl_ParseArgsObjv.h"
