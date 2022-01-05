@@ -528,7 +528,7 @@ DEFINE_COMMAND(hf_min_version_required)
             break;
         }
         case command_hf_min_version_required: {
-            CHECK_SINGLE_ARG("major.minor.patch");
+            CHECK_SINGLE_ARG("major[.minor[.patch]]");
             long major;
             long minor;
             long patch;
