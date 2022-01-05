@@ -92,6 +92,10 @@ bool parseVersionString(const char* s, long* major, long* minor, long* patch) {
 }
 
 long versionInteger(long major, long minor, long patch) {
+    HFASSERT(major > 0);
+    HFASSERT(minor > 0 && minor < 999);
+    HFASSERT(patch > 0 && patch < 99);
+
     return major * 100000 + minor * 100 + patch;
 }
 
@@ -524,12 +528,6 @@ DEFINE_COMMAND(hf_min_version_required)
             break;
         }
         case command_hf_min_version_required: {
-            /*
-                In order for this check to work:
-                    - `major` has no practical limitation
-                    - `minor` cannot be greater than 999
-                    - `patch` cannot be greater than 99
-            */
             CHECK_SINGLE_ARG("major.minor.patch");
             long major;
             long minor;
