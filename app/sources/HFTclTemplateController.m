@@ -74,18 +74,19 @@ bool parseVersionString(const char* s, long* major, long* minor, long* patch) {
 
     *major = *minor = *patch = 0;
 
-    const char* begin = s;
+    const char* first = s;
+    const char* last = first + strlen(s);
     char* end = NULL;
 
-    *major = strtol(begin, &end, 10);
-    if (begin == end) return false;
-    begin = ++end;
+    *major = strtol(first, &end, 10);
+    if (end == last) return false;
+    first = ++end;
 
-    *minor = strtol(begin, &end, 10);
-    if (begin == end) return true;
-    begin = ++end;
+    *minor = strtol(first, &end, 10);
+    if (end == last) return true;
+    first = ++end;
 
-    *patch = strtol(begin, &end, 10);
+    *patch = strtol(first, &end, 10);
 
     return true;
 }
