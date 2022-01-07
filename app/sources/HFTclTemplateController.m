@@ -69,32 +69,10 @@ enum command {
     command_hf_min_version_required,
 };
 
-bool parseVersionString(const char* s, long* major, long* minor, long* patch) {
-    if (!s || !major || !minor || !patch) return false;
-
-    *major = *minor = *patch = 0;
-
-    const char* first = s;
-    const char* last = first + strlen(s);
-    char* end = NULL;
-
-    *major = strtol(first, &end, 10);
-    if (end == last) return false;
-    first = ++end;
-
-    *minor = strtol(first, &end, 10);
-    if (end == last) return true;
-    first = ++end;
-
-    *patch = strtol(first, &end, 10);
-
-    return true;
-}
-
 long versionInteger(long major, long minor, long patch) {
     HFASSERT(major > 0);
-    HFASSERT(minor > 0 && minor < 999);
-    HFASSERT(patch > 0 && patch < 99);
+    HFASSERT(minor >= 0 && minor <= 999);
+    HFASSERT(patch >= 0 && patch <= 99);
 
     return major * 100000 + minor * 100 + patch;
 }
@@ -104,26 +82,6 @@ long versionInteger(long major, long minor, long patch) {
 static const char* kVersionString = HF_XSTR(HEXFIEND_VERSION);
 #undef HF_STR
 #undef HF_XSTR
-
-long haveVersion(void) {
-    static bool inited_s = false;
-    static long have_version_s;
-
-    if (inited_s) return have_version_s;
-
-    long have_major;
-    long have_minor;
-    long have_patch;
-
-    if (!parseVersionString(kVersionString, &have_major, &have_minor, &have_patch)) {
-        return -1;
-    }
-
-    have_version_s = versionInteger(have_major, have_minor, have_patch);
-    inited_s = true;
-
-    return have_version_s;
-}
 
 @interface HFTclTemplateController ()
 
@@ -336,6 +294,56 @@ DEFINE_COMMAND(hf_min_version_required)
     return err;
 }
 
+- (BOOL) parseVersionString:(NSString*)s major:(int*)major minor:(int*)minor patch:(int*)patch {
+    if (!s || !major || !minor || !patch) return false;
+
+    *major = *minor = *patch = 0;
+
+    NSArray<NSString *> *components = [s componentsSeparatedByString:@"."];
+    NSUInteger count = components.count;
+
+    if (count == 0 || count > 3) {
+        return NO;
+    }
+
+    if (count > 0) {
+        *major = [components[0] intValue];
+    }
+
+    if (count > 1) {
+        *minor = [components[1] intValue];
+    }
+
+    if (count > 2) {
+        *patch = [components[2] intValue];
+    }
+
+    return YES;
+}
+
+- (long) haveVersion {
+    static bool inited_s = false;
+    static long have_version_s;
+
+    if (inited_s) {
+        return have_version_s;
+    }
+
+    int have_major;
+    int have_minor;
+    int have_patch;
+
+    if (![self parseVersionString:[NSString stringWithUTF8String:kVersionString] major:&have_major minor:&have_minor patch:&have_patch]) {
+        return -1;
+    }
+
+    have_version_s = versionInteger(have_major, have_minor, have_patch);
+    inited_s = true;
+
+    return have_version_s;
+}
+
+
 - (int)runCommand:(enum command)command objc:(int)objc objv:(struct Tcl_Obj * CONST *)objv {
     switch (command) {
         case command_uint64:
@@ -529,17 +537,17 @@ DEFINE_COMMAND(hf_min_version_required)
         }
         case command_hf_min_version_required: {
             CHECK_SINGLE_ARG("major[.minor[.patch]]");
-            long major;
-            long minor;
-            long patch;
-            if (!parseVersionString(Tcl_GetString(objv[1]), &major, &minor, &patch)) {
+            int major;
+            int minor;
+            int patch;
+            if (![self parseVersionString:[NSString stringWithUTF8String:Tcl_GetString(objv[1])] major:&major minor:&minor patch:&patch]) {
                 Tcl_SetErrno(EIO);
                 Tcl_AddErrorInfo(_interp, "Could not parse minimum version information");
                 return TCL_ERROR;
             }
             const long need_version = versionInteger(major, minor, patch);
-            if (haveVersion() < need_version) {
-                NSString *message = [NSString stringWithFormat:@"This build of HexFiend (v%s) does not meet this template's minimum requirement (v%ld.%ld.%ld)",
+            if ([self haveVersion] < need_version) {
+                NSString *message = [NSString stringWithFormat:@"This build of HexFiend (v%s) does not meet this template's minimum requirement (v%d.%d.%d)",
                                         kVersionString, major, minor, patch];
                 Tcl_SetErrno(EIO);
                 Tcl_AddErrorInfo(_interp, message.UTF8String);
