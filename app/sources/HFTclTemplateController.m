@@ -543,7 +543,7 @@ DEFINE_COMMAND(hf_min_version_required)
             }
             const long need_version = versionInteger(major, minor, patch);
             if ([self haveVersion] < need_version) {
-                NSString *message = [NSString stringWithFormat:@"This build of HexFiend (v%s) does not meet this template's minimum requirement (v%d.%d.%d)",
+                NSString *message = [NSString stringWithFormat:@"This build of Hex Fiend (v%s) does not meet this template's minimum requirement (v%d.%d.%d)",
                                         kVersionString, major, minor, patch];
                 Tcl_SetErrno(EIO);
                 Tcl_AddErrorInfo(_interp, message.UTF8String);
