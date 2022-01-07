@@ -322,23 +322,19 @@ DEFINE_COMMAND(hf_min_version_required)
 }
 
 - (long) haveVersion {
-    static bool inited_s = false;
-    static long have_version_s;
+    static long have_version_s = 0;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        int have_major;
+        int have_minor;
+        int have_patch;
 
-    if (inited_s) {
-        return have_version_s;
-    }
+        if (![self parseVersionString:[NSString stringWithUTF8String:kVersionString] major:&have_major minor:&have_minor patch:&have_patch]) {
+            return; // need better error handling here?
+        }
 
-    int have_major;
-    int have_minor;
-    int have_patch;
-
-    if (![self parseVersionString:[NSString stringWithUTF8String:kVersionString] major:&have_major minor:&have_minor patch:&have_patch]) {
-        return -1;
-    }
-
-    have_version_s = versionInteger(have_major, have_minor, have_patch);
-    inited_s = true;
+        have_version_s = versionInteger(have_major, have_minor, have_patch);
+    });
 
     return have_version_s;
 }
