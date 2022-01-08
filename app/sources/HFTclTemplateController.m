@@ -11,6 +11,7 @@
 #import <tclTomMath.h>
 #import <zlib.h>
 #import <HexFiend/HFEncodingManager.h>
+#import "version.h"
 
 // Tcl_ParseArgsObjv was added in Tcl 8.6, but macOS ships with Tcl 8.5
 #import "Tcl_ParseArgsObjv.h"
@@ -65,7 +66,22 @@ enum command {
     command_uint16_bits,
     command_uint32_bits,
     command_uint64_bits,
+    command_hf_min_version_required,
 };
+
+long versionInteger(long major, long minor, long patch) {
+    HFASSERT(major > 0);
+    HFASSERT(minor >= 0 && minor <= 999);
+    HFASSERT(patch >= 0 && patch <= 99);
+
+    return major * 100000 + minor * 100 + patch;
+}
+
+#define HF_XSTR(s) HF_STR(s)
+#define HF_STR(s) #s
+static const char* kVersionString = HF_XSTR(HEXFIEND_VERSION);
+#undef HF_STR
+#undef HF_XSTR
 
 @interface HFTclTemplateController ()
 
@@ -121,6 +137,7 @@ DEFINE_COMMAND(uint8_bits)
 DEFINE_COMMAND(uint16_bits)
 DEFINE_COMMAND(uint32_bits)
 DEFINE_COMMAND(uint64_bits)
+DEFINE_COMMAND(hf_min_version_required)
 
 @implementation HFTclTemplateController {
     Tcl_Interp *_interp;
@@ -189,6 +206,7 @@ DEFINE_COMMAND(uint64_bits)
         CMD(uint16_bits),
         CMD(uint32_bits),
         CMD(uint64_bits),
+        CMD(hf_min_version_required),
     };
 #undef CMD
 #undef CMD_NAMED
@@ -275,6 +293,52 @@ DEFINE_COMMAND(uint64_bits)
     }
     return err;
 }
+
+- (BOOL) parseVersionString:(NSString*)s major:(int*)major minor:(int*)minor patch:(int*)patch {
+    if (!s || !major || !minor || !patch) return false;
+
+    *major = *minor = *patch = 0;
+
+    NSArray<NSString *> *components = [s componentsSeparatedByString:@"."];
+    NSUInteger count = components.count;
+
+    if (count == 0 || count > 3) {
+        return NO;
+    }
+
+    if (count > 0) {
+        *major = [components[0] intValue];
+    }
+
+    if (count > 1) {
+        *minor = [components[1] intValue];
+    }
+
+    if (count > 2) {
+        *patch = [components[2] intValue];
+    }
+
+    return YES;
+}
+
+- (long) haveVersion {
+    static long have_version_s = 0;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        int have_major;
+        int have_minor;
+        int have_patch;
+
+        if (![self parseVersionString:[NSString stringWithUTF8String:kVersionString] major:&have_major minor:&have_minor patch:&have_patch]) {
+            return; // need better error handling here?
+        }
+
+        have_version_s = versionInteger(have_major, have_minor, have_patch);
+    });
+
+    return have_version_s;
+}
+
 
 - (int)runCommand:(enum command)command objc:(int)objc objv:(struct Tcl_Obj * CONST *)objv {
     switch (command) {
@@ -463,6 +527,26 @@ DEFINE_COMMAND(uint64_bits)
             NSString *error = [self evaluateScript:fullPath];
             if (error) {
                 Tcl_AddErrorInfo(_interp, error.UTF8String);
+                return TCL_ERROR;
+            }
+            break;
+        }
+        case command_hf_min_version_required: {
+            CHECK_SINGLE_ARG("major[.minor[.patch]]");
+            int major;
+            int minor;
+            int patch;
+            if (![self parseVersionString:[NSString stringWithUTF8String:Tcl_GetString(objv[1])] major:&major minor:&minor patch:&patch]) {
+                Tcl_SetErrno(EIO);
+                Tcl_AddErrorInfo(_interp, "Could not parse minimum version information");
+                return TCL_ERROR;
+            }
+            const long need_version = versionInteger(major, minor, patch);
+            if ([self haveVersion] < need_version) {
+                NSString *message = [NSString stringWithFormat:@"This build of Hex Fiend (v%s) does not meet this template's minimum requirement (v%d.%d.%d)",
+                                        kVersionString, major, minor, patch];
+                Tcl_SetErrno(EIO);
+                Tcl_AddErrorInfo(_interp, message.UTF8String);
                 return TCL_ERROR;
             }
             break;
