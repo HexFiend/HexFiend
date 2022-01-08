@@ -1,33 +1,28 @@
 #!/bin/bash
 #
 # To build a distributable version of Hex Fiend, you'll need:
-# 1. A Developer ID from Apple for code signing
-# 2. An account with App Store Connect access for notarization
+# 1. Xcode 13 or greater
+# 2. A Developer ID for code signing
+# 3. An account with App Store Connect access for notarization
 #
-# For the account, you may need to create an app-specific password at appleid.apple.com.
+# For the account, you need to create an app-specific password at appleid.apple.com if one does not exist already.
 #
-# Once you have the password for the account, add it to Keychain Access' Passwords
-# using the name "HexFiendNotarization".
+# Store the password in Keychain Access:
+# $ xcrun notarytool store-credentials HexFiendNotarization --apple-id [APPLEID] --team-id [TEAMID] --password [PASSWORD]
 #
-# Once this is setup, you can run this script with your Developer ID certificate name,
-# and the email address for the App Store Connect account. For example:
+# Now you can run this script with your Developer ID certificate name. For example:
 #
-# $ ./dist.sh "Developer ID Application: My Cool Company" "myself@coolcompany.com"
+# $ ./dist.sh "Developer ID Application: My Cool Company"
 
 set -e
 
 usage() {
-	echo "Usage: ./dist.sh \"Developer ID Application: My Cool Company\" \"myself@coolcompany.com\""
+	echo "Usage: ./dist.sh \"Developer ID Application: My Cool Company\""
 	exit 1
 }
 
 CODESIGN="${1}"
 if [ -z "${CODESIGN}" ]; then
-	usage
-fi
-
-APPSTORE_USER="${2}"
-if [ -z "${APPSTORE_USER}" ]; then
 	usage
 fi
 
@@ -52,8 +47,7 @@ DERIVED_DATA_PATH="${PWD}/DerivedData"
 SCHEME="Release + CodeSign"
 CONFIG="Release+CodeSign"
 
-rm -rf "vendor/applenotary" "${DERIVED_DATA_PATH}"
-git submodule update -f --init # reset Sparkle submodule
+rm -rf "${DERIVED_DATA_PATH}"
 
 xcodebuild \
 	-scheme "${SCHEME}" \
@@ -80,17 +74,5 @@ hdiutil create -fs "HFS+" -format UDBZ -srcfolder "${FOLDER}" -ov "${DMG}"
 rm -rf "${FOLDER}"
 codesign --timestamp -s "${CODESIGN}" "${DMG}"
 
-APPLENOTARYBINARY="./vendor/applenotary/.build/release/applenotary"
-if [ ! -f "${APPLENOTARYBINARY}" ]; then
-	rm -rf ./vendor/applenotary
-	cd vendor
-	git clone https://github.com/pluralsight/applenotary.git
-	cd applenotary
-	git reset --hard 99ae14d2c16c9a3496abba8cc9d6d3d68fd2dd8f
-	swift build -c release
-	cd ../..
-fi
-"${APPLENOTARYBINARY}" -f "${DMG}" -s "${DMG}" \
-	-b "${IDENTIFIER}" \
-	-u "${APPSTORE_USER}" \
-	-p "@keychain:HexFiendNotarization"
+xcrun notarytool submit "${DMG}" --wait --keychain-profile HexFiendNotarization
+xcrun stapler staple "${DMG}"
