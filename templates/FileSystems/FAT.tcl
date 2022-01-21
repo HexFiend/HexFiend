@@ -23,7 +23,7 @@ uint32 LargeSectorsCount
 # Extended BIOS Parameter Block
 uint8 DriveNumber
 hex 1 Reserved
-hex 2 ExtendedBootSignature
+hex 1 ExtendedBootSignature
 uint32 SerialNumber
 ascii 11 VolumeLabel
 ascii 8 SystemIdentifier
