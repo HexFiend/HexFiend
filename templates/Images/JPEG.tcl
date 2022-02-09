@@ -81,8 +81,7 @@ proc find_next {} {
     return $found
 }
 
-proc marker_app0 {marker_number} {
-    sectionname [marker_name $marker_number]
+proc marker_app0 {} {
     set len [uint16 "Length"]
     set identifier [cstr "utf8" "Identifier"]
     set thumb_size 0
@@ -108,8 +107,7 @@ proc marker_app0 {marker_number} {
     sectionvalue [human_size $thumb_size]
 }
 
-proc marker_appN {marker_number} {
-    sectionname [marker_name $marker_number]
+proc marker_appN {} {
     set len [uint16 "Length"]
     set identifier [cstr "utf8" "Identifier"]
     # subtract three for the length size and the string null terminator
@@ -121,8 +119,7 @@ proc marker_appN {marker_number} {
     sectionvalue "$human_len ($identifier)"
 }
 
-proc marker_nonapp {marker_number} {
-    sectionname [marker_name $marker_number]
+proc marker_nonapp {} {
     set len [uint16 "Length"]
     if {$len > 2} {
         bytes [expr $len - 2] "Data"
@@ -130,8 +127,7 @@ proc marker_nonapp {marker_number} {
     sectionvalue [human_size $len]
 }
 
-proc marker_start_of_scan {marker_number} {
-    sectionname [marker_name $marker_number]
+proc marker_start_of_scan {} {
     # length of SOS, not JPEG stream length
     set len [uint16 "Length"]
     set component_count [uint8 "Component count"]
@@ -157,27 +153,29 @@ main_guard {
 
             set app_marker_2 [hex 1 "App marker 2"]
 
+            sectionname [marker_name $app_marker_2]
+
             switch $app_marker_2 {
                 0xD8 { sectionname "Start of Image"; sectionvalue "" }
                 0xD9 { sectionname "End of Image"; sectionvalue "" }
-                0xDA { marker_start_of_scan $app_marker_2 }
-                0xE0 { marker_app0 $app_marker_2 }
-                0xE1 { marker_appN $app_marker_2 }
-                0xE2 { marker_appN $app_marker_2 }
-                0xE3 { marker_appN $app_marker_2 }
-                0xE4 { marker_appN $app_marker_2 }
-                0xE5 { marker_appN $app_marker_2 }
-                0xE6 { marker_appN $app_marker_2 }
-                0xE7 { marker_appN $app_marker_2 }
-                0xE8 { marker_appN $app_marker_2 }
-                0xE9 { marker_appN $app_marker_2 }
-                0xEA { marker_appN $app_marker_2 }
-                0xEB { marker_appN $app_marker_2 }
-                0xEC { marker_appN $app_marker_2 }
-                0xED { marker_appN $app_marker_2 }
-                0xEE { marker_appN $app_marker_2 }
-                0xEF { marker_appN $app_marker_2 }
-                default { marker_nonapp $app_marker_2 }
+                0xDA { marker_start_of_scan }
+                0xE0 { marker_app0 }
+                0xE1 { marker_appN }
+                0xE2 { marker_appN }
+                0xE3 { marker_appN }
+                0xE4 { marker_appN }
+                0xE5 { marker_appN }
+                0xE6 { marker_appN }
+                0xE7 { marker_appN }
+                0xE8 { marker_appN }
+                0xE9 { marker_appN }
+                0xEA { marker_appN }
+                0xEB { marker_appN }
+                0xEC { marker_appN }
+                0xED { marker_appN }
+                0xEE { marker_appN }
+                0xEF { marker_appN }
+                default { marker_nonapp }
             }
         }
     }
