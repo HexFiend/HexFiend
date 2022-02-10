@@ -66,19 +66,14 @@ proc marker_name {value} {
 }
 
 proc find_next {} {
-    set st [pos]
-    set last 0
-    set found 0
+    set start [pos]
     while {![end]} {
-        set b [uint8]
-        if { $last == 255 && $b > 0 } {
-            set found [expr [pos] - $st - 2 ]
-            break
-        }
-        set last $b 
+        if { [uint8] != 255 } continue
+        if { [uint8] > 0 } break
     }
-    goto $st
-    return $found
+    set result [expr [pos] - $start - 2]
+    goto $start
+    return $result
 }
 
 proc marker_app0 {} {
