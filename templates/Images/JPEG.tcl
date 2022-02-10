@@ -112,11 +112,25 @@ proc marker_appN {} {
     set identifier [cstr "utf8" "Identifier"]
     # subtract three for the length size and the string null terminator
     set data_size [expr $len - [string length $identifier] - 3]
-    if {$data_size > 0} {
-        bytes $data_size "Data"
-    }
     set human_len [human_size $len]
     sectionvalue "$human_len ($identifier)"
+    if {$data_size > 0} {
+        if {$identifier == "Exif"} {
+            set exif_end [expr [pos] + $data_size]
+            # The Exif identifier is "Exif\0"? So there's an extra null-terminator?
+            uint8 "Unused"
+            Exif
+            big_endian
+            goto $exif_end
+        } elseif {$identifier == "MPF"} {
+            set exif_end [expr [pos] + $data_size]
+            Exif
+            big_endian
+            goto $exif_end
+        } else {
+            bytes $data_size "Data"
+        }
+    }
 }
 
 proc marker_nonapp {} {
@@ -177,6 +191,8 @@ main_guard {
                 0xEF { marker_appN }
                 default { marker_nonapp }
             }
+
+            if { $app_marker_2 == 0xD9 } break
         }
     }
 }
