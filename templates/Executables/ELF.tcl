@@ -37,6 +37,7 @@ section "File Header" {
   set e_phnum [uint16 -hex "Program header entry count"]
   uint16 -hex "Section header entry size"
   set e_shnum [uint16 -hex "Section header entry count"]
+  uint16 -hex "Section header table index of section name string table"
 }
 
 goto $e_phoff
