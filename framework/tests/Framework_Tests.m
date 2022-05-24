@@ -494,7 +494,7 @@ static NSUInteger random_upto(unsigned long long val) {
     NSData *data = randomDataOfLength(4 * 1024);
     [data writeToURL:url atomically:NO];
     
-    HFByteSlice *slice = [[HFRandomDataByteSlice alloc] initWithRandomDataLength:(1ULL << 50 /* 1125 terabytes */)];
+    HFByteSlice *slice = [[HFRandomDataByteSlice alloc] initWithRandomDataLength:(1ULL << 50 /* 1.1 petabytes*/)];
     HFByteArray *array = [[HFBTreeByteArray alloc] init];
     [array insertByteSlice:slice inRange:HFRangeMake(0, 0)];
     
