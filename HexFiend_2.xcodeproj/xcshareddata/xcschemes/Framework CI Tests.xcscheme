@@ -30,6 +30,9 @@
                <Test
                   Identifier = "HFBTreeTests/testRandom">
                </Test>
+               <Test
+                  Identifier = "HFFrameworkTests/testBadLengthFileWriting">
+               </Test>
             </SkippedTests>
          </TestableReference>
       </Testables>
