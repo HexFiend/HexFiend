@@ -2,7 +2,7 @@ To make a new release of Hex Fiend on GitHub and update the Sparkle appcast for 
 
 1. Make sure `HEXFIEND_VERSION` has been set to a newer version in `version.h` and commit to master if needed.
 2. Update `docs/ReleaseNotes.html` for this new version and commit to master if needed. This file gets bundled into Hex Fiend so it should be updated before making the final build.
-3. Generate a notarized build with `dist.sh` using Xcode 12.2 or later (for Intel and Apple Silicon universal build) from master. See that file for details.
+3. Generate a notarized build with `dist.sh` from master. See that file for details.
 4. Tag the build in git as `vX.Y.Z` using 3 version digits and push.
 5. Edit the tag in [Releases](https://github.com/HexFiend/HexFiend/releases) on GitHub and attach the `Hex_Fiend_X.Y.Z.dmg` file generated previously. Click "Publish Release".
 6. Delete all beta pre-releases on GitHub associated with this version. Make sure to delete the associated tags in git as well, which GitHub does not provide a way to do yet.
