@@ -73,7 +73,7 @@ Any command that takes a label will create a new entry in the user interface wit
 
 | Parameter  | Description |
 | ------------- | ------------- |
-| -collapsed | Collapse this section when initially presented  |
+| -collapsed | Collapse this section when initially presented (v2.15+) |
 | label |  Label to display |
 | body | |
 
@@ -107,12 +107,8 @@ Sections can also be renamed (v2.14.2+). This can be useful for adding details t
 sectionname "Example New Name"
 ```
 
-Sections may be created in the collapsed state by adding the `-collapsed` flag argument
-ahead of the `section` command's other arguments.  If a section should normally be
-presented in an `expanded` mode but during the process of applying a template it becomes
-clear that the current section is too large to initially display, the `sectioncollapse`
-command can be used to mark the section as initially `-collapsed`.
-
+Starting with v2.15, sections may be created in the collapsed state by adding the `-collapsed` flag argument
+ahead of the `section` command's other arguments. If a section should normally be presented in an `expanded` mode but during the process of applying a template it becomes clear that the current section is too large to initially display, the `sectioncollapse` command can be used to mark the section as initially `-collapsed`.
 
 ## Endian
 
