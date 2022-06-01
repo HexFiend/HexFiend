@@ -55,6 +55,7 @@
 @property HFTemplateFile *selectedFile;
 @property HFColorRange *colorRange;
 @property NSUInteger anchorPosition;
+@property NSMutableArray *nodesToCollapse;
 
 @end
 
@@ -274,7 +275,8 @@
     (void)[fm changeCurrentDirectoryPath:currentDir];
     
     [self setRootNode:node error:errorMessage];
-    [self collapseInitiallyCollapsedGroups:templateController.initiallyCollapsed];
+    self.nodesToCollapse = [templateController.initiallyCollapsed mutableCopy];
+    [self collapseNodesIfNeeded];
     [self updateSelectionColorRange];
 }
 
@@ -316,11 +318,21 @@
     }
 }
 
-- (void)collapseInitiallyCollapsedGroups:(NSArray *)initiallyCollapsed {
+- (void)collapseNodesIfNeeded {
     NSOutlineView *outlineView = self.outlineView;
-    for (HFTemplateNode *node in initiallyCollapsed) {
-        [outlineView collapseItem:node];
+    // We only want to collapse nodes once
+    NSMutableArray *nodesThatWereCollapsed = [NSMutableArray array];
+    for (HFTemplateNode *node in self.nodesToCollapse) {
+        if ([outlineView isItemExpanded:node]) {
+            [outlineView collapseItem:node];
+            [nodesThatWereCollapsed addObject:node];
+        }
     }
+    [self.nodesToCollapse removeObjectsInArray:nodesThatWereCollapsed];
+}
+
+- (void)outlineViewItemDidExpand:(NSNotification *)notification {
+    [self collapseNodesIfNeeded];
 }
 
 - (void)setRootNode:(HFTemplateNode *)node error:(NSString *)error {
