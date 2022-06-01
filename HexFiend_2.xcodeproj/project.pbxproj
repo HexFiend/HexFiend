@@ -115,6 +115,7 @@
 		A5A34C1B26AD271900506AE7 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = A5A34C1A26AD271900506AE7 /* Sparkle */; };
 		A5AE0C1D21E1D7570044014E /* HFColumnView.h in Headers */ = {isa = PBXBuildFile; fileRef = A5AE0C1B21E1D7570044014E /* HFColumnView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A5AE0C1E21E1D7570044014E /* HFColumnView.m in Sources */ = {isa = PBXBuildFile; fileRef = A5AE0C1C21E1D7570044014E /* HFColumnView.m */; };
+		A5B2F6E3284729F8006E8AF8 /* templates in Resources */ = {isa = PBXBuildFile; fileRef = A5B2F6E2284729F8006E8AF8 /* templates */; };
 		A5CEA41C20D5DF4400BCA488 /* HFStringEncoding.h in Headers */ = {isa = PBXBuildFile; fileRef = A5CEA41A20D5DF4400BCA488 /* HFStringEncoding.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A5CEA41D20D5DF4400BCA488 /* HFStringEncoding.m in Sources */ = {isa = PBXBuildFile; fileRef = A5CEA41B20D5DF4400BCA488 /* HFStringEncoding.m */; };
 		A5CEA42A20D5E0F500BCA488 /* HFNSStringEncoding.h in Headers */ = {isa = PBXBuildFile; fileRef = A5CEA42820D5E0F500BCA488 /* HFNSStringEncoding.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -501,6 +502,7 @@
 		A59BC59E2002E63C0066860F /* HFTemplateController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFTemplateController.m; path = app/sources/HFTemplateController.m; sourceTree = "<group>"; };
 		A5AE0C1B21E1D7570044014E /* HFColumnView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFColumnView.h; path = sources/HFColumnView.h; sourceTree = "<group>"; };
 		A5AE0C1C21E1D7570044014E /* HFColumnView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFColumnView.m; path = sources/HFColumnView.m; sourceTree = "<group>"; };
+		A5B2F6E2284729F8006E8AF8 /* templates */ = {isa = PBXFileReference; lastKnownFileType = folder; path = templates; sourceTree = "<group>"; };
 		A5CEA41A20D5DF4400BCA488 /* HFStringEncoding.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFStringEncoding.h; path = sources/HFStringEncoding.h; sourceTree = "<group>"; };
 		A5CEA41B20D5DF4400BCA488 /* HFStringEncoding.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFStringEncoding.m; path = sources/HFStringEncoding.m; sourceTree = "<group>"; };
 		A5CEA42820D5E0F500BCA488 /* HFNSStringEncoding.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFNSStringEncoding.h; path = sources/HFNSStringEncoding.h; sourceTree = "<group>"; };
@@ -797,6 +799,7 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				A5B2F6E2284729F8006E8AF8 /* templates */,
 				79E2FF1F1745A2B300FA8F12 /* dsa_pub.pem */,
 				D024AFB20E349A7B00F39EBB /* hex_icon.icns */,
 				D01E7C0A0CDC570400943F9E /* Info.plist */,
@@ -1665,6 +1668,7 @@
 				D04A6B6B100EA47C00704963 /* SaveBanner.xib in Resources */,
 				D04A6B7A100EA4BC00704963 /* FindReplaceBanner.xib in Resources */,
 				D04A6B97100EA73800704963 /* JumpToOffsetBanner.xib in Resources */,
+				A5B2F6E3284729F8006E8AF8 /* templates in Resources */,
 				D04A6B9E100EA75400704963 /* MoveSelectionByBanner.xib in Resources */,
 				D04A6BA5100EA78700704963 /* MyDocument.xib in Resources */,
 				D04A6BAB100EA7B800704963 /* MainMenu.xib in Resources */,

@@ -70,7 +70,8 @@
 - (void)awakeFromNib {
     self.outlineView.doubleAction = @selector(outlineViewDoubleAction:);
     self.outlineView.target = self;
-    
+
+    self.templatesPopUp.autoenablesItems = NO;
     [self loadTemplates:self];
 
     [[NSUserDefaults standardUserDefaults] addObserver:self
@@ -201,8 +202,15 @@
     [self.templatesPopUp.menu addItem:[NSMenuItem separatorItem]];
     NSMenuItem *itemToSelect = noneItem;
     NSString *titleOfLastTemplate = self.titleOfLastTemplate;
+    BOOL addedLocalTemplate = NO;
     if (templates.count > 0) {
         for (HFTemplateFile *file in templates) {
+            if (!addedLocalTemplate) {
+                NSMenuItem *localMenuItem = [[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Local", nil) action:nil keyEquivalent:@""];
+                localMenuItem.enabled = NO;
+                [self.templatesPopUp.menu addItem:localMenuItem];
+            }
+
             NSMenuItem *templateItem = [[NSMenuItem alloc] initWithTitle:file.name action:@selector(selectTemplateFile:) keyEquivalent:@""];
             templateItem.target = self;
             templateItem.representedObject = file;
@@ -210,9 +218,12 @@
             if (titleOfLastTemplate && [titleOfLastTemplate isEqualToString:templateItem.title]) {
                 itemToSelect = templateItem;
             }
+            addedLocalTemplate = YES;
         }
         [self.templatesPopUp.menu addItem:[NSMenuItem separatorItem]];
     }
+
+    [self loadBundleTemplates];
 
     NSMenuItem *refreshItem = [[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Refresh", nil) action:@selector(refresh:) keyEquivalent:@""];
     refreshItem.target = self;
@@ -230,6 +241,68 @@
     self.templates = templates;
     [self saveTitleOfLastTemplate:itemToSelect.title];
     self.selectedFile = itemToSelect.representedObject;
+}
+
+- (void)loadBundleTemplates {
+    NSString *bundleTemplatesPath = [NSBundle.mainBundle.resourcePath stringByAppendingPathComponent:@"templates"];
+    NSDirectoryEnumerator *bundleTemplatesEnumerator = [NSFileManager.defaultManager enumeratorAtPath:bundleTemplatesPath];
+    NSArray *bundleTemplatesPaths = [bundleTemplatesEnumerator.allObjects sortedArrayUsingSelector:@selector(compare:)];
+    BOOL addedBundleTemplate = NO;
+    NSMutableDictionary *folderSubmenus = [NSMutableDictionary dictionary];
+    for (NSString *bundleTemplateFilename in bundleTemplatesPaths) {
+        if (![bundleTemplateFilename containsString:@"/"] && [bundleTemplateFilename containsString:@"."]) {
+            // Skip top-level files
+            continue;
+        }
+
+        NSString *bundleTemplatePath = [bundleTemplatesPath stringByAppendingPathComponent:bundleTemplateFilename];
+        BOOL isDir = NO;
+        if ([NSFileManager.defaultManager fileExistsAtPath:bundleTemplatePath isDirectory:&isDir] && isDir) {
+            // Skip directories
+            continue;
+        }
+
+        if ([bundleTemplateFilename isEqualToString:@"Utility/General.tcl"]) {
+            continue;
+        }
+
+        if (!addedBundleTemplate) {
+            NSMenuItem *communityMenuItem = [[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Community", nil) action:nil keyEquivalent:@""];
+            communityMenuItem.enabled = NO;
+            [self.templatesPopUp.menu addItem:communityMenuItem];
+        }
+
+        NSMutableArray *pathComponents = [bundleTemplateFilename.pathComponents mutableCopy];
+        [pathComponents removeLastObject];
+        NSString *folderSubmenusKey = @"";
+        NSMenu *parentMenu = self.templatesPopUp.menu;
+        for (NSString *pathComponent in pathComponents) {
+            folderSubmenusKey = [folderSubmenusKey stringByAppendingFormat:@"%@/", pathComponent];
+            NSMenu *existingParentMenu = [folderSubmenus objectForKey:folderSubmenusKey];
+            if (existingParentMenu) {
+                parentMenu = existingParentMenu;
+            } else {
+                NSMenuItem *folderMenuItem = [[NSMenuItem alloc] initWithTitle:pathComponent action:nil keyEquivalent:@""];
+                folderMenuItem.submenu = [[NSMenu alloc] init];
+                [parentMenu addItem:folderMenuItem];
+                folderSubmenus[folderSubmenusKey] = folderMenuItem.submenu;
+                parentMenu = folderMenuItem.submenu;
+            }
+        }
+
+        HFTemplateFile *file = [[HFTemplateFile alloc] init];
+        file.path = bundleTemplatePath;
+        file.name = bundleTemplateFilename.lastPathComponent.stringByDeletingPathExtension;
+        NSMenuItem *templateMenuItem = [[NSMenuItem alloc] initWithTitle:file.name action:@selector(selectTemplateFile:) keyEquivalent:@""];
+        templateMenuItem.target = self;
+        templateMenuItem.representedObject = file;
+        [parentMenu addItem:templateMenuItem];
+
+        addedBundleTemplate = YES;
+    }
+    if (addedBundleTemplate) {
+        [self.templatesPopUp.menu addItem:[NSMenuItem separatorItem]];
+    }
 }
 
 - (void)noTemplate:(id __unused)sender {
