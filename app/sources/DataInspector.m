@@ -193,6 +193,7 @@ static NSString *unsignedIntegerDescription(const unsigned char *bytes, NSUInteg
         case 2:
         {
             FETCH(uint16_t)
+            FLIP_AND_SHIFT(2)
             FORMAT(@"%" PRIu16, @"0x%" PRIX16)
         }
         case 3:
