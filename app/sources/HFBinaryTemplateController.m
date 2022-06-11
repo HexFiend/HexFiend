@@ -248,7 +248,7 @@
     NSDirectoryEnumerator *bundleTemplatesEnumerator = [NSFileManager.defaultManager enumeratorAtPath:bundleTemplatesPath];
     NSArray *bundleTemplatesPaths = [bundleTemplatesEnumerator.allObjects sortedArrayUsingSelector:@selector(compare:)];
     BOOL addedBundleTemplate = NO;
-    NSMutableDictionary *folderSubmenus = [NSMutableDictionary dictionary];
+    NSMutableSet<NSString *> *folders = [NSMutableSet set];
     for (NSString *bundleTemplateFilename in bundleTemplatesPaths) {
         if (![bundleTemplateFilename containsString:@"/"] && [bundleTemplateFilename containsString:@"."]) {
             // Skip top-level files
@@ -266,27 +266,16 @@
             continue;
         }
 
-        if (!addedBundleTemplate) {
-            NSMenuItem *communityMenuItem = [[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Community", nil) action:nil keyEquivalent:@""];
-            communityMenuItem.enabled = NO;
-            [self.templatesPopUp.menu addItem:communityMenuItem];
-        }
-
         NSMutableArray *pathComponents = [bundleTemplateFilename.pathComponents mutableCopy];
         [pathComponents removeLastObject];
-        NSString *folderSubmenusKey = @"";
-        NSMenu *parentMenu = self.templatesPopUp.menu;
+        NSString *folderKey = @"";
         for (NSString *pathComponent in pathComponents) {
-            folderSubmenusKey = [folderSubmenusKey stringByAppendingFormat:@"%@/", pathComponent];
-            NSMenu *existingParentMenu = [folderSubmenus objectForKey:folderSubmenusKey];
-            if (existingParentMenu) {
-                parentMenu = existingParentMenu;
-            } else {
+            folderKey = [folderKey stringByAppendingFormat:@"%@/", pathComponent];
+            if (![folders containsObject:folderKey]) {
                 NSMenuItem *folderMenuItem = [[NSMenuItem alloc] initWithTitle:pathComponent action:nil keyEquivalent:@""];
-                folderMenuItem.submenu = [[NSMenu alloc] init];
-                [parentMenu addItem:folderMenuItem];
-                folderSubmenus[folderSubmenusKey] = folderMenuItem.submenu;
-                parentMenu = folderMenuItem.submenu;
+                folderMenuItem.enabled = NO;
+                [self.templatesPopUp.menu addItem:folderMenuItem];
+                [folders addObject:folderKey];
             }
         }
 
@@ -296,7 +285,8 @@
         NSMenuItem *templateMenuItem = [[NSMenuItem alloc] initWithTitle:file.name action:@selector(selectTemplateFile:) keyEquivalent:@""];
         templateMenuItem.target = self;
         templateMenuItem.representedObject = file;
-        [parentMenu addItem:templateMenuItem];
+        templateMenuItem.indentationLevel = 1;
+        [self.templatesPopUp.menu addItem:templateMenuItem];
 
         addedBundleTemplate = YES;
     }
