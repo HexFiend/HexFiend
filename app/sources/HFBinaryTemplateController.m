@@ -223,7 +223,7 @@
         [self.templatesPopUp.menu addItem:[NSMenuItem separatorItem]];
     }
 
-    [self loadBundleTemplates];
+    [self loadBundleTemplates:titleOfLastTemplate itemToSelect:&itemToSelect];
 
     NSMenuItem *refreshItem = [[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Refresh", nil) action:@selector(refresh:) keyEquivalent:@""];
     refreshItem.target = self;
@@ -243,7 +243,7 @@
     self.selectedFile = itemToSelect.representedObject;
 }
 
-- (void)loadBundleTemplates {
+- (void)loadBundleTemplates:(NSString *)titleOfLastTemplate itemToSelect:(NSMenuItem **)itemToSelect {
     NSString *bundleTemplatesPath = [NSBundle.mainBundle.resourcePath stringByAppendingPathComponent:@"templates"];
     NSDirectoryEnumerator *bundleTemplatesEnumerator = [NSFileManager.defaultManager enumeratorAtPath:bundleTemplatesPath];
     NSArray *bundleTemplatesPaths = [bundleTemplatesEnumerator.allObjects sortedArrayUsingSelector:@selector(compare:)];
@@ -287,6 +287,10 @@
         templateMenuItem.representedObject = file;
         templateMenuItem.indentationLevel = 1;
         [self.templatesPopUp.menu addItem:templateMenuItem];
+
+        if (titleOfLastTemplate && [titleOfLastTemplate isEqualToString:templateMenuItem.title]) {
+            *itemToSelect = templateMenuItem;
+        }
 
         addedBundleTemplate = YES;
     }
