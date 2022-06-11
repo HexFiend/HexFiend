@@ -266,7 +266,7 @@ static void verifyEveryObjectInExactlyOneConnectedComponent(NSArray *components,
 
 #endif
 
-#define CHECK_CANCEL() do { if (progressTracker && progressTracker->cancelRequested) { puts("Cancelled!"); wasCancelled = YES; goto cancelled; } } while (0)
+#define CHECK_CANCEL() do { if (progressTracker && progressTracker->cancelRequested) { puts("Cancelled!"); goto cancelled; } } while (0)
 
 - (BOOL)writeToFile:(NSURL *)targetURL trackingProgress:(HFProgressTracker *)progressTracker error:(NSError **)error {
     REQUIRE_NOT_NULL(targetURL);
@@ -274,7 +274,6 @@ static void verifyEveryObjectInExactlyOneConnectedComponent(NSArray *components,
     unsigned long long totalCost = 0;
     unsigned long long startLength, endLength;
     HFObjectGraph *cyclicGraph = nil, *acyclicGraph = nil;
-    BOOL wasCancelled = NO;
     BOOL result = NO;
     HFFileReference *reference;
     NSMutableArray *identity;
