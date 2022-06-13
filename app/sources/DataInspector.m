@@ -6,12 +6,15 @@
 //
 
 #import "DataInspector.h"
+#import "LEB128Type.h"
 
 @implementation DataInspector
 {
     enum InspectorType_t inspectorType;
     enum Endianness_t endianness;
     enum NumberBase_t numberBase;
+
+    LEB128Type *leb128Type;
 }
 
 + (DataInspector*)dataInspectorSupplementing:(NSArray*)inspectors {
@@ -48,6 +51,10 @@
     return ret;
 }
 
+- (void)commonInit {
+    leb128Type = [[LEB128Type alloc] init];
+}
+
 - (void)encodeWithCoder:(NSCoder *)coder {
     HFASSERT([coder allowsKeyedCoding]);
     [coder encodeInt32:inspectorType forKey:@"InspectorType"];
@@ -61,6 +68,12 @@
     inspectorType = [coder decodeInt32ForKey:@"InspectorType"];
     endianness = [coder decodeInt32ForKey:@"Endianness"];
     numberBase = [coder decodeInt32ForKey:@"NumberBase"];
+    [self commonInit];
+    return self;
+}
+
+- (instancetype)init {
+    [self commonInit];
     return self;
 }
 
@@ -370,16 +383,6 @@ static NSAttributedString *formatInspectionString(NSString *s, BOOL isError) {
                                                                      }];
 }
 
-typedef NS_ENUM(NSInteger, InspectionError) {
-    InspectionErrorNoData,
-    InspectionErrorTooMuch,
-    InspectionErrorTooLittle,
-    InspectionErrorNonPwr2,
-    InspectionErrorInternal,
-    InspectionErrorMultipleRanges,
-    InspectionErrorInvalidUTF8,
-};
-
 static NSAttributedString *inspectionError(InspectionError err) {
     NSString *s = nil;
     switch (err) {
@@ -448,6 +451,13 @@ static NSAttributedString *inspectionSuccess(NSString *s) {
             break;
         case eInspectorTypeSLEB128:
         case eInspectorTypeULEB128:
+            if (range.length > leb128Type.maxBytesAllowed) {
+                if (outIsError) {
+                    *outIsError = YES;
+                }
+                return inspectionError(InspectionErrorTooMuch);
+            }
+            break;
         case eInspectorTypeBinary:
             if(range.length > 24) {
                 if(outIsError) *outIsError = YES;
@@ -466,7 +476,17 @@ static NSAttributedString *inspectionSuccess(NSString *s) {
 
 - (NSAttributedString *)valueForBytes:(const unsigned char *)bytes length:(NSUInteger)length isError:(BOOL *)outIsError {
     if(outIsError) *outIsError = YES;
-    
+
+    typedef NSAttributedString* (^HandleTypeBlock)(NSObject<DataInspectorType> *type);
+    HandleTypeBlock handleTypeBock = ^(NSObject<DataInspectorType> *type){
+        InspectionError err;
+        NSString *result = [type valueForBytes:bytes length:length error:&err];
+        if (result) {
+            return inspectionSuccess(result);
+        }
+        return inspectionError(err);
+    };
+
     switch ([self type]) {
         case eInspectorTypeUnsignedInteger:
         case eInspectorTypeSignedInteger:
@@ -547,36 +567,13 @@ static NSAttributedString *inspectionSuccess(NSString *s) {
         }
             
         case eInspectorTypeSLEB128: {
-            int64_t result = 0;
-            unsigned shift = 0;
-            for (size_t i = 0; i < length; i++) {
-                result |= ((int64_t)(bytes[i] & 0x7F) << shift);
-                shift += 7;
-                
-                if ((bytes[i] & 0x80) == 0) {
-                    if (shift < 64 && (bytes[i] & 0x40)) {
-                        result |= -((uint64_t)1 << shift);
-                    }
-                    return inspectionSuccess([NSString stringWithFormat:@"%qd (%ld bytes)", result, i + 1]);
-                }
-            }
-            
-            return inspectionError(InspectionErrorTooLittle);
+            leb128Type.isUnsigned = NO;
+            return handleTypeBock(leb128Type);
         }
-            
+
         case eInspectorTypeULEB128: {
-            uint64_t result = 0;
-            unsigned shift = 0;
-            for (size_t i = 0; i < length; i++) {
-                result |= ((uint64_t)(bytes[i] & 0x7F) << shift);
-                shift += 7;
-                
-                if ((bytes[i] & 0x80) == 0) {
-                    return inspectionSuccess([NSString stringWithFormat:@"%qu (%ld bytes)", result, i + 1]);
-                }
-            }
-            
-            return inspectionError(InspectionErrorTooLittle);
+            leb128Type.isUnsigned = YES;
+            return handleTypeBock(leb128Type);
         }
             
         default:

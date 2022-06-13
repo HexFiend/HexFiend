@@ -59,6 +59,7 @@
 		A51D0E9620F2C21500B55775 /* HFTextRepresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = D0A437380CDD4EDD000F7550 /* HFTextRepresenter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A51D0E9720F2C21500B55775 /* HFTextRepresenter_Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = D061A28E10042D6A0049B8B8 /* HFTextRepresenter_Internal.h */; };
 		A51D0E9820F2C21500B55775 /* HFTextRepresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = D0A437390CDD4EDD000F7550 /* HFTextRepresenter.m */; };
+		A5327E592856EB7500530557 /* LEB128Type.m in Sources */ = {isa = PBXBuildFile; fileRef = A5327E582856EB7500530557 /* LEB128Type.m */; };
 		A5328D4721E1898A007C4DB0 /* HFHexGlyphTable.h in Headers */ = {isa = PBXBuildFile; fileRef = A5328D4521E1898A007C4DB0 /* HFHexGlyphTable.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A5328D4821E1898A007C4DB0 /* HFHexGlyphTable.h in Headers */ = {isa = PBXBuildFile; fileRef = A5328D4521E1898A007C4DB0 /* HFHexGlyphTable.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A5328D4921E1898A007C4DB0 /* HFHexGlyphTable.m in Sources */ = {isa = PBXBuildFile; fileRef = A5328D4621E1898A007C4DB0 /* HFHexGlyphTable.m */; };
@@ -433,6 +434,9 @@
 		A51D0E8B20F1E56600B55775 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.0.sdk/System/Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
 		A51D0E9020F2A8D200B55775 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.0.sdk/System/Library/Frameworks/CoreText.framework; sourceTree = DEVELOPER_DIR; };
 		A531921B21D585FD006C25D6 /* version.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = version.h; sourceTree = "<group>"; };
+		A5327E572856EB7500530557 /* LEB128Type.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = LEB128Type.h; path = app/sources/LEB128Type.h; sourceTree = "<group>"; };
+		A5327E582856EB7500530557 /* LEB128Type.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = LEB128Type.m; path = app/sources/LEB128Type.m; sourceTree = "<group>"; };
+		A5327E5A2856F0CC00530557 /* DataInspectorType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DataInspectorType.h; path = app/sources/DataInspectorType.h; sourceTree = "<group>"; };
 		A5328D4521E1898A007C4DB0 /* HFHexGlyphTable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFHexGlyphTable.h; path = sources/HFHexGlyphTable.h; sourceTree = "<group>"; };
 		A5328D4621E1898A007C4DB0 /* HFHexGlyphTable.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFHexGlyphTable.m; path = sources/HFHexGlyphTable.m; sourceTree = "<group>"; };
 		A550A7161F7877F8001C79C7 /* hexf */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = hexf; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -896,6 +900,15 @@
 			name = Miscellaneous;
 			sourceTree = "<group>";
 		};
+		A5327E562856EB2400530557 /* Data Inspectors */ = {
+			isa = PBXGroup;
+			children = (
+				A5327E572856EB7500530557 /* LEB128Type.h */,
+				A5327E582856EB7500530557 /* LEB128Type.m */,
+			);
+			name = "Data Inspectors";
+			sourceTree = "<group>";
+		};
 		A550A7171F7877F8001C79C7 /* hexf */ = {
 			isa = PBXGroup;
 			children = (
@@ -907,6 +920,8 @@
 		A591313721E3064900685B51 /* Data Inspector */ = {
 			isa = PBXGroup;
 			children = (
+				A5327E5A2856F0CC00530557 /* DataInspectorType.h */,
+				A5327E562856EB2400530557 /* Data Inspectors */,
 				D03CFA880FC78BCD00EE79E4 /* DataInspectorRepresenter.h */,
 				D03CFA890FC78BCD00EE79E4 /* DataInspectorRepresenter.m */,
 				A591313821E3079400685B51 /* DataInspector.h */,
@@ -1786,6 +1801,7 @@
 				D084E763115DAEAC004DC181 /* DiffOverlayView.m in Sources */,
 				D0AFA786123C2BDF00CFC513 /* MyDocumentController.m in Sources */,
 				D0CBB240128F78C200989C15 /* StretchableProgressIndicator.m in Sources */,
+				A5327E592856EB7500530557 /* LEB128Type.m in Sources */,
 				A591314021E3098800685B51 /* DataInspectorScrollView.m in Sources */,
 				A5589AC92206CFCC000293A4 /* HFExtendedAttributes.m in Sources */,
 				D0CBB32A128F906000989C15 /* DiffTextViewContainer.m in Sources */,
