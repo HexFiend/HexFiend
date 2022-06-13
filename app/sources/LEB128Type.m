@@ -7,7 +7,7 @@
 @implementation LEB128Type
 
 - (NSUInteger)maxBytesAllowed {
-    return 24;
+    return 8;
 }
 
 + (LEB128Result *)valueForBytes:(const unsigned char *)bytes length:(NSUInteger)length isUnsigned:(BOOL)isUnsigned error:(InspectionError *)error {
