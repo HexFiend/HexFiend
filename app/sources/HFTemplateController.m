@@ -7,6 +7,7 @@
 //
 
 #import "HFTemplateController.h"
+#import "LEB128Type.h"
 
 static const unsigned long long kMaxCacheSize = 1024 * 1024;
 
@@ -346,6 +347,29 @@ static const unsigned long long kMaxCacheSize = 1024 * 1024;
     *value = val.f;
     if (label) {
         [self addNodeWithLabel:label value:[NSString stringWithFormat:@"%.*g", DBL_DECIMAL_DIG, val.f] size:sizeof(val)];
+    }
+    return YES;
+}
+
+- (BOOL)readULEB128:(uint64_t *)value forLabel:(NSString *_Nullable)label {
+    HFASSERT(value != NULL);
+    LEB128Type *leb128 = [[LEB128Type alloc] init];
+    size_t maxBytesAvailable = self.length - (self.anchor + self.position);
+    size_t bytesToRead = maxBytesAvailable < leb128.maxBytesAllowed ? maxBytesAvailable : leb128.maxBytesAllowed;
+    NSData *data = [self readDataForSize:bytesToRead];
+    if (!data) {
+        return NO;
+    }
+    InspectionError err;
+    LEB128Result *result = [LEB128Type valueForBytes:data.bytes length:data.length isUnsigned:YES error:&err];
+    if (!result) {
+        return NO;
+    }
+    *value = result.value.u;
+    // Reset file pointer based on how many bytes were actually used
+    [self moveTo:-(bytesToRead - result.numBytes)];
+    if (label) {
+        [self addNodeWithLabel:label value:[NSString stringWithFormat:@"%" PRIu64, *value] size:result.numBytes];
     }
     return YES;
 }
