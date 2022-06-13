@@ -589,6 +589,7 @@
 - (void)viewWillAppear {
     self.directoryWatcher = [[HFDirectoryWatcher alloc] initWithPath:self.templatesFolder handler:^{
         NSLog(@"Templates directory changed");
+        [self loadTemplates:self];
         [self rerunTemplate];
     }];
 }
