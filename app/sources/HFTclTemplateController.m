@@ -68,6 +68,7 @@ enum command {
     command_uint64_bits,
     command_hf_min_version_required,
     command_uleb128,
+    command_sleb128,
 };
 
 long versionInteger(long major, long minor, long patch) {
@@ -140,6 +141,7 @@ DEFINE_COMMAND(uint32_bits)
 DEFINE_COMMAND(uint64_bits)
 DEFINE_COMMAND(hf_min_version_required)
 DEFINE_COMMAND(uleb128)
+DEFINE_COMMAND(sleb128)
 
 @implementation HFTclTemplateController {
     Tcl_Interp *_interp;
@@ -210,6 +212,7 @@ DEFINE_COMMAND(uleb128)
         CMD(uint64_bits),
         CMD(hf_min_version_required),
         CMD(uleb128),
+        CMD(sleb128),
     };
 #undef CMD
 #undef CMD_NAMED
@@ -718,6 +721,23 @@ DEFINE_COMMAND(uleb128)
                 return TCL_ERROR;
             }
             Tcl_SetObjResult(_interp, tcl_obj_from_uint64(val));
+            break;
+        }
+        case command_sleb128: {
+            if (objc > 2) {
+                Tcl_WrongNumArgs(_interp, 1, objv, "[label]");
+                return TCL_ERROR;
+            }
+            int64_t val;
+            NSString *label = nil;
+            if (objc == 2) {
+                label = [NSString stringWithUTF8String:Tcl_GetStringFromObj(objv[1], NULL)];
+            }
+            if (![self readSLEB128:&val forLabel:label]) {
+                Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read bytes", -1));
+                return TCL_ERROR;
+            }
+            Tcl_SetObjResult(_interp, Tcl_NewWideIntObj((Tcl_WideInt)val));
             break;
         }
     }

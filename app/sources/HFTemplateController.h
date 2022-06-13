@@ -68,6 +68,7 @@ typedef NS_ENUM(NSUInteger, HFEndian) {
 - (BOOL)readUUID:(NSUUID *_Nonnull*_Nonnull)uuid forLabel:(NSString *_Nullable)label;
 
 - (BOOL)readULEB128:(uint64_t *)value forLabel:(NSString *_Nullable)label;
+- (BOOL)readSLEB128:(int64_t *)value forLabel:(NSString *_Nullable)label;
 
 - (void)moveTo:(long long)offset;
 - (void)goTo:(unsigned long long)offset;

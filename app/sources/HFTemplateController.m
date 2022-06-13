@@ -374,6 +374,29 @@ static const unsigned long long kMaxCacheSize = 1024 * 1024;
     return YES;
 }
 
+- (BOOL)readSLEB128:(int64_t *)value forLabel:(NSString *_Nullable)label {
+    HFASSERT(value != NULL);
+    LEB128Type *leb128 = [[LEB128Type alloc] init];
+    size_t maxBytesAvailable = self.length - (self.anchor + self.position);
+    size_t bytesToRead = maxBytesAvailable < leb128.maxBytesAllowed ? maxBytesAvailable : leb128.maxBytesAllowed;
+    NSData *data = [self readDataForSize:bytesToRead];
+    if (!data) {
+        return NO;
+    }
+    InspectionError err;
+    LEB128Result *result = [LEB128Type valueForBytes:data.bytes length:data.length isUnsigned:NO error:&err];
+    if (!result) {
+        return NO;
+    }
+    *value = result.value.i;
+    // Reset file pointer based on how many bytes were actually used
+    [self moveTo:-(bytesToRead - result.numBytes)];
+    if (label) {
+        [self addNodeWithLabel:label value:[NSString stringWithFormat:@"%lld", *value] size:result.numBytes];
+    }
+    return YES;
+}
+
 - (NSString *)dateToString:(NSDate *)date {
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
     formatter.doesRelativeDateFormatting = YES;
