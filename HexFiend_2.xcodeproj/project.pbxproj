@@ -900,13 +900,13 @@
 			name = Miscellaneous;
 			sourceTree = "<group>";
 		};
-		A5327E562856EB2400530557 /* Data Inspectors */ = {
+		A5327E562856EB2400530557 /* Data Inspector Types */ = {
 			isa = PBXGroup;
 			children = (
 				A5327E572856EB7500530557 /* LEB128Type.h */,
 				A5327E582856EB7500530557 /* LEB128Type.m */,
 			);
-			name = "Data Inspectors";
+			name = "Data Inspector Types";
 			sourceTree = "<group>";
 		};
 		A550A7171F7877F8001C79C7 /* hexf */ = {
@@ -921,7 +921,7 @@
 			isa = PBXGroup;
 			children = (
 				A5327E5A2856F0CC00530557 /* DataInspectorType.h */,
-				A5327E562856EB2400530557 /* Data Inspectors */,
+				A5327E562856EB2400530557 /* Data Inspector Types */,
 				D03CFA880FC78BCD00EE79E4 /* DataInspectorRepresenter.h */,
 				D03CFA890FC78BCD00EE79E4 /* DataInspectorRepresenter.m */,
 				A591313821E3079400685B51 /* DataInspector.h */,
