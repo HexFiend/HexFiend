@@ -8,6 +8,11 @@
 #import "DataInspector.h"
 
 @implementation DataInspector
+{
+    enum InspectorType_t inspectorType;
+    enum Endianness_t endianness;
+    enum NumberBase_t numberBase;
+}
 
 + (DataInspector*)dataInspectorSupplementing:(NSArray*)inspectors {
     DataInspector *ret = [[DataInspector alloc] init];
@@ -411,7 +416,7 @@ static NSAttributedString *inspectionSuccess(NSString *s) {
 }
 
 - (NSAttributedString *)valueForController:(HFController *)controller ranges:(NSArray *)ranges isError:(BOOL *)outIsError {
-    /* Just do a rough cut on length before going to valueForData. */
+    /* Just do a rough cut on length before going to valueForBytes. */
     
     if ([ranges count] != 1) {
         if(outIsError) *outIsError = YES;
@@ -453,13 +458,10 @@ static NSAttributedString *inspectionSuccess(NSString *s) {
             if(outIsError) *outIsError = YES;
             return inspectionError(InspectionErrorInternal);
     }
-    
-    NSAttributedString *result = [self valueForData:[controller dataForRange:range] isError:outIsError];
-    return result;
-}
 
-- (NSAttributedString *)valueForData:(NSData *)data isError:(BOOL *)outIsError {
-    return [self valueForBytes:[data bytes] length:[data length] isError:outIsError];
+    NSData *data = [controller dataForRange:range];
+    NSAttributedString *result = [self valueForBytes:data.bytes length:data.length isError:outIsError];
+    return result;
 }
 
 - (NSAttributedString *)valueForBytes:(const unsigned char *)bytes length:(NSUInteger)length isError:(BOOL *)outIsError {
@@ -820,7 +822,7 @@ static uint8_t bitStringToValue(NSString *value) {
              };
 }
 
-- (void)setPropertyListRepresentation:(id)plist {
+- (void)setPropertyListRepresentation:(NSDictionary *)plist {
     inspectorType = [plist[@"InspectorType"] intValue];
     endianness = [plist[@"Endianness"] intValue];
     numberBase = [plist[@"NumberBase"] intValue];

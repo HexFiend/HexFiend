@@ -42,11 +42,7 @@ enum NumberBase_t {
 };
 
 /* A class representing a single row of the data inspector */
-@interface DataInspector : NSObject<NSCoding> {
-    enum InspectorType_t inspectorType;
-    enum Endianness_t endianness;
-    enum NumberBase_t numberBase;
-}
+@interface DataInspector : NSObject<NSCoding>
 
 /* A data inspector that is different from the given inspectors, if possible. */
 + (DataInspector*)dataInspectorSupplementing:(NSArray*)inspectors;
@@ -56,13 +52,13 @@ enum NumberBase_t {
 @property (nonatomic) enum NumberBase_t numberBase;
 
 - (NSAttributedString *)valueForController:(HFController *)controller ranges:(NSArray*)ranges isError:(BOOL *)outIsError;
-- (NSAttributedString *)valueForData:(NSData *)data isError:(BOOL *)outIsError;
 - (NSAttributedString *)valueForBytes:(const unsigned char *)bytes length:(NSUInteger)length isError:(BOOL *)outIsError;
 
 /* Returns YES if we can replace the given number of bytes with this string value */
 - (BOOL)acceptStringValue:(NSString *)value replacingByteCount:(NSUInteger)count intoData:(unsigned char *)outData;
 
 /* Get and set a property list representation, for persisting to user defaults */
-@property (nonatomic, strong) id propertyListRepresentation;
+@property (nonatomic, strong) NSDictionary *propertyListRepresentation;
+- (void)setPropertyListRepresentation:(NSDictionary *)plist;
 
 @end
