@@ -60,6 +60,7 @@
 		A51D0E9720F2C21500B55775 /* HFTextRepresenter_Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = D061A28E10042D6A0049B8B8 /* HFTextRepresenter_Internal.h */; };
 		A51D0E9820F2C21500B55775 /* HFTextRepresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = D0A437390CDD4EDD000F7550 /* HFTextRepresenter.m */; };
 		A5327E592856EB7500530557 /* LEB128Type.m in Sources */ = {isa = PBXBuildFile; fileRef = A5327E582856EB7500530557 /* LEB128Type.m */; };
+		A5327E5D28570EF300530557 /* HFDirectoryWatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = A5327E5C28570EF300530557 /* HFDirectoryWatcher.m */; };
 		A5328D4721E1898A007C4DB0 /* HFHexGlyphTable.h in Headers */ = {isa = PBXBuildFile; fileRef = A5328D4521E1898A007C4DB0 /* HFHexGlyphTable.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A5328D4821E1898A007C4DB0 /* HFHexGlyphTable.h in Headers */ = {isa = PBXBuildFile; fileRef = A5328D4521E1898A007C4DB0 /* HFHexGlyphTable.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A5328D4921E1898A007C4DB0 /* HFHexGlyphTable.m in Sources */ = {isa = PBXBuildFile; fileRef = A5328D4621E1898A007C4DB0 /* HFHexGlyphTable.m */; };
@@ -437,6 +438,8 @@
 		A5327E572856EB7500530557 /* LEB128Type.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = LEB128Type.h; path = app/sources/LEB128Type.h; sourceTree = "<group>"; };
 		A5327E582856EB7500530557 /* LEB128Type.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = LEB128Type.m; path = app/sources/LEB128Type.m; sourceTree = "<group>"; };
 		A5327E5A2856F0CC00530557 /* DataInspectorType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DataInspectorType.h; path = app/sources/DataInspectorType.h; sourceTree = "<group>"; };
+		A5327E5B28570EF300530557 /* HFDirectoryWatcher.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFDirectoryWatcher.h; path = app/sources/HFDirectoryWatcher.h; sourceTree = "<group>"; };
+		A5327E5C28570EF300530557 /* HFDirectoryWatcher.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFDirectoryWatcher.m; path = app/sources/HFDirectoryWatcher.m; sourceTree = "<group>"; };
 		A5328D4521E1898A007C4DB0 /* HFHexGlyphTable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFHexGlyphTable.h; path = sources/HFHexGlyphTable.h; sourceTree = "<group>"; };
 		A5328D4621E1898A007C4DB0 /* HFHexGlyphTable.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFHexGlyphTable.m; path = sources/HFHexGlyphTable.m; sourceTree = "<group>"; };
 		A550A7161F7877F8001C79C7 /* hexf */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = hexf; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -951,6 +954,8 @@
 				A59BC59B2002113F0066860F /* HFTemplateNode.m */,
 				A5628AAA21D8561C00911ABB /* Tcl_ParseArgsObjv.h */,
 				A5628AA921D8561C00911ABB /* Tcl_ParseArgsObjv.c */,
+				A5327E5B28570EF300530557 /* HFDirectoryWatcher.h */,
+				A5327E5C28570EF300530557 /* HFDirectoryWatcher.m */,
 			);
 			name = "Binary Templates";
 			sourceTree = "<group>";
@@ -1784,6 +1789,7 @@
 			files = (
 				8D11072D0486CEB800E47090 /* main.m in Sources */,
 				D01E7C160CDC58AA00943F9E /* BaseDataDocument.m in Sources */,
+				A5327E5D28570EF300530557 /* HFDirectoryWatcher.m in Sources */,
 				A594F0522495A82400DCACD3 /* HFClickableTextField.m in Sources */,
 				A591313D21E3090300685B51 /* DataInspectorPlusMinusButtonCell.m in Sources */,
 				A59BC5712001AB8C0066860F /* HFBinaryTemplateRepresenter.m in Sources */,

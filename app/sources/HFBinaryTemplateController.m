@@ -10,6 +10,7 @@
 #import "HFTemplateNode.h"
 #import "HFTclTemplateController.h"
 #import "HFColorRange.h"
+#import "HFDirectoryWatcher.h"
 
 @interface NSObject (HFTemplateOutlineViewDelegate)
 
@@ -56,6 +57,7 @@
 @property HFColorRange *colorRange;
 @property NSUInteger anchorPosition;
 @property NSMutableArray *nodesToCollapse;
+@property HFDirectoryWatcher *directoryWatcher;
 
 @end
 
@@ -582,6 +584,18 @@
 
 - (BOOL)hasTemplate {
     return self.node != nil;
+}
+
+- (void)viewWillAppear {
+    self.directoryWatcher = [[HFDirectoryWatcher alloc] initWithPath:self.templatesFolder handler:^{
+        NSLog(@"Templates directory changed");
+        [self rerunTemplate];
+    }];
+}
+
+- (void)viewWillDisappear {
+    [self.directoryWatcher stop];
+    self.directoryWatcher = nil;
 }
 
 @end
