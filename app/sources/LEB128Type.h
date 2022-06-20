@@ -18,7 +18,7 @@ union LEB128Value {
 
 @property BOOL isUnsigned;
 
-+ (LEB128Result *)valueForBytes:(const unsigned char *)bytes length:(NSUInteger)length isUnsigned:(BOOL)isUnsigned error:(InspectionError *)error;
++ (LEB128Result *_Nullable)valueForBytes:(const unsigned char *)bytes length:(NSUInteger)length isUnsigned:(BOOL)isUnsigned error:(InspectionError *)error;
 
 @end
 
