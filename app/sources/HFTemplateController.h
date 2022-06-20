@@ -18,6 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property NSUInteger anchor;
 @property NSString *templatesFolder;
+@property NSString *bundleTemplatesPath;
 @property NSMutableArray *initiallyCollapsed;
 
 @end

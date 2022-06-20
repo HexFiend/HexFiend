@@ -523,16 +523,24 @@ DEFINE_COMMAND(sleb128)
         case command_include: {
             CHECK_SINGLE_ARG("relative_path")
             NSString *path = [NSString stringWithUTF8String:Tcl_GetStringFromObj(objv[1], NULL)];
-            NSString *fullPath = [self.templatesFolder stringByAppendingPathComponent:path];
-            if (![NSFileManager.defaultManager fileExistsAtPath:fullPath]) {
-                NSString *message = [NSString stringWithFormat:@"Include file not found: \"%@\"", fullPath];
+            BOOL found = NO;
+            for (NSString *folder in @[self.templatesFolder, self.bundleTemplatesPath]) {
+                NSString *fullPath = [folder stringByAppendingPathComponent:path];
+                if ([NSFileManager.defaultManager fileExistsAtPath:fullPath]) {
+                    NSString *error = [self evaluateScript:fullPath];
+                    if (error) {
+                        Tcl_AddErrorInfo(_interp, error.UTF8String);
+                        return TCL_ERROR;
+                    }
+                    NSLog(@"Include path \"%@\" found in %@", path, folder);
+                    found = YES;
+                    break;
+                }
+            }
+            if (!found) {
+                NSString *message = [NSString stringWithFormat:@"Include file not found: \"%@\"", path];
                 Tcl_SetErrno(ENOENT);
                 Tcl_AddErrorInfo(_interp, message.UTF8String);
-                return TCL_ERROR;
-            }
-            NSString *error = [self evaluateScript:fullPath];
-            if (error) {
-                Tcl_AddErrorInfo(_interp, error.UTF8String);
                 return TCL_ERROR;
             }
             break;

@@ -125,6 +125,10 @@
     return [[NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES).firstObject stringByAppendingPathComponent:[NSBundle mainBundle].bundleIdentifier] stringByAppendingPathComponent:@"Templates"];
 }
 
+- (NSString *)bundleTemplatesPath {
+    return [NSBundle.mainBundle.resourcePath stringByAppendingPathComponent:@"templates"];
+}
+
 - (NSString *)titleOfLastTemplate {
     return [[NSUserDefaults standardUserDefaults] objectForKey:@"BinaryTemplatesLastTemplate"];
 }
@@ -246,7 +250,7 @@
 }
 
 - (void)loadBundleTemplates:(NSString *)titleOfLastTemplate itemToSelect:(NSMenuItem **)itemToSelect {
-    NSString *bundleTemplatesPath = [NSBundle.mainBundle.resourcePath stringByAppendingPathComponent:@"templates"];
+    NSString *bundleTemplatesPath = self.bundleTemplatesPath;
     NSDirectoryEnumerator *bundleTemplatesEnumerator = [NSFileManager.defaultManager enumeratorAtPath:bundleTemplatesPath];
     NSArray *bundleTemplatesPaths = [bundleTemplatesEnumerator.allObjects sortedArrayUsingSelector:@selector(compare:)];
     BOOL addedBundleTemplate = NO;
@@ -330,6 +334,7 @@
     HFTclTemplateController *templateController = [[HFTclTemplateController alloc] init];
     templateController.anchor = self.anchorPosition;
     templateController.templatesFolder = self.templatesFolder;
+    templateController.bundleTemplatesPath = self.bundleTemplatesPath;
 
     // Change directory to the templates folder so "source" command can use relative paths
     NSFileManager *fm = NSFileManager.defaultManager;
