@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 53;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -1741,6 +1741,7 @@
 /* Begin PBXShellScriptBuildPhase section */
 		A57617BB1E430C18003CF6BB /* Set Bundle Version */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
@@ -1768,6 +1769,7 @@
 		};
 		D05390401E2192AE00F9AAC1 /* Optionally Postprocess for Mac App Store */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
