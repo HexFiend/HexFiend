@@ -79,6 +79,7 @@
 		A572614E21D9AA7600970A0E /* HFEncodingManager.h in Headers */ = {isa = PBXBuildFile; fileRef = A572614B21D9AA7600970A0E /* HFEncodingManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A572614F21D9AA7600970A0E /* HFEncodingManager.m in Sources */ = {isa = PBXBuildFile; fileRef = A572614C21D9AA7600970A0E /* HFEncodingManager.m */; };
 		A572615021D9AA7600970A0E /* HFEncodingManager.m in Sources */ = {isa = PBXBuildFile; fileRef = A572614C21D9AA7600970A0E /* HFEncodingManager.m */; };
+		A5791D62286181DD0067FC1E /* sampleData.rtf in Resources */ = {isa = PBXBuildFile; fileRef = A5791D61286181DD0067FC1E /* sampleData.rtf */; };
 		A57F34731F1B236E00234B94 /* HFHexPasteboardOwner.m in Sources */ = {isa = PBXBuildFile; fileRef = A57F34711F1B236E00234B94 /* HFHexPasteboardOwner.m */; };
 		A57F34741F1B236E00234B94 /* HFHexPasteboardOwner.h in Headers */ = {isa = PBXBuildFile; fileRef = A57F34721F1B236E00234B94 /* HFHexPasteboardOwner.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A57F34761F1B2A2B00234B94 /* HFHexPasteboardOwnerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A57F34751F1B2A2B00234B94 /* HFHexPasteboardOwnerTest.m */; };
@@ -474,6 +475,7 @@
 		A572614921D8A51B00970A0E /* HFPrompt.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFPrompt.m; path = app/sources/HFPrompt.m; sourceTree = "<group>"; };
 		A572614B21D9AA7600970A0E /* HFEncodingManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFEncodingManager.h; path = sources/HFEncodingManager.h; sourceTree = "<group>"; };
 		A572614C21D9AA7600970A0E /* HFEncodingManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFEncodingManager.m; path = sources/HFEncodingManager.m; sourceTree = "<group>"; };
+		A5791D61286181DD0067FC1E /* sampleData.rtf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.rtf; path = sampleData.rtf; sourceTree = "<group>"; };
 		A57F34711F1B236E00234B94 /* HFHexPasteboardOwner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFHexPasteboardOwner.m; path = sources/HFHexPasteboardOwner.m; sourceTree = "<group>"; };
 		A57F34721F1B236E00234B94 /* HFHexPasteboardOwner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFHexPasteboardOwner.h; path = sources/HFHexPasteboardOwner.h; sourceTree = "<group>"; };
 		A57F34751F1B2A2B00234B94 /* HFHexPasteboardOwnerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFHexPasteboardOwnerTest.m; sourceTree = "<group>"; };
@@ -994,6 +996,7 @@
 				D0D110530FF602D800AE5CFB /* FiendlingAppDelegate.m */,
 				D071391E146F7897004D3792 /* MainMenu.xib */,
 				D00C16740FF4925A006D021F /* Info.plist */,
+				A5791D61286181DD0067FC1E /* sampleData.rtf */,
 			);
 			name = HexFiendling;
 			path = sample_code/HexFiendling;
@@ -1724,6 +1727,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A5791D62286181DD0067FC1E /* sampleData.rtf in Resources */,
 				D0713920146F7898004D3792 /* MainMenu.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
