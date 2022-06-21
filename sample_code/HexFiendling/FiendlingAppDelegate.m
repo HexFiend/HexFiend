@@ -20,6 +20,12 @@
 
 @end
 
+@interface FiendlingAppDelegate ()
+
+@property NSArray<FiendlingExample *> *examples;
+
+@end
+
 @implementation FiendlingAppDelegate {
     /* The tab view in our nib */
     IBOutlet NSTabView *tabView;
@@ -40,7 +46,6 @@
     NSData *externalData;
 
     /* Explanatory texts */
-    NSMutableArray *examples;
     IBOutlet NSTextField *explanatoryTextField;
 }
 
@@ -191,22 +196,16 @@
 }
 
 - (void)applicationDidFinishLaunching:(__attribute__((unused)) NSNotification *)note {
-    [self willChangeValueForKey:@"examples"];
-    examples = [[NSMutableArray alloc] init];
-    
-    [examples addObject:[FiendlingExample exampleWithLabel:@"Bound HFTextView" explanation:@"This example demonstrates showing and editing data via the \"data\" binding on both NSTextView and HFTextView."]];
+    self.examples = @[
+        [FiendlingExample exampleWithLabel:@"Bound HFTextView" explanation:@"This example demonstrates showing and editing data via the \"data\" binding on both NSTextView and HFTextView."],
+        [FiendlingExample exampleWithLabel:@"In-Memory Data" explanation:@"This example demonstrates showing in-memory data in a hex view."],
+        [FiendlingExample exampleWithLabel:@"File Data, Multiple Views" explanation:@"This example demonstrates showing file data in three coherent views (a hex view, an ASCII view, and a scroll bar)."],
+        [FiendlingExample exampleWithLabel:@"External Data" explanation:@"This example demonstrates showing data from an external source."],
+    ];
     [self setUpBoundDataHexView];
-
-    [examples addObject:[FiendlingExample exampleWithLabel:@"In-Memory Data" explanation:@"This example demonstrates showing in-memory data in a hex view."]];
     [self setUpInMemoryHexViewIntoView:[self viewForIdentifier:@"in_memory_hex_view"]];
-    
-    [examples addObject:[FiendlingExample exampleWithLabel:@"File Data, Multiple Views" explanation:@"This example demonstrates showing file data in three coherent views (a hex view, an ASCII view, and a scroll bar)."]];
     [self setUpFileMultipleViewIntoView:[self viewForIdentifier:@"file_data_multiple_views"]];
-    
-    [examples addObject:[FiendlingExample exampleWithLabel:@"External Data" explanation:@"This example demonstrates showing data from an external source."]];
     [self setUpExternalDataView:[self viewForIdentifier:@"external_data"]];
-
-    [self didChangeValueForKey:@"examples"];
 }
 
 @end
