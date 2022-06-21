@@ -6,9 +6,43 @@
 //
 
 #import "FiendlingAppDelegate.h"
+#import <HexFiend/HexFiend.h>
 
+@interface FiendlingExample : NSObject {
+    NSString *label;
+    NSString *explanation;
+}
 
-@implementation FiendlingAppDelegate
+@property(readonly) NSString *label;
+@property(readonly) NSString *explanation;
+
++ (instancetype)exampleWithLabel:(NSString *)someLabel explanation:(NSString *)someExplanation;
+
+@end
+
+@implementation FiendlingAppDelegate {
+    /* The tab view in our nib */
+    IBOutlet NSTabView *tabView;
+
+    /**** FIRST TAB ****/
+    /* Data bound to by both the NSTextView and HFTextView */
+    IBOutlet HFTextView *boundDataTextView;
+
+    NSData *textViewBoundData;
+
+    /**** SECOND TAB ****/
+    HFController *inMemoryController;
+    HFController *fileController;
+
+    /**** THIRD TAB ****/
+    HFController *externalDataController;
+    IBOutlet NSTextView *externalDataTextView;
+    NSData *externalData;
+
+    /* Explanatory texts */
+    NSMutableArray *examples;
+    IBOutlet NSTextField *explanatoryTextField;
+}
 
 - (NSData *)rtfSampleData {
     const unsigned char data[] = {
@@ -133,7 +167,6 @@
     [self setValue:[self rtfSampleData] forKey:@"externalData"];
 }
 
-
 - (void)setExternalData:(NSData *)data {
     externalData = [data copy];
     HFByteArray *newByteArray = [[HFBTreeByteArray alloc] init];
@@ -144,7 +177,6 @@
     [externalDataController replaceByteArray:newByteArray];
 }
 
-
 - (NSView *)viewForIdentifier:(NSString *)ident {
     NSView *result = nil;
     NSInteger index = [tabView indexOfTabViewItemWithIdentifier:ident];
@@ -153,7 +185,6 @@
     }
     return result;
 }
-
 
 - (void)setTextViewBoundData:(NSData *)data {
     textViewBoundData = data;
@@ -165,8 +196,7 @@
     
     [examples addObject:[FiendlingExample exampleWithLabel:@"Bound HFTextView" explanation:@"This example demonstrates showing and editing data via the \"data\" binding on both NSTextView and HFTextView."]];
     [self setUpBoundDataHexView];
-    
-    
+
     [examples addObject:[FiendlingExample exampleWithLabel:@"In-Memory Data" explanation:@"This example demonstrates showing in-memory data in a hex view."]];
     [self setUpInMemoryHexViewIntoView:[self viewForIdentifier:@"in_memory_hex_view"]];
     
@@ -179,9 +209,7 @@
     [self didChangeValueForKey:@"examples"];
 }
 
-
 @end
-
 
 @implementation FiendlingExample
 
