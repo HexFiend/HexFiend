@@ -582,13 +582,41 @@ static const unsigned long long kMaxCacheSize = 1024 * 1024;
     }
 }
 
-- (void)endSection {
+#define REQUIRE_SECTION() \
+    if (!self.currentNode.isSection) { \
+        if (error) { \
+            *error = @"No active section."; \
+        } \
+        return NO; \
+    }
+
+- (BOOL)endSection:(NSString *_Nonnull*_Nonnull)error {
+    REQUIRE_SECTION();
     HFTemplateNode *node = self.currentNode;
     self.currentNode = self.currentNode.parent;
     
     HFRange range = self.currentNode.range;
     range.length = ((node.range.location + node.range.length) - range.location);
     self.currentNode.range = range;
+    return YES;
+}
+
+- (BOOL)setSectionName:(NSString *)name error:(NSString *_Nonnull*_Nonnull)error {
+    REQUIRE_SECTION();
+    self.currentSection.label = name;
+    return YES;
+}
+
+- (BOOL)setSectionValue:(NSString *)name error:(NSString *_Nonnull*_Nonnull)error {
+    REQUIRE_SECTION();
+    self.currentSection.value = name;
+    return YES;
+}
+
+- (BOOL)sectionCollapse:(NSString *_Nonnull*_Nonnull)error {
+    REQUIRE_SECTION();
+    [self.initiallyCollapsed addObject:self.currentSection];
+    return YES;
 }
 
 - (HFTemplateNode *)currentSection {
