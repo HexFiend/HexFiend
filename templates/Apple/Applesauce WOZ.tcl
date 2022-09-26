@@ -4,17 +4,16 @@
 # 2022 Aug 13 | chris-torrence | Initial implementation
 
 requires 0 "574F5A" ;# WOZ
-requires 4 "FF0A0D0A" ;# check bytes
+requires 4 "FF0A0D0A" ;# guard bytes, 0xFF/linefeed/carriage return/linefeed
 set woz [ascii 4]
 ascii 4
 entry "Signature" $woz 4 0
-entry "Checkbytes" "FF0A0D0A" 4 4
-# TODO: Should probably verify the crc32
+entry "Guardbytes" "FF0A0D0A" 4 4
 set crc32 [uint32 -hex "CRC32"]
 
-# Return current file position - offset
+# Return current file position minus offset
 # Useful when tying data chunks to their file location.
-proc p {offset} {
+proc shiftPosByOffset {offset} {
   return [expr [pos] - $offset]
 }
 
@@ -23,13 +22,13 @@ proc ChunkINFO {} {
     set chunkSize [uint32 "Size"]
     set version [uint8 "Version"]
     set diskType [uint8]
-    entry "Disk Type" [expr $diskType == 1 ? "5.25" : "3.5"] 1 [p 1]
+    entry "Disk Type" [expr $diskType == 1 ? "5.25" : "3.5"] 1 [shiftPosByOffset 1]
     set writeProt [uint8]
-    entry "Write Protected" [expr $writeProt ? true : false] 1 [p 1]
+    entry "Write Protected" [expr $writeProt ? true : false] 1 [shiftPosByOffset 1]
     set sync [uint8]
-    entry "Synchronized" [expr $sync ? true : false] 1 [p 1]
+    entry "Synchronized" [expr $sync ? true : false] 1 [shiftPosByOffset 1]
     set cleaned [uint8]
-    entry "Cleaned MC3470" [expr $cleaned ? true : false] 1 [p 1]
+    entry "Cleaned MC3470" [expr $cleaned ? true : false] 1 [shiftPosByOffset 1]
     str 32 "utf8" "Creator"
     if {$version >= 2} {
       set sides [uint8 "Disk Sides"]
@@ -41,9 +40,9 @@ proc ChunkINFO {} {
         3 { set bootSectorStr "Both 16+13 sector" }
         default { set bootSectorStr "Invalid" }
       }
-      entry "Boot Sector" $bootSectorStr 1 [p 1]
+      entry "Boot Sector" $bootSectorStr 1 [shiftPosByOffset 1]
       set bitTiming [uint8]
-      entry "Optimal Bit Timing" $bitTiming 1 [p 1]
+      entry "Optimal Bit Timing" $bitTiming 1 [shiftPosByOffset 1]
       set hardware [uint16 "Hardware Compatibility"]
       set ram [uint16 "Required RAM"]
       set largestTrack [uint16 "Largest Track"]
@@ -89,7 +88,7 @@ proc ChunkTRKS {woz} {
         if {$startBlock > 0} {
           set ihex [format %02X $i]
           section -collapsed "TRK $$ihex" {
-            entry "Start Block" $startBlock 2 [p 2]
+            entry "Start Block" $startBlock 2 [shiftPosByOffset 2]
             set blockCount [uint16 "Block Count"]
             set bitCount [uint32 "Bit Count"]
             set start [expr 512 * $startBlock]
@@ -169,7 +168,7 @@ while {![end]} {
     set chunkSize [uint32]
     if {$chunkSize > 0 } {
       section $chunkID {
-        entry "Size" $chunkSize 4 [p 4]
+        entry "Size" $chunkSize 4 [shiftPosByOffset 4]
         hex $chunkSize "Data"
       }
     }
