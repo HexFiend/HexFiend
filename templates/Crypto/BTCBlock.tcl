@@ -1,15 +1,16 @@
-# Bitcoin Core Block
+# Binary Temnplate for Bitcoin Core Block content
 #   Process a single Bitcoin block contained in a Bitcoin Core blk*.dat file. 
 #
-#   Bitcoin Core blk*.dat files start with Magic bytes. This template will align correctly when invoked.
-#   Different blocks can be examined by using the Hex Fiend 'Anchor Template at Offset' feature.
-#
+#   Bitcoin Core blk*.dat files begin with 4 Magic bytes. These Magic bytes serve as a preamble to each block 
+#   in the blk*.dat file. When invoked this template will align correctly on the initial block in the blk*.dat
+#   file. Different blocks can be examined by using the Hex Fiend 'Anchor Template at Offset' feature and 
+#   anchoring on any Magic bytes in the file.
 
 
 
 # Return a BTC varint value. Presence of an argument causes the varint to be displayed as a Hex Fiend 
 # field with the argument as the label. The file pointer is left at the first byte past the varint.
-proc getVarint {args} {
+proc getVarint {{label ""}} {
   
     # Read the indicator byte
     set val [uint8]
@@ -31,9 +32,9 @@ proc getVarint {args} {
        set type   "uint8"
     }
     
-    if {[llength $args] == 1}  {
+    if {$label != ""}  {
       move $moveit
-      $type [lindex $args 0]
+      $type $label
     }
 
     return $val
