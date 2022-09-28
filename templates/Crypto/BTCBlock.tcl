@@ -115,7 +115,7 @@ section -collapsed "TX COUNT $blockTxnum"  {
               bytes $nscriptbytes "ScriptSig"
             } 
 
-            uint32 -hex "Sequence"
+            uint32 -hex "nSequence"
           }
         }
       }
@@ -157,7 +157,7 @@ section -collapsed "TX COUNT $blockTxnum"  {
         }         ; # Section Witness data
       }           ; # process Segwit data
 
-      uint32 "lock time"
+      uint32 "nLockTime"
 
     } ; # Section single transaction
   } ; # for each transaction
