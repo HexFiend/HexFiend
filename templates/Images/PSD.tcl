@@ -128,8 +128,11 @@ if {$imrs_len > 0} {
 				uint16 "ID"
 				pascalString "Name" 2
 				set data_len [uint32 "Data length"]
-				set data_len_padded [padto2 $data_len]
-				bytes $data_len_padded "Data"
+				if {$data_len_padded > 0} {
+					bytes $data_len_padded "Data"
+				} else {
+					entry "Data" "empty"
+				}
 				set i [incr i]
 			}
 		}
@@ -246,7 +249,12 @@ if {$lars_len > 0} {
 											}
 											ascii 4 "Key"
 											set data_len [uint32 "Length"]
-											bytes [padto2 $data_len] "Data"
+											set data_len_padded [padto2 $data_len]
+											if {$data_len_padded > 0} {
+												bytes $data_len_padded "Data"
+											} else {
+												entry "Data" "empty"
+											}
 										}
 									}
 								}
