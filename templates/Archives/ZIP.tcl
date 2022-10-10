@@ -127,7 +127,7 @@ while {![end]} {
             compression_method
             fattime "File last modification time"
             fatdate "File last modification date"
-            if {$flgs != 8} {
+            if {($flgs & (1 << 3)) == 0} {
                 uint32 -hex "CRC-32"
                 set cs [uint32 "Compressed size"]
             } else {
@@ -160,7 +160,7 @@ while {![end]} {
             if {$cs > 0} {	
 	            bytes $cs "File data"
 	        }
-            if {$flgs == 8} {
+            if {($flgs & (1 << 3)) != 0} {
                 section "Data descriptor" {
                     set sig [uint32 -hex "Signature or CRC"]                    
                     if {$sig == 134695760} {
