@@ -72,7 +72,7 @@ set blockTxnum [getVarint]
 # There may be hundreds of transactions. Make a collapsed section to keep the overview initially brief.
 section -collapsed "TX COUNT $blockTxnum"  {
   set Coinbase 1
-  set iscb "(Coinbase)"
+  set iscb "(Coinbase)" 
   for {set tx 0} {$tx < $blockTxnum} {incr tx} {
     section -collapsed "Transaction $tx $iscb" {
       uint32 -hex "Tx version"
