@@ -66,34 +66,37 @@ section "Block header" {
   uint32      "nonce"
 }
 
-# get the number of transactions for the block
+# Get the number of transactions for the block
 set blockTxnum [getVarint]
 
 # There may be hundreds of transactions. Make a collapsed section to keep the overview initially brief.
 section -collapsed "TX COUNT $blockTxnum"  {
+  set Coinbase 1
   for {set tx 0} {$tx < $blockTxnum} {incr tx} {
-    section -collapsed "Transaction $tx" {
+    set iscb ""
+    if $Coinbase {set iscb "(Coinbase)"}
+    section -collapsed "Transaction $tx $iscb" {
       uint32 -hex "Tx version"
   
-      # if next varint is 0 then we've read a (single byte) marker and it's a SegWit transaction. 
-      # if the varint is non-zero it's the actual number of inputs
+      # If next varint is 0 then we've read a (single byte) marker and it's a SegWit transaction. 
+      # If the varint is non-zero it's the actual number of inputs
       set nInputs [getVarint]
       if {$nInputs == 0} {
-        # it's the marker and this is a SegWit transaction. read witness data later.
+        # It's the marker and this is a SegWit transaction. Read witness data later.
         set segwit 1
   
-        # call out marker and flag byte
+        # Call out marker and flag byte
         move -1
         uint8 "marker"
         uint8 "flag"
         
-        # now get the actual number of inputs
+        # Now get the actual number of inputs
         set nInputs [getVarint]
       }  else {
         set segwit 0
       }
       
-      # process the inputs
+      # Process the inputs
       section -collapsed "INPUT COUNT $nInputs"  {
         for {set k 0} {$k < $nInputs} {incr k} {  
           section "Input $k" {
@@ -102,16 +105,18 @@ section -collapsed "TX COUNT $blockTxnum"  {
   
             set nscriptbytes [getVarint "ScriptSig len"]
             if {$nscriptbytes > 0} {
-              # if it's the Coinbase transaction and the first script byte is 0x3
-              # then the next 3 bytes are the block height. must be 1st transaction
-              # and 1st input
-              set bheight [uint8]
-              if {$tx == 0 && $k == 0 && $bheight == 3} { 
-                uint24 "height"
-                move -3 
-              }
-              # move back to beginning of script 
-              move -1
+              # Check for block height. If it's the Coinbase transaction and the first script byte 
+              # is 0x3 then the next 3 bytes are the block height.
+              if $Coinbase {
+                set bheight [uint8]
+                if {$bheight == 3} { 
+                  uint24 "height"
+                  move -3 
+                } 
+                # Move back to beginning of script.
+                move -1
+                set Coinbase 0
+              } 
               bytes $nscriptbytes "ScriptSig"
             } 
 
@@ -120,10 +125,10 @@ section -collapsed "TX COUNT $blockTxnum"  {
         }
       }
   
-      # outputs
+      # Outputs
       set nOutputs [getVarint]
       
-      # process the outputs
+      # Process the outputs
       section -collapsed "OUTPUT COUNT $nOutputs"  {
         for {set k 0} {$k < $nOutputs} {incr k} {
           section "Output $k" {
@@ -134,10 +139,10 @@ section -collapsed "TX COUNT $blockTxnum"  {
         }
       }
   
-      #if it's a Segwit transaction process the witness data for each input
+      # If it's a Segwit transaction process the Witness data for each input
       if {$segwit} {
         section -collapsed "WITNESS DATA"  {
-          # this is the witness data for each input
+          # This is the witness data for each input
           for {set k 0} {$k < $nInputs} {incr k} {
             section "Witness Input $k" {
               set nwitstack [getVarint "STACK COUNT"]
