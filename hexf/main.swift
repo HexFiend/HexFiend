@@ -9,16 +9,14 @@
 
 import Cocoa
 
-autoreleasepool {
-    let controller = Controller()
-    let args = ProcessInfo.processInfo.arguments
-    if args.count <= 1 {
-        if (controller.processStandardInput()) {
-            exit(EXIT_SUCCESS)
-        } else {
-            exit(controller.printUsage())
-        }
+let controller = Controller()
+let args = ProcessInfo.processInfo.arguments
+if args.count <= 1 {
+    if (controller.processStandardInput()) {
+        exit(EXIT_SUCCESS)
+    } else {
+        controller.printUsage()
+        exit(EXIT_FAILURE)
     }
-    exit(controller.processArguments(args))
 }
-exit(EXIT_SUCCESS)
+exit(controller.process(arguments: args))
