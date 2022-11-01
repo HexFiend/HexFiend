@@ -137,13 +137,8 @@ Usage:
             return
             
         case .none:
-            do {
-                try processStandardInput()
-                return
-            } catch {
-                printUsage()
-                throw error
-            }
+            try processStandardInput()
+            return
             
         case let .command(command):
             if self.appRunning {
