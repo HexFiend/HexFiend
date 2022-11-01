@@ -23,7 +23,6 @@
 
 /* Begin PBXBuildFile section */
 		001BEF982910F23600BB82B3 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 001BEF972910F23600BB82B3 /* main.swift */; };
-		001BEF9E2910FE8A00BB82B3 /* Controller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 001BEF992910FA6B00BB82B3 /* Controller.swift */; };
 		795F46C114BAA45D00EB2F7D /* OpenDriveWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 795F46C014BAA45D00EB2F7D /* OpenDriveWindowController.m */; };
 		795F46C314BAADB600EB2F7D /* DiskArbitration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 795F46C214BAADB600EB2F7D /* DiskArbitration.framework */; };
 		79E2FF201745A2B300FA8F12 /* dsa_pub.pem in Resources */ = {isa = PBXBuildFile; fileRef = 79E2FF1F1745A2B300FA8F12 /* dsa_pub.pem */; };
@@ -426,7 +425,6 @@
 
 /* Begin PBXFileReference section */
 		001BEF972910F23600BB82B3 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
-		001BEF992910FA6B00BB82B3 /* Controller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Controller.swift; sourceTree = "<group>"; };
 		089C165DFE840E0CC02AAC07 /* Base */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = app/sources/main.m; sourceTree = "<group>"; };
@@ -948,7 +946,6 @@
 			isa = PBXGroup;
 			children = (
 				001BEF972910F23600BB82B3 /* main.swift */,
-				001BEF992910FA6B00BB82B3 /* Controller.swift */,
 			);
 			path = hexf;
 			sourceTree = "<group>";
@@ -1903,7 +1900,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				001BEF9E2910FE8A00BB82B3 /* Controller.swift in Sources */,
 				001BEF982910F23600BB82B3 /* main.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
