@@ -30,7 +30,7 @@ Usage:
 """, stderr)
     }
     
-    private func standardize(path: String) -> String {
+    private static func standardize(path: String) -> String {
         let url = URL(fileURLWithPath: path)
         return url.path // get absolute path
     }
@@ -49,7 +49,7 @@ Usage:
         
         do {
             // TODO: Heed deprecation warning, and get right config type. This will require an availability check.
-//            try NSWorkspace.shared.openApplication(at: url, configuration: config)
+            //            try NSWorkspace.shared.openApplication(at: url, configuration: config)
             try NSWorkspace.shared.launchApplication(at: url, options: NSWorkspace.LaunchOptions.default, configuration: config)
             return true
         } catch {
@@ -76,7 +76,7 @@ Usage:
                                         deliverImmediately: true)
             return true
         }
-
+        
         // App isn't running so launch it with custom args
         return launchApp(with: [
             "-HFOpenData",
@@ -86,66 +86,86 @@ Usage:
         ])
     }
     
-    func process(arguments args: [String]) -> Int32 {
-        var filesToOpen = [String]()
-        let argsCount = args.count
+    enum Commands: Equatable {
+        case diff(leftFile: String, rightFile: String)
+        case open(files: [String])
+    }
+    
+    enum Options: Equatable {
+        case command(_ command: Commands)
+        case help
+        case invalid
         
-        var diffLeftFile: String?
-        var diffRightFile: String?
-
-        if argsCount == 4, args[1] == "-d" {
-            diffLeftFile = standardize(path:args[2])
-            diffRightFile = standardize(path:args[3])
-        } else {
-            for arg in args.dropFirst() {
-                if arg.hasPrefix("-") {
-                    if arg == "-h" || arg == "--help" {
-                        printUsage()
-                        return EXIT_SUCCESS
+        init(args: [String]) {
+            if args.count == 4, args[1] == "-d" {
+                self = .command(.diff(leftFile: standardize(path:args[2]), rightFile: standardize(path:args[3])))
+            } else {
+                var filesToOpen = [String]()
+                for arg in args.dropFirst() {
+                    if arg.hasPrefix("-") {
+                        if arg == "-h" || arg == "--help" {
+                            self = .help
+                            return
+                        }
+                        self = .invalid
+                        return
                     }
-                    printUsage()
-                    return EXIT_FAILURE
+                    filesToOpen.append(standardize(path: arg))
                 }
-                filesToOpen.append(standardize(path: arg))
+                self = .command(.open(files: filesToOpen))
             }
         }
-        if self.appRunning {
-            // App is already running so post distributed notification
-            let name: String
-            let userInfo: [String: [Any]]
-            if let diffLeftFile = diffLeftFile,
-               let diffRightFile = diffRightFile {
-                name = "HFDiffFilesNotification"
-                userInfo = ["files": [diffLeftFile, diffRightFile]]
-            } else {
-                name = "HFOpenFileNotification"
-                userInfo = ["files": filesToOpen]
-            }
-            let center = DistributedNotificationCenter.default()
-            center.postNotificationName(NSNotification.Name(rawValue: name),
-                                        object: nil,
-                                        userInfo: userInfo,
-                                        deliverImmediately: true)
-        } else {
-            // App isn't running so launch it with custom args
-            var launchArgs: [String]
-            if let diffLeftFile = diffLeftFile,
-               let diffRightFile = diffRightFile {
-                launchArgs = [
-                    "-HFDiffLeftFile",
-                    diffLeftFile,
-                    "-HFDiffRightFile",
-                    diffRightFile
-                ]
-            } else {
-                launchArgs = []
-                for fileToOpen in filesToOpen {
-                    launchArgs.append("-HFOpenFile")
-                    launchArgs.append(fileToOpen)
+    }
+    
+    func process(arguments args: [String]) -> Int32 {
+        switch Options(args: args) {
+        case .invalid:
+            printUsage()
+            return EXIT_FAILURE
+            
+        case .help:
+            printUsage()
+            return EXIT_SUCCESS
+            
+        case let .command(command):
+            if self.appRunning {
+                // App is already running so post distributed notification
+                let name: String
+                let userInfo: [String: [Any]]
+                switch command {
+                case let .diff(diffLeftFile, diffRightFile):
+                    name = "HFDiffFilesNotification"
+                    userInfo = ["files": [diffLeftFile, diffRightFile]]
+                case let .open(files):
+                    name = "HFOpenFileNotification"
+                    userInfo = ["files": files]
                 }
-            }
-            if !launchApp(with: launchArgs) {
-                return EXIT_FAILURE
+                let center = DistributedNotificationCenter.default()
+                center.postNotificationName(NSNotification.Name(rawValue: name),
+                                            object: nil,
+                                            userInfo: userInfo,
+                                            deliverImmediately: true)
+            } else {
+                // App isn't running so launch it with custom args
+                var launchArgs: [String]
+                switch command {
+                case let .diff(diffLeftFile, diffRightFile):
+                    launchArgs = [
+                        "-HFDiffLeftFile",
+                        diffLeftFile,
+                        "-HFDiffRightFile",
+                        diffRightFile
+                    ]
+                case let .open(files):
+                    launchArgs = []
+                    for file in files {
+                        launchArgs.append("-HFOpenFile")
+                        launchArgs.append(file)
+                    }
+                }
+                if !launchApp(with: launchArgs) {
+                    return EXIT_FAILURE
+                }
             }
         }
         return EXIT_SUCCESS
