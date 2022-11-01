@@ -2797,6 +2797,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				OTHER_CFLAGS = "";
 				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
 				WARNING_CFLAGS = (
 					"-W",
 					"-Wall",
@@ -3112,6 +3113,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				OTHER_CFLAGS = "";
 				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
 				WARNING_CFLAGS = (
 					"-W",
 					"-Wall",
@@ -3288,6 +3290,7 @@
 					"-DHF_NO_PRIVILEGED_FILE_OPERATIONS=1",
 				);
 				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
 				WARNING_CFLAGS = (
 					"-W",
 					"-Wall",
