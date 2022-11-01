@@ -160,7 +160,7 @@ Usage:
                                             deliverImmediately: true)
             } else {
                 // App isn't running so launch it with custom args
-                var launchArgs: [String]
+                let launchArgs: [String]
                 switch command {
                 case let .diff(diffLeftFile, diffRightFile):
                     launchArgs = [
@@ -170,10 +170,11 @@ Usage:
                         diffRightFile
                     ]
                 case let .open(files):
-                    launchArgs = []
-                    for file in files {
-                        launchArgs.append("-HFOpenFile")
-                        launchArgs.append(file)
+                    launchArgs = files.flatMap { file in
+                        [
+                            "-HFOpenFile",
+                            file
+                        ]
                     }
                 }
                 try launchApp(with: launchArgs)
