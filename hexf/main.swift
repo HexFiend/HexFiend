@@ -10,4 +10,4 @@
 import Cocoa
 
 let controller = Controller()
-exit(controller.process(arguments: ProcessInfo.processInfo.arguments))
+try controller.process(arguments: ProcessInfo.processInfo.arguments)

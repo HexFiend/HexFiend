@@ -8,6 +8,13 @@
 
 import Cocoa
 
+enum HexfError: Error {
+    case invalidUsage
+    case standardInputNoData
+    case launchAppNoUrl
+    case launchAppFailure
+}
+
 struct Controller {
     private static let kAppIdentifier = "com.ridiculousfish.HexFiend"
     
@@ -39,10 +46,10 @@ Usage:
         NSRunningApplication.runningApplications(withBundleIdentifier: Self.kAppIdentifier).first != nil
     }
     
-    private func launchApp(with args: [String]) -> Bool {
+    private func launchApp(with args: [String]) throws {
         guard let url = NSWorkspace.shared.urlForApplication(withBundleIdentifier: Self.kAppIdentifier) else {
             fputs("Failed to get url to app bundle for: \(Self.kAppIdentifier)", stderr)
-            return false
+            throw HexfError.launchAppNoUrl
         }
         
         let config = [NSWorkspace.LaunchConfigurationKey.arguments: args]
@@ -51,20 +58,19 @@ Usage:
             // TODO: Heed deprecation warning, and get right config type. This will require an availability check.
             //            try NSWorkspace.shared.openApplication(at: url, configuration: config)
             try NSWorkspace.shared.launchApplication(at: url, options: NSWorkspace.LaunchOptions.default, configuration: config)
-            return true
         } catch {
             fputs("Launch app failed: \(error.localizedDescription)", stderr)
-            return false
+            throw HexfError.launchAppFailure
         }
     }
     
-    private func processStandardInput() -> Bool {
+    private func processStandardInput() throws {
         let inFile = FileHandle.standardInput
         // TODO: Heed deprecation warning. This will require an availability check.
         let data = inFile.readDataToEndOfFile()
         
         guard data.count != 0 else {
-            return false
+            throw HexfError.standardInputNoData
         }
         
         if self.appRunning {
@@ -74,11 +80,11 @@ Usage:
                                         object: nil,
                                         userInfo: ["data" : data],
                                         deliverImmediately: true)
-            return true
+            return
         }
         
         // App isn't running so launch it with custom args
-        return launchApp(with: [
+        try launchApp(with: [
             "-HFOpenData",
             data.base64EncodedString(options: .init(rawValue: 0))
             // I'm not sure what 0 is for the options, but that is what the Obj-C code passed in... so I kept it.
@@ -120,22 +126,23 @@ Usage:
         }
     }
     
-    func process(arguments args: [String]) -> Int32 {
+    func process(arguments args: [String]) throws {
         switch Options(args: args) {
         case .invalid:
             printUsage()
-            return EXIT_FAILURE
+            throw HexfError.invalidUsage
             
         case .help:
             printUsage()
-            return EXIT_SUCCESS
+            return
             
         case .none:
-            if processStandardInput() {
-                return EXIT_SUCCESS
-            } else {
+            do {
+                try processStandardInput()
+                return
+            } catch {
                 printUsage()
-                return EXIT_FAILURE
+                throw error
             }
             
         case let .command(command):
@@ -174,12 +181,9 @@ Usage:
                         launchArgs.append(file)
                     }
                 }
-                if !launchApp(with: launchArgs) {
-                    return EXIT_FAILURE
-                }
+                try launchApp(with: launchArgs)
             }
         }
-        return EXIT_SUCCESS
     }
 }
 
