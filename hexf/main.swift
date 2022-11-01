@@ -10,13 +10,4 @@
 import Cocoa
 
 let controller = Controller()
-let args = ProcessInfo.processInfo.arguments
-if args.count <= 1 {
-    if (controller.processStandardInput()) {
-        exit(EXIT_SUCCESS)
-    } else {
-        controller.printUsage()
-        exit(EXIT_FAILURE)
-    }
-}
-exit(controller.process(arguments: args))
+exit(controller.process(arguments: ProcessInfo.processInfo.arguments))

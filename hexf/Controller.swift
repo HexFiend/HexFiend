@@ -58,7 +58,7 @@ Usage:
         }
     }
     
-    func processStandardInput() -> Bool {
+    private func processStandardInput() -> Bool {
         let inFile = FileHandle.standardInput
         // TODO: Heed deprecation warning. This will require an availability check.
         let data = inFile.readDataToEndOfFile()
@@ -93,11 +93,14 @@ Usage:
     
     enum Options: Equatable {
         case command(_ command: Commands)
+        case none
         case help
         case invalid
         
         init(args: [String]) {
-            if args.count == 4, args[1] == "-d" {
+            if args.count == 1 {
+                self = .none
+            } else if args.count == 4, args[1] == "-d" {
                 self = .command(.diff(leftFile: standardize(path:args[2]), rightFile: standardize(path:args[3])))
             } else {
                 var filesToOpen = [String]()
@@ -126,6 +129,14 @@ Usage:
         case .help:
             printUsage()
             return EXIT_SUCCESS
+            
+        case .none:
+            if processStandardInput() {
+                return EXIT_SUCCESS
+            } else {
+                printUsage()
+                return EXIT_FAILURE
+            }
             
         case let .command(command):
             if self.appRunning {
