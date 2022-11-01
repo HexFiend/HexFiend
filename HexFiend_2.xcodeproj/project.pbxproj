@@ -22,8 +22,8 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		001BEF942910EF4000BB82B3 /* Controller.m in Sources */ = {isa = PBXBuildFile; fileRef = 001BEF932910EF4000BB82B3 /* Controller.m */; };
 		001BEF982910F23600BB82B3 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 001BEF972910F23600BB82B3 /* main.swift */; };
+		001BEF9E2910FE8A00BB82B3 /* Controller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 001BEF992910FA6B00BB82B3 /* Controller.swift */; };
 		795F46C114BAA45D00EB2F7D /* OpenDriveWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 795F46C014BAA45D00EB2F7D /* OpenDriveWindowController.m */; };
 		795F46C314BAADB600EB2F7D /* DiskArbitration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 795F46C214BAADB600EB2F7D /* DiskArbitration.framework */; };
 		79E2FF201745A2B300FA8F12 /* dsa_pub.pem in Resources */ = {isa = PBXBuildFile; fileRef = 79E2FF1F1745A2B300FA8F12 /* dsa_pub.pem */; };
@@ -425,10 +425,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		001BEF932910EF4000BB82B3 /* Controller.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Controller.m; sourceTree = "<group>"; };
-		001BEF952910EF4600BB82B3 /* Controller.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Controller.h; sourceTree = "<group>"; };
-		001BEF962910F23500BB82B3 /* hexf-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "hexf-Bridging-Header.h"; sourceTree = "<group>"; };
 		001BEF972910F23600BB82B3 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		001BEF992910FA6B00BB82B3 /* Controller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Controller.swift; sourceTree = "<group>"; };
 		089C165DFE840E0CC02AAC07 /* Base */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = app/sources/main.m; sourceTree = "<group>"; };
@@ -950,9 +948,7 @@
 			isa = PBXGroup;
 			children = (
 				001BEF972910F23600BB82B3 /* main.swift */,
-				001BEF932910EF4000BB82B3 /* Controller.m */,
-				001BEF952910EF4600BB82B3 /* Controller.h */,
-				001BEF962910F23500BB82B3 /* hexf-Bridging-Header.h */,
+				001BEF992910FA6B00BB82B3 /* Controller.swift */,
 			);
 			path = hexf;
 			sourceTree = "<group>";
@@ -1907,7 +1903,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				001BEF942910EF4000BB82B3 /* Controller.m in Sources */,
+				001BEF9E2910FE8A00BB82B3 /* Controller.swift in Sources */,
 				001BEF982910F23600BB82B3 /* main.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2458,7 +2454,6 @@
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				SWIFT_OBJC_BRIDGING_HEADER = "hexf/hexf-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 			};
@@ -2497,7 +2492,6 @@
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				SWIFT_OBJC_BRIDGING_HEADER = "hexf/hexf-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 			};
@@ -2536,7 +2530,6 @@
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				SWIFT_OBJC_BRIDGING_HEADER = "hexf/hexf-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 			};
@@ -2572,7 +2565,6 @@
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				SWIFT_OBJC_BRIDGING_HEADER = "hexf/hexf-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
@@ -2607,7 +2599,6 @@
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				SWIFT_OBJC_BRIDGING_HEADER = "hexf/hexf-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 			};
 			name = "Release+CodeSign";
@@ -4040,7 +4031,6 @@
 				);
 				PRODUCT_NAME = hexf;
 				SKIP_INSTALL = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "hexf/hexf-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 			};
@@ -4060,7 +4050,6 @@
 				);
 				PRODUCT_NAME = hexf;
 				SKIP_INSTALL = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "hexf/hexf-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 			};
 			name = "Release+MAS";
