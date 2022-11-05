@@ -155,13 +155,11 @@ section -collapsed "TRANSACTIONS"  {
               set nwitstack [getVarint "STACK COUNT"]
               section -collapsed "Stack"  {
                 for {set l 0} {$l < $nwitstack} {incr l} {
-                  set nscriptbytes [getVarint]
+                  set silabel [format "item %d count" [expr $l + 1]]
+                  set nscriptbytes [getVarint $silabel]
                   if {$nscriptbytes > 0} {
-                    bytes $nscriptbytes "item [expr $l + 1]: $nscriptbytes bytes"
-                  } else {
-                    move -1
-                    bytes 1 "item [expr $l + 1]: 0 bytes"
-                  }
+                    bytes $nscriptbytes "item [expr $l + 1]"
+                  } 
                 } ; # for each stack item
               }   ; # Section stack items   
             }     ; # Section Witness input   
