@@ -34,10 +34,6 @@ proc getVarint {{label ""}} {
     
     if {$label != ""}  {
       move $moveit
-      if {$type != "uint8"} {
-        move -1
-        uint8 -hex "Varint hint"
-      }
       $type $label
     }
 
