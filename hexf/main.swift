@@ -92,13 +92,13 @@ private func processStandardInput() throws {
     ])
 }
 
-enum Commands: Equatable {
+enum CommandOption: Equatable {
     case diff(leftFile: String, rightFile: String)
     case open(files: [String])
 }
 
-enum Options: Equatable {
-    case command(_ command: Commands)
+enum Command: Equatable {
+    case command(_ command: CommandOption)
     case none
     case help
     case invalid
@@ -127,7 +127,7 @@ enum Options: Equatable {
 }
 
 func process(arguments args: [String]) throws {
-    switch Options(args: args) {
+    switch Command(args: args) {
     case .invalid:
         printUsage()
         throw HexfError.invalidUsage
