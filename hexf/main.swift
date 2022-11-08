@@ -126,8 +126,8 @@ enum Command: Equatable {
     }
 }
 
-func process(arguments args: [String]) throws {
-    switch Command(args: args) {
+func process(command: Command) throws {
+    switch command {
     case .invalid:
         printUsage()
         throw HexfError.invalidUsage
@@ -182,4 +182,4 @@ func process(arguments args: [String]) throws {
     }
 }
 
-try process(arguments: ProcessInfo.processInfo.arguments)
+try process(command: Command(args: ProcessInfo.processInfo.arguments))
