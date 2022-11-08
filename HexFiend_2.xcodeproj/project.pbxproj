@@ -418,6 +418,7 @@
 
 /* Begin PBXFileReference section */
 		001BEF972910F23600BB82B3 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		00DAE167291A16CE0094C709 /* HexFiend_2-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "HexFiend_2-Bridging-Header.h"; sourceTree = "<group>"; };
 		089C165DFE840E0CC02AAC07 /* Base */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = app/sources/main.m; sourceTree = "<group>"; };
@@ -1224,6 +1225,7 @@
 				29B97316FDCFA39411CA2CEA /* main.m */,
 				D0CD51F40DA2B928006E8D1B /* AppDelegate.h */,
 				D0CD51F50DA2B928006E8D1B /* AppDelegate.m */,
+				00DAE167291A16CE0094C709 /* HexFiend_2-Bridging-Header.h */,
 				D02BD6D910545E7B00535EDE /* DocumentTypes */,
 				D084E75C115DAE90004DC181 /* DiffDocument */,
 				D0D8C45C12A3EF3F00960FC4 /* Dialogs */,
@@ -1642,6 +1644,9 @@
 				LastUpgradeCheck = 1340;
 				ORGANIZATIONNAME = ridiculous_fish;
 				TargetAttributes = {
+					8D1107260486CEB800E47090 = {
+						LastSwiftMigration = 1340;
+					};
 					9408FBF919DD72DE004F800E = {
 						CreatedOnToolsVersion = 6.0.1;
 					};
@@ -2795,6 +2800,7 @@
 		D0222569146F5D3900646C27 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = NO;
@@ -2818,6 +2824,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.ridiculousfish.HexFiend;
 				PRODUCT_NAME = "Hex Fiend";
+				SWIFT_OBJC_BRIDGING_HEADER = "HexFiend_2-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -2955,6 +2963,7 @@
 		D022259E146F629E00646C27 /* Debug+UnitTests */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "-";
 				ENABLE_STRICT_OBJC_MSGSEND = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
@@ -2977,6 +2986,9 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.ridiculousfish.HexFiend;
 				PRODUCT_NAME = "Hex Fiend";
+				SWIFT_OBJC_BRIDGING_HEADER = "HexFiend_2-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 				WRAPPER_EXTENSION = app;
 			};
 			name = "Debug+UnitTests";
@@ -3111,6 +3123,7 @@
 		D039DC1214835A1400364FA6 /* Release+CodeSign */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = NO;
@@ -3134,6 +3147,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.ridiculousfish.HexFiend;
 				PRODUCT_NAME = "Hex Fiend";
+				SWIFT_OBJC_BRIDGING_HEADER = "HexFiend_2-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
 				WRAPPER_EXTENSION = app;
 			};
 			name = "Release+CodeSign";
@@ -3288,6 +3303,7 @@
 		D05390291E218CB700F9AAC1 /* Release+MAS */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = NO;
@@ -3307,6 +3323,8 @@
 				OTHER_LDFLAGS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = com.ridiculousfish.HexFiend;
 				PRODUCT_NAME = "Hex Fiend";
+				SWIFT_OBJC_BRIDGING_HEADER = "HexFiend_2-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
 				WRAPPER_EXTENSION = app;
 			};
 			name = "Release+MAS";
@@ -3476,6 +3494,7 @@
 		D05390301E218CD500F9AAC1 /* Debug+MAS */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "-";
 				ENABLE_STRICT_OBJC_MSGSEND = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
@@ -3494,6 +3513,9 @@
 				OTHER_LDFLAGS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = com.ridiculousfish.HexFiend;
 				PRODUCT_NAME = "Hex Fiend";
+				SWIFT_OBJC_BRIDGING_HEADER = "HexFiend_2-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 				WRAPPER_EXTENSION = app;
 			};
 			name = "Debug+MAS";
@@ -3668,6 +3690,7 @@
 		D075E205148196B00010D9AE /* Debug+CodeSign */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "-";
 				ENABLE_STRICT_OBJC_MSGSEND = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
@@ -3690,6 +3713,9 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.ridiculousfish.HexFiend;
 				PRODUCT_NAME = "Hex Fiend";
+				SWIFT_OBJC_BRIDGING_HEADER = "HexFiend_2-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 				WRAPPER_EXTENSION = app;
 			};
 			name = "Debug+CodeSign";
@@ -3848,6 +3874,7 @@
 		D083F7370DBCBD5F00C2B632 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "-";
 				ENABLE_STRICT_OBJC_MSGSEND = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
@@ -3870,6 +3897,9 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.ridiculousfish.HexFiend;
 				PRODUCT_NAME = "Hex Fiend";
+				SWIFT_OBJC_BRIDGING_HEADER = "HexFiend_2-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
