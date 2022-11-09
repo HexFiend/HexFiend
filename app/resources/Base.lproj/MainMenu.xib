@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="16097" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="20037" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="16097"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="20037"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication"/>
@@ -673,6 +673,6 @@
         <customObject id="733" customClass="OpenDriveWindowController"/>
         <customObject id="680" customClass="ChooseStringEncodingWindowController"/>
         <customObject id="744" customClass="SUUpdater"/>
-        <customObject id="Zzl-4N-uHo" userLabel="CLIController" customClass="CLIController"/>
+        <customObject id="Zzl-4N-uHo" userLabel="CLIController" customClass="CLIController" customModule="Hex_Fiend" customModuleProvider="target"/>
     </objects>
 </document>
