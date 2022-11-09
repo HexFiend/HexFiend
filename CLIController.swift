@@ -15,76 +15,65 @@ import Cocoa
         alert.messageText = messageText
         alert.runModal()
     }
-
+    
     @IBAction func installCommandLineTools(_: Any) {
-        //        NSString *srcFile = [[NSBundle mainBundle] pathForResource:@"hexf" ofType:nil];
-        //        NSString *destDir = @"/usr/local/bin";
-        //        NSString *destFile = [destDir stringByAppendingPathComponent:[srcFile lastPathComponent]];
-        
         let fileName = "hexf"
         
-        if let srcFile = Bundle.main.path(forResource: fileName, ofType: nil) {
-            print("🥁 srcFile: \(srcFile)")
-            if let destDir = URL(string: "/usr/local/bin") {
-                print("🥁 destDir: \(destDir.absoluteString)")
-                
-                let destFile = destDir.appendingPathComponent(fileName).absoluteString
-                print("🥁 destFile: \(destFile)")
-                //        NSString *cmd = [NSString stringWithFormat:@"mkdir -p \\\"%@\\\" && ln -fs \\\"%@\\\" \\\"%@\\\" && chmod 755 \\\"%@\\\"",
-                //            destDir, srcFile, destFile, destFile];
-                let cmd = "mkdir -p \\\"\(destDir.absoluteString)\\\" && ln -fs \\\"\(srcFile)\\\" \\\"\(destFile)\\\" && chmod 755 \\\"\(destFile)\\\""
-                print("🥁 cmd: \(cmd)")
-                
-                let script = "do shell script \"\(cmd)\" with administrator privileges"
-                print("🥁 script: \(script)")
-                let appleScript = NSAppleScript(source: script)
-                var errInfo: NSDictionary?
-                // NOTE: running this in Debug mode in Xcode often hangs and fails
-                guard appleScript?.executeAndReturnError(&errInfo) != nil else {
-                    if let errInfo = errInfo {
-                        if let errNum = errInfo[NSAppleScript.errorNumber] as? NSNumber,
-                           errNum.intValue == -128 {
-                            // User cancelled
-                            return
-                        }
-                        if let errMsg = errInfo[NSAppleScript.errorMessage] as? String {
-                            self.runAlert(messageText: errMsg)
-                        }
-                    }
+        guard let srcFile = Bundle.main.path(forResource: fileName, ofType: nil),
+              let destDir = URL(string: "/usr/local/bin") else {
+            self.runAlert(messageText: "The \(fileName) tool failed to install.")
+            return
+        }
+            
+        let destFile = destDir.appendingPathComponent(fileName).absoluteString
+        
+        let cmd = "mkdir -p \\\"\(destDir.absoluteString)\\\" && ln -fs \\\"\(srcFile)\\\" \\\"\(destFile)\\\" && chmod 755 \\\"\(destFile)\\\""
+        let script = "do shell script \"\(cmd)\" with administrator privileges"
+        let appleScript = NSAppleScript(source: script)
+        
+        var errInfo: NSDictionary?
+        // NOTE: running this in Debug mode in Xcode often hangs and fails
+        guard appleScript?.executeAndReturnError(&errInfo) != nil else {
+            if let errInfo = errInfo {
+                if let errNum = errInfo[NSAppleScript.errorNumber] as? NSNumber,
+                   errNum.intValue == -128 {
+                    // User cancelled
                     return
                 }
-                
-//                if (0) {
-//                    // if NSAppleScript above turns out problematic, try the osascript variant instead
-//                    NSTask *task = [[NSTask alloc] init];
-//                    task.launchPath = @"/usr/bin/osascript";
-//                    task.arguments = @[@"-e", script];
-//                    NSPipe *standardErrorPipe = [NSPipe pipe];
-//                    task.standardError = standardErrorPipe;
-//                    @try {
-//                        [task launch];
-//                    } @catch (NSException *ex) {
-//                        [self runAlert:[NSString stringWithFormat:NSLocalizedString(@"Failed to run command: %@", nil), ex]];
-//                        return;
-//                    }
-//                    [task waitUntilExit];
-//                    NSFileHandle *standardErrorFile = [standardErrorPipe fileHandleForReading];
-//                    NSData *standardErrorData = [standardErrorFile readDataToEndOfFile];
-//                    if (task.terminationStatus != 0) {
-//                        NSString *standardErrorStr = [[NSString alloc] initWithData:standardErrorData encoding:NSUTF8StringEncoding];
-//                        if ([standardErrorStr rangeOfString:@"User canceled" options:NSCaseInsensitiveSearch].location != NSNotFound) {
-//                            return;
-//                        }
-//                        [self runAlert:[NSString stringWithFormat:NSLocalizedString(@"The %@ tool failed to install (%@).", ""), [srcFile lastPathComponent], standardErrorStr]];
-//                        return;
-//                    }
-//                }
-                
-                self.runAlert(messageText: "\(fileName) has been successfully installed.")
-            } else {
-                self.runAlert(messageText: "The \(fileName) tool failed to install.")
+                if let errMsg = errInfo[NSAppleScript.errorMessage] as? String {
+                    self.runAlert(messageText: errMsg)
+                }
             }
+            return
         }
+        
+//        if (0) {
+//            // if NSAppleScript above turns out problematic, try the osascript variant instead
+//            NSTask *task = [[NSTask alloc] init];
+//            task.launchPath = @"/usr/bin/osascript";
+//            task.arguments = @[@"-e", script];
+//            NSPipe *standardErrorPipe = [NSPipe pipe];
+//            task.standardError = standardErrorPipe;
+//            @try {
+//                [task launch];
+//            } @catch (NSException *ex) {
+//                [self runAlert:[NSString stringWithFormat:NSLocalizedString(@"Failed to run command: %@", nil), ex]];
+//                return;
+//            }
+//            [task waitUntilExit];
+//            NSFileHandle *standardErrorFile = [standardErrorPipe fileHandleForReading];
+//            NSData *standardErrorData = [standardErrorFile readDataToEndOfFile];
+//            if (task.terminationStatus != 0) {
+//                NSString *standardErrorStr = [[NSString alloc] initWithData:standardErrorData encoding:NSUTF8StringEncoding];
+//                if ([standardErrorStr rangeOfString:@"User canceled" options:NSCaseInsensitiveSearch].location != NSNotFound) {
+//                    return;
+//                }
+//                [self runAlert:[NSString stringWithFormat:NSLocalizedString(@"The %@ tool failed to install (%@).", ""), [srcFile lastPathComponent], standardErrorStr]];
+//                return;
+//            }
+//        }
+        
+        self.runAlert(messageText: "\(fileName) has been successfully installed.")
     }
 }
 
