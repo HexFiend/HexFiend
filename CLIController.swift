@@ -47,31 +47,41 @@ import Cocoa
             return
         }
         
-//        if (0) {
-//            // if NSAppleScript above turns out problematic, try the osascript variant instead
-//            NSTask *task = [[NSTask alloc] init];
-//            task.launchPath = @"/usr/bin/osascript";
-//            task.arguments = @[@"-e", script];
-//            NSPipe *standardErrorPipe = [NSPipe pipe];
-//            task.standardError = standardErrorPipe;
-//            @try {
-//                [task launch];
-//            } @catch (NSException *ex) {
-//                [self runAlert:[NSString stringWithFormat:NSLocalizedString(@"Failed to run command: %@", nil), ex]];
-//                return;
-//            }
-//            [task waitUntilExit];
-//            NSFileHandle *standardErrorFile = [standardErrorPipe fileHandleForReading];
-//            NSData *standardErrorData = [standardErrorFile readDataToEndOfFile];
-//            if (task.terminationStatus != 0) {
-//                NSString *standardErrorStr = [[NSString alloc] initWithData:standardErrorData encoding:NSUTF8StringEncoding];
-//                if ([standardErrorStr rangeOfString:@"User canceled" options:NSCaseInsensitiveSearch].location != NSNotFound) {
-//                    return;
-//                }
-//                [self runAlert:[NSString stringWithFormat:NSLocalizedString(@"The %@ tool failed to install (%@).", ""), [srcFile lastPathComponent], standardErrorStr]];
-//                return;
-//            }
-//        }
+        if false {
+            // if NSAppleScript above turns out problematic, try the osascript variant instead
+            let task = Process()
+            task.launchPath = "/usr/bin/osascript"
+            task.arguments = ["-e", script]
+            let standardErrorPipe = Pipe()
+            task.standardError = standardErrorPipe
+            do {
+                if #available(macOS 10.13, *) {
+                    try task.run()
+                } else {
+                    // Use a special wrapper to catch Obj-C exceptions that Swift cannot catch.
+                    try ObjC.catchException { task.launch() }
+                }
+            } catch {
+                self.runAlert(messageText: "Failed to run command.")
+                return
+            }
+            task.waitUntilExit()
+
+            let standardErrorFile = standardErrorPipe.fileHandleForReading
+            let standardErrorData = standardErrorFile.readDataToEndOfFile()
+
+            if task.terminationStatus != 0,
+               let standardErrorStr = String(data: standardErrorData, encoding: .utf8) {
+                if standardErrorStr.range(of: "User canceled", options: [.caseInsensitive]) != nil {
+                    self.runAlert(messageText: "The \(fileName) tool failed to install (\(standardErrorStr)).")
+                    return
+                } else {
+                    // If the error message included User canceled then just return so we don't get to the
+                    // "successfully installed" bit below
+                    return
+                }
+            }
+        }
         
         self.runAlert(messageText: "\(fileName) has been successfully installed.")
     }
