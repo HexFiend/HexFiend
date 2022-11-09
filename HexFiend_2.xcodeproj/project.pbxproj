@@ -24,6 +24,7 @@
 /* Begin PBXBuildFile section */
 		001BEF982910F23600BB82B3 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 001BEF972910F23600BB82B3 /* main.swift */; };
 		00DAE16B291A18090094C709 /* CLIController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00DAE16A291A18090094C709 /* CLIController.swift */; };
+		00DAE16E291B794D0094C709 /* ObjC.m in Sources */ = {isa = PBXBuildFile; fileRef = 00DAE16D291B794D0094C709 /* ObjC.m */; };
 		795F46C114BAA45D00EB2F7D /* OpenDriveWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 795F46C014BAA45D00EB2F7D /* OpenDriveWindowController.m */; };
 		795F46C314BAADB600EB2F7D /* DiskArbitration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 795F46C214BAADB600EB2F7D /* DiskArbitration.framework */; };
 		79E2FF201745A2B300FA8F12 /* dsa_pub.pem in Resources */ = {isa = PBXBuildFile; fileRef = 79E2FF1F1745A2B300FA8F12 /* dsa_pub.pem */; };
@@ -420,6 +421,8 @@
 		001BEF972910F23600BB82B3 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		00DAE167291A16CE0094C709 /* HexFiend_2-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "HexFiend_2-Bridging-Header.h"; sourceTree = "<group>"; };
 		00DAE16A291A18090094C709 /* CLIController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CLIController.swift; sourceTree = "<group>"; };
+		00DAE16C291B794D0094C709 /* ObjC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ObjC.h; path = app/sources/ObjC.h; sourceTree = "<group>"; };
+		00DAE16D291B794D0094C709 /* ObjC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = ObjC.m; path = app/sources/ObjC.m; sourceTree = "<group>"; };
 		089C165DFE840E0CC02AAC07 /* Base */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = app/sources/main.m; sourceTree = "<group>"; };
@@ -789,6 +792,8 @@
 			isa = PBXGroup;
 			children = (
 				A531921B21D585FD006C25D6 /* version.h */,
+				00DAE16C291B794D0094C709 /* ObjC.h */,
+				00DAE16D291B794D0094C709 /* ObjC.m */,
 				D0560B350CDC4248009D2484 /* Framework */,
 				D0560B380CDC4253009D2484 /* App */,
 				D047E33B1022CF2B00EF307B /* PrivilegedHelper */,
@@ -1808,6 +1813,7 @@
 				D01773920D7A2F32002E03DE /* HFResizingView.m in Sources */,
 				D0CD51F60DA2B928006E8D1B /* AppDelegate.m in Sources */,
 				D03CFA8A0FC78BCD00EE79E4 /* DataInspectorRepresenter.m in Sources */,
+				00DAE16E291B794D0094C709 /* ObjC.m in Sources */,
 				D02BD6E010545E9000535EDE /* FileDataDocument.m in Sources */,
 				A59BC59C2002113F0066860F /* HFTemplateNode.m in Sources */,
 				A59BC59F2002E63C0066860F /* HFTemplateController.m in Sources */,
