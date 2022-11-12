@@ -93,6 +93,7 @@ static inline Class preferredByteArrayClass(void) {
 + (void)registerDefaultDefaults {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
+        NSError *err = nil;
         /* Defaults common to all subclasses */
         NSDictionary *defs = @{
             @"AntialiasText"   : @YES,
@@ -102,7 +103,8 @@ static inline Class preferredByteArrayClass(void) {
             @"DefaultFontSize" : @(HFDEFAULT_FONTSIZE),
             @"BytesPerColumn"  : @4,
             @"DefaultEditMode" : @(HFInsertMode),
-            @"BinaryTemplateSelectionColor" : [NSArchiver archivedDataWithRootObject:[NSColor lightGrayColor]],
+            //@"BinaryTemplateSelectionColor" : [NSKeyedArchiver archivedDataWithRootObject:[NSColor lightGrayColor]],
+            @"BinaryTemplateSelectionColor" : [NSKeyedArchiver archivedDataWithRootObject:[NSColor lightGrayColor] requiringSecureCoding:NO error:&err],
             @"BinaryTemplateRepresenterWidth" : @(self.class.binaryTemplateDefaultWidth),
             @"BinaryTemplateScriptTimeout" : @(10),
             @"BinaryTemplatesSingleClickAction" : @(1), // scroll to offset
@@ -794,7 +796,7 @@ static inline Class preferredByteArrayClass(void) {
 }
 
 - (BOOL)performDragOperation:(id <NSDraggingInfo>)sender {
-    NSArray *files = [sender.draggingPasteboard propertyListForType:NSFilenamesPboardType];
+    NSArray *files = [sender.draggingPasteboard propertyListForType:NSPasteboardTypeFileURL];
     for(NSString *filename in files) {
         NSURL *fileURL = [NSURL fileURLWithPath:filename];
         [[NSDocumentController sharedDocumentController] openDocumentWithContentsOfURL:fileURL display:YES completionHandler:^(NSDocument * _Nullable __unused document, BOOL __unused documentWasAlreadyOpen, NSError * _Nullable __unused error) {

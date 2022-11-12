@@ -114,9 +114,9 @@
                         </constraints>
                         <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                         <connections>
-                            <binding destination="8a1-9n-WoW" name="value" keyPath="values.BinaryTemplateSelectionColor" id="AQi-bm-uG9">
+                            <binding destination="8a1-9n-WoW" name="value" keyPath="values.BinaryTemplateSelectionColor" id="MOL-4h-fJz">
                                 <dictionary key="options">
-                                    <string key="NSValueTransformerName">NSUnarchiveFromData</string>
+                                    <string key="NSValueTransformerName">NSSecureUnarchiveFromDataTransformerName</string>
                                 </dictionary>
                             </binding>
                         </connections>

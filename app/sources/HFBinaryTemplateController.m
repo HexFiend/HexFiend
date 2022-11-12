@@ -429,7 +429,8 @@
     NSColor *color = [NSColor lightGrayColor];
     NSData *colorData = [[NSUserDefaults standardUserDefaults] objectForKey:@"BinaryTemplateSelectionColor"];
     if (colorData && [colorData isKindOfClass:[NSData class]]) {
-        NSColor *tempColor = [NSUnarchiver unarchiveObjectWithData:colorData];
+        NSError *err = nil;
+        NSColor *tempColor = [NSKeyedUnarchiver unarchivedObjectOfClass:[NSData class] fromData:colorData error:&err];
         if (tempColor && [tempColor isKindOfClass:[NSColor class]]) {
             color = tempColor;
         }
