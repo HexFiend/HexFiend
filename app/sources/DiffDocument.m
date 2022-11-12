@@ -390,8 +390,8 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
     switch ([scroller hitPart]) {
         case NSScrollerDecrementPage: [self scrollByLines: -(long long)[self visibleLines]]; break;
         case NSScrollerIncrementPage: [self scrollByLines: (long long)[self visibleLines]]; break;
-        case NSScrollerDecrementLine: [self scrollByLines: -1LL]; break;
-        case NSScrollerIncrementLine: [self scrollByLines: 1LL]; break;
+            //case NSScrollerDecrementLine: [self scrollByLines: -1LL]; break;
+            //case NSScrollerIncrementLine: [self scrollByLines: 1LL]; break;
         case NSScrollerKnob: [self scrollByKnobToValue:[scroller doubleValue]]; break;
         default: break;
     }

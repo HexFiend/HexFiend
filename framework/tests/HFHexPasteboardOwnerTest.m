@@ -20,7 +20,7 @@
 - (NSString *)stringForData:(NSMutableData *)data bytesPerColumn:(NSUInteger)bytesPerColumn {
     HFSharedMemoryByteSlice *slice = [[HFSharedMemoryByteSlice alloc] initWithData:data];
     HFBTreeByteArray *byteArray = [[HFBTreeByteArray alloc] initWithByteSlice:slice];
-    HFHexPasteboardOwner *owner = [HFHexPasteboardOwner ownPasteboard:[NSPasteboard generalPasteboard] forByteArray:byteArray withTypes:@[HFPrivateByteArrayPboardType, NSStringPboardType]];
+    HFHexPasteboardOwner *owner = [HFHexPasteboardOwner ownPasteboard:[NSPasteboard generalPasteboard] forByteArray:byteArray withTypes:@[HFPrivateByteArrayPboardType, NSPasteboardTypeString]];
     owner.bytesPerColumn = bytesPerColumn;
     HFProgressTracker *tracker = [[HFProgressTracker alloc] init];
     return [owner stringFromByteArray:byteArray ofLength:byteArray.length trackingProgress:tracker];

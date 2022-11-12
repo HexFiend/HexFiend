@@ -34,7 +34,7 @@
         NSImage *stopImage = [NSImage imageNamed:NSImageNameStopProgressTemplate];
         HFASSERT(stopImage != NULL);
         [self setImage:stopImage];
-        [[self cell] setButtonType:NSMomentaryChangeButton];
+        [[self cell] setButtonType:NSButtonTypeMomentaryChange];
     }
     return self;
 }

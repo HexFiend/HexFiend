@@ -27,7 +27,7 @@ static inline unsigned char hex2char(NSUInteger c) {
 }
 
 - (void)writeDataInBackgroundToPasteboard:(NSPasteboard *)pboard ofLength:(unsigned long long)length forType:(NSString *)type trackingProgress:(HFProgressTracker *)tracker {
-    HFASSERT([type isEqual:NSStringPboardType]);
+    HFASSERT([type isEqual:NSPasteboardTypeString]);
     if(length == 0) {
         [pboard setString:@"" forType:type];
         return;

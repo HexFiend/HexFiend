@@ -1041,7 +1041,7 @@ static inline Class preferredByteArrayClass(void) {
         return YES;
     }
     else if (action == @selector(setLineNumberFormat:)) {
-        item.state = item.tag == (NSInteger)lineCountingRepresenter.lineNumberFormat ? NSOnState : NSOffState;
+        item.state = item.tag == (NSInteger)lineCountingRepresenter.lineNumberFormat ? NSControlStateValueOn : NSControlStateValueOff;
         return YES;
     }
     else if (action == @selector(scrollToBookmark:) || action == @selector(selectBookmark:)) {
