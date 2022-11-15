@@ -41,13 +41,6 @@
 set XTND_SS  1  ; # extended ScriptSig decoding
 set XTND_SPK 1  ; # extended ScriptPubKey decoding
 set XTND_WIT 1  ; # extended Witness decoding
-set extendedVersion [expr $XTND_SS | \
-                    [expr ($XTND_SPK<<1)] | \
-                    [expr ($XTND_WIT<<2)]]
-
-set XTND_SS_MASK   1
-set XTND_SPK_MASK  [expr 1<<1]
-set XTND_WIT_MASK  [expr 1<<2]
 ####################################################
 
 
@@ -848,7 +841,7 @@ section -collapsed "TRANSACTIONS"  {
             }
             if {$nscriptbytes > 0} {
               bytes $nscriptbytes "ScriptSig"
-              if {$extendedVersion & $XTND_SS_MASK} {
+              if $XTND_SS {
                 # Process the Script if it's not the Coinbase input.
                 if !$Coinbase {
                   move -$nscriptbytes
@@ -878,10 +871,10 @@ section -collapsed "TRANSACTIONS"  {
                   set Coinbase 0
                   set iscb ""
                 }
-              } else {   ;  # (extendedVersion & XTND_SS_MASK) != 0
+              } else {   ;  # XTND_SS != 0
                 set Coinbase 0
                 set iscb ""
-              }  ;  # (extendedVersion & XTND_SS_MASK)  ==  0
+              }  ;  # XTND_SS  ==  0
             } 
             uint32 -hex "nSequence"
           } ;  # Section Input
@@ -905,7 +898,7 @@ section -collapsed "TRANSACTIONS"  {
               continue
             }
             bytes $nscriptbytes "ScriptPubKey"
-            if {$extendedVersion & $XTND_SPK_MASK} {
+            if $XTND_SPK {
               move -$nscriptbytes
               set parseRes [parseScript $nscriptbytes]
               set parseFail [lindex $parseRes 0]
@@ -927,7 +920,7 @@ section -collapsed "TRANSACTIONS"  {
                 }
                 lappend exitMsgs [format "Opcode parse fail (%d): %s  Tx=%d output=%d" $parseFail $reason $curTx $kcnt]
               }
-            }   ;  # (extendedVersion & XTND_SPK_MASK) != 0 
+            }   ;  # XTND_SPK != 0 
           }     ;  # Section Output
         }       ;  # for each output
       }         ;  # Section all outputs
@@ -952,7 +945,7 @@ section -collapsed "TRANSACTIONS"  {
                     set ilabel [format "Item %d" [expr $l + 1]]
                     bytes $nscriptbytes $ilabel
                     
-                    if {$extendedVersion & $XTND_WIT_MASK} {
+                    if $XTND_WIT {
                       move -$nscriptbytes
                       section -collapsed "Decode" {
                         set wType [decodeStack $nscriptbytes "W"]
@@ -963,7 +956,7 @@ section -collapsed "TRANSACTIONS"  {
                           continue
                         }
                       }
-                    }  ; # (extendedVersion & XTND_WIT_MASK) != 0
+                    }  ; # XTND_WIT != 0
                   }    ; # nscriptbytes > 0
                 }      ; # for each stack item
               }        ; # Section stack items   
