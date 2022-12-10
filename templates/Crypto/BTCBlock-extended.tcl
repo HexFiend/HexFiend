@@ -53,7 +53,7 @@ proc initTemplate {} {
        {76 "OP_PUSHDATA1"} \
        {77 "OP_PUSHDATA2"} \
        {78 "OP_PUSHDATA4"} \
-       {79 "OP_INEGATE"} \
+       {79 "OP_1NEGATE"} \
        {97 "OP_NOP"} \
        {99 "OP_IF"} \
       {100 "OP_NOTIF"} \
@@ -95,7 +95,7 @@ proc initTemplate {} {
       {155 "OP_BOOLOR"} \
       {156 "OP_NUMEQUAL"} \
       {157 "OP_NUMEQUALVERIFY"} \
-      {158 "OIP_NUMNOTEQUAL"} \
+      {158 "OP_NUMNOTEQUAL"} \
       {159 "OP_LESSTHAN"} \
       {160 "OP_GREATERTHAN"} \
       {161 "OP_LESSTHANOREQUAL"} \
