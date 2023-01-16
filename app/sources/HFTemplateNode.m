@@ -34,4 +34,8 @@
     return self;
 }
 
+- (BOOL)isSection {
+    return self.isGroup && self.label != nil;
+}
+
 @end

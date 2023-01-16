@@ -598,30 +598,50 @@ DEFINE_COMMAND(sleb128)
                 if (err != TCL_OK) {
                     return err;
                 }
-                [self endSection];
+                NSString *error = nil;
+                if (![self endSection:&error]) {
+                    Tcl_SetObjResult(_interp, Tcl_NewStringObj(error.UTF8String, -1));
+                    return TCL_ERROR;
+                }
             }
             break;
         }
         case command_endsection: {
             CHECK_NO_ARG;
-            [self endSection];
+            NSString *error = nil;
+            if (![self endSection:&error]) {
+                Tcl_SetObjResult(_interp, Tcl_NewStringObj(error.UTF8String, -1));
+                return TCL_ERROR;
+            }
             break;
         }
         case command_sectionname: {
             CHECK_SINGLE_ARG("value")
             NSString *name = [NSString stringWithUTF8String:Tcl_GetStringFromObj(objv[1], NULL)];
-            self.currentSection.label = name;
+            NSString *error = nil;
+            if (![self setSectionName:name error:&error]) {
+                Tcl_SetObjResult(_interp, Tcl_NewStringObj(error.UTF8String, -1));
+                return TCL_ERROR;
+            }
             break;
         }
         case command_sectionvalue: {
             CHECK_SINGLE_ARG("value")
             NSString *value = [NSString stringWithUTF8String:Tcl_GetStringFromObj(objv[1], NULL)];
-            self.currentSection.value = value;
+            NSString *error = nil;
+            if (![self setSectionValue:value error:&error]) {
+                Tcl_SetObjResult(_interp, Tcl_NewStringObj(error.UTF8String, -1));
+                return TCL_ERROR;
+            }
             break;
         }
         case command_sectioncollapse: {
             CHECK_NO_ARG;
-            [self.initiallyCollapsed addObject:self.currentSection];
+            NSString *error = nil;
+            if (![self sectionCollapse:&error]) {
+                Tcl_SetObjResult(_interp, Tcl_NewStringObj(error.UTF8String, -1));
+                return TCL_ERROR;
+            }
             break;
         }
         case command_zlib_uncompress: {

@@ -75,7 +75,10 @@ typedef NS_ENUM(NSUInteger, HFEndian) {
 - (void)goTo:(unsigned long long)offset;
 
 - (void)beginSectionWithLabel:(NSString *_Nullable)label collapsed:(BOOL)collapsed;
-- (void)endSection;
+- (BOOL)endSection:(NSString *_Nonnull*_Nonnull)error;
+- (BOOL)setSectionName:(NSString *)name error:(NSString *_Nonnull*_Nonnull)error;
+- (BOOL)setSectionValue:(NSString *)value error:(NSString *_Nonnull*_Nonnull)error;
+- (BOOL)sectionCollapse:(NSString *_Nonnull*_Nonnull)error;
 
 @property (readonly) HFTemplateNode *currentSection;
 
