@@ -239,7 +239,7 @@ You create an HFController via <tt>[[HFController alloc] init]</tt>.  After that
 @property (readonly) NSMutableArray<HFColorRange*> *colorRanges;
 - (void)colorRangesDidChange; // manually notify of changes to color range individual values
 
-/* Number of bytes used in each column for a text-style representer. */
+/* Number of bytes used in each column for a text-style representer. Currently capped at 512. */
 @property (nonatomic) NSUInteger bytesPerColumn;
 
 /*! @name Edit Mode

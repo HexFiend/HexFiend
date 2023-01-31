@@ -362,6 +362,7 @@ static inline Class preferredByteArrayClass(void) {
 }
 
 - (void)setBytesPerColumn:(NSUInteger)val {
+    if (val > 512) {val = 512;} // sanity check to ensure bytesPerColumn isn't set significantly higher than expected
     if (val != bytesPerColumn) {
         bytesPerColumn = val;
         [self _addPropertyChangeBits:HFControllerBytesPerColumn];

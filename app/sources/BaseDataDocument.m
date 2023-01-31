@@ -1810,6 +1810,7 @@ cancelled:;
     if (byteGrouping) {
         NSInteger value = byteGrouping.integerValue;
         if (value >= 0) {
+            if (value > 512) {value = 512;} // sanity check to ensure BytesPerColumn isn't set significantly higher than expected
             [self setByteGrouping:value];
             [(AppDelegate *)NSApp.delegate buildByteGroupingMenu];
         }
