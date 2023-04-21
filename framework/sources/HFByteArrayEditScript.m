@@ -1363,6 +1363,89 @@ static inline enum HFEditInstructionType HFByteArrayInstructionType(struct HFEdi
     return success;
 }
 
+- (BOOL)computeDifferenceViaDirectComparison {
+    /* We succeed unless we are cancelled */
+    BOOL success = NO;
+    
+    /* Make a dispatch queue for instructions */
+    HFASSERT(insnQueue == NULL);
+    insnCount = insnCapacity = 0;
+    
+    insnCapacity = 128;
+    if(insns) free(insns);
+    insns = malloc(insnCapacity * sizeof(*insns));
+    insnCount = 0;
+
+    
+    const size_t bufSize = 16384;
+    
+    uint8_t srcBuf[bufSize], dstBuf[bufSize];
+    
+    for (size_t i = 0; !*cancelRequested && i < MIN(sourceLength, destLength); i += bufSize) {
+        *self->currentProgress = i * i;
+        // Read block
+        size_t len = MIN(bufSize, MIN(sourceLength - i, destLength - i));
+        [self->source copyBytes:srcBuf range:HFRangeMake(i, len)];
+        [self->destination copyBytes:dstBuf range:HFRangeMake(i, len)];
+
+        // Compare this block fully
+        size_t j = 0;
+        while (j < len) {
+            while (j < len && srcBuf[j] == dstBuf[j])
+                j++;
+            
+            size_t difference_begin = i + j;
+            while ((j < len && srcBuf[j] != dstBuf[j]) || (j + 1 < len && srcBuf[j + 1] != dstBuf[j + 1]))
+                j++;
+            size_t difference_end = i + j;
+            
+            if (difference_end != difference_begin) {
+                if (insnCount != 0 && insns[insnCount - 1].src.location + insns[insnCount - 1].src.length == difference_begin) {
+                    // join with prev
+                    insns[insnCount - 1].src.length += difference_end - difference_begin;
+                    insns[insnCount - 1].dst.length += difference_end - difference_begin;
+                }
+                else {
+                    // new instruction
+                    insns[insnCount].src = HFRangeMake(difference_begin, difference_end - difference_begin);
+                    insns[insnCount].dst = HFRangeMake(difference_begin, difference_end - difference_begin);
+                    insnCount++;
+                    if (insnCount == insnCapacity) {
+                        insnCapacity += 128;
+                        insns = realloc(insns, insnCapacity * sizeof(*insns));
+                    }
+                }
+            }
+        }
+    }
+    
+    if (sourceLength > destLength) {
+        insns[insnCount].src = HFRangeMake(destLength, sourceLength - destLength);
+        insns[insnCount].dst = HFRangeMake(destLength, 0);
+        insnCount++;
+    }
+    else if (destLength > sourceLength) {
+        insns[insnCount].src = HFRangeMake(sourceLength, 0);
+        insns[insnCount].dst = HFRangeMake(sourceLength, destLength - sourceLength);
+        insnCount++;
+    }
+    *self->currentProgress = sourceLength * destLength;
+
+    
+    if (! *cancelRequested) {
+#if ! NDEBUG
+        /* Validate the data */
+        HFASSERT(validate_instructions(insns, insnCount));
+#endif
+        
+        /* We succeed unless we were cancelled */
+        success = YES;
+    }
+    
+    return success;
+}
+
+
 - (instancetype)initWithSource:(HFByteArray *)src toDestination:(HFByteArray *)dst { 
     self = [super init];
     NSParameterAssert(src != nil);
@@ -1400,7 +1483,9 @@ static inline enum HFEditInstructionType HFByteArrayInstructionType(struct HFEdi
         currentProgress = (int64_t *)&localCurrentProgress;
     }
     
-    BOOL result = [self computeDifferenceViaMiddleSnakes];
+    BOOL result = [[NSUserDefaults standardUserDefaults] boolForKey:@"OnlyReplaceInComparison"] ?
+        [self computeDifferenceViaDirectComparison] :
+        [self computeDifferenceViaMiddleSnakes];
     
     cancelRequested = NULL;
     currentProgress = NULL;
