@@ -455,8 +455,8 @@ static NSComparisonResult compareFontDisplayNames(NSFont *a, NSFont *b, void *un
         [DiffDocument compareByteArray:array1
                       againstByteArray:array2
                             usingRange:HFRangeMake(0, 0)
-                          leftFileName:[[leftFile lastPathComponent] stringByDeletingPathExtension]
-                         rightFileName:[[rightFile lastPathComponent] stringByDeletingPathExtension]];
+                          leftFileName:leftFile
+                         rightFileName:rightFile];
     }
 }
 

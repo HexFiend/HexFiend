@@ -49,7 +49,7 @@
     // convert documents to bytearrays
     HFByteArray *leftBytes = [document byteArray];
     HFByteArray *rightBytes = [otherDocument byteArray];
-    [self compareByteArray:leftBytes againstByteArray:rightBytes usingRange:range leftFileName:[document displayName] rightFileName:[otherDocument displayName]];
+    [self compareByteArray:leftBytes againstByteArray:rightBytes usingRange:range leftFileName:[[document fileURL] path] rightFileName:[[otherDocument fileURL] path]];
 }
 
 + (void)compareByteArray:(HFByteArray *)leftBytes againstByteArray:(HFByteArray *)rightBytes usingRange:(HFRange)range leftFileName:(NSString *)leftFileName rightFileName:(NSString *)rightFileName {
@@ -61,8 +61,15 @@
     
     // launch diff window
     DiffDocument *doc = [[DiffDocument alloc] initWithLeftByteArray:leftBytes rightByteArray:rightBytes range:range];
-    doc.leftFileName = leftFileName;
-    doc.rightFileName = rightFileName;
+    NSString *leftDisplayName = [[leftFileName lastPathComponent] stringByDeletingPathExtension];
+    NSString *rightDisplayName = [[rightFileName lastPathComponent] stringByDeletingPathExtension];
+    if ([leftDisplayName isEqualToString:rightDisplayName]) {
+        leftDisplayName = leftFileName;
+        rightDisplayName = rightFileName;
+    }
+
+    doc.leftFileName = leftDisplayName;
+    doc.rightFileName = rightDisplayName;
     [[NSDocumentController sharedDocumentController] addDocument:doc];
     [doc makeWindowControllers];
     [doc showWindows];
