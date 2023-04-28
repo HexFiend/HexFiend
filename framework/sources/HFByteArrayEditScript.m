@@ -1381,7 +1381,7 @@ static inline enum HFEditInstructionType HFByteArrayInstructionType(struct HFEdi
     
     uint8_t srcBuf[bufSize], dstBuf[bufSize];
     
-    BOOL skipOneByteMatches = YES;
+    BOOL skipOneByteMatches = [[NSUserDefaults standardUserDefaults] boolForKey:@"SkipOneByteMatches"];
     
     for (size_t i = 0; !*cancelRequested && i < MIN(sourceLength, destLength); i += bufSize) {
         *self->currentProgress = i * i;
