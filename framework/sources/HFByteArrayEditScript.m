@@ -1381,6 +1381,8 @@ static inline enum HFEditInstructionType HFByteArrayInstructionType(struct HFEdi
     
     uint8_t srcBuf[bufSize], dstBuf[bufSize];
     
+    BOOL skipOneByteMatches = YES;
+    
     for (size_t i = 0; !*cancelRequested && i < MIN(sourceLength, destLength); i += bufSize) {
         *self->currentProgress = i * i;
         // Read block
@@ -1395,20 +1397,19 @@ static inline enum HFEditInstructionType HFByteArrayInstructionType(struct HFEdi
                 j++;
             
             size_t difference_begin = i + j;
-            while ((j < len && srcBuf[j] != dstBuf[j]) || (j + 1 < len && srcBuf[j + 1] != dstBuf[j + 1]))
+            while ((j < len && srcBuf[j] != dstBuf[j]) || (skipOneByteMatches && (j + 1 < len && srcBuf[j + 1] != dstBuf[j + 1])))
                 j++;
             size_t difference_end = i + j;
             
             if (difference_end != difference_begin) {
-                if (insnCount != 0 && insns[insnCount - 1].src.location + insns[insnCount - 1].src.length == difference_begin) {
+                if (insnCount != 0 && (insns[insnCount - 1].src.location + insns[insnCount - 1].src.length == difference_begin ||
+                                       (skipOneByteMatches && insns[insnCount - 1].src.location + insns[insnCount - 1].src.length + 1 == difference_begin))) {
                     // join with prev
-                    insns[insnCount - 1].src.length += difference_end - difference_begin;
-                    insns[insnCount - 1].dst.length += difference_end - difference_begin;
+                    insns[insnCount - 1].src.length = insns[insnCount - 1].dst.length = difference_end - insns[insnCount - 1].src.location;
                 }
                 else {
                     // new instruction
-                    insns[insnCount].src = HFRangeMake(difference_begin, difference_end - difference_begin);
-                    insns[insnCount].dst = HFRangeMake(difference_begin, difference_end - difference_begin);
+                    insns[insnCount].src = insns[insnCount].dst = HFRangeMake(difference_begin, difference_end - difference_begin);
                     insnCount++;
                     if (insnCount == insnCapacity) {
                         insnCapacity += 128;
