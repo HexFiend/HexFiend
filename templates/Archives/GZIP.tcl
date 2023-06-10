@@ -39,8 +39,20 @@ set extra_flags [hex 1 "Extra flags"]
 uint8 "Operating system"
 
 if {$extra_fields} {
-    set xlen [unit16 "XLEN"]
-    bytes $xlen "Extra data"
+    set xlen [uint16]
+    section "Extra fields total length" {
+        sectionvalue $xlen
+
+        set subftotal 0
+        while {$subftotal < $xlen} {
+            section "Subfield" {
+                hex 2 "Subfield ID"
+                set subflen [uint16 "Length"]
+                bytes $subflen "Subfield data"
+            }
+            set subftotal [expr $subftotal + 4 + $subflen]
+        }
+    }
 }
 
 if {$filename} {
