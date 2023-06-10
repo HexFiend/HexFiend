@@ -1535,7 +1535,6 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
     // Adjust by descender to center
     CGFloat yAdjust = lineHeight - ceil(fabs(fontObject.descender));
     textTransform.ty += yAdjust - lineHeight * [self verticalOffset];
-    NSUInteger lineIndex = 0;
     const NSUInteger maxGlyphCount = [self maximumGlyphCountForByteCount:bytesPerLine];
     NEW_ARRAY(struct HFGlyph_t, glyphs, maxGlyphCount);
     NEW_ARRAY(CGSize, advances, maxGlyphCount);
@@ -1598,7 +1597,6 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
         else if (CGRectGetMinY(lineRectInBoundsSpace) > CGRectGetMaxY(clip)) {
             break;
         }
-        lineIndex++;
     }
     FREE_ARRAY(glyphs);
     FREE_ARRAY(advances);
