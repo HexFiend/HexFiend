@@ -1,4 +1,5 @@
 proc parse_fmt {} {
+    global num_channels
     section "Format Descriptor" {
         sectionvalue "Wave sample format"
         set format [uint16]
@@ -43,6 +44,7 @@ proc parse_fmt {} {
 }
 
 proc parse_peak {} {
+    global num_channels
     section "Channel Peak Descriptor" {
         uint32 "PEAK chunk version"
         uint32 "Timestamp"
