@@ -114,7 +114,6 @@ static const HFRange kEntireRange = {0, ULLONG_MAX};
     VERIFY_INTEGRITY(array);
     HFRange remaining = HFRangeMake(0, ULLONG_MAX);
     BOOL result = YES;
-    NSUInteger amt = 0;
     int num = 0;
     const BOOL log = NO;
     while (remaining.length > 0) {
@@ -147,7 +146,6 @@ static const HFRange kEntireRange = {0, ULLONG_MAX};
         HFASSERT(applied1 <= remaining.length);
         remaining.length -= applied1;
         remaining.location += applied1;
-        amt++;
         } // @autoreleasepool
     }
     return result;
