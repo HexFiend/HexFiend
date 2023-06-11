@@ -429,7 +429,16 @@
     NSColor *color = [NSColor lightGrayColor];
     NSData *colorData = [[NSUserDefaults standardUserDefaults] objectForKey:@"BinaryTemplateSelectionColor"];
     if (colorData && [colorData isKindOfClass:[NSData class]]) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+        // TODO: When 10.14 becomes the minimum target, replace NSUnarchiver/NSArchiver
+        // with NSKeyedUnarchiver/NSKeyedArchiver versions.
+        // This can't be easily done until then because in Preferences.xib NSUnarchiveFromData
+        // is used with the binding. The non-deprecated replacement is NSSecureUnarchiveFromData,
+        // but that requires 10.14.
+        // @available(macOS 10.14, *) ---- this is a token so this code is found later...
         NSColor *tempColor = [NSUnarchiver unarchiveObjectWithData:colorData];
+#pragma clang diagnostic pop
         if (tempColor && [tempColor isKindOfClass:[NSColor class]]) {
             color = tempColor;
         }

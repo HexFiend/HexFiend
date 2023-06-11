@@ -102,7 +102,10 @@ static inline Class preferredByteArrayClass(void) {
             @"DefaultFontSize" : @(HFDEFAULT_FONTSIZE),
             @"BytesPerColumn"  : @4,
             @"DefaultEditMode" : @(HFInsertMode),
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
             @"BinaryTemplateSelectionColor" : [NSArchiver archivedDataWithRootObject:[NSColor lightGrayColor]],
+#pragma clang diagnostic pop
             @"BinaryTemplateRepresenterWidth" : @(self.class.binaryTemplateDefaultWidth),
             @"BinaryTemplateScriptTimeout" : @(10),
             @"BinaryTemplatesSingleClickAction" : @(1), // scroll to offset
