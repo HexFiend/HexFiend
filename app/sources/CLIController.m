@@ -35,7 +35,7 @@
         [self runAlert:errInfo[NSAppleScriptErrorMessage]];
         return;
     }
-    if (0) {
+    if (/* DISABLES CODE */ (0)) {
     // if NSAppleScript above turns out problematic, try the osascript variant instead
     NSTask *task = [[NSTask alloc] init];
     task.launchPath = @"/usr/bin/osascript";
