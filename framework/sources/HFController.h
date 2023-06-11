@@ -240,7 +240,9 @@ You create an HFController via <tt>[[HFController alloc] init]</tt>.  After that
 - (void)colorRangesDidChange; // manually notify of changes to color range individual values
 
 /* Number of bytes used in each column for a text-style representer. */
-@property (nonatomic) NSUInteger bytesPerColumn;
+@property (readonly) NSUInteger maxBytesPerColumn;
+- (BOOL)setBytesPerColumn:(NSUInteger)val;
+- (NSUInteger)bytesPerColumn;
 
 /*! @name Edit Mode
    Determines what mode we're in, read-only, overwrite or insert. */

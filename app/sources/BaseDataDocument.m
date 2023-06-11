@@ -1789,27 +1789,46 @@ cancelled:;
     [self setByteGrouping:newBytesPerColumn];
 }
 
-- (void)setByteGrouping:(NSUInteger)newBytesPerColumn {
-    NSUInteger bytesPerLine = [controller bytesPerLine], newDesiredBytesPerLine;
+- (BOOL)setByteGrouping:(NSUInteger)newBytesPerColumn {
+    const NSUInteger bytesPerLine = [controller bytesPerLine];
+    NSUInteger newDesiredBytesPerLine;
     if (newBytesPerColumn == 0) {
         newDesiredBytesPerLine = bytesPerLine;
     }
     else {
         newDesiredBytesPerLine = MAX(newBytesPerColumn, bytesPerLine - (bytesPerLine % newBytesPerColumn));
     }
-    [controller setBytesPerColumn:newBytesPerColumn];
+    if (![controller setBytesPerColumn:newBytesPerColumn]) {
+        return NO;
+    }
     [self relayoutAndResizeWindowForBytesPerLine:newDesiredBytesPerLine]; //this ensures that the window does not shrink when going e.g. from 4->8->4
     [[NSUserDefaults standardUserDefaults] setInteger:newBytesPerColumn forKey:@"BytesPerColumn"];
+    return YES;
 }
 
 - (IBAction)customByteGrouping:(id __unused)sender {
-    NSString *byteGrouping = HFPromptForValue(NSLocalizedString(@"Enter a custom byte grouping", ""));
-    if (byteGrouping) {
-        NSInteger value = byteGrouping.integerValue;
-        if (value >= 0) {
-            [self setByteGrouping:value];
-            [(AppDelegate *)NSApp.delegate buildByteGroupingMenu];
+    BOOL set = NO;
+    while (!set) {
+        NSString *byteGrouping = HFPromptForValue(NSLocalizedString(@"Enter a custom byte grouping", ""));
+        if (!byteGrouping) {
+            // User cancelled
+            break;
         }
+        NSInteger value = byteGrouping.integerValue;
+        if (value < 0) {
+            NSAlert *alert = [[NSAlert alloc] init];
+            alert.messageText = NSLocalizedString(@"Value cannot be negative.", "");
+            [alert runModal];
+            continue;
+        }
+        if (![self setByteGrouping:value]) {
+            NSAlert *alert = [[NSAlert alloc] init];
+            alert.messageText = [NSString stringWithFormat:NSLocalizedString(@"Value cannot be greater than %lu.", ""), controller.maxBytesPerColumn];
+            [alert runModal];
+            continue;
+        }
+        [(AppDelegate *)NSApp.delegate buildByteGroupingMenu];
+        break;
     }
 }
 

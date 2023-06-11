@@ -358,14 +358,22 @@ static inline Class preferredByteArrayClass(void) {
 
 - (void)setShouldLiveReload:(BOOL)livereload {
     _hfflags.livereload = !!livereload;
-    
 }
 
-- (void)setBytesPerColumn:(NSUInteger)val {
+- (NSUInteger)maxBytesPerColumn
+{
+    return 512;
+}
+
+- (BOOL)setBytesPerColumn:(NSUInteger)val {
+    if (val > self.maxBytesPerColumn) {
+        return NO;
+    }
     if (val != bytesPerColumn) {
         bytesPerColumn = val;
         [self _addPropertyChangeBits:HFControllerBytesPerColumn];
     }
+    return YES;
 }
 
 - (NSUInteger)bytesPerColumn {
