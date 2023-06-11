@@ -100,7 +100,7 @@ static NSMapTable *byteArrayMap = nil;
     HFFileReference *fileReference = [notification object];
     NSMutableDictionary *hint = userInfo[HFChangeInFileHintKey];
     
-    NSString * const names[] = {NSGeneralPboard, NSFindPboard, NSDragPboard};
+    NSString * const names[] = {NSPasteboardNameGeneral, NSPasteboardNameFind, NSPasteboardNameDrag};
     NSUInteger i;
     for (i=0; i < sizeof names / sizeof *names; i++) {
         NSPasteboard *pboard = [NSPasteboard pasteboardWithName:names[i]];
