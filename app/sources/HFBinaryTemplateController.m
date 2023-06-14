@@ -11,6 +11,8 @@
 #import "HFTclTemplateController.h"
 #import "HFColorRange.h"
 #import "HFDirectoryWatcher.h"
+#import "HFTemplateFile.h"
+#import "TemplateAutodetection.h"
 
 @interface NSObject (HFTemplateOutlineViewDelegate)
 
@@ -33,18 +35,6 @@
 
 @end
 
-@interface HFTemplateFile : NSObject
-
-@property (copy) NSString *path;
-@property (copy) NSString *name;
-@property (copy) NSArray<NSString *> *supportedTypes;
-
-@end
-
-@implementation HFTemplateFile
-
-@end
-
 @interface HFBinaryTemplateController () <NSOutlineViewDataSource, NSOutlineViewDelegate>
 
 @property (weak) IBOutlet NSOutlineView *outlineView;
@@ -60,6 +50,7 @@
 @property NSUInteger anchorPosition;
 @property NSMutableArray *nodesToCollapse;
 @property HFDirectoryWatcher *directoryWatcher;
+@property TemplateAutodetection *autodetection;
 
 @end
 
@@ -67,6 +58,7 @@
 
 - (instancetype)init {
     if ((self = [super initWithNibName:@"BinaryTemplateController" bundle:nil]) != nil) {
+        self.autodetection = [[TemplateAutodetection alloc] init];
     }
     return self;
 }
@@ -177,83 +169,6 @@
     return [NSURL fileURLWithPath:path].URLByResolvingSymlinksInPath.path;
 }
 
-- (NSArray<NSString *> *)readSupportedTypesAtPath:(NSString *)path {
-    static const unsigned long long maxBytes = 512;
-    NSFileHandle *handle = [NSFileHandle fileHandleForReadingAtPath:path];
-    NSData *data = [handle readDataOfLength:maxBytes];
-    NSString *firstBytes = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-    [handle closeFile];
-
-    static NSRegularExpression *lineRegex;
-    static dispatch_once_t lineOnceToken;
-    dispatch_once(&lineOnceToken, ^{
-        NSString *regexString = @"^\\h*#\\h*+types:\\h*([\\w.-]+(?:[\\h,]+[\\w.-]+)*)\\h*$";
-        NSError *error;
-        lineRegex = [NSRegularExpression regularExpressionWithPattern:regexString options:NSRegularExpressionAnchorsMatchLines | NSRegularExpressionCaseInsensitive error:&error];
-        if (!lineRegex)
-            NSLog(@"%@", error);
-    });
-
-    static NSRegularExpression *typeRegex;
-    static dispatch_once_t typeOnceToken;
-    dispatch_once(&typeOnceToken, ^{
-        NSError *error;
-        typeRegex = [NSRegularExpression regularExpressionWithPattern:@"[\\w.-]+" options:0 error:&error];
-        if (!typeRegex)
-            NSLog(@"%@", error);
-    });
-
-    NSTextCheckingResult *result = [lineRegex firstMatchInString:firstBytes options:0 range:(NSRange){0, firstBytes.length}];
-
-    if (result && result.numberOfRanges == 2) {
-        NSRange typesRange = [result rangeAtIndex:1];
-        NSString *typesString = [firstBytes substringWithRange:typesRange];
-        NSMutableArray *types = [NSMutableArray array];
-
-        [typeRegex enumerateMatchesInString:typesString options:0 range:(NSRange){0, typesString.length} usingBlock:^(NSTextCheckingResult * _Nullable match, __unused NSMatchingFlags flags, __unused BOOL * _Nonnull stop) {
-            NSString *type = [typesString substringWithRange:match.range];
-            [types addObject:type];
-        }];
-
-        return [types copy];
-    }
-
-    return nil;
-}
-
-- (HFTemplateFile *)defaultTemplateForFileAtURL:(NSURL *)url {
-    if (!url) {
-        return nil;
-    }
-    NSString *type;
-    NSError *error;
-    BOOL success = [url getResourceValue:&type forKey:NSURLTypeIdentifierKey error:&error];
-    if (!success) {
-        return nil;
-    }
-    
-    NSString *extension = url.pathExtension;
-    
-    NSArray<HFTemplateFile *> *allTemplates = [self.templates arrayByAddingObjectsFromArray:self.bundleTemplates];
-
-    // Check for exact UTI/extension match first.
-    for (HFTemplateFile *template in allTemplates) {
-        for (NSString *supportedType in template.supportedTypes) {
-            if (UTTypeEqual((__bridge CFStringRef)type, (__bridge CFStringRef)supportedType) || [supportedType caseInsensitiveCompare:extension] == NSOrderedSame)
-                return template;
-        }
-    }
-
-    for (HFTemplateFile *template in allTemplates) {
-        for (NSString *supportedType in template.supportedTypes) {
-            if (UTTypeConformsTo((__bridge CFStringRef)type, (__bridge CFStringRef)supportedType))
-                return template;
-        }
-    }
-
-    return nil;
-}
-
 - (void)traversePath:(NSString *)dir intoTemplates:(NSMutableArray<HFTemplateFile*> *)templates {
     NSFileManager *fm = [NSFileManager defaultManager];
     for (NSString *filename in [fm enumeratorAtPath:dir]) {
@@ -261,7 +176,7 @@
             HFTemplateFile *file = [[HFTemplateFile alloc] init];
             file.path = [dir stringByAppendingPathComponent:filename];
             file.name = [[filename lastPathComponent] stringByDeletingPathExtension];
-            file.supportedTypes = [self readSupportedTypesAtPath:file.path];
+            file.supportedTypes = [self.autodetection readSupportedTypesAtPath:file.path];
             [templates addObject:file];
         } else {
             NSString *original = [dir stringByAppendingPathComponent:filename];
@@ -370,7 +285,7 @@
         HFTemplateFile *file = [[HFTemplateFile alloc] init];
         file.path = bundleTemplatePath;
         file.name = bundleTemplateFilename.lastPathComponent.stringByDeletingPathExtension;
-        file.supportedTypes = [self readSupportedTypesAtPath:file.path];
+        file.supportedTypes = [self.autodetection readSupportedTypesAtPath:file.path];
         [bundleTemplates addObject:file];
         NSMenuItem *templateMenuItem = [[NSMenuItem alloc] initWithTitle:file.name action:@selector(selectTemplateFile:) keyEquivalent:@""];
         templateMenuItem.target = self;
@@ -700,7 +615,11 @@
 
 - (void)autodetectTemplate {
     NSURL *representedURL = self.view.window.representedURL;
-    HFTemplateFile *template = [self defaultTemplateForFileAtURL:representedURL];
+    if (!representedURL) {
+        return;
+    }
+    NSArray<HFTemplateFile *> *allTemplates = [self.templates arrayByAddingObjectsFromArray:self.bundleTemplates];
+    HFTemplateFile *template = [self.autodetection defaultTemplateForFileAtURL:representedURL allTemplates:allTemplates];
     if (template) {
         self.selectedFile = template;
         [self.templatesPopUp selectItemWithTitle:template.name];
