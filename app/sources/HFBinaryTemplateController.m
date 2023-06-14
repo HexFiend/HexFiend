@@ -54,6 +54,7 @@
 @property HFController *controller;
 @property HFTemplateNode *node;
 @property NSArray<HFTemplateFile*> *templates;
+@property NSArray<HFTemplateFile*> *bundleTemplates;
 @property HFTemplateFile *selectedFile;
 @property HFColorRange *colorRange;
 @property NSUInteger anchorPosition;
@@ -91,6 +92,7 @@
     [super viewDidAppear];
 
     [self showPopoverOnce];
+    [self autodetectTemplate];
 }
 
 - (void)showPopoverOnce {
@@ -231,16 +233,18 @@
     }
     
     NSString *extension = url.pathExtension;
+    
+    NSArray<HFTemplateFile *> *allTemplates = [self.templates arrayByAddingObjectsFromArray:self.bundleTemplates];
 
     // Check for exact UTI/extension match first.
-    for (HFTemplateFile *template in self.templates) {
+    for (HFTemplateFile *template in allTemplates) {
         for (NSString *supportedType in template.supportedTypes) {
             if (UTTypeEqual((__bridge CFStringRef)type, (__bridge CFStringRef)supportedType) || [supportedType caseInsensitiveCompare:extension] == NSOrderedSame)
                 return template;
         }
     }
 
-    for (HFTemplateFile *template in self.templates) {
+    for (HFTemplateFile *template in allTemplates) {
         for (NSString *supportedType in template.supportedTypes) {
             if (UTTypeConformsTo((__bridge CFStringRef)type, (__bridge CFStringRef)supportedType))
                 return template;
@@ -332,6 +336,7 @@
     NSArray *bundleTemplatesPaths = [bundleTemplatesEnumerator.allObjects sortedArrayUsingSelector:@selector(compare:)];
     BOOL addedBundleTemplate = NO;
     NSMutableSet<NSString *> *folders = [NSMutableSet set];
+    NSMutableArray<HFTemplateFile *> *bundleTemplates = [NSMutableArray array];
     for (NSString *bundleTemplateFilename in bundleTemplatesPaths) {
         if (![bundleTemplateFilename containsString:@"/"] && [bundleTemplateFilename containsString:@"."]) {
             // Skip top-level files
@@ -365,6 +370,8 @@
         HFTemplateFile *file = [[HFTemplateFile alloc] init];
         file.path = bundleTemplatePath;
         file.name = bundleTemplateFilename.lastPathComponent.stringByDeletingPathExtension;
+        file.supportedTypes = [self readSupportedTypesAtPath:file.path];
+        [bundleTemplates addObject:file];
         NSMenuItem *templateMenuItem = [[NSMenuItem alloc] initWithTitle:file.name action:@selector(selectTemplateFile:) keyEquivalent:@""];
         templateMenuItem.target = self;
         templateMenuItem.representedObject = file;
@@ -380,6 +387,7 @@
     if (addedBundleTemplate) {
         [self.templatesPopUp.menu addItem:[NSMenuItem separatorItem]];
     }
+    self.bundleTemplates = bundleTemplates;
 }
 
 - (void)noTemplate:(id __unused)sender {
@@ -678,8 +686,6 @@
 }
 
 - (void)viewWillAppear {
-    [self autodetectTemplate];
-
     self.directoryWatcher = [[HFDirectoryWatcher alloc] initWithPath:self.templatesFolder handler:^{
         NSLog(@"Templates directory changed");
         [self loadTemplates:self];

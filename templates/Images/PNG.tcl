@@ -2,7 +2,7 @@
 # 2018 Jan 20 | kainjow | Initial implementation
 # 2021 Jul 13 | fosterbrereton | Added several chunk-specific fields and details
 #
-# HexFiend Types: public.png, png
+# types: public.png, png
 
 hf_min_version_required 2.15
 
