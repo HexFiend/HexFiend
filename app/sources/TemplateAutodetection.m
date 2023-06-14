@@ -10,48 +10,87 @@
 
 @implementation TemplateAutodetection
 
-- (NSArray<NSString *> *)readSupportedTypesAtPath:(NSString *)path {
-    static const unsigned long long maxBytes = 512;
-    NSFileHandle *handle = [NSFileHandle fileHandleForReadingAtPath:path];
-    NSData *data = [handle readDataOfLength:maxBytes];
-    NSString *firstBytes = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-    [handle closeFile];
-
-    static NSRegularExpression *lineRegex;
-    static dispatch_once_t lineOnceToken;
-    dispatch_once(&lineOnceToken, ^{
-        NSString *regexString = @"^\\h*#\\h*+types:\\h*([\\w.-]+(?:[\\h,]+[\\w.-]+)*)\\h*$";
-        NSError *error;
-        lineRegex = [NSRegularExpression regularExpressionWithPattern:regexString options:NSRegularExpressionAnchorsMatchLines | NSRegularExpressionCaseInsensitive error:&error];
-        if (!lineRegex)
-            NSLog(@"%@", error);
-    });
-
-    static NSRegularExpression *typeRegex;
-    static dispatch_once_t typeOnceToken;
-    dispatch_once(&typeOnceToken, ^{
-        NSError *error;
-        typeRegex = [NSRegularExpression regularExpressionWithPattern:@"[\\w.-]+" options:0 error:&error];
-        if (!typeRegex)
-            NSLog(@"%@", error);
-    });
-
-    NSTextCheckingResult *result = [lineRegex firstMatchInString:firstBytes options:0 range:(NSRange){0, firstBytes.length}];
-
-    if (result && result.numberOfRanges == 2) {
-        NSRange typesRange = [result rangeAtIndex:1];
-        NSString *typesString = [firstBytes substringWithRange:typesRange];
-        NSMutableArray *types = [NSMutableArray array];
-
-        [typeRegex enumerateMatchesInString:typesString options:0 range:(NSRange){0, typesString.length} usingBlock:^(NSTextCheckingResult * _Nullable match, __unused NSMatchingFlags flags, __unused BOOL * _Nonnull stop) {
-            NSString *type = [typesString substringWithRange:match.range];
-            [types addObject:type];
-        }];
-
-        return [types copy];
+- (NSDictionary *)readFileMetadata:(NSString *)path {
+    // Metadata are comments in "old-style" ASCII property list format but with a dot/period prefix.
+    // See "Old-Style ASCII Property Lists":
+    // https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/PropertyLists/OldStylePlists/OldStylePLists.html
+    //
+    // The lines construct a dictionary.
+    // Only the first lines at the beginning of the file are parsed.
+    //
+    // For example:
+    //
+    //     # png.tcl
+    //     #
+    //     # .min_version_required = 2.15;
+    //     # .types = ( public.jpeg, jpeg );
+    //
+    // This will generate a dictionary:
+    //
+    // {
+    //     min_version_required = 2.15;
+    //     types = ( public.png, png );
+    // }
+    
+    char lineBuffer[1024];
+    FILE *filePtr = fopen(path.UTF8String, "r");
+    if (!filePtr) {
+        NSLog(@"Cannot open %@: %s", path, strerror(errno));
+        return nil;
     }
+    NSMutableString *plistStr = [NSMutableString string];
+    BOOL readingMetadata = NO;
+    NSString *commentPrefix = @"#";
+    NSString *metadataPrefix = @"# .";
+    while (fgets(lineBuffer, sizeof(lineBuffer) - 1, filePtr)) {
+        NSString *line = [[NSString alloc] initWithUTF8String:lineBuffer];
+        if (![line hasPrefix:commentPrefix]) {
+            // Header comment block ended, stop processing.
+            break;
+        }
+        
+        if ([line hasPrefix:metadataPrefix]) {
+            readingMetadata = YES;
+            if (line.length > metadataPrefix.length) {
+                [plistStr appendFormat:@"%@\n", [line substringFromIndex:metadataPrefix.length]];
+            }
+        } else if (readingMetadata) {
+            break;
+        }
+    }
+    fclose(filePtr);
+    if (plistStr.length == 0) {
+        // No metadata lines found
+        return nil;
+    }
+    NSString *dictPlistStr = [NSString stringWithFormat:@"{\n%@\n}", plistStr];
+    NSData *dictData = [dictPlistStr dataUsingEncoding:NSUTF8StringEncoding];
+    NSError *error = nil;
+    NSPropertyListFormat format;
+    NSDictionary *dict = [NSPropertyListSerialization propertyListWithData:dictData options:NSPropertyListImmutable format:&format error:&error];
+    if (!dict) {
+        NSLog(@"Metadata error for %@: %@", path, error);
+        return nil;
+    }
+    if (format != NSPropertyListOpenStepFormat) {  // Sanity check the format
+        NSLog(@"Invalid dictionary format %lu for %@", (unsigned long)format, path);
+    }
+    return dict;
+}
 
-    return nil;
+- (NSArray<NSString *> *)readSupportedTypesAtPath:(NSString *)path {
+    NSDictionary *metadata = [self readFileMetadata:path];
+    if (!metadata) {
+        return nil;
+    }
+    
+    NSArray *types = [metadata objectForKey:@"types"];
+    if (![types isKindOfClass:[NSArray class]]) {
+        NSLog(@"Invalid types array: %@ (type=%@) for %@", types, NSStringFromClass([types class]), path);
+        return nil;
+    }
+    
+    return types;
 }
 
 - (HFTemplateFile *)defaultTemplateForFileAtURL:(NSURL *)url allTemplates:(NSArray<HFTemplateFile *> *)allTemplates {
