@@ -76,6 +76,7 @@
 		A56D78161E7EF088001D1892 /* CLIController.m in Sources */ = {isa = PBXBuildFile; fileRef = A56D78151E7EF088001D1892 /* CLIController.m */; };
 		A571E5922A3973140005B388 /* TemplateAutodetection.m in Sources */ = {isa = PBXBuildFile; fileRef = A571E5912A3973140005B388 /* TemplateAutodetection.m */; };
 		A571E5952A3973690005B388 /* HFTemplateFile.m in Sources */ = {isa = PBXBuildFile; fileRef = A571E5942A3973690005B388 /* HFTemplateFile.m */; };
+		A571E5982A3ABFAD0005B388 /* TemplateMetadata.m in Sources */ = {isa = PBXBuildFile; fileRef = A571E5972A3ABFAD0005B388 /* TemplateMetadata.m */; };
 		A572614A21D8A51B00970A0E /* HFPrompt.m in Sources */ = {isa = PBXBuildFile; fileRef = A572614921D8A51B00970A0E /* HFPrompt.m */; };
 		A572614D21D9AA7600970A0E /* HFEncodingManager.h in Headers */ = {isa = PBXBuildFile; fileRef = A572614B21D9AA7600970A0E /* HFEncodingManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A572614E21D9AA7600970A0E /* HFEncodingManager.h in Headers */ = {isa = PBXBuildFile; fileRef = A572614B21D9AA7600970A0E /* HFEncodingManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -477,6 +478,8 @@
 		A571E5912A3973140005B388 /* TemplateAutodetection.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = TemplateAutodetection.m; path = app/sources/TemplateAutodetection.m; sourceTree = "<group>"; };
 		A571E5932A3973690005B388 /* HFTemplateFile.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFTemplateFile.h; path = app/sources/HFTemplateFile.h; sourceTree = "<group>"; };
 		A571E5942A3973690005B388 /* HFTemplateFile.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFTemplateFile.m; path = app/sources/HFTemplateFile.m; sourceTree = "<group>"; };
+		A571E5962A3ABFAD0005B388 /* TemplateMetadata.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = TemplateMetadata.h; path = app/sources/TemplateMetadata.h; sourceTree = "<group>"; };
+		A571E5972A3ABFAD0005B388 /* TemplateMetadata.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = TemplateMetadata.m; path = app/sources/TemplateMetadata.m; sourceTree = "<group>"; };
 		A572614821D8A51B00970A0E /* HFPrompt.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFPrompt.h; path = app/sources/HFPrompt.h; sourceTree = "<group>"; };
 		A572614921D8A51B00970A0E /* HFPrompt.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFPrompt.m; path = app/sources/HFPrompt.m; sourceTree = "<group>"; };
 		A572614B21D9AA7600970A0E /* HFEncodingManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFEncodingManager.h; path = sources/HFEncodingManager.h; sourceTree = "<group>"; };
@@ -968,6 +971,8 @@
 				A571E5942A3973690005B388 /* HFTemplateFile.m */,
 				A571E5902A3973140005B388 /* TemplateAutodetection.h */,
 				A571E5912A3973140005B388 /* TemplateAutodetection.m */,
+				A571E5962A3ABFAD0005B388 /* TemplateMetadata.h */,
+				A571E5972A3ABFAD0005B388 /* TemplateMetadata.m */,
 			);
 			name = "Binary Templates";
 			sourceTree = "<group>";
@@ -1814,6 +1819,7 @@
 				D01772F50D751DB1002E03DE /* HFDocumentOperationView.m in Sources */,
 				A571E5952A3973690005B388 /* HFTemplateFile.m in Sources */,
 				D01773920D7A2F32002E03DE /* HFResizingView.m in Sources */,
+				A571E5982A3ABFAD0005B388 /* TemplateMetadata.m in Sources */,
 				D0CD51F60DA2B928006E8D1B /* AppDelegate.m in Sources */,
 				D03CFA8A0FC78BCD00EE79E4 /* DataInspectorRepresenter.m in Sources */,
 				D02BD6E010545E9000535EDE /* FileDataDocument.m in Sources */,

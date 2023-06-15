@@ -13,7 +13,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface TemplateAutodetection : NSObject
 
-- (nullable NSArray<NSString *> *)readSupportedTypesAtPath:(NSString *)path;
 - (nullable HFTemplateFile *)defaultTemplateForFileAtURL:(NSURL *)url allTemplates:(NSArray<HFTemplateFile *> *)allTemplates;
 
 @end

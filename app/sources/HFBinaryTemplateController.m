@@ -13,6 +13,7 @@
 #import "HFDirectoryWatcher.h"
 #import "HFTemplateFile.h"
 #import "TemplateAutodetection.h"
+#import "TemplateMetadata.h"
 
 @interface NSObject (HFTemplateOutlineViewDelegate)
 
@@ -176,7 +177,7 @@
             HFTemplateFile *file = [[HFTemplateFile alloc] init];
             file.path = [dir stringByAppendingPathComponent:filename];
             file.name = [[filename lastPathComponent] stringByDeletingPathExtension];
-            file.supportedTypes = [self.autodetection readSupportedTypesAtPath:file.path];
+            file.supportedTypes = [TemplateMetadata readSupportedTypesAtPath:file.path];
             [templates addObject:file];
         } else {
             NSString *original = [dir stringByAppendingPathComponent:filename];
@@ -285,7 +286,7 @@
         HFTemplateFile *file = [[HFTemplateFile alloc] init];
         file.path = bundleTemplatePath;
         file.name = bundleTemplateFilename.lastPathComponent.stringByDeletingPathExtension;
-        file.supportedTypes = [self.autodetection readSupportedTypesAtPath:file.path];
+        file.supportedTypes = [TemplateMetadata readSupportedTypesAtPath:file.path];
         [bundleTemplates addObject:file];
         NSMenuItem *templateMenuItem = [[NSMenuItem alloc] initWithTitle:file.name action:@selector(selectTemplateFile:) keyEquivalent:@""];
         templateMenuItem.target = self;
