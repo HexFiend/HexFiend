@@ -12,7 +12,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface TemplateMetadata : NSObject
 
-+ (NSArray<NSString *> *)readSupportedTypesAtPath:(NSString *)path;
+- (nullable instancetype)initWithPath:(NSString *)path;
+
+@property (nullable, readonly) NSArray<NSString *> *types;
 
 @end
 

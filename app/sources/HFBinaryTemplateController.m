@@ -177,7 +177,7 @@
             HFTemplateFile *file = [[HFTemplateFile alloc] init];
             file.path = [dir stringByAppendingPathComponent:filename];
             file.name = [[filename lastPathComponent] stringByDeletingPathExtension];
-            file.supportedTypes = [TemplateMetadata readSupportedTypesAtPath:file.path];
+            file.supportedTypes = [[TemplateMetadata alloc] initWithPath:file.path].types;
             [templates addObject:file];
         } else {
             NSString *original = [dir stringByAppendingPathComponent:filename];
@@ -286,7 +286,7 @@
         HFTemplateFile *file = [[HFTemplateFile alloc] init];
         file.path = bundleTemplatePath;
         file.name = bundleTemplateFilename.lastPathComponent.stringByDeletingPathExtension;
-        file.supportedTypes = [TemplateMetadata readSupportedTypesAtPath:file.path];
+        file.supportedTypes = [[TemplateMetadata alloc] initWithPath:file.path].types;
         [bundleTemplates addObject:file];
         NSMenuItem *templateMenuItem = [[NSMenuItem alloc] initWithTitle:file.name action:@selector(selectTemplateFile:) keyEquivalent:@""];
         templateMenuItem.target = self;

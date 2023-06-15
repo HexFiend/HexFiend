@@ -78,19 +78,31 @@
     return dict;
 }
 
-+ (NSArray<NSString *> *)readSupportedTypesAtPath:(NSString *)path {
-    NSDictionary *metadata = [self readFileMetadata:path];
+- (nullable instancetype)initWithPath:(NSString *)path
+{
+    self = [super init];
+    
+    NSDictionary *metadata = [self.class readFileMetadata:path];
     if (!metadata) {
         return nil;
     }
-    
+
     NSArray *types = [metadata objectForKey:@"types"];
     if (![types isKindOfClass:[NSArray class]]) {
-        NSLog(@"Invalid types array: %@ (type=%@) for %@", types, NSStringFromClass([types class]), path);
+        NSLog(@"Invalid types array: %@ (type=%@) for %@", types, NSStringFromClass(types.class), path);
         return nil;
     }
     
-    return types;
+    for (NSString *type in types) {
+        if (![type isKindOfClass:[NSString class]]) {
+            NSLog(@"Invalid type: %@ (type=%@) for %@", type, NSStringFromClass(type.class), path);
+            return nil;
+        }
+    }
+    
+    _types = types;
+    
+    return self;
 }
 
 @end
