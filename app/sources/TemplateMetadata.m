@@ -86,22 +86,35 @@
     if (!metadata) {
         return nil;
     }
-
-    NSArray *types = [metadata objectForKey:@"types"];
-    if (![types isKindOfClass:[NSArray class]]) {
-        NSLog(@"Invalid types array: %@ (type=%@) for %@", types, NSStringFromClass(types.class), path);
-        return nil;
-    }
     
-    for (NSString *type in types) {
-        if (![type isKindOfClass:[NSString class]]) {
-            NSLog(@"Invalid type: %@ (type=%@) for %@", type, NSStringFromClass(type.class), path);
+    NSArray *types = metadata[@"types"];
+    if (types) {
+        if (![types isKindOfClass:[NSArray class]]) {
+            NSLog(@"Invalid types class %@ (type=%@) for %@", types, NSStringFromClass(types.class), path);
             return nil;
         }
+        for (NSString *type in types) {
+            if (![type isKindOfClass:[NSString class]]) {
+                NSLog(@"Invalid type class %@ (type=%@) for %@", type, NSStringFromClass(type.class), path);
+                return nil;
+            }
+        }
+        _types = types;
     }
     
-    _types = types;
-    
+    NSString *hidden = metadata[@"hidden"];
+    if (hidden) {
+        if (![hidden isKindOfClass:[NSString class]]) {
+            NSLog(@"Invalid hidden class %@ (type=%@) for %@", hidden, NSStringFromClass(hidden.class), path);
+            return nil;
+        }
+        if (![hidden isEqualToString:@"true"]) {
+            NSLog(@"Invalid hidden value %@ for %@", hidden, path);
+            return nil;
+        }
+        _isHidden = YES;
+    }
+
     return self;
 }
 

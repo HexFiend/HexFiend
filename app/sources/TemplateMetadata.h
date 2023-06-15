@@ -15,6 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (nullable instancetype)initWithPath:(NSString *)path;
 
 @property (nullable, readonly) NSArray<NSString *> *types;
+@property (readonly) BOOL isHidden;
 
 @end
 

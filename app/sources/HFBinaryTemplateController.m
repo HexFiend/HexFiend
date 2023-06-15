@@ -174,10 +174,15 @@
     NSFileManager *fm = [NSFileManager defaultManager];
     for (NSString *filename in [fm enumeratorAtPath:dir]) {
         if ([filename.pathExtension isEqualToString:@"tcl"]) {
+            NSString *path = [dir stringByAppendingPathComponent:filename];
+            TemplateMetadata *metadata = [[TemplateMetadata alloc] initWithPath:path];
+            if (metadata.isHidden) {
+                continue;
+            }
             HFTemplateFile *file = [[HFTemplateFile alloc] init];
-            file.path = [dir stringByAppendingPathComponent:filename];
+            file.path = path;
             file.name = [[filename lastPathComponent] stringByDeletingPathExtension];
-            file.supportedTypes = [[TemplateMetadata alloc] initWithPath:file.path].types;
+            file.supportedTypes = metadata.types;
             [templates addObject:file];
         } else {
             NSString *original = [dir stringByAppendingPathComponent:filename];
@@ -253,6 +258,7 @@
     BOOL addedBundleTemplate = NO;
     NSMutableSet<NSString *> *folders = [NSMutableSet set];
     NSMutableArray<HFTemplateFile *> *bundleTemplates = [NSMutableArray array];
+    NSFileManager *fileManager = NSFileManager.defaultManager;
     for (NSString *bundleTemplateFilename in bundleTemplatesPaths) {
         if (![bundleTemplateFilename containsString:@"/"] && [bundleTemplateFilename containsString:@"."]) {
             // Skip top-level files
@@ -261,12 +267,13 @@
 
         NSString *bundleTemplatePath = [bundleTemplatesPath stringByAppendingPathComponent:bundleTemplateFilename];
         BOOL isDir = NO;
-        if ([NSFileManager.defaultManager fileExistsAtPath:bundleTemplatePath isDirectory:&isDir] && isDir) {
+        if ([fileManager fileExistsAtPath:bundleTemplatePath isDirectory:&isDir] && isDir) {
             // Skip directories
             continue;
         }
-
-        if ([bundleTemplateFilename isEqualToString:@"Utility/General.tcl"]) {
+        
+        TemplateMetadata *metadata = [[TemplateMetadata alloc] initWithPath:bundleTemplatePath];
+        if (metadata.isHidden) {
             continue;
         }
 
@@ -286,7 +293,7 @@
         HFTemplateFile *file = [[HFTemplateFile alloc] init];
         file.path = bundleTemplatePath;
         file.name = bundleTemplateFilename.lastPathComponent.stringByDeletingPathExtension;
-        file.supportedTypes = [[TemplateMetadata alloc] initWithPath:file.path].types;
+        file.supportedTypes = metadata.types;
         [bundleTemplates addObject:file];
         NSMenuItem *templateMenuItem = [[NSMenuItem alloc] initWithTitle:file.name action:@selector(selectTemplateFile:) keyEquivalent:@""];
         templateMenuItem.target = self;

@@ -1,5 +1,7 @@
 # Utility/General.tcl
 # 2021 Jul 13 | fosterbrereton | Initial implementation
+#
+# .hidden = true;
 
 hf_min_version_required 2.15
 
