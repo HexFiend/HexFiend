@@ -14,6 +14,7 @@
 #import "HFTemplateFile.h"
 #import "TemplateAutodetection.h"
 #import "TemplateMetadata.h"
+#import "MinimumVersionRequired.h"
 
 @interface NSObject (HFTemplateOutlineViewDelegate)
 
@@ -179,6 +180,11 @@
             if (metadata.isHidden) {
                 continue;
             }
+            NSString *error = nil;
+            if (metadata.minimumVersionRequired && ![MinimumVersionRequired isMinimumVersionSatisfied:metadata.minimumVersionRequired error:&error]) {
+                NSLog(@"Min version error for %@: %@", path, error);
+                continue;
+            }
             HFTemplateFile *file = [[HFTemplateFile alloc] init];
             file.path = path;
             file.name = [[filename lastPathComponent] stringByDeletingPathExtension];
@@ -274,6 +280,12 @@
         
         TemplateMetadata *metadata = [[TemplateMetadata alloc] initWithPath:bundleTemplatePath];
         if (metadata.isHidden) {
+            continue;
+        }
+
+        NSString *error = nil;
+        if (metadata.minimumVersionRequired && ![MinimumVersionRequired isMinimumVersionSatisfied:metadata.minimumVersionRequired error:&error]) {
+            NSLog(@"Min version error for %@: %@", bundleTemplatePath, error);
             continue;
         }
 

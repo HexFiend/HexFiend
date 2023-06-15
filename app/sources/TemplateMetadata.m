@@ -114,6 +114,15 @@
         }
         _isHidden = YES;
     }
+    
+    NSString *minVersionRequired = metadata[@"min_version_required"];
+    if (minVersionRequired) {
+        if (![minVersionRequired isKindOfClass:[NSString class]]) {
+            NSLog(@"Invalid min_version_required class %@ (type=%@) for %@", minVersionRequired, NSStringFromClass(minVersionRequired.class), minVersionRequired);
+            return nil;
+        }
+        _minimumVersionRequired = minVersionRequired;
+    }
 
     return self;
 }

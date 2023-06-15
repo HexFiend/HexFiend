@@ -16,6 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nullable, readonly) NSArray<NSString *> *types;
 @property (readonly) BOOL isHidden;
+@property (nullable, readonly) NSString *minimumVersionRequired;
 
 @end
 
