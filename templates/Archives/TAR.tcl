@@ -1,3 +1,5 @@
+# .types = ( public.tar-archive, tar );
+
 little_endian
 
 while {![end]} {
