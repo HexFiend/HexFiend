@@ -532,7 +532,6 @@ DEFINE_COMMAND(sleb128)
                         Tcl_AddErrorInfo(_interp, error.UTF8String);
                         return TCL_ERROR;
                     }
-                    NSLog(@"Include path \"%@\" found in %@", path, folder);
                     found = YES;
                     break;
                 }
