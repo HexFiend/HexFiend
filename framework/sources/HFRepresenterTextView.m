@@ -1381,6 +1381,7 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
     HFASSERT(advances != NULL);
     HFASSERT(glyphCount > 0);
     const BOOL colorBytes2Enabled = [NSUserDefaults.standardUserDefaults boolForKey:@"ColorBytes2"];
+    const BOOL darkMode = HFDarkModeEnabled();
     if ([styleRun shouldDraw]) {
         [styleRun set];
         CGContextRef ctx = HFGraphicsGetCurrentContext();
@@ -1430,11 +1431,12 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
                 struct HFRGBColor {
                     CGFloat r, g, b;
                 };
-                static struct HFRGBColor *table;
+                static struct HFRGBColor *darkTable;
+                static struct HFRGBColor *lightTable;
                 static dispatch_once_t onceToken;
                 dispatch_once(&onceToken, ^{
-                    table = calloc(256, sizeof(struct HFRGBColor));
-                    const BOOL darkMode = HFDarkModeEnabled();
+                    darkTable = calloc(256, sizeof(struct HFRGBColor));
+                    lightTable = calloc(256, sizeof(struct HFRGBColor));
                     NSColor *darkColorASCIIPrintable = [NSColor.cyanColor colorUsingColorSpaceName:NSCalibratedRGBColorSpace];
                     NSColor *lightColorASCIIPrintable = [NSColor.systemBlueColor colorUsingColorSpaceName:NSCalibratedRGBColorSpace];
                     NSColor *darkColorASCIIWhitespace = [NSColor.systemGreenColor colorUsingColorSpaceName:NSCalibratedRGBColorSpace];
@@ -1444,28 +1446,38 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
                     NSColor *darkColorNul = [NSColor.darkGrayColor colorUsingColorSpaceName:NSCalibratedRGBColorSpace];
                     NSColor *lightColorNul = [NSColor.lightGrayColor colorUsingColorSpaceName:NSCalibratedRGBColorSpace];
                     for (int b = 0; b < 256; b++) {
-                        NSColor *col = nil;
+                        NSColor *darkColor = nil;
+                        NSColor *lightColor = nil;
                         if (b == ' ' || b == '\n' || b == '\r' || b == '\t') {
-                            col = darkColorASCIIWhitespace;
+                            darkColor = darkColorASCIIWhitespace;
+                            lightColor = darkColorASCIIWhitespace;
                         } else if (b >= 33 && b <= 126) {
-                            col = darkMode ? darkColorASCIIPrintable : lightColorASCIIPrintable;
+                            darkColor = darkColorASCIIPrintable;
+                            lightColor = lightColorASCIIPrintable;
                         } else if (b & 0x7F) {
-                            col = darkMode ? darkColorASCIIOther : lightColorASCIIOther;
+                            darkColor = darkColorASCIIOther;
+                            lightColor = lightColorASCIIOther;
                         } else if (b == 0) {
-                            col = darkMode ? darkColorNul : lightColorNul;
+                            darkColor = darkColorNul;
+                            lightColor = lightColorNul;
                         } else {
-                            col = darkColorNonASCII;
+                            darkColor = darkColorNonASCII;
+                            lightColor = darkColorNonASCII;
                         }
-                        HFASSERT(col != nil);
                         CGFloat fr, fg, fb, fa;
-                        [col getRed:&fr green:&fg blue:&fb alpha:&fa];
-                        table[b].r = fr;
-                        table[b].g = fg;
-                        table[b].b = fb;
+                        [darkColor getRed:&fr green:&fg blue:&fb alpha:&fa];
+                        darkTable[b].r = fr;
+                        darkTable[b].g = fg;
+                        darkTable[b].b = fb;
+                        [lightColor getRed:&fr green:&fg blue:&fb alpha:&fa];
+                        lightTable[b].r = fr;
+                        lightTable[b].g = fg;
+                        lightTable[b].b = fb;
                     }
                 });
                 if (bytePtr && colorBytes2Enabled) {
                     const uint8_t byte = *bytePtr;
+                    const struct HFRGBColor *table = darkMode ? darkTable : lightTable;
                     const struct HFRGBColor col = table[byte];
                     CGContextSetRGBFillColor(ctx, col.r, col.g, col.b, 1.0);
                 }
