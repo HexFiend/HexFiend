@@ -1380,6 +1380,7 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
     HFASSERT(glyphs != NULL);
     HFASSERT(advances != NULL);
     HFASSERT(glyphCount > 0);
+    const BOOL colorBytes2Enabled = [NSUserDefaults.standardUserDefaults boolForKey:@"ColorBytes2"];
     if ([styleRun shouldDraw]) {
         [styleRun set];
         CGContextRef ctx = HFGraphicsGetCurrentContext();
@@ -1433,20 +1434,27 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
                 static dispatch_once_t onceToken;
                 dispatch_once(&onceToken, ^{
                     table = calloc(256, sizeof(struct HFRGBColor));
-                    NSColor *colorASCIIPrintable = [NSColor.cyanColor colorUsingColorSpaceName:NSCalibratedRGBColorSpace];
-                    NSColor *colorASCIIWhitespace = [NSColor.systemGreenColor colorUsingColorSpaceName:NSCalibratedRGBColorSpace];
-                    NSColor *colorASCIIOther = [[NSColor colorWithCalibratedRed:1 green:0 blue:1 alpha:1] colorUsingColorSpaceName:NSCalibratedRGBColorSpace];
-                    NSColor *colorNonASCII = [NSColor.systemOrangeColor colorUsingColorSpaceName:NSCalibratedRGBColorSpace];
-                    for (int b = 1; b < 256; b++) {
+                    const BOOL darkMode = HFDarkModeEnabled();
+                    NSColor *darkColorASCIIPrintable = [NSColor.cyanColor colorUsingColorSpaceName:NSCalibratedRGBColorSpace];
+                    NSColor *lightColorASCIIPrintable = [NSColor.systemBlueColor colorUsingColorSpaceName:NSCalibratedRGBColorSpace];
+                    NSColor *darkColorASCIIWhitespace = [NSColor.systemGreenColor colorUsingColorSpaceName:NSCalibratedRGBColorSpace];
+                    NSColor *darkColorASCIIOther = [[NSColor colorWithCalibratedRed:1 green:0 blue:1 alpha:1] colorUsingColorSpaceName:NSCalibratedRGBColorSpace];
+                    NSColor *lightColorASCIIOther = [NSColor.systemPurpleColor colorUsingColorSpaceName:NSCalibratedRGBColorSpace];
+                    NSColor *darkColorNonASCII = [NSColor.systemOrangeColor colorUsingColorSpaceName:NSCalibratedRGBColorSpace];
+                    NSColor *darkColorNul = [NSColor.darkGrayColor colorUsingColorSpaceName:NSCalibratedRGBColorSpace];
+                    NSColor *lightColorNul = [NSColor.lightGrayColor colorUsingColorSpaceName:NSCalibratedRGBColorSpace];
+                    for (int b = 0; b < 256; b++) {
                         NSColor *col = nil;
                         if (b == ' ' || b == '\n' || b == '\r' || b == '\t') {
-                            col = colorASCIIWhitespace;
+                            col = darkColorASCIIWhitespace;
                         } else if (b >= 33 && b <= 126) {
-                            col = colorASCIIPrintable;
+                            col = darkMode ? darkColorASCIIPrintable : lightColorASCIIPrintable;
                         } else if (b & 0x7F) {
-                            col = colorASCIIOther;
+                            col = darkMode ? darkColorASCIIOther : lightColorASCIIOther;
+                        } else if (b == 0) {
+                            col = darkMode ? darkColorNul : lightColorNul;
                         } else {
-                            col = colorNonASCII;
+                            col = darkColorNonASCII;
                         }
                         HFASSERT(col != nil);
                         CGFloat fr, fg, fb, fa;
@@ -1456,12 +1464,10 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
                         table[b].b = fb;
                     }
                 });
-                if (bytePtr && [NSUserDefaults.standardUserDefaults boolForKey:@"ColorBytes2"]) {
+                if (bytePtr && colorBytes2Enabled) {
                     const uint8_t byte = *bytePtr;
-                    if (byte != 0) {
-                        const struct HFRGBColor col = table[byte];
-                        CGContextSetRGBFillColor(ctx, col.r, col.g, col.b, 1.0);
-                    }
+                    const struct HFRGBColor col = table[byte];
+                    CGContextSetRGBFillColor(ctx, col.r, col.g, col.b, 1.0);
                 }
 
                 /* Draw the glyphs */
