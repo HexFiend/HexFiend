@@ -1438,13 +1438,13 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
                     darkTable = calloc(256, sizeof(struct HFRGBColor));
                     lightTable = calloc(256, sizeof(struct HFRGBColor));
                     NSColor *darkColorASCIIPrintable = [NSColor.cyanColor colorUsingColorSpaceName:NSCalibratedRGBColorSpace];
-                    NSColor *lightColorASCIIPrintable = [NSColor.systemBlueColor colorUsingColorSpaceName:NSCalibratedRGBColorSpace];
+                    NSColor *lightColorASCIIPrintable = [[NSColor colorWithRed:0x33/255.0 green:0xCC/255.0 blue:0xCC/255.0 alpha:1.0] colorUsingColorSpaceName:NSCalibratedRGBColorSpace];
                     NSColor *darkColorASCIIWhitespace = [NSColor.systemGreenColor colorUsingColorSpaceName:NSCalibratedRGBColorSpace];
                     NSColor *darkColorASCIIOther = [[NSColor colorWithCalibratedRed:1 green:0 blue:1 alpha:1] colorUsingColorSpaceName:NSCalibratedRGBColorSpace];
                     NSColor *lightColorASCIIOther = [NSColor.systemPurpleColor colorUsingColorSpaceName:NSCalibratedRGBColorSpace];
                     NSColor *darkColorNonASCII = [NSColor.systemOrangeColor colorUsingColorSpaceName:NSCalibratedRGBColorSpace];
                     NSColor *darkColorNul = [NSColor.darkGrayColor colorUsingColorSpaceName:NSCalibratedRGBColorSpace];
-                    NSColor *lightColorNul = [NSColor.lightGrayColor colorUsingColorSpaceName:NSCalibratedRGBColorSpace];
+                    NSColor *lightColorNul = [[NSColor colorWithCalibratedWhite:0.8 alpha:1.0] colorUsingColorSpaceName:NSCalibratedRGBColorSpace];
                     for (int b = 0; b < 256; b++) {
                         NSColor *darkColor = nil;
                         NSColor *lightColor = nil;
