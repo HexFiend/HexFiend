@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 from __future__ import print_function
 
@@ -20,7 +20,7 @@ if not os.path.isfile(config_path):
     sys.exit(1)
 
 # Silently take advantage of MacPorts or Homebrew.
-doxygen_search = os.pathsep.join((os.environ['PATH'],'/usr/local/bin','/opt/local/bin'))
+doxygen_search = os.pathsep.join((os.environ['PATH'],'/usr/local/bin','/opt/local/bin','/opt/homebrew/bin'))
 doxygen_path = os.getenv("DOXYGEN_PATH") or distutils.spawn.find_executable("doxygen", path=doxygen_search)
 if not doxygen_path or not os.path.isfile(doxygen_path):
     if os.getenv("DOXYGEN_PATH"):
@@ -65,7 +65,7 @@ for line in conf_file:
 	# which we don't want outputted in the html
 	elif line.startswith('STRIP_FROM_PATH '):
 		line = 'STRIP_FROM_PATH = ' + headers
-	proc.stdin.write(line)
+	proc.stdin.write(line.encode("utf-8"))
 proc.stdin.close()
 proc.wait()
 
