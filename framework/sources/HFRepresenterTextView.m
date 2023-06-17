@@ -1478,8 +1478,8 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
                 if (bytePtr && colorBytes2Enabled) {
                     const uint8_t byte = *bytePtr;
                     const struct HFRGBColor *table = darkMode ? darkTable : lightTable;
-                    const struct HFRGBColor col = table[byte];
-                    CGContextSetRGBFillColor(ctx, col.r, col.g, col.b, 1.0);
+                    const struct HFRGBColor *col = &table[byte];
+                    CGContextSetRGBFillColor(ctx, col->r, col->g, col->b, 1.0);
                 }
 
                 /* Draw the glyphs */
