@@ -375,7 +375,7 @@ proc lc_build_tool_version {count} {
             1 { set tool_str "TOOL_CLANG" }
             2 { set tool_str "TOOL_SWIFT" }
             3 { set tool_str "TOOL_LD" }
-            default { die "unknown platform ($platform)" }
+            default { die "unknown tool ($tool)" }
         }
         entry "tool" "$tool_str" 4 [expr [pos] - 4]
         nibbled_version version
