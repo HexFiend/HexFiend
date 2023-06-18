@@ -66,6 +66,7 @@
 		A5328D4921E1898A007C4DB0 /* HFHexGlyphTable.m in Sources */ = {isa = PBXBuildFile; fileRef = A5328D4621E1898A007C4DB0 /* HFHexGlyphTable.m */; };
 		A5328D4A21E1898A007C4DB0 /* HFHexGlyphTable.m in Sources */ = {isa = PBXBuildFile; fileRef = A5328D4621E1898A007C4DB0 /* HFHexGlyphTable.m */; };
 		A53B7D1A1E9185CF00CA3977 /* HFTestHashing.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D149300D8A37580018296B /* HFTestHashing.m */; };
+		A54D8AEE2A3ECBD80021FBAB /* ColorByteThemes in Resources */ = {isa = PBXBuildFile; fileRef = A54D8AED2A3ECBD80021FBAB /* ColorByteThemes */; };
 		A550A7191F7877F8001C79C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = A550A7181F7877F8001C79C7 /* main.m */; };
 		A550A7201F787831001C79C7 /* hexf in Resources */ = {isa = PBXBuildFile; fileRef = A550A7161F7877F8001C79C7 /* hexf */; };
 		A5589AC92206CFCC000293A4 /* HFExtendedAttributes.m in Sources */ = {isa = PBXBuildFile; fileRef = A5589AC82206CFCC000293A4 /* HFExtendedAttributes.m */; };
@@ -447,6 +448,7 @@
 		A5327E5C28570EF300530557 /* HFDirectoryWatcher.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFDirectoryWatcher.m; path = app/sources/HFDirectoryWatcher.m; sourceTree = "<group>"; };
 		A5328D4521E1898A007C4DB0 /* HFHexGlyphTable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFHexGlyphTable.h; path = sources/HFHexGlyphTable.h; sourceTree = "<group>"; };
 		A5328D4621E1898A007C4DB0 /* HFHexGlyphTable.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFHexGlyphTable.m; path = sources/HFHexGlyphTable.m; sourceTree = "<group>"; };
+		A54D8AED2A3ECBD80021FBAB /* ColorByteThemes */ = {isa = PBXFileReference; lastKnownFileType = folder; name = ColorByteThemes; path = app/resources/ColorByteThemes; sourceTree = "<group>"; };
 		A550A7161F7877F8001C79C7 /* hexf */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = hexf; sourceTree = BUILT_PRODUCTS_DIR; };
 		A550A7181F7877F8001C79C7 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		A554E0CD20DF2CD3001B4C48 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/OpenDriveDialog.xib; sourceTree = "<group>"; };
@@ -821,6 +823,7 @@
 			isa = PBXGroup;
 			children = (
 				A5B2F6E2284729F8006E8AF8 /* templates */,
+				A54D8AED2A3ECBD80021FBAB /* ColorByteThemes */,
 				79E2FF1F1745A2B300FA8F12 /* dsa_pub.pem */,
 				D024AFB20E349A7B00F39EBB /* hex_icon.icns */,
 				D01E7C0A0CDC570400943F9E /* Info.plist */,
@@ -1716,6 +1719,7 @@
 				D04A6B9E100EA75400704963 /* MoveSelectionByBanner.xib in Resources */,
 				D04A6BA5100EA78700704963 /* MyDocument.xib in Resources */,
 				D04A6BAB100EA7B800704963 /* MainMenu.xib in Resources */,
+				A54D8AEE2A3ECBD80021FBAB /* ColorByteThemes in Resources */,
 				D018F139107AB64900AE805F /* DiffDocument.xib in Resources */,
 				D0B47FEF1272427B0095120E /* DiffComputationBanner.xib in Resources */,
 				A57F34861F1EFA8800234B94 /* ChooseStringEncodingDialog.xib in Resources */,

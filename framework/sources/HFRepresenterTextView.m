@@ -1437,33 +1437,69 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
                 dispatch_once(&onceToken, ^{
                     darkTable = calloc(256, sizeof(struct HFRGBColor));
                     lightTable = calloc(256, sizeof(struct HFRGBColor));
-                    NSColor *darkColorASCIIPrintable = [NSColor.cyanColor colorUsingColorSpaceName:NSCalibratedRGBColorSpace];
-                    NSColor *lightColorASCIIPrintable = [[NSColor colorWithRed:0x33/255.0 green:0xCC/255.0 blue:0xCC/255.0 alpha:1.0] colorUsingColorSpaceName:NSCalibratedRGBColorSpace];
-                    NSColor *darkColorASCIIWhitespace = [NSColor.systemGreenColor colorUsingColorSpaceName:NSCalibratedRGBColorSpace];
-                    NSColor *darkColorASCIIOther = [[NSColor colorWithCalibratedRed:1 green:0 blue:1 alpha:1] colorUsingColorSpaceName:NSCalibratedRGBColorSpace];
-                    NSColor *lightColorASCIIOther = [NSColor.systemPurpleColor colorUsingColorSpaceName:NSCalibratedRGBColorSpace];
-                    NSColor *darkColorNonASCII = [NSColor.systemOrangeColor colorUsingColorSpaceName:NSCalibratedRGBColorSpace];
-                    NSColor *darkColorNul = [NSColor.darkGrayColor colorUsingColorSpaceName:NSCalibratedRGBColorSpace];
-                    NSColor *lightColorNul = [[NSColor colorWithCalibratedWhite:0.8 alpha:1.0] colorUsingColorSpaceName:NSCalibratedRGBColorSpace];
+                    NSURL *jsonUrl = [NSBundle.mainBundle URLForResource:@"Default" withExtension:@"json5" subdirectory:@"ColorByteThemes"];
+                    HFASSERT(jsonUrl != nil);
+                    NSData *jsonData = [NSData dataWithContentsOfURL:jsonUrl];
+                    HFASSERT(jsonData != nil);
+                    NSError *error;
+                    NSJSONReadingOptions options = 0;
+                    if (@available(macOS 12, *)) {
+                        options |= NSJSONReadingJSON5Allowed;
+                    }
+                    NSDictionary *themeDict = [NSJSONSerialization JSONObjectWithData:jsonData options:options error:&error];
+                    HFASSERT([themeDict isKindOfClass:[NSDictionary class]]);
+                    NSDictionary *darkDict = themeDict[@"dark"];
+                    NSDictionary *lightDict = themeDict[@"light"];
+                    HFASSERT([darkDict isKindOfClass:[NSDictionary class]]);
+                    HFASSERT([lightDict isKindOfClass:[NSDictionary class]]);
                     for (int b = 0; b < 256; b++) {
-                        NSColor *darkColor = nil;
-                        NSColor *lightColor = nil;
+                        NSString *key;
                         if (b == ' ' || b == '\n' || b == '\r' || b == '\t') {
-                            darkColor = darkColorASCIIWhitespace;
-                            lightColor = darkColorASCIIWhitespace;
+                            key = @"whitespace";
                         } else if (b >= 33 && b <= 126) {
-                            darkColor = darkColorASCIIPrintable;
-                            lightColor = lightColorASCIIPrintable;
-                        } else if (b & 0x7F) {
-                            darkColor = darkColorASCIIOther;
-                            lightColor = lightColorASCIIOther;
+                            key = @"printable";
                         } else if (b == 0) {
-                            darkColor = darkColorNul;
-                            lightColor = lightColorNul;
+                            key = @"null";
+                        } else if (b & 0x80) {
+                            key = @"extended";
                         } else {
-                            darkColor = darkColorNonASCII;
-                            lightColor = darkColorNonASCII;
+                            key = @"other";
                         }
+                        static NSColor* (^valueToColor)(NSString *) = ^NSColor*(id colorValue) {
+                            static NSDictionary<NSString *, NSColor *> *colors;
+                            static dispatch_once_t onceToken;
+                            dispatch_once(&onceToken, ^{
+                                NSMutableDictionary *tmpColors = [@{
+                                    @"darkGray": [NSColor.darkGrayColor colorUsingColorSpaceName:NSCalibratedRGBColorSpace],
+                                    @"systemGreen": [NSColor.systemGreenColor colorUsingColorSpaceName:NSCalibratedRGBColorSpace],
+                                    @"systemYellow": [NSColor.systemYellowColor colorUsingColorSpaceName:NSCalibratedRGBColorSpace],
+                                } mutableCopy];
+                                if (@available(macOS 12, *)) {
+                                    tmpColors[@"systemCyan"] = [NSColor.systemCyanColor colorUsingColorSpaceName:NSCalibratedRGBColorSpace];
+                                }
+                                colors = tmpColors;
+                            });
+                            if ([colorValue isKindOfClass:[NSString class]]) {
+                                NSColor *color = colors[colorValue];
+                                if (!color) {
+                                    NSLog(@"Unknown color name %@", colorValue);
+                                    return nil;
+                                }
+                                return color;
+                            } else if ([colorValue isKindOfClass:[NSNumber class]]) {
+                                unsigned num = ((NSNumber *)colorValue).unsignedIntValue;
+                                unsigned red = (num & 0xFF0000) >> 16;
+                                unsigned green = (num & 0x00FF00) >> 8;
+                                unsigned blue = (num & 0x0000FF);
+                                return [[NSColor colorWithCalibratedRed:red/255.0 green:green/255.0 blue:blue/255.0 alpha:1.0] colorUsingColorSpaceName:NSCalibratedRGBColorSpace];
+                            } else {
+                                NSLog(@"Unknown color value type %@", NSStringFromClass([colorValue class]));
+                                HFASSERT(0);
+                            }
+                            return nil;
+                        };
+                        NSColor *darkColor = valueToColor(darkDict[key]);
+                        NSColor *lightColor = valueToColor(lightDict[key]);
                         CGFloat fr, fg, fb, fa;
                         [darkColor getRed:&fr green:&fg blue:&fb alpha:&fa];
                         darkTable[b].r = fr;
