@@ -1437,7 +1437,7 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
                 dispatch_once(&onceToken, ^{
                     darkTable = calloc(256, sizeof(struct HFRGBColor));
                     lightTable = calloc(256, sizeof(struct HFRGBColor));
-                    NSURL *jsonUrl = [NSBundle.mainBundle URLForResource:@"Default" withExtension:@"json5" subdirectory:@"ColorByteThemes"];
+                    NSURL *jsonUrl = [NSBundle.mainBundle URLForResource:@"Hexyl Bright" withExtension:@"json5" subdirectory:@"ColorByteThemes"];
                     HFASSERT(jsonUrl != nil);
                     NSData *jsonData = [NSData dataWithContentsOfURL:jsonUrl];
                     HFASSERT(jsonData != nil);
