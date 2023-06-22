@@ -1473,6 +1473,8 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
                                     @"darkGray": [NSColor.darkGrayColor colorUsingColorSpaceName:NSCalibratedRGBColorSpace],
                                     @"systemGreen": [NSColor.systemGreenColor colorUsingColorSpaceName:NSCalibratedRGBColorSpace],
                                     @"systemYellow": [NSColor.systemYellowColor colorUsingColorSpaceName:NSCalibratedRGBColorSpace],
+                                    @"systemRed": [NSColor.systemRedColor colorUsingColorSpaceName:NSCalibratedRGBColorSpace],
+                                    @"systemPurple": [NSColor.systemPurpleColor colorUsingColorSpaceName:NSCalibratedRGBColorSpace],
                                 } mutableCopy];
                                 if (@available(macOS 12, *)) {
                                     tmpColors[@"systemCyan"] = [NSColor.systemCyanColor colorUsingColorSpaceName:NSCalibratedRGBColorSpace];
@@ -1500,6 +1502,37 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
                         };
                         NSColor *darkColor = valueToColor(darkDict[key]);
                         NSColor *lightColor = valueToColor(lightDict[key]);
+                        
+                        NSDictionary *substitution = @{@"b": [NSNumber numberWithInt:b]};
+                        NSColor* (^customColor)(NSArray *) = ^NSColor*(NSArray *custom) {
+                            __block NSColor *color = nil;
+                            for (NSDictionary<NSString *, NSString *> *customDict in custom) {
+                                [customDict enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull customKey, NSString * _Nonnull customObj, BOOL * _Nonnull __unused stop) {
+                                    @try {
+                                        NSPredicate *predicate = [NSPredicate predicateWithFormat:customKey];
+                                        if ([predicate evaluateWithObject:nil
+                                                    substitutionVariables:substitution]) {
+                                            color = valueToColor(customObj);
+                                        }
+                                    } @catch (NSException *exception) {
+                                        NSLog(@"Predicate exception: %@", exception);
+                                    }
+                                }];
+                            }
+                            return color;
+                        };
+
+                        NSArray *darkCustom = darkDict[@"custom"];
+                        NSArray *lightCustom = lightDict[@"custom"];
+                        NSColor *darkCustomColor = customColor(darkCustom);
+                        NSColor *lightCustomColor = customColor(lightCustom);
+                        if (darkCustomColor) {
+                            darkColor = darkCustomColor;
+                        }
+                        if (lightCustomColor) {
+                            lightColor = lightCustomColor;
+                        }
+
                         CGFloat fr, fg, fb, fa;
                         [darkColor getRed:&fr green:&fg blue:&fb alpha:&fa];
                         darkTable[b].r = fr;
