@@ -27,6 +27,7 @@ private extension NSColor {
 }
 
 @objc public class HFByteTheme: NSObject {
+    // TODO: use struct and raw pointers
     @objc public let darkColorTable: [HFByteThemeColor]
     @objc public let lightColorTable: [HFByteThemeColor]
 
@@ -54,6 +55,10 @@ private extension NSColor {
     
     private static func colorTableFromDict(_ dict: NSDictionary) -> [HFByteThemeColor] {
         var table = [HFByteThemeColor](repeating: .init(r: 0.0, g: 1.0, b: 0), count: 256)
+        var custom: [[String: String]] = []
+        if let customDict = dict["custom"] as? [[String: String]] {
+            custom = customDict
+        }
         let whitespace = [
             UnicodeScalar(" ").value,
             UnicodeScalar("\n").value,
@@ -61,6 +66,24 @@ private extension NSColor {
             UnicodeScalar("\t").value,
         ]
         for b in 0..<table.count {
+            let substitutionVars = ["b": b]
+            var setCustom = false
+            for item in custom {
+                for (formatStr, colorValue) in item {
+                    // TODO: handle exceptions
+                    let predicate = NSPredicate(format: formatStr)
+                    if predicate.evaluate(with: nil, substitutionVariables: substitutionVars) {
+                        if let color = Self.valueToColor(colorValue: colorValue) {
+                            table[b] = Self.nscolorToThemeColor(color)
+                            setCustom = true
+                            break
+                        }
+                    }
+                }
+            }
+            if setCustom {
+                continue
+            }
             let key: String
             if whitespace.contains(UInt32(b)) {
                 key = "whitespace"

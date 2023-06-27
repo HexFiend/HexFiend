@@ -1440,38 +1440,6 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
                     HFASSERT(byteTheme != nil);
                     darkTable = byteTheme.darkColorTable;
                     lightTable = byteTheme.lightColorTable;
-
-                        #if 0
-                        NSDictionary *substitution = @{@"b": [NSNumber numberWithInt:b]};
-                        NSColor* (^customColor)(NSArray *) = ^NSColor*(NSArray *custom) {
-                            __block NSColor *color = nil;
-                            for (NSDictionary<NSString *, NSString *> *customDict in custom) {
-                                [customDict enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull customKey, NSString * _Nonnull customObj, BOOL * _Nonnull __unused stop) {
-                                    @try {
-                                        NSPredicate *predicate = [NSPredicate predicateWithFormat:customKey];
-                                        if ([predicate evaluateWithObject:nil
-                                                    substitutionVariables:substitution]) {
-                                            color = valueToColor(customObj);
-                                        }
-                                    } @catch (NSException *exception) {
-                                        NSLog(@"Predicate exception: %@", exception);
-                                    }
-                                }];
-                            }
-                            return color;
-                        };
-
-                        NSArray *darkCustom = darkDict[@"custom"];
-                        NSArray *lightCustom = lightDict[@"custom"];
-                        NSColor *darkCustomColor = customColor(darkCustom);
-                        NSColor *lightCustomColor = customColor(lightCustom);
-                        if (darkCustomColor) {
-                            darkColor = darkCustomColor;
-                        }
-                        if (lightCustomColor) {
-                            lightColor = lightCustomColor;
-                        }
-                        #endif
                 });
                 if (bytePtr && colorBytes2Enabled) {
                     const uint8_t byte = *bytePtr;
