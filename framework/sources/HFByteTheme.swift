@@ -102,11 +102,7 @@ private extension NSColor {
         return table
     }
     
-    private static var _namesToColors: [String: NSColor?]?
-    private static var namesToColors: [String: NSColor?] {
-        if let namesToColors = Self._namesToColors {
-            return namesToColors
-        }
+    private static var namesToColors: [String: NSColor?] = {
         var map: [String: NSColor] = [
             "darkGray": .darkGray.toRGB(),
             "systemGreen": .systemGreen.toRGB(),
@@ -127,9 +123,8 @@ private extension NSColor {
         if #available(macOS 12, *) {
             map["systemCyan"] = .systemCyan.toRGB()
         }
-        Self._namesToColors = map
         return map
-    }
+    }()
     
     private static func valueToColor(colorValue: Any) -> NSColor? {
         if let colorString = colorValue as? String {
