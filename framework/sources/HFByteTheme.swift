@@ -49,18 +49,19 @@ private extension NSColor {
         return UnsafePointer<HFByteThemeColor>(pointer)
     }
     
+    private static let whitespace: Set = [
+        UnicodeScalar(" ").value,
+        UnicodeScalar("\n").value,
+        UnicodeScalar("\r").value,
+        UnicodeScalar("\t").value,
+    ]
+    
     private static func colorTableFromDict(_ dict: NSDictionary) -> [HFByteThemeColor] {
         var table = [HFByteThemeColor](repeating: .init(), count: 256)
         var custom: [[String: String]] = []
         if let customDict = dict["custom"] as? [[String: String]] {
             custom = customDict
         }
-        let whitespace = [
-            UnicodeScalar(" ").value,
-            UnicodeScalar("\n").value,
-            UnicodeScalar("\r").value,
-            UnicodeScalar("\t").value,
-        ]
         for b in 0..<table.count {
             let substitutionVars = ["b": b]
             var setCustom = false
