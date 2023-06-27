@@ -17,6 +17,7 @@
 #import "HFRepresenterTextViewCallout.h"
 #import <objc/message.h>
 #import <CoreText/CoreText.h>
+#import <HexFiend/HexFiend-Swift.h>
 
 /* Returns the first index where the strings differ.  If the strings do not differ in any characters but are of different lengths, returns the smaller length; if they are the same length and do not differ, returns NSUIntegerMax */
 static inline NSUInteger HFIndexOfFirstByteThatDiffers(const unsigned char *a, NSUInteger len1, const unsigned char *b, NSUInteger len2) {
@@ -1428,81 +1429,19 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
                     }
                 }
                 
-                struct HFRGBColor {
-                    CGFloat r, g, b;
-                };
-                static struct HFRGBColor *darkTable;
-                static struct HFRGBColor *lightTable;
+                __block HFByteTheme *byteTheme = nil;
+                static NSArray<HFByteThemeColor *> *darkTable;
+                static NSArray<HFByteThemeColor *> *lightTable;
                 static dispatch_once_t onceToken;
                 dispatch_once(&onceToken, ^{
-                    darkTable = calloc(256, sizeof(struct HFRGBColor));
-                    lightTable = calloc(256, sizeof(struct HFRGBColor));
                     NSURL *jsonUrl = [NSBundle.mainBundle URLForResource:@"Hexyl Bright" withExtension:@"json5" subdirectory:@"ColorByteThemes"];
                     HFASSERT(jsonUrl != nil);
-                    NSData *jsonData = [NSData dataWithContentsOfURL:jsonUrl];
-                    HFASSERT(jsonData != nil);
-                    NSError *error;
-                    NSJSONReadingOptions options = 0;
-                    if (@available(macOS 12, *)) {
-                        options |= NSJSONReadingJSON5Allowed;
-                    }
-                    NSDictionary *themeDict = [NSJSONSerialization JSONObjectWithData:jsonData options:options error:&error];
-                    HFASSERT([themeDict isKindOfClass:[NSDictionary class]]);
-                    NSDictionary *darkDict = themeDict[@"dark"];
-                    NSDictionary *lightDict = themeDict[@"light"];
-                    HFASSERT([darkDict isKindOfClass:[NSDictionary class]]);
-                    HFASSERT([lightDict isKindOfClass:[NSDictionary class]]);
-                    for (int b = 0; b < 256; b++) {
-                        NSString *key;
-                        if (b == ' ' || b == '\n' || b == '\r' || b == '\t') {
-                            key = @"whitespace";
-                        } else if (b >= 33 && b <= 126) {
-                            key = @"printable";
-                        } else if (b == 0) {
-                            key = @"null";
-                        } else if (b & 0x80) {
-                            key = @"extended";
-                        } else {
-                            key = @"other";
-                        }
-                        static NSColor* (^valueToColor)(NSString *) = ^NSColor*(id colorValue) {
-                            static NSDictionary<NSString *, NSColor *> *colors;
-                            static dispatch_once_t onceToken;
-                            dispatch_once(&onceToken, ^{
-                                NSMutableDictionary *tmpColors = [@{
-                                    @"darkGray": [NSColor.darkGrayColor colorUsingColorSpaceName:NSCalibratedRGBColorSpace],
-                                    @"systemGreen": [NSColor.systemGreenColor colorUsingColorSpaceName:NSCalibratedRGBColorSpace],
-                                    @"systemYellow": [NSColor.systemYellowColor colorUsingColorSpaceName:NSCalibratedRGBColorSpace],
-                                    @"systemRed": [NSColor.systemRedColor colorUsingColorSpaceName:NSCalibratedRGBColorSpace],
-                                    @"systemPurple": [NSColor.systemPurpleColor colorUsingColorSpaceName:NSCalibratedRGBColorSpace],
-                                } mutableCopy];
-                                if (@available(macOS 12, *)) {
-                                    tmpColors[@"systemCyan"] = [NSColor.systemCyanColor colorUsingColorSpaceName:NSCalibratedRGBColorSpace];
-                                }
-                                colors = tmpColors;
-                            });
-                            if ([colorValue isKindOfClass:[NSString class]]) {
-                                NSColor *color = colors[colorValue];
-                                if (!color) {
-                                    NSLog(@"Unknown color name %@", colorValue);
-                                    return nil;
-                                }
-                                return color;
-                            } else if ([colorValue isKindOfClass:[NSNumber class]]) {
-                                unsigned num = ((NSNumber *)colorValue).unsignedIntValue;
-                                unsigned red = (num & 0xFF0000) >> 16;
-                                unsigned green = (num & 0x00FF00) >> 8;
-                                unsigned blue = (num & 0x0000FF);
-                                return [[NSColor colorWithCalibratedRed:red/255.0 green:green/255.0 blue:blue/255.0 alpha:1.0] colorUsingColorSpaceName:NSCalibratedRGBColorSpace];
-                            } else {
-                                NSLog(@"Unknown color value type %@", NSStringFromClass([colorValue class]));
-                                HFASSERT(0);
-                            }
-                            return nil;
-                        };
-                        NSColor *darkColor = valueToColor(darkDict[key]);
-                        NSColor *lightColor = valueToColor(lightDict[key]);
-                        
+                    byteTheme = [[HFByteTheme alloc] initWithUrl:jsonUrl];
+                    HFASSERT(byteTheme != nil);
+                    darkTable = byteTheme.darkColorTable;
+                    lightTable = byteTheme.lightColorTable;
+
+                        #if 0
                         NSDictionary *substitution = @{@"b": [NSNumber numberWithInt:b]};
                         NSColor* (^customColor)(NSArray *) = ^NSColor*(NSArray *custom) {
                             __block NSColor *color = nil;
@@ -1532,23 +1471,13 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
                         if (lightCustomColor) {
                             lightColor = lightCustomColor;
                         }
-
-                        CGFloat fr, fg, fb, fa;
-                        [darkColor getRed:&fr green:&fg blue:&fb alpha:&fa];
-                        darkTable[b].r = fr;
-                        darkTable[b].g = fg;
-                        darkTable[b].b = fb;
-                        [lightColor getRed:&fr green:&fg blue:&fb alpha:&fa];
-                        lightTable[b].r = fr;
-                        lightTable[b].g = fg;
-                        lightTable[b].b = fb;
-                    }
+                        #endif
                 });
                 if (bytePtr && colorBytes2Enabled) {
                     const uint8_t byte = *bytePtr;
-                    const struct HFRGBColor *table = darkMode ? darkTable : lightTable;
-                    const struct HFRGBColor *col = &table[byte];
-                    CGContextSetRGBFillColor(ctx, col->r, col->g, col->b, 1.0);
+                    NSArray<HFByteThemeColor *> *table = darkMode ? darkTable : lightTable;
+                    HFByteThemeColor *col = table[byte];
+                    CGContextSetRGBFillColor(ctx, col.r, col.g, col.b, 1.0);
                 }
 
                 /* Draw the glyphs */
