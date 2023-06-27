@@ -1383,6 +1383,15 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
     HFASSERT(glyphCount > 0);
     const BOOL colorBytes2Enabled = [NSUserDefaults.standardUserDefaults boolForKey:@"ColorBytes2"];
     const BOOL darkMode = HFDarkModeEnabled();
+    
+    if (!self.byteTheme) {
+        NSURL *jsonUrl = [NSBundle.mainBundle URLForResource:@"Hexyl Bright" withExtension:@"json5" subdirectory:@"ColorByteThemes"];
+        HFASSERT(jsonUrl != nil);
+        self.byteTheme = [[HFByteTheme alloc] initWithUrl:jsonUrl];
+        HFASSERT(self.byteTheme != nil);
+    }
+    const struct HFByteThemeColor *colorTable = darkMode ? self.byteTheme.darkColorTable : self.byteTheme.lightColorTable;
+
     if ([styleRun shouldDraw]) {
         [styleRun set];
         CGContextRef ctx = HFGraphicsGetCurrentContext();
@@ -1429,22 +1438,9 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
                     }
                 }
                 
-                static HFByteTheme *byteTheme = nil;
-                static const struct HFByteThemeColor *darkTable;
-                static const struct HFByteThemeColor *lightTable;
-                static dispatch_once_t onceToken;
-                dispatch_once(&onceToken, ^{
-                    NSURL *jsonUrl = [NSBundle.mainBundle URLForResource:@"Hexyl Bright" withExtension:@"json5" subdirectory:@"ColorByteThemes"];
-                    HFASSERT(jsonUrl != nil);
-                    byteTheme = [[HFByteTheme alloc] initWithUrl:jsonUrl];
-                    HFASSERT(byteTheme != nil);
-                    darkTable = byteTheme.darkColorTable;
-                    lightTable = byteTheme.lightColorTable;
-                });
                 if (bytePtr && colorBytes2Enabled) {
                     const uint8_t byte = *bytePtr;
-                    const struct HFByteThemeColor *table = darkMode ? darkTable : lightTable;
-                    const struct HFByteThemeColor *col = &table[byte];
+                    const struct HFByteThemeColor *col = &colorTable[byte];
                     CGContextSetRGBFillColor(ctx, col->r, col->g, col->b, 1.0);
                 }
 
