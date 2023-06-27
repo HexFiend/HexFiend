@@ -8,15 +8,6 @@
 
 import Foundation
 
-@objc public class HFByteThemeColor: NSObject {
-    @objc public var r, g, b: CGFloat
-    init(r: CGFloat, g: CGFloat, b: CGFloat) {
-        self.r = r
-        self.g = g
-        self.b = b
-    }
-}
-
 private extension NSColor {
     func toRGB() -> NSColor {
         guard let rgb = self.usingColorSpaceName(.calibratedRGB) else {
@@ -27,9 +18,8 @@ private extension NSColor {
 }
 
 @objc public class HFByteTheme: NSObject {
-    // TODO: use struct and raw pointers
-    @objc public let darkColorTable: [HFByteThemeColor]
-    @objc public let lightColorTable: [HFByteThemeColor]
+    @objc public let darkColorTable: UnsafePointer<HFByteThemeColor>
+    @objc public let lightColorTable: UnsafePointer<HFByteThemeColor>
 
     @objc public init?(url: URL) {
         guard #available(macOS 12, *) else {
@@ -49,12 +39,18 @@ private extension NSColor {
             print("Invalid \"light\" at \(url))!")
             return nil
         }
-        self.darkColorTable = Self.colorTableFromDict(darkDict)
-        self.lightColorTable = Self.colorTableFromDict(lightDict)
+        self.darkColorTable = Self.colorTableToPointer(Self.colorTableFromDict(darkDict))
+        self.lightColorTable = Self.colorTableToPointer(Self.colorTableFromDict(lightDict))
+    }
+
+    private static func colorTableToPointer(_ table: [HFByteThemeColor]) -> UnsafePointer<HFByteThemeColor> {
+        let pointer = UnsafeMutablePointer<HFByteThemeColor>.allocate(capacity: table.count)
+        pointer.initialize(from: table, count: table.count)
+        return UnsafePointer<HFByteThemeColor>(pointer)
     }
     
     private static func colorTableFromDict(_ dict: NSDictionary) -> [HFByteThemeColor] {
-        var table = [HFByteThemeColor](repeating: .init(r: 0.0, g: 1.0, b: 0), count: 256)
+        var table = [HFByteThemeColor](repeating: .init(), count: 256)
         var custom: [[String: String]] = []
         if let customDict = dict["custom"] as? [[String: String]] {
             custom = customDict

@@ -1429,9 +1429,9 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
                     }
                 }
                 
-                __block HFByteTheme *byteTheme = nil;
-                static NSArray<HFByteThemeColor *> *darkTable;
-                static NSArray<HFByteThemeColor *> *lightTable;
+                static HFByteTheme *byteTheme = nil;
+                static const struct HFByteThemeColor *darkTable;
+                static const struct HFByteThemeColor *lightTable;
                 static dispatch_once_t onceToken;
                 dispatch_once(&onceToken, ^{
                     NSURL *jsonUrl = [NSBundle.mainBundle URLForResource:@"Hexyl Bright" withExtension:@"json5" subdirectory:@"ColorByteThemes"];
@@ -1443,9 +1443,9 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
                 });
                 if (bytePtr && colorBytes2Enabled) {
                     const uint8_t byte = *bytePtr;
-                    NSArray<HFByteThemeColor *> *table = darkMode ? darkTable : lightTable;
-                    HFByteThemeColor *col = table[byte];
-                    CGContextSetRGBFillColor(ctx, col.r, col.g, col.b, 1.0);
+                    const struct HFByteThemeColor *table = darkMode ? darkTable : lightTable;
+                    const struct HFByteThemeColor *col = &table[byte];
+                    CGContextSetRGBFillColor(ctx, col->r, col->g, col->b, 1.0);
                 }
 
                 /* Draw the glyphs */
