@@ -558,4 +558,14 @@ NSData *HFDataFromHexString(NSString *string, BOOL *_Nullable isMissingLastNybbl
 
 NSString *HFHexStringFromData(NSData *data, BOOL includePrefix);
 
+/* Helper for Swift to catch exceptions from Objective-C */
+NS_INLINE NSException * _Nullable HFTry(dispatch_block_t block) {
+    @try {
+        block();
+    } @catch (NSException *exception) {
+        return exception;
+    }
+    return nil;
+}
+
 NS_ASSUME_NONNULL_END

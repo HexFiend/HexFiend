@@ -62,24 +62,23 @@ private extension NSColor {
         if let customDict = dict["custom"] as? [[String: String]] {
             custom = customDict
         }
-        for b in 0..<table.count {
+    mainLoop: for b in 0..<table.count {
             let substitutionVars = ["b": b]
-            var setCustom = false
             for item in custom {
                 for (formatStr, colorValue) in item {
-                    // TODO: handle exceptions
-                    let predicate = NSPredicate(format: formatStr)
-                    if predicate.evaluate(with: nil, substitutionVariables: substitutionVars) {
-                        if let color = Self.valueToColor(colorValue: colorValue) {
-                            table[b] = Self.nscolorToThemeColor(color)
-                            setCustom = true
-                            break
-                        }
+                    var evaluated = false
+                    if let exception = HFTry({
+                        let predicate = NSPredicate(format: formatStr)
+                        evaluated = predicate.evaluate(with: nil, substitutionVariables: substitutionVars)
+                    }) {
+                        print("Predicate error: \(exception)")
+                        continue
+                    }
+                    if evaluated, let color = Self.valueToColor(colorValue: colorValue) {
+                        table[b] = Self.nscolorToThemeColor(color)
+                        continue mainLoop
                     }
                 }
-            }
-            if setCustom {
-                continue
             }
             let key: String
             if whitespace.contains(UInt32(b)) {
