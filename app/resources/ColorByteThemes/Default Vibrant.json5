@@ -5,11 +5,6 @@
        whitespace: "systemGreen",
        other: "systemGreen",
        extended: "systemYellow",
-       custom: [
-           //{"$b BETWEEN {65, 90}": "systemRed"},
-           //{"($b & 0x1) == 0x1": "systemPurple"},
-           {"$b == 0x50": "systemOrange"},
-       ],
    },
    light: {
        null: 0x999999,
