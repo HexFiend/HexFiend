@@ -159,8 +159,25 @@
 }
 
 - (void)loadByteThemes {
-    NSArray<NSURL *> *jsonUrls = [NSBundle.mainBundle URLsForResourcesWithExtension:@"json5" subdirectory:@"ColorByteThemes"];
+    NSString *pathExtension = @"json5";
+    NSString *subdir = @"ColorByteThemes";
+    
+    // Get themes in bundle
     NSMutableDictionary<NSString *, HFByteTheme *> *themes = [NSMutableDictionary dictionary];
+    NSArray<NSURL *> *bundleJsonUrls = [NSBundle.mainBundle URLsForResourcesWithExtension:pathExtension subdirectory:subdir];
+    
+    // Get themes in app support directory
+    NSFileManager *fm = NSFileManager.defaultManager;
+    NSURL *appSupportThemesDir = [[[fm URLsForDirectory:NSApplicationSupportDirectory inDomains:NSUserDomainMask][0] URLByAppendingPathComponent:NSBundle.mainBundle.bundleIdentifier] URLByAppendingPathComponent:subdir];
+    NSDirectoryEnumerator<NSURL *> *dirEnum = [fm enumeratorAtURL:appSupportThemesDir includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsSubdirectoryDescendants errorHandler:nil];
+    NSMutableArray<NSURL *> *appSupportJsonUrls = [NSMutableArray array];
+    for (NSURL *url in dirEnum) {
+        if ([url.pathExtension isEqualToString:pathExtension]) {
+            [appSupportJsonUrls addObject:url];
+        }
+    }
+    
+    NSArray<NSURL *> *jsonUrls = [bundleJsonUrls arrayByAddingObjectsFromArray:appSupportJsonUrls];
     for (NSURL *jsonUrl in jsonUrls) {
         HFByteTheme *byteTheme = [[HFByteTheme alloc] initWithUrl:jsonUrl];
         if (!byteTheme) {
