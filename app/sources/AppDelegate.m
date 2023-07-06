@@ -158,10 +158,9 @@
     byteGroupingMenuItem.submenu = menu;
 }
 
-- (void)buildByteThemeMenu {
+- (void)loadByteThemes {
     NSArray<NSURL *> *jsonUrls = [NSBundle.mainBundle URLsForResourcesWithExtension:@"json5" subdirectory:@"ColorByteThemes"];
     NSMutableDictionary<NSString *, HFByteTheme *> *themes = [NSMutableDictionary dictionary];
-    NSMutableArray<NSMenuItem *> *menuItems = [NSMutableArray array];
     for (NSURL *jsonUrl in jsonUrls) {
         HFByteTheme *byteTheme = [[HFByteTheme alloc] initWithUrl:jsonUrl];
         if (!byteTheme) {
@@ -169,16 +168,24 @@
             continue;;
         }
         NSString *title = jsonUrl.URLByDeletingPathExtension.lastPathComponent;
-        NSMenuItem *menuItem = [[NSMenuItem alloc] initWithTitle:title action:@selector(setByteThemeFromMenuItem:) keyEquivalent:@""];
-        menuItem.representedObject = byteTheme;
-        [menuItems addObject:menuItem];
         themes[title] = byteTheme;
     }
-    [menuItems sortUsingDescriptors:@[[[NSSortDescriptor alloc] initWithKey:@"title" ascending:NO]]];
+    _byteThemes = [themes copy];
+}
+
+- (void)buildByteThemeMenu {
+    [self loadByteThemes];
+
+    NSMutableArray<NSMenuItem *> *menuItems = [NSMutableArray array];
+    [self.byteThemes enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull name, HFByteTheme * _Nonnull theme, BOOL * _Nonnull stop __unused) {
+        NSMenuItem *menuItem = [[NSMenuItem alloc] initWithTitle:name action:@selector(setByteThemeFromMenuItem:) keyEquivalent:@""];
+        menuItem.representedObject = theme;
+        [menuItems addObject:menuItem];
+    }];
+    [menuItems sortUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"title" ascending:NO]]];
     for (NSMenuItem *menuItem in menuItems) {
         [byteThemeMenuItem.submenu addItem:menuItem];
     }
-    _byteThemes = [themes copy];
 }
 
 static NSComparisonResult compareFontDisplayNames(NSFont *a, NSFont *b, void *unused) {
