@@ -287,9 +287,6 @@
     if (bits & (HFControllerEditable)) {
         [(HFRepresenterTextView *)[self view] setEditable:[[self controller] editable]];
     }
-    if (bits & (HFControllerAntialias)) {
-        [(HFRepresenterTextView *)[self view] setShouldAntialias:[[self controller] shouldAntialias]];
-    }
     if (bits & (HFControllerShowCallouts)) {
         [(HFRepresenterTextView *)[self view] setShouldDrawCallouts:[[self controller] shouldShowCallouts]];
     }

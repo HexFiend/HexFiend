@@ -80,7 +80,6 @@ extern NSString * const BaseDataDocumentDidChangeStringEncodingNotification;
 - (NSWindow *)window;
 
 - (IBAction)showFontPanel:sender;
-- (IBAction)setAntialiasFromMenuItem:sender;
 - (IBAction)setColorBytesFromMenuItem:sender;
 
 - (IBAction)findNext:sender;

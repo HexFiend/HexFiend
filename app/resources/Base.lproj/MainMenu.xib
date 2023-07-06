@@ -379,12 +379,6 @@
                             <menuItem isSeparatorItem="YES" id="415">
                                 <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                             </menuItem>
-                            <menuItem title="Anti-alias" id="457">
-                                <modifierMask key="keyEquivalentModifierMask" control="YES"/>
-                                <connections>
-                                    <action selector="setAntialiasFromMenuItem:" target="-1" id="xJB-SX-oT5"/>
-                                </connections>
-                            </menuItem>
                             <menuItem title="Color Bytes" id="HpS-tB-2Bk">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>

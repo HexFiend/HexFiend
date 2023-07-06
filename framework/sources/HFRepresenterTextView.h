@@ -48,7 +48,6 @@ NS_ASSUME_NONNULL_BEGIN
     void (^byteColoring)(uint8_t byte, uint8_t *r, uint8_t *g, uint8_t *b, uint8_t *a);
     
     struct {
-        unsigned antialias:1;
         unsigned drawCallouts:1;
         unsigned editable:1;
         unsigned caretVisible:1;
@@ -71,7 +70,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) NSUInteger startingLineBackgroundColorIndex;
 @property (nonatomic, getter=isEditable) BOOL editable;
 @property (nullable, nonatomic, copy) NSArray *styles;
-@property (nonatomic) BOOL shouldAntialias;
 
 - (BOOL)behavesAsTextField;
 - (BOOL)showsFocusRing;

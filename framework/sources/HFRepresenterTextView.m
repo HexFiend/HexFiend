@@ -485,7 +485,6 @@ enum LineCoverage_t {
                 [self drawPulseBackgroundInRect:imageRect];
                 [NSColor.labelColor set];
                 [self.font set];
-                if (! [self shouldAntialias]) CGContextSetShouldAntialias(ctx, NO);
                 CGContextScaleCTM(ctx, imageScale, imageScale);
                 CGContextTranslateCTM(ctx, -windowFrameInBoundsCoords.origin.x, -windowFrameInBoundsCoords.origin.y);
                 [self drawTextWithClip:windowFrameInBoundsCoords restrictingToTextInRanges:ranges context:ctx];
@@ -669,7 +668,6 @@ enum LineCoverage_t {
     [coder encodeInt64:bytesBetweenVerticalGuides forKey:@"HFBytesBetweenVerticalGuides"];
     [coder encodeInt64:startingLineBackgroundColorIndex forKey:@"HFStartingLineBackgroundColorIndex"];
     [coder encodeObject:rowBackgroundColors forKey:@"HFRowBackgroundColors"];
-    [coder encodeBool:_hftvflags.antialias ? YES : NO forKey:@"HFAntialias"];
     [coder encodeBool:_hftvflags.drawCallouts ? YES : NO forKey:@"HFDrawCallouts"];
     [coder encodeBool:_hftvflags.editable ? YES : NO forKey:@"HFEditable"];
 }
@@ -686,7 +684,6 @@ enum LineCoverage_t {
     bytesBetweenVerticalGuides = (NSUInteger)[coder decodeInt64ForKey:@"HFBytesBetweenVerticalGuides"];
     startingLineBackgroundColorIndex = (NSUInteger)[coder decodeInt64ForKey:@"HFStartingLineBackgroundColorIndex"];
     rowBackgroundColors = [coder decodeObjectForKey:@"HFRowBackgroundColors"];
-    _hftvflags.antialias = [coder decodeBoolForKey:@"HFAntialias"];
     _hftvflags.drawCallouts = [coder decodeBoolForKey:@"HFDrawCallouts"];
     _hftvflags.editable = [coder decodeBoolForKey:@"HFEditable"];
     return self;
@@ -1715,8 +1712,6 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
     [[self backgroundColorForEmptySpace] set];
     CGContextFillRect(ctx, clip);
 
-    BOOL antialias = [self shouldAntialias];
-    
 #if !TARGET_OS_IPHONE
     [self.font set];
     if ([self showsFocusRing]) {
@@ -1734,14 +1729,7 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
     [self _drawDefaultLineBackgrounds:clip withLineHeight:[self lineHeight] maxLines:ll2l(HFRoundUpToNextMultipleSaturate(byteCount, bytesPerLine) / bytesPerLine)];
     [self drawRangesIfNecessaryWithClip:clip context:ctx];
     
-    if (! antialias) {
-        CGContextSaveGState(ctx);
-        CGContextSetShouldAntialias(ctx, NO);
-    }
     [self drawTextWithClip:clip restrictingToTextInRanges:nil context:ctx];
-    if (! antialias) {
-        CGContextRestoreGState(ctx);
-    }
     
     // Vertical dividers only make sense in single byte mode.
     if ([self _effectiveBytesPerColumn] == 1) {
@@ -1918,19 +1906,6 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
         [self _updateCaretTimer];
 #endif
     }
-}
-
-- (BOOL)shouldAntialias {
-    return _hftvflags.antialias ? YES : NO;
-}
-
-- (void)setShouldAntialias:(BOOL)val {
-    _hftvflags.antialias = !!val;
-#if TARGET_OS_IPHONE
-    [self setNeedsDisplay];
-#else
-    [self setNeedsDisplay:YES];
-#endif
 }
 
 - (BOOL)behavesAsTextField {

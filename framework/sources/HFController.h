@@ -29,7 +29,7 @@ typedef NS_OPTIONS(NSUInteger, HFControllerPropertyBits) {
     HFControllerBytesPerColumn = 1 << 6,	/*!< Indicates that the number of bytes per column (byte grouping) has changed. */
     HFControllerEditable = 1 << 7,		/*!< Indicates that the document has become (or is no longer) editable. */
     HFControllerFont = 1 << 8,			/*!< Indicates that the font property has changed. */
-    HFControllerAntialias = 1 << 9,		/*!< Indicates that the shouldAntialias property has changed. */
+    // 1 << 9 was HFControllerAntialias
     HFControllerLineHeight = 1 << 10,		/*!< Indicates that the lineHeight property has changed. */
     HFControllerViewSizeRatios = 1 << 11,	/*!< Indicates that the optimum size for each view may have changed; used by HFLayoutController after font changes. */
     HFControllerByteRangeAttributes = 1 << 12,  /*!< Indicates that some attributes of the ByteArray has changed within the document.  There is no indication as to what the change is. */
@@ -132,7 +132,6 @@ You create an HFController via <tt>[[HFController alloc] init]</tt>.  After that
     HFByteTheme *byteTheme;
     
     struct {
-        BOOL antialias;
         BOOL colorbytes;
         BOOL showcallouts;
         BOOL hideNullBytes;
@@ -289,9 +288,6 @@ You create an HFController via <tt>[[HFController alloc] init]</tt>.  After that
 
 /*! Whether the user can save the document. */
 @property (nonatomic) BOOL savable;
-
-/*! Whether the text should be antialiased. Note that Mac OS X settings may prevent antialiasing text below a certain point size. */
-@property (nonatomic) BOOL shouldAntialias;
 
 /*! When enabled, characters have a background color that correlates to their byte values. */
 @property (nonatomic) BOOL shouldColorBytes;

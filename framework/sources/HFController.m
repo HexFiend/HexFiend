@@ -86,7 +86,6 @@ static inline Class preferredByteArrayClass(void) {
     bytesPerLine = 16;
     bytesPerColumn = 1;
     _hfflags.editable = YES;
-    _hfflags.antialias = YES;
     _hfflags.showcallouts = YES;
     _hfflags.hideNullBytes = NO;
     _hfflags.selectable = YES;
@@ -114,7 +113,6 @@ static inline Class preferredByteArrayClass(void) {
     [coder encodeInt64:bytesPerColumn forKey:@"HFBytesPerColumn"];
     [coder encodeObject:_font forKey:@"HFFont"];
     [coder encodeDouble:lineHeight forKey:@"HFLineHeight"];
-    [coder encodeBool:_hfflags.antialias forKey:@"HFAntialias"];
     [coder encodeBool:_hfflags.colorbytes forKey:@"HFColorBytes"];
     [coder encodeBool:_hfflags.showcallouts forKey:@"HFShowCallouts"];
     [coder encodeBool:_hfflags.hideNullBytes forKey:@"HFHidesNullBytes"];
@@ -133,7 +131,6 @@ static inline Class preferredByteArrayClass(void) {
     bytesPerColumn = (NSUInteger)[coder decodeInt64ForKey:@"HFBytesPerColumn"];
     _font = [coder decodeObjectForKey:@"HFFont"];
     lineHeight = (CGFloat)[coder decodeDoubleForKey:@"HFLineHeight"];
-    _hfflags.antialias = [coder decodeBoolForKey:@"HFAntialias"];
     _hfflags.colorbytes = [coder decodeBoolForKey:@"HFColorBytes"];
     _hfflags.livereload = [coder decodeBoolForKey:@"HFLiveReload"];
     
@@ -300,18 +297,6 @@ static inline Class preferredByteArrayClass(void) {
         [self _insertPropertyChangeFence];
         [self _addPropertyChangeBits:HFControllerViewSizeRatios];
         [self _updateDisplayedRange];
-    }
-}
-
-- (BOOL)shouldAntialias {
-    return _hfflags.antialias;
-}
-
-- (void)setShouldAntialias:(BOOL)antialias {
-    antialias = !! antialias;
-    if (antialias != _hfflags.antialias) {
-        _hfflags.antialias = antialias;
-        [self _addPropertyChangeBits:HFControllerAntialias];
     }
 }
 

@@ -95,7 +95,6 @@ static inline Class preferredByteArrayClass(void) {
     dispatch_once(&onceToken, ^{
         /* Defaults common to all subclasses */
         NSDictionary *defs = @{
-            @"AntialiasText"   : @YES,
             @"ShowCallouts"    : @YES,
             @"HideNullBytes"   : @NO,
             @"DefaultFontName" : HFDEFAULT_FONT,
@@ -140,7 +139,6 @@ static inline Class preferredByteArrayClass(void) {
 + (void)initialize {
     if (self == [BaseDataDocument class]) {
         NSDictionary *defs = @{
-            @"AntialiasText" : @YES,
             @"ShowCallouts" : @YES,
             @"HideNullBytes" : @NO,
             @"DefaultFontName" : HFDEFAULT_FONT,
@@ -701,7 +699,6 @@ static inline Class preferredByteArrayClass(void) {
     [columnRepresenter setLineCountingWidth:lineCountingRepresenter.preferredWidth];
     
     controller = [[HFController alloc] init];
-    [controller setShouldAntialias:[defs boolForKey:@"AntialiasText"]];
     [controller setShouldColorBytes:[defs boolForKey:@"ColorBytes"]];
     [controller setShouldShowCallouts:[defs boolForKey:@"ShowCallouts"]];
     [controller setShouldHideNullBytes:[defs boolForKey:@"HideNullBytes"]];
@@ -925,13 +922,6 @@ static inline Class preferredByteArrayClass(void) {
 }
 
 
-- (IBAction)setAntialiasFromMenuItem:(id)sender {
-    USE(sender);
-    BOOL newVal = ! [controller shouldAntialias];
-    [controller setShouldAntialias:newVal];
-    [[NSUserDefaults standardUserDefaults] setBool:newVal forKey:@"AntialiasText"];
-}
-
 - (IBAction)setShowCalloutsFromMenuItem:(id)sender {
     USE(sender);
     BOOL newVal = ! [controller shouldShowCallouts];
@@ -1015,10 +1005,6 @@ static inline Class preferredByteArrayClass(void) {
     else if (action == @selector(decreaseFontSize:)) {
         return [[self font] pointSize] >= 5.; //5 is our minimum font size
     }    
-    else if (action == @selector(setAntialiasFromMenuItem:)) {
-        [item setState:[controller shouldAntialias]];
-        return YES;
-    }
     else if (action == @selector(setColorBytesFromMenuItem:)) {
         [item setState:[controller shouldColorBytes]];
         return YES;
