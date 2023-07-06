@@ -17,6 +17,7 @@
 #include <stdio.h>
 #import <HexFiend/HFCustomEncoding.h>
 #import <HexFiend/HFEncodingManager.h>
+#import <HexFiend/HexFiend-Swift.h>
 
 @interface AppDelegate ()
 
@@ -56,6 +57,7 @@
     [extendBackwardsItem setKeyEquivalent:@"["];	
     [self buildEncodingMenu];
     [self buildByteGroupingMenu];
+    [self buildByteThemeMenu];
 
     [self processCommandLineArguments];
 
@@ -154,6 +156,26 @@
     [menu addItem:[NSMenuItem separatorItem]];
     [menu addItemWithTitle:NSLocalizedString(@"Custom…", "") action:@selector(customByteGrouping:) keyEquivalent:@""];
     byteGroupingMenuItem.submenu = menu;
+}
+
+- (void)buildByteThemeMenu {
+    NSArray<NSURL *> *jsonUrls = [NSBundle.mainBundle URLsForResourcesWithExtension:@"json5" subdirectory:@"ColorByteThemes"];
+    NSMutableArray<NSMenuItem *> *menuItems = [NSMutableArray array];
+    for (NSURL *jsonUrl in jsonUrls) {
+        HFByteTheme *byteTheme = [[HFByteTheme alloc] initWithUrl:jsonUrl];
+        if (!byteTheme) {
+            NSLog(@"Invalid theme at %@", jsonUrl);
+            continue;;
+        }
+        NSString *title = jsonUrl.URLByDeletingPathExtension.lastPathComponent;
+        NSMenuItem *menuItem = [[NSMenuItem alloc] initWithTitle:title action:@selector(setByteThemeFromMenuItem:) keyEquivalent:@""];
+        menuItem.representedObject = byteTheme;
+        [menuItems addObject:menuItem];
+    }
+    [menuItems sortUsingDescriptors:@[[[NSSortDescriptor alloc] initWithKey:@"title" ascending:NO]]];
+    for (NSMenuItem *menuItem in menuItems) {
+        [byteThemeMenuItem.submenu addItem:menuItem];
+    }
 }
 
 static NSComparisonResult compareFontDisplayNames(NSFont *a, NSFont *b, void *unused) {

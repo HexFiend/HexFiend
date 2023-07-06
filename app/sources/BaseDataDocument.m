@@ -952,6 +952,10 @@ static inline Class preferredByteArrayClass(void) {
     [[NSUserDefaults standardUserDefaults] setBool:newVal forKey:@"ColorBytes"];
 }
 
+- (IBAction)setByteThemeFromMenuItem:(NSMenuItem *)sender {
+    [controller setByteTheme:sender.representedObject];
+}
+
 
 /* Returns the selected bookmark, or NSNotFound. If more than one bookmark is selected, returns the largest. */
 - (NSInteger)selectedBookmark {

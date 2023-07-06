@@ -14,6 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 */
 
 @class HFRepresenter, HFByteArray, HFFileReference, HFControllerCoalescedUndo, HFByteRangeAttributeArray, HFColorRange;
+@class HFByteTheme;
 
 /*! @enum HFControllerPropertyBits
     The HFControllerPropertyBits bitmask is used to inform the HFRepresenters of a change in the current state that they may need to react to.  A bitmask of the changed properties is passed to representerChangedProperties:.  It is common for multiple properties to be included in such a bitmask.        
@@ -39,6 +40,7 @@ typedef NS_OPTIONS(NSUInteger, HFControllerPropertyBits) {
     HFControllerHideNullBytes = 1 << 17, /*!< Indicates that the shouldHideNullBytes property has changed. */
     HFControllerColorRanges = 1 << 18, /*!< Indicates that the colorRanges property has changed. */
     HFControllerSavable = 1 << 19, /*!< Indicates that the document has become (or is no longer) savable. */
+    HFControllerByteTheme = 1 << 29, /*!< Indicates that the byteRange property has changed. */
 };
 
 /*! @enum HFControllerMovementDirection
@@ -126,6 +128,8 @@ You create an HFController via <tt>[[HFController alloc] init]</tt>.  After that
     HFRange cachedRange;
     NSData *cachedData;
     NSUInteger cachedGenerationIndex;
+    
+    HFByteTheme *byteTheme;
     
     struct {
         BOOL antialias;
@@ -408,6 +412,9 @@ You create an HFController via <tt>[[HFController alloc] init]</tt>.  After that
 /*! Attempts to break undo stack dependencies for writing the given file.  If it is unable to do so, it will clear the controller's contributions to the stack. Returns YES if it successfully broke the dependencies, and NO if the stack had to be cleared. */
 - (BOOL)clearUndoManagerDependenciesOnRanges:(NSArray *)ranges inFile:(HFFileReference *)reference hint:(NSMutableDictionary *)hint;
 //@}
+
+- (void)setByteTheme:(HFByteTheme * _Nullable)byteTheme;
+- (HFByteTheme * _Nullable)byteTheme;
 
 @end
 

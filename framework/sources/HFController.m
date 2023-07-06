@@ -2148,4 +2148,16 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
 
 #endif
 
+- (void)setByteTheme:(HFByteTheme * _Nullable)newByteTheme {
+    if (newByteTheme != byteTheme) {
+        byteTheme = newByteTheme;
+        [self _addPropertyChangeBits:HFControllerByteTheme];
+    }
+}
+
+- (HFByteTheme * _Nullable)byteTheme
+{
+    return byteTheme;
+}
+
 @end

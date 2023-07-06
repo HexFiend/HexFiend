@@ -22,6 +22,7 @@
     IBOutlet NSMenu *stringEncodingMenu;
     IBOutlet ChooseStringEncodingWindowController *chooseStringEncoding;
     IBOutlet NSMenuItem *byteGroupingMenuItem;
+    IBOutlet NSMenuItem *byteThemeMenuItem;
     IBOutlet CLIController *cliController; // unused, prevents leak
 }
 
@@ -36,5 +37,6 @@
 @property (readonly) HFStringEncoding *defaultStringEncoding;
 
 - (void)buildByteGroupingMenu;
+- (void)buildByteThemeMenu;
 
 @end

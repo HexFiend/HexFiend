@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="16097" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="21701" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="16097"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="21701"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication"/>
@@ -535,6 +535,20 @@
                                     <action selector="setShowNullBytesFromMenuItem:" target="-1" id="VN0-ev-53i"/>
                                 </connections>
                             </menuItem>
+                            <menuItem title="Byte Theme" id="bNt-Q7-dE4">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <menu key="submenu" title="Byte Theme" id="N6s-fo-7l2">
+                                    <items>
+                                        <menuItem title="None" id="2OA-s2-OKY">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="setByteThemeFromMenuItem:" target="-1" id="gwX-2Z-whY"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="3PN-s1-H7W"/>
+                                    </items>
+                                </menu>
+                            </menuItem>
                             <menuItem isSeparatorItem="YES" id="743"/>
                             <menuItem title="Enter Full Screen" tag="6" keyEquivalent="f" id="740">
                                 <modifierMask key="keyEquivalentModifierMask" control="YES" command="YES"/>
@@ -661,6 +675,7 @@
             <connections>
                 <outlet property="bookmarksMenu" destination="569" id="623"/>
                 <outlet property="byteGroupingMenuItem" destination="488" id="U3v-Jk-eKP"/>
+                <outlet property="byteThemeMenuItem" destination="bNt-Q7-dE4" id="KnB-3u-AF6"/>
                 <outlet property="chooseStringEncoding" destination="680" id="k0D-Q1-3F6"/>
                 <outlet property="cliController" destination="Zzl-4N-uHo" id="2fL-Ue-kWP"/>
                 <outlet property="extendForwardsItem" destination="397" id="407"/>
