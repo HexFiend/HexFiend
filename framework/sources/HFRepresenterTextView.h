@@ -21,7 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
 #define HFTV_BYTES_PER_COLUMN_MAX_VALUE (1 << (HFTV_BYTES_PER_COLUMN_BITFIELD_SIZE - 1))
 
 @class HFTextRepresenter;
-
+@class HFByteTheme;
 
 /* The base class for HFTextRepresenter views - such as the hex or ASCII text view */
 @interface HFRepresenterTextView : HFView

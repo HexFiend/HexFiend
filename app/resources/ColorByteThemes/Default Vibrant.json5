@@ -1,0 +1,16 @@
+{
+   dark: {
+       null: 0x999999,
+       printable: "systemCyan",
+       whitespace: "systemGreen",
+       other: "systemGreen",
+       extended: "systemYellow",
+   },
+   light: {
+       null: 0x999999,
+       printable: "systemCyan",
+       whitespace: "systemGreen",
+       other: "systemGreen",
+       extended: "systemYellow",
+   }
+}

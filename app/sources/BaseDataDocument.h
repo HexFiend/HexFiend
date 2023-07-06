@@ -96,6 +96,7 @@ extern NSString * const BaseDataDocumentDidChangeStringEncodingNotification;
 - (IBAction)modifyByteGrouping:sender;
 - (IBAction)customByteGrouping:(id)sender;
 - (IBAction)setLineNumberFormat:(id)sender;
+- (IBAction)setByteThemeFromMenuItem:(NSMenuItem *)sender;
 
 - (IBAction)setBookmark:sender;
 - (IBAction)deleteBookmark:sender;

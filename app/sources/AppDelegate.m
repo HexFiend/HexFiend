@@ -17,6 +17,7 @@
 #include <stdio.h>
 #import <HexFiend/HFCustomEncoding.h>
 #import <HexFiend/HFEncodingManager.h>
+#import <HexFiend/HexFiend-Swift.h>
 
 @interface AppDelegate ()
 
@@ -56,6 +57,7 @@
     [extendBackwardsItem setKeyEquivalent:@"["];	
     [self buildEncodingMenu];
     [self buildByteGroupingMenu];
+    [self buildByteThemeMenu];
 
     [self processCommandLineArguments];
 
@@ -154,6 +156,36 @@
     [menu addItem:[NSMenuItem separatorItem]];
     [menu addItemWithTitle:NSLocalizedString(@"Custom…", "") action:@selector(customByteGrouping:) keyEquivalent:@""];
     byteGroupingMenuItem.submenu = menu;
+}
+
+- (void)loadByteThemes {
+    NSArray<NSURL *> *jsonUrls = [NSBundle.mainBundle URLsForResourcesWithExtension:@"json5" subdirectory:@"ColorByteThemes"];
+    NSMutableDictionary<NSString *, HFByteTheme *> *themes = [NSMutableDictionary dictionary];
+    for (NSURL *jsonUrl in jsonUrls) {
+        HFByteTheme *byteTheme = [[HFByteTheme alloc] initWithUrl:jsonUrl];
+        if (!byteTheme) {
+            NSLog(@"Invalid theme at %@", jsonUrl);
+            continue;;
+        }
+        NSString *title = jsonUrl.URLByDeletingPathExtension.lastPathComponent;
+        themes[title] = byteTheme;
+    }
+    _byteThemes = [themes copy];
+}
+
+- (void)buildByteThemeMenu {
+    [self loadByteThemes];
+
+    NSMutableArray<NSMenuItem *> *menuItems = [NSMutableArray array];
+    [self.byteThemes enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull name, HFByteTheme * _Nonnull theme, BOOL * _Nonnull stop __unused) {
+        NSMenuItem *menuItem = [[NSMenuItem alloc] initWithTitle:name action:@selector(setByteThemeFromMenuItem:) keyEquivalent:@""];
+        menuItem.representedObject = theme;
+        [menuItems addObject:menuItem];
+    }];
+    [menuItems sortUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"title" ascending:NO]]];
+    for (NSMenuItem *menuItem in menuItems) {
+        [byteThemeMenuItem.submenu addItem:menuItem];
+    }
 }
 
 static NSComparisonResult compareFontDisplayNames(NSFont *a, NSFont *b, void *unused) {

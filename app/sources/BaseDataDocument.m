@@ -693,7 +693,8 @@ static inline Class preferredByteArrayClass(void) {
     [center addObserver:self selector:@selector(dataInspectorChangedRowCount:) name:DataInspectorDidChangeRowCount object:dataInspectorRepresenter];
     [center addObserver:self selector:@selector(dataInspectorDeletedAllRows:) name:DataInspectorDidDeleteAllRows object:dataInspectorRepresenter];
 
-    NSUserDefaults *defs = [NSUserDefaults standardUserDefaults];
+    AppDelegate *appDelegate = (AppDelegate *)NSApp.delegate;
+    NSUserDefaults *defs = NSUserDefaults.standardUserDefaults;
     
     lineCountingRepresenter.lineNumberFormat = (HFLineNumberFormat)[defs integerForKey:@"LineNumberFormat"];
 
@@ -707,6 +708,7 @@ static inline Class preferredByteArrayClass(void) {
     [controller setShouldLiveReload:[defs boolForKey:@"LiveReload"]];
     [controller setUndoManager:[self undoManager]];
     [controller setBytesPerColumn:[defs integerForKey:@"BytesPerColumn"]];
+    [controller setByteTheme:appDelegate.byteThemes[[defs stringForKey:@"ByteTheme"]]];
     
     [self setShouldLiveReload:[controller shouldLiveReload]];
     
@@ -717,7 +719,7 @@ static inline Class preferredByteArrayClass(void) {
         [controller setFont: font];
     }
     
-    [self setStringEncoding:[(AppDelegate *)NSApp.delegate defaultStringEncoding]];
+    [self setStringEncoding:appDelegate.defaultStringEncoding];
     
     static BOOL hasAddedMenu = NO;
     if (! hasAddedMenu) {
@@ -952,6 +954,16 @@ static inline Class preferredByteArrayClass(void) {
     [[NSUserDefaults standardUserDefaults] setBool:newVal forKey:@"ColorBytes"];
 }
 
+- (IBAction)setByteThemeFromMenuItem:(NSMenuItem *)sender {
+    HFByteTheme *byteTheme = sender.representedObject;
+    if (byteTheme) {
+        [NSUserDefaults.standardUserDefaults setObject:sender.title forKey:@"ByteTheme"];
+    } else {
+        [NSUserDefaults.standardUserDefaults removeObjectForKey:@"ByteTheme"];
+    }
+    [controller setByteTheme:byteTheme];
+}
+
 
 /* Returns the selected bookmark, or NSNotFound. If more than one bookmark is selected, returns the largest. */
 - (NSInteger)selectedBookmark {
@@ -1064,6 +1076,9 @@ static inline Class preferredByteArrayClass(void) {
         if ([controller editMode] == HFReadOnlyMode)
             return NO;
         // Fall through
+    } else if (action == @selector(setByteThemeFromMenuItem:)) {
+        item.state = item.representedObject == controller.byteTheme;
+        return YES;
     }
 
     return [super validateMenuItem:item];

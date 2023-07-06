@@ -17,6 +17,7 @@
 #import "HFRepresenterTextViewCallout.h"
 #import <objc/message.h>
 #import <CoreText/CoreText.h>
+#import <HexFiend/HexFiend-Swift.h>
 
 /* Returns the first index where the strings differ.  If the strings do not differ in any characters but are of different lengths, returns the smaller length; if they are the same length and do not differ, returns NSUIntegerMax */
 static inline NSUInteger HFIndexOfFirstByteThatDiffers(const unsigned char *a, NSUInteger len1, const unsigned char *b, NSUInteger len2) {
@@ -1376,10 +1377,15 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
     }    
 }
 
-- (void)drawGlyphs:(const struct HFGlyph_t *)glyphs atPoint:(CGPoint)point withAdvances:(const CGSize *)advances withStyleRun:(HFTextVisualStyleRun *)styleRun count:(NSUInteger)glyphCount {
+- (void)drawGlyphs:(const struct HFGlyph_t *)glyphs bytes:(NSUInteger)byteCount bytePtr:(const unsigned char *)bytePtr atPoint:(CGPoint)point withAdvances:(const CGSize *)advances withStyleRun:(HFTextVisualStyleRun *)styleRun count:(NSUInteger)glyphCount {
     HFASSERT(glyphs != NULL);
     HFASSERT(advances != NULL);
     HFASSERT(glyphCount > 0);
+
+    const BOOL darkMode = HFDarkModeEnabled();
+    HFByteTheme *byteTheme = self.representer.controller.byteTheme;
+    const struct HFByteThemeColor *colorTable = darkMode ? byteTheme.darkColorTable : byteTheme.lightColorTable;
+
     if ([styleRun shouldDraw]) {
         [styleRun set];
         CGContextRef ctx = HFGraphicsGetCurrentContext();
@@ -1390,10 +1396,14 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
             cgglyphs[j] = glyphs[j].glyph;
         }
         
+        const NSUInteger maximumGlyphCountForByteCount = [self maximumGlyphCountForByteCount:byteCount];
         NSUInteger runStart = 0;
         HFGlyphFontIndex runFontIndex = glyphs[0].fontIndex;
         CGFloat runAdvance = 0;
         for (NSUInteger i=1; i <= glyphCount; i++) {
+            if ((i % maximumGlyphCountForByteCount) == 0) {
+                ++bytePtr;
+            }
             /* Check if this run is finished, or if we are using a substitution font */
             if (i == glyphCount || glyphs[i].fontIndex != runFontIndex || runFontIndex > 0) {
                 /* Draw this run */
@@ -1422,6 +1432,12 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
                     }
                 }
                 
+                if (bytePtr && colorTable) {
+                    const uint8_t byte = *bytePtr;
+                    const struct HFByteThemeColor *col = &colorTable[byte];
+                    CGContextSetRGBFillColor(ctx, col->r, col->g, col->b, 1.0);
+                }
+
                 /* Draw the glyphs */
                 const CGGlyph *glyphsPtr = cgglyphs + runStart;
                 const CGSize *advancesPtr = advances + runStart;
@@ -1527,6 +1543,8 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
     
     const unsigned char * const bytePtr = [dataObject bytes];
     
+    const NSUInteger maxBytesPerRun = self.representer.controller.byteTheme ? 1 : NSUIntegerMax;
+    
     CGRect lineRectInBoundsSpace = CGRectMake(CGRectGetMinX(bounds), CGRectGetMinY(bounds), CGRectGetWidth(bounds), lineHeight);
     lineRectInBoundsSpace.origin.y -= [self verticalOffset] * lineHeight;
     
@@ -1556,15 +1574,18 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
                 HFTextVisualStyleRun *styleRun = [self styleRunForByteAtIndex:byteIndex];
                 HFASSERT(styleRun != nil);
                 HFASSERT(byteIndex >= [styleRun range].location);
-                const NSUInteger bytesInThisRun = MIN(NSMaxRange([styleRun range]) - byteIndex, bytesInThisLine - byteIndexInLine);
+                const NSUInteger bytesInThisRun = MIN(MIN(NSMaxRange([styleRun range]) - byteIndex, bytesInThisLine - byteIndexInLine), maxBytesPerRun);
                 const NSRange characterRange = [self roundPartialByteRange:NSMakeRange(byteIndex, bytesInThisRun)];
                 if (characterRange.length > 0) {
+                    const unsigned char *bytePtrOffset = NULL;
                     NSUInteger resultGlyphCount = 0;
                     CGFloat initialTextOffset = 0;
                     if (restrictingToRanges == nil) {
+                        bytePtrOffset = bytePtr + characterRange.location;
                         [self extractGlyphsForBytes:bytePtr + characterRange.location count:characterRange.length offsetIntoLine:byteIndexInLine intoArray:glyphs advances:advances resultingGlyphCount:&resultGlyphCount];
                     }
                     else {
+                        bytePtrOffset = bytePtr + byteIndex;
                         [self extractGlyphsForBytes:bytePtr range:NSMakeRange(byteIndex, bytesInThisRun) intoArray:glyphs advances:advances withInclusionRanges:restrictingToRanges initialTextOffset:&initialTextOffset resultingGlyphCount:&resultGlyphCount];
                     }
                     HFASSERT(resultGlyphCount <= maxGlyphCount);
@@ -1579,7 +1600,7 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
                         textTransform.tx += initialTextOffset + advanceIntoLine;
                         CGContextSetTextMatrix(ctx, textTransform);
                         /* Draw them */
-                        [self drawGlyphs:glyphs atPoint:CGPointMake(textTransform.tx, textTransform.ty) withAdvances:advances withStyleRun:styleRun count:resultGlyphCount];
+                        [self drawGlyphs:glyphs bytes:byteCount bytePtr:bytePtrOffset atPoint:CGPointMake(textTransform.tx, textTransform.ty) withAdvances:advances withStyleRun:styleRun count:resultGlyphCount];
                         
                         /* Undo the work we did before so as not to screw up the next run */
                         textTransform.tx -= initialTextOffset + advanceIntoLine;
