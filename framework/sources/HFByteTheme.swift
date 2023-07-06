@@ -126,21 +126,26 @@ private extension NSColor {
     }()
     
     private static func valueToColor(colorValue: Any) -> NSColor? {
-        if let colorString = colorValue as? String {
+        switch colorValue {
+        case let colorString as String:
             guard let color = Self.namesToColors[colorString] else {
                 print("Unknown color \(colorString)")
                 return nil
             }
             return color
-        } else if let colorNumber = colorValue as? UInt {
-            let red = CGFloat((colorNumber & 0xFF0000) >> 16) / 255.0
-            let green = CGFloat((colorNumber & 0x00FF00) >> 8) / 255.0
-            let blue = CGFloat((colorNumber & 0x0000FF)) / 255.0
-            return NSColor(calibratedRed: red, green: green, blue: blue, alpha: 1.0).toRGB()
-        } else {
+        case let colorNumber as UInt:
+            return uintToColor(value: colorNumber)
+        default:
             print("Unknown color value \(colorValue)")
+            return nil
         }
-        return nil
+    }
+    
+    private static func uintToColor(value: UInt) -> NSColor {
+        let red = CGFloat((value & 0xFF0000) >> 16) / 255.0
+        let green = CGFloat((value & 0x00FF00) >> 8) / 255.0
+        let blue = CGFloat((value & 0x0000FF)) / 255.0
+        return NSColor(calibratedRed: red, green: green, blue: blue, alpha: 1.0).toRGB()
     }
     
     private static func nscolorToThemeColor(_ color: NSColor) -> HFByteThemeColor {
