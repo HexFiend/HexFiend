@@ -10,6 +10,7 @@
 @class ChooseStringEncodingWindowController;
 @class CLIController;
 @class DiffRangeWindowController;
+@class HFByteTheme;
 
 @interface AppDelegate : NSObject {
     IBOutlet NSMenuItem *extendForwardsItem, *extendBackwardsItem;
@@ -35,6 +36,8 @@
 - (IBAction)openPreferences:(id)sender;
 
 @property (readonly) HFStringEncoding *defaultStringEncoding;
+
+@property (readonly) NSDictionary<NSString *, HFByteTheme *> *byteThemes;
 
 - (void)buildByteGroupingMenu;
 - (void)buildByteThemeMenu;

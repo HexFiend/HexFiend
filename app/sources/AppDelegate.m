@@ -160,6 +160,7 @@
 
 - (void)buildByteThemeMenu {
     NSArray<NSURL *> *jsonUrls = [NSBundle.mainBundle URLsForResourcesWithExtension:@"json5" subdirectory:@"ColorByteThemes"];
+    NSMutableDictionary<NSString *, HFByteTheme *> *themes = [NSMutableDictionary dictionary];
     NSMutableArray<NSMenuItem *> *menuItems = [NSMutableArray array];
     for (NSURL *jsonUrl in jsonUrls) {
         HFByteTheme *byteTheme = [[HFByteTheme alloc] initWithUrl:jsonUrl];
@@ -171,11 +172,13 @@
         NSMenuItem *menuItem = [[NSMenuItem alloc] initWithTitle:title action:@selector(setByteThemeFromMenuItem:) keyEquivalent:@""];
         menuItem.representedObject = byteTheme;
         [menuItems addObject:menuItem];
+        themes[title] = byteTheme;
     }
     [menuItems sortUsingDescriptors:@[[[NSSortDescriptor alloc] initWithKey:@"title" ascending:NO]]];
     for (NSMenuItem *menuItem in menuItems) {
         [byteThemeMenuItem.submenu addItem:menuItem];
     }
+    _byteThemes = [themes copy];
 }
 
 static NSComparisonResult compareFontDisplayNames(NSFont *a, NSFont *b, void *unused) {
