@@ -319,6 +319,13 @@
         [[self view] setNeedsDisplay:YES];
 #endif
     }
+    if (bits & (HFControllerByteTheme)) {
+#if TARGET_OS_IPHONE
+        [[self view] setNeedsDisplay];
+#else
+        [[self view] setNeedsDisplay:YES];
+#endif
+    }
     [super controllerDidChange:bits];
 }
 

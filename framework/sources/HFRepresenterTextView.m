@@ -1381,16 +1381,10 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
     HFASSERT(glyphs != NULL);
     HFASSERT(advances != NULL);
     HFASSERT(glyphCount > 0);
-    const BOOL colorBytes2Enabled = [NSUserDefaults.standardUserDefaults boolForKey:@"ColorBytes2"];
+
     const BOOL darkMode = HFDarkModeEnabled();
-    
-    if (!self.byteTheme) {
-        NSURL *jsonUrl = [NSBundle.mainBundle URLForResource:@"Default Vibrant" withExtension:@"json5" subdirectory:@"ColorByteThemes"];
-        HFASSERT(jsonUrl != nil);
-        self.byteTheme = [[HFByteTheme alloc] initWithUrl:jsonUrl];
-        HFASSERT(self.byteTheme != nil);
-    }
-    const struct HFByteThemeColor *colorTable = darkMode ? self.byteTheme.darkColorTable : self.byteTheme.lightColorTable;
+    HFByteTheme *byteTheme = self.representer.controller.byteTheme;
+    const struct HFByteThemeColor *colorTable = darkMode ? byteTheme.darkColorTable : byteTheme.lightColorTable;
 
     if ([styleRun shouldDraw]) {
         [styleRun set];
@@ -1438,7 +1432,7 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
                     }
                 }
                 
-                if (bytePtr && colorBytes2Enabled) {
+                if (bytePtr && colorTable) {
                     const uint8_t byte = *bytePtr;
                     const struct HFByteThemeColor *col = &colorTable[byte];
                     CGContextSetRGBFillColor(ctx, col->r, col->g, col->b, 1.0);

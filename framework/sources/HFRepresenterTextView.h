@@ -142,8 +142,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (IBAction)selectAll:sender;
 
-@property HFByteTheme *byteTheme;
-
 @end
 
 #if !TARGET_OS_IPHONE
