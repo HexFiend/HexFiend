@@ -1385,7 +1385,7 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
     const BOOL darkMode = HFDarkModeEnabled();
     
     if (!self.byteTheme) {
-        NSURL *jsonUrl = [NSBundle.mainBundle URLForResource:@"Default Bright" withExtension:@"json5" subdirectory:@"ColorByteThemes"];
+        NSURL *jsonUrl = [NSBundle.mainBundle URLForResource:@"Default Vibrant" withExtension:@"json5" subdirectory:@"ColorByteThemes"];
         HFASSERT(jsonUrl != nil);
         self.byteTheme = [[HFByteTheme alloc] initWithUrl:jsonUrl];
         HFASSERT(self.byteTheme != nil);
