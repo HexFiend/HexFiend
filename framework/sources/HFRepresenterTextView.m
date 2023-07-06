@@ -1543,7 +1543,7 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
     
     const unsigned char * const bytePtr = [dataObject bytes];
     
-    const NSUInteger maxBytesPerRun = [NSUserDefaults.standardUserDefaults boolForKey:@"ColorBytes2"] ? 1 : NSUIntegerMax;
+    const NSUInteger maxBytesPerRun = self.representer.controller.byteTheme ? 1 : NSUIntegerMax;
     
     CGRect lineRectInBoundsSpace = CGRectMake(CGRectGetMinX(bounds), CGRectGetMinY(bounds), CGRectGetWidth(bounds), lineHeight);
     lineRectInBoundsSpace.origin.y -= [self verticalOffset] * lineHeight;
