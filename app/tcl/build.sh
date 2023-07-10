@@ -10,6 +10,15 @@ DIR=tcl
 BUILD_DIR=build
 FRAMEWORK_DIR=${BUILD_DIR}/tcl/Tcl.framework
 
+# Determine the deployment target from the Xcode project.
+# Assume the current directory is this script's directory.
+pushd ../../
+BUILD_SETTINGS=build_settings.plist
+xcodebuild -showBuildSettings -json | plutil -convert xml1 - -o "${BUILD_SETTINGS}"
+DEPLOYMENT_TARGET=$(/usr/libexec/PlistBuddy -c "Print :0:buildSettings:MACOSX_DEPLOYMENT_TARGET" "${BUILD_SETTINGS}" | tr -d "\n")
+rm "${BUILD_SETTINGS}"
+popd
+
 # Download the archive if it doesn't exist.
 # The SourceForge url downloads automatically if it determines the user agent isn't a browser.
 # nscurl automatically handles redirects by default.
@@ -27,6 +36,7 @@ tar -xvf "${FILENAME}" -C "${DIR}" --strip-components=1
 pushd "${DIR}/macosx"
 ./configure
 NCPU=$(sysctl -n hw.ncpu)
+MACOSX_DEPLOYMENT_TARGET=${DEPLOYMENT_TARGET} make embedded -j ${NCPU}
 make embedded -j ${NCPU}
 popd
 
