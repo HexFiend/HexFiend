@@ -3,3 +3,6 @@ HexFiend_2.xcodeproj/project.xcworkspace/*
 HexFiend_2.xcodeproj/xcuserdata/*
 /DerivedData
 /vendor
+app/tcl/build
+app/tcl/tcl
+app/tcl/tcl.tar.gz
