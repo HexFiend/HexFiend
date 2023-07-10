@@ -36,8 +36,7 @@ tar -xvf "${FILENAME}" -C "${DIR}" --strip-components=1
 pushd "${DIR}/macosx"
 ./configure
 NCPU=$(sysctl -n hw.ncpu)
-MACOSX_DEPLOYMENT_TARGET=${DEPLOYMENT_TARGET} make embedded -j ${NCPU}
-make embedded -j ${NCPU}
+MACOSX_DEPLOYMENT_TARGET=${DEPLOYMENT_TARGET} CFLAGS="-arch arm64 -arch x86_64" make embedded -j ${NCPU}
 popd
 
 pushd "${FRAMEWORK_DIR}/Versions/Current"
