@@ -220,10 +220,11 @@ DEFINE_COMMAND(sleb128)
 }
 
 - (NSString *)evaluateScript:(NSString *)path {
+    const NSInteger timeoutInSeconds = [NSUserDefaults.standardUserDefaults integerForKey:@"BinaryTemplateScriptTimeout"];
     Tcl_LimitTypeSet(_interp, TCL_LIMIT_TIME);
     Tcl_Time time;
     Tcl_GetTime(&time);
-    time.sec += [[NSUserDefaults standardUserDefaults] integerForKey:@"BinaryTemplateScriptTimeout"];
+    time.sec += timeoutInSeconds;
     Tcl_LimitSetTime(_interp, &time);
     const int err = Tcl_EvalFile(_interp, [path fileSystemRepresentation]);
     if (err != TCL_OK) {
