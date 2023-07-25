@@ -48,7 +48,7 @@ section "Program header table" {
       uint32 -hex "Segment type"
 
       if {$ei_class > 1} {
-        uint64 -hex "Flags"
+        uint32 -hex "Flags"
         uint64 -hex "Offset"
         uint64 -hex "Virtual address"
         uint64 -hex "Physical address"
