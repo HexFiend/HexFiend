@@ -19,7 +19,8 @@
 
 @implementation TextDividerRepresenterView : NSView
 
-- (void)drawRect:(NSRect)clip {
+- (void)drawRect:(NSRect)__unused dirtyRect {
+    NSRect clip = self.bounds;
     NSWindow *window = [self window];
     BOOL drawActive = (window == nil || [window isKeyWindow] || [window isMainWindow]);
     CGContextRef ctx = HFGraphicsGetCurrentContext();

@@ -24,7 +24,8 @@
     NSRectFillUsingOperation(NSIntersectionRect(lineRect, clipRect), NSCompositingOperationSourceOver);
 }
 
-- (void)drawRect:(NSRect)rect {
+- (void)drawRect:(NSRect)__unused dirtyRect {
+    NSRect rect = self.bounds;
     if (!HFDarkModeEnabled()) {
         [[NSColor colorWithCalibratedWhite:(CGFloat).91 alpha:1] set];
         NSRectFillUsingOperation(rect, NSCompositingOperationSourceOver);
