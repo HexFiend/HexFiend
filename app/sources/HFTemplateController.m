@@ -46,7 +46,7 @@ static const unsigned long long kMaxCacheSize = 1024 * 1024;
     NSString *localError = [self evaluateScript:path];
     if (localError) {
         if (self.requireFailed) {
-            localError = NSLocalizedString(@"Template not applicable", nil);
+            localError = [NSString stringWithFormat:NSLocalizedString(@"Template not applicable: %@", nil), localError];
         }
         if (error) {
             *error = localError;
