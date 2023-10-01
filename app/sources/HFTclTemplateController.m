@@ -508,7 +508,7 @@ DEFINE_COMMAND(sleb128)
             }
             NSString *hexvalues = [NSString stringWithUTF8String:Tcl_GetStringFromObj(objv[2], NULL)];
             if (![self requireDataAtOffset:offset toMatchHexValues:hexvalues]) {
-                NSString *error = [NSString stringWithFormat:NSLocalizedString(@"Bytes at offset %ld does not match \"%@\"", nil), offset, hexvalues];
+                NSString *error = [NSString stringWithFormat:NSLocalizedString(@"Bytes at offset %ld do not match \"%@\"", nil), offset, hexvalues];
                 Tcl_AddErrorInfo(_interp, error.UTF8String);
                 return TCL_ERROR;
             }
