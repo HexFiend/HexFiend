@@ -1706,7 +1706,8 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
     }
 }
 
-- (void)drawRect:(CGRect)clip {
+- (void)drawRect:(CGRect)__unused directRect {
+    NSRect clip = self.bounds;
     CGContextRef ctx = HFGraphicsGetCurrentContext();
     
     [[self backgroundColorForEmptySpace] set];

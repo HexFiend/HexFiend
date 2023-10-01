@@ -141,7 +141,8 @@
     return result;
 }
 
-- (void)drawRect:(NSRect)dirtyRect {
+- (void)drawRect:(NSRect)__unused dirtyRect {
+    NSRect clipRect = self.bounds;
     /* Paranoia */
     if (! leftView || ! rightView) return;
     
@@ -152,7 +153,7 @@
     } else {
         [[NSColor colorWithCalibratedWhite:.64 alpha:1.] set];
     }
-    NSRectFillUsingOperation(dirtyRect, NSCompositingOperationSourceOver);
+    NSRectFillUsingOperation(clipRect, NSCompositingOperationSourceOver);
     
     CGContextRef ctx = HFGraphicsGetCurrentContext();
     CGFloat lineWidth = 1;
@@ -165,8 +166,8 @@
         BOOL drawActive = (window == nil || [window isMainWindow] || [window isKeyWindow]);
         
         CGFloat shadowWidth = 6;
-        HFDrawShadow(ctx, middleFrame, shadowWidth, NSMinXEdge, drawActive, dirtyRect);
-        HFDrawShadow(ctx, middleFrame, shadowWidth, NSMaxXEdge, drawActive, dirtyRect);
+        HFDrawShadow(ctx, middleFrame, shadowWidth, NSMinXEdge, drawActive, clipRect);
+        HFDrawShadow(ctx, middleFrame, shadowWidth, NSMaxXEdge, drawActive, clipRect);
     }
     
     /* Draw the edge line rects */
@@ -179,10 +180,10 @@
     [dividerColor set];
     lineRect.size.width = lineWidth;
     lineRect.origin.x = NSMinX(middleFrame);
-    if (NSIntersectsRect(lineRect, dirtyRect)) NSRectFill(lineRect);
+    if (NSIntersectsRect(lineRect, clipRect)) NSRectFill(lineRect);
     
     lineRect.origin.x = NSMaxX(middleFrame) - lineWidth;
-    if (NSIntersectsRect(lineRect, dirtyRect)) NSRectFill(lineRect);
+    if (NSIntersectsRect(lineRect, clipRect)) NSRectFill(lineRect);
 }
 
 
