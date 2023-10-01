@@ -643,12 +643,22 @@ enum LineCoverage_t {
     return result;
 }
 
+- (void)commonInit {
+    self.clipsToBounds = YES;
+}
+
+- (instancetype)initWithFrame:(NSRect)frameRect {
+    self = [super initWithFrame:frameRect];
+    [self commonInit];
+    return self;
+}
+
 - (instancetype)initWithRepresenter:(HFTextRepresenter *)rep {
     self = [super initWithFrame:CGRectMake(0, 0, 1, 1)];
     horizontalContainerInset = 4;
     representer = rep;
     _hftvflags.editable = YES;
-    
+    [self commonInit];
     return self;
 }
 
@@ -1706,8 +1716,7 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
     }
 }
 
-- (void)drawRect:(CGRect)__unused directRect {
-    NSRect clip = self.bounds;
+- (void)drawRect:(CGRect)clip {
     CGContextRef ctx = HFGraphicsGetCurrentContext();
     
     [[self backgroundColorForEmptySpace] set];
