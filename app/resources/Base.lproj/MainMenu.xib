@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="21701" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="22154" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="21701"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="22154"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication"/>
@@ -289,6 +289,20 @@
                                         <menuItem title="Jump to Selection" keyEquivalent="j" id="210">
                                             <connections>
                                                 <action selector="performHFFindPanelAction:" target="-1" id="464"/>
+                                            </connections>
+                                        </menuItem>
+                                    </items>
+                                </menu>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="DfN-Sc-DYA"/>
+                            <menuItem title="Tools" id="jkP-px-xxN">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <menu key="submenu" title="Tools" id="zoO-w5-6O1">
+                                    <items>
+                                        <menuItem title="Fill Bytes" id="YQM-Iw-t0W">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="fillBytes:" target="-1" id="XcA-Sa-YDR"/>
                                             </connections>
                                         </menuItem>
                                     </items>

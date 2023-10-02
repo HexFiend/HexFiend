@@ -2061,6 +2061,37 @@ cancelled:;
     [controller insertData:data replacingPreviousBytes:0 allowUndoCoalescing:NO];
 }
 
+- (void)fillBytes:(id)sender {
+    uint8_t fillByte = 0;
+    BOOL validFillByte = NO;
+    while (!validFillByte) {
+        NSString *fillByteStr = HFPromptForValue(NSLocalizedString(@"Enter hex byte:", nil));
+        if (!fillByteStr) {
+            return;
+        }
+        NSData *fillByteData = HFDataFromHexString(fillByteStr, nil);
+        if (fillByteData.length == 1) {
+            fillByte = ((uint8_t*)fillByteData.bytes)[0];
+            break;
+        }
+        NSBeep();
+    }
+    HFByteArray *byteArray = [controller.byteArray mutableCopy];
+    NSArray<HFRangeWrapper *> *ranges = controller.selectedContentsRanges;
+    for (HFRangeWrapper *wrapper in ranges) {
+        const HFRange range = wrapper.HFRange;
+        NSMutableData *data = [NSMutableData dataWithLength:range.length];
+        [byteArray copyBytes:data.mutableBytes range:range];
+
+        memset(data.mutableBytes, fillByte, data.length);
+
+        [byteArray deleteBytesInRange:range];
+        HFByteSlice *byteSlice = [[HFFullMemoryByteSlice alloc] initWithData:data];
+        [byteArray insertByteSlice:byteSlice inRange:HFRangeMake(range.location, 0)];
+    }
+    [controller replaceByteArray:byteArray];
+}
+
 @end
 
 // Let the compiler know about the 10.9 -[NSTimer setTolerance:] selector

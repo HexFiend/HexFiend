@@ -128,4 +128,6 @@ extern NSString * const BaseDataDocumentDidChangeStringEncodingNotification;
 
 - (void)insertData:(NSData *)data;
 
+- (void)fillBytes:(id)sender;
+
 @end
