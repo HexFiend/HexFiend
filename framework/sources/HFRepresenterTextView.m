@@ -555,7 +555,7 @@ enum LineCoverage_t {
 #else
 - (NSColor *)textSelectionColor {
     NSWindow *window = [self window];
-    if (!window.isKeyWindow || self != window.firstResponder) {
+    if (!window.isKeyWindow || (self != window.firstResponder && !representer.controller.inactiveSelectionColorMatchesActive)) {
         return [self inactiveTextSelectionColor];
     } else {
         return [self primaryTextSelectionColor];

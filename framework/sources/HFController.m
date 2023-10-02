@@ -365,6 +365,17 @@ static inline Class preferredByteArrayClass(void) {
     return bytesPerColumn;
 }
 
+- (void)enableEnactiveSelectionColorMatchesActive:(BOOL)flag {
+    if (flag != _hfflags.inactiveSelectionColorMatchesActive) {
+        _hfflags.inactiveSelectionColorMatchesActive = flag;
+        [self _addPropertyChangeBits:HFControllerInactiveSelectionColorMatchesActive];
+    }
+}
+
+- (BOOL)inactiveSelectionColorMatchesActive {
+    return _hfflags.inactiveSelectionColorMatchesActive;
+}
+
 - (BOOL)_shouldInvertSelectedRangesByAnchorRange {
     return _hfflags.selectionInProgress && _hfflags.commandExtendSelection;
 }

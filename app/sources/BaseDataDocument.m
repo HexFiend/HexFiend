@@ -111,6 +111,7 @@ static inline Class preferredByteArrayClass(void) {
             @"BinaryTemplatesDoubleClickAction" : @(0), // do nothing
             @"BinaryTemplatesAutoCollapseValuedSections" : @NO,
             @"ResolveAliases": @YES,
+            @"InactiveSelectionColorMatchesActive": @NO,
         };
         [[NSUserDefaults standardUserDefaults] registerDefaults:defs];
     });
@@ -706,6 +707,7 @@ static inline Class preferredByteArrayClass(void) {
     [controller setUndoManager:[self undoManager]];
     [controller setBytesPerColumn:[defs integerForKey:@"BytesPerColumn"]];
     [controller setByteTheme:appDelegate.byteThemes[[defs stringForKey:@"ByteTheme"]]];
+    [controller enableEnactiveSelectionColorMatchesActive:[defs boolForKey:@"InactiveSelectionColorMatchesActive"]];
     
     [self setShouldLiveReload:[controller shouldLiveReload]];
     
@@ -726,11 +728,19 @@ static inline Class preferredByteArrayClass(void) {
             [self installDebuggingMenuItems:menu];
         }
     }
+    
+    [defs addObserver:self
+           forKeyPath:@"InactiveSelectionColorMatchesActive"
+              options:0
+              context:NULL];
+
     return self;
 }
 
 
 - (void)dealloc {
+    [NSUserDefaults.standardUserDefaults removeObserver:self forKeyPath:@"InactiveSelectionColorMatchesActive" context:NULL];
+
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     
     /* Release and stop observing our banner views.  Note that any of these may be nil. */
@@ -746,8 +756,9 @@ static inline Class preferredByteArrayClass(void) {
         if (object != operationView) {
             [self updateDocumentWindowTitle];
         }
-    }
-    else {
+    } else if (object == NSUserDefaults.standardUserDefaults && [keyPath isEqualToString:@"InactiveSelectionColorMatchesActive"]) {
+        [controller enableEnactiveSelectionColorMatchesActive:[NSUserDefaults.standardUserDefaults boolForKey:@"InactiveSelectionColorMatchesActive"]];
+    } else {
         [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
     }
 }

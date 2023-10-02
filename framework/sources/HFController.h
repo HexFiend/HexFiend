@@ -41,6 +41,7 @@ typedef NS_OPTIONS(NSUInteger, HFControllerPropertyBits) {
     HFControllerColorRanges = 1 << 18, /*!< Indicates that the colorRanges property has changed. */
     HFControllerSavable = 1 << 19, /*!< Indicates that the document has become (or is no longer) savable. */
     HFControllerByteTheme = 1 << 29, /*!< Indicates that the byteTheme property has changed. */
+    HFControllerInactiveSelectionColorMatchesActive = 1 << 30,
 };
 
 /*! @enum HFControllerMovementDirection
@@ -143,6 +144,7 @@ You create an HFController via <tt>[[HFController alloc] init]</tt>.  After that
         BOOL commandExtendSelection;
         BOOL livereload;
         BOOL savable;
+        BOOL inactiveSelectionColorMatchesActive;
     } _hfflags;
 }
 
@@ -411,6 +413,9 @@ You create an HFController via <tt>[[HFController alloc] init]</tt>.  After that
 
 - (void)setByteTheme:(HFByteTheme * _Nullable)byteTheme;
 - (HFByteTheme * _Nullable)byteTheme;
+
+- (void)enableEnactiveSelectionColorMatchesActive:(BOOL)flag;
+- (BOOL)inactiveSelectionColorMatchesActive;
 
 @end
 
