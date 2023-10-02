@@ -707,7 +707,7 @@ static inline Class preferredByteArrayClass(void) {
     [controller setUndoManager:[self undoManager]];
     [controller setBytesPerColumn:[defs integerForKey:@"BytesPerColumn"]];
     [controller setByteTheme:appDelegate.byteThemes[[defs stringForKey:@"ByteTheme"]]];
-    [controller enableEnactiveSelectionColorMatchesActive:[defs boolForKey:@"InactiveSelectionColorMatchesActive"]];
+    controller.inactiveSelectionColorMatchesActive = [defs boolForKey:@"InactiveSelectionColorMatchesActive"];
     
     [self setShouldLiveReload:[controller shouldLiveReload]];
     
@@ -757,7 +757,7 @@ static inline Class preferredByteArrayClass(void) {
             [self updateDocumentWindowTitle];
         }
     } else if (object == NSUserDefaults.standardUserDefaults && [keyPath isEqualToString:@"InactiveSelectionColorMatchesActive"]) {
-        [controller enableEnactiveSelectionColorMatchesActive:[NSUserDefaults.standardUserDefaults boolForKey:@"InactiveSelectionColorMatchesActive"]];
+        controller.inactiveSelectionColorMatchesActive = [NSUserDefaults.standardUserDefaults boolForKey:@"InactiveSelectionColorMatchesActive"];
     } else {
         [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
     }

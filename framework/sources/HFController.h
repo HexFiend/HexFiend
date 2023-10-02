@@ -414,8 +414,7 @@ You create an HFController via <tt>[[HFController alloc] init]</tt>.  After that
 - (void)setByteTheme:(HFByteTheme * _Nullable)byteTheme;
 - (HFByteTheme * _Nullable)byteTheme;
 
-- (void)enableEnactiveSelectionColorMatchesActive:(BOOL)flag;
-- (BOOL)inactiveSelectionColorMatchesActive;
+@property (nonatomic) BOOL inactiveSelectionColorMatchesActive;
 
 @end
 

@@ -316,7 +316,7 @@
         [[self view] setNeedsDisplay:YES];
 #endif
     }
-    if (bits & (HFControllerByteTheme)) {
+    if ((bits & HFControllerByteTheme) || (bits & HFControllerInactiveSelectionColorMatchesActive)) {
 #if TARGET_OS_IPHONE
         [[self view] setNeedsDisplay];
 #else

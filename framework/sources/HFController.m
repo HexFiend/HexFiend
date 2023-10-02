@@ -365,7 +365,7 @@ static inline Class preferredByteArrayClass(void) {
     return bytesPerColumn;
 }
 
-- (void)enableEnactiveSelectionColorMatchesActive:(BOOL)flag {
+- (void)setInactiveSelectionColorMatchesActive:(BOOL)flag {
     if (flag != _hfflags.inactiveSelectionColorMatchesActive) {
         _hfflags.inactiveSelectionColorMatchesActive = flag;
         [self _addPropertyChangeBits:HFControllerInactiveSelectionColorMatchesActive];
