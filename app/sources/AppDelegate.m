@@ -362,7 +362,7 @@ static NSComparisonResult compareFontDisplayNames(NSFont *a, NSFont *b, void *un
         NSUInteger i, max = [menu numberOfItems];
         for (i=0; i < max; i++) {
             NSMenuItem *item = [menu itemAtIndex:i];
-            [item setState:[selectedEncoding isEqual:item.representedObject] ? NSOnState : NSOffState];
+            [item setState:[selectedEncoding isEqual:item.representedObject] ? NSControlStateValueOn : NSControlStateValueOff];
         }
     }
     else {
