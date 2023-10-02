@@ -40,7 +40,7 @@ typedef NS_OPTIONS(NSUInteger, HFControllerPropertyBits) {
     HFControllerHideNullBytes = 1 << 17, /*!< Indicates that the shouldHideNullBytes property has changed. */
     HFControllerColorRanges = 1 << 18, /*!< Indicates that the colorRanges property has changed. */
     HFControllerSavable = 1 << 19, /*!< Indicates that the document has become (or is no longer) savable. */
-    HFControllerByteTheme = 1 << 29, /*!< Indicates that the byteRange property has changed. */
+    HFControllerByteTheme = 1 << 29, /*!< Indicates that the byteTheme property has changed. */
 };
 
 /*! @enum HFControllerMovementDirection
