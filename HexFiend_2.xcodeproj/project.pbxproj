@@ -2587,6 +2587,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculousfish.HexFiend-Framework-iOS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
 			};
 			name = Debug;
 		};
@@ -2612,6 +2613,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculousfish.HexFiend-Framework-iOS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
 			};
 			name = "Debug+CodeSign";
 		};
@@ -2636,6 +2638,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculousfish.HexFiend-Framework-iOS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
 			};
 			name = "Debug+MAS";
 		};
@@ -2661,6 +2664,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculousfish.HexFiend-Framework-iOS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
 			};
 			name = "Debug+UnitTests";
 		};
@@ -2686,6 +2690,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculousfish.HexFiend-Framework-iOS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
 			};
 			name = Release;
 		};
@@ -2711,6 +2716,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculousfish.HexFiend-Framework-iOS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
 			};
 			name = "Release+CodeSign";
 		};
@@ -2736,6 +2742,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculousfish.HexFiend-Framework-iOS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
 			};
 			name = "Release+MAS";
 		};
@@ -2873,6 +2880,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculousfish.HexFiend-Framework";
 				PRODUCT_NAME = HexFiend;
+				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
@@ -3043,6 +3051,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculousfish.HexFiend-Framework";
 				PRODUCT_NAME = HexFiend;
+				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 			};
@@ -3211,6 +3220,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculousfish.HexFiend-Framework";
 				PRODUCT_NAME = HexFiend;
+				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 			};
 			name = "Release+CodeSign";
@@ -3395,6 +3405,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculousfish.HexFiend-Framework";
 				PRODUCT_NAME = HexFiend;
+				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 			};
 			name = "Release+MAS";
@@ -3594,6 +3605,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculousfish.HexFiend-Framework";
 				PRODUCT_NAME = HexFiend;
+				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 			};
@@ -3803,6 +3815,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculousfish.HexFiend-Framework";
 				PRODUCT_NAME = HexFiend;
+				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 			};
@@ -3941,6 +3954,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculousfish.HexFiend-Framework";
 				PRODUCT_NAME = HexFiend;
+				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 			};
