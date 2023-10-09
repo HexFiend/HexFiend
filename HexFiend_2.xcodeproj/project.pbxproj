@@ -65,6 +65,7 @@
 		A5328D4821E1898A007C4DB0 /* HFHexGlyphTable.h in Headers */ = {isa = PBXBuildFile; fileRef = A5328D4521E1898A007C4DB0 /* HFHexGlyphTable.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A5328D4921E1898A007C4DB0 /* HFHexGlyphTable.m in Sources */ = {isa = PBXBuildFile; fileRef = A5328D4621E1898A007C4DB0 /* HFHexGlyphTable.m */; };
 		A5328D4A21E1898A007C4DB0 /* HFHexGlyphTable.m in Sources */ = {isa = PBXBuildFile; fileRef = A5328D4621E1898A007C4DB0 /* HFHexGlyphTable.m */; };
+		A533B9C12AD42F5300ECA26E /* ChooseStringEncodingWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A533B9C02AD42F5300ECA26E /* ChooseStringEncodingWindowController.swift */; };
 		A53B7D1A1E9185CF00CA3977 /* HFTestHashing.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D149300D8A37580018296B /* HFTestHashing.m */; };
 		A54D8AEE2A3ECBD80021FBAB /* ColorByteThemes in Resources */ = {isa = PBXBuildFile; fileRef = A54D8AED2A3ECBD80021FBAB /* ColorByteThemes */; };
 		A54D8B052A44076B0021FBAB /* HFByteTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = A54D8B042A44076B0021FBAB /* HFByteTheme.swift */; };
@@ -344,7 +345,6 @@
 		D0D828E50CDE89E500C2AB82 /* HFByteSlice.h in Headers */ = {isa = PBXBuildFile; fileRef = D08F5E220CDE843E007EFFE8 /* HFByteSlice.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D0D828E60CDE89E800C2AB82 /* HFFullMemoryByteSlice.h in Headers */ = {isa = PBXBuildFile; fileRef = D08F5E370CDE84F4007EFFE8 /* HFFullMemoryByteSlice.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D0D829110CDE969F00C2AB82 /* HFByteArray.h in Headers */ = {isa = PBXBuildFile; fileRef = D08F5DEF0CDE8223007EFFE8 /* HFByteArray.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		D0D8C2BC12A3C10100960FC4 /* ChooseStringEncodingWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D8C2BB12A3C10100960FC4 /* ChooseStringEncodingWindowController.m */; };
 		D8C1F92C16F278BA00A4C36E /* DiffRangeDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = D8C1F92A16F278BA00A4C36E /* DiffRangeDialog.xib */; };
 		D8EE3EFE16F26689001C7C09 /* DiffRangeWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = D8EE3EFD16F26689001C7C09 /* DiffRangeWindowController.m */; };
 		DAE8EBFE1598FFDB0008ADB9 /* DocumentWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = DAE8EBFD1598FFDB0008ADB9 /* DocumentWindow.m */; };
@@ -450,6 +450,8 @@
 		A5327E5C28570EF300530557 /* HFDirectoryWatcher.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFDirectoryWatcher.m; path = app/sources/HFDirectoryWatcher.m; sourceTree = "<group>"; };
 		A5328D4521E1898A007C4DB0 /* HFHexGlyphTable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFHexGlyphTable.h; path = sources/HFHexGlyphTable.h; sourceTree = "<group>"; };
 		A5328D4621E1898A007C4DB0 /* HFHexGlyphTable.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFHexGlyphTable.m; path = sources/HFHexGlyphTable.m; sourceTree = "<group>"; };
+		A533B9BF2AD42F5200ECA26E /* HexFiend_2-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "HexFiend_2-Bridging-Header.h"; sourceTree = "<group>"; };
+		A533B9C02AD42F5300ECA26E /* ChooseStringEncodingWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ChooseStringEncodingWindowController.swift; path = app/sources/ChooseStringEncodingWindowController.swift; sourceTree = "<group>"; };
 		A54D8AED2A3ECBD80021FBAB /* ColorByteThemes */ = {isa = PBXFileReference; lastKnownFileType = folder; name = ColorByteThemes; path = app/resources/ColorByteThemes; sourceTree = "<group>"; };
 		A54D8B042A44076B0021FBAB /* HFByteTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HFByteTheme.swift; path = sources/HFByteTheme.swift; sourceTree = "<group>"; };
 		A54D8B0B2A4AA5E50021FBAB /* HFByteThemeColor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFByteThemeColor.h; path = sources/HFByteThemeColor.h; sourceTree = "<group>"; };
@@ -710,8 +712,6 @@
 		D0D4BE88146F4B3A001B0A71 /* FortunateSon-Launchd.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "FortunateSon-Launchd.plist"; path = "helper_subprocess/FortunateSon-Launchd.plist"; sourceTree = "<group>"; };
 		D0D828FE0CDE8ABE00C2AB82 /* HFFullMemoryByteArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFFullMemoryByteArray.h; path = sources/HFFullMemoryByteArray.h; sourceTree = "<group>"; };
 		D0D828FF0CDE8ABE00C2AB82 /* HFFullMemoryByteArray.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFFullMemoryByteArray.m; path = sources/HFFullMemoryByteArray.m; sourceTree = "<group>"; };
-		D0D8C2BA12A3C10100960FC4 /* ChooseStringEncodingWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ChooseStringEncodingWindowController.h; path = app/sources/ChooseStringEncodingWindowController.h; sourceTree = "<group>"; };
-		D0D8C2BB12A3C10100960FC4 /* ChooseStringEncodingWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ChooseStringEncodingWindowController.m; path = app/sources/ChooseStringEncodingWindowController.m; sourceTree = "<group>"; };
 		D8EE3EFC16F26689001C7C09 /* DiffRangeWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DiffRangeWindowController.h; path = app/sources/DiffRangeWindowController.h; sourceTree = "<group>"; };
 		D8EE3EFD16F26689001C7C09 /* DiffRangeWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DiffRangeWindowController.m; path = app/sources/DiffRangeWindowController.m; sourceTree = "<group>"; };
 		DAE8EBFC1598FFDB0008ADB9 /* DocumentWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DocumentWindow.h; path = app/sources/DocumentWindow.h; sourceTree = "<group>"; };
@@ -902,6 +902,7 @@
 		A531921C21D58DC1006C25D6 /* Miscellaneous */ = {
 			isa = PBXGroup;
 			children = (
+				A533B9BF2AD42F5200ECA26E /* HexFiend_2-Bridging-Header.h */,
 				D0A8AF7B1467272B00387627 /* AppUtilities.h */,
 				D0A8AF7C1467273900387627 /* AppUtilities.m */,
 				D059E1271311C675001493B8 /* AppDebugging.h */,
@@ -1379,8 +1380,7 @@
 		D0D8C45C12A3EF3F00960FC4 /* Dialogs */ = {
 			isa = PBXGroup;
 			children = (
-				D0D8C2BA12A3C10100960FC4 /* ChooseStringEncodingWindowController.h */,
-				D0D8C2BB12A3C10100960FC4 /* ChooseStringEncodingWindowController.m */,
+				A533B9C02AD42F5300ECA26E /* ChooseStringEncodingWindowController.swift */,
 				795F46BF14BAA45D00EB2F7D /* OpenDriveWindowController.h */,
 				795F46C014BAA45D00EB2F7D /* OpenDriveWindowController.m */,
 				D8EE3EFC16F26689001C7C09 /* DiffRangeWindowController.h */,
@@ -1681,6 +1681,9 @@
 				LastUpgradeCheck = 1430;
 				ORGANIZATIONNAME = ridiculous_fish;
 				TargetAttributes = {
+					8D1107260486CEB800E47090 = {
+						LastSwiftMigration = 1500;
+					};
 					9408FBF919DD72DE004F800E = {
 						CreatedOnToolsVersion = 6.0.1;
 					};
@@ -1848,6 +1851,7 @@
 				A571E5952A3973690005B388 /* HFTemplateFile.m in Sources */,
 				D01773920D7A2F32002E03DE /* HFResizingView.m in Sources */,
 				A571E5982A3ABFAD0005B388 /* TemplateMetadata.m in Sources */,
+				A533B9C12AD42F5300ECA26E /* ChooseStringEncodingWindowController.swift in Sources */,
 				D0CD51F60DA2B928006E8D1B /* AppDelegate.m in Sources */,
 				D03CFA8A0FC78BCD00EE79E4 /* DataInspectorRepresenter.m in Sources */,
 				D02BD6E010545E9000535EDE /* FileDataDocument.m in Sources */,
@@ -1865,7 +1869,6 @@
 				D0CBB32A128F906000989C15 /* DiffTextViewContainer.m in Sources */,
 				A5589ACF2206D3C8000293A4 /* HFOpenAccessoryViewController.m in Sources */,
 				A5628AAB21D8561D00911ABB /* Tcl_ParseArgsObjv.c in Sources */,
-				D0D8C2BC12A3C10100960FC4 /* ChooseStringEncodingWindowController.m in Sources */,
 				A59BC5922001FB9A0066860F /* HFTclTemplateController.m in Sources */,
 				A56D78161E7EF088001D1892 /* CLIController.m in Sources */,
 				D059E1291311C676001493B8 /* AppDebugging.m in Sources */,
@@ -2829,6 +2832,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
 				DEAD_CODE_STRIPPING = YES;
@@ -2853,6 +2857,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.ridiculousfish.HexFiend;
 				PRODUCT_NAME = "Hex Fiend";
+				SWIFT_OBJC_BRIDGING_HEADER = "HexFiend_2-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -3001,6 +3007,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "-";
 				DEAD_CODE_STRIPPING = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = NO;
@@ -3024,6 +3031,9 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.ridiculousfish.HexFiend;
 				PRODUCT_NAME = "Hex Fiend";
+				SWIFT_OBJC_BRIDGING_HEADER = "HexFiend_2-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 				WRAPPER_EXTENSION = app;
 			};
 			name = "Debug+UnitTests";
@@ -3169,6 +3179,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
 				DEAD_CODE_STRIPPING = YES;
@@ -3193,6 +3204,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.ridiculousfish.HexFiend;
 				PRODUCT_NAME = "Hex Fiend";
+				SWIFT_OBJC_BRIDGING_HEADER = "HexFiend_2-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
 				WRAPPER_EXTENSION = app;
 			};
 			name = "Release+CodeSign";
@@ -3358,6 +3371,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
 				DEAD_CODE_STRIPPING = YES;
@@ -3378,6 +3392,8 @@
 				OTHER_LDFLAGS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = com.ridiculousfish.HexFiend;
 				PRODUCT_NAME = "Hex Fiend";
+				SWIFT_OBJC_BRIDGING_HEADER = "HexFiend_2-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
 				WRAPPER_EXTENSION = app;
 			};
 			name = "Release+MAS";
@@ -3559,6 +3575,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "-";
 				DEAD_CODE_STRIPPING = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = NO;
@@ -3578,6 +3595,9 @@
 				OTHER_LDFLAGS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = com.ridiculousfish.HexFiend;
 				PRODUCT_NAME = "Hex Fiend";
+				SWIFT_OBJC_BRIDGING_HEADER = "HexFiend_2-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 				WRAPPER_EXTENSION = app;
 			};
 			name = "Debug+MAS";
@@ -3765,6 +3785,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "-";
 				DEAD_CODE_STRIPPING = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = NO;
@@ -3788,6 +3809,9 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.ridiculousfish.HexFiend;
 				PRODUCT_NAME = "Hex Fiend";
+				SWIFT_OBJC_BRIDGING_HEADER = "HexFiend_2-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 				WRAPPER_EXTENSION = app;
 			};
 			name = "Debug+CodeSign";
@@ -3964,6 +3988,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "-";
 				DEAD_CODE_STRIPPING = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = NO;
@@ -3987,6 +4012,9 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.ridiculousfish.HexFiend;
 				PRODUCT_NAME = "Hex Fiend";
+				SWIFT_OBJC_BRIDGING_HEADER = "HexFiend_2-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
