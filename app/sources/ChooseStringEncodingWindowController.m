@@ -101,4 +101,8 @@
     [tableView reloadData];
 }
 
+- (void)clearSelection {
+    [tableView selectRowIndexes:[NSIndexSet indexSet] byExtendingSelection:nil];
+}
+
 @end

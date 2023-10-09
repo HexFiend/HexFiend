@@ -10,6 +10,7 @@
 #import "DiffDocument.h"
 #import "MyDocumentController.h"
 #import "DiffRangeWindowController.h"
+#import "ChooseStringEncodingWindowController.h"
 #include <assert.h>
 #include <errno.h>
 #include <stdbool.h>
@@ -411,6 +412,7 @@ static NSComparisonResult compareFontDisplayNames(NSFont *a, NSFont *b, void *un
     HFStringEncoding *encoding = item.representedObject;
     HFASSERT([encoding isKindOfClass:[HFStringEncoding class]]);
     [self setStringEncoding:encoding];
+    [chooseStringEncoding clearSelection];
 }
 
 - (IBAction)openPreferences:(id)sender {

@@ -12,4 +12,6 @@
     IBOutlet NSSearchField *searchField;
 }
 
+- (void)clearSelection;
+
 @end
