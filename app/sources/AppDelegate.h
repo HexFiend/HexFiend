@@ -23,7 +23,6 @@ NS_ASSUME_NONNULL_BEGIN
     IBOutlet NSMenuItem *noBookmarksMenuItem;
     NSArray *bookmarksMenuItems;
     IBOutlet NSMenu *stringEncodingMenu;
-    IBOutlet ChooseStringEncodingWindowController *chooseStringEncoding;
     IBOutlet NSMenuItem *byteGroupingMenuItem;
     IBOutlet NSMenuItem *byteThemeMenuItem;
     IBOutlet CLIController *cliController; // unused, prevents leak

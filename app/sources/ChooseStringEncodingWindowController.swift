@@ -30,6 +30,14 @@ class ChooseStringEncodingWindowController: NSWindowController, NSTableViewDeleg
         "ChooseStringEncodingDialog"
     }
     
+    init() {
+        super.init(window: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     func populateStringEncodings() {
         encodings = HFEncodingManager.shared().systemEncodings.map({ encoding in
             let label: String

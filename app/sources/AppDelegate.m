@@ -27,6 +27,7 @@
 @property NSString *diffLeftFile;
 @property NSString *diffRightFile;
 @property NSData *dataToOpen;
+@property ChooseStringEncodingWindowController *chooseStringEncoding;
 
 @end
 
@@ -166,9 +167,16 @@
     
     [stringEncodingMenu addItem:[NSMenuItem separatorItem]];
     
-    NSMenuItem *otherEncodingsItem = [[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Customize…", "") action:@selector(showWindow:) keyEquivalent:@""];
-    otherEncodingsItem.target = chooseStringEncoding;
+    NSMenuItem *otherEncodingsItem = [[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Customize…", "") action:@selector(showEncodingsWindow) keyEquivalent:@""];
+    otherEncodingsItem.target = self;
     [stringEncodingMenu addItem:otherEncodingsItem];
+}
+
+- (void)showEncodingsWindow {
+    if (!self.chooseStringEncoding) {
+        self.chooseStringEncoding = [[ChooseStringEncodingWindowController alloc] init];
+    }
+    [self.chooseStringEncoding showWindow:nil];
 }
 
 - (void)buildByteGroupingMenu {
@@ -444,7 +452,7 @@ static NSComparisonResult compareFontDisplayNames(NSFont *a, NSFont *b, void *un
     HFStringEncoding *encoding = item.representedObject;
     HFASSERT([encoding isKindOfClass:[HFStringEncoding class]]);
     [self setStringEncoding:encoding];
-    [chooseStringEncoding reload];
+    [self.chooseStringEncoding reload];
 }
 
 - (IBAction)openPreferences:(id)sender {

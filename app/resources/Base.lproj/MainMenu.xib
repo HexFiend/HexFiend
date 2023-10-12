@@ -670,7 +670,6 @@
                 <outlet property="bookmarksMenu" destination="569" id="623"/>
                 <outlet property="byteGroupingMenuItem" destination="488" id="U3v-Jk-eKP"/>
                 <outlet property="byteThemeMenuItem" destination="bNt-Q7-dE4" id="KnB-3u-AF6"/>
-                <outlet property="chooseStringEncoding" destination="680" id="k0D-Q1-3F6"/>
                 <outlet property="cliController" destination="Zzl-4N-uHo" id="2fL-Ue-kWP"/>
                 <outlet property="extendForwardsItem" destination="397" id="407"/>
                 <outlet property="fontListPlaceholderMenuItem" destination="411" id="LQp-2v-HO1"/>
@@ -680,7 +679,6 @@
             </connections>
         </customObject>
         <customObject id="733" customClass="OpenDriveWindowController"/>
-        <customObject id="680" customClass="ChooseStringEncodingWindowController" customModule="Hex_Fiend"/>
         <customObject id="744" customClass="SUUpdater"/>
         <customObject id="Zzl-4N-uHo" userLabel="CLIController" customClass="CLIController"/>
     </objects>
