@@ -7,6 +7,8 @@
 
 #import <HexFiend/HexFiend.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @class ChooseStringEncodingWindowController;
 @class CLIController;
 @class DiffRangeWindowController;
@@ -27,6 +29,8 @@
     IBOutlet CLIController *cliController; // unused, prevents leak
 }
 
+@property (class, readonly) AppDelegate *shared;
+
 - (IBAction)diffFrontDocuments:(id)sender;
 - (IBAction)diffFrontDocumentsByRange:(id)sender;
 
@@ -37,9 +41,13 @@
 
 @property (readonly) HFStringEncoding *defaultStringEncoding;
 
+@property NSArray<NSNumber *> *menuSystemEncodingsNumbers;
+
 @property (readonly) NSDictionary<NSString *, HFByteTheme *> *byteThemes;
 
 - (void)buildByteGroupingMenu;
 - (void)buildByteThemeMenu;
 
 @end
+
+NS_ASSUME_NONNULL_END

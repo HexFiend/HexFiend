@@ -35,6 +35,12 @@
     NSWindowController *_prefs;
 }
 
++ (instancetype)shared {
+    id delegate = NSApp.delegate;
+    HFASSERT([delegate isKindOfClass:[AppDelegate class]]);
+    return delegate;
+}
+
 - (void)applicationWillFinishLaunching:(NSNotification *)note {
     USE(note);
     /* Make sure our NSDocumentController subclass gets installed */
@@ -100,27 +106,53 @@
     }];
 }
 
-- (void)buildEncodingMenu {
-    NSStringEncoding defaultEncodings[] = {
-        NSASCIIStringEncoding,
-        NSMacOSRomanStringEncoding,
-        NSISOLatin1StringEncoding,
-        NSISOLatin2StringEncoding,
-        NSUTF16LittleEndianStringEncoding,
-        NSUTF16BigEndianStringEncoding,
-    };
-    HFEncodingManager *encodingManager = [HFEncodingManager shared];
-    for (size_t i = 0; i < sizeof(defaultEncodings) / sizeof(defaultEncodings[0]); ++i) {
-        NSStringEncoding encoding = defaultEncodings[i];
+- (NSArray<NSNumber *> *)menuSystemEncodingsNumbers {
+    NSArray<NSNumber *> *menuSystemEncodingsFromDefaults = [NSUserDefaults.standardUserDefaults objectForKey:@"MenuSystemEncodings"];
+    if (!menuSystemEncodingsFromDefaults) {
+        menuSystemEncodingsFromDefaults = @[
+            [NSNumber numberWithUnsignedInteger:NSASCIIStringEncoding],
+            [NSNumber numberWithUnsignedInteger:NSMacOSRomanStringEncoding],
+            [NSNumber numberWithUnsignedInteger:NSISOLatin1StringEncoding],
+            [NSNumber numberWithUnsignedInteger:NSISOLatin2StringEncoding],
+            [NSNumber numberWithUnsignedInteger:NSUTF16LittleEndianStringEncoding],
+            [NSNumber numberWithUnsignedInteger:NSUTF16BigEndianStringEncoding],
+        ];
+    }
+    return menuSystemEncodingsFromDefaults;
+}
+
+- (void)setMenuSystemEncodingsNumbers:(NSArray<NSNumber *> *)menuSystemEncodingsNumbers {
+    [NSUserDefaults.standardUserDefaults setObject:menuSystemEncodingsNumbers forKey:@"MenuSystemEncodings"];
+    [self buildEncodingMenu];
+}
+
+- (NSArray<HFNSStringEncoding *> *)menuSystemEncodings {
+    HFEncodingManager *encodingManager = HFEncodingManager.shared;
+    NSMutableArray<HFNSStringEncoding *> *encodings = NSMutableArray.array;
+    for (NSNumber *encodingNum in self.menuSystemEncodingsNumbers) {
+        const NSStringEncoding encoding = encodingNum.unsignedIntegerValue;
         HFNSStringEncoding *encodingObj = [encodingManager systemEncoding:encoding];
-        HFASSERT(encodingObj != nil);
-        NSString *title = encodingObj.name;
+        if (!encodingObj) {
+            NSLog(@"Unknown encoding %lu", encoding);
+            continue;
+        }
+        [encodings addObject:encodingObj];
+    }
+    return [encodings sortedArrayUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES]]];
+}
+
+- (void)buildEncodingMenu {
+    [stringEncodingMenu removeAllItems];
+    
+    for (HFNSStringEncoding *encoding in self.menuSystemEncodings) {
+        NSString *title = encoding.name;
         NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:title action:@selector(setStringEncodingFromMenuItem:) keyEquivalent:@""];
-        item.representedObject = encodingObj;
+        item.representedObject = encoding;
         [stringEncodingMenu addItem:item];
     }
     
     NSString *encodingsFolder = [[NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES).firstObject stringByAppendingPathComponent:[NSBundle mainBundle].bundleIdentifier] stringByAppendingPathComponent:@"Encodings"];
+    HFEncodingManager *encodingManager = HFEncodingManager.shared;
     NSArray<HFCustomEncoding *> *customEncodings = [encodingManager loadCustomEncodingsFromDirectory:encodingsFolder];
     if (customEncodings.count > 0) {
         [stringEncodingMenu addItem:[NSMenuItem separatorItem]];
@@ -134,7 +166,7 @@
     
     [stringEncodingMenu addItem:[NSMenuItem separatorItem]];
     
-    NSMenuItem *otherEncodingsItem = [[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Other…", "") action:@selector(showWindow:) keyEquivalent:@""];
+    NSMenuItem *otherEncodingsItem = [[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Customize…", "") action:@selector(showWindow:) keyEquivalent:@""];
     otherEncodingsItem.target = chooseStringEncoding;
     [stringEncodingMenu addItem:otherEncodingsItem];
 }
@@ -412,7 +444,7 @@ static NSComparisonResult compareFontDisplayNames(NSFont *a, NSFont *b, void *un
     HFStringEncoding *encoding = item.representedObject;
     HFASSERT([encoding isKindOfClass:[HFStringEncoding class]]);
     [self setStringEncoding:encoding];
-    [chooseStringEncoding clearSelection];
+    [chooseStringEncoding reload];
 }
 
 - (IBAction)openPreferences:(id)sender {

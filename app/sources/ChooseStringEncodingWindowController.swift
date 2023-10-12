@@ -10,9 +10,9 @@ import Cocoa
 
 private class HFEncodingChoice {
     let label: String
-    let encoding: HFStringEncoding
+    let encoding: HFNSStringEncoding
 
-    init(label: String, encoding: HFStringEncoding) {
+    init(label: String, encoding: HFNSStringEncoding) {
         self.label = label
         self.encoding = encoding
     }
@@ -24,6 +24,7 @@ class ChooseStringEncodingWindowController: NSWindowController, NSTableViewDeleg
     
     private var encodings = [HFEncodingChoice]()
     private var activeEncodings = [HFEncodingChoice]()
+    private var menuEncodings = [NSNumber]()
     
     override var windowNibName: String {
         "ChooseStringEncodingDialog"
@@ -42,6 +43,7 @@ class ChooseStringEncodingWindowController: NSWindowController, NSTableViewDeleg
             $0.label < $1.label
         })
         activeEncodings = encodings
+        menuEncodings = AppDelegate.shared.menuSystemEncodingsNumbers
         tableView.reloadData()
     }
     
@@ -67,8 +69,8 @@ class ChooseStringEncodingWindowController: NSWindowController, NSTableViewDeleg
         tableView.reloadData()
     }
     
-    @objc func clearSelection() {
-        tableView.selectRowIndexes(IndexSet(), byExtendingSelection: false)
+    @objc func reload() {
+        tableView.reloadData()
     }
 }
 
@@ -87,31 +89,56 @@ extension ChooseStringEncodingWindowController: NSTableViewDataSource {
             return activeEncodings[row].encoding.name
         case "identifier":
             return activeEncodings[row].encoding.identifier
+        case "show":
+            let number = activeEncodings[row].encoding.encoding as NSNumber
+            if menuEncodings.contains(number) {
+                return NSControl.StateValue.on as NSNumber
+            }
+            return NSControl.StateValue.off as NSNumber
         default:
             assertionFailure("Unknown identifier")
             return nil
         }
     }
     
-    func tableViewSelectionDidChange(_ notification: Notification) {
-        let row = tableView.selectedRow
-        if row == -1 {
+    func tableView(_ tableView: NSTableView, setObjectValue object: Any?, for tableColumn: NSTableColumn?, row: Int) {
+        guard let tableColumn else {
+            assertionFailure()
             return
         }
-        /* Tell the front document (if any) and the app delegate */
-        let encoding = activeEncodings[row].encoding
-        if let document = NSDocumentController.shared.currentDocument {
-            guard let baseDocument = document as? BaseDataDocument else {
-                assertionFailure()
+        switch tableColumn.identifier.rawValue {
+        case "show":
+            guard let newState = object as? NSNumber else {
+                assertionFailure("Invalid object")
                 return
             }
-            baseDocument.stringEncoding = encoding
-        } else {
-            guard let delegate = NSApp.delegate as? AppDelegate else {
-                assertionFailure()
-                return
+            let addToMenu = newState.boolValue
+            let number = activeEncodings[row].encoding.encoding as NSNumber
+            menuEncodings.removeAll {
+                $0 == number
             }
-            delegate.setStringEncoding(encoding)
+            if addToMenu {
+                menuEncodings.append(number)
+            }
+            AppDelegate.shared.menuSystemEncodingsNumbers = menuEncodings
+        default:
+            assertionFailure("Unknown identifier")
         }
+    }
+    
+    func tableView(_ tableView: NSTableView, willDisplayCell cell: Any, for tableColumn: NSTableColumn?, row: Int) {
+        guard let tableColumn else {
+            assertionFailure()
+            return
+        }
+        guard tableColumn.identifier.rawValue == "show" else {
+            return
+        }
+        guard let buttonCell = cell as? NSButtonCell else {
+            assertionFailure()
+            return
+        }
+        let defaultEncoding = AppDelegate.shared.defaultStringEncoding
+        buttonCell.isEnabled = activeEncodings[row].encoding.identifier != defaultEncoding.identifier
     }
 }
