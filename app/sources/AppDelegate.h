@@ -13,6 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class CLIController;
 @class DiffRangeWindowController;
 @class HFByteTheme;
+@class Encodings;
 
 @interface AppDelegate : NSObject {
     IBOutlet NSMenuItem *extendForwardsItem, *extendBackwardsItem;
@@ -30,6 +31,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (class, readonly) AppDelegate *shared;
 
+@property Encodings *encodings;
+
 - (IBAction)diffFrontDocuments:(id)sender;
 - (IBAction)diffFrontDocumentsByRange:(id)sender;
 
@@ -40,12 +43,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (readonly) HFStringEncoding *defaultStringEncoding;
 
-@property NSArray<NSNumber *> *menuSystemEncodingsNumbers;
-
 @property (readonly) NSDictionary<NSString *, HFByteTheme *> *byteThemes;
 
 - (void)buildByteGroupingMenu;
 - (void)buildByteThemeMenu;
+- (void)buildEncodingMenu;
 
 @end
 

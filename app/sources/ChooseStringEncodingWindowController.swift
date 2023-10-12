@@ -51,7 +51,7 @@ class ChooseStringEncodingWindowController: NSWindowController, NSTableViewDeleg
             $0.label < $1.label
         })
         activeEncodings = encodings
-        menuEncodings = AppDelegate.shared.menuSystemEncodingsNumbers
+        menuEncodings = AppDelegate.shared.encodings.menuSystemEncodingsNumbers
         tableView.reloadData()
     }
     
@@ -128,7 +128,7 @@ extension ChooseStringEncodingWindowController: NSTableViewDataSource {
             if addToMenu {
                 menuEncodings.append(number)
             }
-            AppDelegate.shared.menuSystemEncodingsNumbers = menuEncodings
+            AppDelegate.shared.encodings.menuSystemEncodingsNumbers = menuEncodings
         default:
             assertionFailure("Unknown identifier")
         }

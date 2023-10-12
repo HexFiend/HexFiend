@@ -127,6 +127,7 @@
 		A5AE0C1D21E1D7570044014E /* HFColumnView.h in Headers */ = {isa = PBXBuildFile; fileRef = A5AE0C1B21E1D7570044014E /* HFColumnView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A5AE0C1E21E1D7570044014E /* HFColumnView.m in Sources */ = {isa = PBXBuildFile; fileRef = A5AE0C1C21E1D7570044014E /* HFColumnView.m */; };
 		A5B2F6E3284729F8006E8AF8 /* templates in Resources */ = {isa = PBXBuildFile; fileRef = A5B2F6E2284729F8006E8AF8 /* templates */; };
+		A5BAB4152AD7CB3200623A9F /* Encodings.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5BAB4142AD7CB3200623A9F /* Encodings.swift */; };
 		A5CEA41C20D5DF4400BCA488 /* HFStringEncoding.h in Headers */ = {isa = PBXBuildFile; fileRef = A5CEA41A20D5DF4400BCA488 /* HFStringEncoding.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A5CEA41D20D5DF4400BCA488 /* HFStringEncoding.m in Sources */ = {isa = PBXBuildFile; fileRef = A5CEA41B20D5DF4400BCA488 /* HFStringEncoding.m */; };
 		A5CEA42A20D5E0F500BCA488 /* HFNSStringEncoding.h in Headers */ = {isa = PBXBuildFile; fileRef = A5CEA42820D5E0F500BCA488 /* HFNSStringEncoding.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -532,6 +533,7 @@
 		A5AE0C1B21E1D7570044014E /* HFColumnView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFColumnView.h; path = sources/HFColumnView.h; sourceTree = "<group>"; };
 		A5AE0C1C21E1D7570044014E /* HFColumnView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFColumnView.m; path = sources/HFColumnView.m; sourceTree = "<group>"; };
 		A5B2F6E2284729F8006E8AF8 /* templates */ = {isa = PBXFileReference; lastKnownFileType = folder; path = templates; sourceTree = "<group>"; };
+		A5BAB4142AD7CB3200623A9F /* Encodings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Encodings.swift; path = app/sources/Encodings.swift; sourceTree = "<group>"; };
 		A5CEA41A20D5DF4400BCA488 /* HFStringEncoding.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFStringEncoding.h; path = sources/HFStringEncoding.h; sourceTree = "<group>"; };
 		A5CEA41B20D5DF4400BCA488 /* HFStringEncoding.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFStringEncoding.m; path = sources/HFStringEncoding.m; sourceTree = "<group>"; };
 		A5CEA42820D5E0F500BCA488 /* HFNSStringEncoding.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFNSStringEncoding.h; path = sources/HFNSStringEncoding.h; sourceTree = "<group>"; };
@@ -934,6 +936,15 @@
 			name = "Data Inspector Types";
 			sourceTree = "<group>";
 		};
+		A533B9DD2AD7CA1000ECA26E /* Encodings */ = {
+			isa = PBXGroup;
+			children = (
+				A533B9C02AD42F5300ECA26E /* ChooseStringEncodingWindowController.swift */,
+				A5BAB4142AD7CB3200623A9F /* Encodings.swift */,
+			);
+			name = Encodings;
+			sourceTree = "<group>";
+		};
 		A54D8B032A4407420021FBAB /* Byte Theme */ = {
 			isa = PBXGroup;
 			children = (
@@ -1263,6 +1274,7 @@
 				D0CD51F40DA2B928006E8D1B /* AppDelegate.h */,
 				D0CD51F50DA2B928006E8D1B /* AppDelegate.m */,
 				D02BD6D910545E7B00535EDE /* DocumentTypes */,
+				A533B9DD2AD7CA1000ECA26E /* Encodings */,
 				D084E75C115DAE90004DC181 /* DiffDocument */,
 				D0D8C45C12A3EF3F00960FC4 /* Dialogs */,
 				A59BC58F2001FB590066860F /* Binary Templates */,
@@ -1380,7 +1392,6 @@
 		D0D8C45C12A3EF3F00960FC4 /* Dialogs */ = {
 			isa = PBXGroup;
 			children = (
-				A533B9C02AD42F5300ECA26E /* ChooseStringEncodingWindowController.swift */,
 				795F46BF14BAA45D00EB2F7D /* OpenDriveWindowController.h */,
 				795F46C014BAA45D00EB2F7D /* OpenDriveWindowController.m */,
 				D8EE3EFC16F26689001C7C09 /* DiffRangeWindowController.h */,
@@ -1843,6 +1854,7 @@
 				D01E7C160CDC58AA00943F9E /* BaseDataDocument.m in Sources */,
 				A5327E5D28570EF300530557 /* HFDirectoryWatcher.m in Sources */,
 				A594F0522495A82400DCACD3 /* HFClickableTextField.m in Sources */,
+				A5BAB4152AD7CB3200623A9F /* Encodings.swift in Sources */,
 				A591313D21E3090300685B51 /* DataInspectorPlusMinusButtonCell.m in Sources */,
 				A59BC5712001AB8C0066860F /* HFBinaryTemplateRepresenter.m in Sources */,
 				D00122E30D48A8D400540B10 /* HFFindReplaceBackgroundView.m in Sources */,

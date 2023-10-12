@@ -42,6 +42,13 @@
     return delegate;
 }
 
+- (instancetype)init
+{
+    self = [super init];
+    _encodings = [[Encodings alloc] init];
+    return self;
+}
+
 - (void)applicationWillFinishLaunching:(NSNotification *)note {
     USE(note);
     /* Make sure our NSDocumentController subclass gets installed */
@@ -107,30 +114,10 @@
     }];
 }
 
-- (NSArray<NSNumber *> *)menuSystemEncodingsNumbers {
-    NSArray<NSNumber *> *menuSystemEncodingsFromDefaults = [NSUserDefaults.standardUserDefaults objectForKey:@"MenuSystemEncodings"];
-    if (!menuSystemEncodingsFromDefaults) {
-        menuSystemEncodingsFromDefaults = @[
-            [NSNumber numberWithUnsignedInteger:NSASCIIStringEncoding],
-            [NSNumber numberWithUnsignedInteger:NSMacOSRomanStringEncoding],
-            [NSNumber numberWithUnsignedInteger:NSISOLatin1StringEncoding],
-            [NSNumber numberWithUnsignedInteger:NSISOLatin2StringEncoding],
-            [NSNumber numberWithUnsignedInteger:NSUTF16LittleEndianStringEncoding],
-            [NSNumber numberWithUnsignedInteger:NSUTF16BigEndianStringEncoding],
-        ];
-    }
-    return menuSystemEncodingsFromDefaults;
-}
-
-- (void)setMenuSystemEncodingsNumbers:(NSArray<NSNumber *> *)menuSystemEncodingsNumbers {
-    [NSUserDefaults.standardUserDefaults setObject:menuSystemEncodingsNumbers forKey:@"MenuSystemEncodings"];
-    [self buildEncodingMenu];
-}
-
 - (NSArray<HFNSStringEncoding *> *)menuSystemEncodings {
     HFEncodingManager *encodingManager = HFEncodingManager.shared;
     NSMutableArray<HFNSStringEncoding *> *encodings = NSMutableArray.array;
-    for (NSNumber *encodingNum in self.menuSystemEncodingsNumbers) {
+    for (NSNumber *encodingNum in self.encodings.menuSystemEncodingsNumbers) {
         const NSStringEncoding encoding = encodingNum.unsignedIntegerValue;
         HFNSStringEncoding *encodingObj = [encodingManager systemEncoding:encoding];
         if (!encodingObj) {
