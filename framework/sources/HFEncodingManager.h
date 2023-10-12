@@ -17,7 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)shared;
 
 @property (readonly) NSArray<HFNSStringEncoding *> *systemEncodings;
-- (HFNSStringEncoding *)systemEncoding:(NSStringEncoding)systenEncoding;
+- (nullable HFNSStringEncoding *)systemEncoding:(NSStringEncoding)systenEncoding;
 
 - (NSArray<HFCustomEncoding *> *)loadCustomEncodingsFromDirectory:(NSString *)directory;
 @property (nullable, readonly) NSArray<HFCustomEncoding *> *customEncodings;

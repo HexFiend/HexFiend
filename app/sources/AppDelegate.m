@@ -27,7 +27,6 @@
 @property NSString *diffLeftFile;
 @property NSString *diffRightFile;
 @property NSData *dataToOpen;
-@property ChooseStringEncodingWindowController *chooseStringEncoding;
 
 @end
 
@@ -114,25 +113,10 @@
     }];
 }
 
-- (NSArray<HFNSStringEncoding *> *)menuSystemEncodings {
-    HFEncodingManager *encodingManager = HFEncodingManager.shared;
-    NSMutableArray<HFNSStringEncoding *> *encodings = NSMutableArray.array;
-    for (NSNumber *encodingNum in self.encodings.menuSystemEncodingsNumbers) {
-        const NSStringEncoding encoding = encodingNum.unsignedIntegerValue;
-        HFNSStringEncoding *encodingObj = [encodingManager systemEncoding:encoding];
-        if (!encodingObj) {
-            NSLog(@"Unknown encoding %lu", encoding);
-            continue;
-        }
-        [encodings addObject:encodingObj];
-    }
-    return [encodings sortedArrayUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES]]];
-}
-
 - (void)buildEncodingMenu {
     [stringEncodingMenu removeAllItems];
     
-    for (HFNSStringEncoding *encoding in self.menuSystemEncodings) {
+    for (HFNSStringEncoding *encoding in self.encodings.menuSystemEncodings) {
         NSString *title = encoding.name;
         NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:title action:@selector(setStringEncodingFromMenuItem:) keyEquivalent:@""];
         item.representedObject = encoding;
@@ -155,15 +139,8 @@
     [stringEncodingMenu addItem:[NSMenuItem separatorItem]];
     
     NSMenuItem *otherEncodingsItem = [[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Customize…", "") action:@selector(showEncodingsWindow) keyEquivalent:@""];
-    otherEncodingsItem.target = self;
+    otherEncodingsItem.target = self.encodings;
     [stringEncodingMenu addItem:otherEncodingsItem];
-}
-
-- (void)showEncodingsWindow {
-    if (!self.chooseStringEncoding) {
-        self.chooseStringEncoding = [[ChooseStringEncodingWindowController alloc] init];
-    }
-    [self.chooseStringEncoding showWindow:nil];
 }
 
 - (void)buildByteGroupingMenu {
@@ -439,7 +416,7 @@ static NSComparisonResult compareFontDisplayNames(NSFont *a, NSFont *b, void *un
     HFStringEncoding *encoding = item.representedObject;
     HFASSERT([encoding isKindOfClass:[HFStringEncoding class]]);
     [self setStringEncoding:encoding];
-    [self.chooseStringEncoding reload];
+    [self.encodings.chooseStringEncoding reload];
 }
 
 - (IBAction)openPreferences:(id)sender {

@@ -9,7 +9,9 @@
 import Foundation
 
 class Encodings: NSObject {
-    @objc var menuSystemEncodingsNumbers: [NSNumber] {
+    @objc private(set) lazy var chooseStringEncoding = ChooseStringEncodingWindowController()
+
+    var menuSystemEncodingsNumbers: [NSNumber] {
         get {
             if let encodingsFromDefaults = UserDefaults.standard.object(forKey: "MenuSystemEncodings") as? [NSNumber] {
                 return encodingsFromDefaults
@@ -28,6 +30,23 @@ class Encodings: NSObject {
         set(newEncodings) {
             UserDefaults.standard.set(newEncodings, forKey: "MenuSystemEncodings")
             AppDelegate.shared.buildEncodingMenu()
-        }        
+        }
+    }
+    
+    @objc func menuSystemEncodings() -> [HFNSStringEncoding] {
+        let encodingManager = HFEncodingManager.shared()
+        return menuSystemEncodingsNumbers.compactMap { encoding in
+            guard let encodingObj = encodingManager.systemEncoding(encoding.uintValue) else {
+                print("Unknown encoding \(encoding)")
+                return nil
+            }
+            return encodingObj
+        }.sorted {
+            $0.name < $1.name
+        }
+    }
+    
+    @objc func showEncodingsWindow() {
+        chooseStringEncoding.showWindow(nil)
     }
 }
