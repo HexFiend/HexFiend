@@ -198,3 +198,57 @@ include "Utilities/General.tcl"
 
 # This script can now use commands defined in the above file, like `assert` and `check`
 ```
+
+## Metadata
+
+Starting with v2.17, template files can store metadata in the beginning header comment block for additional functionality.
+
+### Auto-detection
+
+Templates can store file type information (UTI, extension) which is used to automatically choose the template.
+
+Example:
+
+```tcl
+# png.tcl
+#
+# .types = ( public.png, png );
+```
+
+### Hidden files
+
+If a template file isn't actually meant to be directly used, such as a file meant to be included, it can have metadata set to hide it from the UI.
+
+Example:
+
+```tcl
+# Utility/General.tcl
+#
+# .hidden = true;
+```
+
+### Minimum version
+
+The minimum version can be set to exclude showing a template in the UI if the app version is lower.
+
+Example:
+
+```tcl
+# png.tcl
+#
+# .min_version_required = 2.17;
+```
+
+### How it works
+
+- All sequential comment lines in the beginning of the file are scanned for metadata
+- A metadata comment starts with a dot
+- The rest of the line is assumed to be a key-value pair using [Old-Style ASCII Property Lists](https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/PropertyLists/OldStylePlists/OldStylePLists.html) format.
+
+Here is an example of invalid metadata since there is a line break:
+
+```tcl
+# myfile.tcl
+
+# .types = ( myfile );
+```
