@@ -1689,7 +1689,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 1430;
+				LastUpgradeCheck = 1500;
 				ORGANIZATIONNAME = ridiculous_fish;
 				TargetAttributes = {
 					8D1107260486CEB800E47090 = {
