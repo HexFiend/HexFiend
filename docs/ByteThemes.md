@@ -24,7 +24,7 @@ Byte Themes are JSON5 files. This limits them to macOS 12 and greater, where sup
 
 Let's start with an example:
 
-```json
+```
 {
    dark: {
        null: 0x999999,
@@ -47,7 +47,7 @@ The format starts with the theme variant, light or dark. Each variant supports f
 
 - null: 0
 - printable: 33 - 126
-- whitespace: 9, 10, 13,32
+- whitespace: 9, 10, 13, 32
 - extended: 128 - 255
 - other: everything else
 
