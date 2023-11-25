@@ -64,8 +64,8 @@
     NSString *leftDisplayName = [[leftFileName lastPathComponent] stringByDeletingPathExtension];
     NSString *rightDisplayName = [[rightFileName lastPathComponent] stringByDeletingPathExtension];
     if ([leftDisplayName isEqualToString:rightDisplayName]) {
-        leftDisplayName = leftFileName;
-        rightDisplayName = rightFileName;
+        leftDisplayName = [leftFileName stringByAbbreviatingWithTildeInPath];
+        rightDisplayName = [rightFileName stringByAbbreviatingWithTildeInPath];
     }
 
     doc.leftFileName = leftDisplayName;
