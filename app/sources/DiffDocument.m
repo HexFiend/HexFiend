@@ -45,9 +45,9 @@
 }
 
 - (void)hideViewForRepresenter:(HFRepresenter *)rep {
+    HFASSERT(rep != nil);
     HFRepresenter *leftRep = [allRepresenters objectForKey:[rep className]];
 
-    HFASSERT(rep != NULL);
     HFASSERT([layoutRepresenter.representers indexOfObjectIdenticalTo:rep] != NSNotFound);
     if (rep == statusBarRepresenter) {
         [self.window setContentBorderThickness:0 forEdge:NSRectEdgeMinY];
@@ -1098,7 +1098,7 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
 }
 
 - (void)scrollWithScrollEvent:(NSEvent *)scrollEvent {
-    HFASSERT(scrollEvent != NULL);
+    HFASSERT(scrollEvent != nil);
     HFASSERT([scrollEvent type] == NSEventTypeScrollWheel);
     long double scrollY = 0;
     
