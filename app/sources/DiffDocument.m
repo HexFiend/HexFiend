@@ -758,7 +758,8 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
     [self showViewForRepresenter:lineCountingRepresenter];
     [self showViewForRepresenter:hexRepresenter];
     [self showViewForRepresenter:asciiRepresenter];
-    
+    [self showViewForRepresenter:textDividerRepresenter];
+
     /* Install the two byte arrays */
     [[leftTextView controller] setByteArray:leftBytes];
     [[rightTextView controller] setByteArray:rightBytes];
