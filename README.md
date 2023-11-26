@@ -18,4 +18,4 @@ Download the latest version from the [releases](https://github.com/ridiculousfis
 - **Smart saving.**  Hex Fiend knows not to waste time overwriting the parts of your files that haven’t changed, and never needs temporary disk space.
 - **Data inspector.**  Interpret data as integer or floating point, signed or unsigned, big or little endian.
 - **Binary templates.**  Visualize the structure of a file through scripting. See [documentation](https://github.com/ridiculousfish/HexFiend/tree/master/templates).
-- **Embeddable!**  It’s really easy to incorporate Hex Fiend’s hex or data views into your app using the Hex Fiend framework.  Its permissive BSD-style license won’t burden you. See the [API reference](http://ridiculousfish.com/hexfiend/docs/) for details.
+- **Embeddable!**  It’s really easy to incorporate Hex Fiend’s hex or data views into your app using the Hex Fiend framework.  Its permissive BSD-style license won’t burden you. See the [API reference](http://ridiculousfish.com/hexfiend/docs/) for details. Check out the [projects using Hex Fiend](https://github.com/HexFiend/HexFiend/blob/master/docs/ProjectsUsingHexFiend.md).
