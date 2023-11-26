@@ -134,6 +134,6 @@ extern NSString * const BaseDataDocumentDidChangeStringEncodingNotification;
 - (void)dataInspectorChangedRowCount:(NSNotification *)note;
 - (void)dataInspectorDeletedAllRows:(NSNotification *)note;
 
-- (void)setByteGrouping:(NSUInteger)newBytesPerColumn;
+- (BOOL)setByteGrouping:(NSUInteger)newBytesPerColumn;
 
 @end

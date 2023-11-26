@@ -1231,9 +1231,9 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
     [super setLineNumberFormat:sender];
 }
 
-- (void)setByteGrouping:(NSUInteger)newBytesPerColumn {
+- (BOOL)setByteGrouping:(NSUInteger)newBytesPerColumn {
     [[leftTextView controller] setBytesPerColumn:newBytesPerColumn];
-    [super setByteGrouping:newBytesPerColumn];
+    return [super setByteGrouping:newBytesPerColumn];
 }
 
 @end
