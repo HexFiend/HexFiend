@@ -388,7 +388,10 @@ static NSComparisonResult compareFontDisplayNames(NSFont *a, NSFont *b, void *un
             NSLog(@"Failed to find encoding object for %ld", encoding);
         }
     } else if ([obj isKindOfClass:[NSData class]]) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         HFStringEncoding *encodingObj = [NSKeyedUnarchiver unarchiveObjectWithData:obj];
+#pragma clang diagnostic pop
         if ([encodingObj isKindOfClass:[HFCustomEncoding class]]) {
             return encodingObj;
         } else if ([encodingObj isKindOfClass:[HFNSStringEncoding class]]) {
@@ -409,7 +412,10 @@ static NSComparisonResult compareFontDisplayNames(NSFont *a, NSFont *b, void *un
 }
 
 - (void)setStringEncoding:(HFStringEncoding *)encoding {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     [[NSUserDefaults standardUserDefaults] setObject:[NSKeyedArchiver archivedDataWithRootObject:encoding] forKey:@"DefaultStringEncoding"];
+#pragma clang diagnostic pop
 }
 
 - (IBAction)setStringEncodingFromMenuItem:(NSMenuItem *)item {
