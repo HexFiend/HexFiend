@@ -561,7 +561,11 @@ static inline Class preferredByteArrayClass(void) {
 /* When our line counting view needs more space, we increase the size of our window, and also move it left by the same amount so that the other content does not appear to move. */
 - (void)lineCountingViewChangedWidth:(NSNotification *)note {
     USE(note);
-    HFASSERT([note object] == lineCountingRepresenter);
+    if (note.object != lineCountingRepresenter) {
+        HFASSERT([note.object isKindOfClass:[HFLineCountingRepresenter class]]);
+        // TODO: Probably DiffDocument's 2nd line counting rep.
+        return;
+    }
     NSView *lineCountingView = [lineCountingRepresenter view];
     
     CGFloat newWidth = [lineCountingRepresenter preferredWidth];
