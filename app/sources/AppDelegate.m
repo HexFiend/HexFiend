@@ -416,7 +416,7 @@ static NSComparisonResult compareFontDisplayNames(NSFont *a, NSFont *b, void *un
     HFStringEncoding *encoding = item.representedObject;
     HFASSERT([encoding isKindOfClass:[HFStringEncoding class]]);
     [self setStringEncoding:encoding];
-    [self.encodings.chooseStringEncoding reload];
+    [self.encodings reloadEncodingsWindowIfLoaded];
 }
 
 - (IBAction)openPreferences:(id)sender {

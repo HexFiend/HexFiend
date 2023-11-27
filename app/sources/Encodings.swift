@@ -9,7 +9,7 @@
 import Foundation
 
 class Encodings: NSObject {
-    @objc private(set) lazy var chooseStringEncoding = ChooseStringEncodingWindowController()
+    @objc private var chooseStringEncoding: ChooseStringEncodingWindowController?
 
     var menuSystemEncodingsNumbers: [NSNumber] {
         get {
@@ -47,6 +47,19 @@ class Encodings: NSObject {
     }
     
     @objc func showEncodingsWindow() {
-        chooseStringEncoding.showWindow(nil)
+        let choose: ChooseStringEncodingWindowController
+        if let chooseStringEncoding {
+            choose = chooseStringEncoding
+        } else {
+            choose = ChooseStringEncodingWindowController()
+            self.chooseStringEncoding = choose
+        }
+        choose.showWindow(nil)
+    }
+    
+    @objc func reloadEncodingsWindowIfLoaded() {
+        if let chooseStringEncoding {
+            chooseStringEncoding.reload()
+        }
     }
 }
