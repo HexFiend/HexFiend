@@ -9,7 +9,7 @@
 import Foundation
 
 class Encodings: NSObject {
-    @objc private var chooseStringEncoding: ChooseStringEncodingWindowController?
+    private var chooseStringEncoding: ChooseStringEncodingWindowController?
 
     var menuSystemEncodingsNumbers: [NSNumber] {
         get {
