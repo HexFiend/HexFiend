@@ -586,11 +586,7 @@ static inline Class preferredByteArrayClass(void) {
         windowWidthChange = (windowWidthChange < 0 ? HFFloor(windowWidthChange) : HFCeil(windowWidthChange));
         
         /* convertSize: has a nasty habit of stomping on negatives.  Make our window width change negative if our view-space horizontal change was negative. */
-#if CGFLOAT_IS_DOUBLE
-        windowWidthChange = copysign(windowWidthChange, widthChange);
-#else
-        windowWidthChange = copysignf(windowWidthChange, widthChange);
-#endif
+        windowWidthChange = HFCopysign(windowWidthChange, widthChange);
         
         NSRect windowFrame = [lineCountingViewWindow frame];
         windowFrame.size.width += windowWidthChange;
@@ -624,11 +620,7 @@ static inline Class preferredByteArrayClass(void) {
         windowHeightChange = (windowHeightChange < 0 ? HFFloor(windowHeightChange) : HFCeil(windowHeightChange));
         
         /* convertSize: has a nasty habit of stomping on negatives.  Make our window height change negative if our view-space vertical change was negative. */
-#if CGFLOAT_IS_DOUBLE
-        windowHeightChange = copysign(windowHeightChange, heightChange);
-#else
-        windowHeightChange = copysignf(windowHeightChange, heightChange);
-#endif
+        windowHeightChange = HFCopysign(windowHeightChange, heightChange);
         
         NSRect windowFrame = columnViewWindow.frame;
         windowFrame.size.height += windowHeightChange;
