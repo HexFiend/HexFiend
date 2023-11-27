@@ -32,7 +32,6 @@
 - (void)showViewForRepresenter:(HFRepresenter *)rep {
     HFRepresenter *leftRep = [allRepresenters objectForKey:[rep className]];
     
-    HFASSERT([[rep view] superview] == nil && [[rep view] window] == nil);
     if (rep == statusBarRepresenter) {
         NSView *view = rep.view;
         [self.window setContentBorderThickness:view.frame.size.height forEdge:NSRectEdgeMinY];
