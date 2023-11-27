@@ -8,7 +8,8 @@
 
 #import <Foundation/Foundation.h>
 #import <HexFiend/HFNSStringEncoding.h>
-#import <HexFiend/HFCustomEncoding.h>
+
+@class HFCustomEncoding;
 
 NS_ASSUME_NONNULL_BEGIN
 

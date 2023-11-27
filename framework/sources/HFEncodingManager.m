@@ -7,6 +7,7 @@
 //
 
 #import "HFEncodingManager.h"
+#import <HexFiend/HFCustomEncoding.h>
 
 @interface HFEncodingManager ()
 

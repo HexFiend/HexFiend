@@ -6,6 +6,7 @@
 //
 
 #import <HexFiend/HFStringEncodingTextRepresenter.h>
+#import <HexFiend/HFAssert.h>
 #import <HexFiend/HFRepresenterStringEncodingTextView.h>
 #import <HexFiend/HFPasteboardOwner.h>
 #import <HexFiend/HFProgressTracker.h>

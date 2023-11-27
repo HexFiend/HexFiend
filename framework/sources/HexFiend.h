@@ -55,8 +55,9 @@
 #import <HexFiend/HFByteRangeAttribute.h>
 #import <HexFiend/HFByteRangeAttributeArray.h>
 #import <HexFiend/HFNSStringEncoding.h>
-
 #import <HexFiend/HFByteThemeColor.h>
+#import <HexFiend/HFCustomEncoding.h>
+#import <HexFiend/HFEncodingManager.h>
 
 /* The following is all for Doxygen */
 
