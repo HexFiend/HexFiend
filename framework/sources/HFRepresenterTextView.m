@@ -1444,7 +1444,11 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
                 if (bytePtr && colorTable) {
                     const uint8_t byte = *bytePtr;
                     const struct HFByteThemeColor *col = &colorTable[byte];
-                    CGContextSetRGBFillColor(ctx, col->r, col->g, col->b, 1.0);
+                    if (col->set) {
+                        CGContextSetRGBFillColor(ctx, col->r, col->g, col->b, 1.0);
+                    } else {
+                        [styleRun set];
+                    }
                 }
 
                 /* Draw the glyphs */

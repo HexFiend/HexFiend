@@ -8,4 +8,5 @@
 
 struct HFByteThemeColor {
     CGFloat r, g, b;
+    BOOL set;
 };

@@ -167,6 +167,6 @@ private extension NSColor {
         var g = CGFloat.zero
         var b = CGFloat.zero
         color.getRed(&r, green: &g, blue: &b, alpha: nil)
-        return HFByteThemeColor(r: r, g: g, b: b)
+        return HFByteThemeColor(r: r, g: g, b: b, set: true)
     }
 }
