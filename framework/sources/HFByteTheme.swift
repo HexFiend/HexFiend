@@ -26,9 +26,16 @@ private extension NSColor {
             print("Byte themes only available on macOS 12 and later.")
             return nil
         }
-        guard let data = try? Data(contentsOf: url),
-              let topDict = try? JSONSerialization.jsonObject(with: data, options: [.json5Allowed]) as? NSDictionary else {
-            print("Invalid json at \(url)")
+        let topDict: NSDictionary
+        do {
+            let data = try Data(contentsOf: url)
+            guard let dict = try JSONSerialization.jsonObject(with: data, options: [.json5Allowed]) as? NSDictionary else {
+                print("Top-level object not a dictionary at \(url)")
+                return nil
+            }
+            topDict = dict
+        } catch {
+            print("Invalid json at \(url): \(error)")
             return nil
         }
         guard let darkDict = topDict["dark"] as? NSDictionary else {
