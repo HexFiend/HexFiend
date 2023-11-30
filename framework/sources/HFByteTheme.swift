@@ -10,7 +10,7 @@ import Foundation
 
 private extension NSColor {
     func toRGB() -> NSColor {
-        guard let rgb = self.usingColorSpaceName(.calibratedRGB) else {
+        guard let rgb = usingType(.componentBased) else {
             fatalError("Can't convert color to calibratedRGB")
         }
         return rgb
