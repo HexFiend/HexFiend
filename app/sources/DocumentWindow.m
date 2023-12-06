@@ -14,7 +14,7 @@
 @dynamic delegate;
 
 - (void)awakeFromNib {
-    [self registerForDraggedTypes:@[NSFilenamesPboardType]];
+    [self registerForDraggedTypes:@[NSPasteboardTypeFileURL]];
 }
 
 - (NSDragOperation)draggingEntered:(id <NSDraggingInfo>)sender {

@@ -800,9 +800,10 @@ static inline Class preferredByteArrayClass(void) {
 }
 
 - (BOOL)performDragOperation:(id <NSDraggingInfo>)sender {
-    NSArray *files = [sender.draggingPasteboard propertyListForType:NSFilenamesPboardType];
-    for(NSString *filename in files) {
-        NSURL *fileURL = [NSURL fileURLWithPath:filename];
+    NSDictionary *options = @{NSPasteboardURLReadingFileURLsOnlyKey: @YES};
+    NSArray<NSURL *> *urls = [sender.draggingPasteboard readObjectsForClasses:@[NSURL.class]
+                                                                      options:options];
+    for (NSURL *fileURL in urls) {
         [[NSDocumentController sharedDocumentController] openDocumentWithContentsOfURL:fileURL display:YES completionHandler:^(NSDocument * _Nullable __unused document, BOOL __unused documentWasAlreadyOpen, NSError * _Nullable __unused error) {
         }];
     }
