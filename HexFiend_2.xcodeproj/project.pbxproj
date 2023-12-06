@@ -36,6 +36,7 @@
 		9483479419DE1C920086A732 /* TreeEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = D06D60BC0FA7EA23002376EE /* TreeEntry.m */; };
 		9483479519DE1C950086A732 /* BTree_Test.m in Sources */ = {isa = PBXBuildFile; fileRef = D06D60A50FA7E980002376EE /* BTree_Test.m */; };
 		94ECCBC01BDF7DD2007FF44E /* HexFiend.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D01E7BB80CDC530C00943F9E /* HexFiend.framework */; };
+		A50859AA2B204C8100325B36 /* HFTclTemplateControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A50859A92B204C8100325B36 /* HFTclTemplateControllerTests.swift */; };
 		A51D0E7B20F1CB7F00B55775 /* HFController.h in Headers */ = {isa = PBXBuildFile; fileRef = D0A6C9D70DCC68610077175C /* HFController.h */; };
 		A51D0E7C20F1CB7F00B55775 /* HFController.m in Sources */ = {isa = PBXBuildFile; fileRef = D01E7BEB0CDC55D000943F9E /* HFController.m */; };
 		A51D0E7E20F1D01A00B55775 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A51D0E7D20F1D01A00B55775 /* UIKit.framework */; };
@@ -353,6 +354,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		A50859AB2B204C8100325B36 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8D1107260486CEB800E47090;
+			remoteInfo = HexFiend_2;
+		};
 		A550A7211F787A60001C79C7 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
@@ -440,6 +448,9 @@
 		9408FBFE19DD72DF004F800E /* Framework_Tests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Framework_Tests.m; sourceTree = "<group>"; };
 		9408FC0F19DD8669004F800E /* HFPrivilegedHelperConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFPrivilegedHelperConnection.h; path = sources/HFPrivilegedHelperConnection.h; sourceTree = "<group>"; };
 		9483478F19DE188E0086A732 /* HFTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFTest.h; sourceTree = "<group>"; };
+		A50859A72B204C8100325B36 /* Hex Fiend Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Hex Fiend Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A50859A92B204C8100325B36 /* HFTclTemplateControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HFTclTemplateControllerTests.swift; sourceTree = "<group>"; };
+		A50859B52B204D7600325B36 /* Hex_Fiend_Tests-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Hex_Fiend_Tests-Bridging-Header.h"; sourceTree = "<group>"; };
 		A51D0E7D20F1D01A00B55775 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.0.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		A51D0E8B20F1E56600B55775 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.0.sdk/System/Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
 		A51D0E9020F2A8D200B55775 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.0.sdk/System/Library/Frameworks/CoreText.framework; sourceTree = DEVELOPER_DIR; };
@@ -743,6 +754,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A50859A42B204C8100325B36 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A550A7131F7877F8001C79C7 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -801,6 +819,7 @@
 				9408FBFA19DD72DE004F800E /* HexFiend_Framework Tests.xctest */,
 				A550A7161F7877F8001C79C7 /* hexf */,
 				A5EF294A20F187B700CA7B39 /* HexFiend_Framework_iOS.framework */,
+				A50859A72B204C8100325B36 /* Hex Fiend Tests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -815,6 +834,7 @@
 				A550A7171F7877F8001C79C7 /* hexf */,
 				D00C166E0FF4925A006D021F /* HexFiendling */,
 				D05390411E2192C000F9AAC1 /* configs */,
+				A50859A82B204C8100325B36 /* Hex Fiend Tests */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
 				D01D1D6C1489D1F6008212BB /* Documentation Scripts */,
@@ -899,6 +919,15 @@
 			);
 			name = Tests;
 			path = tests;
+			sourceTree = "<group>";
+		};
+		A50859A82B204C8100325B36 /* Hex Fiend Tests */ = {
+			isa = PBXGroup;
+			children = (
+				A50859B52B204D7600325B36 /* Hex_Fiend_Tests-Bridging-Header.h */,
+				A50859A92B204C8100325B36 /* HFTclTemplateControllerTests.swift */,
+			);
+			path = "Hex Fiend Tests";
 			sourceTree = "<group>";
 		};
 		A531921C21D58DC1006C25D6 /* Miscellaneous */ = {
@@ -1594,6 +1623,24 @@
 			productReference = 9408FBFA19DD72DE004F800E /* HexFiend_Framework Tests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		A50859A62B204C8100325B36 /* Hex Fiend Tests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A50859B42B204C8100325B36 /* Build configuration list for PBXNativeTarget "Hex Fiend Tests" */;
+			buildPhases = (
+				A50859A32B204C8100325B36 /* Sources */,
+				A50859A42B204C8100325B36 /* Frameworks */,
+				A50859A52B204C8100325B36 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				A50859AC2B204C8100325B36 /* PBXTargetDependency */,
+			);
+			name = "Hex Fiend Tests";
+			productName = "Hex Fiend Tests";
+			productReference = A50859A72B204C8100325B36 /* Hex Fiend Tests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		A550A7151F7877F8001C79C7 /* hexf */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = A550A71A1F7877F8001C79C7 /* Build configuration list for PBXNativeTarget "hexf" */;
@@ -1689,6 +1736,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
+				LastSwiftUpdateCheck = 1500;
 				LastUpgradeCheck = 1500;
 				ORGANIZATIONNAME = ridiculous_fish;
 				TargetAttributes = {
@@ -1697,6 +1745,10 @@
 					};
 					9408FBF919DD72DE004F800E = {
 						CreatedOnToolsVersion = 6.0.1;
+					};
+					A50859A62B204C8100325B36 = {
+						CreatedOnToolsVersion = 15.0.1;
+						TestTargetID = 8D1107260486CEB800E47090;
 					};
 					A550A7151F7877F8001C79C7 = {
 						CreatedOnToolsVersion = 9.0;
@@ -1730,6 +1782,7 @@
 				D0F6FE0A0FFF679200C609F0 /* Documentation Generation */,
 				9408FBF919DD72DE004F800E /* HexFiend_Framework Tests */,
 				A550A7151F7877F8001C79C7 /* hexf */,
+				A50859A62B204C8100325B36 /* Hex Fiend Tests */,
 			);
 		};
 /* End PBXProject section */
@@ -1770,6 +1823,13 @@
 			files = (
 				A57F347C1F1BE7CD00234B94 /* BigResult.txt.gz in Resources */,
 				A57F34781F1BCC4B00234B94 /* BigColumnsResult.txt.gz in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A50859A52B204C8100325B36 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1907,6 +1967,14 @@
 				9408FBFF19DD72DF004F800E /* Framework_Tests.m in Sources */,
 				9483479419DE1C920086A732 /* TreeEntry.m in Sources */,
 				9483479319DE1C8E0086A732 /* NaiveArray.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A50859A32B204C8100325B36 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A50859AA2B204C8100325B36 /* HFTclTemplateControllerTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2061,6 +2129,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		A50859AC2B204C8100325B36 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8D1107260486CEB800E47090 /* HexFiend_2 */;
+			targetProxy = A50859AB2B204C8100325B36 /* PBXContainerItemProxy */;
+		};
 		A550A7221F787A60001C79C7 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = A550A7151F7877F8001C79C7 /* hexf */;
@@ -2430,6 +2503,292 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = "Release+CodeSign";
+		};
+		A50859AD2B204C8100325B36 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculous-fish.Hex-Fiend-Tests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "Hex Fiend Tests/Hex_Fiend_Tests-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Hex Fiend.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Hex Fiend";
+			};
+			name = Debug;
+		};
+		A50859AE2B204C8100325B36 /* Debug+CodeSign */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculous-fish.Hex-Fiend-Tests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "Hex Fiend Tests/Hex_Fiend_Tests-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Hex Fiend.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Hex Fiend";
+			};
+			name = "Debug+CodeSign";
+		};
+		A50859AF2B204C8100325B36 /* Debug+MAS */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculous-fish.Hex-Fiend-Tests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "Hex Fiend Tests/Hex_Fiend_Tests-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Hex Fiend.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Hex Fiend";
+			};
+			name = "Debug+MAS";
+		};
+		A50859B02B204C8100325B36 /* Debug+UnitTests */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculous-fish.Hex-Fiend-Tests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "Hex Fiend Tests/Hex_Fiend_Tests-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Hex Fiend.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Hex Fiend";
+			};
+			name = "Debug+UnitTests";
+		};
+		A50859B12B204C8100325B36 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculous-fish.Hex-Fiend-Tests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "Hex Fiend Tests/Hex_Fiend_Tests-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Hex Fiend.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Hex Fiend";
+			};
+			name = Release;
+		};
+		A50859B22B204C8100325B36 /* Release+CodeSign */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculous-fish.Hex-Fiend-Tests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "Hex Fiend Tests/Hex_Fiend_Tests-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Hex Fiend.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Hex Fiend";
+			};
+			name = "Release+CodeSign";
+		};
+		A50859B32B204C8100325B36 /* Release+MAS */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculous-fish.Hex-Fiend-Tests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "Hex Fiend Tests/Hex_Fiend_Tests-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Hex Fiend.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Hex Fiend";
+			};
+			name = "Release+MAS";
 		};
 		A550A71B1F7877F8001C79C7 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -4075,6 +4434,20 @@
 				9408FC0319DD72DF004F800E /* Release */,
 				9408FC0419DD72DF004F800E /* Release+CodeSign */,
 				D053902E1E218CB700F9AAC1 /* Release+MAS */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A50859B42B204C8100325B36 /* Build configuration list for PBXNativeTarget "Hex Fiend Tests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A50859AD2B204C8100325B36 /* Debug */,
+				A50859AE2B204C8100325B36 /* Debug+CodeSign */,
+				A50859AF2B204C8100325B36 /* Debug+MAS */,
+				A50859B02B204C8100325B36 /* Debug+UnitTests */,
+				A50859B12B204C8100325B36 /* Release */,
+				A50859B22B204C8100325B36 /* Release+CodeSign */,
+				A50859B32B204C8100325B36 /* Release+MAS */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
