@@ -58,6 +58,15 @@
 #import <HexFiend/HFByteThemeColor.h>
 #import <HexFiend/HFCustomEncoding.h>
 #import <HexFiend/HFEncodingManager.h>
+#import <HexFiend/HFBinaryGlyphTable.h>
+#import <HexFiend/HFCancelButton.h>
+#import <HexFiend/HFColumnView.h>
+#import <HexFiend/HFFastMemchr.h>
+#import <HexFiend/HFGlyphTrie.h>
+#import <HexFiend/HFHexPasteboardOwner.h>
+#import <HexFiend/HFLineCountingView.h>
+#import <HexFiend/HFRepresenterTextView.h>
+#import <HexFiend/HFUIUtils.h>
 
 /* The following is all for Doxygen */
 
