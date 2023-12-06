@@ -106,4 +106,25 @@ entry "Magic" $magic
                        [.init("Magic", "4022250974", (0, 0))])
     }
 
+    func testUInt32UnknownOption() throws {
+        let script = """
+uint32 -asdf "Magic"
+"""
+        let result = try evaluate("DEADBEEF", script)
+        XCTAssertTrue(try XCTUnwrap(result.error).hasPrefix("Unknown option -asdf"))
+        XCTAssertEqual(result.nodes, [])
+    }
+
+    func testUInt32WithCommand() throws {
+        let script = """
+proc myproc {value} {
+    return "abc-$value-123"
+}
+
+uint32 -cmd myproc "Magic"
+"""
+        XCTAssertEqual(try evaluate("DEADBEEF", script).nodes,
+                       [.init("Magic", "abc-4022250974-123", (0, 4))])
+    }
+
 }

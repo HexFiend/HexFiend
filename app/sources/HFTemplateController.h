@@ -86,6 +86,8 @@ typedef NS_ENUM(NSUInteger, HFEndian) {
 
 - (BOOL)readBits:(NSString *)bits byteCount:(unsigned)numberOfBytes forLabel:(NSString *_Nullable)label result:(uint64 *)result error:(NSString *_Nonnull*_Nonnull)error;
 
+@property (readonly, nullable) HFTemplateNode *currentNode;
+
 NS_ASSUME_NONNULL_END
 
 @end

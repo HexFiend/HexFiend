@@ -715,10 +715,12 @@ DEFINE_COMMAND(sleb128)
             break;
     }
     int asHexFlag = 0;
+    const char *cmdArg = NULL;
     NSString *label = nil;
     Tcl_Obj **extraArgs = NULL;
     Tcl_ArgvInfo argInfoTable[] = {
         {TCL_ARGV_CONSTANT, "-hex", (void*)1, &asHexFlag, "display as hexadecimal", NULL},
+        {TCL_ARGV_STRING, "-cmd", NULL, &cmdArg, "command/proc to transform value", NULL},
         TCL_ARGV_AUTO_HELP,
         TCL_ARGV_TABLE_END,
     };
@@ -737,7 +739,7 @@ DEFINE_COMMAND(sleb128)
             }
         }
         if (objc > 2) {
-            const char *usage = hexSwitchAllowed ? "[-hex] [label]" : "[label";
+            const char *usage = hexSwitchAllowed ? "[-hex] [-cmd] [label]" : "[-cmd] [label";
             Tcl_WrongNumArgs(_interp, 0, objv, usage);
             ckfree((char *)extraArgs);
             return TCL_ERROR;
@@ -901,6 +903,28 @@ DEFINE_COMMAND(sleb128)
         default:
             HFASSERT(0);
             break;
+    }
+    if (cmdArg) {
+        // If the -cmd arg is set, use that arg as the name of a procedure that
+        // must take a single arg, which is the node's value, and return a new value.
+        // The result of the procedure is stored in a temporary variable, named with a uuid value,
+        // and then retrieved.
+        HFTemplateNode *node = self.currentNode.children.lastObject;
+        HFASSERT(node != nil);
+        NSString *resultVar = NSUUID.UUID.UUIDString;
+        NSString *script = [NSString stringWithFormat:@"set %@ [%s %@]", resultVar, cmdArg, node.value];
+        err = Tcl_Eval(_interp, script.UTF8String);
+        if (err != TCL_OK) {
+            return err;
+        }
+        const char *result = Tcl_GetVar(_interp, resultVar.UTF8String, 0);
+        if (result) {
+            node.value = [NSString stringWithUTF8String:result];
+        }
+        err = Tcl_UnsetVar(_interp, resultVar.UTF8String, 0);
+        if (err != TCL_OK) {
+            return err;
+        }
     }
     return TCL_OK;
 }
