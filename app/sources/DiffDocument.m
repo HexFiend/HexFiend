@@ -1236,4 +1236,8 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
     return [super setByteGrouping:newBytesPerColumn];
 }
 
+- (BOOL)shouldSaveWindowState {
+    return NO;
+}
+
 @end

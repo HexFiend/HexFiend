@@ -136,4 +136,6 @@ extern NSString * const BaseDataDocumentDidChangeStringEncodingNotification;
 
 - (BOOL)setByteGrouping:(NSUInteger)newBytesPerColumn;
 
+- (BOOL)shouldSaveWindowState;
+
 @end
