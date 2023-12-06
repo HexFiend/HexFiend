@@ -18,5 +18,6 @@
 }
 
 - (NSSize)minimumFrameSizeForProposedSize:(NSSize)frameSize;
+- (CGFloat)minimumViewWidthForBytesPerLine:(NSUInteger)bytesPerLine;
 
 @end

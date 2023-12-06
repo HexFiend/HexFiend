@@ -796,7 +796,8 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
     
     /* Update our window size so it's the right size for our data */
     NSRect windowFrame = [window frame];
-    windowFrame.size = [self minimumWindowFrameSizeForProposedSize:windowFrame.size];
+    const NSUInteger bytesPerLine = [(NSNumber *)[NSUserDefaults.standardUserDefaults objectForKey:@"BytesPerLine"] unsignedIntegerValue];
+    windowFrame.size.width = [textViewContainer minimumViewWidthForBytesPerLine:bytesPerLine];
     [window setFrame:windowFrame display:YES];
     
     /* Start at instruction zero */
