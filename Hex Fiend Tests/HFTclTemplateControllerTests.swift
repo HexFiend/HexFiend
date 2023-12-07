@@ -37,7 +37,7 @@ private struct Node: Equatable {
 }
 
 final class HFTclTemplateControllerTests: XCTestCase {
-    private func evaluate(_ hexBytes: String,_ tclScript: String) throws -> (error: NSString?, root: HFTemplateNode, nodes: [Node]) {
+    private func evaluate(_ hexBytes: String, _ tclScript: String) throws -> (error: NSString?, root: HFTemplateNode, nodes: [Node]) {
         let uuid = UUID().uuidString
         let url = NSURL.fileURL(withPath: NSTemporaryDirectory()).appendingPathComponent("\(uuid).tcl")
         try tclScript.write(to: url, atomically: true, encoding: .utf8)
@@ -62,13 +62,21 @@ final class HFTclTemplateControllerTests: XCTestCase {
         }
         return (error, root, nodes)
     }
-    
+
+    private func assertNodes(_ hexBytes: String,
+                             _ tclScript: String,
+                             _ expected: [Node]) throws {
+        let result = try evaluate(hexBytes, tclScript)
+        XCTAssertNil(result.error)
+        XCTAssertEqual(result.nodes, expected)
+    }
+
     func testUInt32() throws {
         let script = """
 uint32 "Magic"
 """
-        XCTAssertEqual(try evaluate("DEADBEEF", script).nodes,
-                       [.init("Magic", "4022250974", (0, 4))])
+        try assertNodes("DEADBEEF", script,
+                        [.init("Magic", "4022250974", (0, 4))])
     }
     
     func testLittleEndianUInt32() throws {
@@ -76,8 +84,8 @@ uint32 "Magic"
 little_endian
 uint32 "Magic"
 """
-        XCTAssertEqual(try evaluate("DEADBEEF", script).nodes,
-                       [.init("Magic", "4022250974", (0, 4))])
+        try assertNodes("DEADBEEF", script,
+                        [.init("Magic", "4022250974", (0, 4))])
     }
     
     func testBigEndianUInt32() throws {
@@ -85,16 +93,16 @@ uint32 "Magic"
 big_endian
 uint32 "Magic"
 """
-        XCTAssertEqual(try evaluate("DEADBEEF", script).nodes,
-                       [.init("Magic", "3735928559", (0, 4))])
+        try assertNodes("DEADBEEF", script,
+                        [.init("Magic", "3735928559", (0, 4))])
     }
     
     func testUInt32Hex() throws {
         let script = """
 uint32 -hex "Magic"
 """
-        XCTAssertEqual(try evaluate("DEADBEEF", script).nodes,
-                       [.init("Magic", "0xEFBEADDE", (0, 4))])
+        try assertNodes("DEADBEEF", script,
+                        [.init("Magic", "0xEFBEADDE", (0, 4))])
     }
 
     func testUInt32NoLabelWithEntry() throws {
@@ -102,8 +110,8 @@ uint32 -hex "Magic"
 set magic [uint32]
 entry "Magic" $magic
 """
-        XCTAssertEqual(try evaluate("DEADBEEF", script).nodes,
-                       [.init("Magic", "4022250974", (0, 0))])
+        try assertNodes("DEADBEEF", script,
+                        [.init("Magic", "4022250974", (0, 0))])
     }
 
     func testUInt32UnknownOption() throws {
@@ -123,8 +131,8 @@ proc myproc {value} {
 
 uint32 -cmd myproc "Magic"
 """
-        XCTAssertEqual(try evaluate("DEADBEEF", script).nodes,
-                       [.init("Magic", "abc-4022250974-123", (0, 4))])
+        try assertNodes("DEADBEEF", script,
+                        [.init("Magic", "abc-4022250974-123", (0, 4))])
     }
 
     func testUInt32HexWithCommand() throws {
@@ -135,8 +143,8 @@ proc myproc {value} {
 
 uint32 -hex -cmd myproc "Magic"
 """
-        XCTAssertEqual(try evaluate("DEADBEEF", script).nodes,
-                       [.init("Magic", "abc-0xEFBEADDE-123", (0, 4))])
+        try assertNodes("DEADBEEF", script,
+                        [.init("Magic", "abc-0xEFBEADDE-123", (0, 4))])
     }
 
 }
