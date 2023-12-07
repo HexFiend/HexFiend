@@ -907,23 +907,16 @@ DEFINE_COMMAND(sleb128)
     if (cmdArg) {
         // If the -cmd arg is set, use that arg as the name of a procedure that
         // must take a single arg, which is the node's value, and return a new value.
-        // The result of the procedure is stored in a temporary variable, named with a uuid value,
-        // and then retrieved.
         HFTemplateNode *node = self.currentNode.children.lastObject;
         HFASSERT(node != nil);
-        NSString *resultVar = NSUUID.UUID.UUIDString;
-        NSString *script = [NSString stringWithFormat:@"set %@ [%s %@]", resultVar, cmdArg, node.value];
+        NSString *script = [NSString stringWithFormat:@"%s %@", cmdArg, node.value];
         err = Tcl_Eval(_interp, script.UTF8String);
         if (err != TCL_OK) {
             return err;
         }
-        const char *result = Tcl_GetVar(_interp, resultVar.UTF8String, 0);
+        const char *result = Tcl_GetStringResult(_interp);
         if (result) {
             node.value = [NSString stringWithUTF8String:result];
-        }
-        err = Tcl_UnsetVar(_interp, resultVar.UTF8String, 0);
-        if (err != TCL_OK) {
-            return err;
         }
     }
     return TCL_OK;
