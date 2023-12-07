@@ -127,4 +127,16 @@ uint32 -cmd myproc "Magic"
                        [.init("Magic", "abc-4022250974-123", (0, 4))])
     }
 
+    func testUInt32HexWithCommand() throws {
+        let script = """
+proc myproc {value} {
+    return "abc-$value-123"
+}
+
+uint32 -hex -cmd myproc "Magic"
+"""
+        XCTAssertEqual(try evaluate("DEADBEEF", script).nodes,
+                       [.init("Magic", "abc-0xEFBEADDE-123", (0, 4))])
+    }
+
 }
