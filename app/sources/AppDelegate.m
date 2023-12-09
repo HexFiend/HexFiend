@@ -436,6 +436,11 @@ static NSComparisonResult compareFontDisplayNames(NSFont *a, NSFont *b, void *un
     if (!_prefs) {
         _prefs = [[NSWindowController alloc] initWithWindowNibName:@"Preferences"];
     }
+    if (@available(macOS 13, *)) {
+        // Hex Fiend > Preferences menu in Ventura+ gets automatically renamed to Settings,
+        // so make sure the window title matches too.
+        _prefs.window.title = NSLocalizedString(@"Settings", nil);
+    }
     [_prefs showWindow:sender];
 }
 
