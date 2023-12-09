@@ -446,13 +446,13 @@ static inline Class preferredByteArrayClass(void) {
     controller.displayedLineRange = displayedLineRange;
 }
 
-- (BOOL)shouldSaveWindowState {
-    return YES;
+- (BOOL)isDiffDocument {
+    return [self isKindOfClass:NSClassFromString(@"DiffDocument")];
 }
 
 - (void)saveWindowState
 {
-    if (loadingWindow || !self.shouldSaveWindowState) {
+    if (loadingWindow || self.isDiffDocument) {
         return;
     }
     NSInteger bpl = [controller bytesPerLine];
@@ -523,7 +523,7 @@ static inline Class preferredByteArrayClass(void) {
         }
     }
 
-    if ([self shouldSaveWindowState] && [ud objectForKey:@"WindowOrigin"] && [ud objectForKey:@"WindowHeight"]) {
+    if (!self.isDiffDocument && [ud objectForKey:@"WindowOrigin"] && [ud objectForKey:@"WindowHeight"]) {
         NSRect frame = [[self window] frame];
         frame.origin = NSPointFromString([ud objectForKey:@"WindowOrigin"]);
         frame.size.height = [ud doubleForKey:@"WindowHeight"];
@@ -988,6 +988,12 @@ static inline Class preferredByteArrayClass(void) {
 
 - (BOOL)validateMenuItem:(NSMenuItem *)item {
     SEL action = [item action];
+    if (self.isDiffDocument) {
+        if (action == @selector(saveDocument:) ||
+            action == @selector(saveDocumentAs:)) {
+            return NO;
+        }
+    }
     if (action == @selector(toggleVisibleControllerView:)) {
         NSUInteger arrayIndex = [item tag] - 1;
         NSArray *representers = self.representers;
