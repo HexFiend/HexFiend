@@ -990,7 +990,10 @@ static inline Class preferredByteArrayClass(void) {
     SEL action = [item action];
     if (self.isDiffDocument) {
         if (action == @selector(saveDocument:) ||
-            action == @selector(saveDocumentAs:)) {
+            action == @selector(saveDocumentAs:) ||
+            action == @selector(setBookmark:) ||
+            action == @selector(deleteBookmark:) ||
+            action == @selector(setShowCalloutsFromMenuItem:)) {
             return NO;
         }
     }
