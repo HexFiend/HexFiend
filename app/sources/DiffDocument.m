@@ -454,6 +454,9 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
     if (propertyMask & HFControllerFont) {
         [client setFont:[controller font]];
     }
+    if (propertyMask & HFControllerByteTheme) {
+        [client setByteTheme:[controller byteTheme]];
+    }
 }
 
 
@@ -1235,6 +1238,11 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
 - (BOOL)setByteGrouping:(NSUInteger)newBytesPerColumn {
     [[leftTextView controller] setBytesPerColumn:newBytesPerColumn];
     return [super setByteGrouping:newBytesPerColumn];
+}
+
+- (void)setByteTheme:(HFByteTheme *)byteTheme {
+    [super setByteTheme:byteTheme];
+    leftTextView.controller.byteTheme = byteTheme;
 }
 
 @end

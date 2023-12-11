@@ -963,6 +963,10 @@ static inline Class preferredByteArrayClass(void) {
     } else {
         [NSUserDefaults.standardUserDefaults removeObjectForKey:@"ByteTheme"];
     }
+    [self setByteTheme:byteTheme];
+}
+
+- (void)setByteTheme:(HFByteTheme *)byteTheme {
     [controller setByteTheme:byteTheme];
 }
 
