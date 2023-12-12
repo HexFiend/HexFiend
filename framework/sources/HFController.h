@@ -395,6 +395,8 @@ You create an HFController via <tt>[[HFController alloc] init]</tt>.  After that
 /*! Sets the range for the given bookmark.  Pass {ULLONG_MAX, ULLONG_MAX} to remove the bookmark. Undoable. */
 - (void)setRange:(HFRange)range forBookmark:(NSInteger)bookmark;
 
+- (NSString *)bookmarkUndoActionName;
+
 /*! Returns an NSIndexSet of the bookmarks in the given range. */
 - (NSIndexSet *)bookmarksInRange:(HFRange)range;
 

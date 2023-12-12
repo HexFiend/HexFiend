@@ -555,7 +555,8 @@ static inline Class preferredByteArrayClass(void) {
         HFRange existingRange = [self rangeForBookmark:bookmark];
         NSUndoManager *undoer = [self undoManager];
         [[undoer prepareWithInvocationTarget:self] setRange:existingRange forBookmark:bookmark];
-        [undoer setActionName:NSLocalizedString(@"Bookmark", "")];
+        [undoer setActionName:self.bookmarkUndoActionName];
+        [undoer setActionIsDiscardable:YES];
         
         NSString *attribute = HFBookmarkAttributeFromBookmark(bookmark);
         [attributeArray removeAttribute:attribute];
@@ -564,6 +565,10 @@ static inline Class preferredByteArrayClass(void) {
         }
         [self _addPropertyChangeBits:HFControllerByteRangeAttributes | HFControllerBookmarks];
     }
+}
+
+- (NSString *)bookmarkUndoActionName {
+    return NSLocalizedString(@"Bookmark", "");
 }
 
 - (NSIndexSet *)bookmarksInRange:(HFRange)range {

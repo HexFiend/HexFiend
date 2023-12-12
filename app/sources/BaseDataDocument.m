@@ -1964,6 +1964,19 @@ cancelled:;
 
 /* When we're changed we're no longer transient */
 - (void)updateChangeCount:(NSDocumentChangeType)change {
+    // When a bookmark is added, it's registered with the undo manager but it's not
+    // part of the document. However, NSDocument considers all undos as changes.
+    // So we check the current undo's action name to see if it's a bookmark.
+    // If it is a bookmark, and there aren't any current edits,
+    // we drop the updateChangeCount call entirely.
+    // Unfortunately there doesn't seem to be a better way to identify the current undo item
+    // beyond checking the action name.
+    NSUndoManager *undoManager = self.undoManager;
+    const NSDocumentChangeType actualChangeType = change & ~NSChangeDiscardable;
+    if ((actualChangeType == NSChangeDone || actualChangeType == NSChangeUndone || actualChangeType == NSChangeRedone) && !self.window.documentEdited && ([undoManager.undoActionName isEqualToString:controller.bookmarkUndoActionName] || [undoManager.redoActionName isEqualToString:controller.bookmarkUndoActionName])) {
+        return;
+    }
+
     [self setTransient:NO];
     [super updateChangeCount:change];
 }
