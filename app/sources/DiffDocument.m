@@ -405,7 +405,7 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
         [allRepresenters setObject:leftBinaryTemplateRepresenter forKey:[leftBinaryTemplateRepresenter className]];
         
         NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
-        [center addObserver:self selector:@selector(lineCountingViewChangedWidth:) name:HFLineCountingRepresenterMinimumViewWidthChanged object:leftLineCountingRepresenter];
+        [center addObserver:self selector:@selector(leftLineCountingViewChangedWidth:) name:HFLineCountingRepresenterMinimumViewWidthChanged object:leftLineCountingRepresenter];
         [center addObserver:self selector:@selector(columnRepresenterViewHeightChanged:) name:HFColumnRepresenterViewHeightChanged object:leftColumnRepresenter];
         [center addObserver:self selector:@selector(lineCountingRepCycledLineNumberFormat:) name:HFLineCountingRepresenterCycledLineNumberFormat object:leftLineCountingRepresenter];
         [center addObserver:self selector:@selector(dataInspectorChangedRowCount:) name:DataInspectorDidChangeRowCount object:leftDataInspectorRepresenter];
@@ -413,8 +413,8 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
         
         NSUserDefaults *defs = [NSUserDefaults standardUserDefaults];
         
-        lineCountingRepresenter.lineNumberFormat = (HFLineNumberFormat)[defs integerForKey:@"LineNumberFormat"];
-        [columnRepresenter setLineCountingWidth:lineCountingRepresenter.preferredWidth];
+        leftLineCountingRepresenter.lineNumberFormat = (HFLineNumberFormat)[defs integerForKey:@"LineNumberFormat"];
+        [leftColumnRepresenter setLineCountingWidth:leftLineCountingRepresenter.preferredWidth];
     }
     return self;
 }
@@ -1219,6 +1219,12 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
     NSView *view = [textViewContainer superview];
     HFASSERT([view isKindOfClass:[NSSplitView class]]);
     return view;
+}
+
+- (void)leftLineCountingViewChangedWidth:(NSNotification *)note {
+    HFLineCountingRepresenter *rep = note.object;
+    HFASSERT(rep == leftLineCountingRepresenter);
+    [self lineCountingRepChangedWidth:rep associatedColumnRep:leftColumnRepresenter];
 }
 
 #pragma mark Set representer properties (override BaseDocument)

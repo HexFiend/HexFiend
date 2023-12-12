@@ -562,22 +562,22 @@ static inline Class preferredByteArrayClass(void) {
     [self setupWindowEnforcingBytesPerLine:oldBPL];
 }
 
-/* When our line counting view needs more space, we increase the size of our window, and also move it left by the same amount so that the other content does not appear to move. */
 - (void)lineCountingViewChangedWidth:(NSNotification *)note {
-    USE(note);
-    if (note.object != lineCountingRepresenter) {
-        HFASSERT([note.object isKindOfClass:[HFLineCountingRepresenter class]]);
-        // TODO: Probably DiffDocument's 2nd line counting rep.
-        return;
-    }
-    NSView *lineCountingView = [lineCountingRepresenter view];
-    
-    CGFloat newWidth = [lineCountingRepresenter preferredWidth];
-    
-    // Always update column representer
-    [columnRepresenter setLineCountingWidth:newWidth];
+    HFLineCountingRepresenter *rep = note.object;
+    HFASSERT(rep == lineCountingRepresenter);
+    [self lineCountingRepChangedWidth:rep associatedColumnRep:columnRepresenter];
+}
 
-    /* Don't do anything window changing if we're not in a window yet */
+/* When our line counting view needs more space, we increase the size of our window, and also move it left by the same amount so that the other content does not appear to move. */
+- (void)lineCountingRepChangedWidth:(HFLineCountingRepresenter *)rep associatedColumnRep:(HFColumnRepresenter *)columnRep {
+    NSView *lineCountingView = [rep view];
+
+    CGFloat newWidth = [rep preferredWidth];
+
+    // Always update column representer
+    [columnRep setLineCountingWidth:newWidth];
+
+    /* Don't do any window changing if we're not in a window yet */
     NSWindow *lineCountingViewWindow = [lineCountingView window];
     if (! lineCountingViewWindow) return;
     
@@ -603,18 +603,19 @@ static inline Class preferredByteArrayClass(void) {
 
 - (void)columnRepresenterViewHeightChanged:(NSNotification *)note {
     USE(note);
-    HFASSERT([note object] == columnRepresenter);
+    HFColumnRepresenter *rep = note.object;
+    HFASSERT([rep isKindOfClass:[HFColumnRepresenter class]]);
 
-    NSView *columnView = [columnRepresenter view];
-    
-    /* Don't do anything window changing if we're not in a window yet */
+    NSView *columnView = [rep view];
+
+    /* Don't do any window changing if we're not in a window yet */
     NSWindow *columnViewWindow = [columnView window];
     if (!columnViewWindow) {
         return;
     }
     
-    CGFloat newHeight = [columnRepresenter preferredHeight];
-    
+    CGFloat newHeight = [rep preferredHeight];
+
     HFASSERT(columnViewWindow == [self window]);
     
     CGFloat currentHeight = columnView.frame.size.height;

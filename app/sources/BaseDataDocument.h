@@ -133,6 +133,7 @@ extern NSString * const BaseDataDocumentDidChangeStringEncodingNotification;
 - (void)lineCountingViewChangedWidth:(NSNotification *)note;
 - (void)dataInspectorChangedRowCount:(NSNotification *)note;
 - (void)dataInspectorDeletedAllRows:(NSNotification *)note;
+- (void)lineCountingRepChangedWidth:(HFLineCountingRepresenter *)rep associatedColumnRep:(HFColumnRepresenter *)columnRep;
 
 - (BOOL)setByteGrouping:(NSUInteger)newBytesPerColumn;
 - (void)setByteTheme:(HFByteTheme *)byteTheme;
