@@ -528,10 +528,11 @@ DEFINE_COMMAND(sleb128)
             [self beginSectionWithLabel:label collapsed:(labelArg > 1)];
             if (objc == labelArg + 2) {
                 const int err = Tcl_EvalObjEx(_interp, objv[labelArg + 1], 0);
+                NSString *error = nil;
                 if (err != TCL_OK) {
+                    HFASSERT([self endSection:&error]);
                     return err;
                 }
-                NSString *error = nil;
                 if (![self endSection:&error]) {
                     Tcl_SetObjResult(_interp, Tcl_NewStringObj(error.UTF8String, -1));
                     return TCL_ERROR;

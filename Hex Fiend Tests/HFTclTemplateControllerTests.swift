@@ -203,22 +203,39 @@ section A {
 proc parse_blah {} {
     section A {
         section B {
-            error
+            error "Oops"
         }
     }
 }
 entry top 1
-if {[catch parse_blah]} { entry "Error" "Oops" }
+if {[catch parse_blah]} { entry "Error" $errorInfo }
 entry top 2
+"""
+        let errorInfo = """
+Oops
+    while executing
+\"error \"Oops\"\"
+    invoked from within
+\"section B {
+            error \"Oops\"
+        }\"
+    invoked from within
+\"section A {
+        section B {
+            error \"Oops\"
+        }
+    }\"
+    (procedure \"parse_blah\" line 2)
+    invoked from within
+\"parse_blah\"
 """
         try assertNodes("", script, [
             .init("top", "1", (0, 0)),
             .group("A", nil, (0, 0), [
-                .group("B", nil, (0, 0), [
-                    .init("Error", "Oops", (0, 0)),
-                    .init("top", "2", (0, 0)),
-                ]),
+                .group("B", nil, (0, 0)),
             ]),
+            .init("Error", errorInfo, (0, 0)),
+            .init("top", "2", (0, 0)),
         ])
     }
 
