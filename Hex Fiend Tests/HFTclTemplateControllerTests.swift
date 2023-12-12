@@ -19,20 +19,37 @@ private struct Node: Equatable {
     let value: String?
     let isGroup: Bool
     let range: HFRange
-    
-    init(label: String?, value: String?, isGroup: Bool, range: HFRange) {
+    let children: [Node]
+
+    init(label: String?, value: String?, isGroup: Bool, range: HFRange, children: [Node] = []) {
         self.label = label
         self.value = value
         self.isGroup = isGroup
         self.range = range
+        self.children = children
     }
     
     init(_ label: String, _ value: String?, isGroup: Bool = false, _ range: HFRange) {
         self.init(label: label, value: value, isGroup: isGroup, range: range)
     }
     
-    init(_ label: String, _ value: String?, isGroup: Bool = false, _ range: (location: Int, length: Int)) {
-        self.init(label: label, value: value, isGroup: isGroup, range: .init(location: UInt64(range.location), length: UInt64(range.length)))
+    init(_ label: String,
+         _ value: String?,
+         isGroup: Bool = false,
+         _ range: (location: Int, length: Int),
+         _ children: [Node] = []) {
+        self.init(label: label,
+                  value: value,
+                  isGroup: isGroup,
+                  range: .init(location: UInt64(range.location), length: UInt64(range.length)),
+                  children: children)
+    }
+
+    static func group(_ label: String,
+                      _ value: String?,
+                      _ range: (location: Int, length: Int),
+                      _ children: [Node] = []) -> Self {
+        .init(label, value, isGroup: true, range, children)
     }
 }
 
@@ -58,7 +75,22 @@ final class HFTclTemplateControllerTests: XCTestCase {
         let root = template.evaluateScript(url.path, for: controller, error: &error)
         let rootChildren = try XCTUnwrap(root.children as? [HFTemplateNode])
         let nodes: [Node] = rootChildren.map { node in
-                .init(label: node.label, value: node.value, isGroup: node.isGroup, range: node.range)
+            // TODO: recursive
+            guard let children = node.children as? [HFTemplateNode] else {
+                fatalError("Unexpected children type")
+            }
+            let nodes: [Node] = children.map { node in
+                .init(label: node.label,
+                      value: node.value,
+                      isGroup: node.isGroup,
+                      range: node.range)
+            }
+            return Node(label: node.label,
+                        value: node.value,
+                        isGroup: node.isGroup,
+                        range: node.range,
+                        children: nodes
+            )
         }
         return (error, root, nodes)
     }
@@ -145,6 +177,30 @@ uint32 -hex -cmd myproc "Magic"
 """
         try assertNodes("DEADBEEF", script,
                         [.init("Magic", "abc-0xEFBEADDE-123", (0, 4))])
+    }
+
+    func testSection() throws {
+        let script = """
+section A {
+}
+"""
+        try assertNodes("", script, [
+            .group("A", nil, (0, 0)),
+        ])
+    }
+
+    func testNestedSections() throws {
+        let script = """
+section A {
+    section B {
+    }
+}
+"""
+        try assertNodes("", script, [
+            .group("A", nil, (0, 0), [
+                .group("B", nil, (0, 0)),
+            ]),
+        ])
     }
 
 }
