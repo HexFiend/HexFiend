@@ -139,7 +139,13 @@ static const NSTimeInterval HFCaretBlinkFrequency = 0.56;
     HFASSERT(range.length == 0);
     
     CGPoint caretBaseline = [self originForCharacterAtByteIndex:range.location];
-    return CGRectMake(caretBaseline.x - 1, caretBaseline.y, 1, [self lineHeight]);
+    CGFloat width;
+    if (@available(macOS 14, *)) {
+        width = 2;
+    } else {
+        width = 1;
+    }
+    return CGRectMake(caretBaseline.x - 1, caretBaseline.y, width, [self lineHeight]);
 }
 
 - (void)_blinkCaret:(NSTimer *)timer {
@@ -510,10 +516,18 @@ enum LineCoverage_t {
 #endif
 }
 
+- (NSColor *)caretColor {
+    if (@available(macOS 14, *)) {
+        return NSColor.textInsertionPointColor;
+    } else {
+        return HFColor.labelColor;
+    }
+}
+
 - (void)drawCaretIfNecessaryWithClip:(CGRect)clipRect context:(CGContextRef)ctx {
     CGRect caretRect = CGRectIntersection(caretRectToDraw, clipRect);
     if (! CGRectIsEmpty(caretRect)) {
-        [HFColor.labelColor set];
+        [self.caretColor set];
         CGContextFillRect(ctx, caretRect);
         lastDrawnCaretRect = caretRect;
     }
