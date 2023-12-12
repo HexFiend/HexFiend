@@ -54,6 +54,19 @@ private struct Node: Equatable {
 }
 
 final class HFTclTemplateControllerTests: XCTestCase {
+    private func childrenToNode(_ children: NSMutableArray) throws -> [Node] {
+        let children = try XCTUnwrap(children as? [HFTemplateNode])
+        let nodes: [Node] = try children.map { node in
+            return Node(label: node.label,
+                        value: node.value,
+                        isGroup: node.isGroup,
+                        range: node.range,
+                        children: try childrenToNode(node.children)
+            )
+        }
+        return nodes
+    }
+
     private func evaluate(_ hexBytes: String, _ tclScript: String) throws -> (error: NSString?, root: HFTemplateNode, nodes: [Node]) {
         let uuid = UUID().uuidString
         let url = NSURL.fileURL(withPath: NSTemporaryDirectory()).appendingPathComponent("\(uuid).tcl")
@@ -73,25 +86,7 @@ final class HFTclTemplateControllerTests: XCTestCase {
         var error: NSString?
         let template = HFTclTemplateController()
         let root = template.evaluateScript(url.path, for: controller, error: &error)
-        let rootChildren = try XCTUnwrap(root.children as? [HFTemplateNode])
-        let nodes: [Node] = rootChildren.map { node in
-            // TODO: recursive
-            guard let children = node.children as? [HFTemplateNode] else {
-                fatalError("Unexpected children type")
-            }
-            let nodes: [Node] = children.map { node in
-                .init(label: node.label,
-                      value: node.value,
-                      isGroup: node.isGroup,
-                      range: node.range)
-            }
-            return Node(label: node.label,
-                        value: node.value,
-                        isGroup: node.isGroup,
-                        range: node.range,
-                        children: nodes
-            )
-        }
+        let nodes = try childrenToNode(root.children)
         return (error, root, nodes)
     }
 
@@ -199,6 +194,30 @@ section A {
         try assertNodes("", script, [
             .group("A", nil, (0, 0), [
                 .group("B", nil, (0, 0)),
+            ]),
+        ])
+    }
+
+    func testNestedSectionsErrors() throws {
+        let script = """
+proc parse_blah {} {
+    section A {
+        section B {
+            error
+        }
+    }
+}
+entry top 1
+if {[catch parse_blah]} { entry "Error" "Oops" }
+entry top 2
+"""
+        try assertNodes("", script, [
+            .init("top", "1", (0, 0)),
+            .group("A", nil, (0, 0), [
+                .group("B", nil, (0, 0), [
+                    .init("Error", "Oops", (0, 0)),
+                    .init("top", "2", (0, 0)),
+                ]),
             ]),
         ])
     }
