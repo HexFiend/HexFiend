@@ -25,6 +25,7 @@
 - (unsigned long long)concreteToAbstractExpansionBeforeConcreteLocation:(unsigned long long)concreteEndpoint onLeft:(BOOL)left;
 - (unsigned long long)abstractToConcreteCollapseBeforeAbstractLocation:(unsigned long long)abstractEndpoint onLeft:(BOOL)left;
 - (void)scrollToFocusedInstruction;
+- (void)leftLineCountingViewChangedWidth:(NSNotification *)note;
 @end
 
 @implementation DiffDocument
