@@ -7,13 +7,14 @@
 //
 
 #import "HFTemplateController.h"
+#import "HFTemplateNode.h"
 #import "LEB128Type.h"
 
 static const unsigned long long kMaxCacheSize = 1024 * 1024;
 
 @interface HFTemplateController ()
 
-@property HFController *controller;
+@property id<HFTemplateControllerDataSource> dataSource;
 @property unsigned long long position;
 @property HFEndian endian;
 @property HFTemplateNode *root;
@@ -34,8 +35,8 @@ static const unsigned long long kMaxCacheSize = 1024 * 1024;
     return self;
 }
 
-- (HFTemplateNode *)evaluateScript:(NSString *)path forController:(HFController *)controller error:(NSString **)error {
-    self.controller = controller;
+- (HFTemplateNode *)evaluateScript:(NSString *)path withDataSource:(id<HFTemplateControllerDataSource>)dataSource error:(NSString **)error {
+    self.dataSource = dataSource;
     self.position = 0;
     self.root = [[HFTemplateNode alloc] initGroupWithLabel:nil parent:nil];
     self.currentNode = self.root;
@@ -69,7 +70,7 @@ static const unsigned long long kMaxCacheSize = 1024 * 1024;
 
     if (range.length > kMaxCacheSize) {
         // Don't try to cache if the requested range wouldn't fit
-        [self.controller copyBytes:buffer range:range];
+        [self.dataSource copyBytes:buffer range:range];
     } else {
         if ((range.location < _bytesCacheRange.location) || (range.location + range.length > _bytesCacheRange.location + _bytesCacheRange.length)) {
             // Requested range is not cached, so recache
@@ -79,7 +80,7 @@ static const unsigned long long kMaxCacheSize = 1024 * 1024;
             if (_bytesCacheRange.location + _bytesCacheRange.length > self.length) {
                 _bytesCacheRange.length = self.length - _bytesCacheRange.location;
             }
-            [self.controller copyBytes:_bytesCache.mutableBytes range:_bytesCacheRange];
+            [self.dataSource copyBytes:_bytesCache.mutableBytes range:_bytesCacheRange];
         }
         memcpy(buffer, _bytesCache.bytes + range.location - _bytesCacheRange.location, size);
     }
@@ -569,7 +570,7 @@ static const unsigned long long kMaxCacheSize = 1024 * 1024;
 }
 
 - (unsigned long long)length {
-    return self.controller.contentsLength;
+    return self.dataSource.contentsLength;
 }
 
 - (void)beginSectionWithLabel:(NSString *)label collapsed:(BOOL)collapsed {

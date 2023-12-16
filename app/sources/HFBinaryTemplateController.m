@@ -37,6 +37,24 @@
 
 @end
 
+@interface ControllerDataSource : NSObject <HFTemplateControllerDataSource>
+
+@property HFController *controller;
+
+@end
+
+@implementation ControllerDataSource
+
+- (unsigned long long)contentsLength { 
+    return self.controller.contentsLength;
+}
+
+- (void)copyBytes:(nonnull unsigned char *)bytes range:(HFRange)range { 
+    [self.controller copyBytes:bytes range:range];
+}
+
+@end
+
 @interface HFBinaryTemplateController () <NSOutlineViewDataSource, NSOutlineViewDelegate>
 
 @property (weak) IBOutlet NSOutlineView *outlineView;
@@ -363,7 +381,9 @@
         NSLog(@"Failed to change directory to %@", self.templatesFolder);
     }
     
-    HFTemplateNode *node = [templateController evaluateScript:self.selectedFile.path forController:controller error:&errorMessage];
+    ControllerDataSource *dataSource = [[ControllerDataSource alloc] init];
+    dataSource.controller = controller;
+    HFTemplateNode *node = [templateController evaluateScript:self.selectedFile.path withDataSource:dataSource error:&errorMessage];
 
     // Restore current directory
     (void)[fm changeCurrentDirectoryPath:currentDir];

@@ -12,6 +12,7 @@
 #import <zlib.h>
 #import <HexFiend/HFEncodingManager.h>
 #import "MinimumVersionRequired.h"
+#import "HFTemplateNode.h"
 
 // Tcl_ParseArgsObjv was added in Tcl 8.6, but macOS ships with Tcl 8.5
 #import "Tcl_ParseArgsObjv.h"

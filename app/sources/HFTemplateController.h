@@ -7,14 +7,22 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "HFTemplateNode.h"
 #import <HexFiend/HFStringEncoding.h>
+#import <HexFiend/HFTypes.h>
+
+@class HFTemplateNode;
 
 NS_ASSUME_NONNULL_BEGIN
 
+@protocol HFTemplateControllerDataSource <NSObject>
+@required
+- (unsigned long long)contentsLength;
+- (void)copyBytes:(unsigned char *)bytes range:(HFRange)range;
+@end
+
 @interface HFTemplateController : NSObject
 
-- (HFTemplateNode *)evaluateScript:(NSString *)path forController:(HFController *)controller error:(NSString *_Nullable*_Nullable)error;
+- (HFTemplateNode *)evaluateScript:(NSString *)path withDataSource:(id<HFTemplateControllerDataSource>)dataSource error:(NSString *_Nullable*_Nullable)error;
 
 @property NSUInteger anchor;
 @property NSString *templatesFolder;
