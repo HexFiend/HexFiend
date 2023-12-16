@@ -375,13 +375,6 @@
 			remoteGlobalIDString = D047E3141022CEFE00EF307B;
 			remoteInfo = FortunateSon;
 		};
-		D047E49C1022E0D300EF307B /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = D047E3141022CEFE00EF307B;
-			remoteInfo = Fortunate_Son;
-		};
 		D05E7A880FF615D800767D95 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
@@ -1706,7 +1699,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				D047E49D1022E0D300EF307B /* PBXTargetDependency */,
 			);
 			name = HexFiend_Framework;
 			productName = HexFiend_Framework;
@@ -2143,11 +2135,6 @@
 			isa = PBXTargetDependency;
 			target = D047E3141022CEFE00EF307B /* FortunateSon (PrivilegedHelper) */;
 			targetProxy = D039DBFF1481C17C00364FA6 /* PBXContainerItemProxy */;
-		};
-		D047E49D1022E0D300EF307B /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = D047E3141022CEFE00EF307B /* FortunateSon (PrivilegedHelper) */;
-			targetProxy = D047E49C1022E0D300EF307B /* PBXContainerItemProxy */;
 		};
 		D05E7A890FF615D800767D95 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
