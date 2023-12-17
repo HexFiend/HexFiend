@@ -5,12 +5,9 @@
 //  Copyright 2009 __MyCompanyName__. All rights reserved.
 //
 
-<<<<<<<< HEAD:app/sources/HFPrivilegedHelperConnection.h
-#import <HexFiend/HFFrameworkPrefix.h>
-#import <HexFiend/HFPrivilegedHelper.h>
-========
+#if ! HF_NO_PRIVILEGED_FILE_OPERATIONS
+
 #import "HFFrameworkPrefix.h"
->>>>>>>> 6b56269 (start on package):framework/include/HFPrivilegedHelperConnection.h
 #import "FortunateSonIPCTypes.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -39,3 +36,5 @@ struct HFProcessInfo_t {
 @end
 
 NS_ASSUME_NONNULL_END
+
+#endif

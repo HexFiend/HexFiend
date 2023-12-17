@@ -10,15 +10,45 @@ let package = Package(
     products: [
         .library(
             name: "HexFiend",
-            targets: ["HexFiend"]),
+            targets: [
+                "HexFiendObjC",
+            ]),
     ],
     targets: [
         .target(
-            name: "HexFiend",
+            name: "HexFiendCoreObjC",
+            path: "framework",
+            exclude: [
+                "include/HFPrivilegedHelperConnection.h",
+            ],
+            sources: [
+                "sources/HFFunctions.m",
+            ],
+            cSettings: [
+                .define("HF_NO_PRIVILEGED_FILE_OPERATIONS", to: "1")
+            ]),
+        .target(
+            name: "HexFiendSwift",
+            dependencies: [
+                "HexFiendCoreObjC",
+            ],
+            path: "framework",
+            sources: [
+                "sources/HFByteTheme.swift",
+            ],
+            cSettings: [
+                .define("HF_NO_PRIVILEGED_FILE_OPERATIONS", to: "1")
+            ]),
+        .target(
+            name: "HexFiendObjC",
+            dependencies: [
+                "HexFiendSwift",
+            ],
             path: "framework",
             exclude: [
                 "sources/BTree/BTree_Testing/",
                 "sources/HFByteTheme.swift",
+                "sources/HFFunctions.m",
                 "sources/HFPrivilegedHelperConnection.m",
                 "tests",
             ],
@@ -27,6 +57,6 @@ let package = Package(
             ],
             cSettings: [
                 .define("HF_NO_PRIVILEGED_FILE_OPERATIONS", to: "1")
-            ])
+            ]),
     ]
 )
