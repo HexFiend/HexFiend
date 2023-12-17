@@ -6,3 +6,5 @@ HexFiend_2.xcodeproj/xcuserdata/*
 app/tcl/build
 app/tcl/tcl
 app/tcl/tcl.tar.gz
+/.swiftpm/xcode/package.xcworkspace/xcuserdata/
+/.swiftpm/xcode/xcuserdata/

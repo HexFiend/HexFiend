@@ -5,15 +5,15 @@
 //  Copyright 2008 ridiculous_fish. All rights reserved.
 //
 
-#import <HexFiend/HFBTreeByteArray.h>
-#import <HexFiend/HFFileReference.h>
-#import <HexFiend/HFProgressTracker.h>
-#import <HexFiend/HFByteSlice.h>
-#import <HexFiend/HFFunctions.h>
-#import <HexFiend/HFAssert.h>
+#import "HFBTreeByteArray.h"
+#import "HFFileReference.h"
+#import "HFProgressTracker.h"
+#import "HFByteSlice.h"
+#import "HFFunctions.h"
+#import "HFAssert.h"
 #import "HFByteSliceFileOperation.h"
 #import "HFObjectGraph.h"
-#import <HexFiend/HFSharedMemoryByteSlice.h>
+#import "HFSharedMemoryByteSlice.h"
 
 // When we save a file, and other byte arrays need to break their dependencies on the file by copying some of its data into memory, what's the max amount we should copy (per byte array)?  We currently don't show any progress for this, so this should be a smaller value
 #define MAX_MEMORY_TO_USE_FOR_BREAKING_FILE_DEPENDENCIES_ON_SAVE (16 * 1024 * 1024)

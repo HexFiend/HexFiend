@@ -5,13 +5,13 @@
 //  Copyright 2007 ridiculous_fish. All rights reserved.
 //
 
-#import <HexFiend/HFStringEncodingTextRepresenter.h>
-#import <HexFiend/HFAssert.h>
-#import <HexFiend/HFRepresenterStringEncodingTextView.h>
-#import <HexFiend/HFPasteboardOwner.h>
-#import <HexFiend/HFProgressTracker.h>
-#import <HexFiend/HFEncodingManager.h>
-#import <HexFiend/HFFunctions.h>
+#import "HFStringEncodingTextRepresenter.h"
+#import "HFAssert.h"
+#import "HFRepresenterStringEncodingTextView.h"
+#import "HFPasteboardOwner.h"
+#import "HFProgressTracker.h"
+#import "HFEncodingManager.h"
+#import "HFFunctions.h"
 
 @interface HFStringEncodingPasteboardOwner : HFPasteboardOwner
 @property HFStringEncoding* encoding;

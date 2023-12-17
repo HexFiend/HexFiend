@@ -7,10 +7,10 @@
 //
 
 #import "HFByteArray_Internal.h"
-#import <HexFiend/HFByteSlice.h>
-#import <HexFiend/HFBTreeByteArray.h>
-#import <HexFiend/HFFunctions.h>
-#import <HexFiend/HFAssert.h>
+#import "HFByteSlice.h"
+#import "HFBTreeByteArray.h"
+#import "HFFunctions.h"
+#import "HFAssert.h"
 #import "HFBTree.h"
 
 @implementation HFBTreeByteArray

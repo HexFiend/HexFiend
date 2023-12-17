@@ -6,14 +6,14 @@
 //
 
 #import "HFTextRepresenter_Internal.h"
-#import <HexFiend/HFRepresenterTextView.h>
+#import "HFRepresenterTextView.h"
 #if !TARGET_OS_IPHONE
-#import <HexFiend/HFTextSelectionPulseView.h>
+#import "HFTextSelectionPulseView.h"
 #endif
 #import "HFTextVisualStyleRun.h"
-#import <HexFiend/HFFunctions.h>
-#import <HexFiend/HFAssert.h>
-#import <HexFiend/HFUIUtils.h>
+#import "HFFunctions.h"
+#import "HFAssert.h"
+#import "HFUIUtils.h"
 #import "HFRepresenterTextViewCallout.h"
 #import <objc/message.h>
 #import <CoreText/CoreText.h>

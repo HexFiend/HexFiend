@@ -6,8 +6,8 @@
 //  Copyright © 2018 ridiculous_fish. All rights reserved.
 //
 
-#import <HexFiend/HFFrameworkPrefix.h>
-#import <HexFiend/HFAssert.h>
+#import "HFFrameworkPrefix.h"
+#import "HFAssert.h"
 #import "HFStringEncoding.h"
 
 @implementation HFStringEncoding

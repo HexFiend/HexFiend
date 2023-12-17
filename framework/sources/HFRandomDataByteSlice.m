@@ -9,8 +9,8 @@
 /* NOTE - THIS FILE IS COMPILED -O3 EVEN IN DEBUG BUILDS BECAUSE OF THE MUNGE LOOP (extra build flags for this file in Xcode) */
 
 #import "HFRandomDataByteSlice.h"
-#import <HexFiend/HFFunctions.h>
-#import <HexFiend/HFAssert.h>
+#import "HFFunctions.h"
+#import "HFAssert.h"
 
 //#if ! NDEBUG
 

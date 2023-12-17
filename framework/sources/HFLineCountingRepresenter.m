@@ -5,11 +5,11 @@
 //  Copyright 2007 ridiculous_fish. All rights reserved.
 //
 
-#import <HexFiend/HFLineCountingRepresenter.h>
-#import <HexFiend/HFLineCountingView.h>
-#import <HexFiend/HFHexGlyphTable.h>
-#import <HexFiend/HFFunctions.h>
-#import <HexFiend/HFAssert.h>
+#import "HFLineCountingRepresenter.h"
+#import "HFLineCountingView.h"
+#import "HFHexGlyphTable.h"
+#import "HFFunctions.h"
+#import "HFAssert.h"
 
 NSString *const HFLineCountingRepresenterMinimumViewWidthChanged = @"HFLineCountingRepresenterMinimumViewWidthChanged";
 NSString *const HFLineCountingRepresenterCycledLineNumberFormat = @"HFLineCountingRepresenterCycledLineNumberFormat";

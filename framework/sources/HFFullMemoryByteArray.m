@@ -6,12 +6,12 @@
 //
 
 #import "HFByteArray_Internal.h"
-#import <HexFiend/HFFullMemoryByteArray.h>
-#import <HexFiend/HFFullMemoryByteSlice.h>
-#import <HexFiend/HFByteSlice.h>
-#import <HexFiend/HFByteRangeAttributeArray.h>
-#import <HexFiend/HFFunctions.h>
-#import <HexFiend/HFAssert.h>
+#import "HFFullMemoryByteArray.h"
+#import "HFFullMemoryByteSlice.h"
+#import "HFByteSlice.h"
+#import "HFByteRangeAttributeArray.h"
+#import "HFFunctions.h"
+#import "HFAssert.h"
 
 @implementation HFFullMemoryByteArray
 

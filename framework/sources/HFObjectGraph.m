@@ -7,8 +7,8 @@
 
 #import "HFObjectGraph.h"
 #import "HFTest.h"
-#import <HexFiend/HFFrameworkPrefix.h>
-#import <HexFiend/HFAssert.h>
+#import "HFFrameworkPrefix.h"
+#import "HFAssert.h"
 
 @implementation HFObjectGraph
 {

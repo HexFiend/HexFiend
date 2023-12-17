@@ -1,5 +1,5 @@
 #import "HFGlyphTrie.h"
-#import <HexFiend/HFAssert.h>
+#import "HFAssert.h"
 
 /* If branchingDepth is 1, then this is a leaf and there's nothing to free (a parent frees its children).  If branchingDepth is 2, then this is a branch whose children are leaves, so we have to free the leaves but we do not recurse.  If branchingDepth is greater than 2, we do have to recurse. */
 static void freeTrie(struct HFGlyphTrieBranch_t *branch, uint8_t branchingDepth) {

@@ -5,22 +5,23 @@
 //  Copyright 2007 ridiculous_fish. All rights reserved.
 //
 
-#import <HexFiend/HFController.h>
+#import "HFController.h"
+#import "HFRepresenter.h"
 #import "HFRepresenter_Internal.h"
 #import "HFByteArray_Internal.h"
-#import <HexFiend/HFFullMemoryByteArray.h>
-#import <HexFiend/HFBTreeByteArray.h>
-#import <HexFiend/HFAttributedByteArray.h>
-#import <HexFiend/HFByteRangeAttribute.h>
-#import <HexFiend/HFFullMemoryByteSlice.h>
+#import "HFFullMemoryByteArray.h"
+#import "HFBTreeByteArray.h"
+#import "HFAttributedByteArray.h"
+#import "HFByteRangeAttribute.h"
+#import "HFFullMemoryByteSlice.h"
 #import "HFControllerCoalescedUndo.h"
-#import <HexFiend/HFSharedMemoryByteSlice.h>
+#import "HFSharedMemoryByteSlice.h"
 #import "HFRandomDataByteSlice.h"
-#import <HexFiend/HFFileReference.h>
-#import <HexFiend/HFByteRangeAttributeArray.h>
-#import <HexFiend/HFFunctions.h>
-#import <HexFiend/HFAssert.h>
-#import <HexFiend/HFUIUtils.h>
+#import "HFFileReference.h"
+#import "HFByteRangeAttributeArray.h"
+#import "HFFunctions.h"
+#import "HFAssert.h"
+#import "HFUIUtils.h"
 
 /* Used for the anchor range and location */
 #define NO_SELECTION ULLONG_MAX

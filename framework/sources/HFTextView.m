@@ -5,16 +5,16 @@
 //  Copyright 2009 ridiculous_fish. All rights reserved.
 //
 
-#import <HexFiend/HFTextView.h>
-#import <HexFiend/HFBTreeByteArray.h>
-#import <HexFiend/HFLayoutRepresenter.h>
-#import <HexFiend/HFHexTextRepresenter.h>
-#import <HexFiend/HFStringEncodingTextRepresenter.h>
-#import <HexFiend/HFVerticalScrollerRepresenter.h>
-#import <HexFiend/HFSharedMemoryByteSlice.h>
-#import <HexFiend/HFFullMemoryByteSlice.h>
-#import <HexFiend/HFFunctions.h>
-#import <HexFiend/HFAssert.h>
+#import "HFTextView.h"
+#import "HFBTreeByteArray.h"
+#import "HFLayoutRepresenter.h"
+#import "HFHexTextRepresenter.h"
+#import "HFStringEncodingTextRepresenter.h"
+#import "HFVerticalScrollerRepresenter.h"
+#import "HFSharedMemoryByteSlice.h"
+#import "HFFullMemoryByteSlice.h"
+#import "HFFunctions.h"
+#import "HFAssert.h"
 #import "HFByteArrayProxiedData.h"
 
 @implementation HFTextView

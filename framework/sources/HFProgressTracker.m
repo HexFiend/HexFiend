@@ -6,8 +6,8 @@
 //  Copyright 2008 ridiculous_fish. All rights reserved.
 //
 
-#import <HexFiend/HFProgressTracker.h>
-#import <HexFiend/HFAssert.h>
+#import "HFProgressTracker.h"
+#import "HFAssert.h"
 
 @implementation HFProgressTracker
 

@@ -5,9 +5,9 @@
 //  Copyright 2009 ridiculous_fish. All rights reserved.
 //
 
-#import <HexFiend/HFByteRangeAttribute.h>
-#import <HexFiend/HFFunctions.h>
-#import <HexFiend/HFAssert.h>
+#import "HFByteRangeAttribute.h"
+#import "HFFunctions.h"
+#import "HFAssert.h"
 
 NSString * const kHFAttributeDiffInsertion = @"HFAttributeDiffInsertion";
 NSString * const kHFAttributeFocused = @"HFAttributeFocused";

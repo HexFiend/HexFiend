@@ -5,11 +5,11 @@
 //  Copyright 2009 ridiculous_fish. All rights reserved.
 //
 
-#import <HexFiend/HFByteRangeAttributeArray.h>
+#import "HFByteRangeAttributeArray.h"
 #import "HFAnnotatedTree.h"
-#import <HexFiend/HFByteRangeAttribute.h>
-#import <HexFiend/HFFunctions.h>
-#import <HexFiend/HFAssert.h>
+#import "HFByteRangeAttribute.h"
+#import "HFFunctions.h"
+#import "HFAssert.h"
 
 #if NDEBUG
 #define VERIFY_INTEGRITY(x) do { } while (0)

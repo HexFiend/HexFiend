@@ -5,8 +5,8 @@
 //  Copyright 2008 ridiculous_fish. All rights reserved.
 //
 
-#import <HexFiend/HFTextSelectionPulseView.h>
-#import <HexFiend/HFFunctions.h>
+#import "HFTextSelectionPulseView.h"
+#import "HFFunctions.h"
 
 
 @implementation HFTextSelectionPulseView

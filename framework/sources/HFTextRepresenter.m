@@ -6,16 +6,16 @@
 //
 
 #import "HFTextRepresenter_Internal.h"
-#import <HexFiend/HFRepresenterTextView.h>
+#import "HFRepresenterTextView.h"
 #if !TARGET_OS_IPHONE
-#import <HexFiend/HFPasteboardOwner.h>
+#import "HFPasteboardOwner.h"
 #endif
-#import <HexFiend/HFByteArray.h>
-#import <HexFiend/HFByteRangeAttributeArray.h>
+#import "HFByteArray.h"
+#import "HFByteRangeAttributeArray.h"
 #import "HFTextVisualStyleRun.h"
-#import <HexFiend/HFByteRangeAttribute.h>
-#import <HexFiend/HFFunctions.h>
-#import <HexFiend/HFAssert.h>
+#import "HFByteRangeAttribute.h"
+#import "HFFunctions.h"
+#import "HFAssert.h"
 #import "HFColorRange.h"
 
 @implementation HFTextRepresenter {

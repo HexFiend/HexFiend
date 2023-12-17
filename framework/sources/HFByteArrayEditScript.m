@@ -5,11 +5,11 @@
 //  Copyright 2010 ridiculous_fish. All rights reserved.
 //
 
-#import <HexFiend/HFByteArrayEditScript.h>
-#import <HexFiend/HFByteArray.h>
-#import <HexFiend/HFProgressTracker.h>
-#import <HexFiend/HFFunctions.h>
-#import <HexFiend/HFAssert.h>
+#import "HFByteArrayEditScript.h"
+#import "HFByteArray.h"
+#import "HFProgressTracker.h"
+#import "HFFunctions.h"
+#import "HFAssert.h"
 #import "HFByteArray_Internal.h"
 #include <malloc/malloc.h>
 #include <libkern/OSAtomic.h>

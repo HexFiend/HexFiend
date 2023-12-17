@@ -7,7 +7,7 @@
 //
 
 #import "HFCustomEncoding.h"
-#import <HexFiend/HFAssert.h>
+#import "HFAssert.h"
 
 @interface HFCustomEncoding ()
 

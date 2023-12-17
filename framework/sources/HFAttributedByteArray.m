@@ -5,13 +5,13 @@
 //  Copyright 2011 ridiculous_fish. All rights reserved.
 //
 
-#import <HexFiend/HFAttributedByteArray.h>
-#import <HexFiend/HFBTreeByteArray.h>
-#import <HexFiend/HFByteSlice.h>
-#import <HexFiend/HFByteRangeAttributeArray.h>
-#import <HexFiend/HFByteRangeAttribute.h>
-#import <HexFiend/HFFunctions.h>
-#import <HexFiend/HFAssert.h>
+#import "HFAttributedByteArray.h"
+#import "HFBTreeByteArray.h"
+#import "HFByteSlice.h"
+#import "HFByteRangeAttributeArray.h"
+#import "HFByteRangeAttribute.h"
+#import "HFFunctions.h"
+#import "HFAssert.h"
 
 @implementation HFAttributedByteArray
 

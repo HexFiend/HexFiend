@@ -5,12 +5,12 @@
 //  Copyright 2008 ridiculous_fish. All rights reserved.
 //
 
-#import <HexFiend/HFPasteboardOwner.h>
-#import <HexFiend/HFProgressTracker.h>
-#import <HexFiend/HFController.h>
-#import <HexFiend/HFByteArray.h>
-#import <HexFiend/HFFunctions.h>
-#import <HexFiend/HFAssert.h>
+#import "HFPasteboardOwner.h"
+#import "HFProgressTracker.h"
+#import "HFController.h"
+#import "HFByteArray.h"
+#import "HFFunctions.h"
+#import "HFAssert.h"
 
 //What's the smallest clipboard data size we should offer to avoid copying when quitting?  This is 5 MB
 #define MINIMUM_PASTEBOARD_SIZE_TO_WARN_ABOUT (5UL << 20)

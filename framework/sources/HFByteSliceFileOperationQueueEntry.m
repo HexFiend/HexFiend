@@ -7,9 +7,9 @@
 
 #import "HFByteSliceFileOperationQueueEntry.h"
 #include <malloc/malloc.h>
-#import <HexFiend/HFFrameworkPrefix.h>
-#import <HexFiend/HFFunctions.h>
-#import <HexFiend/HFAssert.h>
+#import "HFFrameworkPrefix.h"
+#import "HFFunctions.h"
+#import "HFAssert.h"
 
 #define SOFT_MAX_PER_BUFFER (512u * 1024u)
 

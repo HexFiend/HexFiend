@@ -5,9 +5,9 @@
 //  Copyright 2008 ridiculous_fish. All rights reserved.
 //
 
-#import <HexFiend/HFFileReference.h>
-#import <HexFiend/HFFunctions.h>
-#import <HexFiend/HFAssert.h>
+#import "HFFileReference.h"
+#import "HFFunctions.h"
+#import "HFAssert.h"
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <fcntl.h>

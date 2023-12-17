@@ -6,9 +6,9 @@
 //
 
 #import "HFByteSlice_Private.h"
-#import <HexFiend/HFSharedMemoryByteSlice.h>
-#import <HexFiend/HFFunctions.h>
-#import <HexFiend/HFAssert.h>
+#import "HFSharedMemoryByteSlice.h"
+#import "HFFunctions.h"
+#import "HFAssert.h"
 
 #define MAX_FAST_PATH_SIZE (1 << 13)
 

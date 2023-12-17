@@ -5,11 +5,11 @@
 //  Copyright 2007 ridiculous_fish. All rights reserved.
 //
 
-#import <HexFiend/HFLineCountingView.h>
-#import <HexFiend/HFLineCountingRepresenter.h>
-#import <HexFiend/HFTextRepresenter_Internal.h>
-#import <HexFiend/HFFunctions.h>
-#import <HexFiend/HFAssert.h>
+#import "HFLineCountingView.h"
+#import "HFLineCountingRepresenter.h"
+#import "HFTextRepresenter_Internal.h"
+#import "HFFunctions.h"
+#import "HFAssert.h"
 
 #define INVALID_LINE_COUNT NSUIntegerMax
 

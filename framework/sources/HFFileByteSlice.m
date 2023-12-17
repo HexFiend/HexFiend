@@ -6,12 +6,12 @@
 //
 
 #import "HFByteSlice_Private.h"
-#import <HexFiend/HFFileByteSlice.h>
-#import <HexFiend/HFFileReference.h>
-#import <HexFiend/HFByteRangeAttribute.h>
-#import <HexFiend/HFByteRangeAttributeArray.h>
-#import <HexFiend/HFFunctions.h>
-#import <HexFiend/HFAssert.h>
+#import "HFFileByteSlice.h"
+#import "HFFileReference.h"
+#import "HFByteRangeAttribute.h"
+#import "HFByteRangeAttributeArray.h"
+#import "HFFunctions.h"
+#import "HFAssert.h"
 
 @implementation HFFileByteSlice
 

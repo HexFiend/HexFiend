@@ -1,4 +1,4 @@
-#import <HexFiend/HFUIUtils.h>
+#import "HFUIUtils.h"
 
 NSUInteger HFLineHeightForFont(HFFont *font) {
 #if TARGET_OS_IPHONE

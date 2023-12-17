@@ -6,10 +6,10 @@
 //
 
 #import "HFByteArray_Internal.h"
-#import <HexFiend/HFProgressTracker.h>
-#import <HexFiend/HFFunctions.h>
-#import <HexFiend/HFFastMemchr.h>
-#import <HexFiend/HFAssert.h>
+#import "HFProgressTracker.h"
+#import "HFFunctions.h"
+#import "HFFastMemchr.h"
+#import "HFAssert.h"
 
 //How many bytes should we read at a time when doing a find/replace?
 #define SEARCH_CHUNK_SIZE 32768

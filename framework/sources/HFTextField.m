@@ -5,13 +5,13 @@
 //  Copyright 2008 ridiculous_fish. All rights reserved.
 //
 
-#import <HexFiend/HFTextField.h>
-#import <HexFiend/HFBTreeByteArray.h>
-#import <HexFiend/HFController.h>
-#import <HexFiend/HFLayoutRepresenter.h>
-#import <HexFiend/HFHexTextRepresenter.h>
-#import <HexFiend/HFStringEncodingTextRepresenter.h>
-#import <HexFiend/HFAssert.h>
+#import "HFTextField.h"
+#import "HFBTreeByteArray.h"
+#import "HFController.h"
+#import "HFLayoutRepresenter.h"
+#import "HFHexTextRepresenter.h"
+#import "HFStringEncodingTextRepresenter.h"
+#import "HFAssert.h"
 
 @implementation HFTextField
 

@@ -5,13 +5,13 @@
 //  Copyright 2007 ridiculous_fish. All rights reserved.
 //
 
-#import <HexFiend/HFHexTextRepresenter.h>
+#import "HFHexTextRepresenter.h"
 #import "HFRepresenterHexTextView.h"
 #if !TARGET_OS_IPHONE
-#import <HexFiend/HFHexPasteboardOwner.h>
+#import "HFHexPasteboardOwner.h"
 #endif
-#import <HexFiend/HFFunctions.h>
-#import <HexFiend/HFAssert.h>
+#import "HFFunctions.h"
+#import "HFAssert.h"
 
 @implementation HFHexTextRepresenter {
     unsigned long long omittedNybbleLocation;

@@ -7,7 +7,7 @@
 
 #import "HFRepresenterTextViewCallout.h"
 #import "HFRepresenterTextView.h"
-#import <HexFiend/HFAssert.h>
+#import "HFAssert.h"
 #import <CoreText/CoreText.h>
 
 static const CGFloat HFTeardropRadius = 12;

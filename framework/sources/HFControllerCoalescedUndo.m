@@ -6,9 +6,9 @@
 //
 
 #import "HFControllerCoalescedUndo.h"
-#import <HexFiend/HFFullMemoryByteArray.h>
-#import <HexFiend/HFFunctions.h>
-#import <HexFiend/HFAssert.h>
+#import "HFFullMemoryByteArray.h"
+#import "HFFunctions.h"
+#import "HFAssert.h"
 
 /* Invariant for this class: actionPoint >= anchorPoint
  

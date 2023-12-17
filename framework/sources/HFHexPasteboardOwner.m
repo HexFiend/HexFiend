@@ -5,11 +5,11 @@
 //  Copyright 2007 ridiculous_fish. All rights reserved.
 //
 
-#import <HexFiend/HFHexPasteboardOwner.h>
-#import <HexFiend/HFProgressTracker.h>
-#import <HexFiend/HFByteArray.h>
-#import <HexFiend/HFFunctions.h>
-#import <HexFiend/HFAssert.h>
+#import "HFHexPasteboardOwner.h"
+#import "HFProgressTracker.h"
+#import "HFByteArray.h"
+#import "HFFunctions.h"
+#import "HFAssert.h"
 
 static inline unsigned char hex2char(NSUInteger c) {
     HFASSERT(c < 16);

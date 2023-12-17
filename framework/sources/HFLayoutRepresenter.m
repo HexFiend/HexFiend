@@ -5,9 +5,9 @@
 //  Copyright 2007 ridiculous_fish. All rights reserved.
 //
 
-#import <HexFiend/HFLayoutRepresenter.h>
-#import <HexFiend/HFFunctions.h>
-#import <HexFiend/HFAssert.h>
+#import "HFLayoutRepresenter.h"
+#import "HFFunctions.h"
+#import "HFAssert.h"
 
 @interface HFRepresenterLayoutViewInfo : NSObject {
 @public

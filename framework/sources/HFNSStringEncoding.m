@@ -7,7 +7,7 @@
 //
 
 #import "HFNSStringEncoding.h"
-#import <HexFiend/HFFunctions.h>
+#import "HFFunctions.h"
 
 @implementation HFNSStringEncoding
 {

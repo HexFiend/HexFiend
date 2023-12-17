@@ -5,11 +5,11 @@
 //  Copyright 2007 ridiculous_fish. All rights reserved.
 //
 
-#import <HexFiend/HFTextRepresenter.h>
-#import <HexFiend/HFRepresenterTextView.h>
-#import <HexFiend/HFController.h>
-#import <HexFiend/HFFunctions.h>
-#import <HexFiend/HFAssert.h>
+#import "HFTextRepresenter.h"
+#import "HFRepresenterTextView.h"
+#import "HFController.h"
+#import "HFFunctions.h"
+#import "HFAssert.h"
 
 #define FORWARD(x) - (void)x : sender { USE(sender); UNIMPLEMENTED_VOID(); }
 

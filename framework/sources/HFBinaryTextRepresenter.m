@@ -5,7 +5,7 @@
 //  Copyright 2020 ridiculous_fish. All rights reserved.
 //
 
-#import <HexFiend/HFBinaryTextRepresenter.h>
+#import "HFBinaryTextRepresenter.h"
 #import "HFRepresenterBinaryTextView.h"
 
 @implementation HFBinaryTextRepresenter

@@ -6,7 +6,7 @@
 //
 
 #import "HFTextVisualStyleRun.h"
-#import <HexFiend/HFFunctions.h>
+#import "HFFunctions.h"
 
 
 @implementation HFTextVisualStyleRun

@@ -5,9 +5,9 @@
 //  Copyright 2007 ridiculous_fish. All rights reserved.
 //
 
-#import <HexFiend/HFStatusBarRepresenter.h>
-#import <HexFiend/HFFunctions.h>
-#import <HexFiend/HFAssert.h>
+#import "HFStatusBarRepresenter.h"
+#import "HFFunctions.h"
+#import "HFAssert.h"
 
 #define kHFStatusBarDefaultModeUserDefaultsKey @"HFStatusBarDefaultMode"
 
