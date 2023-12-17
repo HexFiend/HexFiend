@@ -8,17 +8,13 @@
 #import "AppDebugging.h"
 #import "AppUtilities.h"
 #import "HFPrompt.h"
+@import HexFiendObjC;
 
 static unsigned long long unsignedLongLongValue(NSString *s) {
     unsigned long long result = 0;
     parseNumericStringWithSuffix(s, &result, NULL);
     return result;
 }
-
-@interface HFRandomDataByteSlice : HFByteSlice
-- (HFRandomDataByteSlice *)initWithRandomDataLength:(unsigned long long)length;
-@end
-
 
 @implementation BaseDataDocument (AppDebugging)
 
@@ -35,8 +31,7 @@ static unsigned long long unsignedLongLongValue(NSString *s) {
 - (void)_randomByteArray:sender {
     USE(sender);
     unsigned long long length = unsignedLongLongValue(HFPromptForValue(NSLocalizedString(@"How long?", "")));
-    Class clsHFRandomDataByteSlice = NSClassFromString(@"HFRandomDataByteSlice");
-    HFByteSlice *slice = [[clsHFRandomDataByteSlice alloc] initWithRandomDataLength:length];
+    HFByteSlice *slice = [[HFRandomDataByteSlice alloc] initWithRandomDataLength:length];
     HFByteArray *array = [[HFBTreeByteArray alloc] init];
     [array insertByteSlice:slice inRange:HFRangeMake(0, 0)];
     [controller insertByteArray:array replacingPreviousBytes:0 allowUndoCoalescing:NO];
@@ -49,7 +44,6 @@ static unsigned long long unsignedLongLongValue(NSString *s) {
     
     HFByteArray *byteArray = [[controller byteArray] mutableCopy];
     unsigned i;
-    Class clsHFRandomDataByteSlice = NSClassFromString(@"HFRandomDataByteSlice");
     for (i=1; i <= tweakCount; i++) {
 	@autoreleasepool {
 	NSUInteger op;
@@ -59,7 +53,7 @@ static unsigned long long unsignedLongLongValue(NSString *s) {
 	switch ((op = (random()%2))) {
 	    case 0: { //insert
 		offset = random() % (1 + length);
-		HFByteSlice* slice = [[clsHFRandomDataByteSlice alloc] initWithRandomDataLength: 1 + random() % 1000];
+		HFByteSlice* slice = [[HFRandomDataByteSlice alloc] initWithRandomDataLength: 1 + random() % 1000];
 		[byteArray insertByteSlice:slice inRange:HFRangeMake(offset, 0)];
 		break;
 	    }

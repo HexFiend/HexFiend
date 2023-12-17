@@ -12,7 +12,7 @@
 #import "AppDebugging.h"
 #import "AppUtilities.h"
 #import "AppDelegate.h"
-#import <HexFiend/HexFiend.h>
+@import HexFiendObjC;
 #import "HFPrompt.h"
 #import <Hex_Fiend-Swift.h>
 

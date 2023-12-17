@@ -6,7 +6,7 @@
 //
 
 #import "DiffTextViewContainer.h"
-#import <HexFiend/HexFiend.h>
+@import HexFiendObjC;
 
 /* DiffTextViewContainer exists to draw a border and to lay out views with a fixed space between them. */
 @implementation DiffTextViewContainer

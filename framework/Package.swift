@@ -17,40 +17,23 @@ let package = Package(
     targets: [
         .target(
             name: "HexFiendCoreObjC",
-            path: "framework",
-            exclude: [
-                "include/HFPrivilegedHelperConnection.h",
-            ],
-            sources: [
-                "sources/HFFunctions.m",
-            ],
-            cSettings: [
-                .define("HF_NO_PRIVILEGED_FILE_OPERATIONS", to: "1")
-            ]),
+            path: "core",
+            publicHeadersPath: "include"),
         .target(
             name: "HexFiendSwift",
             dependencies: [
                 "HexFiendCoreObjC",
             ],
-            path: "framework",
-            sources: [
-                "sources/HFByteTheme.swift",
-            ],
-            cSettings: [
-                .define("HF_NO_PRIVILEGED_FILE_OPERATIONS", to: "1")
-            ]),
+            path: "swift"),
         .target(
             name: "HexFiendObjC",
             dependencies: [
                 "HexFiendSwift",
             ],
-            path: "framework",
+            path: "objc",
             exclude: [
                 "sources/BTree/BTree_Testing/",
-                "sources/HFByteTheme.swift",
-                "sources/HFFunctions.m",
                 "sources/HFPrivilegedHelperConnection.m",
-                "tests",
             ],
             resources: [
                 .process("resources/HFModalProgress.xib"),

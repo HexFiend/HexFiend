@@ -9,7 +9,7 @@
 #import "HFBinaryTemplateRepresenter.h"
 #import "HFBinaryTemplateController.h"
 #import "HFTemplateNode.h"
-#import <HexFiend/HFRepresenterTextView.h>
+@import HexFiendObjC;
 
 @interface HFBinaryTemplateRepresenter ()
 

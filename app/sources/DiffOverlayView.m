@@ -6,7 +6,7 @@
 //
 
 #import "DiffOverlayView.h"
-#import <HexFiend/HexFiend.h>
+@import HexFiendObjC;
 
 @implementation DiffOverlayView
 

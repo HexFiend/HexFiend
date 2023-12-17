@@ -5,7 +5,8 @@
 //  Copyright 2008 ridiculous_fish. All rights reserved.
 //
 
-#import <HexFiend/HexFiend.h>
+#import <Cocoa/Cocoa.h>
+@import HexFiendObjC;
 
 NS_ASSUME_NONNULL_BEGIN
 

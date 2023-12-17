@@ -6,7 +6,7 @@
 //
 
 #import "HFResizingView.h"
-#import <HexFiend/HexFiend.h>
+@import HexFiendObjC;
 
 @implementation HFResizingView
 

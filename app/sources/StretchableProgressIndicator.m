@@ -6,7 +6,7 @@
 //
 
 #import "StretchableProgressIndicator.h"
-#import <HexFiend/HexFiend.h>
+@import HexFiendObjC;
 
 static CGFloat norm(unsigned char x) {
     return x / (CGFloat)255.;

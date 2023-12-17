@@ -6,7 +6,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <HexFiend/HexFiend.h>
+@import HexFiendObjC;
 
 static BOOL parseSuffixMultiplier(const char *multiplier, unsigned long long *multiplierResultValue) {
     NSCParameterAssert(multiplier != NULL);

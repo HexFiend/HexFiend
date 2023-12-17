@@ -5,8 +5,8 @@
 //  Copyright 2007 ridiculous_fish. All rights reserved.
 //
 
-#import <HexFiend/HexFiend.h>
 #import "DocumentWindow.h"
+@import HexFiendObjC;
 
 @class HFByteArray, HFRepresenter, HFHexTextRepresenter, HFLineCountingRepresenter, HFLayoutRepresenter, HFDocumentOperationView, DataInspectorRepresenter;
 @class HFBinaryTemplateRepresenter;
