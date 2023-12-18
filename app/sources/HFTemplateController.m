@@ -397,15 +397,18 @@ static const unsigned long long kMaxCacheSize = 1024 * 1024;
     return YES;
 }
 
-- (NSString *)dateToString:(NSDate *)date {
+- (NSString *)dateToString:(NSDate *)date utcOffset:(NSNumber *_Nullable)utcOffset {
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
     formatter.doesRelativeDateFormatting = YES;
     formatter.dateStyle = NSDateFormatterShortStyle;
     formatter.timeStyle = NSDateFormatterShortStyle;
+    if (utcOffset) {
+        formatter.timeZone = [NSTimeZone timeZoneForSecondsFromGMT:utcOffset.integerValue];
+    }
     return [formatter stringFromDate:date];
 }
 
-- (BOOL)readMacDate:(NSDate **)value forLabel:(NSString *)label {
+- (BOOL)readMacDate:(NSDate **)value utcOffset:(NSNumber *_Nullable)utcOffset forLabel:(NSString *)label {
     uint32_t val;
     if (![self readBytes:&val size:sizeof(val)]) {
         return NO;
@@ -421,7 +424,7 @@ static const unsigned long long kMaxCacheSize = 1024 * 1024;
     }
     *value = [NSDate dateWithTimeIntervalSinceReferenceDate:cftime];
     if (label) {
-        [self addNodeWithLabel:label value:[self dateToString:*value] size:sizeof(val)];
+        [self addNodeWithLabel:label value:[self dateToString:*value utcOffset:utcOffset] size:sizeof(val)];
     }
     return YES;
 }
@@ -494,7 +497,7 @@ static const unsigned long long kMaxCacheSize = 1024 * 1024;
     }
     NSDate *date = [NSDate dateWithTimeIntervalSince1970:t];
     if (label) {
-        [self addNodeWithLabel:label value:[self dateToString:date] size:numBytes];
+        [self addNodeWithLabel:label value:[self dateToString:date utcOffset:nil] size:numBytes];
     }
     return date;
 }

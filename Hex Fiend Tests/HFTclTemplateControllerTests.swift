@@ -256,4 +256,13 @@ macdate -hex Date
         XCTAssertEqual(result.nodes, [])
     }
 
+    func testMacDateUtcOffset() throws {
+        let script = """
+macdate -utcOffset 0 Date
+"""
+        try assertNodes("00000000", script,
+                        [.init("Date", "1/1/04, 8:00 AM", (0, 4))])
+    }
+
+
 }

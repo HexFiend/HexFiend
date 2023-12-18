@@ -708,10 +708,19 @@ DEFINE_COMMAND(sleb128)
 
 - (int)runTypeCommand:(enum command)command objc:(int)objc objv:(struct Tcl_Obj * CONST *)objv {
     BOOL hexSwitchAllowed = NO;
+    BOOL utcOffsetAllowed = NO;
     size_t argInfoTableSize = 3;
     switch (command) {
         case command_uint32:
             hexSwitchAllowed = YES;
+            ++argInfoTableSize;
+            break;
+        case command_macdate:
+        case command_fatdate:
+        case command_fattime:
+        case command_unixtime32:
+        case command_unixtime64:
+            utcOffsetAllowed = YES;
             ++argInfoTableSize;
             break;
         default:
@@ -719,6 +728,7 @@ DEFINE_COMMAND(sleb128)
     }
     int asHexFlag = 0;
     const char *cmdArg = NULL;
+    const char *utcOffsetArg = NULL;
     NSString *label = nil;
     Tcl_Obj **extraArgs = NULL;
     Tcl_ArgvInfo argInfoTable[argInfoTableSize];
@@ -730,6 +740,16 @@ DEFINE_COMMAND(sleb128)
             .srcPtr = (void*)1,
             .dstPtr = &asHexFlag,
             .helpStr = "display as hexadecimal",
+            .clientData = NULL,
+        };
+    }
+    if (utcOffsetAllowed) {
+        argInfoTable[argInfoTableIndex++] = (Tcl_ArgvInfo){
+            .type = TCL_ARGV_STRING,
+            .keyStr = "-utcOffset",
+            .srcPtr = NULL,
+            .dstPtr = &utcOffsetArg,
+            .helpStr = "utc offset",
             .clientData = NULL,
         };
     }
@@ -870,7 +890,12 @@ DEFINE_COMMAND(sleb128)
         }
         case command_macdate: {
             NSDate *date = nil;
-            if (![self readMacDate:&date forLabel:label]) {
+            NSNumber *utcOffset = nil;
+            if (utcOffsetArg) {
+                NSString *utcOffsetStr = [NSString stringWithUTF8String:utcOffsetArg];
+                utcOffset = [NSNumber numberWithInteger:utcOffsetStr.integerValue];
+            }
+            if (![self readMacDate:&date utcOffset:utcOffset forLabel:label]) {
                 Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read macdate bytes", -1));
                 return TCL_ERROR;
             }
