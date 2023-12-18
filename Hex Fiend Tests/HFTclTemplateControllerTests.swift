@@ -239,4 +239,12 @@ Oops
         ])
     }
 
+    func testMacDate() throws {
+        let script = """
+macdate Date
+"""
+        try assertNodes("00000000", script,
+                        [.init("Date", "1/1/04, 12:00 AM", (0, 4))])
+    }
+
 }
