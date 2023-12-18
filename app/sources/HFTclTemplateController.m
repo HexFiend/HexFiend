@@ -708,9 +708,11 @@ DEFINE_COMMAND(sleb128)
 
 - (int)runTypeCommand:(enum command)command objc:(int)objc objv:(struct Tcl_Obj * CONST *)objv {
     BOOL hexSwitchAllowed = NO;
+    size_t argInfoTableSize = 3;
     switch (command) {
         case command_uint32:
             hexSwitchAllowed = YES;
+            ++argInfoTableSize;
             break;
         default:
             break;
@@ -719,12 +721,28 @@ DEFINE_COMMAND(sleb128)
     const char *cmdArg = NULL;
     NSString *label = nil;
     Tcl_Obj **extraArgs = NULL;
-    Tcl_ArgvInfo argInfoTable[] = {
-        {TCL_ARGV_CONSTANT, "-hex", (void*)1, &asHexFlag, "display as hexadecimal", NULL},
-        {TCL_ARGV_STRING, "-cmd", NULL, &cmdArg, "command/proc to transform value", NULL},
-        TCL_ARGV_AUTO_HELP,
-        TCL_ARGV_TABLE_END,
+    Tcl_ArgvInfo argInfoTable[argInfoTableSize];
+    size_t argInfoTableIndex = 0;
+    if (hexSwitchAllowed) {
+        argInfoTable[argInfoTableIndex++] = (Tcl_ArgvInfo){
+            .type = TCL_ARGV_CONSTANT,
+            .keyStr = "-hex",
+            .srcPtr = (void*)1,
+            .dstPtr = &asHexFlag,
+            .helpStr = "display as hexadecimal",
+            .clientData = NULL,
+        };
+    }
+    argInfoTable[argInfoTableIndex++] = (Tcl_ArgvInfo){
+        .type = TCL_ARGV_STRING,
+        .keyStr = "-cmd",
+        .srcPtr = NULL,
+        .dstPtr = &cmdArg,
+        .helpStr = "command/proc to transform value",
+        .clientData = NULL,
     };
+    argInfoTable[argInfoTableIndex++] = (Tcl_ArgvInfo)TCL_ARGV_AUTO_HELP;
+    argInfoTable[argInfoTableIndex++] = (Tcl_ArgvInfo)TCL_ARGV_TABLE_END;
     int err = Tcl_ParseArgsObjv(_interp, argInfoTable, &objc, objv, &extraArgs);
     if (err != TCL_OK) {
         return err;

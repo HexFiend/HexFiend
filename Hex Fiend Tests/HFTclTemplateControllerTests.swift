@@ -247,4 +247,13 @@ macdate Date
                         [.init("Date", "1/1/04, 12:00 AM", (0, 4))])
     }
 
+    func testMacDateHexError() throws {
+        let script = """
+macdate -hex Date
+"""
+        let result = try evaluate("00000000", script)
+        XCTAssertTrue(try XCTUnwrap(result.error).hasPrefix("Unknown option -hex"))
+        XCTAssertEqual(result.nodes, [])
+    }
+
 }
