@@ -716,8 +716,6 @@ DEFINE_COMMAND(sleb128)
             ++argInfoTableSize;
             break;
         case command_macdate:
-        case command_fatdate:
-        case command_fattime:
         case command_unixtime32:
         case command_unixtime64:
             utcOffsetAllowed = YES;
