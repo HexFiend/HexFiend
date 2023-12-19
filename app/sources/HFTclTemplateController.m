@@ -766,6 +766,11 @@ DEFINE_COMMAND(sleb128)
         return err;
     }
     const BOOL asHex = asHexFlag == 1;
+    NSNumber *utcOffset = nil;
+    if (utcOffsetArg) {
+        NSString *utcOffsetStr = [NSString stringWithUTF8String:utcOffsetArg];
+        utcOffset = [NSNumber numberWithInteger:utcOffsetStr.integerValue];
+    }
     if (extraArgs && objc > 1) {
         for (int i = 1; i < objc; i++) {
             const char *arg = Tcl_GetStringFromObj(extraArgs[i], NULL);
@@ -888,11 +893,6 @@ DEFINE_COMMAND(sleb128)
         }
         case command_macdate: {
             NSDate *date = nil;
-            NSNumber *utcOffset = nil;
-            if (utcOffsetArg) {
-                NSString *utcOffsetStr = [NSString stringWithUTF8String:utcOffsetArg];
-                utcOffset = [NSNumber numberWithInteger:utcOffsetStr.integerValue];
-            }
             if (![self readMacDate:&date utcOffset:utcOffset forLabel:label]) {
                 Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read macdate bytes", -1));
                 return TCL_ERROR;
@@ -924,7 +924,7 @@ DEFINE_COMMAND(sleb128)
         case command_unixtime64: {
             const unsigned numBytes = command == command_unixtime32 ? 4 : 8;
             NSString *dateErr = nil;
-            NSDate *date = [self readUnixTime:numBytes forLabel:label error:&dateErr];
+            NSDate *date = [self readUnixTime:numBytes utcOffset:utcOffset forLabel:label error:&dateErr];
             if (!date) {
                 Tcl_SetObjResult(_interp, Tcl_NewStringObj(dateErr.UTF8String, -1));
                 return TCL_ERROR;

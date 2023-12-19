@@ -3,3 +3,4 @@
 //
 
 #import "HFTclTemplateController.h"
+#import "HFTemplateController.h"

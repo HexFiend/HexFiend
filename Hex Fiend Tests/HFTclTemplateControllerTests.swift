@@ -239,12 +239,25 @@ Oops
         ])
     }
 
+    /// Format a date like HFTemplateController
+    private func formatDate(_ date: Date, utcOffset: Int? = nil) -> String {
+        let formatter = DateFormatter()
+        formatter.doesRelativeDateFormatting = true
+        formatter.dateStyle = .short
+        formatter.timeStyle = .short
+        if let utcOffset {
+            formatter.timeZone = NSTimeZone(forSecondsFromGMT: utcOffset) as TimeZone
+        }
+        return formatter.string(from: date)
+    }
+
     func testMacDate() throws {
         let script = """
 macdate Date
 """
+        let date = try XCTUnwrap(HFTemplateController.convertMacDateSeconds(0))
         try assertNodes("00000000", script,
-                        [.init("Date", "1/1/04, 12:00 AM", (0, 4))])
+                        [.init("Date", formatDate(date), (0, 4))])
     }
 
     func testMacDateHexError() throws {
@@ -260,9 +273,37 @@ macdate -hex Date
         let script = """
 macdate -utcOffset 0 Date
 """
+        let date = try XCTUnwrap(HFTemplateController.convertMacDateSeconds(0))
         try assertNodes("00000000", script,
-                        [.init("Date", "1/1/04, 8:00 AM", (0, 4))])
+                        [.init("Date", formatDate(date, utcOffset: 0), (0, 4))])
     }
 
+    func testUnixTime() throws {
+        let date = formatDate(Date(timeIntervalSince1970: 0))
+        let script32 = """
+unixtime32 Date
+"""
+        try assertNodes("00000000", script32,
+                        [.init("Date", date, (0, 4))])
+        let script64 = """
+unixtime64 Date
+"""
+        try assertNodes("0000000000000000", script64,
+                        [.init("Date", date, (0, 8))])
+    }
+
+    func testUnixTimeUtcOffset() throws {
+        let date = formatDate(Date(timeIntervalSince1970: 0), utcOffset: 0)
+        let script32 = """
+unixtime32 -utcOffset 0 Date
+"""
+        try assertNodes("00000000", script32,
+                        [.init("Date", date, (0, 4))])
+        let script64 = """
+unixtime64 -utcOffset 0 Date
+"""
+        try assertNodes("0000000000000000", script64,
+                        [.init("Date", date, (0, 8))])
+    }
 
 }
