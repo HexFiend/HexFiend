@@ -6,7 +6,7 @@
 //  Copyright © 2023 ridiculous_fish. All rights reserved.
 //
 
-#import <HexFiend/HFByteTheme.h>
+#import "HFByteTheme.h"
 
 @implementation HFByteTheme : NSObject
 

@@ -7,7 +7,7 @@
 //
 
 #import "DocumentWindow.h"
-@import HexFiendObjC;
+@import HexFiend;
 
 @implementation DocumentWindow
 

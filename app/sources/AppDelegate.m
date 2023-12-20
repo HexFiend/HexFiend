@@ -16,8 +16,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <stdio.h>
-@import HexFiendObjC;
-@import HexFiendSwift;
+@import HexFiend;
 
 #if ! HF_NO_PRIVILEGED_FILE_OPERATIONS
 #import "HFPrivilegedHelperConnection.h"

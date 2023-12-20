@@ -17,10 +17,7 @@
 #import "HFRepresenterTextViewCallout.h"
 #import <objc/message.h>
 #import <CoreText/CoreText.h>
-#import <HexFiend/HFByteTheme.h>
-@import HexFiendCoreObjC;
-@import HexFiendSwift;
-//#import "HexFiend-Swift.h"
+#import "HFByteTheme.h"
 
 /* Returns the first index where the strings differ.  If the strings do not differ in any characters but are of different lengths, returns the smaller length; if they are the same length and do not differ, returns NSUIntegerMax */
 static inline NSUInteger HFIndexOfFirstByteThatDiffers(const unsigned char *a, NSUInteger len1, const unsigned char *b, NSUInteger len2) {

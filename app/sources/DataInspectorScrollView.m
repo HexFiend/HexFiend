@@ -6,7 +6,7 @@
 //
 
 #import "DataInspectorScrollView.h"
-@import HexFiendObjC;
+@import HexFiend;
 
 @implementation DataInspectorScrollView
 

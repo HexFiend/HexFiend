@@ -8,7 +8,7 @@
 #import "AppDebugging.h"
 #import "AppUtilities.h"
 #import "HFPrompt.h"
-@import HexFiendObjC;
+@import HexFiend;
 
 static unsigned long long unsignedLongLongValue(NSString *s) {
     unsigned long long result = 0;

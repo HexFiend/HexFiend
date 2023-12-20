@@ -6,7 +6,7 @@
 //
 
 #import "DocumentWindow.h"
-@import HexFiendObjC;
+@import HexFiend;
 
 @class HFByteArray, HFRepresenter, HFHexTextRepresenter, HFLineCountingRepresenter, HFLayoutRepresenter, HFDocumentOperationView, DataInspectorRepresenter;
 @class HFBinaryTemplateRepresenter;

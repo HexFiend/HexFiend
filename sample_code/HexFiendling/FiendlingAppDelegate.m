@@ -6,7 +6,7 @@
 //
 
 #import "FiendlingAppDelegate.h"
-#import <HexFiend/HexFiend.h>
+@import HexFiend;
 
 @interface FiendlingExample : NSObject {
     NSString *label;

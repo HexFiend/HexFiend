@@ -6,7 +6,7 @@
 //
 
 #import <Cocoa/Cocoa.h>
-@import HexFiendObjC;
+@import HexFiend;
 
 NS_ASSUME_NONNULL_BEGIN
 

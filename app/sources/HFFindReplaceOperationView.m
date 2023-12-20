@@ -7,7 +7,7 @@
 
 #import "HFFindReplaceOperationView.h"
 #import "BaseDataDocument.h"
-@import HexFiendObjC;
+@import HexFiend;
 
 @implementation HFFindReplaceOperationView
 

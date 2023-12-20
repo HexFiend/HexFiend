@@ -5,7 +5,7 @@
 //  Copyright 2011 ridiculous_fish. All rights reserved.
 //
 
-@import HexFiendObjC;
+@import HexFiend;
 
 @interface HFTextDividerRepresenter : HFRepresenter
 

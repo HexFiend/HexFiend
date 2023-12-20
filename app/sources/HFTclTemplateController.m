@@ -10,7 +10,7 @@
 #import <tcl.h>
 #import <tclTomMath.h>
 #import <zlib.h>
-@import HexFiendObjC;
+@import HexFiend;
 #import "MinimumVersionRequired.h"
 
 // Tcl_ParseArgsObjv was added in Tcl 8.6, but macOS ships with Tcl 8.5

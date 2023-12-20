@@ -5,7 +5,7 @@
 //  Copyright © 2019 ridiculous_fish. All rights reserved.
 //
 
-@import HexFiendObjC;
+@import HexFiend;
 
 /* The largest number of bytes that any inspector type can edit */
 #define MAX_EDITABLE_BYTE_COUNT 128

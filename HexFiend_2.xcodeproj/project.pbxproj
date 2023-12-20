@@ -65,6 +65,7 @@
 		A591314021E3098800685B51 /* DataInspectorScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = A591313F21E3098800685B51 /* DataInspectorScrollView.m */; };
 		A594F04F24959F6400DCACD3 /* BinaryTemplatePopover.xib in Resources */ = {isa = PBXBuildFile; fileRef = A594F04D24959F6400DCACD3 /* BinaryTemplatePopover.xib */; };
 		A594F0522495A82400DCACD3 /* HFClickableTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = A594F0512495A82300DCACD3 /* HFClickableTextField.m */; };
+		A59693392B32B40B00E62C1B /* HexFiend in Frameworks */ = {isa = PBXBuildFile; productRef = A59693382B32B40B00E62C1B /* HexFiend */; };
 		A59BC5712001AB8C0066860F /* HFBinaryTemplateRepresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = A59BC5702001AB8C0066860F /* HFBinaryTemplateRepresenter.m */; };
 		A59BC5922001FB9A0066860F /* HFTclTemplateController.m in Sources */ = {isa = PBXBuildFile; fileRef = A59BC5912001FB9A0066860F /* HFTclTemplateController.m */; };
 		A59BC5942001FD0F0066860F /* Tcl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A59BC5932001FD0F0066860F /* Tcl.framework */; };
@@ -76,7 +77,6 @@
 		A5A34C1B26AD271900506AE7 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = A5A34C1A26AD271900506AE7 /* Sparkle */; };
 		A5B2F6E3284729F8006E8AF8 /* templates in Resources */ = {isa = PBXBuildFile; fileRef = A5B2F6E2284729F8006E8AF8 /* templates */; };
 		A5B762FA2B32AE2F00CA25AE /* HFByteTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5B762F92B32AE2F00CA25AE /* HFByteTheme.swift */; };
-		A5B762FC2B32AE5600CA25AE /* HFByteTheme.m in Sources */ = {isa = PBXBuildFile; fileRef = A5B762FB2B32AE5600CA25AE /* HFByteTheme.m */; };
 		A5BAB4152AD7CB3200623A9F /* Encodings.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5BAB4142AD7CB3200623A9F /* Encodings.swift */; };
 		A5D8C8F220E9E58000103D60 /* libz.1.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = A5D8C8F120E9E58000103D60 /* libz.1.tbd */; };
 		D00122E30D48A8D400540B10 /* HFFindReplaceBackgroundView.m in Sources */ = {isa = PBXBuildFile; fileRef = D00122E20D48A8D400540B10 /* HFFindReplaceBackgroundView.m */; };
@@ -297,7 +297,6 @@ s01E7C3D0CDC6A3100943F9E /* HFTypes.h in Headers */ = {isa = PBXBuildFile; fileR
 		A5A2F6642B2F63F80097F225 /* HFHelperProcessSharedCode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFHelperProcessSharedCode.h; path = framework/objc/include/HFHelperProcessSharedCode.h; sourceTree = "<group>"; };
 		A5B2F6E2284729F8006E8AF8 /* templates */ = {isa = PBXFileReference; lastKnownFileType = folder; path = templates; sourceTree = "<group>"; };
 		A5B762F92B32AE2F00CA25AE /* HFByteTheme.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HFByteTheme.swift; path = app/sources/HFByteTheme.swift; sourceTree = "<group>"; };
-		A5B762FB2B32AE5600CA25AE /* HFByteTheme.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFByteTheme.m; path = sources/HFByteTheme.m; sourceTree = "<group>"; };
 		A5BAB4142AD7CB3200623A9F /* Encodings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Encodings.swift; path = app/sources/Encodings.swift; sourceTree = "<group>"; };
 		A5D8C8F120E9E58000103D60 /* libz.1.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.1.tbd; path = usr/lib/libz.1.tbd; sourceTree = SDKROOT; };
 		D00122E10D48A8D400540B10 /* HFFindReplaceBackgroundView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFFindReplaceBackgroundView.h; path = app/sources/HFFindReplaceBackgroundView.h; sourceTree = "<group>"; };
@@ -412,6 +411,7 @@ s01E7C3D0CDC6A3100943F9E /* HFTypes.h in Headers */ = {isa = PBXBuildFile; fileR
 			buildActionMask = 2147483647;
 			files = (
 				D05E7AAE0FF6167100767D95 /* Cocoa.framework in Frameworks */,
+				A59693392B32B40B00E62C1B /* HexFiend in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -843,6 +843,9 @@ s01E7C3D0CDC6A3100943F9E /* HFTypes.h in Headers */ = {isa = PBXBuildFile; fileR
 			dependencies = (
 			);
 			name = HexFiendling;
+			packageProductDependencies = (
+				A59693382B32B40B00E62C1B /* HexFiend */,
+			);
 			productName = HexFiendling;
 			productReference = D00C15E50FF091FF006D021F /* HexFiendling.app */;
 			productType = "com.apple.product-type.application";
@@ -1952,6 +1955,7 @@ s01E7C3D0CDC6A3100943F9E /* HFTypes.h in Headers */ = {isa = PBXBuildFile; fileR
 		D00C15ED0FF09200006D021F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				DEAD_CODE_STRIPPING = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				INFOPLIST_FILE = sample_code/HexFiendling/Info.plist;
@@ -2089,6 +2093,7 @@ s01E7C3D0CDC6A3100943F9E /* HFTypes.h in Headers */ = {isa = PBXBuildFile; fileR
 		D022256E146F5D3900646C27 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				DEAD_CODE_STRIPPING = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				INFOPLIST_FILE = sample_code/HexFiendling/Info.plist;
@@ -2235,6 +2240,7 @@ s01E7C3D0CDC6A3100943F9E /* HFTypes.h in Headers */ = {isa = PBXBuildFile; fileR
 		D02225A3146F629E00646C27 /* Debug+UnitTests */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				DEAD_CODE_STRIPPING = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				INFOPLIST_FILE = sample_code/HexFiendling/Info.plist;
@@ -2380,6 +2386,7 @@ s01E7C3D0CDC6A3100943F9E /* HFTypes.h in Headers */ = {isa = PBXBuildFile; fileR
 		D039DC1614835A1400364FA6 /* Release+CodeSign */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "-";
 				DEAD_CODE_STRIPPING = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -2542,6 +2549,7 @@ s01E7C3D0CDC6A3100943F9E /* HFTypes.h in Headers */ = {isa = PBXBuildFile; fileR
 		D053902C1E218CB700F9AAC1 /* Release+MAS */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_IDENTITY = "-";
 				DEAD_CODE_STRIPPING = YES;
@@ -2716,6 +2724,7 @@ s01E7C3D0CDC6A3100943F9E /* HFTypes.h in Headers */ = {isa = PBXBuildFile; fileR
 		D05390331E218CD500F9AAC1 /* Debug+MAS */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				DEAD_CODE_STRIPPING = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -2899,6 +2908,7 @@ s01E7C3D0CDC6A3100943F9E /* HFTypes.h in Headers */ = {isa = PBXBuildFile; fileR
 		D075E20A148196B00010D9AE /* Debug+CodeSign */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				DEAD_CODE_STRIPPING = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				INFOPLIST_FILE = sample_code/HexFiendling/Info.plist;
@@ -3214,6 +3224,11 @@ s01E7C3D0CDC6A3100943F9E /* HFTypes.h in Headers */ = {isa = PBXBuildFile; fileR
 			isa = XCSwiftPackageProductDependency;
 			package = A54281AF2B413542006DEF81 /* XCRemoteSwiftPackageReference "swift-argument-parser" */;
 			productName = ArgumentParser;
+		};
+		A59693382B32B40B00E62C1B /* HexFiend */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A5A2F6602B2F5C580097F225 /* XCLocalSwiftPackageReference "framework" */;
+			productName = HexFiend;
 		};
 		A5A2F6612B2F5F010097F225 /* HexFiend */ = {
 			isa = XCSwiftPackageProductDependency;

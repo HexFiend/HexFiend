@@ -7,7 +7,7 @@
 //
 
 import Cocoa
-import HexFiendCoreObjC
+import HexFiend
 
 private extension NSColor {
     func toRGB() -> NSColor {
