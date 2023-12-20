@@ -69,8 +69,7 @@
 		A533B9C12AD42F5300ECA26E /* ChooseStringEncodingWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A533B9C02AD42F5300ECA26E /* ChooseStringEncodingWindowController.swift */; };
 		A53B7D1A1E9185CF00CA3977 /* HFTestHashing.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D149300D8A37580018296B /* HFTestHashing.m */; };
 		A54D8AEE2A3ECBD80021FBAB /* ColorByteThemes in Resources */ = {isa = PBXBuildFile; fileRef = A54D8AED2A3ECBD80021FBAB /* ColorByteThemes */; };
-		A54D8B052A44076B0021FBAB /* HFByteTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = A54D8B042A44076B0021FBAB /* HFByteTheme.swift */; };
-		A54D8B0C2A4AA5E50021FBAB /* HFByteThemeColor.h in Headers */ = {isa = PBXBuildFile; fileRef = A54D8B0B2A4AA5E50021FBAB /* HFByteThemeColor.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A54D8B0C2A4AA5E50021FBAB /* HFByteTheme.h in Headers */ = {isa = PBXBuildFile; fileRef = A54D8B0B2A4AA5E50021FBAB /* HFByteTheme.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A550A7191F7877F8001C79C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = A550A7181F7877F8001C79C7 /* main.m */; };
 		A550A7201F787831001C79C7 /* hexf in Resources */ = {isa = PBXBuildFile; fileRef = A550A7161F7877F8001C79C7 /* hexf */; };
 		A5589AC92206CFCC000293A4 /* HFExtendedAttributes.m in Sources */ = {isa = PBXBuildFile; fileRef = A5589AC82206CFCC000293A4 /* HFExtendedAttributes.m */; };
@@ -128,6 +127,8 @@
 		A5AE0C1D21E1D7570044014E /* HFColumnView.h in Headers */ = {isa = PBXBuildFile; fileRef = A5AE0C1B21E1D7570044014E /* HFColumnView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A5AE0C1E21E1D7570044014E /* HFColumnView.m in Sources */ = {isa = PBXBuildFile; fileRef = A5AE0C1C21E1D7570044014E /* HFColumnView.m */; };
 		A5B2F6E3284729F8006E8AF8 /* templates in Resources */ = {isa = PBXBuildFile; fileRef = A5B2F6E2284729F8006E8AF8 /* templates */; };
+		A5B762FA2B32AE2F00CA25AE /* HFByteTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5B762F92B32AE2F00CA25AE /* HFByteTheme.swift */; };
+		A5B762FC2B32AE5600CA25AE /* HFByteTheme.m in Sources */ = {isa = PBXBuildFile; fileRef = A5B762FB2B32AE5600CA25AE /* HFByteTheme.m */; };
 		A5BAB4152AD7CB3200623A9F /* Encodings.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5BAB4142AD7CB3200623A9F /* Encodings.swift */; };
 		A5CEA41C20D5DF4400BCA488 /* HFStringEncoding.h in Headers */ = {isa = PBXBuildFile; fileRef = A5CEA41A20D5DF4400BCA488 /* HFStringEncoding.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A5CEA41D20D5DF4400BCA488 /* HFStringEncoding.m in Sources */ = {isa = PBXBuildFile; fileRef = A5CEA41B20D5DF4400BCA488 /* HFStringEncoding.m */; };
@@ -458,8 +459,7 @@
 		A533B9BF2AD42F5200ECA26E /* HexFiend_2-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "HexFiend_2-Bridging-Header.h"; sourceTree = "<group>"; };
 		A533B9C02AD42F5300ECA26E /* ChooseStringEncodingWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ChooseStringEncodingWindowController.swift; path = app/sources/ChooseStringEncodingWindowController.swift; sourceTree = "<group>"; };
 		A54D8AED2A3ECBD80021FBAB /* ColorByteThemes */ = {isa = PBXFileReference; lastKnownFileType = folder; name = ColorByteThemes; path = app/resources/ColorByteThemes; sourceTree = "<group>"; };
-		A54D8B042A44076B0021FBAB /* HFByteTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HFByteTheme.swift; path = sources/HFByteTheme.swift; sourceTree = "<group>"; };
-		A54D8B0B2A4AA5E50021FBAB /* HFByteThemeColor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFByteThemeColor.h; path = sources/HFByteThemeColor.h; sourceTree = "<group>"; };
+		A54D8B0B2A4AA5E50021FBAB /* HFByteTheme.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFByteTheme.h; path = sources/HFByteTheme.h; sourceTree = "<group>"; };
 		A550A7161F7877F8001C79C7 /* hexf */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = hexf; sourceTree = BUILT_PRODUCTS_DIR; };
 		A550A7181F7877F8001C79C7 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		A554E0CD20DF2CD3001B4C48 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/OpenDriveDialog.xib; sourceTree = "<group>"; };
@@ -537,6 +537,8 @@
 		A5AE0C1B21E1D7570044014E /* HFColumnView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFColumnView.h; path = sources/HFColumnView.h; sourceTree = "<group>"; };
 		A5AE0C1C21E1D7570044014E /* HFColumnView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFColumnView.m; path = sources/HFColumnView.m; sourceTree = "<group>"; };
 		A5B2F6E2284729F8006E8AF8 /* templates */ = {isa = PBXFileReference; lastKnownFileType = folder; path = templates; sourceTree = "<group>"; };
+		A5B762F92B32AE2F00CA25AE /* HFByteTheme.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HFByteTheme.swift; path = app/sources/HFByteTheme.swift; sourceTree = "<group>"; };
+		A5B762FB2B32AE5600CA25AE /* HFByteTheme.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFByteTheme.m; path = sources/HFByteTheme.m; sourceTree = "<group>"; };
 		A5BAB4142AD7CB3200623A9F /* Encodings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Encodings.swift; path = app/sources/Encodings.swift; sourceTree = "<group>"; };
 		A5CEA41A20D5DF4400BCA488 /* HFStringEncoding.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFStringEncoding.h; path = sources/HFStringEncoding.h; sourceTree = "<group>"; };
 		A5CEA41B20D5DF4400BCA488 /* HFStringEncoding.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFStringEncoding.m; path = sources/HFStringEncoding.m; sourceTree = "<group>"; };
@@ -970,8 +972,8 @@
 		A54D8B032A4407420021FBAB /* Byte Theme */ = {
 			isa = PBXGroup;
 			children = (
-				A54D8B042A44076B0021FBAB /* HFByteTheme.swift */,
-				A54D8B0B2A4AA5E50021FBAB /* HFByteThemeColor.h */,
+				A54D8B0B2A4AA5E50021FBAB /* HFByteTheme.h */,
+				A5B762FB2B32AE5600CA25AE /* HFByteTheme.m */,
 			);
 			name = "Byte Theme";
 			sourceTree = "<group>";
@@ -1295,6 +1297,7 @@
 				29B97316FDCFA39411CA2CEA /* main.m */,
 				D0CD51F40DA2B928006E8D1B /* AppDelegate.h */,
 				D0CD51F50DA2B928006E8D1B /* AppDelegate.m */,
+				A5B762F92B32AE2F00CA25AE /* HFByteTheme.swift */,
 				D02BD6D910545E7B00535EDE /* DocumentTypes */,
 				A533B9DD2AD7CA1000ECA26E /* Encodings */,
 				D084E75C115DAE90004DC181 /* DiffDocument */,
@@ -1510,7 +1513,7 @@
 				A594F0632495EAD900DCACD3 /* HFBinaryGlyphTable.h in Headers */,
 				D0A436310CDC7EB1000F7550 /* HFFunctions.h in Headers */,
 				9408FC1019DD8669004F800E /* HFPrivilegedHelperConnection.h in Headers */,
-				A54D8B0C2A4AA5E50021FBAB /* HFByteThemeColor.h in Headers */,
+				A54D8B0C2A4AA5E50021FBAB /* HFByteTheme.h in Headers */,
 				D01E7C3D0CDC6A3100943F9E /* HFTypes.h in Headers */,
 				D0A435730CDC71DF000F7550 /* HFRepresenter.h in Headers */,
 				D0A4373A0CDD4EDD000F7550 /* HFTextRepresenter.h in Headers */,
@@ -1946,6 +1949,7 @@
 				DAE8EBFE1598FFDB0008ADB9 /* DocumentWindow.m in Sources */,
 				D8EE3EFE16F26689001C7C09 /* DiffRangeWindowController.m in Sources */,
 				A572614A21D8A51B00970A0E /* HFPrompt.m in Sources */,
+				A5B762FA2B32AE2F00CA25AE /* HFByteTheme.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2059,7 +2063,6 @@
 				D08F5E4F0CDE872C007EFFE8 /* HFByteArray.m in Sources */,
 				A594F0612495EAD900DCACD3 /* HFBinaryGlyphTable.m in Sources */,
 				D08F5E500CDE872C007EFFE8 /* HFByteSlice.m in Sources */,
-				A54D8B052A44076B0021FBAB /* HFByteTheme.swift in Sources */,
 				D08F5E510CDE872C007EFFE8 /* HFFullMemoryByteSlice.m in Sources */,
 				D082AB440CDE97DC00554EB7 /* HFFullMemoryByteArray.m in Sources */,
 				D0CDB7550CE735590084926B /* HFRepresenterStringEncodingTextView.m in Sources */,
@@ -2097,6 +2100,7 @@
 				D0B422A20FF845F800DF27E5 /* HFTextView.m in Sources */,
 				D0114CAA1006D1DF00DAF4CE /* HFByteArrayProxiedData.m in Sources */,
 				D0A05C0213BBE4B200553980 /* HFAttributedByteArray.m in Sources */,
+				A5B762FC2B32AE5600CA25AE /* HFByteTheme.m in Sources */,
 				A5AE0C1E21E1D7570044014E /* HFColumnView.m in Sources */,
 				D04D8FDF10239BB20013A2A1 /* HFPrivilegedHelperConnection.m in Sources */,
 				D0621CF0102ED78900DAEB4D /* FortunateSon.defs in Sources */,
@@ -3110,7 +3114,6 @@
 		D00C15ED0FF09200006D021F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				DEAD_CODE_STRIPPING = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				INFOPLIST_FILE = sample_code/HexFiendling/Info.plist;
@@ -3190,7 +3193,6 @@
 		D0222569146F5D3900646C27 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
@@ -3278,7 +3280,6 @@
 		D022256E146F5D3900646C27 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				DEAD_CODE_STRIPPING = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				INFOPLIST_FILE = sample_code/HexFiendling/Info.plist;
@@ -3368,7 +3369,6 @@
 		D022259E146F629E00646C27 /* Debug+UnitTests */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "-";
 				DEAD_CODE_STRIPPING = YES;
@@ -3456,7 +3456,6 @@
 		D02225A3146F629E00646C27 /* Debug+UnitTests */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				DEAD_CODE_STRIPPING = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				INFOPLIST_FILE = sample_code/HexFiendling/Info.plist;
@@ -3544,7 +3543,6 @@
 		D039DC1214835A1400364FA6 /* Release+CodeSign */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
@@ -3632,7 +3630,6 @@
 		D039DC1614835A1400364FA6 /* Release+CodeSign */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_IDENTITY = "-";
 				DEAD_CODE_STRIPPING = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -3740,7 +3737,6 @@
 		D05390291E218CB700F9AAC1 /* Release+MAS */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
@@ -3825,7 +3821,6 @@
 		D053902C1E218CB700F9AAC1 /* Release+MAS */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_IDENTITY = "-";
 				DEAD_CODE_STRIPPING = YES;
@@ -3947,7 +3942,6 @@
 		D05390301E218CD500F9AAC1 /* Debug+MAS */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "-";
 				DEAD_CODE_STRIPPING = YES;
@@ -4032,7 +4026,6 @@
 		D05390331E218CD500F9AAC1 /* Debug+MAS */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				DEAD_CODE_STRIPPING = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -4160,7 +4153,6 @@
 		D075E205148196B00010D9AE /* Debug+CodeSign */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "-";
 				DEAD_CODE_STRIPPING = YES;
@@ -4248,7 +4240,6 @@
 		D075E20A148196B00010D9AE /* Debug+CodeSign */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				DEAD_CODE_STRIPPING = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				INFOPLIST_FILE = sample_code/HexFiendling/Info.plist;
@@ -4369,7 +4360,6 @@
 		D083F7370DBCBD5F00C2B632 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "-";
 				DEAD_CODE_STRIPPING = YES;

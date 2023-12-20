@@ -18,7 +18,6 @@
 #include <stdio.h>
 #import <HexFiend/HFCustomEncoding.h>
 #import <HexFiend/HFEncodingManager.h>
-#import <HexFiend/HexFiend-Swift.h>
 
 @interface AppDelegate ()
 
@@ -184,7 +183,7 @@
     
     NSArray<NSURL *> *jsonUrls = [bundleJsonUrls arrayByAddingObjectsFromArray:appSupportJsonUrls];
     for (NSURL *jsonUrl in jsonUrls) {
-        HFByteTheme *byteTheme = [[HFByteTheme alloc] initWithUrl:jsonUrl];
+        HFByteTheme *byteTheme = [HFByteTheme fromUrl:jsonUrl];
         if (!byteTheme) {
             NSLog(@"Invalid theme at %@", jsonUrl);
             continue;;

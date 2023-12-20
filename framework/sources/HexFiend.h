@@ -55,7 +55,7 @@
 #import <HexFiend/HFByteRangeAttribute.h>
 #import <HexFiend/HFByteRangeAttributeArray.h>
 #import <HexFiend/HFNSStringEncoding.h>
-#import <HexFiend/HFByteThemeColor.h>
+#import <HexFiend/HFByteTheme.h>
 #import <HexFiend/HFCustomEncoding.h>
 #import <HexFiend/HFEncodingManager.h>
 #import <HexFiend/HFBinaryGlyphTable.h>

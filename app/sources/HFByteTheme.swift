@@ -1,6 +1,6 @@
 //
 //  HFByteTheme.swift
-//  HexFiend_Framework
+//  HexFiend_2
 //
 //  Created by Kevin Wojniak on 6/21/23.
 //  Copyright © 2023 ridiculous_fish. All rights reserved.
@@ -17,11 +17,8 @@ private extension NSColor {
     }
 }
 
-@objc public class HFByteTheme: NSObject {
-    @objc public let darkColorTable: UnsafePointer<HFByteThemeColor>
-    @objc public let lightColorTable: UnsafePointer<HFByteThemeColor>
-
-    @objc public init?(url: URL) {
+extension HFByteTheme {
+    @objc static func from(url: URL) -> Self? {
         guard #available(macOS 12, *) else {
             print("Byte themes only available on macOS 12 and later.")
             return nil
@@ -46,8 +43,10 @@ private extension NSColor {
             print("Invalid \"light\" at \(url))!")
             return nil
         }
-        self.darkColorTable = Self.colorTableToPointer(Self.colorTableFromDict(darkDict))
-        self.lightColorTable = Self.colorTableToPointer(Self.colorTableFromDict(lightDict))
+        let theme = Self()
+        theme.darkColorTable = .init(mutating: Self.colorTableToPointer(Self.colorTableFromDict(darkDict)))
+        theme.lightColorTable = .init(mutating: Self.colorTableToPointer(Self.colorTableFromDict(lightDict)))
+        return theme
     }
 
     private static func colorTableToPointer(_ table: [HFByteThemeColor]) -> UnsafePointer<HFByteThemeColor> {
