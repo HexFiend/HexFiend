@@ -9,7 +9,7 @@
 #import "HFBinaryTemplateController.h"
 #import "HFTemplateNode.h"
 #import "HFTclTemplateController.h"
-#import "HFColorRange.h"
+#import "HexFiend/HFColorRange.h"
 #import "HFDirectoryWatcher.h"
 #import "HFTemplateFile.h"
 #import "TemplateAutodetection.h"
