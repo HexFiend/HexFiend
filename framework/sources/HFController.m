@@ -40,7 +40,7 @@
 static const CGFloat kScrollMultiplier = (CGFloat)1.5;
 #endif
 
-static const CFTimeInterval kPulseDuration = .2;
+static const CFTimeInterval kPulseDuration = .5;
 
 static void *KVOContextChangesAreLocked = &KVOContextChangesAreLocked;
 

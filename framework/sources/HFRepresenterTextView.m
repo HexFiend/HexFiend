@@ -406,7 +406,6 @@ enum LineCoverage_t {
 - (void)drawPulseBackgroundInRect:(CGRect)pulseRect {
     CGContextRef ctx = HFGraphicsGetCurrentContext();
     CGContextSaveGState(ctx);
-    [[NSBezierPath bezierPathWithRoundedRect:pulseRect xRadius:25 yRadius:25] addClip];
     NSColor *yellow = NSColor.systemYellowColor;
     NSGradient *gradient = [[NSGradient alloc] initWithStartingColor:yellow endingColor:[NSColor colorWithCalibratedRed:(CGFloat)1. green:(CGFloat).75 blue:0 alpha:1]];
     [gradient drawInRect:pulseRect angle:90];
@@ -461,8 +460,8 @@ enum LineCoverage_t {
                 NSRect bounds = [self bounds];
                 NSRect windowFrameInBoundsCoords;
                 if (emptySelection) {
-                    CGFloat w = (CGFloat)fmax([self advancePerColumn], [self advancePerCharacter]);
-                    windowFrameInBoundsCoords.origin.x = startPoint.x - w/2;
+                    CGFloat w = [self advancePerCharacter];
+                    windowFrameInBoundsCoords.origin.x = startPoint.x;
                     windowFrameInBoundsCoords.size.width = w;
                 } else {
                     windowFrameInBoundsCoords.origin.x = bounds.origin.x;
