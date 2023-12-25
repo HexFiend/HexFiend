@@ -1274,10 +1274,6 @@ static inline Class preferredByteArrayClass(void) {
         [NSApp postEvent:[NSEvent otherEventWithType:NSEventTypeApplicationDefined location:NSZeroPoint modifierFlags:0 timestamp:0 windowNumber:0 context:NULL subtype:0 data1:0 data2:0] atStart:NO];
     }];
 
-    if (operationError && outError) {
-        *outError = operationError;
-    }
-
     while ([saveView operationIsRunning]) {
         @autoreleasepool {
             @try {  
@@ -1288,6 +1284,10 @@ static inline Class preferredByteArrayClass(void) {
                 NSLog(@"Exception thrown during save: %@", localException);
             }
         }
+    }
+
+    if (operationError && outError) {
+        *outError = operationError;
     }
 
     [showSaveViewAfterDelayTimer invalidate];
