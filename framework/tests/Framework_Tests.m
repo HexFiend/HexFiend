@@ -14,7 +14,6 @@
 #import "HFTestHashing.h"
 #import <HexFiend/HFByteArrayEditScript.h>
 #import "HFRandomDataByteSlice.h"
-#import "HFPrivilegedHelperConnection.h"
 
 #import "HFTest.h"
 
@@ -666,7 +665,6 @@ static HFRange randomRange(uint32_t max) {
 - (void)setUp {
     [super setUp];
     srandom(0xBEBAFECA);
-    [HFPrivilegedHelperConnection sharedConnection].disabled = YES;
 }
 
 - (void)tearDown {
