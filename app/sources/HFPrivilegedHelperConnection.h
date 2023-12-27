@@ -6,6 +6,7 @@
 //
 
 #import <HexFiend/HFFrameworkPrefix.h>
+#import <HexFiend/HFPrivilegedHelper.h>
 #import "FortunateSonIPCTypes.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -14,7 +15,7 @@ struct HFProcessInfo_t {
     unsigned char bits; //either 32 or 64
 };
 
-@interface HFPrivilegedHelperConnection : NSObject {
+@interface HFPrivilegedHelperConnection : NSObject <HFPrivilegedHelper> {
     NSMachPort *childReceiveMachPort;
 }
 
