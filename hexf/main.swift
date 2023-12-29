@@ -67,10 +67,13 @@ Usage:
     
     private func processStandardInput() throws {
         let inFile = FileHandle.standardInput
-        // TODO: Heed deprecation warning. This will require an availability check.
-        let data = inFile.readDataToEndOfFile()
-        
-        guard data.count != 0 else {
+        let data: Data?
+        if #available(macOS 10.15.4, *) {
+            data = try inFile.readToEnd()
+        } else {
+            data = inFile.readDataToEndOfFile()
+        }
+        guard let data, !data.isEmpty else {
             throw HexfError.standardInputNoData
         }
         
