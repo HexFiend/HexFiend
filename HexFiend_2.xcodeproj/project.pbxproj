@@ -22,6 +22,7 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		001BEF982910F23600BB82B3 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 001BEF972910F23600BB82B3 /* main.swift */; };
 		795F46C114BAA45D00EB2F7D /* OpenDriveWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 795F46C014BAA45D00EB2F7D /* OpenDriveWindowController.m */; };
 		795F46C314BAADB600EB2F7D /* DiskArbitration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 795F46C214BAADB600EB2F7D /* DiskArbitration.framework */; };
 		79E2FF201745A2B300FA8F12 /* dsa_pub.pem in Resources */ = {isa = PBXBuildFile; fileRef = 79E2FF1F1745A2B300FA8F12 /* dsa_pub.pem */; };
@@ -70,7 +71,6 @@
 		A53B7D1A1E9185CF00CA3977 /* HFTestHashing.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D149300D8A37580018296B /* HFTestHashing.m */; };
 		A54D8AEE2A3ECBD80021FBAB /* ColorByteThemes in Resources */ = {isa = PBXBuildFile; fileRef = A54D8AED2A3ECBD80021FBAB /* ColorByteThemes */; };
 		A54D8B0C2A4AA5E50021FBAB /* HFByteTheme.h in Headers */ = {isa = PBXBuildFile; fileRef = A54D8B0B2A4AA5E50021FBAB /* HFByteTheme.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		A550A7191F7877F8001C79C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = A550A7181F7877F8001C79C7 /* main.m */; };
 		A550A7201F787831001C79C7 /* hexf in Resources */ = {isa = PBXBuildFile; fileRef = A550A7161F7877F8001C79C7 /* hexf */; };
 		A5589AC92206CFCC000293A4 /* HFExtendedAttributes.m in Sources */ = {isa = PBXBuildFile; fileRef = A5589AC82206CFCC000293A4 /* HFExtendedAttributes.m */; };
 		A5589ACC2206D238000293A4 /* OpenAccessoryView.xib in Resources */ = {isa = PBXBuildFile; fileRef = A5589ACA2206D238000293A4 /* OpenAccessoryView.xib */; };
@@ -428,6 +428,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		001BEF972910F23600BB82B3 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		089C165DFE840E0CC02AAC07 /* Base */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = app/sources/main.m; sourceTree = "<group>"; };
@@ -462,7 +463,6 @@
 		A54D8AED2A3ECBD80021FBAB /* ColorByteThemes */ = {isa = PBXFileReference; lastKnownFileType = folder; name = ColorByteThemes; path = app/resources/ColorByteThemes; sourceTree = "<group>"; };
 		A54D8B0B2A4AA5E50021FBAB /* HFByteTheme.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFByteTheme.h; path = sources/HFByteTheme.h; sourceTree = "<group>"; };
 		A550A7161F7877F8001C79C7 /* hexf */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = hexf; sourceTree = BUILT_PRODUCTS_DIR; };
-		A550A7181F7877F8001C79C7 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		A554E0CD20DF2CD3001B4C48 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/OpenDriveDialog.xib; sourceTree = "<group>"; };
 		A554E0CE20DF2CD3001B4C48 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/DataInspectorView.xib; sourceTree = "<group>"; };
 		A554E0CF20DF2CD4001B4C48 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/ChooseStringEncodingDialog.xib; sourceTree = "<group>"; };
@@ -985,7 +985,7 @@
 		A550A7171F7877F8001C79C7 /* hexf */ = {
 			isa = PBXGroup;
 			children = (
-				A550A7181F7877F8001C79C7 /* main.m */,
+				001BEF972910F23600BB82B3 /* main.swift */,
 			);
 			path = hexf;
 			sourceTree = "<group>";
@@ -1751,6 +1751,7 @@
 					};
 					A550A7151F7877F8001C79C7 = {
 						CreatedOnToolsVersion = 9.0;
+						LastSwiftMigration = 1430;
 						ProvisioningStyle = Manual;
 					};
 					D01E7BB70CDC530C00943F9E = {
@@ -1984,7 +1985,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A550A7191F7877F8001C79C7 /* main.m in Sources */,
+				001BEF982910F23600BB82B3 /* main.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2811,8 +2812,15 @@
 				);
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
@@ -2842,8 +2850,15 @@
 				);
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 			};
 			name = "Debug+CodeSign";
 		};
@@ -2873,8 +2888,15 @@
 				);
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 			};
 			name = "Debug+UnitTests";
 		};
@@ -2901,8 +2923,14 @@
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
 		};
@@ -2929,8 +2957,14 @@
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_VERSION = 5.0;
 			};
 			name = "Release+CodeSign";
 		};
@@ -4401,8 +4435,15 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "-";
 				DEAD_CODE_STRIPPING = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
 				PRODUCT_NAME = hexf;
 				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 			};
 			name = "Debug+MAS";
 		};
@@ -4413,8 +4454,14 @@
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
 				DEAD_CODE_STRIPPING = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
 				PRODUCT_NAME = hexf;
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
 			};
 			name = "Release+MAS";
 		};
