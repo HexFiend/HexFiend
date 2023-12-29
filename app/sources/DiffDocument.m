@@ -727,8 +727,15 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
     
     [leftBytes incrementChangeLockCounter];
     [rightBytes incrementChangeLockCounter];
+    NSUserDefaults *userDefaults = NSUserDefaults.standardUserDefaults;
+    BOOL onlyReplace = [userDefaults boolForKey:@"OnlyReplaceInComparison"];
+    BOOL skipOneByteMatches = [userDefaults boolForKey:@"SkipOneByteMatches"];
     [diffComputationView startOperation:^id(HFProgressTracker *tracker) {
-        return [[HFByteArrayEditScript alloc] initWithDifferenceFromSource:self->leftBytes toDestination:self->rightBytes trackingProgress:tracker];
+        return [[HFByteArrayEditScript alloc] initWithDifferenceFromSource:self->leftBytes
+                                                             toDestination:self->rightBytes
+                                                               onlyReplace:onlyReplace
+                                                        skipOneByteMatches:skipOneByteMatches
+                                                          trackingProgress:tracker];
     } completionHandler:^(id script) {
         [self->leftBytes decrementChangeLockCounter];
         [self->rightBytes decrementChangeLockCounter];

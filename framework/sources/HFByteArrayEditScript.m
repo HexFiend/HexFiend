@@ -1363,7 +1363,7 @@ static inline enum HFEditInstructionType HFByteArrayInstructionType(struct HFEdi
     return success;
 }
 
-- (BOOL)computeDifferenceViaDirectComparison {
+- (BOOL)computeDifferenceViaDirectComparison:(BOOL)skipOneByteMatches {
     /* We succeed unless we are cancelled */
     BOOL success = NO;
     
@@ -1380,8 +1380,6 @@ static inline enum HFEditInstructionType HFByteArrayInstructionType(struct HFEdi
     const size_t bufSize = 16384;
     
     uint8_t srcBuf[bufSize], dstBuf[bufSize];
-    
-    BOOL skipOneByteMatches = [[NSUserDefaults standardUserDefaults] boolForKey:@"SkipOneByteMatches"];
     
     for (size_t i = 0; !*cancelRequested && i < MIN(sourceLength, destLength); i += bufSize) {
         *self->currentProgress = i * i;
@@ -1463,7 +1461,9 @@ static inline enum HFEditInstructionType HFByteArrayInstructionType(struct HFEdi
  
  Our implementation of the Longest Common Subsequence traverses any leading/trailing snakes.  We can be certain that these snakes are part of the LCS, so they can contribute to our progress.  Imagine that the arrays are of length M and N, for allocated progress M*N.  If we traverse a leading/trailing snake of length x, then the new arrays are of length M-x and N-x, so the new progress is (M-x)*(N-x).  Since we initially allocated M*N, this means we "progressed" by M*N - (M-x)*(N-x), which reduces to (M+N-x)*x.
  */
-- (BOOL)computeDifferencesTrackingProgress:(HFProgressTracker *)tracker {
+- (BOOL)computeDifferencesTrackingProgress:(HFProgressTracker *)tracker
+                               onlyReplace:(BOOL)onlyReplace
+                        skipOneByteMatches:(BOOL)skipOneByteMatches {
     const int localCancelRequested = 0;
     unsigned long long localCurrentProgress = 0;
     
@@ -1484,10 +1484,10 @@ static inline enum HFEditInstructionType HFByteArrayInstructionType(struct HFEdi
         currentProgress = (int64_t *)&localCurrentProgress;
     }
     
-    BOOL result = [[NSUserDefaults standardUserDefaults] boolForKey:@"OnlyReplaceInComparison"] ?
-        [self computeDifferenceViaDirectComparison] :
+    BOOL result = onlyReplace ?
+        [self computeDifferenceViaDirectComparison:skipOneByteMatches] :
         [self computeDifferenceViaMiddleSnakes];
-    
+
     cancelRequested = NULL;
     currentProgress = NULL;
     
@@ -1496,9 +1496,15 @@ static inline enum HFEditInstructionType HFByteArrayInstructionType(struct HFEdi
     return result;
 }
 
-- (instancetype)initWithDifferenceFromSource:(HFByteArray *)src toDestination:(HFByteArray *)dst trackingProgress:(HFProgressTracker *)progressTracker {
+- (instancetype)initWithDifferenceFromSource:(HFByteArray *)src
+                               toDestination:(HFByteArray *)dst
+                                 onlyReplace:(BOOL)onlyReplace
+                          skipOneByteMatches:(BOOL)skipOneByteMatches
+                            trackingProgress:(HFProgressTracker *)progressTracker {
     self = [self initWithSource:src toDestination:dst];
-    BOOL success = [self computeDifferencesTrackingProgress:progressTracker];
+    BOOL success = [self computeDifferencesTrackingProgress:progressTracker
+                                                onlyReplace:onlyReplace
+                                         skipOneByteMatches:skipOneByteMatches];
     if (! success) {
         /* Cancelled */
         self = nil;
