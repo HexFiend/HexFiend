@@ -23,6 +23,7 @@ static unsigned long long unsignedLongLongValue(NSString *s) {
 @implementation BaseDataDocument (AppDebugging)
 
 - (void)installDebuggingMenuItems:(NSMenu *)menu {
+    [menu addItemWithTitle:@"Toggle Scroller" action:@selector(toggleScrollerVisibleControllerView) keyEquivalent:@""];
     [menu addItem:[NSMenuItem separatorItem]];
     [menu addItemWithTitle:@"Randomly Tweak ByteArray" action:@selector(_tweakByteArray:) keyEquivalent:@""];
     [menu addItemWithTitle:@"Random ByteArray" action:@selector(_randomByteArray:) keyEquivalent:@""];

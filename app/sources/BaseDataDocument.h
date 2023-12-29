@@ -138,4 +138,6 @@ extern NSString * const BaseDataDocumentDidChangeStringEncodingNotification;
 - (BOOL)setByteGrouping:(NSUInteger)newBytesPerColumn;
 - (void)setByteTheme:(HFByteTheme *)byteTheme;
 
+- (void)toggleScrollerVisibleControllerView;
+
 @end

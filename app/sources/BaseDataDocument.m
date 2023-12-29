@@ -846,28 +846,35 @@ static inline Class preferredByteArrayClass(void) {
     NSArray *representers = self.representers;
     if (arrayIndex >= [representers count]) {
         NSBeep();
+        return;
+    }
+    HFRepresenter *rep = representers[arrayIndex];
+    [self toggleRepresenterVisibleControllerView:rep];
+}
+
+- (void)toggleRepresenterVisibleControllerView:(HFRepresenter *)rep {
+    BOOL isLineCounting = [rep isKindOfClass:[HFLineCountingRepresenter class]];
+    if ([self representerIsShown:rep]) {
+        [self hideViewForRepresenter:rep];
+        [self showOrHideDividerRepresenter];
+        [self relayoutAndResizeWindowForRepresenter:rep];
+        if (isLineCounting) {
+            [columnRepresenter setLineCountingWidth:0];
+        }
     }
     else {
-        HFRepresenter *rep = representers[arrayIndex];
-        BOOL isLineCounting = [rep isKindOfClass:[HFLineCountingRepresenter class]];
-        if ([self representerIsShown:rep]) {
-            [self hideViewForRepresenter:rep];
-            [self showOrHideDividerRepresenter];
-            [self relayoutAndResizeWindowForRepresenter:rep];
-            if (isLineCounting) {
-                [columnRepresenter setLineCountingWidth:0];
-            }
+        [self showViewForRepresenter:rep];
+        [self showOrHideDividerRepresenter];
+        [self relayoutAndResizeWindowForRepresenter:rep];
+        if (isLineCounting) {
+            [columnRepresenter setLineCountingWidth:((NSView *)lineCountingRepresenter.view).frame.size.width];
         }
-        else {
-            [self showViewForRepresenter:rep];
-            [self showOrHideDividerRepresenter];
-            [self relayoutAndResizeWindowForRepresenter:rep];
-            if (isLineCounting) {
-                [columnRepresenter setLineCountingWidth:((NSView *)lineCountingRepresenter.view).frame.size.width];
-            }
-        }
-        [self saveDefaultRepresentersToDisplay];
     }
+    [self saveDefaultRepresentersToDisplay];
+}
+
+- (void)toggleScrollerVisibleControllerView {
+    [self toggleRepresenterVisibleControllerView:scrollRepresenter];
 }
 
 - (void)setFont:(NSFont *)font registeringUndo:(BOOL)undo {
