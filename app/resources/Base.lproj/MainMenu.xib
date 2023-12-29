@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="22155" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="22505" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="22155"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="22505"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication"/>
@@ -578,40 +578,7 @@
                     </menu>
                 </menuItem>
                 <menuItem title="Debug" id="470">
-                    <menu key="submenu" title="Debug" id="471">
-                        <items>
-                            <menuItem title="Line Counting VIew" tag="1" id="473">
-                                <connections>
-                                    <action selector="toggleVisibleControllerView:" target="-1" id="481"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem title="Hex View" tag="2" id="476">
-                                <connections>
-                                    <action selector="toggleVisibleControllerView:" target="-1" id="478"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem title="ASCII View" tag="3" id="475">
-                                <connections>
-                                    <action selector="toggleVisibleControllerView:" target="-1" id="480"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem title="Scroller View" tag="4" id="474">
-                                <connections>
-                                    <action selector="toggleVisibleControllerView:" target="-1" id="477"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem title="Data Inspector" tag="5" id="472">
-                                <connections>
-                                    <action selector="toggleVisibleControllerView:" target="-1" id="479"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem title="Status Bar" tag="6" id="504">
-                                <connections>
-                                    <action selector="toggleVisibleControllerView:" target="-1" id="505"/>
-                                </connections>
-                            </menuItem>
-                        </items>
-                    </menu>
+                    <menu key="submenu" title="Debug" id="471"/>
                 </menuItem>
                 <menuItem title="Window" id="19">
                     <menu key="submenu" title="Window" systemMenu="window" id="24">
