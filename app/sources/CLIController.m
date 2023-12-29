@@ -2,7 +2,7 @@
 //  CLIController.m
 //  HexFiend_2
 //
-//  Created by Kevin Wojniak on 2013/3/19.
+//  Created by Kevin Wojniak on 2017/3/19.
 //  Copyright © 2017 ridiculous_fish. All rights reserved.
 //
 
@@ -28,7 +28,7 @@
     NSDictionary *errInfo = nil;
     // NOTE: running this in Debug mode in Xcode often hangs and fails
     if (![appleScript executeAndReturnError:&errInfo]) {
-        if ([errInfo[NSAppleScriptErrorNumber] intValue] == -128) {
+        if ([errInfo[NSAppleScriptErrorNumber] intValue] == userCanceledErr) {
             // User cancelled
             return;
         }
