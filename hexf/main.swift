@@ -49,19 +49,36 @@ Usage:
     
     private func launchApp(with args: [String]) throws {
         guard let url = NSWorkspace.shared.urlForApplication(withBundleIdentifier: Self.kAppIdentifier) else {
-            fputs("Failed to get url to app bundle for: \(Self.kAppIdentifier)", stderr)
+            fputs("Failed to get url to app bundle for: \(Self.kAppIdentifier)\n", stderr)
             throw HexfError.launchAppNoUrl
         }
         
-        let config = [NSWorkspace.LaunchConfigurationKey.arguments: args]
-        
-        do {
-            // TODO: Heed deprecation warning, and get right config type. This will require an availability check.
-            //            try NSWorkspace.shared.openApplication(at: url, configuration: config)
-            try NSWorkspace.shared.launchApplication(at: url, options: NSWorkspace.LaunchOptions.default, configuration: config)
-        } catch {
-            fputs("Launch app failed: \(error.localizedDescription)", stderr)
-            throw HexfError.launchAppFailure
+        if #available(macOS 10.15, *) {
+            let config = NSWorkspace.OpenConfiguration()
+            config.arguments = args
+            var openError: Error?
+            let semaphore = DispatchSemaphore(value: 0)
+            NSWorkspace.shared.openApplication(at: url, configuration: config) { _, error in
+                openError = error
+                semaphore.signal()
+            }
+            let result = semaphore.wait(timeout: .now() + .seconds(15))
+            if result == .timedOut {
+                fputs("Launch app timeout\n", stderr)
+                throw HexfError.launchAppFailure
+            }
+            if let openError {
+                fputs("Launch error: \(openError)\n", stderr)
+                throw HexfError.launchAppFailure
+            }
+        } else {
+            let config = [NSWorkspace.LaunchConfigurationKey.arguments: args]
+            do {
+                try NSWorkspace.shared.launchApplication(at: url, options: NSWorkspace.LaunchOptions.default, configuration: config)
+            } catch {
+                fputs("Launch app failed: \(error.localizedDescription)\n", stderr)
+                throw HexfError.launchAppFailure
+            }
         }
     }
     
