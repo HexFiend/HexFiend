@@ -9,17 +9,17 @@
 
 import Cocoa
 
-enum HexfError: Error {
+private enum HexfError: Error {
     case invalidUsage
     case standardInputNoData
     case launchAppNoUrl
     case launchAppFailure
 }
 
-struct Controller {
+private struct Controller {
     private static let kAppIdentifier = "com.ridiculousfish.HexFiend"
     
-    func printUsage() {
+    private func printUsage() {
         fputs("""
 Usage:
 
@@ -91,12 +91,12 @@ Usage:
         try launchApp(with: ["-HFOpenData", data.base64EncodedString()])
     }
     
-    enum Commands: Equatable {
+    private enum Commands: Equatable {
         case diff(leftFile: String, rightFile: String)
         case open(files: [String])
     }
     
-    enum Options: Equatable {
+    private enum Options: Equatable {
         case command(_ command: Commands)
         case none
         case help
@@ -182,5 +182,5 @@ Usage:
     }
 }
 
-let controller = Controller()
+private let controller = Controller()
 try controller.process(arguments: ProcessInfo.processInfo.arguments)
