@@ -88,12 +88,7 @@ Usage:
         }
         
         // App isn't running so launch it with custom args
-        try launchApp(with: [
-            "-HFOpenData",
-            data.base64EncodedString(options: .init(rawValue: 0))
-            // I'm not sure what 0 is for the options, but that is what the Obj-C code passed in... so I kept it.
-            //        NSString *base64Str = [data base64EncodedStringWithOptions:0];
-        ])
+        try launchApp(with: ["-HFOpenData", data.base64EncodedString()])
     }
     
     enum Commands: Equatable {
