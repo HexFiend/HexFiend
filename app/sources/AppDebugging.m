@@ -24,16 +24,9 @@ static unsigned long long unsignedLongLongValue(NSString *s) {
 
 - (void)installDebuggingMenuItems:(NSMenu *)menu {
     [menu addItem:[NSMenuItem separatorItem]];
-    [menu addItemWithTitle:@"Show ByteArray" action:@selector(_showByteArray:) keyEquivalent:@"k"];
-    [[[menu itemArray] lastObject] setKeyEquivalentModifierMask:NSEventModifierFlagCommand];
     [menu addItemWithTitle:@"Randomly Tweak ByteArray" action:@selector(_tweakByteArray:) keyEquivalent:@""];
     [menu addItemWithTitle:@"Random ByteArray" action:@selector(_randomByteArray:) keyEquivalent:@""];
     
-}
-
-- (void)_showByteArray:sender {
-    USE(sender);
-    NSLog(@"%@", [controller byteArray]);
 }
 
 - (void)_randomByteArray:sender {
