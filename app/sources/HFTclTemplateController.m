@@ -508,6 +508,8 @@ DEFINE_COMMAND(sleb128)
             }
             NSString *hexvalues = [NSString stringWithUTF8String:Tcl_GetStringFromObj(objv[2], NULL)];
             if (![self requireDataAtOffset:offset toMatchHexValues:hexvalues]) {
+                NSString *error = [NSString stringWithFormat:NSLocalizedString(@"Bytes at offset %ld do not match \"%@\"", nil), offset, hexvalues];
+                Tcl_AddErrorInfo(_interp, error.UTF8String);
                 return TCL_ERROR;
             }
             break;
@@ -526,10 +528,11 @@ DEFINE_COMMAND(sleb128)
             [self beginSectionWithLabel:label collapsed:(labelArg > 1)];
             if (objc == labelArg + 2) {
                 const int err = Tcl_EvalObjEx(_interp, objv[labelArg + 1], 0);
+                NSString *error = nil;
                 if (err != TCL_OK) {
+                    HFASSERT([self endSection:&error]);
                     return err;
                 }
-                NSString *error = nil;
                 if (![self endSection:&error]) {
                     Tcl_SetObjResult(_interp, Tcl_NewStringObj(error.UTF8String, -1));
                     return TCL_ERROR;
@@ -705,26 +708,69 @@ DEFINE_COMMAND(sleb128)
 
 - (int)runTypeCommand:(enum command)command objc:(int)objc objv:(struct Tcl_Obj * CONST *)objv {
     BOOL hexSwitchAllowed = NO;
+    BOOL utcOffsetAllowed = NO;
+    size_t argInfoTableSize = 3;
     switch (command) {
         case command_uint32:
             hexSwitchAllowed = YES;
+            ++argInfoTableSize;
+            break;
+        case command_macdate:
+        case command_unixtime32:
+        case command_unixtime64:
+            utcOffsetAllowed = YES;
+            ++argInfoTableSize;
             break;
         default:
             break;
     }
     int asHexFlag = 0;
+    const char *cmdArg = NULL;
+    const char *utcOffsetArg = NULL;
     NSString *label = nil;
     Tcl_Obj **extraArgs = NULL;
-    Tcl_ArgvInfo argInfoTable[] = {
-        {TCL_ARGV_CONSTANT, "-hex", (void*)1, &asHexFlag, "display as hexadecimal", NULL},
-        TCL_ARGV_AUTO_HELP,
-        TCL_ARGV_TABLE_END,
+    Tcl_ArgvInfo argInfoTable[argInfoTableSize];
+    size_t argInfoTableIndex = 0;
+    if (hexSwitchAllowed) {
+        argInfoTable[argInfoTableIndex++] = (Tcl_ArgvInfo){
+            .type = TCL_ARGV_CONSTANT,
+            .keyStr = "-hex",
+            .srcPtr = (void*)1,
+            .dstPtr = &asHexFlag,
+            .helpStr = "display as hexadecimal",
+            .clientData = NULL,
+        };
+    }
+    if (utcOffsetAllowed) {
+        argInfoTable[argInfoTableIndex++] = (Tcl_ArgvInfo){
+            .type = TCL_ARGV_STRING,
+            .keyStr = "-utcOffset",
+            .srcPtr = NULL,
+            .dstPtr = &utcOffsetArg,
+            .helpStr = "utc offset",
+            .clientData = NULL,
+        };
+    }
+    argInfoTable[argInfoTableIndex++] = (Tcl_ArgvInfo){
+        .type = TCL_ARGV_STRING,
+        .keyStr = "-cmd",
+        .srcPtr = NULL,
+        .dstPtr = &cmdArg,
+        .helpStr = "command/proc to transform value",
+        .clientData = NULL,
     };
+    argInfoTable[argInfoTableIndex++] = (Tcl_ArgvInfo)TCL_ARGV_AUTO_HELP;
+    argInfoTable[argInfoTableIndex++] = (Tcl_ArgvInfo)TCL_ARGV_TABLE_END;
     int err = Tcl_ParseArgsObjv(_interp, argInfoTable, &objc, objv, &extraArgs);
     if (err != TCL_OK) {
         return err;
     }
     const BOOL asHex = asHexFlag == 1;
+    NSNumber *utcOffset = nil;
+    if (utcOffsetArg) {
+        NSString *utcOffsetStr = [NSString stringWithUTF8String:utcOffsetArg];
+        utcOffset = [NSNumber numberWithInteger:utcOffsetStr.integerValue];
+    }
     if (extraArgs && objc > 1) {
         for (int i = 1; i < objc; i++) {
             const char *arg = Tcl_GetStringFromObj(extraArgs[i], NULL);
@@ -735,7 +781,7 @@ DEFINE_COMMAND(sleb128)
             }
         }
         if (objc > 2) {
-            const char *usage = hexSwitchAllowed ? "[-hex] [label]" : "[label";
+            const char *usage = hexSwitchAllowed ? "[-hex] [-cmd] [label]" : "[-cmd] [label";
             Tcl_WrongNumArgs(_interp, 0, objv, usage);
             ckfree((char *)extraArgs);
             return TCL_ERROR;
@@ -847,7 +893,7 @@ DEFINE_COMMAND(sleb128)
         }
         case command_macdate: {
             NSDate *date = nil;
-            if (![self readMacDate:&date forLabel:label]) {
+            if (![self readMacDate:&date utcOffset:utcOffset forLabel:label]) {
                 Tcl_SetObjResult(_interp, Tcl_NewStringObj("Failed to read macdate bytes", -1));
                 return TCL_ERROR;
             }
@@ -878,7 +924,7 @@ DEFINE_COMMAND(sleb128)
         case command_unixtime64: {
             const unsigned numBytes = command == command_unixtime32 ? 4 : 8;
             NSString *dateErr = nil;
-            NSDate *date = [self readUnixTime:numBytes forLabel:label error:&dateErr];
+            NSDate *date = [self readUnixTime:numBytes utcOffset:utcOffset forLabel:label error:&dateErr];
             if (!date) {
                 Tcl_SetObjResult(_interp, Tcl_NewStringObj(dateErr.UTF8String, -1));
                 return TCL_ERROR;
@@ -899,6 +945,21 @@ DEFINE_COMMAND(sleb128)
         default:
             HFASSERT(0);
             break;
+    }
+    if (cmdArg) {
+        // If the -cmd arg is set, use that arg as the name of a procedure that
+        // must take a single arg, which is the node's value, and return a new value.
+        HFTemplateNode *node = self.currentNode.children.lastObject;
+        HFASSERT(node != nil);
+        NSString *script = [NSString stringWithFormat:@"%s %@", cmdArg, node.value];
+        err = Tcl_Eval(_interp, script.UTF8String);
+        if (err != TCL_OK) {
+            return err;
+        }
+        const char *result = Tcl_GetStringResult(_interp);
+        if (result) {
+            node.value = [NSString stringWithUTF8String:result];
+        }
     }
     return TCL_OK;
 }

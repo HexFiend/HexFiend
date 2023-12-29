@@ -7,3 +7,4 @@ To make a new release of Hex Fiend on GitHub and update the Sparkle appcast for 
 5. Edit the tag in [Releases](https://github.com/HexFiend/HexFiend/releases) on GitHub and attach the `Hex_Fiend_X.Y.Z.dmg` file generated previously. Click "Publish Release".
 6. Delete all beta pre-releases on GitHub associated with this version. Make sure to delete the associated tags in git as well, which GitHub does not provide a way to do yet.
 7. Add a new `<item>` to `app/appcast.xml` for this version number. To update the `dsaSignature` field, run `sign_update.rb Hex_Fiend_X.Y.Z.dmg dsa_priv.pem`. Note currently only devs with write access to the repository have this file. The script is from Sparkle repository. Commit to master. Test the update with an older version after a few minutes as it takes some time for the file to be updated on GitHub.
+8. Update the [website](https://github.com/HexFiend/hexfiend-site) html and copy over the release notes

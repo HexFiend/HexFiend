@@ -12,7 +12,10 @@
 
 - (instancetype)initWithCoder:(NSCoder *)coder {
     self = [super initWithCoder:coder];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     [self setBezelStyle:NSRoundRectBezelStyle];
+#pragma clang diagnostic pop
     return self;
 }
 

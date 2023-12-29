@@ -86,13 +86,10 @@ NSString * const DataInspectorDidDeleteAllRows = @"DataInspectorDidDeleteAllRows
     [table setSelectionHighlightStyle:NSTableViewSelectionHighlightStyleNone];
     [table setRefusesFirstResponder:YES];
     [table setTarget:self];
-    [table setDoubleAction:@selector(doubleClickedTable:)];    
-#if defined(MAC_OS_X_VERSION_10_15) && MAC_OS_X_VERSION_MAX_ALLOWED > MAC_OS_X_VERSION_10_15
-    // TODO: remove once GitHub supports Xcode 12.2+
+    [table setDoubleAction:@selector(doubleClickedTable:)];
     if (@available(macOS 11.0, *)) {
         table.style = NSTableViewStyleFullWidth;
     }
-#endif
     return resultView;
 }
 
@@ -210,10 +207,10 @@ NSString * const DataInspectorDidDeleteAllRows = @"DataInspectorDidDeleteAllRows
         [cell setEnabled:allowsEndianness || allowsNumberBase];
         NSPopUpButtonCell *popUpCell = (NSPopUpButtonCell*)cell;
         HFASSERT(popUpCell.numberOfItems == 6);
-        [popUpCell itemAtIndex:1].state = NSOffState;
-        [popUpCell itemAtIndex:2].state = NSOffState;
-        [popUpCell itemAtIndex:4].state = NSOffState;
-        [popUpCell itemAtIndex:5].state = NSOffState;
+        [popUpCell itemAtIndex:1].state = NSControlStateValueOff;
+        [popUpCell itemAtIndex:2].state = NSControlStateValueOff;
+        [popUpCell itemAtIndex:4].state = NSControlStateValueOff;
+        [popUpCell itemAtIndex:5].state = NSControlStateValueOff;
         [popUpCell itemAtIndex:1].enabled = NO;
         [popUpCell itemAtIndex:2].enabled = NO;
         [popUpCell itemAtIndex:4].enabled = NO;
@@ -228,7 +225,7 @@ NSString * const DataInspectorDidDeleteAllRows = @"DataInspectorDidDeleteAllRows
                 endianIndex = 2;
                 [titleItems addObject:@"be"];
             }
-            [popUpCell itemAtIndex:endianIndex].state = NSOnState;
+            [popUpCell itemAtIndex:endianIndex].state = NSControlStateValueOn;
             [popUpCell itemAtIndex:1].enabled = YES;
             [popUpCell itemAtIndex:2].enabled = YES;
         }
@@ -241,7 +238,7 @@ NSString * const DataInspectorDidDeleteAllRows = @"DataInspectorDidDeleteAllRows
                 numberBaseIndex = 5;
                 [titleItems addObject:@"hex"];
             }
-            [popUpCell itemAtIndex:numberBaseIndex].state = NSOnState;
+            [popUpCell itemAtIndex:numberBaseIndex].state = NSControlStateValueOn;
             [popUpCell itemAtIndex:4].enabled = YES;
             [popUpCell itemAtIndex:5].enabled = YES;
         }

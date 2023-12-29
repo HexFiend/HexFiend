@@ -1363,6 +1363,88 @@ static inline enum HFEditInstructionType HFByteArrayInstructionType(struct HFEdi
     return success;
 }
 
+- (BOOL)computeDifferenceViaDirectComparison:(BOOL)skipOneByteMatches {
+    /* We succeed unless we are cancelled */
+    BOOL success = NO;
+    
+    /* Make a dispatch queue for instructions */
+    HFASSERT(insnQueue == NULL);
+    insnCount = insnCapacity = 0;
+    
+    insnCapacity = 128;
+    if(insns) free(insns);
+    insns = malloc(insnCapacity * sizeof(*insns));
+    insnCount = 0;
+
+    
+    const size_t bufSize = 16384;
+    
+    uint8_t srcBuf[bufSize], dstBuf[bufSize];
+    
+    for (size_t i = 0; !*cancelRequested && i < MIN(sourceLength, destLength); i += bufSize) {
+        *self->currentProgress = i * i;
+        // Read block
+        size_t len = MIN(bufSize, MIN(sourceLength - i, destLength - i));
+        [self->source copyBytes:srcBuf range:HFRangeMake(i, len)];
+        [self->destination copyBytes:dstBuf range:HFRangeMake(i, len)];
+
+        // Compare this block fully
+        size_t j = 0;
+        while (j < len) {
+            while (j < len && srcBuf[j] == dstBuf[j])
+                j++;
+            
+            size_t difference_begin = i + j;
+            while ((j < len && srcBuf[j] != dstBuf[j]) || (skipOneByteMatches && (j + 1 < len && srcBuf[j + 1] != dstBuf[j + 1])))
+                j++;
+            size_t difference_end = i + j;
+            
+            if (difference_end != difference_begin) {
+                if (insnCount != 0 && (insns[insnCount - 1].src.location + insns[insnCount - 1].src.length == difference_begin ||
+                                       (skipOneByteMatches && insns[insnCount - 1].src.location + insns[insnCount - 1].src.length + 1 == difference_begin))) {
+                    // join with prev
+                    insns[insnCount - 1].src.length = insns[insnCount - 1].dst.length = difference_end - insns[insnCount - 1].src.location;
+                }
+                else {
+                    // new instruction
+                    insns[insnCount].src = insns[insnCount].dst = HFRangeMake(difference_begin, difference_end - difference_begin);
+                    insnCount++;
+                    if (insnCount == insnCapacity) {
+                        insnCapacity += 128;
+                        insns = realloc(insns, insnCapacity * sizeof(*insns));
+                    }
+                }
+            }
+        }
+    }
+    
+    if (sourceLength > destLength) {
+        insns[insnCount].src = HFRangeMake(destLength, sourceLength - destLength);
+        insns[insnCount].dst = HFRangeMake(destLength, 0);
+        insnCount++;
+    }
+    else if (destLength > sourceLength) {
+        insns[insnCount].src = HFRangeMake(sourceLength, 0);
+        insns[insnCount].dst = HFRangeMake(sourceLength, destLength - sourceLength);
+        insnCount++;
+    }
+    *self->currentProgress = sourceLength * destLength;
+
+    
+    if (! *cancelRequested) {
+#if ! NDEBUG
+        /* Validate the data */
+        HFASSERT(validate_instructions(insns, insnCount));
+#endif
+        
+        /* We succeed unless we were cancelled */
+        success = YES;
+    }
+    
+    return success;
+}
+
+
 - (instancetype)initWithSource:(HFByteArray *)src toDestination:(HFByteArray *)dst { 
     self = [super init];
     NSParameterAssert(src != nil);
@@ -1379,7 +1461,9 @@ static inline enum HFEditInstructionType HFByteArrayInstructionType(struct HFEdi
  
  Our implementation of the Longest Common Subsequence traverses any leading/trailing snakes.  We can be certain that these snakes are part of the LCS, so they can contribute to our progress.  Imagine that the arrays are of length M and N, for allocated progress M*N.  If we traverse a leading/trailing snake of length x, then the new arrays are of length M-x and N-x, so the new progress is (M-x)*(N-x).  Since we initially allocated M*N, this means we "progressed" by M*N - (M-x)*(N-x), which reduces to (M+N-x)*x.
  */
-- (BOOL)computeDifferencesTrackingProgress:(HFProgressTracker *)tracker {
+- (BOOL)computeDifferencesTrackingProgress:(HFProgressTracker *)tracker
+                               onlyReplace:(BOOL)onlyReplace
+                        skipOneByteMatches:(BOOL)skipOneByteMatches {
     const int localCancelRequested = 0;
     unsigned long long localCurrentProgress = 0;
     
@@ -1400,8 +1484,10 @@ static inline enum HFEditInstructionType HFByteArrayInstructionType(struct HFEdi
         currentProgress = (int64_t *)&localCurrentProgress;
     }
     
-    BOOL result = [self computeDifferenceViaMiddleSnakes];
-    
+    BOOL result = onlyReplace ?
+        [self computeDifferenceViaDirectComparison:skipOneByteMatches] :
+        [self computeDifferenceViaMiddleSnakes];
+
     cancelRequested = NULL;
     currentProgress = NULL;
     
@@ -1410,9 +1496,15 @@ static inline enum HFEditInstructionType HFByteArrayInstructionType(struct HFEdi
     return result;
 }
 
-- (instancetype)initWithDifferenceFromSource:(HFByteArray *)src toDestination:(HFByteArray *)dst trackingProgress:(HFProgressTracker *)progressTracker {
+- (instancetype)initWithDifferenceFromSource:(HFByteArray *)src
+                               toDestination:(HFByteArray *)dst
+                                 onlyReplace:(BOOL)onlyReplace
+                          skipOneByteMatches:(BOOL)skipOneByteMatches
+                            trackingProgress:(HFProgressTracker *)progressTracker {
     self = [self initWithSource:src toDestination:dst];
-    BOOL success = [self computeDifferencesTrackingProgress:progressTracker];
+    BOOL success = [self computeDifferencesTrackingProgress:progressTracker
+                                                onlyReplace:onlyReplace
+                                         skipOneByteMatches:skipOneByteMatches];
     if (! success) {
         /* Cancelled */
         self = nil;

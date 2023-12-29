@@ -6,6 +6,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <HexFiend/HFPrivilegedHelper.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -53,6 +54,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 /*! isEqual: returns whether two file references both reference the same file, as in have the same inode and device. */
 - (BOOL)isEqual:(nullable id)val;
+
+typedef id<HFPrivilegedHelper> _Nullable (^HFPrivilegedHelperShared)(void);
++ (void)setPrivilegedHelperShared:(HFPrivilegedHelperShared)callback;
 
 @end
 

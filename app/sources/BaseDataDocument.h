@@ -128,4 +128,16 @@ extern NSString * const BaseDataDocumentDidChangeStringEncodingNotification;
 
 - (void)insertData:(NSData *)data;
 
+- (void)lineCountingRepCycledLineNumberFormat:(NSNotification*)note;
+- (void)columnRepresenterViewHeightChanged:(NSNotification *)note;
+- (void)lineCountingViewChangedWidth:(NSNotification *)note;
+- (void)dataInspectorChangedRowCount:(NSNotification *)note;
+- (void)dataInspectorDeletedAllRows:(NSNotification *)note;
+- (void)lineCountingRepChangedWidth:(HFLineCountingRepresenter *)rep associatedColumnRep:(HFColumnRepresenter *)columnRep;
+
+- (BOOL)setByteGrouping:(NSUInteger)newBytesPerColumn;
+- (void)setByteTheme:(HFByteTheme *)byteTheme;
+
+- (void)toggleScrollerVisibleControllerView;
+
 @end

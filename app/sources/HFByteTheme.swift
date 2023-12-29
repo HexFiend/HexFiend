@@ -1,6 +1,6 @@
 //
 //  HFByteTheme.swift
-//  HexFiend_Framework
+//  HexFiend_2
 //
 //  Created by Kevin Wojniak on 6/21/23.
 //  Copyright © 2023 ridiculous_fish. All rights reserved.
@@ -10,25 +10,29 @@ import Foundation
 
 private extension NSColor {
     func toRGB() -> NSColor {
-        guard let rgb = self.usingColorSpaceName(.calibratedRGB) else {
+        guard let rgb = usingType(.componentBased) else {
             fatalError("Can't convert color to calibratedRGB")
         }
         return rgb
     }
 }
 
-@objc public class HFByteTheme: NSObject {
-    @objc public let darkColorTable: UnsafePointer<HFByteThemeColor>
-    @objc public let lightColorTable: UnsafePointer<HFByteThemeColor>
-
-    @objc public init?(url: URL) {
+extension HFByteTheme {
+    @objc static func from(url: URL) -> Self? {
         guard #available(macOS 12, *) else {
             print("Byte themes only available on macOS 12 and later.")
             return nil
         }
-        guard let data = try? Data(contentsOf: url),
-              let topDict = try? JSONSerialization.jsonObject(with: data, options: [.json5Allowed]) as? NSDictionary else {
-            print("Invalid json at \(url)")
+        let topDict: NSDictionary
+        do {
+            let data = try Data(contentsOf: url)
+            guard let dict = try JSONSerialization.jsonObject(with: data, options: [.json5Allowed]) as? NSDictionary else {
+                print("Top-level object not a dictionary at \(url)")
+                return nil
+            }
+            topDict = dict
+        } catch {
+            print("Invalid json at \(url): \(error)")
             return nil
         }
         guard let darkDict = topDict["dark"] as? NSDictionary else {
@@ -39,8 +43,10 @@ private extension NSColor {
             print("Invalid \"light\" at \(url))!")
             return nil
         }
-        self.darkColorTable = Self.colorTableToPointer(Self.colorTableFromDict(darkDict))
-        self.lightColorTable = Self.colorTableToPointer(Self.colorTableFromDict(lightDict))
+        let theme = Self()
+        theme.darkColorTable = .init(mutating: Self.colorTableToPointer(Self.colorTableFromDict(darkDict)))
+        theme.lightColorTable = .init(mutating: Self.colorTableToPointer(Self.colorTableFromDict(lightDict)))
+        return theme
     }
 
     private static func colorTableToPointer(_ table: [HFByteThemeColor]) -> UnsafePointer<HFByteThemeColor> {
@@ -103,18 +109,32 @@ private extension NSColor {
     
     private static var namesToColors: [String: NSColor?] = {
         var map: [String: NSColor] = [
+            "black": .black.toRGB(),
+            "blue": .blue.toRGB(),
+            "brown": .brown.toRGB(),
+            "clear": .clear.toRGB(),
+            "cyan": .cyan.toRGB(),
             "darkGray": .darkGray.toRGB(),
-            "systemGreen": .systemGreen.toRGB(),
-            "systemYellow": .systemYellow.toRGB(),
-            "systemRed": .systemRed.toRGB(),
-            "systemPurple": .systemPurple.toRGB(),
+            "gray": .gray.toRGB(),
+            "green": .green.toRGB(),
+            "lightGray": .lightGray.toRGB(),
+            "magenta": .magenta.toRGB(),
+            "orange": .orange.toRGB(),
+            "purple": .purple.toRGB(),
+            "red": .red.toRGB(),
             "systemBlue": .systemBlue.toRGB(),
-            "systemOrange": .systemOrange.toRGB(),
             "systemBrown": .systemBrown.toRGB(),
-            "systemPink": .systemPink.toRGB(),
             "systemGray": .systemGray.toRGB(),
-            "systemTeal": .systemTeal.toRGB(),
+            "systemGreen": .systemGreen.toRGB(),
             "systemMint": .systemMint.toRGB(),
+            "systemOrange": .systemOrange.toRGB(),
+            "systemPink": .systemPink.toRGB(),
+            "systemPurple": .systemPurple.toRGB(),
+            "systemRed": .systemRed.toRGB(),
+            "systemTeal": .systemTeal.toRGB(),
+            "systemYellow": .systemYellow.toRGB(),
+            "white": .white.toRGB(),
+            "yellow": .yellow.toRGB(),
         ]
         if #available(macOS 10.15, *) {
             map["systemIndigo"] = .systemIndigo.toRGB()
@@ -153,6 +173,6 @@ private extension NSColor {
         var g = CGFloat.zero
         var b = CGFloat.zero
         color.getRed(&r, green: &g, blue: &b, alpha: nil)
-        return HFByteThemeColor(r: r, g: g, b: b)
+        return HFByteThemeColor(r: r, g: g, b: b, set: true)
     }
 }

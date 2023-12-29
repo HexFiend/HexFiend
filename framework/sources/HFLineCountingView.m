@@ -226,7 +226,8 @@ static const CGFloat kShadowWidth = 6;
     [string drawInRect:textRect withAttributes:textAttributes];
 }
 
-- (void)drawRect:(NSRect)clipRect {
+- (void)drawRect:(NSRect)__unused dirtyRect {
+    NSRect clipRect = self.bounds;
     [self drawGradientWithClip:clipRect];
     [self drawDividerWithClip:clipRect];
     [self drawLineNumbersWithClipSingleStringDrawing];

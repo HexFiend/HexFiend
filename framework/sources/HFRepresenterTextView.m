@@ -17,7 +17,7 @@
 #import "HFRepresenterTextViewCallout.h"
 #import <objc/message.h>
 #import <CoreText/CoreText.h>
-#import <HexFiend/HexFiend-Swift.h>
+#import <HexFiend/HFByteTheme.h>
 
 /* Returns the first index where the strings differ.  If the strings do not differ in any characters but are of different lengths, returns the smaller length; if they are the same length and do not differ, returns NSUIntegerMax */
 static inline NSUInteger HFIndexOfFirstByteThatDiffers(const unsigned char *a, NSUInteger len1, const unsigned char *b, NSUInteger len2) {
@@ -139,7 +139,13 @@ static const NSTimeInterval HFCaretBlinkFrequency = 0.56;
     HFASSERT(range.length == 0);
     
     CGPoint caretBaseline = [self originForCharacterAtByteIndex:range.location];
-    return CGRectMake(caretBaseline.x - 1, caretBaseline.y, 1, [self lineHeight]);
+    CGFloat width;
+    if (@available(macOS 14, *)) {
+        width = 2;
+    } else {
+        width = 1;
+    }
+    return CGRectMake(caretBaseline.x - 1, caretBaseline.y, width, [self lineHeight]);
 }
 
 - (void)_blinkCaret:(NSTimer *)timer {
@@ -400,7 +406,6 @@ enum LineCoverage_t {
 - (void)drawPulseBackgroundInRect:(CGRect)pulseRect {
     CGContextRef ctx = HFGraphicsGetCurrentContext();
     CGContextSaveGState(ctx);
-    [[NSBezierPath bezierPathWithRoundedRect:pulseRect xRadius:25 yRadius:25] addClip];
     NSColor *yellow = NSColor.systemYellowColor;
     NSGradient *gradient = [[NSGradient alloc] initWithStartingColor:yellow endingColor:[NSColor colorWithCalibratedRed:(CGFloat)1. green:(CGFloat).75 blue:0 alpha:1]];
     [gradient drawInRect:pulseRect angle:90];
@@ -455,8 +460,8 @@ enum LineCoverage_t {
                 NSRect bounds = [self bounds];
                 NSRect windowFrameInBoundsCoords;
                 if (emptySelection) {
-                    CGFloat w = (CGFloat)fmax([self advancePerColumn], [self advancePerCharacter]);
-                    windowFrameInBoundsCoords.origin.x = startPoint.x - w/2;
+                    CGFloat w = [self advancePerCharacter];
+                    windowFrameInBoundsCoords.origin.x = startPoint.x;
                     windowFrameInBoundsCoords.size.width = w;
                 } else {
                     windowFrameInBoundsCoords.origin.x = bounds.origin.x;
@@ -510,10 +515,19 @@ enum LineCoverage_t {
 #endif
 }
 
+- (NSColor *)caretColor {
+#if defined(MAC_OS_VERSION_14_0) && MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_VERSION_14_0
+    if (@available(macOS 14, *)) {
+        return NSColor.textInsertionPointColor;
+    }
+#endif
+    return HFColor.labelColor;
+}
+
 - (void)drawCaretIfNecessaryWithClip:(CGRect)clipRect context:(CGContextRef)ctx {
     CGRect caretRect = CGRectIntersection(caretRectToDraw, clipRect);
     if (! CGRectIsEmpty(caretRect)) {
-        [HFColor.labelColor set];
+        [self.caretColor set];
         CGContextFillRect(ctx, caretRect);
         lastDrawnCaretRect = caretRect;
     }
@@ -555,7 +569,7 @@ enum LineCoverage_t {
 #else
 - (NSColor *)textSelectionColor {
     NSWindow *window = [self window];
-    if (!window.isKeyWindow || self != window.firstResponder) {
+    if (!window.isKeyWindow || (self != window.firstResponder && !representer.controller.inactiveSelectionColorMatchesActive)) {
         return [self inactiveTextSelectionColor];
     } else {
         return [self primaryTextSelectionColor];
@@ -643,12 +657,24 @@ enum LineCoverage_t {
     return result;
 }
 
+- (void)commonInit {
+#if defined(MAC_OS_VERSION_14_0) && MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_VERSION_14_0
+    self.clipsToBounds = YES;
+#endif
+}
+
+- (instancetype)initWithFrame:(NSRect)frameRect {
+    self = [super initWithFrame:frameRect];
+    [self commonInit];
+    return self;
+}
+
 - (instancetype)initWithRepresenter:(HFTextRepresenter *)rep {
     self = [super initWithFrame:CGRectMake(0, 0, 1, 1)];
     horizontalContainerInset = 4;
     representer = rep;
     _hftvflags.editable = YES;
-    
+    [self commonInit];
     return self;
 }
 
@@ -1432,7 +1458,11 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
                 if (bytePtr && colorTable) {
                     const uint8_t byte = *bytePtr;
                     const struct HFByteThemeColor *col = &colorTable[byte];
-                    CGContextSetRGBFillColor(ctx, col->r, col->g, col->b, 1.0);
+                    if (col->set) {
+                        CGContextSetRGBFillColor(ctx, col->r, col->g, col->b, 1.0);
+                    } else {
+                        [styleRun set];
+                    }
                 }
 
                 /* Draw the glyphs */

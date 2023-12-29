@@ -5,6 +5,9 @@
   <title>Hex Fiend Release Notes</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
+    :root {
+      color-scheme: light dark;
+    }
     body {
       font-family: sans-serif;
     }
@@ -14,6 +17,33 @@
 <body>
 
   <h2>Hex Fiend Release Notes</h2>
+
+  <h3>v2.17.1</h3>
+  <ul>
+    <li>Fix crash when selecting a text encoding from the menu before selecting Customize</li>
+  </ul>
+
+  <h3>v2.17</h3>
+  <ul>
+    <li>macOS 10.14.6 is now required due to introducing Swift into the codebase.</li>
+    <li>Templates now can have <a href="https://github.com/HexFiend/HexFiend/blob/master/templates/Reference.md#metadata">metadata</a> in their header comment block, which powers these new features:</li>
+    <ul>
+      <li>Auto-detection. Templates can store file type information (UTI, extension) which is used to choose the template. Note that most builtin templates don't yet have this information set.</li>
+      <li>Hide templates. If a template file isn't actually a template, such as a utilities file, it can have metadata set to hide it.</li>
+      <li>Minimum version. Metadata can include the minimum version to exclude showing a template in the list if the app version is lower.</li>
+    </ul>
+    <li><a href="https://github.com/HexFiend/HexFiend/blob/master/docs/ByteThemes.md">Byte themes</a> have been added, accessible from the Views menu.</li>
+    <li>Templates reload automatically when the templates directory is modified (thanks @tbartelmess)</li>
+    <li>Text encodings menu can now be customized</li>
+    <li>Add setting "Match inactive text selection color with active" to help with selection color in dark mode</li>
+    <li>Fixed rendering issues with Sonoma (thanks @zorgiepoo).</li>
+    <li>Fix <code>include</code> command not working for builtin templates</li>
+    <li>Add error handling to section commands</li>
+    <li>Better error message when the <code>requires</code> command fails</li>
+    <li>Added <code>uleb128</code> and <code>sleb128</code> commands</li>
+    <li>Custom bytes grouping values are now capped and validated to prevent crashing</li>
+    <li>Anti-alias option has been removed</li>
+  </ul>
 
   <h3>v2.16</h3>
   <ul>

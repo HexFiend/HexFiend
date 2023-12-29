@@ -96,8 +96,8 @@
 }
 
 - (void)reset {
-    self.openFileButton.state = NSOnState;
-    self.openAttributeButton.state = NSOffState;
+    self.openFileButton.state = NSControlStateValueOn;
+    self.openAttributeButton.state = NSControlStateValueOff;
     self.openAttribute = NO;
     [self enableOrDisableTableView];
 }

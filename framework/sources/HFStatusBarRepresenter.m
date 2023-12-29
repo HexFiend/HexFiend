@@ -64,7 +64,10 @@
     _statusView.font = [NSFont labelFontOfSize:10];
     _statusView.rep = self;
     _statusView.autoresizingMask = NSViewWidthSizable;
-    _statusView.stringValue = [NSString stringWithUTF8String:__FUNCTION__]; // dummy
+    if ([self controller] == nil) {
+        // controllerDidChange already called updateString so avoid clobbering it
+        _statusView.stringValue = [NSString stringWithUTF8String:__FUNCTION__]; // dummy
+    }
     [_statusView sizeToFit];
     NSView *view = [[NSView alloc] initWithFrame:NSMakeRect(0, 0, _statusView.bounds.size.width, _statusView.bounds.size.height + 4)];
     NSRect statusFrame = _statusView.frame;

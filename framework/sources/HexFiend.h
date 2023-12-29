@@ -55,8 +55,19 @@
 #import <HexFiend/HFByteRangeAttribute.h>
 #import <HexFiend/HFByteRangeAttributeArray.h>
 #import <HexFiend/HFNSStringEncoding.h>
-
-#import <HexFiend/HFByteThemeColor.h>
+#import <HexFiend/HFByteTheme.h>
+#import <HexFiend/HFCustomEncoding.h>
+#import <HexFiend/HFEncodingManager.h>
+#import <HexFiend/HFBinaryGlyphTable.h>
+#import <HexFiend/HFCancelButton.h>
+#import <HexFiend/HFColumnView.h>
+#import <HexFiend/HFFastMemchr.h>
+#import <HexFiend/HFGlyphTrie.h>
+#import <HexFiend/HFHexPasteboardOwner.h>
+#import <HexFiend/HFLineCountingView.h>
+#import <HexFiend/HFRepresenterTextView.h>
+#import <HexFiend/HFUIUtils.h>
+#import <HexFiend/HFPrivilegedHelper.h>
 
 /* The following is all for Doxygen */
 

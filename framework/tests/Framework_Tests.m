@@ -14,7 +14,6 @@
 #import "HFTestHashing.h"
 #import <HexFiend/HFByteArrayEditScript.h>
 #import "HFRandomDataByteSlice.h"
-#import "HFPrivilegedHelperConnection.h"
 
 #import "HFTest.h"
 
@@ -375,7 +374,7 @@ static NSUInteger random_upto(unsigned long long val) {
         for (j=0; j < arrayCount; j++) {
             HFByteArray *dst = byteArrays[j];
             dbg_printf("Tested %lu / %lu (lengths are %llu, %llu)\n", i * arrayCount + j, arrayCount * arrayCount, [src length], [dst length]);
-            HFByteArrayEditScript *script = [[HFByteArrayEditScript alloc] initWithDifferenceFromSource:src toDestination:dst trackingProgress:nil];
+            HFByteArrayEditScript *script = [[HFByteArrayEditScript alloc] initWithDifferenceFromSource:src toDestination:dst onlyReplace:NO skipOneByteMatches:NO trackingProgress:nil];
             HFByteArray *guineaPig = [src mutableCopy];
             [script applyToByteArray:guineaPig];
 
@@ -666,7 +665,6 @@ static HFRange randomRange(uint32_t max) {
 - (void)setUp {
     [super setUp];
     srandom(0xBEBAFECA);
-    [HFPrivilegedHelperConnection sharedConnection].disabled = YES;
 }
 
 - (void)tearDown {

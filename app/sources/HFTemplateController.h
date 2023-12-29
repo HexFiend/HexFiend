@@ -61,10 +61,10 @@ typedef NS_ENUM(NSUInteger, HFEndian) {
 - (BOOL)readInt8:(int8_t *)value forLabel:(NSString *_Nullable)label;
 - (BOOL)readFloat:(float *)value forLabel:(NSString *_Nullable)label;
 - (BOOL)readDouble:(double *)value forLabel:(NSString *_Nullable)label;
-- (BOOL)readMacDate:(NSDate *_Nonnull*_Nonnull)value forLabel:(NSString *_Nullable)label;
+- (BOOL)readMacDate:(NSDate *_Nonnull*_Nonnull)value utcOffset:(NSNumber *_Nullable)utcOffset forLabel:(NSString *_Nullable)label;
 - (NSString *_Nullable)readFatDateWithLabel:(NSString *_Nullable)label error:(NSString *_Nonnull*_Nonnull)error;
 - (NSString *_Nullable)readFatTimeWithLabel:(NSString *_Nullable)label error:(NSString *_Nonnull*_Nonnull)error;
-- (NSDate *_Nullable)readUnixTime:(unsigned)numBytes forLabel:(NSString *_Nullable)label error:(NSString *_Nonnull*_Nonnull)error;
+- (NSDate *_Nullable)readUnixTime:(unsigned)numBytes utcOffset:(NSNumber *_Nullable)utcOffset forLabel:(NSString *_Nullable)label error:(NSString *_Nonnull*_Nonnull)error;
 
 - (BOOL)readUUID:(NSUUID *_Nonnull*_Nonnull)uuid forLabel:(NSString *_Nullable)label;
 
@@ -86,6 +86,12 @@ typedef NS_ENUM(NSUInteger, HFEndian) {
 
 - (BOOL)readBits:(NSString *)bits byteCount:(unsigned)numberOfBytes forLabel:(NSString *_Nullable)label result:(uint64 *)result error:(NSString *_Nonnull*_Nonnull)error;
 
-NS_ASSUME_NONNULL_END
+@property (readonly, nullable) HFTemplateNode *currentNode;
 
 @end
+
+@interface HFTemplateController (Testing)
++ (NSDate *_Nullable)convertMacDateSeconds:(UInt32)seconds;
+@end
+
+NS_ASSUME_NONNULL_END

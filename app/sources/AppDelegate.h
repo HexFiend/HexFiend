@@ -7,10 +7,13 @@
 
 #import <HexFiend/HexFiend.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @class ChooseStringEncodingWindowController;
 @class CLIController;
 @class DiffRangeWindowController;
 @class HFByteTheme;
+@class Encodings;
 
 @interface AppDelegate : NSObject {
     IBOutlet NSMenuItem *extendForwardsItem, *extendBackwardsItem;
@@ -21,11 +24,14 @@
     IBOutlet NSMenuItem *noBookmarksMenuItem;
     NSArray *bookmarksMenuItems;
     IBOutlet NSMenu *stringEncodingMenu;
-    IBOutlet ChooseStringEncodingWindowController *chooseStringEncoding;
     IBOutlet NSMenuItem *byteGroupingMenuItem;
     IBOutlet NSMenuItem *byteThemeMenuItem;
     IBOutlet CLIController *cliController; // unused, prevents leak
 }
+
+@property (class, readonly) AppDelegate *shared;
+
+@property Encodings *encodings;
 
 - (IBAction)diffFrontDocuments:(id)sender;
 - (IBAction)diffFrontDocumentsByRange:(id)sender;
@@ -41,5 +47,8 @@
 
 - (void)buildByteGroupingMenu;
 - (void)buildByteThemeMenu;
+- (void)buildEncodingMenu;
 
 @end
+
+NS_ASSUME_NONNULL_END

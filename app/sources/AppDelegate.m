@@ -10,6 +10,7 @@
 #import "DiffDocument.h"
 #import "MyDocumentController.h"
 #import "DiffRangeWindowController.h"
+#import "Hex_Fiend-Swift.h"
 #include <assert.h>
 #include <errno.h>
 #include <stdbool.h>
@@ -17,7 +18,10 @@
 #include <stdio.h>
 #import <HexFiend/HFCustomEncoding.h>
 #import <HexFiend/HFEncodingManager.h>
-#import <HexFiend/HexFiend-Swift.h>
+
+#if ! HF_NO_PRIVILEGED_FILE_OPERATIONS
+#import "HFPrivilegedHelperConnection.h"
+#endif
 
 @interface AppDelegate ()
 
@@ -34,6 +38,19 @@
     NSWindowController *_prefs;
 }
 
++ (instancetype)shared {
+    id delegate = NSApp.delegate;
+    HFASSERT([delegate isKindOfClass:[AppDelegate class]]);
+    return delegate;
+}
+
+- (instancetype)init
+{
+    self = [super init];
+    _encodings = [[Encodings alloc] init];
+    return self;
+}
+
 - (void)applicationWillFinishLaunching:(NSNotification *)note {
     USE(note);
     /* Make sure our NSDocumentController subclass gets installed */
@@ -42,6 +59,12 @@
 
 - (void)applicationDidFinishLaunching:(NSNotification *)note {
     USE(note);
+
+#if ! HF_NO_PRIVILEGED_FILE_OPERATIONS
+    [HFFileReference setPrivilegedHelperShared:^{
+        return [HFPrivilegedHelperConnection sharedConnection];
+    }];
+#endif
 
     if (! [[NSUserDefaults standardUserDefaults] boolForKey:@"HFDebugMenu"]) {
         /* Remove the Debug menu unless we want it */
@@ -100,26 +123,17 @@
 }
 
 - (void)buildEncodingMenu {
-    NSStringEncoding defaultEncodings[] = {
-        NSASCIIStringEncoding,
-        NSMacOSRomanStringEncoding,
-        NSISOLatin1StringEncoding,
-        NSISOLatin2StringEncoding,
-        NSUTF16LittleEndianStringEncoding,
-        NSUTF16BigEndianStringEncoding,
-    };
-    HFEncodingManager *encodingManager = [HFEncodingManager shared];
-    for (size_t i = 0; i < sizeof(defaultEncodings) / sizeof(defaultEncodings[0]); ++i) {
-        NSStringEncoding encoding = defaultEncodings[i];
-        HFNSStringEncoding *encodingObj = [encodingManager systemEncoding:encoding];
-        HFASSERT(encodingObj != nil);
-        NSString *title = encodingObj.name;
+    [stringEncodingMenu removeAllItems];
+    
+    for (HFNSStringEncoding *encoding in self.encodings.menuSystemEncodings) {
+        NSString *title = encoding.name;
         NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:title action:@selector(setStringEncodingFromMenuItem:) keyEquivalent:@""];
-        item.representedObject = encodingObj;
+        item.representedObject = encoding;
         [stringEncodingMenu addItem:item];
     }
     
     NSString *encodingsFolder = [[NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES).firstObject stringByAppendingPathComponent:[NSBundle mainBundle].bundleIdentifier] stringByAppendingPathComponent:@"Encodings"];
+    HFEncodingManager *encodingManager = HFEncodingManager.shared;
     NSArray<HFCustomEncoding *> *customEncodings = [encodingManager loadCustomEncodingsFromDirectory:encodingsFolder];
     if (customEncodings.count > 0) {
         [stringEncodingMenu addItem:[NSMenuItem separatorItem]];
@@ -133,8 +147,8 @@
     
     [stringEncodingMenu addItem:[NSMenuItem separatorItem]];
     
-    NSMenuItem *otherEncodingsItem = [[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Other…", "") action:@selector(showWindow:) keyEquivalent:@""];
-    otherEncodingsItem.target = chooseStringEncoding;
+    NSMenuItem *otherEncodingsItem = [[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Customize…", "") action:@selector(showEncodingsWindow) keyEquivalent:@""];
+    otherEncodingsItem.target = self.encodings;
     [stringEncodingMenu addItem:otherEncodingsItem];
 }
 
@@ -179,7 +193,7 @@
     
     NSArray<NSURL *> *jsonUrls = [bundleJsonUrls arrayByAddingObjectsFromArray:appSupportJsonUrls];
     for (NSURL *jsonUrl in jsonUrls) {
-        HFByteTheme *byteTheme = [[HFByteTheme alloc] initWithUrl:jsonUrl];
+        HFByteTheme *byteTheme = [HFByteTheme fromUrl:jsonUrl];
         if (!byteTheme) {
             NSLog(@"Invalid theme at %@", jsonUrl);
             continue;;
@@ -269,9 +283,16 @@ static NSComparisonResult compareFontDisplayNames(NSFont *a, NSFont *b, void *un
 }
 
 - (BOOL)validateMenuItem:(NSMenuItem *)item {
-    SEL sel = [item action];
+    const SEL sel = [item action];
+    BaseDataDocument *document = NSDocumentController.sharedDocumentController.currentDocument;
+    const BOOL isDiffDocument = [document isKindOfClass:[DiffDocument class]];
+    if (isDiffDocument) {
+        if (sel == @selector(diffFrontDocuments:) ||
+            sel == @selector(diffFrontDocumentsByRange:)) {
+            return NO;
+        }
+    }
     if (sel == @selector(setFontFromMenuItem:)) {
-        BaseDataDocument *document = [[NSDocumentController sharedDocumentController] currentDocument];
         BOOL check = NO;
         if (document) {
             NSFont *font = [document font];
@@ -362,7 +383,7 @@ static NSComparisonResult compareFontDisplayNames(NSFont *a, NSFont *b, void *un
         NSUInteger i, max = [menu numberOfItems];
         for (i=0; i < max; i++) {
             NSMenuItem *item = [menu itemAtIndex:i];
-            [item setState:[selectedEncoding isEqual:item.representedObject] ? NSOnState : NSOffState];
+            [item setState:[selectedEncoding isEqual:item.representedObject] ? NSControlStateValueOn : NSControlStateValueOff];
         }
     }
     else {
@@ -383,7 +404,10 @@ static NSComparisonResult compareFontDisplayNames(NSFont *a, NSFont *b, void *un
             NSLog(@"Failed to find encoding object for %ld", encoding);
         }
     } else if ([obj isKindOfClass:[NSData class]]) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         HFStringEncoding *encodingObj = [NSKeyedUnarchiver unarchiveObjectWithData:obj];
+#pragma clang diagnostic pop
         if ([encodingObj isKindOfClass:[HFCustomEncoding class]]) {
             return encodingObj;
         } else if ([encodingObj isKindOfClass:[HFNSStringEncoding class]]) {
@@ -404,18 +428,27 @@ static NSComparisonResult compareFontDisplayNames(NSFont *a, NSFont *b, void *un
 }
 
 - (void)setStringEncoding:(HFStringEncoding *)encoding {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     [[NSUserDefaults standardUserDefaults] setObject:[NSKeyedArchiver archivedDataWithRootObject:encoding] forKey:@"DefaultStringEncoding"];
+#pragma clang diagnostic pop
 }
 
 - (IBAction)setStringEncodingFromMenuItem:(NSMenuItem *)item {
     HFStringEncoding *encoding = item.representedObject;
     HFASSERT([encoding isKindOfClass:[HFStringEncoding class]]);
     [self setStringEncoding:encoding];
+    [self.encodings reloadEncodingsWindowIfLoaded];
 }
 
 - (IBAction)openPreferences:(id)sender {
     if (!_prefs) {
         _prefs = [[NSWindowController alloc] initWithWindowNibName:@"Preferences"];
+    }
+    if (@available(macOS 13, *)) {
+        // Hex Fiend > Preferences menu in Ventura+ gets automatically renamed to Settings,
+        // so make sure the window title matches too.
+        _prefs.window.title = NSLocalizedString(@"Settings", nil);
     }
     [_prefs showWindow:sender];
 }
@@ -504,8 +537,8 @@ static NSComparisonResult compareFontDisplayNames(NSFont *a, NSFont *b, void *un
         [DiffDocument compareByteArray:array1
                       againstByteArray:array2
                             usingRange:HFRangeMake(0, 0)
-                          leftFileName:[[leftFile lastPathComponent] stringByDeletingPathExtension]
-                         rightFileName:[[rightFile lastPathComponent] stringByDeletingPathExtension]];
+                          leftFileName:leftFile
+                         rightFileName:rightFile];
     }
 }
 

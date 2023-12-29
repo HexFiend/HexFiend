@@ -12,13 +12,9 @@
 #include <sys/types.h>
 #include <fcntl.h>
 #include <unistd.h>
-#if ! HF_NO_PRIVILEGED_FILE_OPERATIONS
 #include <sys/disk.h>
-#endif
 
-#if ! HF_NO_PRIVILEGED_FILE_OPERATIONS
-#import "HFPrivilegedHelperConnection.h"
-#endif
+static HFPrivilegedHelperShared privilegedHelperCallback;
 
 @interface HFConcreteFileReference : HFFileReference
 @end
@@ -197,6 +193,10 @@ static void HFSetFDShouldCache(int fd, BOOL shouldCache) {
     [self close];
 }
 
++ (void)setPrivilegedHelperShared:(HFPrivilegedHelperShared)callback {
+    privilegedHelperCallback = [callback copy];
+}
+
 @end
 
 @implementation HFConcreteFileReference
@@ -211,16 +211,14 @@ static void HFSetFDShouldCache(int fd, BOOL shouldCache) {
         fileDescriptor = open(p, O_RDONLY, 0);
     }
 
-#if ! HF_NO_PRIVILEGED_FILE_OPERATIONS
 	if (fileDescriptor < 0 && errno == EACCES) {
-		if ([[HFPrivilegedHelperConnection sharedConnection] openFileAtPath:p writable:isWritable fileDescriptor:&fileDescriptor error:error]) {
+		if (privilegedHelperCallback && [privilegedHelperCallback() openFileAtPath:p writable:isWritable fileDescriptor:&fileDescriptor error:error]) {
             isPrivileged = YES;
         } else {
 			fileDescriptor = -1; 
 			errno = EACCES;
 		}
 	}
-#endif
 
     if (fileDescriptor < 0) {
         returnReadError(error);
@@ -237,8 +235,7 @@ static void HFSetFDShouldCache(int fd, BOOL shouldCache) {
         return NO;
     }
 
-#if ! HF_NO_PRIVILEGED_FILE_OPERATIONS
-    if (!sb.st_size && (S_ISCHR(sb.st_mode) || S_ISBLK(sb.st_mode))) {
+    if (isPrivileged && !sb.st_size && (S_ISCHR(sb.st_mode) || S_ISBLK(sb.st_mode))) {
         uint64_t blockCount;
 
         if (ioctl(fileDescriptor, DKIOCGETBLOCKSIZE, &blockSize) < 0
@@ -253,11 +250,8 @@ static void HFSetFDShouldCache(int fd, BOOL shouldCache) {
         isFixedLength = YES;
     }
     else {
-#endif
         fileLength = sb.st_size;
-#if ! HF_NO_PRIVILEGED_FILE_OPERATIONS
     }
-#endif
 
     fileMode = sb.st_mode;
     inode = sb.st_ino;

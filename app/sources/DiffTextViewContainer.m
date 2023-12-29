@@ -15,10 +15,18 @@
     interviewDistance = NSMinX([rightView frame]) - NSMaxX([leftView frame]);
 }
 
+- (CGFloat)textViewToLayoutView
+{
+    HFLayoutRepresenter *leftLayout = [leftView layoutRepresenter];
+    CGFloat textViewToLayoutView = [leftView bounds].size.width - [[leftLayout view] frame].size.width; //we assume this is the same between both text views
+    return textViewToLayoutView;
+}
+
 - (void)getLeftLayoutWidth:(CGFloat *)leftWidth rightLayoutWidth:(CGFloat *)rightWidth forProposedWidth:(CGFloat)viewWidth {
     /* Compute how much space we can allocate to each text view */
-    HFLayoutRepresenter *leftLayout = [leftView layoutRepresenter], *rightLayout = [rightView layoutRepresenter];
-    CGFloat textViewToLayoutView = [leftView bounds].size.width - [[leftLayout view] frame].size.width; //we assume this is the same between both text views
+    HFLayoutRepresenter *leftLayout = [leftView layoutRepresenter];
+    HFLayoutRepresenter *rightLayout = [rightView layoutRepresenter];
+    const CGFloat textViewToLayoutView = [self textViewToLayoutView];
     const CGFloat availableTextViewSpace = viewWidth - interviewDistance - 2 * textViewToLayoutView;
 
     /* Compute byte granularity */
@@ -48,49 +56,13 @@
     *rightWidth = [rightLayout minimumViewWidthForBytesPerLine:bpl] + textViewToLayoutView;
 }
 
-- (void)OLDgetLeftLayoutWidth:(CGFloat *)leftWidth rightLayoutWidth:(CGFloat *)rightWidth forProposedWidth:(CGFloat)viewWidth {
-    /* Compute how much space we can allocate to each text view */
-    HFLayoutRepresenter *leftLayout = [leftView layoutRepresenter], *rightLayout = [rightView layoutRepresenter];
-    CGFloat textViewToLayoutView = [leftView bounds].size.width - [[leftLayout view] frame].size.width; //we assume this is the same between both text views
-    const CGFloat availableTextViewSpace = viewWidth - interviewDistance - 2 * textViewToLayoutView;
-    
-    /* Start by dividing the space evenly, then iterate on finding the max bytes per line until we don't see any more changes */
-    CGFloat leftLayoutViewSpace = HFFloor(availableTextViewSpace / 2);
-    CGFloat rightLayoutViewSpace = availableTextViewSpace - leftLayoutViewSpace;
-    
-    /* Compute the BPLs for these view spaces */
-    NSUInteger leftBytesPerLine = [leftLayout maximumBytesPerLineForLayoutInProposedWidth:leftLayoutViewSpace];
-    NSUInteger rightBytesPerLine = [rightLayout maximumBytesPerLineForLayoutInProposedWidth:rightLayoutViewSpace];
-    
-    /* Compute how much space these BPLs would actually require */
-    leftLayoutViewSpace = [leftLayout minimumViewWidthForBytesPerLine:leftBytesPerLine];
-    rightLayoutViewSpace = [rightLayout minimumViewWidthForBytesPerLine:rightBytesPerLine];
-    
-    /* If the BPLs are the same, then there's no hope of fitting more in.  If they're not the same, there may be hope.  See how much unused space we have and assign it to the side that we want to get bigger. */
-    CGFloat slackSpace = HFMax(availableTextViewSpace - leftLayoutViewSpace - rightLayoutViewSpace, 0.);
-    if (rightBytesPerLine < leftBytesPerLine) {
-        rightLayoutViewSpace += slackSpace;
-        rightBytesPerLine = [rightLayout maximumBytesPerLineForLayoutInProposedWidth:rightLayoutViewSpace];
-        rightLayoutViewSpace = [rightLayout minimumViewWidthForBytesPerLine:rightBytesPerLine];
-    } else if (leftBytesPerLine < rightBytesPerLine) {
-        leftLayoutViewSpace += slackSpace;
-        leftBytesPerLine = [leftLayout maximumBytesPerLineForLayoutInProposedWidth:leftLayoutViewSpace];
-        leftLayoutViewSpace = [leftLayout minimumViewWidthForBytesPerLine:leftBytesPerLine];	    
-    }
-    
-    /* If they're still not the same, then use the smaller of the two */
-    if (rightBytesPerLine > leftBytesPerLine) {
-        rightBytesPerLine = leftBytesPerLine;
-        rightLayoutViewSpace = [rightLayout minimumViewWidthForBytesPerLine:rightBytesPerLine];
-    } else if (leftBytesPerLine > rightBytesPerLine) {
-        leftBytesPerLine = rightBytesPerLine;
-        leftLayoutViewSpace = [leftLayout minimumViewWidthForBytesPerLine:leftBytesPerLine];
-    }
-    
-    /* Done, return the stuff */
-    HFASSERT(leftBytesPerLine == rightBytesPerLine);
-    *leftWidth = leftLayoutViewSpace + textViewToLayoutView;
-    *rightWidth = rightLayoutViewSpace + textViewToLayoutView;
+- (CGFloat)minimumViewWidthForBytesPerLine:(NSUInteger)bytesPerLine {
+    HFLayoutRepresenter *leftLayout = [leftView layoutRepresenter];
+    HFLayoutRepresenter *rightLayout = [rightView layoutRepresenter];
+    const CGFloat textViewToLayoutView = [self textViewToLayoutView];
+    CGFloat leftWidth = [leftLayout minimumViewWidthForBytesPerLine:bytesPerLine] + textViewToLayoutView;
+    CGFloat rightWidth = [rightLayout minimumViewWidthForBytesPerLine:bytesPerLine] + textViewToLayoutView;
+    return leftWidth + interviewDistance + rightWidth;
 }
 
 - (NSSize)minimumFrameSizeForProposedSize:(NSSize)frameSize {
@@ -141,7 +113,8 @@
     return result;
 }
 
-- (void)drawRect:(NSRect)dirtyRect {
+- (void)drawRect:(NSRect)__unused dirtyRect {
+    NSRect clipRect = self.bounds;
     /* Paranoia */
     if (! leftView || ! rightView) return;
     
@@ -152,7 +125,7 @@
     } else {
         [[NSColor colorWithCalibratedWhite:.64 alpha:1.] set];
     }
-    NSRectFillUsingOperation(dirtyRect, NSCompositingOperationSourceOver);
+    NSRectFillUsingOperation(clipRect, NSCompositingOperationSourceOver);
     
     CGContextRef ctx = HFGraphicsGetCurrentContext();
     CGFloat lineWidth = 1;
@@ -165,8 +138,8 @@
         BOOL drawActive = (window == nil || [window isMainWindow] || [window isKeyWindow]);
         
         CGFloat shadowWidth = 6;
-        HFDrawShadow(ctx, middleFrame, shadowWidth, NSMinXEdge, drawActive, dirtyRect);
-        HFDrawShadow(ctx, middleFrame, shadowWidth, NSMaxXEdge, drawActive, dirtyRect);
+        HFDrawShadow(ctx, middleFrame, shadowWidth, NSMinXEdge, drawActive, clipRect);
+        HFDrawShadow(ctx, middleFrame, shadowWidth, NSMaxXEdge, drawActive, clipRect);
     }
     
     /* Draw the edge line rects */
@@ -179,10 +152,10 @@
     [dividerColor set];
     lineRect.size.width = lineWidth;
     lineRect.origin.x = NSMinX(middleFrame);
-    if (NSIntersectsRect(lineRect, dirtyRect)) NSRectFill(lineRect);
+    if (NSIntersectsRect(lineRect, clipRect)) NSRectFill(lineRect);
     
     lineRect.origin.x = NSMaxX(middleFrame) - lineWidth;
-    if (NSIntersectsRect(lineRect, dirtyRect)) NSRectFill(lineRect);
+    if (NSIntersectsRect(lineRect, clipRect)) NSRectFill(lineRect);
 }
 
 

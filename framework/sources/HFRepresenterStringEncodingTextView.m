@@ -7,7 +7,9 @@
 
 #import "HFRepresenterStringEncodingTextView.h"
 #import "HFTextRepresenter_Internal.h"
+#import <HexFiend/HFAssert.h>
 #import <HexFiend/HFEncodingManager.h>
+#import <HexFiend/HFFUnctions.h>
 #import <CoreText/CoreText.h>
 
 static NSString *copy1CharStringForByteValue(unsigned long long byteValue, NSUInteger bytesPerChar, HFStringEncoding *encoding) {

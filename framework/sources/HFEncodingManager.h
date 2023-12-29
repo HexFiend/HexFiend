@@ -8,20 +8,25 @@
 
 #import <Foundation/Foundation.h>
 #import <HexFiend/HFNSStringEncoding.h>
-#import <HexFiend/HFCustomEncoding.h>
+
+@class HFCustomEncoding;
+
+NS_ASSUME_NONNULL_BEGIN
 
 @interface HFEncodingManager : NSObject
 
 + (instancetype)shared;
 
 @property (readonly) NSArray<HFNSStringEncoding *> *systemEncodings;
-- (HFNSStringEncoding *)systemEncoding:(NSStringEncoding)systenEncoding;
+- (nullable HFNSStringEncoding *)systemEncoding:(NSStringEncoding)systenEncoding;
 
 - (NSArray<HFCustomEncoding *> *)loadCustomEncodingsFromDirectory:(NSString *)directory;
-@property (readonly) NSArray<HFCustomEncoding *> *customEncodings;
+@property (nullable, readonly) NSArray<HFCustomEncoding *> *customEncodings;
 
-- (HFStringEncoding *)encodingByIdentifier:(NSString *)identifier;
+- (nullable HFStringEncoding *)encodingByIdentifier:(NSString *)identifier;
 
 @property (readonly) HFNSStringEncoding *ascii;
 
 @end
+
+NS_ASSUME_NONNULL_END
