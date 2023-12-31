@@ -22,7 +22,7 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		001BEF982910F23600BB82B3 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 001BEF972910F23600BB82B3 /* main.swift */; };
+		001BEF982910F23600BB82B3 /* hexf.swift in Sources */ = {isa = PBXBuildFile; fileRef = 001BEF972910F23600BB82B3 /* hexf.swift */; };
 		795F46C114BAA45D00EB2F7D /* OpenDriveWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 795F46C014BAA45D00EB2F7D /* OpenDriveWindowController.m */; };
 		795F46C314BAADB600EB2F7D /* DiskArbitration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 795F46C214BAADB600EB2F7D /* DiskArbitration.framework */; };
 		79E2FF201745A2B300FA8F12 /* dsa_pub.pem in Resources */ = {isa = PBXBuildFile; fileRef = 79E2FF1F1745A2B300FA8F12 /* dsa_pub.pem */; };
@@ -69,6 +69,7 @@
 		A5328D4A21E1898A007C4DB0 /* HFHexGlyphTable.m in Sources */ = {isa = PBXBuildFile; fileRef = A5328D4621E1898A007C4DB0 /* HFHexGlyphTable.m */; };
 		A533B9C12AD42F5300ECA26E /* ChooseStringEncodingWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A533B9C02AD42F5300ECA26E /* ChooseStringEncodingWindowController.swift */; };
 		A53B7D1A1E9185CF00CA3977 /* HFTestHashing.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D149300D8A37580018296B /* HFTestHashing.m */; };
+		A54281B12B413542006DEF81 /* ArgumentParser in Frameworks */ = {isa = PBXBuildFile; productRef = A54281B02B413542006DEF81 /* ArgumentParser */; };
 		A54D8AEE2A3ECBD80021FBAB /* ColorByteThemes in Resources */ = {isa = PBXBuildFile; fileRef = A54D8AED2A3ECBD80021FBAB /* ColorByteThemes */; };
 		A54D8B0C2A4AA5E50021FBAB /* HFByteTheme.h in Headers */ = {isa = PBXBuildFile; fileRef = A54D8B0B2A4AA5E50021FBAB /* HFByteTheme.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A550A7201F787831001C79C7 /* hexf in Resources */ = {isa = PBXBuildFile; fileRef = A550A7161F7877F8001C79C7 /* hexf */; };
@@ -428,7 +429,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		001BEF972910F23600BB82B3 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		001BEF972910F23600BB82B3 /* hexf.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = hexf.swift; sourceTree = "<group>"; };
 		089C165DFE840E0CC02AAC07 /* Base */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = app/sources/main.m; sourceTree = "<group>"; };
@@ -762,6 +763,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A54281B12B413542006DEF81 /* ArgumentParser in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -985,7 +987,7 @@
 		A550A7171F7877F8001C79C7 /* hexf */ = {
 			isa = PBXGroup;
 			children = (
-				001BEF972910F23600BB82B3 /* main.swift */,
+				001BEF972910F23600BB82B3 /* hexf.swift */,
 			);
 			path = hexf;
 			sourceTree = "<group>";
@@ -1653,6 +1655,9 @@
 			dependencies = (
 			);
 			name = hexf;
+			packageProductDependencies = (
+				A54281B02B413542006DEF81 /* ArgumentParser */,
+			);
 			productName = CommandLineTool;
 			productReference = A550A7161F7877F8001C79C7 /* hexf */;
 			productType = "com.apple.product-type.tool";
@@ -1770,6 +1775,7 @@
 			mainGroup = 29B97314FDCFA39411CA2CEA /* HexFiend_2 */;
 			packageReferences = (
 				A5A34C1926AD271900506AE7 /* XCRemoteSwiftPackageReference "Sparkle" */,
+				A54281AF2B413542006DEF81 /* XCRemoteSwiftPackageReference "swift-argument-parser" */,
 			);
 			projectDirPath = "";
 			projectRoot = ../..;
@@ -1985,7 +1991,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				001BEF982910F23600BB82B3 /* main.swift in Sources */,
+				001BEF982910F23600BB82B3 /* hexf.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4619,6 +4625,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		A54281AF2B413542006DEF81 /* XCRemoteSwiftPackageReference "swift-argument-parser" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-argument-parser.git";
+			requirement = {
+				kind = exactVersion;
+				version = 1.3.0;
+			};
+		};
 		A5A34C1926AD271900506AE7 /* XCRemoteSwiftPackageReference "Sparkle" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/sparkle-project/Sparkle";
@@ -4630,6 +4644,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		A54281B02B413542006DEF81 /* ArgumentParser */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A54281AF2B413542006DEF81 /* XCRemoteSwiftPackageReference "swift-argument-parser" */;
+			productName = ArgumentParser;
+		};
 		A5A34C1A26AD271900506AE7 /* Sparkle */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = A5A34C1926AD271900506AE7 /* XCRemoteSwiftPackageReference "Sparkle" */;

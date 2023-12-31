@@ -8,36 +8,18 @@
 //
 
 import Cocoa
-
-private enum HexfError: Error {
-    case invalidUsage
-    case standardInputNoData
-    case launchAppNoUrl
-    case launchAppFailure
-}
+import ArgumentParser
 
 private struct Controller {
     private static let kAppIdentifier = "com.ridiculousfish.HexFiend"
     
-    private func printUsage() {
-        fputs("""
-Usage:
-
-  Open files:
-    hexf file1 [file2 file3 ...]
-
-  Compare files:
-    hexf -d file1 file2
-
-  Open piped data:
-    echo hello | hexf
-
-  Show help:
-    hexf -h | --help
-
-""", stderr)
+    struct HexfError: Error, CustomStringConvertible {
+        var description: String
+        init(_ description: String) {
+            self.description = description
+        }
     }
-    
+
     private static func standardize(path: String) -> String {
         let url = URL(fileURLWithPath: path)
         return url.path // get absolute path
@@ -49,8 +31,7 @@ Usage:
     
     private func launchApp(with args: [String]) throws {
         guard let url = NSWorkspace.shared.urlForApplication(withBundleIdentifier: Self.kAppIdentifier) else {
-            fputs("Failed to get url to app bundle for: \(Self.kAppIdentifier)\n", stderr)
-            throw HexfError.launchAppNoUrl
+            throw HexfError("Failed to get url to app bundle for: \(Self.kAppIdentifier)")
         }
         
         if #available(macOS 10.15, *) {
@@ -64,20 +45,17 @@ Usage:
             }
             let result = semaphore.wait(timeout: .now() + .seconds(15))
             if result == .timedOut {
-                fputs("Launch app timeout\n", stderr)
-                throw HexfError.launchAppFailure
+                throw HexfError("Launch app timeout")
             }
             if let openError {
-                fputs("Launch error: \(openError)\n", stderr)
-                throw HexfError.launchAppFailure
+                throw HexfError("Launch error: \(openError)")
             }
         } else {
             let config = [NSWorkspace.LaunchConfigurationKey.arguments: args]
             do {
                 try NSWorkspace.shared.launchApplication(at: url, options: NSWorkspace.LaunchOptions.default, configuration: config)
             } catch {
-                fputs("Launch app failed: \(error.localizedDescription)\n", stderr)
-                throw HexfError.launchAppFailure
+                throw HexfError("Launch app failed: \(error.localizedDescription)")
             }
         }
     }
@@ -91,7 +69,7 @@ Usage:
             data = inFile.readDataToEndOfFile()
         }
         guard let data, !data.isEmpty else {
-            throw HexfError.standardInputNoData
+            throw HexfError("No data")
         }
         
         if self.appRunning {
@@ -116,42 +94,24 @@ Usage:
     private enum Options: Equatable {
         case command(_ command: Commands)
         case none
-        case help
-        case invalid
-        
-        init(args: [String]) {
-            if args.count == 1 {
+
+        init(args: Hexf) {
+            if args.files.isEmpty {
                 self = .none
-            } else if args.count == 4, args[1] == "-d" {
-                self = .command(.diff(leftFile: standardize(path:args[2]), rightFile: standardize(path:args[3])))
+            } else if args.files.count == 2, args.diff {
+                self = .command(.diff(leftFile: standardize(path: args.files[0]),
+                                      rightFile: standardize(path: args.files[1])))
             } else {
-                var filesToOpen = [String]()
-                for arg in args.dropFirst() {
-                    if arg.hasPrefix("-") {
-                        if arg == "-h" || arg == "--help" {
-                            self = .help
-                            return
-                        }
-                        self = .invalid
-                        return
-                    }
-                    filesToOpen.append(standardize(path: arg))
+                let filesToOpen: [String] = args.files.map { file in
+                    standardize(path: file)
                 }
                 self = .command(.open(files: filesToOpen))
             }
         }
     }
     
-    func process(arguments args: [String]) throws {
+    func process(args: Hexf) throws {
         switch Options(args: args) {
-        case .invalid:
-            printUsage()
-            throw HexfError.invalidUsage
-            
-        case .help:
-            printUsage()
-            return
-            
         case .none:
             try processStandardInput()
             return
@@ -160,7 +120,7 @@ Usage:
             if self.appRunning {
                 // App is already running so post distributed notification
                 let name: String
-                let userInfo: [String: [Any]]
+                let userInfo: [String: [String]]
                 switch command {
                 case let .diff(diffLeftFile, diffRightFile):
                     name = "HFDiffFilesNotification"
@@ -199,5 +159,24 @@ Usage:
     }
 }
 
-private let controller = Controller()
-try controller.process(arguments: ProcessInfo.processInfo.arguments)
+@main
+struct Hexf: ParsableCommand {
+    @Flag(name: .shortAndLong, help: "Compare two files.")
+    var diff = false
+
+    @Argument(help: ArgumentHelp(
+        "Files to open.",
+        discussion: "If no input files are provided, hexf reads from stdin.",
+        valueName: "file"))
+    var files: [String] = []
+
+    mutating func validate() throws {
+        if diff, files.count != 2 {
+            throw ValidationError("Diff mode requires exactly two files.")
+        }
+    }
+
+    mutating func run() throws {
+        try Controller().process(args: self)
+    }
+}
