@@ -161,6 +161,8 @@ private struct Controller {
 
 @main
 struct Hexf: ParsableCommand {
+    static var configuration = CommandConfiguration(version: HFVersion())
+
     @Flag(name: .shortAndLong, help: "Compare two files.")
     var diff = false
 

@@ -461,6 +461,7 @@
 		A5328D4621E1898A007C4DB0 /* HFHexGlyphTable.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFHexGlyphTable.m; path = sources/HFHexGlyphTable.m; sourceTree = "<group>"; };
 		A533B9BF2AD42F5200ECA26E /* HexFiend_2-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "HexFiend_2-Bridging-Header.h"; path = "app/sources/HexFiend_2-Bridging-Header.h"; sourceTree = "<group>"; };
 		A533B9C02AD42F5300ECA26E /* ChooseStringEncodingWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ChooseStringEncodingWindowController.swift; path = app/sources/ChooseStringEncodingWindowController.swift; sourceTree = "<group>"; };
+		A54281B22B427F62006DEF81 /* hexf-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "hexf-Bridging-Header.h"; sourceTree = "<group>"; };
 		A54D8AED2A3ECBD80021FBAB /* ColorByteThemes */ = {isa = PBXFileReference; lastKnownFileType = folder; name = ColorByteThemes; path = app/resources/ColorByteThemes; sourceTree = "<group>"; };
 		A54D8B0B2A4AA5E50021FBAB /* HFByteTheme.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFByteTheme.h; path = sources/HFByteTheme.h; sourceTree = "<group>"; };
 		A550A7161F7877F8001C79C7 /* hexf */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = hexf; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -988,6 +989,7 @@
 			isa = PBXGroup;
 			children = (
 				001BEF972910F23600BB82B3 /* hexf.swift */,
+				A54281B22B427F62006DEF81 /* hexf-Bridging-Header.h */,
 			);
 			path = hexf;
 			sourceTree = "<group>";
@@ -2825,6 +2827,7 @@
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "hexf/hexf-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 			};
@@ -2863,6 +2866,7 @@
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "hexf/hexf-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 			};
@@ -2901,6 +2905,7 @@
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "hexf/hexf-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 			};
@@ -2936,6 +2941,7 @@
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "hexf/hexf-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
@@ -2970,6 +2976,7 @@
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "hexf/hexf-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 			};
 			name = "Release+CodeSign";
@@ -4448,6 +4455,7 @@
 				);
 				PRODUCT_NAME = hexf;
 				SKIP_INSTALL = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "hexf/hexf-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 			};
@@ -4467,6 +4475,7 @@
 				);
 				PRODUCT_NAME = hexf;
 				SKIP_INSTALL = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "hexf/hexf-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 			};
 			name = "Release+MAS";
