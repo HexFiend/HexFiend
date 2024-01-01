@@ -481,7 +481,7 @@
     REQUIRE_NOT_NULL(pb);
     if ([[self controller] editable]) {
         // we can paste if the pboard contains text or contains an HFByteArray
-        return [HFPasteboardOwner unpackByteArrayFromPasteboard:pb] || [pb availableTypeFromArray:@[NSStringPboardType]];
+        return [HFPasteboardOwner unpackByteArrayFromPasteboard:pb] || [pb availableTypeFromArray:@[NSPasteboardTypeString]];
     }
     return NO;
 }
@@ -507,7 +507,7 @@
         result = YES;
     }
     else {
-        NSString *stringType = [pb availableTypeFromArray:@[NSStringPboardType]];
+        NSString *stringType = [pb availableTypeFromArray:@[NSPasteboardTypeString]];
         if (stringType) {
             NSString *stringValue = [pb stringForType:stringType];
             if (stringValue) {

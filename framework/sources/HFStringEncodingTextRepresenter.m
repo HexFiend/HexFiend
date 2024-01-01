@@ -20,7 +20,7 @@
 @implementation HFStringEncodingPasteboardOwner
 
 - (void)writeDataInBackgroundToPasteboard:(NSPasteboard *)pboard ofLength:(unsigned long long)length forType:(NSString *)type trackingProgress:(HFProgressTracker *)tracker {
-    HFASSERT([type isEqual:NSStringPboardType]);
+    HFASSERT([type isEqual:NSPasteboardTypeString]);
     HFByteArray *byteArray = [self byteArray];
     HFASSERT(length <= NSUIntegerMax);
     NSUInteger dataLength = ll2l(length);
@@ -140,7 +140,7 @@
         NSBeep();
     }
     else {
-        HFStringEncodingPasteboardOwner *owner = [HFStringEncodingPasteboardOwner ownPasteboard:pb forByteArray:selection withTypes:@[HFPrivateByteArrayPboardType, NSStringPboardType]];
+        HFStringEncodingPasteboardOwner *owner = [HFStringEncodingPasteboardOwner ownPasteboard:pb forByteArray:selection withTypes:@[HFPrivateByteArrayPboardType, NSPasteboardTypeString]];
         [owner setEncoding:enc];
         [owner setBytesPerLine:[self bytesPerLine]];
     }

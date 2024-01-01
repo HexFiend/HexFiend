@@ -119,7 +119,7 @@
     if ([selection length] == 0) {
         NSBeep();
     } else {
-        HFHexPasteboardOwner *owner = [HFHexPasteboardOwner ownPasteboard:pb forByteArray:selection withTypes:@[HFPrivateByteArrayPboardType, NSStringPboardType]];
+        HFHexPasteboardOwner *owner = [HFHexPasteboardOwner ownPasteboard:pb forByteArray:selection withTypes:@[HFPrivateByteArrayPboardType, NSPasteboardTypeString]];
         [owner setBytesPerLine:[self bytesPerLine]];
         owner.bytesPerColumn = [self hexPasteboardBytesPerColumn];
     }
