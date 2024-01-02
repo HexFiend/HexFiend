@@ -953,6 +953,7 @@
 				A5589ACE2206D3C8000293A4 /* HFOpenAccessoryViewController.m */,
 				9408FC0F19DD8669004F800E /* HFPrivilegedHelperConnection.h */,
 				D04D8FCB102396FC0013A2A1 /* HFPrivilegedHelperConnection.m */,
+				A5B762F92B32AE2F00CA25AE /* HFByteTheme.swift */,
 			);
 			name = Miscellaneous;
 			sourceTree = "<group>";
@@ -1305,7 +1306,6 @@
 				29B97316FDCFA39411CA2CEA /* main.m */,
 				D0CD51F40DA2B928006E8D1B /* AppDelegate.h */,
 				D0CD51F50DA2B928006E8D1B /* AppDelegate.m */,
-				A5B762F92B32AE2F00CA25AE /* HFByteTheme.swift */,
 				D02BD6D910545E7B00535EDE /* DocumentTypes */,
 				A533B9DD2AD7CA1000ECA26E /* Encodings */,
 				D084E75C115DAE90004DC181 /* DiffDocument */,
