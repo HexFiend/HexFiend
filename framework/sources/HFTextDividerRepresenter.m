@@ -1,23 +1,23 @@
 //
-//  TextDividerRepresenter.m
+//  HFTextDividerRepresenter.m
 //  HexFiend_2
 //
 //  Copyright 2011 ridiculous_fish. All rights reserved.
 //
 
-#import "TextDividerRepresenter.h"
+#import <HexFiend/HFTextDividerRepresenter.h>
 #import <HexFiend/HFFunctions.h>
 
 #define DIVIDER_WIDTH 8
 #define SHADOW_WIDTH 4
 #define SHADOW_ALPHA .25
 
-@interface TextDividerRepresenterView : NSView {
+@interface HFTextDividerRepresenterView : NSView {
     BOOL registeredForAppNotifications;
 }
 @end
 
-@implementation TextDividerRepresenterView : NSView
+@implementation HFTextDividerRepresenterView : NSView
 
 - (void)drawRect:(NSRect)__unused dirtyRect {
     NSRect clip = self.bounds;
@@ -80,10 +80,10 @@
 @end
 
 
-@implementation TextDividerRepresenter
+@implementation HFTextDividerRepresenter
 
 - (NSView *)createView {
-    TextDividerRepresenterView *result = [[TextDividerRepresenterView alloc] initWithFrame:NSMakeRect(0, 0, 10, 10)];
+    HFTextDividerRepresenterView *result = [[HFTextDividerRepresenterView alloc] initWithFrame:NSMakeRect(0, 0, 10, 10)];
     [result setAutoresizingMask:NSViewHeightSizable];
     return result;
 }

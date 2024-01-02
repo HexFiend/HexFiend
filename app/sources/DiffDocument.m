@@ -10,7 +10,6 @@
 #import "DataInspectorRepresenter.h"
 #import "HFDocumentOperationView.h"
 #import "DiffTextViewContainer.h"
-#import "TextDividerRepresenter.h"
 #import "HFBinaryTemplateRepresenter.h"
 #import <HexFiend/HexFiend.h>
 
@@ -389,7 +388,7 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
         leftScrollRepresenter = [[HFVerticalScrollerRepresenter alloc] init];
         leftStatusBarRepresenter = [[HFStatusBarRepresenter alloc] init];
         leftDataInspectorRepresenter = [[DataInspectorRepresenter alloc] init];
-        leftTextDividerRepresenter = [[TextDividerRepresenter alloc] init];
+        leftTextDividerRepresenter = [[HFTextDividerRepresenter alloc] init];
         leftBinaryTemplateRepresenter = [[HFBinaryTemplateRepresenter alloc] init];
         leftBinaryTemplateRepresenter.viewWidth = [NSUserDefaults.standardUserDefaults doubleForKey:@"BinaryTemplateRepresenterWidth"];
         

@@ -78,6 +78,7 @@
 		A5589ACF2206D3C8000293A4 /* HFOpenAccessoryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A5589ACE2206D3C8000293A4 /* HFOpenAccessoryViewController.m */; };
 		A5589AD22206E1C4000293A4 /* ExtendedAttributeDataDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = A5589AD12206E1C4000293A4 /* ExtendedAttributeDataDocument.m */; };
 		A5628AAB21D8561D00911ABB /* Tcl_ParseArgsObjv.c in Sources */ = {isa = PBXBuildFile; fileRef = A5628AA921D8561C00911ABB /* Tcl_ParseArgsObjv.c */; settings = {COMPILER_FLAGS = "-w"; }; };
+		A568D70C2B43D22900159993 /* HFTextDividerRepresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = D01EF15213B2A0D300CC9283 /* HFTextDividerRepresenter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A56D78161E7EF088001D1892 /* CLIController.m in Sources */ = {isa = PBXBuildFile; fileRef = A56D78151E7EF088001D1892 /* CLIController.m */; };
 		A571E5922A3973140005B388 /* TemplateAutodetection.m in Sources */ = {isa = PBXBuildFile; fileRef = A571E5912A3973140005B388 /* TemplateAutodetection.m */; };
 		A571E5952A3973690005B388 /* HFTemplateFile.m in Sources */ = {isa = PBXBuildFile; fileRef = A571E5942A3973690005B388 /* HFTemplateFile.m */; };
@@ -236,7 +237,7 @@
 		D01E7C160CDC58AA00943F9E /* BaseDataDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = D01E7C150CDC58AA00943F9E /* BaseDataDocument.m */; };
 		D01E7C3D0CDC6A3100943F9E /* HFTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = D01E7C3B0CDC69E500943F9E /* HFTypes.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D01E7C960CDC700400943F9E /* HFRepresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = D01E7C340CDC646800943F9E /* HFRepresenter.m */; };
-		D01EF15413B2A0D300CC9283 /* TextDividerRepresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = D01EF15313B2A0D300CC9283 /* TextDividerRepresenter.m */; };
+		D01EF15413B2A0D300CC9283 /* HFTextDividerRepresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = D01EF15313B2A0D300CC9283 /* HFTextDividerRepresenter.m */; };
 		D024AFB30E349A7B00F39EBB /* hex_icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = D024AFB20E349A7B00F39EBB /* hex_icon.icns */; };
 		D026C7B00CDD50ED0082279E /* HFRepresenterTextView.h in Headers */ = {isa = PBXBuildFile; fileRef = D026C7AE0CDD50ED0082279E /* HFRepresenterTextView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D026C7B10CDD50ED0082279E /* HFRepresenterTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = D026C7AF0CDD50ED0082279E /* HFRepresenterTextView.m */; };
@@ -596,8 +597,8 @@
 		D01E7C330CDC646800943F9E /* HFRepresenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFRepresenter.h; path = sources/HFRepresenter.h; sourceTree = "<group>"; };
 		D01E7C340CDC646800943F9E /* HFRepresenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFRepresenter.m; path = sources/HFRepresenter.m; sourceTree = "<group>"; };
 		D01E7C3B0CDC69E500943F9E /* HFTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFTypes.h; path = sources/HFTypes.h; sourceTree = "<group>"; };
-		D01EF15213B2A0D300CC9283 /* TextDividerRepresenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextDividerRepresenter.h; path = app/sources/TextDividerRepresenter.h; sourceTree = "<group>"; };
-		D01EF15313B2A0D300CC9283 /* TextDividerRepresenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TextDividerRepresenter.m; path = app/sources/TextDividerRepresenter.m; sourceTree = "<group>"; };
+		D01EF15213B2A0D300CC9283 /* HFTextDividerRepresenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFTextDividerRepresenter.h; path = sources/HFTextDividerRepresenter.h; sourceTree = "<group>"; };
+		D01EF15313B2A0D300CC9283 /* HFTextDividerRepresenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFTextDividerRepresenter.m; path = sources/HFTextDividerRepresenter.m; sourceTree = "<group>"; };
 		D024AFB20E349A7B00F39EBB /* hex_icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = hex_icon.icns; path = app/resources/hex_icon.icns; sourceTree = "<group>"; };
 		D026C7AE0CDD50ED0082279E /* HFRepresenterTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFRepresenterTextView.h; path = sources/HFRepresenterTextView.h; sourceTree = "<group>"; };
 		D026C7AF0CDD50ED0082279E /* HFRepresenterTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFRepresenterTextView.m; path = sources/HFRepresenterTextView.m; sourceTree = "<group>"; };
@@ -942,8 +943,6 @@
 				D01772F40D751DB1002E03DE /* HFDocumentOperationView.m */,
 				D01773900D7A2F32002E03DE /* HFResizingView.h */,
 				D01773910D7A2F32002E03DE /* HFResizingView.m */,
-				D01EF15213B2A0D300CC9283 /* TextDividerRepresenter.h */,
-				D01EF15313B2A0D300CC9283 /* TextDividerRepresenter.m */,
 				D0CBB23E128F78C200989C15 /* StretchableProgressIndicator.h */,
 				D0CBB23F128F78C200989C15 /* StretchableProgressIndicator.m */,
 				A572614821D8A51B00970A0E /* HFPrompt.h */,
@@ -1138,6 +1137,8 @@
 				A582748421DC83A100008DBE /* HFColumnRepresenter.m */,
 				A5AE0C1B21E1D7570044014E /* HFColumnView.h */,
 				A5AE0C1C21E1D7570044014E /* HFColumnView.m */,
+				D01EF15213B2A0D300CC9283 /* HFTextDividerRepresenter.h */,
+				D01EF15313B2A0D300CC9283 /* HFTextDividerRepresenter.m */,
 			);
 			name = Representers;
 			sourceTree = "<group>";
@@ -1557,6 +1558,7 @@
 				D0422FDF0D62599300F8FCDE /* HFProgressTracker.h in Headers */,
 				D0370A3F0D68307A00B3A8C6 /* HFSharedMemoryByteSlice.h in Headers */,
 				A582748521DC83A100008DBE /* HFColumnRepresenter.h in Headers */,
+				A568D70C2B43D22900159993 /* HFTextDividerRepresenter.h in Headers */,
 				D019B9010D83FEB3005789AA /* HFByteSliceFileOperation.h in Headers */,
 				D019B9550D840FE8005789AA /* HFObjectGraph.h in Headers */,
 				A572614D21D9AA7600970A0E /* HFEncodingManager.h in Headers */,
@@ -1955,7 +1957,7 @@
 				A56D78161E7EF088001D1892 /* CLIController.m in Sources */,
 				D059E1291311C676001493B8 /* AppDebugging.m in Sources */,
 				A571E5922A3973140005B388 /* TemplateAutodetection.m in Sources */,
-				D01EF15413B2A0D300CC9283 /* TextDividerRepresenter.m in Sources */,
+				D01EF15413B2A0D300CC9283 /* HFTextDividerRepresenter.m in Sources */,
 				A5589AD22206E1C4000293A4 /* ExtendedAttributeDataDocument.m in Sources */,
 				D0A8AF7D1467273900387627 /* AppUtilities.m in Sources */,
 				D0D0536E1487FF2500704643 /* HFFindReplaceOperationView.m in Sources */,

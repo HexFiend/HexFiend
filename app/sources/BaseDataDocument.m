@@ -8,7 +8,6 @@
 #import "BaseDataDocument.h"
 #import "HFDocumentOperationView.h"
 #import "DataInspectorRepresenter.h"
-#import "TextDividerRepresenter.h"
 #import "HFBinaryTemplateRepresenter.h"
 #import "AppDebugging.h"
 #import "AppUtilities.h"
@@ -674,7 +673,7 @@ static inline Class preferredByteArrayClass(void) {
     scrollRepresenter = [[HFVerticalScrollerRepresenter alloc] init];
     statusBarRepresenter = [[HFStatusBarRepresenter alloc] init];
     dataInspectorRepresenter = [[DataInspectorRepresenter alloc] init];
-    textDividerRepresenter = [[TextDividerRepresenter alloc] init];
+    textDividerRepresenter = [[HFTextDividerRepresenter alloc] init];
     binaryTemplateRepresenter = [[HFBinaryTemplateRepresenter alloc] init];
     binaryTemplateRepresenter.viewWidth = [NSUserDefaults.standardUserDefaults doubleForKey:@"BinaryTemplateRepresenterWidth"];
 
