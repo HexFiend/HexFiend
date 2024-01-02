@@ -230,7 +230,7 @@ static inline Class preferredByteArrayClass(void) {
 - (void)showOrHideDividerRepresenter {
     BOOL dividerRepresenterShouldBeShown = [self dividerRepresenterShouldBeShown];
     BOOL dividerRepresenterIsShown = [self representerIsShown:textDividerRepresenter];
-    if (dividerRepresenterShouldBeShown && ! dividerRepresenterIsShown) {
+    if (dividerRepresenterShouldBeShown && ! dividerRepresenterIsShown && !hideTextDividerOverride) {
         [self showViewForRepresenter:textDividerRepresenter];
     } else if (! dividerRepresenterShouldBeShown && dividerRepresenterIsShown) {
         [self hideViewForRepresenter:textDividerRepresenter];
@@ -875,6 +875,11 @@ static inline Class preferredByteArrayClass(void) {
 
 - (void)toggleScrollerVisibleControllerView {
     [self toggleRepresenterVisibleControllerView:scrollRepresenter];
+}
+
+- (void)toggleTextDividerVisibleControllerView {
+    hideTextDividerOverride = [self representerIsShown:textDividerRepresenter];
+    [self toggleRepresenterVisibleControllerView:textDividerRepresenter];
 }
 
 - (void)setFont:(NSFont *)font registeringUndo:(BOOL)undo {
