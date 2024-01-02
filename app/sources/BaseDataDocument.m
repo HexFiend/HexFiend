@@ -1026,6 +1026,12 @@ static inline Class preferredByteArrayClass(void) {
             return YES;
         }
     }
+    else if (action == @selector(toggleScrollerVisibleControllerView)) {
+        item.state = [self representerIsShown:scrollRepresenter] ? NSControlStateValueOn : NSControlStateValueOff;
+    }
+    else if (action == @selector(toggleTextDividerVisibleControllerView)) {
+        item.state = [self representerIsShown:textDividerRepresenter] ? NSControlStateValueOn : NSControlStateValueOff;
+    }
     else if (action == @selector(performFindPanelAction:)) {
         switch ([item tag]) {
             case NSFindPanelActionShowFindPanel:
