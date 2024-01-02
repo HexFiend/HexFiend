@@ -79,6 +79,7 @@
 		A5589AD22206E1C4000293A4 /* ExtendedAttributeDataDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = A5589AD12206E1C4000293A4 /* ExtendedAttributeDataDocument.m */; };
 		A5628AAB21D8561D00911ABB /* Tcl_ParseArgsObjv.c in Sources */ = {isa = PBXBuildFile; fileRef = A5628AA921D8561C00911ABB /* Tcl_ParseArgsObjv.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		A568D70C2B43D22900159993 /* HFTextDividerRepresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = D01EF15213B2A0D300CC9283 /* HFTextDividerRepresenter.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A568D70E2B43D46200159993 /* ScrollViewRepresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A568D70D2B43D46200159993 /* ScrollViewRepresenter.swift */; };
 		A56D78161E7EF088001D1892 /* CLIController.m in Sources */ = {isa = PBXBuildFile; fileRef = A56D78151E7EF088001D1892 /* CLIController.m */; };
 		A571E5922A3973140005B388 /* TemplateAutodetection.m in Sources */ = {isa = PBXBuildFile; fileRef = A571E5912A3973140005B388 /* TemplateAutodetection.m */; };
 		A571E5952A3973690005B388 /* HFTemplateFile.m in Sources */ = {isa = PBXBuildFile; fileRef = A571E5942A3973690005B388 /* HFTemplateFile.m */; };
@@ -490,6 +491,7 @@
 		A5589AD12206E1C4000293A4 /* ExtendedAttributeDataDocument.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = ExtendedAttributeDataDocument.m; path = app/sources/ExtendedAttributeDataDocument.m; sourceTree = "<group>"; };
 		A5628AA921D8561C00911ABB /* Tcl_ParseArgsObjv.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Tcl_ParseArgsObjv.c; path = app/sources/Tcl_ParseArgsObjv.c; sourceTree = "<group>"; };
 		A5628AAA21D8561C00911ABB /* Tcl_ParseArgsObjv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Tcl_ParseArgsObjv.h; path = app/sources/Tcl_ParseArgsObjv.h; sourceTree = "<group>"; };
+		A568D70D2B43D46200159993 /* ScrollViewRepresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ScrollViewRepresenter.swift; path = app/sources/ScrollViewRepresenter.swift; sourceTree = "<group>"; };
 		A56D78141E7EF088001D1892 /* CLIController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CLIController.h; path = app/sources/CLIController.h; sourceTree = "<group>"; };
 		A56D78151E7EF088001D1892 /* CLIController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CLIController.m; path = app/sources/CLIController.m; sourceTree = "<group>"; };
 		A571E5902A3973140005B388 /* TemplateAutodetection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = TemplateAutodetection.h; path = app/sources/TemplateAutodetection.h; sourceTree = "<group>"; };
@@ -954,6 +956,7 @@
 				9408FC0F19DD8669004F800E /* HFPrivilegedHelperConnection.h */,
 				D04D8FCB102396FC0013A2A1 /* HFPrivilegedHelperConnection.m */,
 				A5B762F92B32AE2F00CA25AE /* HFByteTheme.swift */,
+				A568D70D2B43D46200159993 /* ScrollViewRepresenter.swift */,
 			);
 			name = Miscellaneous;
 			sourceTree = "<group>";
@@ -1967,6 +1970,7 @@
 				D8EE3EFE16F26689001C7C09 /* DiffRangeWindowController.m in Sources */,
 				A572614A21D8A51B00970A0E /* HFPrompt.m in Sources */,
 				A5B762FA2B32AE2F00CA25AE /* HFByteTheme.swift in Sources */,
+				A568D70E2B43D46200159993 /* ScrollViewRepresenter.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

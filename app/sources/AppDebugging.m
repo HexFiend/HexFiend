@@ -25,6 +25,7 @@ static unsigned long long unsignedLongLongValue(NSString *s) {
 - (void)installDebuggingMenuItems:(NSMenu *)menu {
     [menu addItemWithTitle:@"Scroller" action:@selector(toggleScrollerVisibleControllerView) keyEquivalent:@""];
     [menu addItemWithTitle:@"Text Divider" action:@selector(toggleTextDividerVisibleControllerView) keyEquivalent:@""];
+    [menu addItemWithTitle:@"Scroll View" action:@selector(toggleScrollViewVisibleControllerView) keyEquivalent:@""];
     [menu addItem:[NSMenuItem separatorItem]];
     [menu addItemWithTitle:@"Randomly Tweak ByteArray" action:@selector(_tweakByteArray:) keyEquivalent:@""];
     [menu addItemWithTitle:@"Random ByteArray" action:@selector(_randomByteArray:) keyEquivalent:@""];

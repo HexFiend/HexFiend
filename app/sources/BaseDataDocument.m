@@ -14,6 +14,7 @@
 #import "AppDelegate.h"
 #import <HexFiend/HexFiend.h>
 #import "HFPrompt.h"
+#import <Hex_Fiend-Swift.h>
 
 static const char *const kProgressContext = "context";
 
@@ -67,6 +68,7 @@ static inline Class preferredByteArrayClass(void) {
     BOOL _resizeBinaryTemplate;
     NSRect _windowFrameBeforeResize;
     CGFloat _binaryTemplateWidthBeforeResize;
+    ScrollViewRepresenter *scrollViewRepresenter;
 }
 
 + (NSString *)userDefKeyForRepresenterWithName:(const char *)repName {
@@ -187,6 +189,7 @@ static inline Class preferredByteArrayClass(void) {
         textDividerRepresenter,
         binaryTemplateRepresenter,
         columnRepresenter,
+        scrollViewRepresenter,
     ];
 }
 
@@ -249,6 +252,7 @@ static inline Class preferredByteArrayClass(void) {
     [shownRepresentersData setObject:statusBarRepresenter forKey:USERDEFS_KEY_FOR_REP(statusBarRepresenter)];
     [shownRepresentersData setObject:scrollRepresenter forKey:USERDEFS_KEY_FOR_REP(scrollRepresenter)];
     [shownRepresentersData setObject:binaryTemplateRepresenter forKey:USERDEFS_KEY_FOR_REP(binaryTemplateRepresenter)];
+    [shownRepresentersData setObject:scrollViewRepresenter forKey:USERDEFS_KEY_FOR_REP(scrollViewRepresenter)];
     NSUserDefaults *defs = [NSUserDefaults standardUserDefaults];
     NSEnumerator *keysEnum = [shownRepresentersData keyEnumerator];
     NSString *name = nil;
@@ -676,6 +680,7 @@ static inline Class preferredByteArrayClass(void) {
     textDividerRepresenter = [[HFTextDividerRepresenter alloc] init];
     binaryTemplateRepresenter = [[HFBinaryTemplateRepresenter alloc] init];
     binaryTemplateRepresenter.viewWidth = [NSUserDefaults.standardUserDefaults doubleForKey:@"BinaryTemplateRepresenterWidth"];
+    scrollViewRepresenter = [[ScrollViewRepresenter alloc] init];
 
     /* We will create layoutRepresenter when the window is actually shown
      * so that it will never exist in an inconsistent state */
@@ -881,6 +886,10 @@ static inline Class preferredByteArrayClass(void) {
     [self toggleRepresenterVisibleControllerView:textDividerRepresenter];
 }
 
+- (void)toggleScrollViewVisibleControllerView {
+    [self toggleRepresenterVisibleControllerView:scrollViewRepresenter];
+}
+
 - (void)setFont:(NSFont *)font registeringUndo:(BOOL)undo {
     HFASSERT(font != nil);
     
@@ -1030,6 +1039,9 @@ static inline Class preferredByteArrayClass(void) {
     }
     else if (action == @selector(toggleTextDividerVisibleControllerView)) {
         item.state = [self representerIsShown:textDividerRepresenter] ? NSControlStateValueOn : NSControlStateValueOff;
+    }
+    else if (action == @selector(toggleScrollViewVisibleControllerView)) {
+        item.state = [self representerIsShown:scrollViewRepresenter] ? NSControlStateValueOn : NSControlStateValueOff;
     }
     else if (action == @selector(performFindPanelAction:)) {
         switch ([item tag]) {
