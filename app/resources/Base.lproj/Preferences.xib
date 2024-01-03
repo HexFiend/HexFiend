@@ -191,7 +191,7 @@
                     </textField>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="LaR-ii-EoC" userLabel="Enable Custom Command">
                         <rect key="frame" x="19" y="124" width="153" height="16"/>
-                        <buttonCell key="cell" type="check" title="Enable costom command" bezelStyle="regularSquare" imagePosition="left" controlSize="small" inset="2" id="Ggf-hG-KSb" userLabel="Enable custom command">
+                        <buttonCell key="cell" type="check" title="Enable custom command" bezelStyle="regularSquare" imagePosition="left" controlSize="small" inset="2" id="Ggf-hG-KSb" userLabel="Enable custom command">
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                             <font key="font" metaFont="smallSystem"/>
                             <connections>
