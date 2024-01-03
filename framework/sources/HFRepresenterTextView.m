@@ -2072,6 +2072,10 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
 }
 
 - (void)scrollWheel:(NSEvent *)event {
+    if (self.enclosingScrollView) {
+        [super scrollWheel:event];
+        return;
+    }
     [[self representer] scrollWheel:event];
 }
 #endif
