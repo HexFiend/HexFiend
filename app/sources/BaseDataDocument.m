@@ -113,6 +113,7 @@ static inline Class preferredByteArrayClass(void) {
             @"BinaryTemplatesAutoCollapseValuedSections" : @NO,
             @"ResolveAliases": @YES,
             @"InactiveSelectionColorMatchesActive": @NO,
+            @"EnableCustomCommand": @NO,
             @"PostSaveCommand": @"echo %filepath%",
         };
         [[NSUserDefaults standardUserDefaults] registerDefaults:defs];
@@ -1439,8 +1440,8 @@ static inline Class preferredByteArrayClass(void) {
     HFByteArray *byteArray = [controller byteArray];
     BOOL result = [byteArray writeToFile:targetURL trackingProgress:tracker error:error];
     [tracker noteFinished:self];
-    if (result) {
-        NSUserDefaults *defs = NSUserDefaults.standardUserDefaults;
+    NSUserDefaults *defs = NSUserDefaults.standardUserDefaults;
+    if (result && [defs boolForKey:@"EnableCustomCommand"]) {
         NSString *command = [defs stringForKey:@"PostSaveCommand"];
         NSString *finalCommand = [command stringByReplacingOccurrencesOfString:@"%filepath%" withString:targetURL.absoluteURL.path];
         NSTask *task = [NSTask new];
