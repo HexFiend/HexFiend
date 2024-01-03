@@ -113,6 +113,7 @@ static inline Class preferredByteArrayClass(void) {
             @"BinaryTemplatesAutoCollapseValuedSections" : @NO,
             @"ResolveAliases": @YES,
             @"InactiveSelectionColorMatchesActive": @NO,
+            @"PostSaveCommand": @"echo %filepath%",
         };
         [[NSUserDefaults standardUserDefaults] registerDefaults:defs];
     });
@@ -1438,6 +1439,18 @@ static inline Class preferredByteArrayClass(void) {
     HFByteArray *byteArray = [controller byteArray];
     BOOL result = [byteArray writeToFile:targetURL trackingProgress:tracker error:error];
     [tracker noteFinished:self];
+    if (result) {
+        NSUserDefaults *defs = NSUserDefaults.standardUserDefaults;
+        NSString *command = [defs stringForKey:@"PostSaveCommand"];
+        NSString *finalCommand = [command stringByReplacingOccurrencesOfString:@"%filepath%" withString:targetURL.absoluteURL.path];
+        NSTask *task = [NSTask new];
+        task.launchPath = @"/bin/sh";
+        task.arguments = @[
+            @"-c",
+            finalCommand
+        ];
+        [task launch];
+    }
     if (tracker->cancelRequested) return @(HFSaveCancelled);
     else if (! result) return @(HFSaveError);
     else return @(HFSaveSuccessful);    
