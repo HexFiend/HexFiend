@@ -54,7 +54,7 @@
 		A51D0E8D20F2A40C00B55775 /* HFRepresenterTextViewCallout.m in Sources */ = {isa = PBXBuildFile; fileRef = D016437213E5F7BC00294E60 /* HFRepresenterTextViewCallout.m */; };
 		A51D0E8F20F2A43700B55775 /* HFRepresenterTextViewCallout.h in Headers */ = {isa = PBXBuildFile; fileRef = D016437113E5F7BB00294E60 /* HFRepresenterTextViewCallout.h */; };
 		A51D0E9120F2A8D200B55775 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A51D0E9020F2A8D200B55775 /* CoreText.framework */; };
-		A51D0E9220F2B74C00B55775 /* HFRepresenterHexTextView.h in Headers */ = {isa = PBXBuildFile; fileRef = D026C7B90CDD546C0082279E /* HFRepresenterHexTextView.h */; };
+		A51D0E9220F2B74C00B55775 /* HFRepresenterHexTextView.h in Headers */ = {isa = PBXBuildFile; fileRef = D026C7B90CDD546C0082279E /* HFRepresenterHexTextView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A51D0E9320F2B74F00B55775 /* HFRepresenterHexTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = D026C7BA0CDD546C0082279E /* HFRepresenterHexTextView.m */; };
 		A51D0E9420F2BAB700B55775 /* HFRepresenterStringEncodingTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = D0CDB7530CE735590084926B /* HFRepresenterStringEncodingTextView.m */; };
 		A51D0E9520F2BABA00B55775 /* HFRepresenterStringEncodingTextView.h in Headers */ = {isa = PBXBuildFile; fileRef = D0CDB7520CE735590084926B /* HFRepresenterStringEncodingTextView.h */; };
@@ -242,7 +242,7 @@
 		D024AFB30E349A7B00F39EBB /* hex_icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = D024AFB20E349A7B00F39EBB /* hex_icon.icns */; };
 		D026C7B00CDD50ED0082279E /* HFRepresenterTextView.h in Headers */ = {isa = PBXBuildFile; fileRef = D026C7AE0CDD50ED0082279E /* HFRepresenterTextView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D026C7B10CDD50ED0082279E /* HFRepresenterTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = D026C7AF0CDD50ED0082279E /* HFRepresenterTextView.m */; };
-		D026C7BB0CDD546C0082279E /* HFRepresenterHexTextView.h in Headers */ = {isa = PBXBuildFile; fileRef = D026C7B90CDD546C0082279E /* HFRepresenterHexTextView.h */; settings = {ATTRIBUTES = (); }; };
+		D026C7BB0CDD546C0082279E /* HFRepresenterHexTextView.h in Headers */ = {isa = PBXBuildFile; fileRef = D026C7B90CDD546C0082279E /* HFRepresenterHexTextView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D026C7BC0CDD546C0082279E /* HFRepresenterHexTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = D026C7BA0CDD546C0082279E /* HFRepresenterHexTextView.m */; };
 		D026C7C00CDD54D00082279E /* HFHexTextRepresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = D026C7BE0CDD54D00082279E /* HFHexTextRepresenter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D026C7C10CDD54D00082279E /* HFHexTextRepresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = D026C7BF0CDD54D00082279E /* HFHexTextRepresenter.m */; };
