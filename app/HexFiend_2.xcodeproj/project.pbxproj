@@ -48,6 +48,7 @@
 		A571E59B2A3AD38D0005B388 /* MinimumVersionRequired.m in Sources */ = {isa = PBXBuildFile; fileRef = A571E59A2A3AD38D0005B388 /* MinimumVersionRequired.m */; };
 		A572614A21D8A51B00970A0E /* HFPrompt.m in Sources */ = {isa = PBXBuildFile; fileRef = A572614921D8A51B00970A0E /* HFPrompt.m */; };
 		A5791D62286181DD0067FC1E /* sampleData.rtf in Resources */ = {isa = PBXBuildFile; fileRef = A5791D61286181DD0067FC1E /* sampleData.rtf */; };
+		A57B5E7B2B49286000FF958B /* HexFiend in Frameworks */ = {isa = PBXBuildFile; productRef = A57B5E7A2B49286000FF958B /* HexFiend */; };
 		A57F34801F1EF47700234B94 /* Preferences.xib in Resources */ = {isa = PBXBuildFile; fileRef = A57F34821F1EF47700234B94 /* Preferences.xib */; };
 		A57F34831F1EFA6E00234B94 /* DataInspectorView.xib in Resources */ = {isa = PBXBuildFile; fileRef = A57F34851F1EFA6E00234B94 /* DataInspectorView.xib */; };
 		A57F34861F1EFA8800234B94 /* ChooseStringEncodingDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = A57F34881F1EFA8800234B94 /* ChooseStringEncodingDialog.xib */; };
@@ -59,7 +60,6 @@
 		A591314021E3098800685B51 /* DataInspectorScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = A591313F21E3098800685B51 /* DataInspectorScrollView.m */; };
 		A594F04F24959F6400DCACD3 /* BinaryTemplatePopover.xib in Resources */ = {isa = PBXBuildFile; fileRef = A594F04D24959F6400DCACD3 /* BinaryTemplatePopover.xib */; };
 		A594F0522495A82400DCACD3 /* HFClickableTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = A594F0512495A82300DCACD3 /* HFClickableTextField.m */; };
-		A59693392B32B40B00E62C1B /* HexFiend in Frameworks */ = {isa = PBXBuildFile; productRef = A59693382B32B40B00E62C1B /* HexFiend */; };
 		A59BC5712001AB8C0066860F /* HFBinaryTemplateRepresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = A59BC5702001AB8C0066860F /* HFBinaryTemplateRepresenter.m */; };
 		A59BC5922001FB9A0066860F /* HFTclTemplateController.m in Sources */ = {isa = PBXBuildFile; fileRef = A59BC5912001FB9A0066860F /* HFTclTemplateController.m */; };
 		A59BC5942001FD0F0066860F /* Tcl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A59BC5932001FD0F0066860F /* Tcl.framework */; };
@@ -67,7 +67,6 @@
 		A59BC59C2002113F0066860F /* HFTemplateNode.m in Sources */ = {isa = PBXBuildFile; fileRef = A59BC59B2002113F0066860F /* HFTemplateNode.m */; };
 		A59BC59F2002E63C0066860F /* HFTemplateController.m in Sources */ = {isa = PBXBuildFile; fileRef = A59BC59E2002E63C0066860F /* HFTemplateController.m */; };
 		A59DFE67200BE7A800FEA540 /* BinaryTemplateController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A59DFE65200BE7A800FEA540 /* BinaryTemplateController.xib */; };
-		A5A2F6622B2F5F010097F225 /* HexFiend in Frameworks */ = {isa = PBXBuildFile; productRef = A5A2F6612B2F5F010097F225 /* HexFiend */; };
 		A5A34C1B26AD271900506AE7 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = A5A34C1A26AD271900506AE7 /* Sparkle */; };
 		A5B2F6E3284729F8006E8AF8 /* templates in Resources */ = {isa = PBXBuildFile; fileRef = A5B2F6E2284729F8006E8AF8 /* templates */; };
 		A5B762FA2B32AE2F00CA25AE /* HFByteTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5B762F92B32AE2F00CA25AE /* HFByteTheme.swift */; };
@@ -172,32 +171,32 @@
 		001BEF972910F23600BB82B3 /* hexf.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = hexf.swift; sourceTree = "<group>"; };
 		089C165DFE840E0CC02AAC07 /* Base */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
-		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = app/sources/main.m; sourceTree = "<group>"; };
+		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = sources/main.m; sourceTree = "<group>"; };
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
-		795F46BF14BAA45D00EB2F7D /* OpenDriveWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OpenDriveWindowController.h; path = app/sources/OpenDriveWindowController.h; sourceTree = "<group>"; };
-		795F46C014BAA45D00EB2F7D /* OpenDriveWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OpenDriveWindowController.m; path = app/sources/OpenDriveWindowController.m; sourceTree = "<group>"; };
+		795F46BF14BAA45D00EB2F7D /* OpenDriveWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OpenDriveWindowController.h; path = sources/OpenDriveWindowController.h; sourceTree = "<group>"; };
+		795F46C014BAA45D00EB2F7D /* OpenDriveWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OpenDriveWindowController.m; path = sources/OpenDriveWindowController.m; sourceTree = "<group>"; };
 		795F46C214BAADB600EB2F7D /* DiskArbitration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DiskArbitration.framework; path = System/Library/Frameworks/DiskArbitration.framework; sourceTree = SDKROOT; };
-		79E2FF1F1745A2B300FA8F12 /* dsa_pub.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = dsa_pub.pem; path = app/resources/dsa_pub.pem; sourceTree = "<group>"; };
+		79E2FF1F1745A2B300FA8F12 /* dsa_pub.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = dsa_pub.pem; path = resources/dsa_pub.pem; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* Hex Fiend.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Hex Fiend.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9408FBFA19DD72DE004F800E /* HexFiend_Framework Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "HexFiend_Framework Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		9408FC0F19DD8669004F800E /* HFPrivilegedHelperConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFPrivilegedHelperConnection.h; path = app/sources/HFPrivilegedHelperConnection.h; sourceTree = "<group>"; };
+		9408FC0F19DD8669004F800E /* HFPrivilegedHelperConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFPrivilegedHelperConnection.h; path = sources/HFPrivilegedHelperConnection.h; sourceTree = "<group>"; };
 		A50859A72B204C8100325B36 /* Hex Fiend Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Hex Fiend Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A50859A92B204C8100325B36 /* HFTclTemplateControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HFTclTemplateControllerTests.swift; sourceTree = "<group>"; };
 		A50859B52B204D7600325B36 /* Hex_Fiend_Tests-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Hex_Fiend_Tests-Bridging-Header.h"; sourceTree = "<group>"; };
 		A51D0E7D20F1D01A00B55775 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.0.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		A51D0E8B20F1E56600B55775 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.0.sdk/System/Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
 		A51D0E9020F2A8D200B55775 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.0.sdk/System/Library/Frameworks/CoreText.framework; sourceTree = DEVELOPER_DIR; };
-		A531921B21D585FD006C25D6 /* version.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = version.h; sourceTree = "<group>"; };
-		A5327E572856EB7500530557 /* LEB128Type.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = LEB128Type.h; path = app/sources/LEB128Type.h; sourceTree = "<group>"; };
-		A5327E582856EB7500530557 /* LEB128Type.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = LEB128Type.m; path = app/sources/LEB128Type.m; sourceTree = "<group>"; };
-		A5327E5A2856F0CC00530557 /* DataInspectorType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DataInspectorType.h; path = app/sources/DataInspectorType.h; sourceTree = "<group>"; };
-		A5327E5B28570EF300530557 /* HFDirectoryWatcher.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFDirectoryWatcher.h; path = app/sources/HFDirectoryWatcher.h; sourceTree = "<group>"; };
-		A5327E5C28570EF300530557 /* HFDirectoryWatcher.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFDirectoryWatcher.m; path = app/sources/HFDirectoryWatcher.m; sourceTree = "<group>"; };
-		A533B9BF2AD42F5200ECA26E /* HexFiend_2-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "HexFiend_2-Bridging-Header.h"; path = "app/sources/HexFiend_2-Bridging-Header.h"; sourceTree = "<group>"; };
-		A533B9C02AD42F5300ECA26E /* ChooseStringEncodingWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ChooseStringEncodingWindowController.swift; path = app/sources/ChooseStringEncodingWindowController.swift; sourceTree = "<group>"; };
+		A531921B21D585FD006C25D6 /* version.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = version.h; path = ../version.h; sourceTree = "<group>"; };
+		A5327E572856EB7500530557 /* LEB128Type.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = LEB128Type.h; path = sources/LEB128Type.h; sourceTree = "<group>"; };
+		A5327E582856EB7500530557 /* LEB128Type.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = LEB128Type.m; path = sources/LEB128Type.m; sourceTree = "<group>"; };
+		A5327E5A2856F0CC00530557 /* DataInspectorType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DataInspectorType.h; path = sources/DataInspectorType.h; sourceTree = "<group>"; };
+		A5327E5B28570EF300530557 /* HFDirectoryWatcher.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFDirectoryWatcher.h; path = sources/HFDirectoryWatcher.h; sourceTree = "<group>"; };
+		A5327E5C28570EF300530557 /* HFDirectoryWatcher.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFDirectoryWatcher.m; path = sources/HFDirectoryWatcher.m; sourceTree = "<group>"; };
+		A533B9BF2AD42F5200ECA26E /* HexFiend_2-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "HexFiend_2-Bridging-Header.h"; path = "sources/HexFiend_2-Bridging-Header.h"; sourceTree = "<group>"; };
+		A533B9C02AD42F5300ECA26E /* ChooseStringEncodingWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ChooseStringEncodingWindowController.swift; path = sources/ChooseStringEncodingWindowController.swift; sourceTree = "<group>"; };
 		A54281B22B427F62006DEF81 /* hexf-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "hexf-Bridging-Header.h"; sourceTree = "<group>"; };
-		A54D8AED2A3ECBD80021FBAB /* ColorByteThemes */ = {isa = PBXFileReference; lastKnownFileType = folder; name = ColorByteThemes; path = app/resources/ColorByteThemes; sourceTree = "<group>"; };
+		A54D8AED2A3ECBD80021FBAB /* ColorByteThemes */ = {isa = PBXFileReference; lastKnownFileType = folder; name = ColorByteThemes; path = resources/ColorByteThemes; sourceTree = "<group>"; };
 		A550A7161F7877F8001C79C7 /* hexf */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = hexf; sourceTree = BUILT_PRODUCTS_DIR; };
 		A554E0CD20DF2CD3001B4C48 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/OpenDriveDialog.xib; sourceTree = "<group>"; };
 		A554E0CE20DF2CD3001B4C48 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/DataInspectorView.xib; sourceTree = "<group>"; };
@@ -214,114 +213,114 @@
 		A554E0D920DF2CD6001B4C48 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/Preferences.xib; sourceTree = "<group>"; };
 		A554E0DA20DF2CD6001B4C48 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/BinaryTemplateController.xib; sourceTree = "<group>"; };
 		A554E0DB20DF2CD7001B4C48 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
-		A5589AC72206CFCC000293A4 /* HFExtendedAttributes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFExtendedAttributes.h; path = app/sources/HFExtendedAttributes.h; sourceTree = "<group>"; };
-		A5589AC82206CFCC000293A4 /* HFExtendedAttributes.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFExtendedAttributes.m; path = app/sources/HFExtendedAttributes.m; sourceTree = "<group>"; };
-		A5589ACB2206D238000293A4 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = app/resources/Base.lproj/OpenAccessoryView.xib; sourceTree = "<group>"; };
-		A5589ACD2206D3C8000293A4 /* HFOpenAccessoryViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFOpenAccessoryViewController.h; path = app/sources/HFOpenAccessoryViewController.h; sourceTree = "<group>"; };
-		A5589ACE2206D3C8000293A4 /* HFOpenAccessoryViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFOpenAccessoryViewController.m; path = app/sources/HFOpenAccessoryViewController.m; sourceTree = "<group>"; };
-		A5589AD02206E1C4000293A4 /* ExtendedAttributeDataDocument.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ExtendedAttributeDataDocument.h; path = app/sources/ExtendedAttributeDataDocument.h; sourceTree = "<group>"; };
-		A5589AD12206E1C4000293A4 /* ExtendedAttributeDataDocument.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = ExtendedAttributeDataDocument.m; path = app/sources/ExtendedAttributeDataDocument.m; sourceTree = "<group>"; };
-		A5628AA921D8561C00911ABB /* Tcl_ParseArgsObjv.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Tcl_ParseArgsObjv.c; path = app/sources/Tcl_ParseArgsObjv.c; sourceTree = "<group>"; };
-		A5628AAA21D8561C00911ABB /* Tcl_ParseArgsObjv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Tcl_ParseArgsObjv.h; path = app/sources/Tcl_ParseArgsObjv.h; sourceTree = "<group>"; };
-		A568D70D2B43D46200159993 /* ScrollViewRepresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ScrollViewRepresenter.swift; path = app/sources/ScrollViewRepresenter.swift; sourceTree = "<group>"; };
-		A56D78141E7EF088001D1892 /* CLIController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CLIController.h; path = app/sources/CLIController.h; sourceTree = "<group>"; };
-		A56D78151E7EF088001D1892 /* CLIController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CLIController.m; path = app/sources/CLIController.m; sourceTree = "<group>"; };
-		A571E5902A3973140005B388 /* TemplateAutodetection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = TemplateAutodetection.h; path = app/sources/TemplateAutodetection.h; sourceTree = "<group>"; };
-		A571E5912A3973140005B388 /* TemplateAutodetection.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = TemplateAutodetection.m; path = app/sources/TemplateAutodetection.m; sourceTree = "<group>"; };
-		A571E5932A3973690005B388 /* HFTemplateFile.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFTemplateFile.h; path = app/sources/HFTemplateFile.h; sourceTree = "<group>"; };
-		A571E5942A3973690005B388 /* HFTemplateFile.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFTemplateFile.m; path = app/sources/HFTemplateFile.m; sourceTree = "<group>"; };
-		A571E5962A3ABFAD0005B388 /* TemplateMetadata.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = TemplateMetadata.h; path = app/sources/TemplateMetadata.h; sourceTree = "<group>"; };
-		A571E5972A3ABFAD0005B388 /* TemplateMetadata.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = TemplateMetadata.m; path = app/sources/TemplateMetadata.m; sourceTree = "<group>"; };
-		A571E5992A3AD38D0005B388 /* MinimumVersionRequired.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MinimumVersionRequired.h; path = app/sources/MinimumVersionRequired.h; sourceTree = "<group>"; };
-		A571E59A2A3AD38D0005B388 /* MinimumVersionRequired.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = MinimumVersionRequired.m; path = app/sources/MinimumVersionRequired.m; sourceTree = "<group>"; };
-		A572614821D8A51B00970A0E /* HFPrompt.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFPrompt.h; path = app/sources/HFPrompt.h; sourceTree = "<group>"; };
-		A572614921D8A51B00970A0E /* HFPrompt.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFPrompt.m; path = app/sources/HFPrompt.m; sourceTree = "<group>"; };
+		A5589AC72206CFCC000293A4 /* HFExtendedAttributes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFExtendedAttributes.h; path = sources/HFExtendedAttributes.h; sourceTree = "<group>"; };
+		A5589AC82206CFCC000293A4 /* HFExtendedAttributes.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFExtendedAttributes.m; path = sources/HFExtendedAttributes.m; sourceTree = "<group>"; };
+		A5589ACB2206D238000293A4 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = resources/Base.lproj/OpenAccessoryView.xib; sourceTree = "<group>"; };
+		A5589ACD2206D3C8000293A4 /* HFOpenAccessoryViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFOpenAccessoryViewController.h; path = sources/HFOpenAccessoryViewController.h; sourceTree = "<group>"; };
+		A5589ACE2206D3C8000293A4 /* HFOpenAccessoryViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFOpenAccessoryViewController.m; path = sources/HFOpenAccessoryViewController.m; sourceTree = "<group>"; };
+		A5589AD02206E1C4000293A4 /* ExtendedAttributeDataDocument.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ExtendedAttributeDataDocument.h; path = sources/ExtendedAttributeDataDocument.h; sourceTree = "<group>"; };
+		A5589AD12206E1C4000293A4 /* ExtendedAttributeDataDocument.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = ExtendedAttributeDataDocument.m; path = sources/ExtendedAttributeDataDocument.m; sourceTree = "<group>"; };
+		A5628AA921D8561C00911ABB /* Tcl_ParseArgsObjv.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Tcl_ParseArgsObjv.c; path = sources/Tcl_ParseArgsObjv.c; sourceTree = "<group>"; };
+		A5628AAA21D8561C00911ABB /* Tcl_ParseArgsObjv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Tcl_ParseArgsObjv.h; path = sources/Tcl_ParseArgsObjv.h; sourceTree = "<group>"; };
+		A568D70D2B43D46200159993 /* ScrollViewRepresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ScrollViewRepresenter.swift; path = sources/ScrollViewRepresenter.swift; sourceTree = "<group>"; };
+		A56D78141E7EF088001D1892 /* CLIController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CLIController.h; path = sources/CLIController.h; sourceTree = "<group>"; };
+		A56D78151E7EF088001D1892 /* CLIController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CLIController.m; path = sources/CLIController.m; sourceTree = "<group>"; };
+		A571E5902A3973140005B388 /* TemplateAutodetection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = TemplateAutodetection.h; path = sources/TemplateAutodetection.h; sourceTree = "<group>"; };
+		A571E5912A3973140005B388 /* TemplateAutodetection.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = TemplateAutodetection.m; path = sources/TemplateAutodetection.m; sourceTree = "<group>"; };
+		A571E5932A3973690005B388 /* HFTemplateFile.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFTemplateFile.h; path = sources/HFTemplateFile.h; sourceTree = "<group>"; };
+		A571E5942A3973690005B388 /* HFTemplateFile.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFTemplateFile.m; path = sources/HFTemplateFile.m; sourceTree = "<group>"; };
+		A571E5962A3ABFAD0005B388 /* TemplateMetadata.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = TemplateMetadata.h; path = sources/TemplateMetadata.h; sourceTree = "<group>"; };
+		A571E5972A3ABFAD0005B388 /* TemplateMetadata.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = TemplateMetadata.m; path = sources/TemplateMetadata.m; sourceTree = "<group>"; };
+		A571E5992A3AD38D0005B388 /* MinimumVersionRequired.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MinimumVersionRequired.h; path = sources/MinimumVersionRequired.h; sourceTree = "<group>"; };
+		A571E59A2A3AD38D0005B388 /* MinimumVersionRequired.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = MinimumVersionRequired.m; path = sources/MinimumVersionRequired.m; sourceTree = "<group>"; };
+		A572614821D8A51B00970A0E /* HFPrompt.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFPrompt.h; path = sources/HFPrompt.h; sourceTree = "<group>"; };
+		A572614921D8A51B00970A0E /* HFPrompt.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFPrompt.m; path = sources/HFPrompt.m; sourceTree = "<group>"; };
 		A5791D61286181DD0067FC1E /* sampleData.rtf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.rtf; path = sampleData.rtf; sourceTree = "<group>"; };
-		A591313821E3079400685B51 /* DataInspector.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DataInspector.h; path = app/sources/DataInspector.h; sourceTree = "<group>"; };
-		A591313921E3079400685B51 /* DataInspector.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = DataInspector.m; path = app/sources/DataInspector.m; sourceTree = "<group>"; };
-		A591313B21E3090300685B51 /* DataInspectorPlusMinusButtonCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DataInspectorPlusMinusButtonCell.h; path = app/sources/DataInspectorPlusMinusButtonCell.h; sourceTree = "<group>"; };
-		A591313C21E3090300685B51 /* DataInspectorPlusMinusButtonCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = DataInspectorPlusMinusButtonCell.m; path = app/sources/DataInspectorPlusMinusButtonCell.m; sourceTree = "<group>"; };
-		A591313E21E3098800685B51 /* DataInspectorScrollView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DataInspectorScrollView.h; path = app/sources/DataInspectorScrollView.h; sourceTree = "<group>"; };
-		A591313F21E3098800685B51 /* DataInspectorScrollView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = DataInspectorScrollView.m; path = app/sources/DataInspectorScrollView.m; sourceTree = "<group>"; };
-		A594F04E24959F6400DCACD3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = app/resources/Base.lproj/BinaryTemplatePopover.xib; sourceTree = "<group>"; };
-		A594F0502495A82300DCACD3 /* HFClickableTextField.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFClickableTextField.h; path = app/sources/HFClickableTextField.h; sourceTree = "<group>"; };
-		A594F0512495A82300DCACD3 /* HFClickableTextField.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFClickableTextField.m; path = app/sources/HFClickableTextField.m; sourceTree = "<group>"; };
-		A59BC56F2001AB8C0066860F /* HFBinaryTemplateRepresenter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFBinaryTemplateRepresenter.h; path = app/sources/HFBinaryTemplateRepresenter.h; sourceTree = "<group>"; };
-		A59BC5702001AB8C0066860F /* HFBinaryTemplateRepresenter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFBinaryTemplateRepresenter.m; path = app/sources/HFBinaryTemplateRepresenter.m; sourceTree = "<group>"; };
-		A59BC5902001FB9A0066860F /* HFTclTemplateController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFTclTemplateController.h; path = app/sources/HFTclTemplateController.h; sourceTree = "<group>"; };
-		A59BC5912001FB9A0066860F /* HFTclTemplateController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFTclTemplateController.m; path = app/sources/HFTclTemplateController.m; sourceTree = "<group>"; };
+		A591313821E3079400685B51 /* DataInspector.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DataInspector.h; path = sources/DataInspector.h; sourceTree = "<group>"; };
+		A591313921E3079400685B51 /* DataInspector.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = DataInspector.m; path = sources/DataInspector.m; sourceTree = "<group>"; };
+		A591313B21E3090300685B51 /* DataInspectorPlusMinusButtonCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DataInspectorPlusMinusButtonCell.h; path = sources/DataInspectorPlusMinusButtonCell.h; sourceTree = "<group>"; };
+		A591313C21E3090300685B51 /* DataInspectorPlusMinusButtonCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = DataInspectorPlusMinusButtonCell.m; path = sources/DataInspectorPlusMinusButtonCell.m; sourceTree = "<group>"; };
+		A591313E21E3098800685B51 /* DataInspectorScrollView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DataInspectorScrollView.h; path = sources/DataInspectorScrollView.h; sourceTree = "<group>"; };
+		A591313F21E3098800685B51 /* DataInspectorScrollView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = DataInspectorScrollView.m; path = sources/DataInspectorScrollView.m; sourceTree = "<group>"; };
+		A594F04E24959F6400DCACD3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = resources/Base.lproj/BinaryTemplatePopover.xib; sourceTree = "<group>"; };
+		A594F0502495A82300DCACD3 /* HFClickableTextField.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFClickableTextField.h; path = sources/HFClickableTextField.h; sourceTree = "<group>"; };
+		A594F0512495A82300DCACD3 /* HFClickableTextField.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFClickableTextField.m; path = sources/HFClickableTextField.m; sourceTree = "<group>"; };
+		A59BC56F2001AB8C0066860F /* HFBinaryTemplateRepresenter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFBinaryTemplateRepresenter.h; path = sources/HFBinaryTemplateRepresenter.h; sourceTree = "<group>"; };
+		A59BC5702001AB8C0066860F /* HFBinaryTemplateRepresenter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFBinaryTemplateRepresenter.m; path = sources/HFBinaryTemplateRepresenter.m; sourceTree = "<group>"; };
+		A59BC5902001FB9A0066860F /* HFTclTemplateController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFTclTemplateController.h; path = sources/HFTclTemplateController.h; sourceTree = "<group>"; };
+		A59BC5912001FB9A0066860F /* HFTclTemplateController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFTclTemplateController.m; path = sources/HFTclTemplateController.m; sourceTree = "<group>"; };
 		A59BC5932001FD0F0066860F /* Tcl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Tcl.framework; path = System/Library/Frameworks/Tcl.framework; sourceTree = SDKROOT; };
-		A59BC59520020B480066860F /* HFBinaryTemplateController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFBinaryTemplateController.h; path = app/sources/HFBinaryTemplateController.h; sourceTree = "<group>"; };
-		A59BC59620020B480066860F /* HFBinaryTemplateController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFBinaryTemplateController.m; path = app/sources/HFBinaryTemplateController.m; sourceTree = "<group>"; };
-		A59BC59A2002113F0066860F /* HFTemplateNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFTemplateNode.h; path = app/sources/HFTemplateNode.h; sourceTree = "<group>"; };
-		A59BC59B2002113F0066860F /* HFTemplateNode.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFTemplateNode.m; path = app/sources/HFTemplateNode.m; sourceTree = "<group>"; };
-		A59BC59D2002E63C0066860F /* HFTemplateController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFTemplateController.h; path = app/sources/HFTemplateController.h; sourceTree = "<group>"; };
-		A59BC59E2002E63C0066860F /* HFTemplateController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFTemplateController.m; path = app/sources/HFTemplateController.m; sourceTree = "<group>"; };
-		A5A2F6642B2F63F80097F225 /* HFHelperProcessSharedCode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFHelperProcessSharedCode.h; path = framework/objc/include/HFHelperProcessSharedCode.h; sourceTree = "<group>"; };
-		A5B2F6E2284729F8006E8AF8 /* templates */ = {isa = PBXFileReference; lastKnownFileType = folder; path = templates; sourceTree = "<group>"; };
-		A5B762F92B32AE2F00CA25AE /* HFByteTheme.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HFByteTheme.swift; path = app/sources/HFByteTheme.swift; sourceTree = "<group>"; };
-		A5BAB4142AD7CB3200623A9F /* Encodings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Encodings.swift; path = app/sources/Encodings.swift; sourceTree = "<group>"; };
+		A59BC59520020B480066860F /* HFBinaryTemplateController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFBinaryTemplateController.h; path = sources/HFBinaryTemplateController.h; sourceTree = "<group>"; };
+		A59BC59620020B480066860F /* HFBinaryTemplateController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFBinaryTemplateController.m; path = sources/HFBinaryTemplateController.m; sourceTree = "<group>"; };
+		A59BC59A2002113F0066860F /* HFTemplateNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFTemplateNode.h; path = sources/HFTemplateNode.h; sourceTree = "<group>"; };
+		A59BC59B2002113F0066860F /* HFTemplateNode.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFTemplateNode.m; path = sources/HFTemplateNode.m; sourceTree = "<group>"; };
+		A59BC59D2002E63C0066860F /* HFTemplateController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFTemplateController.h; path = sources/HFTemplateController.h; sourceTree = "<group>"; };
+		A59BC59E2002E63C0066860F /* HFTemplateController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFTemplateController.m; path = sources/HFTemplateController.m; sourceTree = "<group>"; };
+		A5A2F6642B2F63F80097F225 /* HFHelperProcessSharedCode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HFHelperProcessSharedCode.h; sourceTree = "<group>"; };
+		A5B2F6E2284729F8006E8AF8 /* templates */ = {isa = PBXFileReference; lastKnownFileType = folder; name = templates; path = ../templates; sourceTree = "<group>"; };
+		A5B762F92B32AE2F00CA25AE /* HFByteTheme.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HFByteTheme.swift; path = sources/HFByteTheme.swift; sourceTree = "<group>"; };
+		A5BAB4142AD7CB3200623A9F /* Encodings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Encodings.swift; path = sources/Encodings.swift; sourceTree = "<group>"; };
 		A5D8C8F120E9E58000103D60 /* libz.1.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.1.tbd; path = usr/lib/libz.1.tbd; sourceTree = SDKROOT; };
-		D00122E10D48A8D400540B10 /* HFFindReplaceBackgroundView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFFindReplaceBackgroundView.h; path = app/sources/HFFindReplaceBackgroundView.h; sourceTree = "<group>"; };
-		D00122E20D48A8D400540B10 /* HFFindReplaceBackgroundView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFFindReplaceBackgroundView.m; path = app/sources/HFFindReplaceBackgroundView.m; sourceTree = "<group>"; };
+		D00122E10D48A8D400540B10 /* HFFindReplaceBackgroundView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFFindReplaceBackgroundView.h; path = sources/HFFindReplaceBackgroundView.h; sourceTree = "<group>"; };
+		D00122E20D48A8D400540B10 /* HFFindReplaceBackgroundView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFFindReplaceBackgroundView.m; path = sources/HFFindReplaceBackgroundView.m; sourceTree = "<group>"; };
 		D00C15E50FF091FF006D021F /* HexFiendling.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HexFiendling.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D00C16740FF4925A006D021F /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D00C16750FF4925A006D021F /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		D01772F30D751DB1002E03DE /* HFDocumentOperationView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFDocumentOperationView.h; path = app/sources/HFDocumentOperationView.h; sourceTree = "<group>"; };
-		D01772F40D751DB1002E03DE /* HFDocumentOperationView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFDocumentOperationView.m; path = app/sources/HFDocumentOperationView.m; sourceTree = "<group>"; };
-		D01773900D7A2F32002E03DE /* HFResizingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFResizingView.h; path = app/sources/HFResizingView.h; sourceTree = "<group>"; };
-		D01773910D7A2F32002E03DE /* HFResizingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFResizingView.m; path = app/sources/HFResizingView.m; sourceTree = "<group>"; };
-		D018F151107ABAC600AE805F /* DiffDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DiffDocument.h; path = app/sources/DiffDocument.h; sourceTree = "<group>"; };
-		D018F152107ABAC600AE805F /* DiffDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DiffDocument.m; path = app/sources/DiffDocument.m; sourceTree = "<group>"; };
+		D01772F30D751DB1002E03DE /* HFDocumentOperationView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFDocumentOperationView.h; path = sources/HFDocumentOperationView.h; sourceTree = "<group>"; };
+		D01772F40D751DB1002E03DE /* HFDocumentOperationView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFDocumentOperationView.m; path = sources/HFDocumentOperationView.m; sourceTree = "<group>"; };
+		D01773900D7A2F32002E03DE /* HFResizingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFResizingView.h; path = sources/HFResizingView.h; sourceTree = "<group>"; };
+		D01773910D7A2F32002E03DE /* HFResizingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFResizingView.m; path = sources/HFResizingView.m; sourceTree = "<group>"; };
+		D018F151107ABAC600AE805F /* DiffDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DiffDocument.h; path = sources/DiffDocument.h; sourceTree = "<group>"; };
+		D018F152107ABAC600AE805F /* DiffDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DiffDocument.m; path = sources/DiffDocument.m; sourceTree = "<group>"; };
 		D01D1D6D1489D1F6008212BB /* build_documentation.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = build_documentation.py; sourceTree = "<group>"; };
 		D01D1D6F1489D1F6008212BB /* hexfiend_doxyfile.config */ = {isa = PBXFileReference; lastKnownFileType = text; path = hexfiend_doxyfile.config; sourceTree = "<group>"; };
 		D01D1D701489D1F6008212BB /* munge_header_for_doxy.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = munge_header_for_doxy.py; sourceTree = "<group>"; };
-		D01E7C0A0CDC570400943F9E /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = app/Info.plist; sourceTree = "<group>"; };
-		D01E7C140CDC58AA00943F9E /* BaseDataDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BaseDataDocument.h; path = app/sources/BaseDataDocument.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		D01E7C150CDC58AA00943F9E /* BaseDataDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; name = BaseDataDocument.m; path = app/sources/BaseDataDocument.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
-		D024AFB20E349A7B00F39EBB /* hex_icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = hex_icon.icns; path = app/resources/hex_icon.icns; sourceTree = "<group>"; };
-		D02BD6DE10545E9000535EDE /* FileDataDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileDataDocument.h; path = app/sources/FileDataDocument.h; sourceTree = "<group>"; };
-		D02BD6DF10545E9000535EDE /* FileDataDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FileDataDocument.m; path = app/sources/FileDataDocument.m; sourceTree = "<group>"; };
-		D03CFA880FC78BCD00EE79E4 /* DataInspectorRepresenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DataInspectorRepresenter.h; path = app/sources/DataInspectorRepresenter.h; sourceTree = "<group>"; };
-		D03CFA890FC78BCD00EE79E4 /* DataInspectorRepresenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DataInspectorRepresenter.m; path = app/sources/DataInspectorRepresenter.m; sourceTree = "<group>"; };
+		D01E7C0A0CDC570400943F9E /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D01E7C140CDC58AA00943F9E /* BaseDataDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BaseDataDocument.h; path = sources/BaseDataDocument.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		D01E7C150CDC58AA00943F9E /* BaseDataDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; name = BaseDataDocument.m; path = sources/BaseDataDocument.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		D024AFB20E349A7B00F39EBB /* hex_icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = hex_icon.icns; path = resources/hex_icon.icns; sourceTree = "<group>"; };
+		D02BD6DE10545E9000535EDE /* FileDataDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileDataDocument.h; path = sources/FileDataDocument.h; sourceTree = "<group>"; };
+		D02BD6DF10545E9000535EDE /* FileDataDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FileDataDocument.m; path = sources/FileDataDocument.m; sourceTree = "<group>"; };
+		D03CFA880FC78BCD00EE79E4 /* DataInspectorRepresenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DataInspectorRepresenter.h; path = sources/DataInspectorRepresenter.h; sourceTree = "<group>"; };
+		D03CFA890FC78BCD00EE79E4 /* DataInspectorRepresenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DataInspectorRepresenter.m; path = sources/DataInspectorRepresenter.m; sourceTree = "<group>"; };
 		D047E3151022CEFE00EF307B /* com.ridiculousfish.HexFiend.PrivilegedHelper */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = com.ridiculousfish.HexFiend.PrivilegedHelper; sourceTree = BUILT_PRODUCTS_DIR; };
-		D047E33F1022CFA800EF307B /* FortunateSon.defs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.mig; name = FortunateSon.defs; path = helper_subprocess/FortunateSon.defs; sourceTree = "<group>"; };
-		D047E4431022DF6F00EF307B /* FortunateSonIPCTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FortunateSonIPCTypes.h; path = helper_subprocess/FortunateSonIPCTypes.h; sourceTree = "<group>"; };
-		D047E48B1022E09300EF307B /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = helper_subprocess/main.cpp; sourceTree = "<group>"; };
-		D04D8FCB102396FC0013A2A1 /* HFPrivilegedHelperConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFPrivilegedHelperConnection.m; path = app/sources/HFPrivilegedHelperConnection.m; sourceTree = "<group>"; };
+		D047E33F1022CFA800EF307B /* FortunateSon.defs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.mig; path = FortunateSon.defs; sourceTree = "<group>"; };
+		D047E4431022DF6F00EF307B /* FortunateSonIPCTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FortunateSonIPCTypes.h; sourceTree = "<group>"; };
+		D047E48B1022E09300EF307B /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		D04D8FCB102396FC0013A2A1 /* HFPrivilegedHelperConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFPrivilegedHelperConnection.m; path = sources/HFPrivilegedHelperConnection.m; sourceTree = "<group>"; };
 		D05390421E2192C000F9AAC1 /* HexFiendSandbox.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = HexFiendSandbox.entitlements; sourceTree = "<group>"; };
 		D05390431E2192C000F9AAC1 /* HexFiendUnsandbox.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = HexFiendUnsandbox.entitlements; sourceTree = "<group>"; };
 		D05390441E2192C000F9AAC1 /* postprocess_for_mas.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = postprocess_for_mas.sh; sourceTree = "<group>"; };
 		D05984CB1032C6D900059E72 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = /System/Library/Frameworks/Security.framework; sourceTree = "<absolute>"; };
-		D059E1271311C675001493B8 /* AppDebugging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDebugging.h; path = app/sources/AppDebugging.h; sourceTree = "<group>"; };
-		D059E1281311C676001493B8 /* AppDebugging.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDebugging.m; path = app/sources/AppDebugging.m; sourceTree = "<group>"; };
-		D0621CAC102ED50D00DAEB4D /* FortunateSonServerImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FortunateSonServerImpl.cpp; path = helper_subprocess/FortunateSonServerImpl.cpp; sourceTree = "<group>"; };
-		D074B0D3115B2075002D5FA8 /* DiffDocumentWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DiffDocumentWindow.h; path = app/sources/DiffDocumentWindow.h; sourceTree = "<group>"; };
-		D074B0D4115B2075002D5FA8 /* DiffDocumentWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DiffDocumentWindow.m; path = app/sources/DiffDocumentWindow.m; sourceTree = "<group>"; };
-		D084E761115DAEAC004DC181 /* DiffOverlayView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DiffOverlayView.h; path = app/sources/DiffOverlayView.h; sourceTree = "<group>"; };
-		D084E762115DAEAC004DC181 /* DiffOverlayView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DiffOverlayView.m; path = app/sources/DiffOverlayView.m; sourceTree = "<group>"; };
-		D0A8AF7B1467272B00387627 /* AppUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppUtilities.h; path = app/sources/AppUtilities.h; sourceTree = "<group>"; };
-		D0A8AF7C1467273900387627 /* AppUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppUtilities.m; path = app/sources/AppUtilities.m; sourceTree = "<group>"; };
-		D0AFA784123C2BDF00CFC513 /* MyDocumentController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MyDocumentController.h; path = app/sources/MyDocumentController.h; sourceTree = "<group>"; };
-		D0AFA785123C2BDF00CFC513 /* MyDocumentController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MyDocumentController.m; path = app/sources/MyDocumentController.m; sourceTree = "<group>"; };
-		D0CBB23E128F78C200989C15 /* StretchableProgressIndicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StretchableProgressIndicator.h; path = app/sources/StretchableProgressIndicator.h; sourceTree = "<group>"; };
-		D0CBB23F128F78C200989C15 /* StretchableProgressIndicator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = StretchableProgressIndicator.m; path = app/sources/StretchableProgressIndicator.m; sourceTree = "<group>"; };
-		D0CBB328128F906000989C15 /* DiffTextViewContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DiffTextViewContainer.h; path = app/sources/DiffTextViewContainer.h; sourceTree = "<group>"; };
-		D0CBB329128F906000989C15 /* DiffTextViewContainer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DiffTextViewContainer.m; path = app/sources/DiffTextViewContainer.m; sourceTree = "<group>"; };
-		D0CD51F40DA2B928006E8D1B /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = app/sources/AppDelegate.h; sourceTree = "<group>"; };
-		D0CD51F50DA2B928006E8D1B /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; name = AppDelegate.m; path = app/sources/AppDelegate.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
-		D0D0536C1487FF2500704643 /* HFFindReplaceOperationView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFFindReplaceOperationView.h; path = app/sources/HFFindReplaceOperationView.h; sourceTree = "<group>"; };
-		D0D0536D1487FF2500704643 /* HFFindReplaceOperationView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFFindReplaceOperationView.m; path = app/sources/HFFindReplaceOperationView.m; sourceTree = "<group>"; };
+		D059E1271311C675001493B8 /* AppDebugging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDebugging.h; path = sources/AppDebugging.h; sourceTree = "<group>"; };
+		D059E1281311C676001493B8 /* AppDebugging.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDebugging.m; path = sources/AppDebugging.m; sourceTree = "<group>"; };
+		D0621CAC102ED50D00DAEB4D /* FortunateSonServerImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FortunateSonServerImpl.cpp; sourceTree = "<group>"; };
+		D074B0D3115B2075002D5FA8 /* DiffDocumentWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DiffDocumentWindow.h; path = sources/DiffDocumentWindow.h; sourceTree = "<group>"; };
+		D074B0D4115B2075002D5FA8 /* DiffDocumentWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DiffDocumentWindow.m; path = sources/DiffDocumentWindow.m; sourceTree = "<group>"; };
+		D084E761115DAEAC004DC181 /* DiffOverlayView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DiffOverlayView.h; path = sources/DiffOverlayView.h; sourceTree = "<group>"; };
+		D084E762115DAEAC004DC181 /* DiffOverlayView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DiffOverlayView.m; path = sources/DiffOverlayView.m; sourceTree = "<group>"; };
+		D0A8AF7B1467272B00387627 /* AppUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppUtilities.h; path = sources/AppUtilities.h; sourceTree = "<group>"; };
+		D0A8AF7C1467273900387627 /* AppUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppUtilities.m; path = sources/AppUtilities.m; sourceTree = "<group>"; };
+		D0AFA784123C2BDF00CFC513 /* MyDocumentController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MyDocumentController.h; path = sources/MyDocumentController.h; sourceTree = "<group>"; };
+		D0AFA785123C2BDF00CFC513 /* MyDocumentController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MyDocumentController.m; path = sources/MyDocumentController.m; sourceTree = "<group>"; };
+		D0CBB23E128F78C200989C15 /* StretchableProgressIndicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StretchableProgressIndicator.h; path = sources/StretchableProgressIndicator.h; sourceTree = "<group>"; };
+		D0CBB23F128F78C200989C15 /* StretchableProgressIndicator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = StretchableProgressIndicator.m; path = sources/StretchableProgressIndicator.m; sourceTree = "<group>"; };
+		D0CBB328128F906000989C15 /* DiffTextViewContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DiffTextViewContainer.h; path = sources/DiffTextViewContainer.h; sourceTree = "<group>"; };
+		D0CBB329128F906000989C15 /* DiffTextViewContainer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DiffTextViewContainer.m; path = sources/DiffTextViewContainer.m; sourceTree = "<group>"; };
+		D0CD51F40DA2B928006E8D1B /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = sources/AppDelegate.h; sourceTree = "<group>"; };
+		D0CD51F50DA2B928006E8D1B /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; name = AppDelegate.m; path = sources/AppDelegate.m; sourceTree = "<group>"; };
+		D0D0536C1487FF2500704643 /* HFFindReplaceOperationView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFFindReplaceOperationView.h; path = sources/HFFindReplaceOperationView.h; sourceTree = "<group>"; };
+		D0D0536D1487FF2500704643 /* HFFindReplaceOperationView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFFindReplaceOperationView.m; path = sources/HFFindReplaceOperationView.m; sourceTree = "<group>"; };
 		D0D110520FF602D800AE5CFB /* FiendlingAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FiendlingAppDelegate.h; sourceTree = "<group>"; };
 		D0D110530FF602D800AE5CFB /* FiendlingAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FiendlingAppDelegate.m; sourceTree = "<group>"; };
 		D0D4BE84146F43A1001B0A71 /* ServiceManagement.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ServiceManagement.framework; path = /System/Library/Frameworks/ServiceManagement.framework; sourceTree = "<absolute>"; };
-		D0D4BE87146F4B3A001B0A71 /* FortunateSon-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "FortunateSon-Info.plist"; path = "helper_subprocess/FortunateSon-Info.plist"; sourceTree = "<group>"; };
-		D0D4BE88146F4B3A001B0A71 /* FortunateSon-Launchd.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "FortunateSon-Launchd.plist"; path = "helper_subprocess/FortunateSon-Launchd.plist"; sourceTree = "<group>"; };
-		D8EE3EFC16F26689001C7C09 /* DiffRangeWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DiffRangeWindowController.h; path = app/sources/DiffRangeWindowController.h; sourceTree = "<group>"; };
-		D8EE3EFD16F26689001C7C09 /* DiffRangeWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DiffRangeWindowController.m; path = app/sources/DiffRangeWindowController.m; sourceTree = "<group>"; };
-		DAE8EBFC1598FFDB0008ADB9 /* DocumentWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DocumentWindow.h; path = app/sources/DocumentWindow.h; sourceTree = "<group>"; };
-		DAE8EBFD1598FFDB0008ADB9 /* DocumentWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DocumentWindow.m; path = app/sources/DocumentWindow.m; sourceTree = "<group>"; };
-		FBEA8E7F14A2C10B00C27288 /* fileport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fileport.h; path = helper_subprocess/fileport.h; sourceTree = "<group>"; };
+		D0D4BE87146F4B3A001B0A71 /* FortunateSon-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "FortunateSon-Info.plist"; sourceTree = "<group>"; };
+		D0D4BE88146F4B3A001B0A71 /* FortunateSon-Launchd.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "FortunateSon-Launchd.plist"; sourceTree = "<group>"; };
+		D8EE3EFC16F26689001C7C09 /* DiffRangeWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DiffRangeWindowController.h; path = sources/DiffRangeWindowController.h; sourceTree = "<group>"; };
+		D8EE3EFD16F26689001C7C09 /* DiffRangeWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DiffRangeWindowController.m; path = sources/DiffRangeWindowController.m; sourceTree = "<group>"; };
+		DAE8EBFC1598FFDB0008ADB9 /* DocumentWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DocumentWindow.h; path = sources/DocumentWindow.h; sourceTree = "<group>"; };
+		DAE8EBFD1598FFDB0008ADB9 /* DocumentWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DocumentWindow.m; path = sources/DocumentWindow.m; sourceTree = "<group>"; };
+		FBEA8E7F14A2C10B00C27288 /* fileport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fileport.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -330,7 +329,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A5D8C8F220E9E58000103D60 /* libz.1.tbd in Frameworks */,
-				A5A2F6622B2F5F010097F225 /* HexFiend in Frameworks */,
+				A57B5E7B2B49286000FF958B /* HexFiend in Frameworks */,
 				A59BC5942001FD0F0066860F /* Tcl.framework in Frameworks */,
 				795F46C314BAADB600EB2F7D /* DiskArbitration.framework in Frameworks */,
 				A5A34C1B26AD271900506AE7 /* Sparkle in Frameworks */,
@@ -365,7 +364,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				D05E7AAE0FF6167100767D95 /* Cocoa.framework in Frameworks */,
-				A59693392B32B40B00E62C1B /* HexFiend in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -466,7 +464,8 @@
 				A50859B52B204D7600325B36 /* Hex_Fiend_Tests-Bridging-Header.h */,
 				A50859A92B204C8100325B36 /* HFTclTemplateControllerTests.swift */,
 			);
-			path = "Hex Fiend Tests";
+			name = "Hex Fiend Tests";
+			path = "../Hex Fiend Tests";
 			sourceTree = "<group>";
 		};
 		A531921C21D58DC1006C25D6 /* Miscellaneous */ = {
@@ -521,7 +520,8 @@
 				001BEF972910F23600BB82B3 /* hexf.swift */,
 				A54281B22B427F62006DEF81 /* hexf-Bridging-Header.h */,
 			);
-			path = hexf;
+			name = hexf;
+			path = ../hexf;
 			sourceTree = "<group>";
 		};
 		A591313721E3064900685B51 /* Data Inspector */ = {
@@ -594,7 +594,7 @@
 				A5791D61286181DD0067FC1E /* sampleData.rtf */,
 			);
 			name = HexFiendling;
-			path = sample_code/HexFiendling;
+			path = ../sample_code/HexFiendling;
 			sourceTree = "<group>";
 		};
 		D01D1D6C1489D1F6008212BB /* Documentation Scripts */ = {
@@ -605,7 +605,7 @@
 				D01D1D701489D1F6008212BB /* munge_header_for_doxy.py */,
 			);
 			name = "Documentation Scripts";
-			path = documentation_tools;
+			path = ../documentation_tools;
 			sourceTree = "<group>";
 		};
 		D02BD6D910545E7B00535EDE /* DocumentTypes */ = {
@@ -638,6 +638,7 @@
 				A5A2F6642B2F63F80097F225 /* HFHelperProcessSharedCode.h */,
 			);
 			name = PrivilegedHelper;
+			path = ../helper_subprocess;
 			sourceTree = "<group>";
 			tabWidth = 4;
 		};
@@ -648,7 +649,8 @@
 				D05390431E2192C000F9AAC1 /* HexFiendUnsandbox.entitlements */,
 				D05390441E2192C000F9AAC1 /* postprocess_for_mas.sh */,
 			);
-			path = configs;
+			name = configs;
+			path = ../configs;
 			sourceTree = "<group>";
 		};
 		D0560B380CDC4253009D2484 /* App */ = {
@@ -722,7 +724,7 @@
 			name = HexFiend_2;
 			packageProductDependencies = (
 				A5A34C1A26AD271900506AE7 /* Sparkle */,
-				A5A2F6612B2F5F010097F225 /* HexFiend */,
+				A57B5E7A2B49286000FF958B /* HexFiend */,
 			);
 			productInstallPath = "$(HOME)/Applications";
 			productName = HexFiend_2;
@@ -798,7 +800,6 @@
 			);
 			name = HexFiendling;
 			packageProductDependencies = (
-				A59693382B32B40B00E62C1B /* HexFiend */,
 			);
 			productName = HexFiendling;
 			productReference = D00C15E50FF091FF006D021F /* HexFiendling.app */;
@@ -860,7 +861,7 @@
 			packageReferences = (
 				A5A34C1926AD271900506AE7 /* XCRemoteSwiftPackageReference "Sparkle" */,
 				A54281AF2B413542006DEF81 /* XCRemoteSwiftPackageReference "swift-argument-parser" */,
-				A5A2F6602B2F5C580097F225 /* XCLocalSwiftPackageReference "framework" */,
+				A57B5E792B49286000FF958B /* XCLocalSwiftPackageReference ".." */,
 			);
 			projectDirPath = "";
 			projectRoot = ../..;
@@ -973,7 +974,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "${SRCROOT}/configs/postprocess_for_mas.sh\n";
+			shellScript = "${SRCROOT}/../configs/postprocess_for_mas.sh\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -1101,7 +1102,7 @@
 				089C165DFE840E0CC02AAC07 /* Base */,
 			);
 			name = InfoPlist.strings;
-			path = app/resources;
+			path = resources;
 			sourceTree = "<group>";
 		};
 		A5589ACA2206D238000293A4 /* OpenAccessoryView.xib */ = {
@@ -1118,7 +1119,7 @@
 				A554E0D920DF2CD6001B4C48 /* Base */,
 			);
 			name = Preferences.xib;
-			path = app/resources;
+			path = resources;
 			sourceTree = "<group>";
 		};
 		A57F34851F1EFA6E00234B94 /* DataInspectorView.xib */ = {
@@ -1127,7 +1128,7 @@
 				A554E0CE20DF2CD3001B4C48 /* Base */,
 			);
 			name = DataInspectorView.xib;
-			path = app/resources;
+			path = resources;
 			sourceTree = "<group>";
 		};
 		A57F34881F1EFA8800234B94 /* ChooseStringEncodingDialog.xib */ = {
@@ -1136,7 +1137,7 @@
 				A554E0CF20DF2CD4001B4C48 /* Base */,
 			);
 			name = ChooseStringEncodingDialog.xib;
-			path = app/resources;
+			path = resources;
 			sourceTree = "<group>";
 		};
 		A57F348B1F1EFA9600234B94 /* OpenDriveDialog.xib */ = {
@@ -1145,7 +1146,7 @@
 				A554E0CD20DF2CD3001B4C48 /* Base */,
 			);
 			name = OpenDriveDialog.xib;
-			path = app/resources;
+			path = resources;
 			sourceTree = "<group>";
 		};
 		A594F04D24959F6400DCACD3 /* BinaryTemplatePopover.xib */ = {
@@ -1162,7 +1163,7 @@
 				A554E0DA20DF2CD6001B4C48 /* Base */,
 			);
 			name = BinaryTemplateController.xib;
-			path = app/resources;
+			path = resources;
 			sourceTree = "<group>";
 		};
 		D018F137107AB64900AE805F /* DiffDocument.xib */ = {
@@ -1171,7 +1172,7 @@
 				A554E0D620DF2CD6001B4C48 /* Base */,
 			);
 			name = DiffDocument.xib;
-			path = app/resources;
+			path = resources;
 			sourceTree = "<group>";
 		};
 		D04A6B69100EA47C00704963 /* SaveBanner.xib */ = {
@@ -1180,7 +1181,7 @@
 				A554E0D420DF2CD5001B4C48 /* Base */,
 			);
 			name = SaveBanner.xib;
-			path = app/resources;
+			path = resources;
 			sourceTree = "<group>";
 		};
 		D04A6B78100EA4BC00704963 /* FindReplaceBanner.xib */ = {
@@ -1189,7 +1190,7 @@
 				A554E0D320DF2CD5001B4C48 /* Base */,
 			);
 			name = FindReplaceBanner.xib;
-			path = app/resources;
+			path = resources;
 			sourceTree = "<group>";
 		};
 		D04A6B95100EA73800704963 /* JumpToOffsetBanner.xib */ = {
@@ -1198,7 +1199,7 @@
 				A554E0D220DF2CD4001B4C48 /* Base */,
 			);
 			name = JumpToOffsetBanner.xib;
-			path = app/resources;
+			path = resources;
 			sourceTree = "<group>";
 		};
 		D04A6B9C100EA75400704963 /* MoveSelectionByBanner.xib */ = {
@@ -1207,7 +1208,7 @@
 				A554E0D120DF2CD4001B4C48 /* Base */,
 			);
 			name = MoveSelectionByBanner.xib;
-			path = app/resources;
+			path = resources;
 			sourceTree = "<group>";
 		};
 		D04A6BA3100EA78700704963 /* MyDocument.xib */ = {
@@ -1216,7 +1217,7 @@
 				A554E0D020DF2CD4001B4C48 /* Base */,
 			);
 			name = MyDocument.xib;
-			path = app/resources;
+			path = resources;
 			sourceTree = "<group>";
 		};
 		D04A6BA9100EA7B800704963 /* MainMenu.xib */ = {
@@ -1225,7 +1226,7 @@
 				A554E0D820DF2CD6001B4C48 /* Base */,
 			);
 			name = MainMenu.xib;
-			path = app/resources;
+			path = resources;
 			sourceTree = "<group>";
 		};
 		D071391E146F7897004D3792 /* MainMenu.xib */ = {
@@ -1242,7 +1243,7 @@
 				A554E0D520DF2CD5001B4C48 /* Base */,
 			);
 			name = DiffComputationBanner.xib;
-			path = app/resources;
+			path = resources;
 			sourceTree = "<group>";
 		};
 		D8C1F92A16F278BA00A4C36E /* DiffRangeDialog.xib */ = {
@@ -1251,7 +1252,7 @@
 				A554E0D720DF2CD6001B4C48 /* Base */,
 			);
 			name = DiffRangeDialog.xib;
-			path = app/resources;
+			path = resources;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -1751,7 +1752,7 @@
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				SWIFT_OBJC_BRIDGING_HEADER = "hexf/hexf-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "../hexf/hexf-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 			};
@@ -1790,7 +1791,7 @@
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				SWIFT_OBJC_BRIDGING_HEADER = "hexf/hexf-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "../hexf/hexf-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 			};
@@ -1829,7 +1830,7 @@
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				SWIFT_OBJC_BRIDGING_HEADER = "hexf/hexf-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "../hexf/hexf-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 			};
@@ -1865,7 +1866,7 @@
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				SWIFT_OBJC_BRIDGING_HEADER = "hexf/hexf-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "../hexf/hexf-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
@@ -1900,7 +1901,7 @@
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				SWIFT_OBJC_BRIDGING_HEADER = "hexf/hexf-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "../hexf/hexf-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 			};
 			name = "Release+CodeSign";
@@ -1947,7 +1948,7 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_ENTITLEMENTS = configs/HexFiendUnsandbox.entitlements;
+				CODE_SIGN_ENTITLEMENTS = ../configs/HexFiendUnsandbox.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = YES;
@@ -1996,9 +1997,9 @@
 				DEAD_CODE_STRIPPING = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
-				INFOPLIST_FILE = app/Info.plist;
+				INFOPLIST_FILE = Info.plist;
 				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-traditional";
-				INFOPLIST_PREFIX_HEADER = version.h;
+				INFOPLIST_PREFIX_HEADER = ../version.h;
 				INFOPLIST_PREPROCESS = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2015,7 +2016,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.ridiculousfish.HexFiend;
 				PRODUCT_NAME = "Hex Fiend";
-				SWIFT_OBJC_BRIDGING_HEADER = "app/sources/HexFiend_2-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "sources/HexFiend_2-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				WRAPPER_EXTENSION = app;
 			};
@@ -2029,14 +2030,14 @@
 				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
 				DEAD_CODE_STRIPPING = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				INFOPLIST_FILE = "helper_subprocess/FortunateSon-Info.plist";
+				INFOPLIST_FILE = "../helper_subprocess/FortunateSon-Info.plist";
 				INFOPLIST_PREPROCESS = YES;
 				INSTALL_PATH = /usr/local/bin;
 				OTHER_LDFLAGS = (
 					"-sectcreate",
 					__TEXT,
 					__launchd_plist,
-					"helper_subprocess/FortunateSon-Launchd.plist",
+					"../helper_subprocess/FortunateSon-Launchd.plist",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.ridiculousfish.HexFiend.PrivilegedHelper;
 				PRODUCT_NAME = com.ridiculousfish.HexFiend.PrivilegedHelper;
@@ -2093,7 +2094,7 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_ENTITLEMENTS = configs/HexFiendUnsandbox.entitlements;
+				CODE_SIGN_ENTITLEMENTS = ../configs/HexFiendUnsandbox.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = YES;
@@ -2143,9 +2144,9 @@
 				DEAD_CODE_STRIPPING = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
-				INFOPLIST_FILE = app/Info.plist;
+				INFOPLIST_FILE = Info.plist;
 				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-traditional";
-				INFOPLIST_PREFIX_HEADER = version.h;
+				INFOPLIST_PREFIX_HEADER = ../version.h;
 				INFOPLIST_PREPROCESS = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2162,7 +2163,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.ridiculousfish.HexFiend;
 				PRODUCT_NAME = "Hex Fiend";
-				SWIFT_OBJC_BRIDGING_HEADER = "app/sources/HexFiend_2-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "sources/HexFiend_2-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				WRAPPER_EXTENSION = app;
@@ -2176,14 +2177,14 @@
 				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
 				DEAD_CODE_STRIPPING = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				INFOPLIST_FILE = "helper_subprocess/FortunateSon-Info.plist";
+				INFOPLIST_FILE = "../helper_subprocess/FortunateSon-Info.plist";
 				INFOPLIST_PREPROCESS = YES;
 				INSTALL_PATH = /usr/local/bin;
 				OTHER_LDFLAGS = (
 					"-sectcreate",
 					__TEXT,
 					__launchd_plist,
-					"helper_subprocess/FortunateSon-Launchd.plist",
+					"../helper_subprocess/FortunateSon-Launchd.plist",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.ridiculousfish.HexFiend.PrivilegedHelper;
 				PRODUCT_NAME = com.ridiculousfish.HexFiend.PrivilegedHelper;
@@ -2240,7 +2241,7 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_ENTITLEMENTS = configs/HexFiendUnsandbox.entitlements;
+				CODE_SIGN_ENTITLEMENTS = ../configs/HexFiendUnsandbox.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = YES;
@@ -2289,9 +2290,9 @@
 				DEAD_CODE_STRIPPING = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
-				INFOPLIST_FILE = app/Info.plist;
+				INFOPLIST_FILE = Info.plist;
 				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-traditional";
-				INFOPLIST_PREFIX_HEADER = version.h;
+				INFOPLIST_PREFIX_HEADER = ../version.h;
 				INFOPLIST_PREPROCESS = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2308,7 +2309,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.ridiculousfish.HexFiend;
 				PRODUCT_NAME = "Hex Fiend";
-				SWIFT_OBJC_BRIDGING_HEADER = "app/sources/HexFiend_2-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "sources/HexFiend_2-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				WRAPPER_EXTENSION = app;
 			};
@@ -2322,14 +2323,14 @@
 				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
 				DEAD_CODE_STRIPPING = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				INFOPLIST_FILE = "helper_subprocess/FortunateSon-Info.plist";
+				INFOPLIST_FILE = "../helper_subprocess/FortunateSon-Info.plist";
 				INFOPLIST_PREPROCESS = YES;
 				INSTALL_PATH = /usr/local/bin;
 				OTHER_LDFLAGS = (
 					"-sectcreate",
 					__TEXT,
 					__launchd_plist,
-					"helper_subprocess/FortunateSon-Launchd.plist",
+					"../helper_subprocess/FortunateSon-Launchd.plist",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.ridiculousfish.HexFiend.PrivilegedHelper;
 				PRODUCT_NAME = com.ridiculousfish.HexFiend.PrivilegedHelper;
@@ -2365,14 +2366,14 @@
 				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
 				DEAD_CODE_STRIPPING = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				INFOPLIST_FILE = "helper_subprocess/FortunateSon-Info.plist";
+				INFOPLIST_FILE = "../helper_subprocess/FortunateSon-Info.plist";
 				INFOPLIST_PREPROCESS = YES;
 				INSTALL_PATH = /usr/local/bin;
 				OTHER_LDFLAGS = (
 					"-sectcreate",
 					__TEXT,
 					__launchd_plist,
-					"helper_subprocess/FortunateSon-Launchd.plist",
+					"../helper_subprocess/FortunateSon-Launchd.plist",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.ridiculousfish.HexFiend.PrivilegedHelper;
 				PRODUCT_NAME = com.ridiculousfish.HexFiend.PrivilegedHelper;
@@ -2403,7 +2404,7 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_ENTITLEMENTS = configs/HexFiendSandbox.entitlements;
+				CODE_SIGN_ENTITLEMENTS = ../configs/HexFiendSandbox.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = YES;
@@ -2455,9 +2456,9 @@
 				DEAD_CODE_STRIPPING = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
-				INFOPLIST_FILE = app/Info_MAS.plist;
+				INFOPLIST_FILE = Info_MAS.plist;
 				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-traditional";
-				INFOPLIST_PREFIX_HEADER = version.h;
+				INFOPLIST_PREFIX_HEADER = ../version.h;
 				INFOPLIST_PREPROCESS = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2470,7 +2471,7 @@
 				OTHER_LDFLAGS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = com.ridiculousfish.HexFiend;
 				PRODUCT_NAME = "Hex Fiend";
-				SWIFT_OBJC_BRIDGING_HEADER = "app/sources/HexFiend_2-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "sources/HexFiend_2-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				WRAPPER_EXTENSION = app;
 			};
@@ -2484,14 +2485,14 @@
 				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
 				DEAD_CODE_STRIPPING = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				INFOPLIST_FILE = "helper_subprocess/FortunateSon-Info.plist";
+				INFOPLIST_FILE = "../helper_subprocess/FortunateSon-Info.plist";
 				INFOPLIST_PREPROCESS = YES;
 				INSTALL_PATH = /usr/local/bin;
 				OTHER_LDFLAGS = (
 					"-sectcreate",
 					__TEXT,
 					__launchd_plist,
-					"helper_subprocess/FortunateSon-Launchd.plist",
+					"../helper_subprocess/FortunateSon-Launchd.plist",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.ridiculousfish.HexFiend.PrivilegedHelper;
 				PRODUCT_NAME = com.ridiculousfish.HexFiend.PrivilegedHelper;
@@ -2578,7 +2579,7 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_ENTITLEMENTS = configs/HexFiendSandbox.entitlements;
+				CODE_SIGN_ENTITLEMENTS = ../configs/HexFiendSandbox.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = YES;
@@ -2630,9 +2631,9 @@
 				DEAD_CODE_STRIPPING = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
-				INFOPLIST_FILE = app/Info_MAS.plist;
+				INFOPLIST_FILE = Info_MAS.plist;
 				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-traditional";
-				INFOPLIST_PREFIX_HEADER = version.h;
+				INFOPLIST_PREFIX_HEADER = ../version.h;
 				INFOPLIST_PREPROCESS = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2645,7 +2646,7 @@
 				OTHER_LDFLAGS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = com.ridiculousfish.HexFiend;
 				PRODUCT_NAME = "Hex Fiend";
-				SWIFT_OBJC_BRIDGING_HEADER = "app/sources/HexFiend_2-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "sources/HexFiend_2-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				WRAPPER_EXTENSION = app;
@@ -2659,14 +2660,14 @@
 				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
 				DEAD_CODE_STRIPPING = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				INFOPLIST_FILE = "helper_subprocess/FortunateSon-Info.plist";
+				INFOPLIST_FILE = "../helper_subprocess/FortunateSon-Info.plist";
 				INFOPLIST_PREPROCESS = YES;
 				INSTALL_PATH = /usr/local/bin;
 				OTHER_LDFLAGS = (
 					"-sectcreate",
 					__TEXT,
 					__launchd_plist,
-					"helper_subprocess/FortunateSon-Launchd.plist",
+					"../helper_subprocess/FortunateSon-Launchd.plist",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.ridiculousfish.HexFiend.PrivilegedHelper;
 				PRODUCT_NAME = com.ridiculousfish.HexFiend.PrivilegedHelper;
@@ -2762,7 +2763,7 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_ENTITLEMENTS = configs/HexFiendUnsandbox.entitlements;
+				CODE_SIGN_ENTITLEMENTS = ../configs/HexFiendUnsandbox.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = YES;
@@ -2811,9 +2812,9 @@
 				DEAD_CODE_STRIPPING = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
-				INFOPLIST_FILE = app/Info.plist;
+				INFOPLIST_FILE = Info.plist;
 				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-traditional";
-				INFOPLIST_PREFIX_HEADER = version.h;
+				INFOPLIST_PREFIX_HEADER = ../version.h;
 				INFOPLIST_PREPROCESS = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2830,7 +2831,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.ridiculousfish.HexFiend;
 				PRODUCT_NAME = "Hex Fiend";
-				SWIFT_OBJC_BRIDGING_HEADER = "app/sources/HexFiend_2-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "sources/HexFiend_2-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				WRAPPER_EXTENSION = app;
@@ -2844,14 +2845,14 @@
 				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
 				DEAD_CODE_STRIPPING = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				INFOPLIST_FILE = "helper_subprocess/FortunateSon-Info.plist";
+				INFOPLIST_FILE = "../helper_subprocess/FortunateSon-Info.plist";
 				INFOPLIST_PREPROCESS = YES;
 				INSTALL_PATH = /usr/local/bin;
 				OTHER_LDFLAGS = (
 					"-sectcreate",
 					__TEXT,
 					__launchd_plist,
-					"helper_subprocess/FortunateSon-Launchd.plist",
+					"../helper_subprocess/FortunateSon-Launchd.plist",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.ridiculousfish.HexFiend.PrivilegedHelper;
 				PRODUCT_NAME = com.ridiculousfish.HexFiend.PrivilegedHelper;
@@ -2908,7 +2909,7 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_ENTITLEMENTS = configs/HexFiendUnsandbox.entitlements;
+				CODE_SIGN_ENTITLEMENTS = ../configs/HexFiendUnsandbox.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = YES;
@@ -2957,9 +2958,9 @@
 				DEAD_CODE_STRIPPING = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
-				INFOPLIST_FILE = app/Info.plist;
+				INFOPLIST_FILE = Info.plist;
 				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-traditional";
-				INFOPLIST_PREFIX_HEADER = version.h;
+				INFOPLIST_PREFIX_HEADER = ../version.h;
 				INFOPLIST_PREPROCESS = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2976,7 +2977,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.ridiculousfish.HexFiend;
 				PRODUCT_NAME = "Hex Fiend";
-				SWIFT_OBJC_BRIDGING_HEADER = "app/sources/HexFiend_2-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "sources/HexFiend_2-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				WRAPPER_EXTENSION = app;
@@ -2996,7 +2997,7 @@
 				);
 				PRODUCT_NAME = hexf;
 				SKIP_INSTALL = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "hexf/hexf-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "../hexf/hexf-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 			};
@@ -3016,7 +3017,7 @@
 				);
 				PRODUCT_NAME = hexf;
 				SKIP_INSTALL = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "hexf/hexf-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "../hexf/hexf-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 			};
 			name = "Release+MAS";
@@ -3147,9 +3148,9 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		A5A2F6602B2F5C580097F225 /* XCLocalSwiftPackageReference "framework" */ = {
+		A57B5E792B49286000FF958B /* XCLocalSwiftPackageReference ".." */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = framework;
+			relativePath = ..;
 		};
 /* End XCLocalSwiftPackageReference section */
 
@@ -3178,14 +3179,8 @@
 			package = A54281AF2B413542006DEF81 /* XCRemoteSwiftPackageReference "swift-argument-parser" */;
 			productName = ArgumentParser;
 		};
-		A59693382B32B40B00E62C1B /* HexFiend */ = {
+		A57B5E7A2B49286000FF958B /* HexFiend */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = A5A2F6602B2F5C580097F225 /* XCLocalSwiftPackageReference "framework" */;
-			productName = HexFiend;
-		};
-		A5A2F6612B2F5F010097F225 /* HexFiend */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = A5A2F6602B2F5C580097F225 /* XCLocalSwiftPackageReference "framework" */;
 			productName = HexFiend;
 		};
 		A5A34C1A26AD271900506AE7 /* Sparkle */ = {

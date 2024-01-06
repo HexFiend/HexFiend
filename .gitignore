@@ -1,10 +1,10 @@
 .DS_Store
-HexFiend_2.xcodeproj/project.xcworkspace/*
-HexFiend_2.xcodeproj/xcuserdata/*
+/app/HexFiend_2.xcodeproj/project.xcworkspace/*
+/app/HexFiend_2.xcodeproj/xcuserdata/*
 /DerivedData
 /vendor
 app/tcl/build
 app/tcl/tcl
 app/tcl/tcl.tar.gz
-/framework/.swiftpm/xcode/package.xcworkspace/xcuserdata/
-/framework/.swiftpm/xcode/xcuserdata/
+/.swiftpm/xcode/package.xcworkspace/xcuserdata/
+/.swiftpm/xcode/xcuserdata/

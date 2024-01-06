@@ -17,7 +17,7 @@ let package = Package(
     targets: [
         .target(
             name: "HexFiend",
-            path: "objc",
+            path: "framework/objc",
             exclude: [
                 "sources/BTree/BTree_Testing/",
             ],
