@@ -4,11 +4,13 @@ on: [push, pull_request]
 
 jobs:
   build:
-    runs-on: macos-latest
+    runs-on: macos-13
     steps:
     - uses: actions/checkout@v2
       with:
         submodules: recursive
+    - name: Set Xcode Version
+      run: sudo xcode-select -s /Applications/Xcode_15.1.app
     - name: Build Hex Fiend
       run: xcodebuild -scheme Release
     - name: Build Tests
