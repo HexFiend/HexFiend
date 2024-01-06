@@ -12,7 +12,6 @@
 #import "FortunateSon.h"
 #import <ServiceManagement/ServiceManagement.h>
 #import <Security/Authorization.h>
-#import <HexFiend/HFAssert.h>
 
 #include "fileport.h"
 

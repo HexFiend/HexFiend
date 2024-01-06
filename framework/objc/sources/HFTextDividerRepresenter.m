@@ -5,7 +5,8 @@
 //  Copyright 2011 ridiculous_fish. All rights reserved.
 //
 
-#import "TextDividerRepresenter.h"
+#import "HFTextDividerRepresenter.h"
+#import "HFFunctions.h"
 
 #define DIVIDER_WIDTH 8
 #define SHADOW_WIDTH 4

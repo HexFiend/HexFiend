@@ -6,7 +6,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <HexFiend/HFPrivilegedHelper.h>
+#import "HFPrivilegedHelper.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
