@@ -5,6 +5,8 @@
 //  Copyright 2009 __MyCompanyName__. All rights reserved.
 //
 
+#if ! HF_NO_PRIVILEGED_FILE_OPERATIONS
+
 #import "HFFrameworkPrefix.h"
 #import "FortunateSonIPCTypes.h"
 
@@ -34,3 +36,5 @@ struct HFProcessInfo_t {
 @end
 
 NS_ASSUME_NONNULL_END
+
+#endif
