@@ -81,7 +81,7 @@ static NSString *randTmpFileName(NSString *name) {
     const NSUInteger buffLen = 4099;
     unsigned char *buff = malloc(buffLen);
     XCTAssert(buff != NULL);
-    [randomDataOfLength(buffLen) getBytes:buff];
+    [randomDataOfLength(buffLen) getBytes:buff length:buffLen];
     /* Replace instances of searchChar with fillerChar */
     for (NSUInteger i=0; i < buffLen; i++) {
         if (buff[i] == searchChar) buff[i] = fillerChar;
