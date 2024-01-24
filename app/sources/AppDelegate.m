@@ -442,6 +442,7 @@ static NSComparisonResult compareFontDisplayNames(NSFont *a, NSFont *b, void *un
 }
 
 - (IBAction)openPreferences:(id)sender {
+#if 0
     if (!_prefs) {
         _prefs = [[NSWindowController alloc] initWithWindowNibName:@"Preferences"];
     }
@@ -450,6 +451,11 @@ static NSComparisonResult compareFontDisplayNames(NSFont *a, NSFont *b, void *un
         // so make sure the window title matches too.
         _prefs.window.title = NSLocalizedString(@"Settings", nil);
     }
+#else
+    if (!_prefs) {
+        _prefs = [[Settings alloc] init];
+    }
+#endif
     [_prefs showWindow:sender];
 }
 

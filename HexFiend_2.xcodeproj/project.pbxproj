@@ -136,6 +136,7 @@
 		A5B762FA2B32AE2F00CA25AE /* HFByteTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5B762F92B32AE2F00CA25AE /* HFByteTheme.swift */; };
 		A5B762FC2B32AE5600CA25AE /* HFByteTheme.m in Sources */ = {isa = PBXBuildFile; fileRef = A5B762FB2B32AE5600CA25AE /* HFByteTheme.m */; };
 		A5BAB4152AD7CB3200623A9F /* Encodings.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5BAB4142AD7CB3200623A9F /* Encodings.swift */; };
+		A5C92DA12B60699A00165412 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5C92DA02B60699A00165412 /* Settings.swift */; };
 		A5CEA41C20D5DF4400BCA488 /* HFStringEncoding.h in Headers */ = {isa = PBXBuildFile; fileRef = A5CEA41A20D5DF4400BCA488 /* HFStringEncoding.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A5CEA41D20D5DF4400BCA488 /* HFStringEncoding.m in Sources */ = {isa = PBXBuildFile; fileRef = A5CEA41B20D5DF4400BCA488 /* HFStringEncoding.m */; };
 		A5CEA42A20D5E0F500BCA488 /* HFNSStringEncoding.h in Headers */ = {isa = PBXBuildFile; fileRef = A5CEA42820D5E0F500BCA488 /* HFNSStringEncoding.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -547,6 +548,7 @@
 		A5B762F92B32AE2F00CA25AE /* HFByteTheme.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HFByteTheme.swift; path = app/sources/HFByteTheme.swift; sourceTree = "<group>"; };
 		A5B762FB2B32AE5600CA25AE /* HFByteTheme.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFByteTheme.m; path = sources/HFByteTheme.m; sourceTree = "<group>"; };
 		A5BAB4142AD7CB3200623A9F /* Encodings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Encodings.swift; path = app/sources/Encodings.swift; sourceTree = "<group>"; };
+		A5C92DA02B60699A00165412 /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Settings.swift; path = app/sources/Settings.swift; sourceTree = "<group>"; };
 		A5CEA41A20D5DF4400BCA488 /* HFStringEncoding.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFStringEncoding.h; path = sources/HFStringEncoding.h; sourceTree = "<group>"; };
 		A5CEA41B20D5DF4400BCA488 /* HFStringEncoding.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFStringEncoding.m; path = sources/HFStringEncoding.m; sourceTree = "<group>"; };
 		A5CEA42820D5E0F500BCA488 /* HFNSStringEncoding.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFNSStringEncoding.h; path = sources/HFNSStringEncoding.h; sourceTree = "<group>"; };
@@ -1434,6 +1436,7 @@
 				D8EE3EFD16F26689001C7C09 /* DiffRangeWindowController.m */,
 				A56D78141E7EF088001D1892 /* CLIController.h */,
 				A56D78151E7EF088001D1892 /* CLIController.m */,
+				A5C92DA02B60699A00165412 /* Settings.swift */,
 			);
 			name = Dialogs;
 			sourceTree = "<group>";
@@ -1959,6 +1962,7 @@
 				A59BC5922001FB9A0066860F /* HFTclTemplateController.m in Sources */,
 				A56D78161E7EF088001D1892 /* CLIController.m in Sources */,
 				D059E1291311C676001493B8 /* AppDebugging.m in Sources */,
+				A5C92DA12B60699A00165412 /* Settings.swift in Sources */,
 				A571E5922A3973140005B388 /* TemplateAutodetection.m in Sources */,
 				D01EF15413B2A0D300CC9283 /* HFTextDividerRepresenter.m in Sources */,
 				A5589AD22206E1C4000293A4 /* ExtendedAttributeDataDocument.m in Sources */,
