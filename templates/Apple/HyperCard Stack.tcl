@@ -18,6 +18,71 @@ proc c_string {label} {
 	move 1
 }
 
+proc align {} {
+	if { [expr ([pos] % 2) != 0] } {
+		move 1
+	}
+}
+
+proc parse_part {number} {
+	section "Part $number" {
+		set part_size [uint16]
+		uint16 "Part ID"
+		# 1 button, 2 field
+		uint8 "Part Type"
+		# 7 hidden, 5 dontWrap, 4 dontSearch, 3 sharedText, 2 fixedLineHeight, 1 autoTab, 0 disabled/lockText
+		uint8 "Part Flags"
+		set rect_top [int16]
+		set rect_left [int16]
+		set rect_bottom [int16]
+		set rect_right [int16]
+		entry "Rect" "$rect_left,$rect_top,$rect_right,$rect_bottom"
+		# 15 showName/autoSelect, 14 highlight/showLines, 13 wideMargins/autoHighlight
+		# 12 sharedHighlight/multipleLines, 11-8 buttonFamily, 0-3 style
+		uint16 "Ext. Part Flags"
+		uint16 "titleWidth/lastSelectedLine"
+		uint16 "icon/firstSelectedLine"
+		int16 "textAlignment"
+		int16 "textFontID"
+		uint16 "textSize"
+		uint16 "textStyle"
+		uint16 "lineHeight"
+		c_string "Name"
+		move 1
+		c_string "Script"
+		align
+	}
+}
+
+proc parse_contents {number} {
+	section "Contents $number" {
+		set part_id [int16]
+		if { $part_id < 0 } {
+			set real_id [expr -$part_id]
+			entry "For Card Part" "$real_id"
+		} else {
+			entry "For Bg Part" "$part_id"
+		}
+		set contents_size [uint16 "Contents Size"]
+		set pre_style_length_pos [pos]
+		set style_length_raw [uint16 "Raw Style/Text Length"]
+		set raw_contents_startpos [pos]
+		set raw_contents_endpos [expr $raw_contents_startpos + $contents_size - 2]
+		if { $style_length_raw > 32767 } {
+			set style_length [expr $style_length_raw - 32770]
+			bytes $style_length "Style Data"
+		} else {
+			goto [expr $pre_style_length_pos + 1]
+			entry "Style Data" "--"
+		}
+		set contents_length [expr $raw_contents_endpos - [pos]]
+		entry "Text Length" "$contents_length"
+		str $contents_length "macRoman" "Text"
+		
+		align
+	}
+}
+
 if [catch {
     for {set i 1} {![end]} {incr i} {
     	section "Block $i" {
@@ -32,7 +97,10 @@ if [catch {
 					uint32 "Number of Cards"
 					uint32 "Some Card ID"
 					uint32 "LIST ID"
-					move 16
+					set num_free_blocks [uint32 "Number of FREE Blocks"]
+					set size_free_blocks [uint32 "Size of FREE Blocks"]
+					uint32 "PRNT ID"
+					uint32 "Password Hash"
 					uint16 "User Level"
 					move 2
 					# 10 is cantPeek, 11 cantAbort, 13 privateAccess, 14 cantDelete, 15 cantModify
@@ -45,11 +113,22 @@ if [catch {
 					move 328
 					uint16 "Height"
 					uint16 "Width"
-					move 262
-					for {set p 1} {$p <= 40} {incr p} {
-						bytes 8 "Pattern $p Data"
+					move 260
+					section -collapsed "Patterns" {
+						for {set p 1} {$p <= 40} {incr p} {
+							bytes 8 "Pattern $p Data"
+						}
 					}
-					move 512
+					section "Free Blocks" {
+						for {set f 1} {$f <= $num_free_blocks} {incr f} {
+							section "Free Block $f" {
+								uint32 "Offset"
+								uint32 "Length"
+							}
+						}
+					}
+					goto 1536
+					# seems part before script is magical fixed size?
 					c_string "Script"
 				}
 				"LIST" {
@@ -92,32 +171,12 @@ if [catch {
 					str 4 "macRoman" "Script Lang. Type"
 					section "$num_parts Parts" {
 						for {set p 1} {$p <= $num_parts} {incr p} {
-							section "Part $p" {
-								set part_size [uint16]
-								uint16 "Part ID"
-								# 1 button, 2 field
-								uint8 "Part Type"
-								# 7 hidden, 5 dontWrap, 4 dontSearch, 3 sharedText, 2 fixedLineHeight, 1 autoTab, 0 disabled/lockText
-								uint8 "Part Flags"
-								set rect_top [int16]
-								set rect_left [int16]
-								set rect_bottom [int16]
-								set rect_right [int16]
-								entry "Rect" "$rect_left,$rect_top,$rect_right,$rect_bottom"
-								# 15 showName/autoSelect, 14 highlight/showLines, 13 wideMargins/autoHighlight
-								# 12 sharedHighlight/multipleLines, 11-8 buttonFamily, 0-3 style
-								uint16 "Ext. Part Flags"
-								uint16 "titleWidth/lastSelectedLine"
-								uint16 "icon/firstSelectedLine"
-								int16 "textAlignment"
-								int16 "textFontID"
-								uint16 "textSize"
-								uint16 "textStyle"
-								uint16 "lineHeight"
-								c_string "Name"
-								move 1
-								c_string "Script"
-							}
+							parse_part $p
+						}
+					}
+					section "$num_contents Contents" {
+						for {set p 1} {$p <= $num_contents} {incr p} {
+							parse_contents $p
 						}
 					}
 				}
@@ -137,34 +196,16 @@ if [catch {
 					# str 4 "macRoman" "Script Lang. Type"
 					section "$num_parts Parts" {
 						for {set p 1} {$p <= $num_parts} {incr p} {
-							section "Part $p" {
-								set part_size [uint16]
-								uint16 "Part ID"
-								# 1 button, 2 field
-								uint8 "Part Type"
-								# 7 hidden, 5 dontWrap, 4 dontSearch, 3 sharedText, 2 fixedLineHeight, 1 autoTab, 0 disabled/lockText
-								uint8 "Part Flags"
-								set rect_top [int16]
-								set rect_left [int16]
-								set rect_bottom [int16]
-								set rect_right [int16]
-								entry "Rect" "$rect_left,$rect_top,$rect_right,$rect_bottom"
-								# 15 showName/autoSelect, 14 highlight/showLines, 13 wideMargins/autoHighlight
-								# 12 sharedHighlight/multipleLines, 11-8 buttonFamily, 0-3 style
-								uint16 "Ext. Part Flags"
-								uint16 "titleWidth/lastSelectedLine"
-								uint16 "icon/firstSelectedLine"
-								int16 "textAlignment"
-								int16 "textFontID"
-								uint16 "textSize"
-								uint16 "textStyle"
-								uint16 "lineHeight"
-								c_string "Name"
-								move 1
-								c_string "Script"
-							}
+							parse_part $p
 						}
 					}
+					section "$num_contents Contents" {
+						for {set p 1} {$p <= $num_contents} {incr p} {
+							parse_contents $p
+						}
+					}
+					c_string "Name"
+					c_string "Script"
 				}
 				"TAIL" {
 					move 4
