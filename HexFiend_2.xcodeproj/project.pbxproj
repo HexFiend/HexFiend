@@ -1748,7 +1748,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastSwiftUpdateCheck = 1500;
-				LastUpgradeCheck = 1510;
+				LastUpgradeCheck = 1530;
 				ORGANIZATIONNAME = ridiculous_fish;
 				TargetAttributes = {
 					8D1107260486CEB800E47090 = {
