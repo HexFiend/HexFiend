@@ -217,7 +217,7 @@
 }
 
 - (void)setData:(NSData *)data {
-    if ([data length] == 0 && [cachedData length] == 0) return; //prevent an infinite regress where someone tries to set a nil data on us
+    if (data == nil && [cachedData length] == 0) return; //prevent an infinite regress where someone tries to set a nil data on us
     if (data == nil || data != cachedData) {
         cachedData = [data copy];
         HFByteArray *newArray = [[HFBTreeByteArray alloc] init];
