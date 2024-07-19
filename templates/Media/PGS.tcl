@@ -56,16 +56,6 @@ proc pgs_segment_type {} {
     return $type
 }
 
-proc pgs_last_in_sequence {} {
-    set raw [format "%#02X" [uint8]]
-    switch $raw {
-        0X40 {set flag "Last in Sequence"}
-        0X80 {set flag "First in Sequence"}
-        0XC0 {set flag "First and last in Sequence"}
-    }
-    entry "Last in Sequence Flag" $flag 1 [expr [pos] - 1]
-}
-
 proc pds_segment {size} {
     uint8 "Palette ID"
     uint8 "Palette Version Number"
@@ -90,11 +80,26 @@ proc pds_segment {size} {
 proc ods_segment {size} {
     uint16 "Object ID"
     uint8 "Object Version Number"
-    pgs_last_in_sequence
-    uint24 "Object Data Length"
-    uint16 "Width"
-    uint16 "Height"
-    bytes [expr $size - 11] "Object Data"
+    set last_in_sequence_flag [uint8]
+    if {($last_in_sequence_flag & 0x80) > 0} {
+        # first in sequence
+        if {($last_in_sequence_flag & 0x40) > 0} {
+            entry "Last in Sequence Flag" "First and last in Sequence" 1 [expr [pos] - 1]
+        } else {
+            entry "Last in Sequence Flag" "First in Sequence" 1 [expr [pos] - 1]
+        }
+        uint24 "Object Data Length"
+        uint16 "Width"
+        uint16 "Height"
+        bytes [expr $size - 11] "Object Data"
+    } else {
+        if {($last_in_sequence_flag & 0x40) > 0} {
+            entry "Last in Sequence Flag" "Last in Sequence" 1 [expr [pos] - 1]
+        } else {
+            entry "Last in Sequence Flag" [format "%02X" $last_in_sequence_flag] 1 [expr [pos] - 1]
+        }
+        bytes [expr $size - 4] "Object Data"
+    }
 }
 
 proc pcs_segment {} {
