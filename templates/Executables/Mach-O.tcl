@@ -16,6 +16,11 @@ include "Utility/General.tcl"
 #     - https://eclecticlight.co/2020/07/28/universal-binaries-inside-fat-headers/
 #     - https://www.objc.io/issues/6-build-tools/mach-o-executables/#mach-o
 #     - https://medium.com/tokopedia-engineering/a-curious-case-of-mach-o-executable-26d5ecadd995
+#     - https://math-atlas.sourceforge.net/devel/assembly/MachORuntime.pdf
+#     - https://en.wikipedia.org/wiki/Mach-O
+#     - https://github.com/ziglang/zig/blob/master/lib/std/macho.zig
+#     - https://github.com/llvm/llvm-project/blob/main/lld/MachO/InputFiles.cpp
+#     - https://pkg.go.dev/github.com/blacktop/go-macho/types
 #
 ####################################################################################################
 
@@ -312,13 +317,81 @@ proc lc_version_min_macosx {main_offset command_size} {
 }
 
 ####################################################################################################
-
+# Many of the comments in this routine were colaesced from sources linked at the top of this file.
 proc lc_symtab_nlist_64 {stroff count} {
     section "\[ $count \]" {
         set n_strx [uint32 n_strx]
         set n_type [uint8 n_type]
+
+        # N_STAB fields. See <mach-o/stab.h> for the values these bits represent.
+        if [expr ($n_type & 0xe0) != 0x00] { entry "    N_STAB" "" 1 [expr [pos] - 1] }
+
+        # If this bit is on, this symbol is marked as having limited global scope. When the file is
+        # fed to the static linker, it clears the `N_EXT` bit for each symbol with the `N_PEXT` bit
+        # set. (The ld option -keep_private_externs turns off this behavior.)
+        if [expr ($n_type & 0x10) == 0x10] { entry "    N_PEXT" "" 1 [expr [pos] - 1] }
+
+        # N_TYPE fields and their interpretations
+        # The symbol is undefined. Undefined symbols are symbols referenced in this module but
+        # defined in a different module. 
+        if [expr ($n_type & 0x0e) == 0x00] { entry "    N_UNDF" "" 1 [expr [pos] - 1] }
+        # The symbol is absolute. The linker does not update the value of an absolute symbol.
+        if [expr ($n_type & 0x0e) == 0x02] { entry "    N_ABS" "" 1 [expr [pos] - 1] }
+        # The symbol is defined in the section number given in n_sect.
+        if [expr ($n_type & 0x0e) == 0x0e] { entry "    N_SECT" "" 1 [expr [pos] - 1] }
+        # The symbol is undefined and the image is using a prebound value for the symbol.
+        if [expr ($n_type & 0x0e) == 0x0c] { entry "    N_PBUD" "" 1 [expr [pos] - 1] }
+        # The symbol is defined to be the same as another symbol. The n_value field is an index into
+        # the string table specifying the name of the other symbol. When that symbol is linked, both
+        # this and the other symbol point to the same defined type and value.
+        if [expr ($n_type & 0x0e) == 0x0a] { entry "    N_INDR" "" 1 [expr [pos] - 1] }
+
+        # If this bit is on, this symbol is an external symbol, a symbol that is either defined
+        # outside this file or that is defined in this file but can be referenced by other files.
+        if [expr ($n_type & 0x01) == 0x01] { entry "    N_EXT" "" 1 [expr [pos] - 1] }
+
+        # An integer specifying the number of the section that this symbol can be found in, or
+        # NO_SECT if the symbol is not to be found in any section of this image. The sections are
+        # contiguously numbered across segments, starting from 1, according to the order they appear
+        # in the LC_SEGMENT load commands.
         set n_sect [uint8 n_sect]
+        # A 16-bit value providing additional information about the nature of this symbol.
         set n_desc [uint16 n_desc]
+
+        # Some of these flags have several interpretations. See <mach-o/nlist.h> for more details.
+        # Must be set for any symbol that might be referenced by another image. The strip tool uses
+        # this bit to avoid removing symbols that must exist: If the symbol has this bit set, strip
+        # does not strip it.
+        if [expr ($n_desc & 0x0010) == 0x0010] { entry "    REFERENCED_DYNAMICALLY" "" 2 [expr [pos] - 2] }
+        # Used by the dynamic linker at runtime. Do not set this bit in a linked image.
+        # In a relocatable (.o) file, this bit is the `N_NO_DEAD_STRIP` bit, which tells the static
+        # linker not to dead strip this symbol. Since this bit should not be set in a linked image,
+        # we will assume if it is set, it means `N_NO_DEAD_STRIP`.
+        if [expr ($n_desc & 0x0020) == 0x0020] { entry "    N_NO_DEAD_STRIP" "" 2 [expr [pos] - 2] }
+        # Indicates that this symbol is a weak reference. If the dynamic linker cannot find a
+        # definition for this symbol, it sets the address of this symbol to zero. The static linker
+        # sets this symbol given the appropriate weak-linking flags.
+        if [expr ($n_desc & 0x0040) == 0x0040] { entry "    N_WEAK_REF" "" 2 [expr [pos] - 2] }
+        # Indicates that this symbol is a weak definition. If the static linker or the dynamic
+        # linker finds another (non-weak) definition for this symbol, the weak definition is
+        # ignored. Only symbols in a coalesced section can be marked as a weak definition.
+        if [expr ($n_desc & 0x0080) == 0x0080] { entry "    N_WEAK_DEF" "" 2 [expr [pos] - 2] }
+        # I couldn't find an explicit description of this bit. See this link for details on what ARM
+        # Thumb is: https://stackoverflow.com/a/10638621/153535. Presumably if this bit is set, this
+        # symbol definition is written against the ARM Thumb instruction set.
+        if [expr ($n_desc & 0x0008) == 0x0008] { entry "    N_ARM_THUMB_DEF" "" 2 [expr [pos] - 2] }
+        # Indicates that the function is actually a resolver function and should be called to get
+        # the address of the real function to use. This bit is only available in .o files.
+        if [expr ($n_desc & 0x0100) == 0x0100] { entry "    N_SYMBOL_RESOLVER" "" 2 [expr [pos] - 2] }
+        # A section can have multiple symbols. A symbol that does not have the N_ALT_ENTRY attribute
+        # indicates a beginning of a subsection. Therefore, by definition, a symbol is always
+        # present at the beginning of each subsection. A symbol with N_ALT_ENTRY attribute does not
+        # start a new subsection and can point to a middle of a subsection.
+        if [expr ($n_desc & 0x0200) == 0x0200] { entry "    N_ALT_ENTRY" "" 2 [expr [pos] - 2] }
+        # Indicates that the symbol is used infrequently and the linker should order it towards the
+        # end of the section.
+        if [expr ($n_desc & 0x0400) == 0x0400] { entry "    N_COLD_FUNC" "" 2 [expr [pos] - 2] }
+
         set n_value [uint64 n_value]
         jumpa [expr $stroff + $n_strx] {
             set symbol_name [cstr "ascii" symbol_name]
