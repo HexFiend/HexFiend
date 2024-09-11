@@ -538,7 +538,7 @@ proc lc_symtab_nlist_64 {stroff count} {
             # end of the section.
             if [expr ($n_desc & 0x0400) == 0x0400] { entry "    N_COLD_FUNC" "" 2 [expr [pos] - 2] }
 
-            set n_value [uint64 n_value]
+            set n_value [uint64 -hex n_value]
         }
     }
 }
