@@ -16,6 +16,11 @@ include "Utility/General.tcl"
 #     - https://eclecticlight.co/2020/07/28/universal-binaries-inside-fat-headers/
 #     - https://www.objc.io/issues/6-build-tools/mach-o-executables/#mach-o
 #     - https://medium.com/tokopedia-engineering/a-curious-case-of-mach-o-executable-26d5ecadd995
+#     - https://math-atlas.sourceforge.net/devel/assembly/MachORuntime.pdf
+#     - https://en.wikipedia.org/wiki/Mach-O
+#     - https://github.com/ziglang/zig/blob/master/lib/std/macho.zig
+#     - https://github.com/llvm/llvm-project/blob/main/lld/MachO/InputFiles.cpp
+#     - https://pkg.go.dev/github.com/blacktop/go-macho/types
 #
 ####################################################################################################
 
@@ -313,17 +318,228 @@ proc lc_version_min_macosx {main_offset command_size} {
 
 ####################################################################################################
 
+proc lc_symtab_nlist_64_stab_str {type} {
+    switch $type {
+        32 { set result  "N_GSYM" }
+        34 { set result  "N_FNAME" }
+        36 { set result  "N_FUN" }
+        38 { set result  "N_STSYM" }
+        40 { set result  "N_LCSYM" }
+        46 { set result  "N_BNSYM" }
+        48 { set result  "N_PC" }
+        50 { set result  "N_AST" }
+        60 { set result  "N_OPT" }
+        64 { set result  "N_RSYM" }
+        68 { set result  "N_SLINE" }
+        78 { set result  "N_ENSYM" }
+        96 { set result  "N_SSYM" }
+        100 { set result "N_SO" }
+        102 { set result "N_OSO" }
+        104 { set result "N_LIB" }
+        128 { set result "N_LSYM" }
+        130 { set result "N_BINCL" }
+        132 { set result "N_SOL" }
+        134 { set result "N_PARAMS" }
+        136 { set result "N_VERSION" }
+        138 { set result "N_OLEVEL" }
+        160 { set result "N_PSYM" }
+        162 { set result "N_EINCL" }
+        164 { set result "N_ENTRY" }
+        192 { set result "N_LBRAC" }
+        194 { set result "N_EXCL" }
+        224 { set result "N_RBRAC" }
+        226 { set result "N_BCOMM" }
+        228 { set result "N_ECOMM" }
+        232 { set result "N_ECOML" }
+        254 { set result "N_LENG" }
+        default { die "unknown STAB value ($type)" }
+    }
+    return $result
+}
+
+####################################################################################################
+# Many of the comments in this routine were colaesced from sources linked at the top of this file.
+proc lc_symtab_nlist_64_stab {symbol_name type} {
+    set stab_str [lc_symtab_nlist_64_stab_str $type]
+    entry "    N_STAB" $stab_str 1 [expr [pos] - 1]
+    set symbol_name_length [string length $symbol_name]
+
+    if {$symbol_name_length != 0} {
+        set symbol_name "'$symbol_name'"
+    }
+
+    sectionvalue "($stab_str) $symbol_name"
+
+    # Gleaned from <mach-o/stab.h>
+    #
+    # Hex  | Dec | STAB      | Info w/ name,type,sect,desc,value interpretations
+    # -----|-----|-----------|--------------------------------------------------
+    # 0x20 | 32  | N_GSYM    | global symbol: name,,NO_SECT,type,0
+    # 0x22 | 34  | N_FNAME   | procedure name (f77 kludge): name,,NO_SECT,0,0
+    # 0x24 | 36  | N_FUN     | procedure: name,,n_sect,linenumber,address
+    # 0x26 | 38  | N_STSYM   | static symbol: name,,n_sect,type,address
+    # 0x28 | 40  | N_LCSYM   | .lcomm symbol: name,,n_sect,type,address
+    # 0x2e | 46  | N_BNSYM   | begin nsect sym: 0,,n_sect,0,address
+    # 0x30 | 48  | N_PC      | global pascal symbol: name,,NO_SECT,subtype,line
+    # 0x32 | 50  | N_AST     | AST file path: name,,NO_SECT,0,0
+    # 0x3c | 60  | N_OPT     | emitted with gcc2_compiled and in gcc source
+    # 0x40 | 64  | N_RSYM    | register sym: name,,NO_SECT,type,register
+    # 0x44 | 68  | N_SLINE   | src line: 0,,n_sect,linenumber,address
+    # 0x4e | 78  | N_ENSYM   | end nsect sym: 0,,n_sect,0,address
+    # 0x60 | 96  | N_SSYM    | structure elt: name,,NO_SECT,type,struct_offset
+    # 0x64 | 100 | N_SO      | source file name: name,,n_sect,0,address
+    # 0x66 | 102 | N_OSO     | object file name: name,,cpusubtype?,1,st_mtime
+    # 0x68 | 104 | N_LIB     | dynamic library file name: name,,NO_SECT,0,0
+    # 0x80 | 128 | N_LSYM    | local sym: name,,NO_SECT,type,offset
+    # 0x82 | 130 | N_BINCL   | include file beginning: name,,NO_SECT,0,sum
+    # 0x84 | 132 | N_SOL     | #included file name: name,,n_sect,0,address
+    # 0x86 | 134 | N_PARAMS  | compiler parameters: name,,NO_SECT,0,0
+    # 0x88 | 136 | N_VERSION | compiler version: name,,NO_SECT,0,0
+    # 0x8A | 138 | N_OLEVEL  | compiler -O level: name,,NO_SECT,0,0
+    # 0xa0 | 160 | N_PSYM    | parameter: name,,NO_SECT,type,offset
+    # 0xa2 | 162 | N_EINCL   | include file end: name,,NO_SECT,0,0
+    # 0xa4 | 164 | N_ENTRY   | alternate entry: name,,n_sect,linenumber,address
+    # 0xc0 | 192 | N_LBRAC   | left bracket: 0,,NO_SECT,nesting level,address
+    # 0xc2 | 194 | N_EXCL    | deleted include file: name,,NO_SECT,0,sum
+    # 0xe0 | 224 | N_RBRAC   | right bracket: 0,,NO_SECT,nesting level,address
+    # 0xe2 | 226 | N_BCOMM   | begin common: name,,NO_SECT,0,0
+    # 0xe4 | 228 | N_ECOMM   | end common: name,,n_sect,0,0
+    # 0xe8 | 232 | N_ECOML   | end common (local name): 0,,n_sect,0,address
+    # 0xfe | 254 | N_LENG    | second stab entry with length information
+
+    switch $type {
+        34 -
+        50 -
+        104 -
+        134 -
+        136 -
+        138 -
+        162 -
+        226 {
+            hex 1 NO_SECT
+            hex 2 zero
+            hex 8 zero
+        }
+        36 -
+        68 -
+        164 {
+            set n_sect [uint8 n_sect]
+            set line_number [uint16 line_number]
+            set address [uint64 -hex address]
+            set addr_hex [format 0x%x $address]
+            sectionvalue "($stab_str) $n_sect $addr_hex $symbol_name"
+        }
+        46 -
+        78 -
+        100 -
+        132 -
+        232 {
+            set n_sect [uint8 n_sect]
+            set line_number [uint16 line_number]
+            set address [uint64 -hex address]
+            set addr_hex [format 0x%x $address]
+            sectionvalue "($stab_str) $n_sect $addr_hex $symbol_name"
+        }
+        default {
+            uint8 n_sect
+            uint16 n_desc
+            uint64 n_value
+        }
+    }
+}
+
+####################################################################################################
+# Many of the comments in this routine were colaesced from sources linked at the top of this file.
 proc lc_symtab_nlist_64 {stroff count} {
     section "\[ $count \]" {
         set n_strx [uint32 n_strx]
-        set n_type [uint8 n_type]
-        set n_sect [uint8 n_sect]
-        set n_desc [uint16 n_desc]
-        set n_value [uint64 n_value]
+
         jumpa [expr $stroff + $n_strx] {
-            set symbol_name [cstr "ascii" symbol_name]
+            set symbol_name [cstr "ascii"]
         }
+
         sectionvalue "$symbol_name"
+
+        set symbol_name_length [string length $symbol_name]
+
+        if {$symbol_name_length != 0} {
+            entry "    symbol name" $symbol_name $symbol_name_length [expr $stroff + $n_strx + 1]
+        }
+
+        set n_type [uint8 n_type]
+
+        # N_STAB entries; handle them separately.
+        if [expr ($n_type & 0xe0) != 0x00] {
+            lc_symtab_nlist_64_stab $symbol_name $n_type
+        } else {
+            # If this bit is on, this symbol is marked as having limited global scope. When the file is
+            # fed to the static linker, it clears the `N_EXT` bit for each symbol with the `N_PEXT` bit
+            # set. (The ld option -keep_private_externs turns off this behavior.)
+            if [expr ($n_type & 0x10) == 0x10] { entry "    N_PEXT" "" 1 [expr [pos] - 1] }
+
+            # N_TYPE fields and their interpretations
+            # The symbol is undefined. Undefined symbols are symbols referenced in this module but
+            # defined in a different module. 
+            if [expr ($n_type & 0x0e) == 0x00] { entry "    N_UNDF" "" 1 [expr [pos] - 1] }
+            # The symbol is absolute. The linker does not update the value of an absolute symbol.
+            if [expr ($n_type & 0x0e) == 0x02] { entry "    N_ABS" "" 1 [expr [pos] - 1] }
+            # The symbol is defined in the section number given in n_sect.
+            if [expr ($n_type & 0x0e) == 0x0e] { entry "    N_SECT" "" 1 [expr [pos] - 1] }
+            # The symbol is undefined and the image is using a prebound value for the symbol.
+            if [expr ($n_type & 0x0e) == 0x0c] { entry "    N_PBUD" "" 1 [expr [pos] - 1] }
+            # The symbol is defined to be the same as another symbol. The n_value field is an index into
+            # the string table specifying the name of the other symbol. When that symbol is linked, both
+            # this and the other symbol point to the same defined type and value.
+            if [expr ($n_type & 0x0e) == 0x0a] { entry "    N_INDR" "" 1 [expr [pos] - 1] }
+
+            # If this bit is on, this symbol is an external symbol, a symbol that is either defined
+            # outside this file or that is defined in this file but can be referenced by other files.
+            if [expr ($n_type & 0x01) == 0x01] { entry "    N_EXT" "" 1 [expr [pos] - 1] }
+
+            # An integer specifying the number of the section that this symbol can be found in, or
+            # NO_SECT if the symbol is not to be found in any section of this image. The sections are
+            # contiguously numbered across segments, starting from 1, according to the order they appear
+            # in the LC_SEGMENT load commands.
+            set n_sect [uint8 n_sect]
+            # A 16-bit value providing additional information about the nature of this symbol.
+            set n_desc [uint16 n_desc]
+
+            # Some of these flags have several interpretations. See <mach-o/nlist.h> for more details.
+            # Must be set for any symbol that might be referenced by another image. The strip tool uses
+            # this bit to avoid removing symbols that must exist: If the symbol has this bit set, strip
+            # does not strip it.
+            if [expr ($n_desc & 0x0010) == 0x0010] { entry "    REFERENCED_DYNAMICALLY" "" 2 [expr [pos] - 2] }
+            # Used by the dynamic linker at runtime. Do not set this bit in a linked image.
+            # In a relocatable (.o) file, this bit is the `N_NO_DEAD_STRIP` bit, which tells the static
+            # linker not to dead strip this symbol. Since this bit should not be set in a linked image,
+            # we will assume if it is set, it means `N_NO_DEAD_STRIP`.
+            if [expr ($n_desc & 0x0020) == 0x0020] { entry "    N_NO_DEAD_STRIP" "" 2 [expr [pos] - 2] }
+            # Indicates that this symbol is a weak reference. If the dynamic linker cannot find a
+            # definition for this symbol, it sets the address of this symbol to zero. The static linker
+            # sets this symbol given the appropriate weak-linking flags.
+            if [expr ($n_desc & 0x0040) == 0x0040] { entry "    N_WEAK_REF" "" 2 [expr [pos] - 2] }
+            # Indicates that this symbol is a weak definition. If the static linker or the dynamic
+            # linker finds another (non-weak) definition for this symbol, the weak definition is
+            # ignored. Only symbols in a coalesced section can be marked as a weak definition.
+            if [expr ($n_desc & 0x0080) == 0x0080] { entry "    N_WEAK_DEF" "" 2 [expr [pos] - 2] }
+            # I couldn't find an explicit description of this bit. See this link for details on what ARM
+            # Thumb is: https://stackoverflow.com/a/10638621/153535. Presumably if this bit is set, this
+            # symbol definition is written against the ARM Thumb instruction set.
+            if [expr ($n_desc & 0x0008) == 0x0008] { entry "    N_ARM_THUMB_DEF" "" 2 [expr [pos] - 2] }
+            # Indicates that the function is actually a resolver function and should be called to get
+            # the address of the real function to use. This bit is only available in .o files.
+            if [expr ($n_desc & 0x0100) == 0x0100] { entry "    N_SYMBOL_RESOLVER" "" 2 [expr [pos] - 2] }
+            # A section can have multiple symbols. A symbol that does not have the N_ALT_ENTRY attribute
+            # indicates a beginning of a subsection. Therefore, by definition, a symbol is always
+            # present at the beginning of each subsection. A symbol with N_ALT_ENTRY attribute does not
+            # start a new subsection and can point to a middle of a subsection.
+            if [expr ($n_desc & 0x0200) == 0x0200] { entry "    N_ALT_ENTRY" "" 2 [expr [pos] - 2] }
+            # Indicates that the symbol is used infrequently and the linker should order it towards the
+            # end of the section.
+            if [expr ($n_desc & 0x0400) == 0x0400] { entry "    N_COLD_FUNC" "" 2 [expr [pos] - 2] }
+
+            set n_value [uint64 -hex n_value]
+        }
     }
 }
 

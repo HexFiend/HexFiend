@@ -711,7 +711,10 @@ DEFINE_COMMAND(sleb128)
     BOOL utcOffsetAllowed = NO;
     size_t argInfoTableSize = 3;
     switch (command) {
+        case command_uint8:
+        case command_uint16:
         case command_uint32:
+        case command_uint64:
             hexSwitchAllowed = YES;
             ++argInfoTableSize;
             break;
