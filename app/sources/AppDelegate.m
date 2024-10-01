@@ -283,16 +283,9 @@ static NSComparisonResult compareFontDisplayNames(NSFont *a, NSFont *b, void *un
 }
 
 - (BOOL)validateMenuItem:(NSMenuItem *)item {
-    const SEL sel = [item action];
-    BaseDataDocument *document = NSDocumentController.sharedDocumentController.currentDocument;
-    const BOOL isDiffDocument = [document isKindOfClass:[DiffDocument class]];
-    if (isDiffDocument) {
-        if (sel == @selector(diffFrontDocuments:) ||
-            sel == @selector(diffFrontDocumentsByRange:)) {
-            return NO;
-        }
-    }
+    SEL sel = [item action];
     if (sel == @selector(setFontFromMenuItem:)) {
+        BaseDataDocument *document = [[NSDocumentController sharedDocumentController] currentDocument];
         BOOL check = NO;
         if (document) {
             NSFont *font = [document font];
