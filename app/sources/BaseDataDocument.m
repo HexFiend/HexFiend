@@ -449,13 +449,13 @@ static inline Class preferredByteArrayClass(void) {
     controller.displayedLineRange = displayedLineRange;
 }
 
-- (BOOL)isDiffDocument {
-    return [self isKindOfClass:NSClassFromString(@"DiffDocument")];
+- (BOOL)shouldSaveWindowState {
+    return YES;
 }
 
 - (void)saveWindowState
 {
-    if (loadingWindow || self.isDiffDocument) {
+    if (loadingWindow || !self.shouldSaveWindowState) {
         return;
     }
     NSInteger bpl = [controller bytesPerLine];
@@ -526,7 +526,7 @@ static inline Class preferredByteArrayClass(void) {
         }
     }
 
-    if (!self.isDiffDocument && [ud objectForKey:@"WindowOrigin"] && [ud objectForKey:@"WindowHeight"]) {
+    if ([self shouldSaveWindowState] && [ud objectForKey:@"WindowOrigin"] && [ud objectForKey:@"WindowHeight"]) {
         NSRect frame = [[self window] frame];
         frame.origin = NSPointFromString([ud objectForKey:@"WindowOrigin"]);
         frame.size.height = [ud doubleForKey:@"WindowHeight"];
@@ -565,22 +565,22 @@ static inline Class preferredByteArrayClass(void) {
     [self setupWindowEnforcingBytesPerLine:oldBPL];
 }
 
-- (void)lineCountingViewChangedWidth:(NSNotification *)note {
-    HFLineCountingRepresenter *rep = note.object;
-    HFASSERT(rep == lineCountingRepresenter);
-    [self lineCountingRepChangedWidth:rep associatedColumnRep:columnRepresenter];
-}
-
 /* When our line counting view needs more space, we increase the size of our window, and also move it left by the same amount so that the other content does not appear to move. */
-- (void)lineCountingRepChangedWidth:(HFLineCountingRepresenter *)rep associatedColumnRep:(HFColumnRepresenter *)columnRep {
-    NSView *lineCountingView = [rep view];
-
-    CGFloat newWidth = [rep preferredWidth];
-
+- (void)lineCountingViewChangedWidth:(NSNotification *)note {
+    USE(note);
+    if (note.object != lineCountingRepresenter) {
+        HFASSERT([note.object isKindOfClass:[HFLineCountingRepresenter class]]);
+        // TODO: Probably DiffDocument's 2nd line counting rep.
+        return;
+    }
+    NSView *lineCountingView = [lineCountingRepresenter view];
+    
+    CGFloat newWidth = [lineCountingRepresenter preferredWidth];
+    
     // Always update column representer
-    [columnRep setLineCountingWidth:newWidth];
+    [columnRepresenter setLineCountingWidth:newWidth];
 
-    /* Don't do any window changing if we're not in a window yet */
+    /* Don't do anything window changing if we're not in a window yet */
     NSWindow *lineCountingViewWindow = [lineCountingView window];
     if (! lineCountingViewWindow) return;
     
@@ -606,19 +606,18 @@ static inline Class preferredByteArrayClass(void) {
 
 - (void)columnRepresenterViewHeightChanged:(NSNotification *)note {
     USE(note);
-    HFColumnRepresenter *rep = note.object;
-    HFASSERT([rep isKindOfClass:[HFColumnRepresenter class]]);
+    HFASSERT([note object] == columnRepresenter);
 
-    NSView *columnView = [rep view];
-
-    /* Don't do any window changing if we're not in a window yet */
+    NSView *columnView = [columnRepresenter view];
+    
+    /* Don't do anything window changing if we're not in a window yet */
     NSWindow *columnViewWindow = [columnView window];
     if (!columnViewWindow) {
         return;
     }
     
-    CGFloat newHeight = [rep preferredHeight];
-
+    CGFloat newHeight = [columnRepresenter preferredHeight];
+    
     HFASSERT(columnViewWindow == [self window]);
     
     CGFloat currentHeight = columnView.frame.size.height;
@@ -984,10 +983,6 @@ static inline Class preferredByteArrayClass(void) {
     } else {
         [NSUserDefaults.standardUserDefaults removeObjectForKey:@"ByteTheme"];
     }
-    [self setByteTheme:byteTheme];
-}
-
-- (void)setByteTheme:(HFByteTheme *)byteTheme {
     [controller setByteTheme:byteTheme];
 }
 
@@ -1013,15 +1008,6 @@ static inline Class preferredByteArrayClass(void) {
 
 - (BOOL)validateMenuItem:(NSMenuItem *)item {
     SEL action = [item action];
-    if (self.isDiffDocument) {
-        if (action == @selector(saveDocument:) ||
-            action == @selector(saveDocumentAs:) ||
-            action == @selector(setBookmark:) ||
-            action == @selector(deleteBookmark:) ||
-            action == @selector(setShowCalloutsFromMenuItem:)) {
-            return NO;
-        }
-    }
     if (action == @selector(toggleVisibleControllerView:)) {
         NSUInteger arrayIndex = [item tag] - 1;
         NSArray *representers = self.representers;
