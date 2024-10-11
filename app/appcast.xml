@@ -6,7 +6,7 @@
 		<description>HexFiend 2 Release Notes</description>
 		<language>en</language>
 		<item>
-			<title>HexFiend 2.18.1</title>
+			<title>HexFiend 2.18</title>
 			<sparkle:releaseNotesLink>https://hexfiend.github.io/HexFiend/ReleaseNotes.html</sparkle:releaseNotesLink>
 			<enclosure
 				url="https://github.com/HexFiend/HexFiend/releases/download/v2.18.0/Hex_Fiend_2.18.dmg"
