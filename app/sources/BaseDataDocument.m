@@ -449,13 +449,9 @@ static inline Class preferredByteArrayClass(void) {
     controller.displayedLineRange = displayedLineRange;
 }
 
-- (BOOL)shouldSaveWindowState {
-    return YES;
-}
-
 - (void)saveWindowState
 {
-    if (loadingWindow || !self.shouldSaveWindowState) {
+    if (loadingWindow) {
         return;
     }
     NSInteger bpl = [controller bytesPerLine];
@@ -526,7 +522,7 @@ static inline Class preferredByteArrayClass(void) {
         }
     }
 
-    if ([self shouldSaveWindowState] && [ud objectForKey:@"WindowOrigin"] && [ud objectForKey:@"WindowHeight"]) {
+    if ([ud objectForKey:@"WindowOrigin"] && [ud objectForKey:@"WindowHeight"]) {
         NSRect frame = [[self window] frame];
         frame.origin = NSPointFromString([ud objectForKey:@"WindowOrigin"]);
         frame.size.height = [ud doubleForKey:@"WindowHeight"];
