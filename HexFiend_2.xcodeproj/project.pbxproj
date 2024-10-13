@@ -77,7 +77,8 @@
 		A5589ACC2206D238000293A4 /* OpenAccessoryView.xib in Resources */ = {isa = PBXBuildFile; fileRef = A5589ACA2206D238000293A4 /* OpenAccessoryView.xib */; };
 		A5589ACF2206D3C8000293A4 /* HFOpenAccessoryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A5589ACE2206D3C8000293A4 /* HFOpenAccessoryViewController.m */; };
 		A5589AD22206E1C4000293A4 /* ExtendedAttributeDataDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = A5589AD12206E1C4000293A4 /* ExtendedAttributeDataDocument.m */; };
-		A5628AAB21D8561D00911ABB /* Tcl_ParseArgsObjv.c in Sources */ = {isa = PBXBuildFile; fileRef = A5628AA921D8561C00911ABB /* Tcl_ParseArgsObjv.c */; settings = {COMPILER_FLAGS = "-w"; }; };
+		A56371DA2A5BEE3400BE5187 /* Tcl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A56371D92A5BEE3400BE5187 /* Tcl.framework */; };
+		A56371DB2A5BEE3400BE5187 /* Tcl.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = A56371D92A5BEE3400BE5187 /* Tcl.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A568D70C2B43D22900159993 /* HFTextDividerRepresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = D01EF15213B2A0D300CC9283 /* HFTextDividerRepresenter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A568D70E2B43D46200159993 /* ScrollViewRepresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A568D70D2B43D46200159993 /* ScrollViewRepresenter.swift */; };
 		A56D78161E7EF088001D1892 /* CLIController.m in Sources */ = {isa = PBXBuildFile; fileRef = A56D78151E7EF088001D1892 /* CLIController.m */; };
@@ -124,7 +125,6 @@
 		A594F0642495EAD900DCACD3 /* HFBinaryGlyphTable.h in Headers */ = {isa = PBXBuildFile; fileRef = A594F0602495EAD800DCACD3 /* HFBinaryGlyphTable.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A59BC5712001AB8C0066860F /* HFBinaryTemplateRepresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = A59BC5702001AB8C0066860F /* HFBinaryTemplateRepresenter.m */; };
 		A59BC5922001FB9A0066860F /* HFTclTemplateController.m in Sources */ = {isa = PBXBuildFile; fileRef = A59BC5912001FB9A0066860F /* HFTclTemplateController.m */; };
-		A59BC5942001FD0F0066860F /* Tcl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A59BC5932001FD0F0066860F /* Tcl.framework */; };
 		A59BC59820020B480066860F /* HFBinaryTemplateController.m in Sources */ = {isa = PBXBuildFile; fileRef = A59BC59620020B480066860F /* HFBinaryTemplateController.m */; };
 		A59BC59C2002113F0066860F /* HFTemplateNode.m in Sources */ = {isa = PBXBuildFile; fileRef = A59BC59B2002113F0066860F /* HFTemplateNode.m */; };
 		A59BC59F2002E63C0066860F /* HFTemplateController.m in Sources */ = {isa = PBXBuildFile; fileRef = A59BC59E2002E63C0066860F /* HFTemplateController.m */; };
@@ -403,6 +403,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				A56371DB2A5BEE3400BE5187 /* Tcl.framework in Copy Frameworks */,
 				D047E4CA1022E1CA00EF307B /* HexFiend.framework in Copy Frameworks */,
 			);
 			name = "Copy Frameworks";
@@ -489,8 +490,7 @@
 		A5589ACE2206D3C8000293A4 /* HFOpenAccessoryViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFOpenAccessoryViewController.m; path = app/sources/HFOpenAccessoryViewController.m; sourceTree = "<group>"; };
 		A5589AD02206E1C4000293A4 /* ExtendedAttributeDataDocument.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ExtendedAttributeDataDocument.h; path = app/sources/ExtendedAttributeDataDocument.h; sourceTree = "<group>"; };
 		A5589AD12206E1C4000293A4 /* ExtendedAttributeDataDocument.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = ExtendedAttributeDataDocument.m; path = app/sources/ExtendedAttributeDataDocument.m; sourceTree = "<group>"; };
-		A5628AA921D8561C00911ABB /* Tcl_ParseArgsObjv.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Tcl_ParseArgsObjv.c; path = app/sources/Tcl_ParseArgsObjv.c; sourceTree = "<group>"; };
-		A5628AAA21D8561C00911ABB /* Tcl_ParseArgsObjv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Tcl_ParseArgsObjv.h; path = app/sources/Tcl_ParseArgsObjv.h; sourceTree = "<group>"; };
+		A56371D92A5BEE3400BE5187 /* Tcl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Tcl.framework; path = app/tcl/build/tcl/Tcl.framework; sourceTree = "<group>"; };
 		A568D70D2B43D46200159993 /* ScrollViewRepresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ScrollViewRepresenter.swift; path = app/sources/ScrollViewRepresenter.swift; sourceTree = "<group>"; };
 		A56D78141E7EF088001D1892 /* CLIController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CLIController.h; path = app/sources/CLIController.h; sourceTree = "<group>"; };
 		A56D78151E7EF088001D1892 /* CLIController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CLIController.m; path = app/sources/CLIController.m; sourceTree = "<group>"; };
@@ -534,7 +534,6 @@
 		A59BC5702001AB8C0066860F /* HFBinaryTemplateRepresenter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFBinaryTemplateRepresenter.m; path = app/sources/HFBinaryTemplateRepresenter.m; sourceTree = "<group>"; };
 		A59BC5902001FB9A0066860F /* HFTclTemplateController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFTclTemplateController.h; path = app/sources/HFTclTemplateController.h; sourceTree = "<group>"; };
 		A59BC5912001FB9A0066860F /* HFTclTemplateController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFTclTemplateController.m; path = app/sources/HFTclTemplateController.m; sourceTree = "<group>"; };
-		A59BC5932001FD0F0066860F /* Tcl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Tcl.framework; path = System/Library/Frameworks/Tcl.framework; sourceTree = SDKROOT; };
 		A59BC59520020B480066860F /* HFBinaryTemplateController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFBinaryTemplateController.h; path = app/sources/HFBinaryTemplateController.h; sourceTree = "<group>"; };
 		A59BC59620020B480066860F /* HFBinaryTemplateController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFBinaryTemplateController.m; path = app/sources/HFBinaryTemplateController.m; sourceTree = "<group>"; };
 		A59BC59A2002113F0066860F /* HFTemplateNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFTemplateNode.h; path = app/sources/HFTemplateNode.h; sourceTree = "<group>"; };
@@ -740,8 +739,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				A5D8C8F220E9E58000103D60 /* libz.1.tbd in Frameworks */,
-				A59BC5942001FD0F0066860F /* Tcl.framework in Frameworks */,
 				795F46C314BAADB600EB2F7D /* DiskArbitration.framework in Frameworks */,
+				A56371DA2A5BEE3400BE5187 /* Tcl.framework in Frameworks */,
 				A5A34C1B26AD271900506AE7 /* Sparkle in Frameworks */,
 				8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */,
 				94ECCBC01BDF7DD2007FF44E /* HexFiend.framework in Frameworks */,
@@ -884,13 +883,13 @@
 				A51D0E8B20F1E56600B55775 /* CoreGraphics.framework */,
 				A51D0E7D20F1D01A00B55775 /* UIKit.framework */,
 				A5D8C8F120E9E58000103D60 /* libz.1.tbd */,
-				A59BC5932001FD0F0066860F /* Tcl.framework */,
 				795F46C214BAADB600EB2F7D /* DiskArbitration.framework */,
 				D0D4BE84146F43A1001B0A71 /* ServiceManagement.framework */,
 				D05984CB1032C6D900059E72 /* Security.framework */,
 				1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */,
 				29B97324FDCFA39411CA2CEA /* AppKit.framework */,
 				29B97325FDCFA39411CA2CEA /* Foundation.framework */,
+				A56371D92A5BEE3400BE5187 /* Tcl.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -1029,8 +1028,6 @@
 				A594F0512495A82300DCACD3 /* HFClickableTextField.m */,
 				A59BC59A2002113F0066860F /* HFTemplateNode.h */,
 				A59BC59B2002113F0066860F /* HFTemplateNode.m */,
-				A5628AAA21D8561C00911ABB /* Tcl_ParseArgsObjv.h */,
-				A5628AA921D8561C00911ABB /* Tcl_ParseArgsObjv.c */,
 				A5327E5B28570EF300530557 /* HFDirectoryWatcher.h */,
 				A5327E5C28570EF300530557 /* HFDirectoryWatcher.m */,
 				A571E5932A3973690005B388 /* HFTemplateFile.h */,
@@ -1954,7 +1951,6 @@
 				A5589AC92206CFCC000293A4 /* HFExtendedAttributes.m in Sources */,
 				D0CBB32A128F906000989C15 /* DiffTextViewContainer.m in Sources */,
 				A5589ACF2206D3C8000293A4 /* HFOpenAccessoryViewController.m in Sources */,
-				A5628AAB21D8561D00911ABB /* Tcl_ParseArgsObjv.c in Sources */,
 				A58CA20E2B3C0D6800EDD4DA /* FortunateSon.defs in Sources */,
 				A59BC5922001FB9A0066860F /* HFTclTemplateController.m in Sources */,
 				A56D78161E7EF088001D1892 /* CLIController.m in Sources */,
@@ -3250,7 +3246,10 @@
 				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
 				DEAD_CODE_STRIPPING = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = NO;
-				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/app/tcl/build/tcl",
+				);
 				INFOPLIST_FILE = app/Info.plist;
 				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-traditional";
 				INFOPLIST_PREFIX_HEADER = version.h;
@@ -3425,7 +3424,10 @@
 				CODE_SIGN_IDENTITY = "-";
 				DEAD_CODE_STRIPPING = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = NO;
-				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/app/tcl/build/tcl",
+				);
 				INFOPLIST_FILE = app/Info.plist;
 				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-traditional";
 				INFOPLIST_PREFIX_HEADER = version.h;
@@ -3600,7 +3602,10 @@
 				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
 				DEAD_CODE_STRIPPING = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = NO;
-				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/app/tcl/build/tcl",
+				);
 				INFOPLIST_FILE = app/Info.plist;
 				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-traditional";
 				INFOPLIST_PREFIX_HEADER = version.h;
@@ -3794,7 +3799,10 @@
 				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
 				DEAD_CODE_STRIPPING = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = NO;
-				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/app/tcl/build/tcl",
+				);
 				INFOPLIST_FILE = app/Info_MAS.plist;
 				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-traditional";
 				INFOPLIST_PREFIX_HEADER = version.h;
@@ -3997,7 +4005,10 @@
 				CODE_SIGN_IDENTITY = "-";
 				DEAD_CODE_STRIPPING = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = NO;
-				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/app/tcl/build/tcl",
+				);
 				INFOPLIST_FILE = app/Info_MAS.plist;
 				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-traditional";
 				INFOPLIST_PREFIX_HEADER = version.h;
@@ -4207,7 +4218,10 @@
 				CODE_SIGN_IDENTITY = "-";
 				DEAD_CODE_STRIPPING = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = NO;
-				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/app/tcl/build/tcl",
+				);
 				INFOPLIST_FILE = app/Info.plist;
 				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-traditional";
 				INFOPLIST_PREFIX_HEADER = version.h;
@@ -4414,7 +4428,10 @@
 				CODE_SIGN_IDENTITY = "-";
 				DEAD_CODE_STRIPPING = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = NO;
-				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/app/tcl/build/tcl",
+				);
 				INFOPLIST_FILE = app/Info.plist;
 				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-traditional";
 				INFOPLIST_PREFIX_HEADER = version.h;

@@ -7,14 +7,14 @@
 //
 
 #import "HFTclTemplateController.h"
-#import <tcl.h>
-#import <tclTomMath.h>
 #import <zlib.h>
 #import <HexFiend/HFEncodingManager.h>
 #import "MinimumVersionRequired.h"
 
-// Tcl_ParseArgsObjv was added in Tcl 8.6, but macOS ships with Tcl 8.5
-#import "Tcl_ParseArgsObjv.h"
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wquoted-include-in-framework-header"
+#import <Tcl/tcl.h>
+#pragma clang diagnostic pop
 
 static Tcl_Obj* tcl_obj_from_uint64(uint64_t value) {
     char buf[21];
@@ -73,12 +73,12 @@ enum command {
 
 @interface HFTclTemplateController ()
 
-- (int)runCommand:(enum command)command objc:(int)objc objv:(struct Tcl_Obj * CONST *)objv;
+- (int)runCommand:(enum command)command objc:(Tcl_Size)objc objv:(struct Tcl_Obj * const *)objv;
 
 @end
 
 #define DEFINE_COMMAND(name) \
-    int cmd_##name(ClientData clientData, Tcl_Interp *interp __unused, int objc, struct Tcl_Obj * CONST * objv) { \
+    int cmd_##name(ClientData clientData, Tcl_Interp *interp __unused, int objc, struct Tcl_Obj * const * objv) { \
         return [(__bridge HFTclTemplateController *)clientData runCommand:command_##name objc:objc objv:objv]; \
     }
 
@@ -287,7 +287,7 @@ DEFINE_COMMAND(sleb128)
     return err;
 }
 
-- (int)runCommand:(enum command)command objc:(int)objc objv:(struct Tcl_Obj * CONST *)objv {
+- (int)runCommand:(enum command)command objc:(Tcl_Size)objc objv:(struct Tcl_Obj * const *)objv {
     switch (command) {
         case command_uint64:
         case command_int64:
@@ -580,7 +580,7 @@ DEFINE_COMMAND(sleb128)
         }
         case command_zlib_uncompress: {
             CHECK_SINGLE_ARG("data")
-            int numBytes = 0;
+            Tcl_Size numBytes = 0;
             const unsigned char *bytes = Tcl_GetByteArrayFromObj(objv[1], &numBytes);
             if (!bytes) {
                 return TCL_ERROR;
@@ -706,7 +706,7 @@ DEFINE_COMMAND(sleb128)
     return TCL_OK;
 }
 
-- (int)runTypeCommand:(enum command)command objc:(int)objc objv:(struct Tcl_Obj * CONST *)objv {
+- (int)runTypeCommand:(enum command)command objc:(Tcl_Size)objc objv:(struct Tcl_Obj * const *)objv {
     BOOL hexSwitchAllowed = NO;
     BOOL utcOffsetAllowed = NO;
     size_t argInfoTableSize = 3;

@@ -1,8 +1,8 @@
 set -e
 
-VERSION_MAJOR=8
-VERSION_MINOR=6
-VERSION_PATCH=13
+VERSION_MAJOR=9
+VERSION_MINOR=0
+VERSION_PATCH=0
 VERSION=${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}
 URL=http://prdownloads.sourceforge.net/tcl/tcl${VERSION}-src.tar.gz
 FILENAME=tcl.tar.gz
@@ -45,7 +45,7 @@ pushd "${FRAMEWORK_DIR}/Versions/Current"
 install_name_tool -id @rpath/Tcl.framework/Versions/${VERSION_MAJOR}.${VERSION_MINOR}/Tcl Tcl
 
 # Remove files that cause code signing errors. These don't appear to be needed.
-rm libtclstub8.6.a
+rm libtclstub.a
 rm tclConfig.sh
 rm tclooConfig.sh
 
