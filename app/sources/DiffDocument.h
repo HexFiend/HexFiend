@@ -28,19 +28,6 @@
     CFAbsoluteTime timeOfLastScrollEvent;
     
     HFRange range_;
-    
-    HFColumnRepresenter *leftColumnRepresenter;
-    HFLineCountingRepresenter *leftLineCountingRepresenter;
-    HFBinaryTextRepresenter *leftBinaryRepresenter;
-    HFHexTextRepresenter *leftHexRepresenter;
-    HFRepresenter *leftAsciiRepresenter;
-    HFRepresenter *leftScrollRepresenter;
-    HFRepresenter *leftTextDividerRepresenter;
-    DataInspectorRepresenter *leftDataInspectorRepresenter;
-    HFStatusBarRepresenter *leftStatusBarRepresenter;
-    HFBinaryTemplateRepresenter *leftBinaryTemplateRepresenter;
-    
-    NSMutableDictionary<NSString*, HFRepresenter*> *allRepresenters;
 }
 
 + (NSArray *)getFrontTwoDocumentsForDiffing;
