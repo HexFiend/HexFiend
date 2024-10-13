@@ -15,18 +15,10 @@
     interviewDistance = NSMinX([rightView frame]) - NSMaxX([leftView frame]);
 }
 
-- (CGFloat)textViewToLayoutView
-{
-    HFLayoutRepresenter *leftLayout = [leftView layoutRepresenter];
-    CGFloat textViewToLayoutView = [leftView bounds].size.width - [[leftLayout view] frame].size.width; //we assume this is the same between both text views
-    return textViewToLayoutView;
-}
-
 - (void)getLeftLayoutWidth:(CGFloat *)leftWidth rightLayoutWidth:(CGFloat *)rightWidth forProposedWidth:(CGFloat)viewWidth {
     /* Compute how much space we can allocate to each text view */
-    HFLayoutRepresenter *leftLayout = [leftView layoutRepresenter];
-    HFLayoutRepresenter *rightLayout = [rightView layoutRepresenter];
-    const CGFloat textViewToLayoutView = [self textViewToLayoutView];
+    HFLayoutRepresenter *leftLayout = [leftView layoutRepresenter], *rightLayout = [rightView layoutRepresenter];
+    CGFloat textViewToLayoutView = [leftView bounds].size.width - [[leftLayout view] frame].size.width; //we assume this is the same between both text views
     const CGFloat availableTextViewSpace = viewWidth - interviewDistance - 2 * textViewToLayoutView;
 
     /* Compute byte granularity */
@@ -54,15 +46,6 @@
     /* Return what we've discovered */
     *leftWidth = [leftLayout minimumViewWidthForBytesPerLine:bpl] + textViewToLayoutView;
     *rightWidth = [rightLayout minimumViewWidthForBytesPerLine:bpl] + textViewToLayoutView;
-}
-
-- (CGFloat)minimumViewWidthForBytesPerLine:(NSUInteger)bytesPerLine {
-    HFLayoutRepresenter *leftLayout = [leftView layoutRepresenter];
-    HFLayoutRepresenter *rightLayout = [rightView layoutRepresenter];
-    const CGFloat textViewToLayoutView = [self textViewToLayoutView];
-    CGFloat leftWidth = [leftLayout minimumViewWidthForBytesPerLine:bytesPerLine] + textViewToLayoutView;
-    CGFloat rightWidth = [rightLayout minimumViewWidthForBytesPerLine:bytesPerLine] + textViewToLayoutView;
-    return leftWidth + interviewDistance + rightWidth;
 }
 
 - (NSSize)minimumFrameSizeForProposedSize:(NSSize)frameSize {
