@@ -171,24 +171,28 @@ proc parse_smpl {} {
     set mm [uint8]
     set ss [uint8]
     set ff [uint8]
-    entry "SMPTE Offset" [format "%02i:%02i:%02i:%02i" $hh $mm $ss $ff ]
+    move -4
+    entry "SMPTE Offset" [format "%02i:%02i:%02i:%02i" $hh $mm $ss $ff ] 4
+    move 4
     set loop_count [uint32]
     set spec_metadata [uint32]
     section "Loop Definitions"
     for { set i 0 } {$i < $loop_count } { incr i } {
       uint32 "Loop ID"
       set loop_type [uint32]
+      move -4
       if { $loop_type == 0 } {
-        entry "Loop Type" "Forward (0)"
+        entry "Loop Type" "Forward (0)" 4
       } elseif { $loop_type == 1 } {
-        entry "Loop Type" "Forward-Reverse (1)"
+        entry "Loop Type" "Forward-Reverse (1)" 4
       } elseif { $loop_type == 2 } {
-        entry "Loop Type" "Reverse (2)"
+        entry "Loop Type" "Reverse (2)" 4
       } elseif { $loop_type < 32 } {
-        entry "Loop Type" [format "Reserved (%i)" $loop_type]
+        entry "Loop Type" [format "Reserved (%i)" $loop_type] 4
       } else {
-        entry "Loop Type" [format "Vendor (%i)" $loop_type]
+        entry "Loop Type" [format "Vendor (%i)" $loop_type] 4
       }
+      move 4
       uint32 "Sample Start"
       uint32 "Sample End"
       uint32 "Tuning (cents)"
