@@ -165,7 +165,7 @@ proc parse_smpl {} {
     hex 4 "Product"
     uint32 "Sample Period (ns)"
     uint32 "MIDI Note Number"
-    uint32 "MIDI Detune (cents)"
+    int32 "MIDI Detune (cents)"
     uint32 "SMPTE Format"
     set hh [uint8]
     set mm [uint8]
