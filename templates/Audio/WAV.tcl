@@ -52,7 +52,7 @@ proc parse_peak {} {
             section [format "Channel %d Peak" $i] {
                 float "Value"
                 uint32 "Position"
-            }            
+            }
         }
     }
 }
@@ -98,15 +98,15 @@ proc parse_ltxt {length} {
 
 proc parse_bext {chunk_size} {
     section "Broadcast-Wave Metadata" {
-       ascii 256 "Description" 
+       ascii 256 "Description"
         ascii 32 "Originator"
-        ascii 32 "Originator Ref" 
+        ascii 32 "Originator Ref"
         ascii 10 "Date"
         ascii 8 "Time"
         uint64 "Time Reference"
         set bext_version [uint16 "BEXT chunk version"]
         if {$bext_version > 0} {
-            section "UMID Field" { 
+            section "UMID Field" {
                 sectionvalue "SMPTE Universal Material Identifier"
                 hex 10 "Universal Label"
                 hex 1 "Material Type"
@@ -115,7 +115,7 @@ proc parse_bext {chunk_size} {
                 hex 3 "Instance Number"
                 hex 16 "Material Number"
                 if {$remaining_umid == 0x33} {
-                    section "UMID Source Pack" { 
+                    section "UMID Source Pack" {
                         hex 8 "Time Data"
                         hex 12 "Geospatial Data"
                         ascii 4 "Country Code"
@@ -133,12 +133,12 @@ proc parse_bext {chunk_size} {
         }
 
         if {$bext_version > 1} {
-            section "EBU Loudness Metadata" { 
-                entry "Integrated Loudness" [expr double([uint16]) / double(100)] 
-                entry "Loudness Range" [expr double([uint16]) / double(100)] 
-                entry "True Peak" [expr double([uint16]) / double(100)] 
-                entry "Max Momentary Loudness" [expr double([uint16]) / double(100)] 
-                entry "Max Short Term Loudness" [expr double([uint16]) / double(100)] 
+            section "EBU Loudness Metadata" {
+                entry "Integrated Loudness" [expr double([uint16]) / double(100)]
+                entry "Loudness Range" [expr double([uint16]) / double(100)]
+                entry "True Peak" [expr double([uint16]) / double(100)]
+                entry "Max Momentary Loudness" [expr double([uint16]) / double(100)]
+                entry "Max Short Term Loudness" [expr double([uint16]) / double(100)]
             }
         } else {
                 entry "EBU Loudness Metadata" "(Not Present)"
@@ -159,6 +159,49 @@ proc parse_bext {chunk_size} {
     }
 }
 
+proc parse_smpl {} {
+  section "Sampler Metadata" {
+    hex 4 "Manufacturer"
+    hex 4 "Product"
+    uint32 "Sample Period (ns)"
+    uint32 "MIDI Note Number"
+    int32 "MIDI Detune (cents)"
+    uint32 "SMPTE Format"
+    set hh [uint8]
+    set mm [uint8]
+    set ss [uint8]
+    set ff [uint8]
+    move -4
+    entry "SMPTE Offset" [format "%02i:%02i:%02i:%02i" $hh $mm $ss $ff ] 4
+    move 4
+    set loop_count [uint32]
+    set spec_metadata [uint32]
+    section "Loop Definitions"
+    for { set i 0 } {$i < $loop_count } { incr i } {
+      uint32 "Loop ID"
+      set loop_type [uint32]
+      move -4
+      if { $loop_type == 0 } {
+        entry "Loop Type" "Forward (0)" 4
+      } elseif { $loop_type == 1 } {
+        entry "Loop Type" "Forward-Reverse (1)" 4
+      } elseif { $loop_type == 2 } {
+        entry "Loop Type" "Reverse (2)" 4
+      } elseif { $loop_type < 32 } {
+        entry "Loop Type" [format "Reserved (%i)" $loop_type] 4
+      } else {
+        entry "Loop Type" [format "Vendor (%i)" $loop_type] 4
+      }
+      move 4
+      uint32 "Sample Start"
+      uint32 "Sample End"
+      int32 "Tuning (cents)"
+      uint32 "Repeat Count"
+    }
+  }
+}
+
+
 proc parse_fact {} {
     uint32 "Sample Count"
 }
@@ -174,6 +217,7 @@ proc parse_chunk {signature length} {
         "cue " { parse_cue }
         "labl" { parse_labl $length}
         "ltxt" { parse_ltxt $length}
+        "smpl" { parse_smpl }
     }
     goto [expr $content_start + $length + ($length % 2)]
 }
@@ -185,7 +229,7 @@ proc parse_list {length ds64} {
         while {$remain > 0} {
             section $index {
                 set chunk_signature [ascii 4 "Chunk Signature"]
-                
+
                 if {[dict exists $ds64 $chunk_signature]} {
                     uint32 ;# Will be 0xFFFFFFFF
                     set chunk_size [dict get $ds64 $chunk_signature]
@@ -218,7 +262,7 @@ proc parse_rf64 {} {
         set rf64_size [uint64 "Form Size"]
         set data_size [uint64 "Data Chunk Size"]
         uint64; # dead value, historically was frame count
-        
+
         set ds64_dict [dict create "data" $data_size]
         set count [uint32 "Long Chunk Table Length"]
 
@@ -242,7 +286,7 @@ set header_signature [ascii 4 "Header Signature"]
 set riff_size [uint32 "RIFF Size"]
 set riff_form [ascii 4 "RIFF Form"]
 if {$header_signature == "RF64" || $header_signature == "BW64"} {
-    parse_rf64 
+    parse_rf64
 } elseif {$header_signature == "RIFF" } {
     parse_wave $riff_size
 } else {
