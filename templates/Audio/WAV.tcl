@@ -195,7 +195,7 @@ proc parse_smpl {} {
       move 4
       uint32 "Sample Start"
       uint32 "Sample End"
-      uint32 "Tuning (cents)"
+      int32 "Tuning (cents)"
       uint32 "Repeat Count"
     }
   }
