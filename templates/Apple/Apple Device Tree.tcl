@@ -143,5 +143,14 @@ proc readNode { } {
     endsection
 }
 
-# Kick off reading entire device tree
-readNode
+# Check if this is an Image4 wrapper, which is not supported
+goto 6
+set header [ascii 4]
+if { $header == "IM4P" || $header == "IMG4" } {
+    error "Image4 detected, please extract the device tree from the container and try again"
+} else {
+    goto 0
+    
+    # Kick off reading entire device tree
+    readNode
+}
