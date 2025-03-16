@@ -129,4 +129,8 @@ extern NSString * const BaseDataDocumentDidChangeStringEncodingNotification;
 
 - (void)insertData:(NSData *)data;
 
+- (void)toggleScrollerVisibleControllerView;
+- (void)toggleTextDividerVisibleControllerView;
+- (void)toggleScrollViewVisibleControllerView;
+
 @end
