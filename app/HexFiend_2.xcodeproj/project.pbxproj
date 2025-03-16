@@ -276,8 +276,8 @@
 		D01D1D6F1489D1F6008212BB /* hexfiend_doxyfile.config */ = {isa = PBXFileReference; lastKnownFileType = text; path = hexfiend_doxyfile.config; sourceTree = "<group>"; };
 		D01D1D701489D1F6008212BB /* munge_header_for_doxy.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = munge_header_for_doxy.py; sourceTree = "<group>"; };
 		D01E7C0A0CDC570400943F9E /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		D01E7C140CDC58AA00943F9E /* BaseDataDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BaseDataDocument.h; path = sources/BaseDataDocument.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		D01E7C150CDC58AA00943F9E /* BaseDataDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; name = BaseDataDocument.m; path = sources/BaseDataDocument.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		D01E7C140CDC58AA00943F9E /* BaseDataDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BaseDataDocument.h; path = sources/BaseDataDocument.h; sourceTree = "<group>"; };
+		D01E7C150CDC58AA00943F9E /* BaseDataDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; name = BaseDataDocument.m; path = sources/BaseDataDocument.m; sourceTree = "<group>"; };
 		D024AFB20E349A7B00F39EBB /* hex_icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = hex_icon.icns; path = resources/hex_icon.icns; sourceTree = "<group>"; };
 		D02BD6DE10545E9000535EDE /* FileDataDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileDataDocument.h; path = sources/FileDataDocument.h; sourceTree = "<group>"; };
 		D02BD6DF10545E9000535EDE /* FileDataDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FileDataDocument.m; path = sources/FileDataDocument.m; sourceTree = "<group>"; };
@@ -861,7 +861,7 @@
 			packageReferences = (
 				A5A34C1926AD271900506AE7 /* XCRemoteSwiftPackageReference "Sparkle" */,
 				A54281AF2B413542006DEF81 /* XCRemoteSwiftPackageReference "swift-argument-parser" */,
-				A57B5E792B49286000FF958B /* XCLocalSwiftPackageReference ".." */,
+				A5884A6F2D870C1F00E02030 /* XCLocalSwiftPackageReference "../../HexFiend" */,
 			);
 			projectDirPath = "";
 			projectRoot = ../..;
@@ -3148,9 +3148,9 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		A57B5E792B49286000FF958B /* XCLocalSwiftPackageReference ".." */ = {
+		A5884A6F2D870C1F00E02030 /* XCLocalSwiftPackageReference "../../HexFiend" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = ..;
+			relativePath = ../../HexFiend;
 		};
 /* End XCLocalSwiftPackageReference section */
 
