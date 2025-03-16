@@ -1472,7 +1472,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_OBJC_BRIDGING_HEADER = "Hex Fiend Tests/Hex_Fiend_Tests-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "../Hex Fiend Tests/Hex_Fiend_Tests-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Hex Fiend.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Hex Fiend";
@@ -1515,7 +1515,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_OBJC_BRIDGING_HEADER = "Hex Fiend Tests/Hex_Fiend_Tests-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "../Hex Fiend Tests/Hex_Fiend_Tests-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Hex Fiend.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Hex Fiend";
@@ -1558,7 +1558,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_OBJC_BRIDGING_HEADER = "Hex Fiend Tests/Hex_Fiend_Tests-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "../Hex Fiend Tests/Hex_Fiend_Tests-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Hex Fiend.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Hex Fiend";
@@ -1601,7 +1601,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_OBJC_BRIDGING_HEADER = "Hex Fiend Tests/Hex_Fiend_Tests-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "../Hex Fiend Tests/Hex_Fiend_Tests-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Hex Fiend.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Hex Fiend";
@@ -1640,7 +1640,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_OBJC_BRIDGING_HEADER = "Hex Fiend Tests/Hex_Fiend_Tests-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "../Hex Fiend Tests/Hex_Fiend_Tests-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Hex Fiend.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Hex Fiend";
 			};
@@ -1678,7 +1678,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_OBJC_BRIDGING_HEADER = "Hex Fiend Tests/Hex_Fiend_Tests-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "../Hex Fiend Tests/Hex_Fiend_Tests-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Hex Fiend.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Hex Fiend";
 			};
@@ -1716,7 +1716,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_OBJC_BRIDGING_HEADER = "Hex Fiend Tests/Hex_Fiend_Tests-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "../Hex Fiend Tests/Hex_Fiend_Tests-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Hex Fiend.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Hex Fiend";
 			};
