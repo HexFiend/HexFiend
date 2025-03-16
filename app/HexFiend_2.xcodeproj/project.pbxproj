@@ -40,6 +40,7 @@
 		A5589ACF2206D3C8000293A4 /* HFOpenAccessoryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A5589ACE2206D3C8000293A4 /* HFOpenAccessoryViewController.m */; };
 		A5589AD22206E1C4000293A4 /* ExtendedAttributeDataDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = A5589AD12206E1C4000293A4 /* ExtendedAttributeDataDocument.m */; };
 		A5628AAB21D8561D00911ABB /* Tcl_ParseArgsObjv.c in Sources */ = {isa = PBXBuildFile; fileRef = A5628AA921D8561C00911ABB /* Tcl_ParseArgsObjv.c */; settings = {COMPILER_FLAGS = "-w"; }; };
+		A56780EE2D87158400CB1678 /* HexFiend in Frameworks */ = {isa = PBXBuildFile; productRef = A56780ED2D87158400CB1678 /* HexFiend */; };
 		A568D70E2B43D46200159993 /* ScrollViewRepresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A568D70D2B43D46200159993 /* ScrollViewRepresenter.swift */; };
 		A56D78161E7EF088001D1892 /* CLIController.m in Sources */ = {isa = PBXBuildFile; fileRef = A56D78151E7EF088001D1892 /* CLIController.m */; };
 		A571E5922A3973140005B388 /* TemplateAutodetection.m in Sources */ = {isa = PBXBuildFile; fileRef = A571E5912A3973140005B388 /* TemplateAutodetection.m */; };
@@ -364,6 +365,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D05E7AAE0FF6167100767D95 /* Cocoa.framework in Frameworks */,
+				A56780EE2D87158400CB1678 /* HexFiend in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -800,6 +802,7 @@
 			);
 			name = HexFiendling;
 			packageProductDependencies = (
+				A56780ED2D87158400CB1678 /* HexFiend */,
 			);
 			productName = HexFiendling;
 			productReference = D00C15E50FF091FF006D021F /* HexFiendling.app */;
@@ -1282,7 +1285,7 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				INFOPLIST_FILE = "framework/tests/Framework_Tests-Info.plist";
+				INFOPLIST_FILE = "../framework/tests/Framework_Tests-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -1319,7 +1322,7 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				INFOPLIST_FILE = "framework/tests/Framework_Tests-Info.plist";
+				INFOPLIST_FILE = "../framework/tests/Framework_Tests-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -1356,7 +1359,7 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				INFOPLIST_FILE = "framework/tests/Framework_Tests-Info.plist";
+				INFOPLIST_FILE = "../framework/tests/Framework_Tests-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -1388,7 +1391,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				INFOPLIST_FILE = "framework/tests/Framework_Tests-Info.plist";
+				INFOPLIST_FILE = "../framework/tests/Framework_Tests-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -1420,7 +1423,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				INFOPLIST_FILE = "framework/tests/Framework_Tests-Info.plist";
+				INFOPLIST_FILE = "../framework/tests/Framework_Tests-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -1912,7 +1915,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				DEAD_CODE_STRIPPING = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				INFOPLIST_FILE = sample_code/HexFiendling/Info.plist;
+				INFOPLIST_FILE = ../sample_code/HexFiendling/Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculousfish.${PRODUCT_NAME:identifier}";
 				PRODUCT_NAME = HexFiendling;
@@ -2050,7 +2053,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				DEAD_CODE_STRIPPING = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				INFOPLIST_FILE = sample_code/HexFiendling/Info.plist;
+				INFOPLIST_FILE = ../sample_code/HexFiendling/Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculousfish.${PRODUCT_NAME:identifier}";
 				PRODUCT_NAME = HexFiendling;
@@ -2197,7 +2200,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				DEAD_CODE_STRIPPING = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				INFOPLIST_FILE = sample_code/HexFiendling/Info.plist;
+				INFOPLIST_FILE = ../sample_code/HexFiendling/Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculousfish.${PRODUCT_NAME:identifier}";
 				PRODUCT_NAME = HexFiendling;
@@ -2344,7 +2347,7 @@
 				CODE_SIGN_IDENTITY = "-";
 				DEAD_CODE_STRIPPING = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				INFOPLIST_FILE = sample_code/HexFiendling/Info.plist;
+				INFOPLIST_FILE = ../sample_code/HexFiendling/Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculousfish.${PRODUCT_NAME:identifier}";
 				PRODUCT_NAME = HexFiendling;
@@ -2508,7 +2511,7 @@
 				CODE_SIGN_IDENTITY = "-";
 				DEAD_CODE_STRIPPING = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				INFOPLIST_FILE = sample_code/HexFiendling/Info.plist;
+				INFOPLIST_FILE = ../sample_code/HexFiendling/Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculousfish.${PRODUCT_NAME:identifier}";
 				PRODUCT_NAME = HexFiendling;
@@ -2543,7 +2546,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				INFOPLIST_FILE = "framework/tests/Framework_Tests-Info.plist";
+				INFOPLIST_FILE = "../framework/tests/Framework_Tests-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -2682,7 +2685,7 @@
 				CLANG_ENABLE_OBJC_ARC = YES;
 				DEAD_CODE_STRIPPING = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				INFOPLIST_FILE = sample_code/HexFiendling/Info.plist;
+				INFOPLIST_FILE = ../sample_code/HexFiendling/Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculousfish.${PRODUCT_NAME:identifier}";
 				PRODUCT_NAME = HexFiendling;
@@ -2722,7 +2725,7 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				INFOPLIST_FILE = "framework/tests/Framework_Tests-Info.plist";
+				INFOPLIST_FILE = "../framework/tests/Framework_Tests-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -2865,7 +2868,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				DEAD_CODE_STRIPPING = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				INFOPLIST_FILE = sample_code/HexFiendling/Info.plist;
+				INFOPLIST_FILE = ../sample_code/HexFiendling/Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculousfish.${PRODUCT_NAME:identifier}";
 				PRODUCT_NAME = HexFiendling;
@@ -3178,6 +3181,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = A54281AF2B413542006DEF81 /* XCRemoteSwiftPackageReference "swift-argument-parser" */;
 			productName = ArgumentParser;
+		};
+		A56780ED2D87158400CB1678 /* HexFiend */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A5884A6F2D870C1F00E02030 /* XCLocalSwiftPackageReference "../../HexFiend" */;
+			productName = HexFiend;
 		};
 		A57B5E7A2B49286000FF958B /* HexFiend */ = {
 			isa = XCSwiftPackageProductDependency;
