@@ -17,6 +17,10 @@ jobs:
       run: xcodebuild build-for-testing -scheme "Framework CI Tests"
     - name: Run Tests
       run: xcodebuild test-without-building -scheme "Framework CI Tests"
+    - name: Build App Tests
+      run: xcodebuild build-for-testing -scheme "Hex Fiend Tests"
+    - name: Run App Tests
+      run: xcodebuild test-without-building -scheme "Hex Fiend Tests"
     - name: Install Doxygen
       run: brew install doxygen
     - name: Build Documentation
