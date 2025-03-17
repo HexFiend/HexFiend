@@ -16,8 +16,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <stdio.h>
-#import <HexFiend/HFCustomEncoding.h>
-#import <HexFiend/HFEncodingManager.h>
+@import HexFiend;
 
 #if ! HF_NO_PRIVILEGED_FILE_OPERATIONS
 #import "HFPrivilegedHelperConnection.h"

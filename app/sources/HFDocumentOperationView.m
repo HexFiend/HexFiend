@@ -6,7 +6,7 @@
 //
 
 #import "HFDocumentOperationView.h"
-#import <HexFiend/HexFiend.h>
+@import HexFiend;
 
 static NSString *sNibName;
 

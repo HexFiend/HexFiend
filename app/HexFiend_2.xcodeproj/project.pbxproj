@@ -1,0 +1,3202 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 60;
+	objects = {
+
+/* Begin PBXAggregateTarget section */
+		D0F6FE0A0FFF679200C609F0 /* Documentation Generation */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = D0F6FE180FFF67AC00C609F0 /* Build configuration list for PBXAggregateTarget "Documentation Generation" */;
+			buildPhases = (
+				D01D1D711489D208008212BB /* ShellScript */,
+			);
+			dependencies = (
+			);
+			name = "Documentation Generation";
+			productName = "Documentation Generation";
+		};
+/* End PBXAggregateTarget section */
+
+/* Begin PBXBuildFile section */
+		001BEF982910F23600BB82B3 /* hexf.swift in Sources */ = {isa = PBXBuildFile; fileRef = 001BEF972910F23600BB82B3 /* hexf.swift */; };
+		795F46C114BAA45D00EB2F7D /* OpenDriveWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 795F46C014BAA45D00EB2F7D /* OpenDriveWindowController.m */; };
+		795F46C314BAADB600EB2F7D /* DiskArbitration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 795F46C214BAADB600EB2F7D /* DiskArbitration.framework */; };
+		79E2FF201745A2B300FA8F12 /* dsa_pub.pem in Resources */ = {isa = PBXBuildFile; fileRef = 79E2FF1F1745A2B300FA8F12 /* dsa_pub.pem */; };
+		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
+		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
+		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
+		A50859AA2B204C8100325B36 /* HFTclTemplateControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A50859A92B204C8100325B36 /* HFTclTemplateControllerTests.swift */; };
+		A5327E592856EB7500530557 /* LEB128Type.m in Sources */ = {isa = PBXBuildFile; fileRef = A5327E582856EB7500530557 /* LEB128Type.m */; };
+		A5327E5D28570EF300530557 /* HFDirectoryWatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = A5327E5C28570EF300530557 /* HFDirectoryWatcher.m */; };
+		A533B9C12AD42F5300ECA26E /* ChooseStringEncodingWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A533B9C02AD42F5300ECA26E /* ChooseStringEncodingWindowController.swift */; };
+		A54281B12B413542006DEF81 /* ArgumentParser in Frameworks */ = {isa = PBXBuildFile; productRef = A54281B02B413542006DEF81 /* ArgumentParser */; };
+		A54D8AEE2A3ECBD80021FBAB /* ColorByteThemes in Resources */ = {isa = PBXBuildFile; fileRef = A54D8AED2A3ECBD80021FBAB /* ColorByteThemes */; };
+		A550A7201F787831001C79C7 /* hexf in Resources */ = {isa = PBXBuildFile; fileRef = A550A7161F7877F8001C79C7 /* hexf */; };
+		A5589AC92206CFCC000293A4 /* HFExtendedAttributes.m in Sources */ = {isa = PBXBuildFile; fileRef = A5589AC82206CFCC000293A4 /* HFExtendedAttributes.m */; };
+		A5589ACC2206D238000293A4 /* OpenAccessoryView.xib in Resources */ = {isa = PBXBuildFile; fileRef = A5589ACA2206D238000293A4 /* OpenAccessoryView.xib */; };
+		A5589ACF2206D3C8000293A4 /* HFOpenAccessoryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A5589ACE2206D3C8000293A4 /* HFOpenAccessoryViewController.m */; };
+		A5589AD22206E1C4000293A4 /* ExtendedAttributeDataDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = A5589AD12206E1C4000293A4 /* ExtendedAttributeDataDocument.m */; };
+		A5628AAB21D8561D00911ABB /* Tcl_ParseArgsObjv.c in Sources */ = {isa = PBXBuildFile; fileRef = A5628AA921D8561C00911ABB /* Tcl_ParseArgsObjv.c */; settings = {COMPILER_FLAGS = "-w"; }; };
+		A56780EE2D87158400CB1678 /* HexFiend in Frameworks */ = {isa = PBXBuildFile; productRef = A56780ED2D87158400CB1678 /* HexFiend */; };
+		A568D70E2B43D46200159993 /* ScrollViewRepresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A568D70D2B43D46200159993 /* ScrollViewRepresenter.swift */; };
+		A56D78161E7EF088001D1892 /* CLIController.m in Sources */ = {isa = PBXBuildFile; fileRef = A56D78151E7EF088001D1892 /* CLIController.m */; };
+		A571E5922A3973140005B388 /* TemplateAutodetection.m in Sources */ = {isa = PBXBuildFile; fileRef = A571E5912A3973140005B388 /* TemplateAutodetection.m */; };
+		A571E5952A3973690005B388 /* HFTemplateFile.m in Sources */ = {isa = PBXBuildFile; fileRef = A571E5942A3973690005B388 /* HFTemplateFile.m */; };
+		A571E5982A3ABFAD0005B388 /* TemplateMetadata.m in Sources */ = {isa = PBXBuildFile; fileRef = A571E5972A3ABFAD0005B388 /* TemplateMetadata.m */; };
+		A571E59B2A3AD38D0005B388 /* MinimumVersionRequired.m in Sources */ = {isa = PBXBuildFile; fileRef = A571E59A2A3AD38D0005B388 /* MinimumVersionRequired.m */; };
+		A572614A21D8A51B00970A0E /* HFPrompt.m in Sources */ = {isa = PBXBuildFile; fileRef = A572614921D8A51B00970A0E /* HFPrompt.m */; };
+		A5791D62286181DD0067FC1E /* sampleData.rtf in Resources */ = {isa = PBXBuildFile; fileRef = A5791D61286181DD0067FC1E /* sampleData.rtf */; };
+		A57B5E7B2B49286000FF958B /* HexFiend in Frameworks */ = {isa = PBXBuildFile; productRef = A57B5E7A2B49286000FF958B /* HexFiend */; };
+		A57F34801F1EF47700234B94 /* Preferences.xib in Resources */ = {isa = PBXBuildFile; fileRef = A57F34821F1EF47700234B94 /* Preferences.xib */; };
+		A57F34831F1EFA6E00234B94 /* DataInspectorView.xib in Resources */ = {isa = PBXBuildFile; fileRef = A57F34851F1EFA6E00234B94 /* DataInspectorView.xib */; };
+		A57F34861F1EFA8800234B94 /* ChooseStringEncodingDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = A57F34881F1EFA8800234B94 /* ChooseStringEncodingDialog.xib */; };
+		A57F34891F1EFA9600234B94 /* OpenDriveDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = A57F348B1F1EFA9600234B94 /* OpenDriveDialog.xib */; };
+		A58CA20D2B3C0D0700EDD4DA /* HFPrivilegedHelperConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = D04D8FCB102396FC0013A2A1 /* HFPrivilegedHelperConnection.m */; };
+		A58CA20E2B3C0D6800EDD4DA /* FortunateSon.defs in Sources */ = {isa = PBXBuildFile; fileRef = D047E33F1022CFA800EF307B /* FortunateSon.defs */; };
+		A591313A21E3079400685B51 /* DataInspector.m in Sources */ = {isa = PBXBuildFile; fileRef = A591313921E3079400685B51 /* DataInspector.m */; };
+		A591313D21E3090300685B51 /* DataInspectorPlusMinusButtonCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A591313C21E3090300685B51 /* DataInspectorPlusMinusButtonCell.m */; };
+		A591314021E3098800685B51 /* DataInspectorScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = A591313F21E3098800685B51 /* DataInspectorScrollView.m */; };
+		A594F04F24959F6400DCACD3 /* BinaryTemplatePopover.xib in Resources */ = {isa = PBXBuildFile; fileRef = A594F04D24959F6400DCACD3 /* BinaryTemplatePopover.xib */; };
+		A594F0522495A82400DCACD3 /* HFClickableTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = A594F0512495A82300DCACD3 /* HFClickableTextField.m */; };
+		A59BC5712001AB8C0066860F /* HFBinaryTemplateRepresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = A59BC5702001AB8C0066860F /* HFBinaryTemplateRepresenter.m */; };
+		A59BC5922001FB9A0066860F /* HFTclTemplateController.m in Sources */ = {isa = PBXBuildFile; fileRef = A59BC5912001FB9A0066860F /* HFTclTemplateController.m */; };
+		A59BC5942001FD0F0066860F /* Tcl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A59BC5932001FD0F0066860F /* Tcl.framework */; };
+		A59BC59820020B480066860F /* HFBinaryTemplateController.m in Sources */ = {isa = PBXBuildFile; fileRef = A59BC59620020B480066860F /* HFBinaryTemplateController.m */; };
+		A59BC59C2002113F0066860F /* HFTemplateNode.m in Sources */ = {isa = PBXBuildFile; fileRef = A59BC59B2002113F0066860F /* HFTemplateNode.m */; };
+		A59BC59F2002E63C0066860F /* HFTemplateController.m in Sources */ = {isa = PBXBuildFile; fileRef = A59BC59E2002E63C0066860F /* HFTemplateController.m */; };
+		A59DFE67200BE7A800FEA540 /* BinaryTemplateController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A59DFE65200BE7A800FEA540 /* BinaryTemplateController.xib */; };
+		A5A34C1B26AD271900506AE7 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = A5A34C1A26AD271900506AE7 /* Sparkle */; };
+		A5B2F6E3284729F8006E8AF8 /* templates in Resources */ = {isa = PBXBuildFile; fileRef = A5B2F6E2284729F8006E8AF8 /* templates */; };
+		A5B762FA2B32AE2F00CA25AE /* HFByteTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5B762F92B32AE2F00CA25AE /* HFByteTheme.swift */; };
+		A5BAB4152AD7CB3200623A9F /* Encodings.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5BAB4142AD7CB3200623A9F /* Encodings.swift */; };
+		A5D8C8F220E9E58000103D60 /* libz.1.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = A5D8C8F120E9E58000103D60 /* libz.1.tbd */; };
+		D00122E30D48A8D400540B10 /* HFFindReplaceBackgroundView.m in Sources */ = {isa = PBXBuildFile; fileRef = D00122E20D48A8D400540B10 /* HFFindReplaceBackgroundView.m */; };
+		D00C16790FF4925A006D021F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D00C16750FF4925A006D021F /* main.m */; };
+		D01772F50D751DB1002E03DE /* HFDocumentOperationView.m in Sources */ = {isa = PBXBuildFile; fileRef = D01772F40D751DB1002E03DE /* HFDocumentOperationView.m */; };
+		D01773920D7A2F32002E03DE /* HFResizingView.m in Sources */ = {isa = PBXBuildFile; fileRef = D01773910D7A2F32002E03DE /* HFResizingView.m */; };
+		D018F139107AB64900AE805F /* DiffDocument.xib in Resources */ = {isa = PBXBuildFile; fileRef = D018F137107AB64900AE805F /* DiffDocument.xib */; };
+		D018F153107ABAC600AE805F /* DiffDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = D018F152107ABAC600AE805F /* DiffDocument.m */; };
+		D01E7C160CDC58AA00943F9E /* BaseDataDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = D01E7C150CDC58AA00943F9E /* BaseDataDocument.m */; };
+		D024AFB30E349A7B00F39EBB /* hex_icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = D024AFB20E349A7B00F39EBB /* hex_icon.icns */; };
+		D02BD6E010545E9000535EDE /* FileDataDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = D02BD6DF10545E9000535EDE /* FileDataDocument.m */; };
+		D039DC031482DCD000364FA6 /* com.ridiculousfish.HexFiend.PrivilegedHelper in CopyFiles */ = {isa = PBXBuildFile; fileRef = D047E3151022CEFE00EF307B /* com.ridiculousfish.HexFiend.PrivilegedHelper */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		D03CFA8A0FC78BCD00EE79E4 /* DataInspectorRepresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = D03CFA890FC78BCD00EE79E4 /* DataInspectorRepresenter.m */; };
+		D047E3401022CFA800EF307B /* FortunateSon.defs in Sources */ = {isa = PBXBuildFile; fileRef = D047E33F1022CFA800EF307B /* FortunateSon.defs */; settings = {ATTRIBUTES = (Server, ); }; };
+		D047E48C1022E09300EF307B /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D047E48B1022E09300EF307B /* main.cpp */; };
+		D04A6B6B100EA47C00704963 /* SaveBanner.xib in Resources */ = {isa = PBXBuildFile; fileRef = D04A6B69100EA47C00704963 /* SaveBanner.xib */; };
+		D04A6B7A100EA4BC00704963 /* FindReplaceBanner.xib in Resources */ = {isa = PBXBuildFile; fileRef = D04A6B78100EA4BC00704963 /* FindReplaceBanner.xib */; };
+		D04A6B97100EA73800704963 /* JumpToOffsetBanner.xib in Resources */ = {isa = PBXBuildFile; fileRef = D04A6B95100EA73800704963 /* JumpToOffsetBanner.xib */; };
+		D04A6B9E100EA75400704963 /* MoveSelectionByBanner.xib in Resources */ = {isa = PBXBuildFile; fileRef = D04A6B9C100EA75400704963 /* MoveSelectionByBanner.xib */; };
+		D04A6BA5100EA78700704963 /* MyDocument.xib in Resources */ = {isa = PBXBuildFile; fileRef = D04A6BA3100EA78700704963 /* MyDocument.xib */; };
+		D04A6BAB100EA7B800704963 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = D04A6BA9100EA7B800704963 /* MainMenu.xib */; };
+		D059E1291311C676001493B8 /* AppDebugging.m in Sources */ = {isa = PBXBuildFile; fileRef = D059E1281311C676001493B8 /* AppDebugging.m */; };
+		D05E7AAE0FF6167100767D95 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
+		D0621CAD102ED50D00DAEB4D /* FortunateSonServerImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D0621CAC102ED50D00DAEB4D /* FortunateSonServerImpl.cpp */; };
+		D0713920146F7898004D3792 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = D071391E146F7897004D3792 /* MainMenu.xib */; };
+		D074B0D5115B2075002D5FA8 /* DiffDocumentWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = D074B0D4115B2075002D5FA8 /* DiffDocumentWindow.m */; };
+		D084E763115DAEAC004DC181 /* DiffOverlayView.m in Sources */ = {isa = PBXBuildFile; fileRef = D084E762115DAEAC004DC181 /* DiffOverlayView.m */; };
+		D0A8AF7D1467273900387627 /* AppUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = D0A8AF7C1467273900387627 /* AppUtilities.m */; };
+		D0AFA786123C2BDF00CFC513 /* MyDocumentController.m in Sources */ = {isa = PBXBuildFile; fileRef = D0AFA785123C2BDF00CFC513 /* MyDocumentController.m */; };
+		D0B47FEF1272427B0095120E /* DiffComputationBanner.xib in Resources */ = {isa = PBXBuildFile; fileRef = D0B47FED1272427B0095120E /* DiffComputationBanner.xib */; };
+		D0CBB240128F78C200989C15 /* StretchableProgressIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = D0CBB23F128F78C200989C15 /* StretchableProgressIndicator.m */; };
+		D0CBB32A128F906000989C15 /* DiffTextViewContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = D0CBB329128F906000989C15 /* DiffTextViewContainer.m */; };
+		D0CD51F60DA2B928006E8D1B /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D0CD51F50DA2B928006E8D1B /* AppDelegate.m */; };
+		D0D0536E1487FF2500704643 /* HFFindReplaceOperationView.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D0536D1487FF2500704643 /* HFFindReplaceOperationView.m */; };
+		D0D110540FF602D800AE5CFB /* FiendlingAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D110530FF602D800AE5CFB /* FiendlingAppDelegate.m */; };
+		D8C1F92C16F278BA00A4C36E /* DiffRangeDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = D8C1F92A16F278BA00A4C36E /* DiffRangeDialog.xib */; };
+		D8EE3EFE16F26689001C7C09 /* DiffRangeWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = D8EE3EFD16F26689001C7C09 /* DiffRangeWindowController.m */; };
+		DAE8EBFE1598FFDB0008ADB9 /* DocumentWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = DAE8EBFD1598FFDB0008ADB9 /* DocumentWindow.m */; };
+		FB1E99AA14A301CD002136A3 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D05984CB1032C6D900059E72 /* Security.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		A50859AB2B204C8100325B36 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8D1107260486CEB800E47090;
+			remoteInfo = HexFiend_2;
+		};
+		A550A7211F787A60001C79C7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A550A7151F7877F8001C79C7;
+			remoteInfo = hexf;
+		};
+		D039DBFF1481C17C00364FA6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D047E3141022CEFE00EF307B;
+			remoteInfo = FortunateSon;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		D01E7BDA0CDC540700943F9E /* Copy Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Copy Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D039DC011481C18400364FA6 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = Contents/Library/LaunchServices;
+			dstSubfolderSpec = 1;
+			files = (
+				D039DC031482DCD000364FA6 /* com.ridiculousfish.HexFiend.PrivilegedHelper in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D05E7AA50FF6160D00767D95 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		001BEF972910F23600BB82B3 /* hexf.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = hexf.swift; sourceTree = "<group>"; };
+		089C165DFE840E0CC02AAC07 /* Base */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
+		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = sources/main.m; sourceTree = "<group>"; };
+		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
+		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
+		795F46BF14BAA45D00EB2F7D /* OpenDriveWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OpenDriveWindowController.h; path = sources/OpenDriveWindowController.h; sourceTree = "<group>"; };
+		795F46C014BAA45D00EB2F7D /* OpenDriveWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OpenDriveWindowController.m; path = sources/OpenDriveWindowController.m; sourceTree = "<group>"; };
+		795F46C214BAADB600EB2F7D /* DiskArbitration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DiskArbitration.framework; path = System/Library/Frameworks/DiskArbitration.framework; sourceTree = SDKROOT; };
+		79E2FF1F1745A2B300FA8F12 /* dsa_pub.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = dsa_pub.pem; path = resources/dsa_pub.pem; sourceTree = "<group>"; };
+		8D1107320486CEB800E47090 /* Hex Fiend.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Hex Fiend.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		9408FBFA19DD72DE004F800E /* HexFiend_Framework Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "HexFiend_Framework Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		9408FC0F19DD8669004F800E /* HFPrivilegedHelperConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFPrivilegedHelperConnection.h; path = sources/HFPrivilegedHelperConnection.h; sourceTree = "<group>"; };
+		A50859A72B204C8100325B36 /* Hex Fiend Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Hex Fiend Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A50859A92B204C8100325B36 /* HFTclTemplateControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HFTclTemplateControllerTests.swift; sourceTree = "<group>"; };
+		A50859B52B204D7600325B36 /* Hex_Fiend_Tests-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Hex_Fiend_Tests-Bridging-Header.h"; sourceTree = "<group>"; };
+		A51D0E7D20F1D01A00B55775 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.0.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
+		A51D0E8B20F1E56600B55775 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.0.sdk/System/Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
+		A51D0E9020F2A8D200B55775 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.0.sdk/System/Library/Frameworks/CoreText.framework; sourceTree = DEVELOPER_DIR; };
+		A531921B21D585FD006C25D6 /* version.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = version.h; path = ../version.h; sourceTree = "<group>"; };
+		A5327E572856EB7500530557 /* LEB128Type.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = LEB128Type.h; path = sources/LEB128Type.h; sourceTree = "<group>"; };
+		A5327E582856EB7500530557 /* LEB128Type.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = LEB128Type.m; path = sources/LEB128Type.m; sourceTree = "<group>"; };
+		A5327E5A2856F0CC00530557 /* DataInspectorType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DataInspectorType.h; path = sources/DataInspectorType.h; sourceTree = "<group>"; };
+		A5327E5B28570EF300530557 /* HFDirectoryWatcher.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFDirectoryWatcher.h; path = sources/HFDirectoryWatcher.h; sourceTree = "<group>"; };
+		A5327E5C28570EF300530557 /* HFDirectoryWatcher.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFDirectoryWatcher.m; path = sources/HFDirectoryWatcher.m; sourceTree = "<group>"; };
+		A533B9BF2AD42F5200ECA26E /* HexFiend_2-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "HexFiend_2-Bridging-Header.h"; path = "sources/HexFiend_2-Bridging-Header.h"; sourceTree = "<group>"; };
+		A533B9C02AD42F5300ECA26E /* ChooseStringEncodingWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ChooseStringEncodingWindowController.swift; path = sources/ChooseStringEncodingWindowController.swift; sourceTree = "<group>"; };
+		A54281B22B427F62006DEF81 /* hexf-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "hexf-Bridging-Header.h"; sourceTree = "<group>"; };
+		A54D8AED2A3ECBD80021FBAB /* ColorByteThemes */ = {isa = PBXFileReference; lastKnownFileType = folder; name = ColorByteThemes; path = resources/ColorByteThemes; sourceTree = "<group>"; };
+		A550A7161F7877F8001C79C7 /* hexf */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = hexf; sourceTree = BUILT_PRODUCTS_DIR; };
+		A554E0CD20DF2CD3001B4C48 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/OpenDriveDialog.xib; sourceTree = "<group>"; };
+		A554E0CE20DF2CD3001B4C48 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/DataInspectorView.xib; sourceTree = "<group>"; };
+		A554E0CF20DF2CD4001B4C48 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/ChooseStringEncodingDialog.xib; sourceTree = "<group>"; };
+		A554E0D020DF2CD4001B4C48 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MyDocument.xib; sourceTree = "<group>"; };
+		A554E0D120DF2CD4001B4C48 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MoveSelectionByBanner.xib; sourceTree = "<group>"; };
+		A554E0D220DF2CD4001B4C48 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/JumpToOffsetBanner.xib; sourceTree = "<group>"; };
+		A554E0D320DF2CD5001B4C48 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/FindReplaceBanner.xib; sourceTree = "<group>"; };
+		A554E0D420DF2CD5001B4C48 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/SaveBanner.xib; sourceTree = "<group>"; };
+		A554E0D520DF2CD5001B4C48 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/DiffComputationBanner.xib; sourceTree = "<group>"; };
+		A554E0D620DF2CD6001B4C48 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/DiffDocument.xib; sourceTree = "<group>"; };
+		A554E0D720DF2CD6001B4C48 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/DiffRangeDialog.xib; sourceTree = "<group>"; };
+		A554E0D820DF2CD6001B4C48 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		A554E0D920DF2CD6001B4C48 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/Preferences.xib; sourceTree = "<group>"; };
+		A554E0DA20DF2CD6001B4C48 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/BinaryTemplateController.xib; sourceTree = "<group>"; };
+		A554E0DB20DF2CD7001B4C48 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		A5589AC72206CFCC000293A4 /* HFExtendedAttributes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFExtendedAttributes.h; path = sources/HFExtendedAttributes.h; sourceTree = "<group>"; };
+		A5589AC82206CFCC000293A4 /* HFExtendedAttributes.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFExtendedAttributes.m; path = sources/HFExtendedAttributes.m; sourceTree = "<group>"; };
+		A5589ACB2206D238000293A4 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = resources/Base.lproj/OpenAccessoryView.xib; sourceTree = "<group>"; };
+		A5589ACD2206D3C8000293A4 /* HFOpenAccessoryViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFOpenAccessoryViewController.h; path = sources/HFOpenAccessoryViewController.h; sourceTree = "<group>"; };
+		A5589ACE2206D3C8000293A4 /* HFOpenAccessoryViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFOpenAccessoryViewController.m; path = sources/HFOpenAccessoryViewController.m; sourceTree = "<group>"; };
+		A5589AD02206E1C4000293A4 /* ExtendedAttributeDataDocument.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ExtendedAttributeDataDocument.h; path = sources/ExtendedAttributeDataDocument.h; sourceTree = "<group>"; };
+		A5589AD12206E1C4000293A4 /* ExtendedAttributeDataDocument.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = ExtendedAttributeDataDocument.m; path = sources/ExtendedAttributeDataDocument.m; sourceTree = "<group>"; };
+		A5628AA921D8561C00911ABB /* Tcl_ParseArgsObjv.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Tcl_ParseArgsObjv.c; path = sources/Tcl_ParseArgsObjv.c; sourceTree = "<group>"; };
+		A5628AAA21D8561C00911ABB /* Tcl_ParseArgsObjv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Tcl_ParseArgsObjv.h; path = sources/Tcl_ParseArgsObjv.h; sourceTree = "<group>"; };
+		A568D70D2B43D46200159993 /* ScrollViewRepresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ScrollViewRepresenter.swift; path = sources/ScrollViewRepresenter.swift; sourceTree = "<group>"; };
+		A56D78141E7EF088001D1892 /* CLIController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CLIController.h; path = sources/CLIController.h; sourceTree = "<group>"; };
+		A56D78151E7EF088001D1892 /* CLIController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CLIController.m; path = sources/CLIController.m; sourceTree = "<group>"; };
+		A571E5902A3973140005B388 /* TemplateAutodetection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = TemplateAutodetection.h; path = sources/TemplateAutodetection.h; sourceTree = "<group>"; };
+		A571E5912A3973140005B388 /* TemplateAutodetection.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = TemplateAutodetection.m; path = sources/TemplateAutodetection.m; sourceTree = "<group>"; };
+		A571E5932A3973690005B388 /* HFTemplateFile.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFTemplateFile.h; path = sources/HFTemplateFile.h; sourceTree = "<group>"; };
+		A571E5942A3973690005B388 /* HFTemplateFile.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFTemplateFile.m; path = sources/HFTemplateFile.m; sourceTree = "<group>"; };
+		A571E5962A3ABFAD0005B388 /* TemplateMetadata.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = TemplateMetadata.h; path = sources/TemplateMetadata.h; sourceTree = "<group>"; };
+		A571E5972A3ABFAD0005B388 /* TemplateMetadata.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = TemplateMetadata.m; path = sources/TemplateMetadata.m; sourceTree = "<group>"; };
+		A571E5992A3AD38D0005B388 /* MinimumVersionRequired.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MinimumVersionRequired.h; path = sources/MinimumVersionRequired.h; sourceTree = "<group>"; };
+		A571E59A2A3AD38D0005B388 /* MinimumVersionRequired.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = MinimumVersionRequired.m; path = sources/MinimumVersionRequired.m; sourceTree = "<group>"; };
+		A572614821D8A51B00970A0E /* HFPrompt.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFPrompt.h; path = sources/HFPrompt.h; sourceTree = "<group>"; };
+		A572614921D8A51B00970A0E /* HFPrompt.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFPrompt.m; path = sources/HFPrompt.m; sourceTree = "<group>"; };
+		A5791D61286181DD0067FC1E /* sampleData.rtf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.rtf; path = sampleData.rtf; sourceTree = "<group>"; };
+		A591313821E3079400685B51 /* DataInspector.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DataInspector.h; path = sources/DataInspector.h; sourceTree = "<group>"; };
+		A591313921E3079400685B51 /* DataInspector.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = DataInspector.m; path = sources/DataInspector.m; sourceTree = "<group>"; };
+		A591313B21E3090300685B51 /* DataInspectorPlusMinusButtonCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DataInspectorPlusMinusButtonCell.h; path = sources/DataInspectorPlusMinusButtonCell.h; sourceTree = "<group>"; };
+		A591313C21E3090300685B51 /* DataInspectorPlusMinusButtonCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = DataInspectorPlusMinusButtonCell.m; path = sources/DataInspectorPlusMinusButtonCell.m; sourceTree = "<group>"; };
+		A591313E21E3098800685B51 /* DataInspectorScrollView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DataInspectorScrollView.h; path = sources/DataInspectorScrollView.h; sourceTree = "<group>"; };
+		A591313F21E3098800685B51 /* DataInspectorScrollView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = DataInspectorScrollView.m; path = sources/DataInspectorScrollView.m; sourceTree = "<group>"; };
+		A594F04E24959F6400DCACD3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = resources/Base.lproj/BinaryTemplatePopover.xib; sourceTree = "<group>"; };
+		A594F0502495A82300DCACD3 /* HFClickableTextField.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFClickableTextField.h; path = sources/HFClickableTextField.h; sourceTree = "<group>"; };
+		A594F0512495A82300DCACD3 /* HFClickableTextField.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFClickableTextField.m; path = sources/HFClickableTextField.m; sourceTree = "<group>"; };
+		A59BC56F2001AB8C0066860F /* HFBinaryTemplateRepresenter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFBinaryTemplateRepresenter.h; path = sources/HFBinaryTemplateRepresenter.h; sourceTree = "<group>"; };
+		A59BC5702001AB8C0066860F /* HFBinaryTemplateRepresenter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFBinaryTemplateRepresenter.m; path = sources/HFBinaryTemplateRepresenter.m; sourceTree = "<group>"; };
+		A59BC5902001FB9A0066860F /* HFTclTemplateController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFTclTemplateController.h; path = sources/HFTclTemplateController.h; sourceTree = "<group>"; };
+		A59BC5912001FB9A0066860F /* HFTclTemplateController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFTclTemplateController.m; path = sources/HFTclTemplateController.m; sourceTree = "<group>"; };
+		A59BC5932001FD0F0066860F /* Tcl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Tcl.framework; path = System/Library/Frameworks/Tcl.framework; sourceTree = SDKROOT; };
+		A59BC59520020B480066860F /* HFBinaryTemplateController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFBinaryTemplateController.h; path = sources/HFBinaryTemplateController.h; sourceTree = "<group>"; };
+		A59BC59620020B480066860F /* HFBinaryTemplateController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFBinaryTemplateController.m; path = sources/HFBinaryTemplateController.m; sourceTree = "<group>"; };
+		A59BC59A2002113F0066860F /* HFTemplateNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFTemplateNode.h; path = sources/HFTemplateNode.h; sourceTree = "<group>"; };
+		A59BC59B2002113F0066860F /* HFTemplateNode.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFTemplateNode.m; path = sources/HFTemplateNode.m; sourceTree = "<group>"; };
+		A59BC59D2002E63C0066860F /* HFTemplateController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HFTemplateController.h; path = sources/HFTemplateController.h; sourceTree = "<group>"; };
+		A59BC59E2002E63C0066860F /* HFTemplateController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HFTemplateController.m; path = sources/HFTemplateController.m; sourceTree = "<group>"; };
+		A5A2F6642B2F63F80097F225 /* HFHelperProcessSharedCode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HFHelperProcessSharedCode.h; sourceTree = "<group>"; };
+		A5B2F6E2284729F8006E8AF8 /* templates */ = {isa = PBXFileReference; lastKnownFileType = folder; name = templates; path = ../templates; sourceTree = "<group>"; };
+		A5B762F92B32AE2F00CA25AE /* HFByteTheme.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HFByteTheme.swift; path = sources/HFByteTheme.swift; sourceTree = "<group>"; };
+		A5BAB4142AD7CB3200623A9F /* Encodings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Encodings.swift; path = sources/Encodings.swift; sourceTree = "<group>"; };
+		A5D8C8F120E9E58000103D60 /* libz.1.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.1.tbd; path = usr/lib/libz.1.tbd; sourceTree = SDKROOT; };
+		D00122E10D48A8D400540B10 /* HFFindReplaceBackgroundView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFFindReplaceBackgroundView.h; path = sources/HFFindReplaceBackgroundView.h; sourceTree = "<group>"; };
+		D00122E20D48A8D400540B10 /* HFFindReplaceBackgroundView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFFindReplaceBackgroundView.m; path = sources/HFFindReplaceBackgroundView.m; sourceTree = "<group>"; };
+		D00C15E50FF091FF006D021F /* HexFiendling.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HexFiendling.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D00C16740FF4925A006D021F /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D00C16750FF4925A006D021F /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		D01772F30D751DB1002E03DE /* HFDocumentOperationView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFDocumentOperationView.h; path = sources/HFDocumentOperationView.h; sourceTree = "<group>"; };
+		D01772F40D751DB1002E03DE /* HFDocumentOperationView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFDocumentOperationView.m; path = sources/HFDocumentOperationView.m; sourceTree = "<group>"; };
+		D01773900D7A2F32002E03DE /* HFResizingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFResizingView.h; path = sources/HFResizingView.h; sourceTree = "<group>"; };
+		D01773910D7A2F32002E03DE /* HFResizingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFResizingView.m; path = sources/HFResizingView.m; sourceTree = "<group>"; };
+		D018F151107ABAC600AE805F /* DiffDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DiffDocument.h; path = sources/DiffDocument.h; sourceTree = "<group>"; };
+		D018F152107ABAC600AE805F /* DiffDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DiffDocument.m; path = sources/DiffDocument.m; sourceTree = "<group>"; };
+		D01D1D6D1489D1F6008212BB /* build_documentation.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = build_documentation.py; sourceTree = "<group>"; };
+		D01D1D6F1489D1F6008212BB /* hexfiend_doxyfile.config */ = {isa = PBXFileReference; lastKnownFileType = text; path = hexfiend_doxyfile.config; sourceTree = "<group>"; };
+		D01D1D701489D1F6008212BB /* munge_header_for_doxy.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = munge_header_for_doxy.py; sourceTree = "<group>"; };
+		D01E7C0A0CDC570400943F9E /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D01E7C140CDC58AA00943F9E /* BaseDataDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BaseDataDocument.h; path = sources/BaseDataDocument.h; sourceTree = "<group>"; };
+		D01E7C150CDC58AA00943F9E /* BaseDataDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; name = BaseDataDocument.m; path = sources/BaseDataDocument.m; sourceTree = "<group>"; };
+		D024AFB20E349A7B00F39EBB /* hex_icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = hex_icon.icns; path = resources/hex_icon.icns; sourceTree = "<group>"; };
+		D02BD6DE10545E9000535EDE /* FileDataDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileDataDocument.h; path = sources/FileDataDocument.h; sourceTree = "<group>"; };
+		D02BD6DF10545E9000535EDE /* FileDataDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FileDataDocument.m; path = sources/FileDataDocument.m; sourceTree = "<group>"; };
+		D03CFA880FC78BCD00EE79E4 /* DataInspectorRepresenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DataInspectorRepresenter.h; path = sources/DataInspectorRepresenter.h; sourceTree = "<group>"; };
+		D03CFA890FC78BCD00EE79E4 /* DataInspectorRepresenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DataInspectorRepresenter.m; path = sources/DataInspectorRepresenter.m; sourceTree = "<group>"; };
+		D047E3151022CEFE00EF307B /* com.ridiculousfish.HexFiend.PrivilegedHelper */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = com.ridiculousfish.HexFiend.PrivilegedHelper; sourceTree = BUILT_PRODUCTS_DIR; };
+		D047E33F1022CFA800EF307B /* FortunateSon.defs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.mig; path = FortunateSon.defs; sourceTree = "<group>"; };
+		D047E4431022DF6F00EF307B /* FortunateSonIPCTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FortunateSonIPCTypes.h; sourceTree = "<group>"; };
+		D047E48B1022E09300EF307B /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		D04D8FCB102396FC0013A2A1 /* HFPrivilegedHelperConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFPrivilegedHelperConnection.m; path = sources/HFPrivilegedHelperConnection.m; sourceTree = "<group>"; };
+		D05390421E2192C000F9AAC1 /* HexFiendSandbox.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = HexFiendSandbox.entitlements; sourceTree = "<group>"; };
+		D05390431E2192C000F9AAC1 /* HexFiendUnsandbox.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = HexFiendUnsandbox.entitlements; sourceTree = "<group>"; };
+		D05390441E2192C000F9AAC1 /* postprocess_for_mas.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = postprocess_for_mas.sh; sourceTree = "<group>"; };
+		D05984CB1032C6D900059E72 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = /System/Library/Frameworks/Security.framework; sourceTree = "<absolute>"; };
+		D059E1271311C675001493B8 /* AppDebugging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDebugging.h; path = sources/AppDebugging.h; sourceTree = "<group>"; };
+		D059E1281311C676001493B8 /* AppDebugging.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDebugging.m; path = sources/AppDebugging.m; sourceTree = "<group>"; };
+		D0621CAC102ED50D00DAEB4D /* FortunateSonServerImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FortunateSonServerImpl.cpp; sourceTree = "<group>"; };
+		D074B0D3115B2075002D5FA8 /* DiffDocumentWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DiffDocumentWindow.h; path = sources/DiffDocumentWindow.h; sourceTree = "<group>"; };
+		D074B0D4115B2075002D5FA8 /* DiffDocumentWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DiffDocumentWindow.m; path = sources/DiffDocumentWindow.m; sourceTree = "<group>"; };
+		D084E761115DAEAC004DC181 /* DiffOverlayView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DiffOverlayView.h; path = sources/DiffOverlayView.h; sourceTree = "<group>"; };
+		D084E762115DAEAC004DC181 /* DiffOverlayView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DiffOverlayView.m; path = sources/DiffOverlayView.m; sourceTree = "<group>"; };
+		D0A8AF7B1467272B00387627 /* AppUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppUtilities.h; path = sources/AppUtilities.h; sourceTree = "<group>"; };
+		D0A8AF7C1467273900387627 /* AppUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppUtilities.m; path = sources/AppUtilities.m; sourceTree = "<group>"; };
+		D0AFA784123C2BDF00CFC513 /* MyDocumentController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MyDocumentController.h; path = sources/MyDocumentController.h; sourceTree = "<group>"; };
+		D0AFA785123C2BDF00CFC513 /* MyDocumentController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MyDocumentController.m; path = sources/MyDocumentController.m; sourceTree = "<group>"; };
+		D0CBB23E128F78C200989C15 /* StretchableProgressIndicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StretchableProgressIndicator.h; path = sources/StretchableProgressIndicator.h; sourceTree = "<group>"; };
+		D0CBB23F128F78C200989C15 /* StretchableProgressIndicator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = StretchableProgressIndicator.m; path = sources/StretchableProgressIndicator.m; sourceTree = "<group>"; };
+		D0CBB328128F906000989C15 /* DiffTextViewContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DiffTextViewContainer.h; path = sources/DiffTextViewContainer.h; sourceTree = "<group>"; };
+		D0CBB329128F906000989C15 /* DiffTextViewContainer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DiffTextViewContainer.m; path = sources/DiffTextViewContainer.m; sourceTree = "<group>"; };
+		D0CD51F40DA2B928006E8D1B /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = sources/AppDelegate.h; sourceTree = "<group>"; };
+		D0CD51F50DA2B928006E8D1B /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; name = AppDelegate.m; path = sources/AppDelegate.m; sourceTree = "<group>"; };
+		D0D0536C1487FF2500704643 /* HFFindReplaceOperationView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HFFindReplaceOperationView.h; path = sources/HFFindReplaceOperationView.h; sourceTree = "<group>"; };
+		D0D0536D1487FF2500704643 /* HFFindReplaceOperationView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HFFindReplaceOperationView.m; path = sources/HFFindReplaceOperationView.m; sourceTree = "<group>"; };
+		D0D110520FF602D800AE5CFB /* FiendlingAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FiendlingAppDelegate.h; sourceTree = "<group>"; };
+		D0D110530FF602D800AE5CFB /* FiendlingAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FiendlingAppDelegate.m; sourceTree = "<group>"; };
+		D0D4BE84146F43A1001B0A71 /* ServiceManagement.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ServiceManagement.framework; path = /System/Library/Frameworks/ServiceManagement.framework; sourceTree = "<absolute>"; };
+		D0D4BE87146F4B3A001B0A71 /* FortunateSon-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "FortunateSon-Info.plist"; sourceTree = "<group>"; };
+		D0D4BE88146F4B3A001B0A71 /* FortunateSon-Launchd.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "FortunateSon-Launchd.plist"; sourceTree = "<group>"; };
+		D8EE3EFC16F26689001C7C09 /* DiffRangeWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DiffRangeWindowController.h; path = sources/DiffRangeWindowController.h; sourceTree = "<group>"; };
+		D8EE3EFD16F26689001C7C09 /* DiffRangeWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DiffRangeWindowController.m; path = sources/DiffRangeWindowController.m; sourceTree = "<group>"; };
+		DAE8EBFC1598FFDB0008ADB9 /* DocumentWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DocumentWindow.h; path = sources/DocumentWindow.h; sourceTree = "<group>"; };
+		DAE8EBFD1598FFDB0008ADB9 /* DocumentWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DocumentWindow.m; path = sources/DocumentWindow.m; sourceTree = "<group>"; };
+		FBEA8E7F14A2C10B00C27288 /* fileport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fileport.h; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		8D11072E0486CEB800E47090 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A5D8C8F220E9E58000103D60 /* libz.1.tbd in Frameworks */,
+				A57B5E7B2B49286000FF958B /* HexFiend in Frameworks */,
+				A59BC5942001FD0F0066860F /* Tcl.framework in Frameworks */,
+				795F46C314BAADB600EB2F7D /* DiskArbitration.framework in Frameworks */,
+				A5A34C1B26AD271900506AE7 /* Sparkle in Frameworks */,
+				8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9408FBF719DD72DE004F800E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A50859A42B204C8100325B36 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A550A7131F7877F8001C79C7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A54281B12B413542006DEF81 /* ArgumentParser in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D00C15E30FF091FF006D021F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D05E7AAE0FF6167100767D95 /* Cocoa.framework in Frameworks */,
+				A56780EE2D87158400CB1678 /* HexFiend in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D047E3131022CEFE00EF307B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FB1E99AA14A301CD002136A3 /* Security.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		19C28FACFE9D520D11CA2CBB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8D1107320486CEB800E47090 /* Hex Fiend.app */,
+				D00C15E50FF091FF006D021F /* HexFiendling.app */,
+				D047E3151022CEFE00EF307B /* com.ridiculousfish.HexFiend.PrivilegedHelper */,
+				9408FBFA19DD72DE004F800E /* HexFiend_Framework Tests.xctest */,
+				A550A7161F7877F8001C79C7 /* hexf */,
+				A50859A72B204C8100325B36 /* Hex Fiend Tests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		29B97314FDCFA39411CA2CEA /* HexFiend_2 */ = {
+			isa = PBXGroup;
+			children = (
+				A531921B21D585FD006C25D6 /* version.h */,
+				D0560B380CDC4253009D2484 /* App */,
+				D047E33B1022CF2B00EF307B /* PrivilegedHelper */,
+				A550A7171F7877F8001C79C7 /* hexf */,
+				D00C166E0FF4925A006D021F /* HexFiendling */,
+				D05390411E2192C000F9AAC1 /* configs */,
+				A50859A82B204C8100325B36 /* Hex Fiend Tests */,
+				29B97323FDCFA39411CA2CEA /* Frameworks */,
+				19C28FACFE9D520D11CA2CBB /* Products */,
+				D01D1D6C1489D1F6008212BB /* Documentation Scripts */,
+			);
+			indentWidth = 4;
+			name = HexFiend_2;
+			sourceTree = "<group>";
+			tabWidth = 4;
+			usesTabs = 0;
+		};
+		29B97317FDCFA39411CA2CEA /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				A5B2F6E2284729F8006E8AF8 /* templates */,
+				A54D8AED2A3ECBD80021FBAB /* ColorByteThemes */,
+				79E2FF1F1745A2B300FA8F12 /* dsa_pub.pem */,
+				D024AFB20E349A7B00F39EBB /* hex_icon.icns */,
+				D01E7C0A0CDC570400943F9E /* Info.plist */,
+				089C165CFE840E0CC02AAC07 /* InfoPlist.strings */,
+				A57F348B1F1EFA9600234B94 /* OpenDriveDialog.xib */,
+				A57F34851F1EFA6E00234B94 /* DataInspectorView.xib */,
+				A57F34881F1EFA8800234B94 /* ChooseStringEncodingDialog.xib */,
+				D04A6BA3100EA78700704963 /* MyDocument.xib */,
+				D04A6B9C100EA75400704963 /* MoveSelectionByBanner.xib */,
+				D04A6B95100EA73800704963 /* JumpToOffsetBanner.xib */,
+				D04A6B78100EA4BC00704963 /* FindReplaceBanner.xib */,
+				D04A6B69100EA47C00704963 /* SaveBanner.xib */,
+				D0B47FED1272427B0095120E /* DiffComputationBanner.xib */,
+				D018F137107AB64900AE805F /* DiffDocument.xib */,
+				D8C1F92A16F278BA00A4C36E /* DiffRangeDialog.xib */,
+				D04A6BA9100EA7B800704963 /* MainMenu.xib */,
+				A57F34821F1EF47700234B94 /* Preferences.xib */,
+				A59DFE65200BE7A800FEA540 /* BinaryTemplateController.xib */,
+				A594F04D24959F6400DCACD3 /* BinaryTemplatePopover.xib */,
+				A5589ACA2206D238000293A4 /* OpenAccessoryView.xib */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				A51D0E9020F2A8D200B55775 /* CoreText.framework */,
+				A51D0E8B20F1E56600B55775 /* CoreGraphics.framework */,
+				A51D0E7D20F1D01A00B55775 /* UIKit.framework */,
+				A5D8C8F120E9E58000103D60 /* libz.1.tbd */,
+				A59BC5932001FD0F0066860F /* Tcl.framework */,
+				795F46C214BAADB600EB2F7D /* DiskArbitration.framework */,
+				D0D4BE84146F43A1001B0A71 /* ServiceManagement.framework */,
+				D05984CB1032C6D900059E72 /* Security.framework */,
+				1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */,
+				29B97324FDCFA39411CA2CEA /* AppKit.framework */,
+				29B97325FDCFA39411CA2CEA /* Foundation.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		A50859A82B204C8100325B36 /* Hex Fiend Tests */ = {
+			isa = PBXGroup;
+			children = (
+				A50859B52B204D7600325B36 /* Hex_Fiend_Tests-Bridging-Header.h */,
+				A50859A92B204C8100325B36 /* HFTclTemplateControllerTests.swift */,
+			);
+			name = "Hex Fiend Tests";
+			path = "../Hex Fiend Tests";
+			sourceTree = "<group>";
+		};
+		A531921C21D58DC1006C25D6 /* Miscellaneous */ = {
+			isa = PBXGroup;
+			children = (
+				A533B9BF2AD42F5200ECA26E /* HexFiend_2-Bridging-Header.h */,
+				D0A8AF7B1467272B00387627 /* AppUtilities.h */,
+				D0A8AF7C1467273900387627 /* AppUtilities.m */,
+				D059E1271311C675001493B8 /* AppDebugging.h */,
+				D059E1281311C676001493B8 /* AppDebugging.m */,
+				D01772F30D751DB1002E03DE /* HFDocumentOperationView.h */,
+				D01772F40D751DB1002E03DE /* HFDocumentOperationView.m */,
+				D01773900D7A2F32002E03DE /* HFResizingView.h */,
+				D01773910D7A2F32002E03DE /* HFResizingView.m */,
+				D0CBB23E128F78C200989C15 /* StretchableProgressIndicator.h */,
+				D0CBB23F128F78C200989C15 /* StretchableProgressIndicator.m */,
+				A572614821D8A51B00970A0E /* HFPrompt.h */,
+				A572614921D8A51B00970A0E /* HFPrompt.m */,
+				A5589AC72206CFCC000293A4 /* HFExtendedAttributes.h */,
+				A5589AC82206CFCC000293A4 /* HFExtendedAttributes.m */,
+				A5589ACD2206D3C8000293A4 /* HFOpenAccessoryViewController.h */,
+				A5589ACE2206D3C8000293A4 /* HFOpenAccessoryViewController.m */,
+				9408FC0F19DD8669004F800E /* HFPrivilegedHelperConnection.h */,
+				D04D8FCB102396FC0013A2A1 /* HFPrivilegedHelperConnection.m */,
+				A5B762F92B32AE2F00CA25AE /* HFByteTheme.swift */,
+				A568D70D2B43D46200159993 /* ScrollViewRepresenter.swift */,
+			);
+			name = Miscellaneous;
+			sourceTree = "<group>";
+		};
+		A5327E562856EB2400530557 /* Data Inspector Types */ = {
+			isa = PBXGroup;
+			children = (
+				A5327E572856EB7500530557 /* LEB128Type.h */,
+				A5327E582856EB7500530557 /* LEB128Type.m */,
+			);
+			name = "Data Inspector Types";
+			sourceTree = "<group>";
+		};
+		A533B9DD2AD7CA1000ECA26E /* Encodings */ = {
+			isa = PBXGroup;
+			children = (
+				A533B9C02AD42F5300ECA26E /* ChooseStringEncodingWindowController.swift */,
+				A5BAB4142AD7CB3200623A9F /* Encodings.swift */,
+			);
+			name = Encodings;
+			sourceTree = "<group>";
+		};
+		A550A7171F7877F8001C79C7 /* hexf */ = {
+			isa = PBXGroup;
+			children = (
+				001BEF972910F23600BB82B3 /* hexf.swift */,
+				A54281B22B427F62006DEF81 /* hexf-Bridging-Header.h */,
+			);
+			name = hexf;
+			path = ../hexf;
+			sourceTree = "<group>";
+		};
+		A591313721E3064900685B51 /* Data Inspector */ = {
+			isa = PBXGroup;
+			children = (
+				A5327E5A2856F0CC00530557 /* DataInspectorType.h */,
+				A5327E562856EB2400530557 /* Data Inspector Types */,
+				D03CFA880FC78BCD00EE79E4 /* DataInspectorRepresenter.h */,
+				D03CFA890FC78BCD00EE79E4 /* DataInspectorRepresenter.m */,
+				A591313821E3079400685B51 /* DataInspector.h */,
+				A591313921E3079400685B51 /* DataInspector.m */,
+				A591313B21E3090300685B51 /* DataInspectorPlusMinusButtonCell.h */,
+				A591313C21E3090300685B51 /* DataInspectorPlusMinusButtonCell.m */,
+				A591313E21E3098800685B51 /* DataInspectorScrollView.h */,
+				A591313F21E3098800685B51 /* DataInspectorScrollView.m */,
+			);
+			name = "Data Inspector";
+			sourceTree = "<group>";
+		};
+		A59BC58F2001FB590066860F /* Binary Templates */ = {
+			isa = PBXGroup;
+			children = (
+				A59BC56F2001AB8C0066860F /* HFBinaryTemplateRepresenter.h */,
+				A59BC5702001AB8C0066860F /* HFBinaryTemplateRepresenter.m */,
+				A59BC59D2002E63C0066860F /* HFTemplateController.h */,
+				A59BC59E2002E63C0066860F /* HFTemplateController.m */,
+				A59BC5902001FB9A0066860F /* HFTclTemplateController.h */,
+				A59BC5912001FB9A0066860F /* HFTclTemplateController.m */,
+				A59BC59520020B480066860F /* HFBinaryTemplateController.h */,
+				A59BC59620020B480066860F /* HFBinaryTemplateController.m */,
+				A594F0502495A82300DCACD3 /* HFClickableTextField.h */,
+				A594F0512495A82300DCACD3 /* HFClickableTextField.m */,
+				A59BC59A2002113F0066860F /* HFTemplateNode.h */,
+				A59BC59B2002113F0066860F /* HFTemplateNode.m */,
+				A5628AAA21D8561C00911ABB /* Tcl_ParseArgsObjv.h */,
+				A5628AA921D8561C00911ABB /* Tcl_ParseArgsObjv.c */,
+				A5327E5B28570EF300530557 /* HFDirectoryWatcher.h */,
+				A5327E5C28570EF300530557 /* HFDirectoryWatcher.m */,
+				A571E5932A3973690005B388 /* HFTemplateFile.h */,
+				A571E5942A3973690005B388 /* HFTemplateFile.m */,
+				A571E5992A3AD38D0005B388 /* MinimumVersionRequired.h */,
+				A571E59A2A3AD38D0005B388 /* MinimumVersionRequired.m */,
+				A571E5902A3973140005B388 /* TemplateAutodetection.h */,
+				A571E5912A3973140005B388 /* TemplateAutodetection.m */,
+				A571E5962A3ABFAD0005B388 /* TemplateMetadata.h */,
+				A571E5972A3ABFAD0005B388 /* TemplateMetadata.m */,
+			);
+			name = "Binary Templates";
+			sourceTree = "<group>";
+		};
+		D00122DC0D48A89F00540B10 /* Find_Replace */ = {
+			isa = PBXGroup;
+			children = (
+				D00122E10D48A8D400540B10 /* HFFindReplaceBackgroundView.h */,
+				D00122E20D48A8D400540B10 /* HFFindReplaceBackgroundView.m */,
+				D0D0536C1487FF2500704643 /* HFFindReplaceOperationView.h */,
+				D0D0536D1487FF2500704643 /* HFFindReplaceOperationView.m */,
+			);
+			name = Find_Replace;
+			sourceTree = "<group>";
+		};
+		D00C166E0FF4925A006D021F /* HexFiendling */ = {
+			isa = PBXGroup;
+			children = (
+				D00C16750FF4925A006D021F /* main.m */,
+				D0D110520FF602D800AE5CFB /* FiendlingAppDelegate.h */,
+				D0D110530FF602D800AE5CFB /* FiendlingAppDelegate.m */,
+				D071391E146F7897004D3792 /* MainMenu.xib */,
+				D00C16740FF4925A006D021F /* Info.plist */,
+				A5791D61286181DD0067FC1E /* sampleData.rtf */,
+			);
+			name = HexFiendling;
+			path = ../sample_code/HexFiendling;
+			sourceTree = "<group>";
+		};
+		D01D1D6C1489D1F6008212BB /* Documentation Scripts */ = {
+			isa = PBXGroup;
+			children = (
+				D01D1D6D1489D1F6008212BB /* build_documentation.py */,
+				D01D1D6F1489D1F6008212BB /* hexfiend_doxyfile.config */,
+				D01D1D701489D1F6008212BB /* munge_header_for_doxy.py */,
+			);
+			name = "Documentation Scripts";
+			path = ../documentation_tools;
+			sourceTree = "<group>";
+		};
+		D02BD6D910545E7B00535EDE /* DocumentTypes */ = {
+			isa = PBXGroup;
+			children = (
+				D0AFA784123C2BDF00CFC513 /* MyDocumentController.h */,
+				D0AFA785123C2BDF00CFC513 /* MyDocumentController.m */,
+				DAE8EBFC1598FFDB0008ADB9 /* DocumentWindow.h */,
+				DAE8EBFD1598FFDB0008ADB9 /* DocumentWindow.m */,
+				D01E7C140CDC58AA00943F9E /* BaseDataDocument.h */,
+				D01E7C150CDC58AA00943F9E /* BaseDataDocument.m */,
+				D02BD6DE10545E9000535EDE /* FileDataDocument.h */,
+				D02BD6DF10545E9000535EDE /* FileDataDocument.m */,
+				A5589AD02206E1C4000293A4 /* ExtendedAttributeDataDocument.h */,
+				A5589AD12206E1C4000293A4 /* ExtendedAttributeDataDocument.m */,
+			);
+			name = DocumentTypes;
+			sourceTree = "<group>";
+		};
+		D047E33B1022CF2B00EF307B /* PrivilegedHelper */ = {
+			isa = PBXGroup;
+			children = (
+				D0D4BE87146F4B3A001B0A71 /* FortunateSon-Info.plist */,
+				D0D4BE88146F4B3A001B0A71 /* FortunateSon-Launchd.plist */,
+				D047E33F1022CFA800EF307B /* FortunateSon.defs */,
+				D047E4431022DF6F00EF307B /* FortunateSonIPCTypes.h */,
+				D047E48B1022E09300EF307B /* main.cpp */,
+				D0621CAC102ED50D00DAEB4D /* FortunateSonServerImpl.cpp */,
+				FBEA8E7F14A2C10B00C27288 /* fileport.h */,
+				A5A2F6642B2F63F80097F225 /* HFHelperProcessSharedCode.h */,
+			);
+			name = PrivilegedHelper;
+			path = ../helper_subprocess;
+			sourceTree = "<group>";
+			tabWidth = 4;
+		};
+		D05390411E2192C000F9AAC1 /* configs */ = {
+			isa = PBXGroup;
+			children = (
+				D05390421E2192C000F9AAC1 /* HexFiendSandbox.entitlements */,
+				D05390431E2192C000F9AAC1 /* HexFiendUnsandbox.entitlements */,
+				D05390441E2192C000F9AAC1 /* postprocess_for_mas.sh */,
+			);
+			name = configs;
+			path = ../configs;
+			sourceTree = "<group>";
+		};
+		D0560B380CDC4253009D2484 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				29B97316FDCFA39411CA2CEA /* main.m */,
+				D0CD51F40DA2B928006E8D1B /* AppDelegate.h */,
+				D0CD51F50DA2B928006E8D1B /* AppDelegate.m */,
+				D02BD6D910545E7B00535EDE /* DocumentTypes */,
+				A533B9DD2AD7CA1000ECA26E /* Encodings */,
+				D084E75C115DAE90004DC181 /* DiffDocument */,
+				D0D8C45C12A3EF3F00960FC4 /* Dialogs */,
+				A59BC58F2001FB590066860F /* Binary Templates */,
+				D00122DC0D48A89F00540B10 /* Find_Replace */,
+				A591313721E3064900685B51 /* Data Inspector */,
+				A531921C21D58DC1006C25D6 /* Miscellaneous */,
+				29B97317FDCFA39411CA2CEA /* Resources */,
+			);
+			name = App;
+			sourceTree = "<group>";
+		};
+		D084E75C115DAE90004DC181 /* DiffDocument */ = {
+			isa = PBXGroup;
+			children = (
+				D018F151107ABAC600AE805F /* DiffDocument.h */,
+				D018F152107ABAC600AE805F /* DiffDocument.m */,
+				D074B0D3115B2075002D5FA8 /* DiffDocumentWindow.h */,
+				D074B0D4115B2075002D5FA8 /* DiffDocumentWindow.m */,
+				D084E761115DAEAC004DC181 /* DiffOverlayView.h */,
+				D084E762115DAEAC004DC181 /* DiffOverlayView.m */,
+				D0CBB328128F906000989C15 /* DiffTextViewContainer.h */,
+				D0CBB329128F906000989C15 /* DiffTextViewContainer.m */,
+			);
+			name = DiffDocument;
+			sourceTree = "<group>";
+		};
+		D0D8C45C12A3EF3F00960FC4 /* Dialogs */ = {
+			isa = PBXGroup;
+			children = (
+				795F46BF14BAA45D00EB2F7D /* OpenDriveWindowController.h */,
+				795F46C014BAA45D00EB2F7D /* OpenDriveWindowController.m */,
+				D8EE3EFC16F26689001C7C09 /* DiffRangeWindowController.h */,
+				D8EE3EFD16F26689001C7C09 /* DiffRangeWindowController.m */,
+				A56D78141E7EF088001D1892 /* CLIController.h */,
+				A56D78151E7EF088001D1892 /* CLIController.m */,
+			);
+			name = Dialogs;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		8D1107260486CEB800E47090 /* HexFiend_2 */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C01FCF4A08A954540054247B /* Build configuration list for PBXNativeTarget "HexFiend_2" */;
+			buildPhases = (
+				D01E7BDA0CDC540700943F9E /* Copy Frameworks */,
+				8D1107290486CEB800E47090 /* Resources */,
+				8D11072C0486CEB800E47090 /* Sources */,
+				8D11072E0486CEB800E47090 /* Frameworks */,
+				D039DC011481C18400364FA6 /* CopyFiles */,
+				A57617BB1E430C18003CF6BB /* Set Bundle Version */,
+				D05390401E2192AE00F9AAC1 /* Optionally Postprocess for Mac App Store */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				A550A7221F787A60001C79C7 /* PBXTargetDependency */,
+				D039DC001481C17C00364FA6 /* PBXTargetDependency */,
+			);
+			name = HexFiend_2;
+			packageProductDependencies = (
+				A5A34C1A26AD271900506AE7 /* Sparkle */,
+				A57B5E7A2B49286000FF958B /* HexFiend */,
+			);
+			productInstallPath = "$(HOME)/Applications";
+			productName = HexFiend_2;
+			productReference = 8D1107320486CEB800E47090 /* Hex Fiend.app */;
+			productType = "com.apple.product-type.application";
+		};
+		9408FBF919DD72DE004F800E /* HexFiend_Framework Tests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9408FC0C19DD72DF004F800E /* Build configuration list for PBXNativeTarget "HexFiend_Framework Tests" */;
+			buildPhases = (
+				9408FBF619DD72DE004F800E /* Sources */,
+				9408FBF719DD72DE004F800E /* Frameworks */,
+				9408FBF819DD72DE004F800E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "HexFiend_Framework Tests";
+			productName = "HexFiend_Framework Tests";
+			productReference = 9408FBFA19DD72DE004F800E /* HexFiend_Framework Tests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		A50859A62B204C8100325B36 /* Hex Fiend Tests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A50859B42B204C8100325B36 /* Build configuration list for PBXNativeTarget "Hex Fiend Tests" */;
+			buildPhases = (
+				A50859A32B204C8100325B36 /* Sources */,
+				A50859A42B204C8100325B36 /* Frameworks */,
+				A50859A52B204C8100325B36 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				A50859AC2B204C8100325B36 /* PBXTargetDependency */,
+			);
+			name = "Hex Fiend Tests";
+			productName = "Hex Fiend Tests";
+			productReference = A50859A72B204C8100325B36 /* Hex Fiend Tests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		A550A7151F7877F8001C79C7 /* hexf */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A550A71A1F7877F8001C79C7 /* Build configuration list for PBXNativeTarget "hexf" */;
+			buildPhases = (
+				A550A7121F7877F8001C79C7 /* Sources */,
+				A550A7131F7877F8001C79C7 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = hexf;
+			packageProductDependencies = (
+				A54281B02B413542006DEF81 /* ArgumentParser */,
+			);
+			productName = CommandLineTool;
+			productReference = A550A7161F7877F8001C79C7 /* hexf */;
+			productType = "com.apple.product-type.tool";
+		};
+		D00C15E40FF091FF006D021F /* HexFiendling */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D00C15EE0FF09200006D021F /* Build configuration list for PBXNativeTarget "HexFiendling" */;
+			buildPhases = (
+				D05E7AA50FF6160D00767D95 /* CopyFiles */,
+				D00C15E10FF091FF006D021F /* Resources */,
+				D00C15E20FF091FF006D021F /* Sources */,
+				D00C15E30FF091FF006D021F /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = HexFiendling;
+			packageProductDependencies = (
+				A56780ED2D87158400CB1678 /* HexFiend */,
+			);
+			productName = HexFiendling;
+			productReference = D00C15E50FF091FF006D021F /* HexFiendling.app */;
+			productType = "com.apple.product-type.application";
+		};
+		D047E3141022CEFE00EF307B /* FortunateSon (PrivilegedHelper) */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D047E32A1022CF1200EF307B /* Build configuration list for PBXNativeTarget "FortunateSon (PrivilegedHelper)" */;
+			buildPhases = (
+				D047E3121022CEFE00EF307B /* Sources */,
+				D047E3131022CEFE00EF307B /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "FortunateSon (PrivilegedHelper)";
+			productName = Fortunate_Son;
+			productReference = D047E3151022CEFE00EF307B /* com.ridiculousfish.HexFiend.PrivilegedHelper */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		29B97313FDCFA39411CA2CEA /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastSwiftUpdateCheck = 1500;
+				LastUpgradeCheck = 1620;
+				ORGANIZATIONNAME = ridiculous_fish;
+				TargetAttributes = {
+					8D1107260486CEB800E47090 = {
+						LastSwiftMigration = 1500;
+					};
+					9408FBF919DD72DE004F800E = {
+						CreatedOnToolsVersion = 6.0.1;
+					};
+					A50859A62B204C8100325B36 = {
+						CreatedOnToolsVersion = 15.0.1;
+						TestTargetID = 8D1107260486CEB800E47090;
+					};
+					A550A7151F7877F8001C79C7 = {
+						CreatedOnToolsVersion = 9.0;
+						LastSwiftMigration = 1430;
+						ProvisioningStyle = Manual;
+					};
+				};
+			};
+			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "HexFiend_2" */;
+			compatibilityVersion = "Xcode 11.4";
+			developmentRegion = en;
+			hasScannedForEncodings = 1;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 29B97314FDCFA39411CA2CEA /* HexFiend_2 */;
+			packageReferences = (
+				A5A34C1926AD271900506AE7 /* XCRemoteSwiftPackageReference "Sparkle" */,
+				A54281AF2B413542006DEF81 /* XCRemoteSwiftPackageReference "swift-argument-parser" */,
+				A5884A6F2D870C1F00E02030 /* XCLocalSwiftPackageReference "../../HexFiend" */,
+			);
+			projectDirPath = "";
+			projectRoot = ../..;
+			targets = (
+				8D1107260486CEB800E47090 /* HexFiend_2 */,
+				D047E3141022CEFE00EF307B /* FortunateSon (PrivilegedHelper) */,
+				D00C15E40FF091FF006D021F /* HexFiendling */,
+				D0F6FE0A0FFF679200C609F0 /* Documentation Generation */,
+				9408FBF919DD72DE004F800E /* HexFiend_Framework Tests */,
+				A550A7151F7877F8001C79C7 /* hexf */,
+				A50859A62B204C8100325B36 /* Hex Fiend Tests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		8D1107290486CEB800E47090 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A59DFE67200BE7A800FEA540 /* BinaryTemplateController.xib in Resources */,
+				A550A7201F787831001C79C7 /* hexf in Resources */,
+				8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */,
+				D024AFB30E349A7B00F39EBB /* hex_icon.icns in Resources */,
+				A57F34831F1EFA6E00234B94 /* DataInspectorView.xib in Resources */,
+				D04A6B6B100EA47C00704963 /* SaveBanner.xib in Resources */,
+				D04A6B7A100EA4BC00704963 /* FindReplaceBanner.xib in Resources */,
+				D04A6B97100EA73800704963 /* JumpToOffsetBanner.xib in Resources */,
+				A5B2F6E3284729F8006E8AF8 /* templates in Resources */,
+				D04A6B9E100EA75400704963 /* MoveSelectionByBanner.xib in Resources */,
+				D04A6BA5100EA78700704963 /* MyDocument.xib in Resources */,
+				D04A6BAB100EA7B800704963 /* MainMenu.xib in Resources */,
+				A54D8AEE2A3ECBD80021FBAB /* ColorByteThemes in Resources */,
+				D018F139107AB64900AE805F /* DiffDocument.xib in Resources */,
+				D0B47FEF1272427B0095120E /* DiffComputationBanner.xib in Resources */,
+				A57F34861F1EFA8800234B94 /* ChooseStringEncodingDialog.xib in Resources */,
+				A5589ACC2206D238000293A4 /* OpenAccessoryView.xib in Resources */,
+				A57F34891F1EFA9600234B94 /* OpenDriveDialog.xib in Resources */,
+				D8C1F92C16F278BA00A4C36E /* DiffRangeDialog.xib in Resources */,
+				A57F34801F1EF47700234B94 /* Preferences.xib in Resources */,
+				A594F04F24959F6400DCACD3 /* BinaryTemplatePopover.xib in Resources */,
+				79E2FF201745A2B300FA8F12 /* dsa_pub.pem in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9408FBF819DD72DE004F800E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A50859A52B204C8100325B36 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D00C15E10FF091FF006D021F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A5791D62286181DD0067FC1E /* sampleData.rtf in Resources */,
+				D0713920146F7898004D3792 /* MainMenu.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		A57617BB1E430C18003CF6BB /* Set Bundle Version */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Set Bundle Version";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "DATE=`date -u \"+%s\"`\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $DATE\" \"${TARGET_BUILD_DIR}/${INFOPLIST_PATH}\"\n";
+		};
+		D01D1D711489D208008212BB /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "'documentation_tools/build_documentation.py'\n";
+		};
+		D05390401E2192AE00F9AAC1 /* Optionally Postprocess for Mac App Store */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Optionally Postprocess for Mac App Store";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "${SRCROOT}/../configs/postprocess_for_mas.sh\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		8D11072C0486CEB800E47090 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8D11072D0486CEB800E47090 /* main.m in Sources */,
+				D01E7C160CDC58AA00943F9E /* BaseDataDocument.m in Sources */,
+				A5327E5D28570EF300530557 /* HFDirectoryWatcher.m in Sources */,
+				A594F0522495A82400DCACD3 /* HFClickableTextField.m in Sources */,
+				A5BAB4152AD7CB3200623A9F /* Encodings.swift in Sources */,
+				A591313D21E3090300685B51 /* DataInspectorPlusMinusButtonCell.m in Sources */,
+				A59BC5712001AB8C0066860F /* HFBinaryTemplateRepresenter.m in Sources */,
+				D00122E30D48A8D400540B10 /* HFFindReplaceBackgroundView.m in Sources */,
+				A58CA20D2B3C0D0700EDD4DA /* HFPrivilegedHelperConnection.m in Sources */,
+				A571E59B2A3AD38D0005B388 /* MinimumVersionRequired.m in Sources */,
+				D01772F50D751DB1002E03DE /* HFDocumentOperationView.m in Sources */,
+				A571E5952A3973690005B388 /* HFTemplateFile.m in Sources */,
+				D01773920D7A2F32002E03DE /* HFResizingView.m in Sources */,
+				A571E5982A3ABFAD0005B388 /* TemplateMetadata.m in Sources */,
+				A533B9C12AD42F5300ECA26E /* ChooseStringEncodingWindowController.swift in Sources */,
+				D0CD51F60DA2B928006E8D1B /* AppDelegate.m in Sources */,
+				D03CFA8A0FC78BCD00EE79E4 /* DataInspectorRepresenter.m in Sources */,
+				D02BD6E010545E9000535EDE /* FileDataDocument.m in Sources */,
+				A59BC59C2002113F0066860F /* HFTemplateNode.m in Sources */,
+				A59BC59F2002E63C0066860F /* HFTemplateController.m in Sources */,
+				D018F153107ABAC600AE805F /* DiffDocument.m in Sources */,
+				A591313A21E3079400685B51 /* DataInspector.m in Sources */,
+				D074B0D5115B2075002D5FA8 /* DiffDocumentWindow.m in Sources */,
+				D084E763115DAEAC004DC181 /* DiffOverlayView.m in Sources */,
+				D0AFA786123C2BDF00CFC513 /* MyDocumentController.m in Sources */,
+				D0CBB240128F78C200989C15 /* StretchableProgressIndicator.m in Sources */,
+				A5327E592856EB7500530557 /* LEB128Type.m in Sources */,
+				A591314021E3098800685B51 /* DataInspectorScrollView.m in Sources */,
+				A5589AC92206CFCC000293A4 /* HFExtendedAttributes.m in Sources */,
+				D0CBB32A128F906000989C15 /* DiffTextViewContainer.m in Sources */,
+				A5589ACF2206D3C8000293A4 /* HFOpenAccessoryViewController.m in Sources */,
+				A5628AAB21D8561D00911ABB /* Tcl_ParseArgsObjv.c in Sources */,
+				A58CA20E2B3C0D6800EDD4DA /* FortunateSon.defs in Sources */,
+				A59BC5922001FB9A0066860F /* HFTclTemplateController.m in Sources */,
+				A56D78161E7EF088001D1892 /* CLIController.m in Sources */,
+				D059E1291311C676001493B8 /* AppDebugging.m in Sources */,
+				A571E5922A3973140005B388 /* TemplateAutodetection.m in Sources */,
+				A5589AD22206E1C4000293A4 /* ExtendedAttributeDataDocument.m in Sources */,
+				D0A8AF7D1467273900387627 /* AppUtilities.m in Sources */,
+				D0D0536E1487FF2500704643 /* HFFindReplaceOperationView.m in Sources */,
+				A59BC59820020B480066860F /* HFBinaryTemplateController.m in Sources */,
+				795F46C114BAA45D00EB2F7D /* OpenDriveWindowController.m in Sources */,
+				DAE8EBFE1598FFDB0008ADB9 /* DocumentWindow.m in Sources */,
+				D8EE3EFE16F26689001C7C09 /* DiffRangeWindowController.m in Sources */,
+				A572614A21D8A51B00970A0E /* HFPrompt.m in Sources */,
+				A5B762FA2B32AE2F00CA25AE /* HFByteTheme.swift in Sources */,
+				A568D70E2B43D46200159993 /* ScrollViewRepresenter.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9408FBF619DD72DE004F800E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A50859A32B204C8100325B36 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A50859AA2B204C8100325B36 /* HFTclTemplateControllerTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A550A7121F7877F8001C79C7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				001BEF982910F23600BB82B3 /* hexf.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D00C15E20FF091FF006D021F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D00C16790FF4925A006D021F /* main.m in Sources */,
+				D0D110540FF602D800AE5CFB /* FiendlingAppDelegate.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D047E3121022CEFE00EF307B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D047E3401022CFA800EF307B /* FortunateSon.defs in Sources */,
+				D047E48C1022E09300EF307B /* main.cpp in Sources */,
+				D0621CAD102ED50D00DAEB4D /* FortunateSonServerImpl.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		A50859AC2B204C8100325B36 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8D1107260486CEB800E47090 /* HexFiend_2 */;
+			targetProxy = A50859AB2B204C8100325B36 /* PBXContainerItemProxy */;
+		};
+		A550A7221F787A60001C79C7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A550A7151F7877F8001C79C7 /* hexf */;
+			targetProxy = A550A7211F787A60001C79C7 /* PBXContainerItemProxy */;
+		};
+		D039DC001481C17C00364FA6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D047E3141022CEFE00EF307B /* FortunateSon (PrivilegedHelper) */;
+			targetProxy = D039DBFF1481C17C00364FA6 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		089C165CFE840E0CC02AAC07 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				089C165DFE840E0CC02AAC07 /* Base */,
+			);
+			name = InfoPlist.strings;
+			path = resources;
+			sourceTree = "<group>";
+		};
+		A5589ACA2206D238000293A4 /* OpenAccessoryView.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				A5589ACB2206D238000293A4 /* Base */,
+			);
+			name = OpenAccessoryView.xib;
+			sourceTree = "<group>";
+		};
+		A57F34821F1EF47700234B94 /* Preferences.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				A554E0D920DF2CD6001B4C48 /* Base */,
+			);
+			name = Preferences.xib;
+			path = resources;
+			sourceTree = "<group>";
+		};
+		A57F34851F1EFA6E00234B94 /* DataInspectorView.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				A554E0CE20DF2CD3001B4C48 /* Base */,
+			);
+			name = DataInspectorView.xib;
+			path = resources;
+			sourceTree = "<group>";
+		};
+		A57F34881F1EFA8800234B94 /* ChooseStringEncodingDialog.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				A554E0CF20DF2CD4001B4C48 /* Base */,
+			);
+			name = ChooseStringEncodingDialog.xib;
+			path = resources;
+			sourceTree = "<group>";
+		};
+		A57F348B1F1EFA9600234B94 /* OpenDriveDialog.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				A554E0CD20DF2CD3001B4C48 /* Base */,
+			);
+			name = OpenDriveDialog.xib;
+			path = resources;
+			sourceTree = "<group>";
+		};
+		A594F04D24959F6400DCACD3 /* BinaryTemplatePopover.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				A594F04E24959F6400DCACD3 /* Base */,
+			);
+			name = BinaryTemplatePopover.xib;
+			sourceTree = "<group>";
+		};
+		A59DFE65200BE7A800FEA540 /* BinaryTemplateController.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				A554E0DA20DF2CD6001B4C48 /* Base */,
+			);
+			name = BinaryTemplateController.xib;
+			path = resources;
+			sourceTree = "<group>";
+		};
+		D018F137107AB64900AE805F /* DiffDocument.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				A554E0D620DF2CD6001B4C48 /* Base */,
+			);
+			name = DiffDocument.xib;
+			path = resources;
+			sourceTree = "<group>";
+		};
+		D04A6B69100EA47C00704963 /* SaveBanner.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				A554E0D420DF2CD5001B4C48 /* Base */,
+			);
+			name = SaveBanner.xib;
+			path = resources;
+			sourceTree = "<group>";
+		};
+		D04A6B78100EA4BC00704963 /* FindReplaceBanner.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				A554E0D320DF2CD5001B4C48 /* Base */,
+			);
+			name = FindReplaceBanner.xib;
+			path = resources;
+			sourceTree = "<group>";
+		};
+		D04A6B95100EA73800704963 /* JumpToOffsetBanner.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				A554E0D220DF2CD4001B4C48 /* Base */,
+			);
+			name = JumpToOffsetBanner.xib;
+			path = resources;
+			sourceTree = "<group>";
+		};
+		D04A6B9C100EA75400704963 /* MoveSelectionByBanner.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				A554E0D120DF2CD4001B4C48 /* Base */,
+			);
+			name = MoveSelectionByBanner.xib;
+			path = resources;
+			sourceTree = "<group>";
+		};
+		D04A6BA3100EA78700704963 /* MyDocument.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				A554E0D020DF2CD4001B4C48 /* Base */,
+			);
+			name = MyDocument.xib;
+			path = resources;
+			sourceTree = "<group>";
+		};
+		D04A6BA9100EA7B800704963 /* MainMenu.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				A554E0D820DF2CD6001B4C48 /* Base */,
+			);
+			name = MainMenu.xib;
+			path = resources;
+			sourceTree = "<group>";
+		};
+		D071391E146F7897004D3792 /* MainMenu.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				A554E0DB20DF2CD7001B4C48 /* Base */,
+			);
+			name = MainMenu.xib;
+			sourceTree = "<group>";
+		};
+		D0B47FED1272427B0095120E /* DiffComputationBanner.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				A554E0D520DF2CD5001B4C48 /* Base */,
+			);
+			name = DiffComputationBanner.xib;
+			path = resources;
+			sourceTree = "<group>";
+		};
+		D8C1F92A16F278BA00A4C36E /* DiffRangeDialog.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				A554E0D720DF2CD6001B4C48 /* Base */,
+			);
+			name = DiffRangeDialog.xib;
+			path = resources;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		9408FC0019DD72DF004F800E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEAD_CODE_STRIPPING = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+					"$(inherited)",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				INFOPLIST_FILE = "../framework/tests/Framework_Tests-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = "-lz";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculousfish.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		9408FC0119DD72DF004F800E /* Debug+CodeSign */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEAD_CODE_STRIPPING = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+					"$(inherited)",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				INFOPLIST_FILE = "../framework/tests/Framework_Tests-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = "-lz";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculousfish.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = "Debug+CodeSign";
+		};
+		9408FC0219DD72DF004F800E /* Debug+UnitTests */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEAD_CODE_STRIPPING = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+					"$(inherited)",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				INFOPLIST_FILE = "../framework/tests/Framework_Tests-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = "-lz";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculousfish.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = "Debug+UnitTests";
+		};
+		9408FC0319DD72DF004F800E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEAD_CODE_STRIPPING = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+					"$(inherited)",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				INFOPLIST_FILE = "../framework/tests/Framework_Tests-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "-lz";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculousfish.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		9408FC0419DD72DF004F800E /* Release+CodeSign */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEAD_CODE_STRIPPING = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+					"$(inherited)",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				INFOPLIST_FILE = "../framework/tests/Framework_Tests-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "-lz";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculousfish.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = "Release+CodeSign";
+		};
+		A50859AD2B204C8100325B36 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculous-fish.Hex-Fiend-Tests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "../Hex Fiend Tests/Hex_Fiend_Tests-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Hex Fiend.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Hex Fiend";
+			};
+			name = Debug;
+		};
+		A50859AE2B204C8100325B36 /* Debug+CodeSign */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculous-fish.Hex-Fiend-Tests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "../Hex Fiend Tests/Hex_Fiend_Tests-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Hex Fiend.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Hex Fiend";
+			};
+			name = "Debug+CodeSign";
+		};
+		A50859AF2B204C8100325B36 /* Debug+MAS */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculous-fish.Hex-Fiend-Tests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "../Hex Fiend Tests/Hex_Fiend_Tests-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Hex Fiend.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Hex Fiend";
+			};
+			name = "Debug+MAS";
+		};
+		A50859B02B204C8100325B36 /* Debug+UnitTests */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculous-fish.Hex-Fiend-Tests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "../Hex Fiend Tests/Hex_Fiend_Tests-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Hex Fiend.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Hex Fiend";
+			};
+			name = "Debug+UnitTests";
+		};
+		A50859B12B204C8100325B36 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculous-fish.Hex-Fiend-Tests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "../Hex Fiend Tests/Hex_Fiend_Tests-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Hex Fiend.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Hex Fiend";
+			};
+			name = Release;
+		};
+		A50859B22B204C8100325B36 /* Release+CodeSign */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculous-fish.Hex-Fiend-Tests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "../Hex Fiend Tests/Hex_Fiend_Tests-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Hex Fiend.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Hex Fiend";
+			};
+			name = "Release+CodeSign";
+		};
+		A50859B32B204C8100325B36 /* Release+MAS */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculous-fish.Hex-Fiend-Tests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "../Hex Fiend Tests/Hex_Fiend_Tests-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Hex Fiend.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Hex Fiend";
+			};
+			name = "Release+MAS";
+		};
+		A550A71B1F7877F8001C79C7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = "";
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "../hexf/hexf-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		A550A71C1F7877F8001C79C7 /* Debug+CodeSign */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = "";
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "../hexf/hexf-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = "Debug+CodeSign";
+		};
+		A550A71D1F7877F8001C79C7 /* Debug+UnitTests */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = "";
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "../hexf/hexf-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = "Debug+UnitTests";
+		};
+		A550A71E1F7877F8001C79C7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
+				CODE_SIGN_STYLE = Manual;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "../hexf/hexf-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		A550A71F1F7877F8001C79C7 /* Release+CodeSign */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
+				CODE_SIGN_STYLE = Manual;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "../hexf/hexf-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+			};
+			name = "Release+CodeSign";
+		};
+		D00C15ED0FF09200006D021F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				DEAD_CODE_STRIPPING = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				INFOPLIST_FILE = ../sample_code/HexFiendling/Info.plist;
+				INSTALL_PATH = "$(HOME)/Applications";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculousfish.${PRODUCT_NAME:identifier}";
+				PRODUCT_NAME = HexFiendling;
+			};
+			name = Debug;
+		};
+		D0222568146F5D3900646C27 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				BUILD_FOR_MAS = "";
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = NO;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_ENTITLEMENTS = ../configs/HexFiendUnsandbox.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = "NDEBUG=1";
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = YES;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
+				GCC_WARN_ABOUT_POINTER_SIGNEDNESS = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_CHECK_SWITCH_STATEMENTS = YES;
+				GCC_WARN_SHADOW = YES;
+				GCC_WARN_SIGN_COMPARE = YES;
+				GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNKNOWN_PRAGMAS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_LABEL = YES;
+				GCC_WARN_UNUSED_PARAMETER = YES;
+				GCC_WARN_UNUSED_VALUE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INSTALL_PATH = /Applications;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				MACOSX_DEPLOYMENT_TARGET = 10.14.6;
+				OTHER_CFLAGS = "";
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_VERSION = 6.0;
+				WARNING_CFLAGS = (
+					"-W",
+					"-Wall",
+				);
+			};
+			name = Release;
+		};
+		D0222569146F5D3900646C27 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
+				DEAD_CODE_STRIPPING = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = NO;
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				INFOPLIST_FILE = Info.plist;
+				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-traditional";
+				INFOPLIST_PREFIX_HEADER = ../version.h;
+				INFOPLIST_PREPROCESS = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				OTHER_CFLAGS = (
+					"-fblocks",
+					"$(inherited)",
+				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-framework",
+					Sparkle,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.ridiculousfish.HexFiend;
+				PRODUCT_NAME = "Hex Fiend";
+				SWIFT_OBJC_BRIDGING_HEADER = "sources/HexFiend_2-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+		D022256C146F5D3900646C27 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
+				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
+				DEAD_CODE_STRIPPING = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				INFOPLIST_FILE = "../helper_subprocess/FortunateSon-Info.plist";
+				INFOPLIST_PREPROCESS = YES;
+				INSTALL_PATH = /usr/local/bin;
+				OTHER_LDFLAGS = (
+					"-sectcreate",
+					__TEXT,
+					__launchd_plist,
+					"../helper_subprocess/FortunateSon-Launchd.plist",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.ridiculousfish.HexFiend.PrivilegedHelper;
+				PRODUCT_NAME = com.ridiculousfish.HexFiend.PrivilegedHelper;
+			};
+			name = Release;
+		};
+		D022256E146F5D3900646C27 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				DEAD_CODE_STRIPPING = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				INFOPLIST_FILE = ../sample_code/HexFiendling/Info.plist;
+				INSTALL_PATH = "$(HOME)/Applications";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculousfish.${PRODUCT_NAME:identifier}";
+				PRODUCT_NAME = HexFiendling;
+			};
+			name = Release;
+		};
+		D022256F146F5D3900646C27 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEAD_CODE_STRIPPING = YES;
+				PRODUCT_NAME = "Documentation Generation";
+			};
+			name = Release;
+		};
+		D022259D146F629E00646C27 /* Debug+UnitTests */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				BUILD_FOR_MAS = "";
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = NO;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_ENTITLEMENTS = ../configs/HexFiendUnsandbox.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = "HFUNIT_TESTS=1";
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = YES;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
+				GCC_WARN_ABOUT_POINTER_SIGNEDNESS = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_CHECK_SWITCH_STATEMENTS = YES;
+				GCC_WARN_SHADOW = YES;
+				GCC_WARN_SIGN_COMPARE = YES;
+				GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNKNOWN_PRAGMAS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_LABEL = YES;
+				GCC_WARN_UNUSED_PARAMETER = YES;
+				GCC_WARN_UNUSED_VALUE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INSTALL_PATH = /Applications;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				MACOSX_DEPLOYMENT_TARGET = 10.14.6;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = "";
+				SDKROOT = macosx;
+				SWIFT_VERSION = 6.0;
+				WARNING_CFLAGS = (
+					"-W",
+					"-Wall",
+				);
+			};
+			name = "Debug+UnitTests";
+		};
+		D022259E146F629E00646C27 /* Debug+UnitTests */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "-";
+				DEAD_CODE_STRIPPING = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = NO;
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				INFOPLIST_FILE = Info.plist;
+				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-traditional";
+				INFOPLIST_PREFIX_HEADER = ../version.h;
+				INFOPLIST_PREPROCESS = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				OTHER_CFLAGS = (
+					"-fblocks",
+					"$(inherited)",
+				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-framework",
+					Sparkle,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.ridiculousfish.HexFiend;
+				PRODUCT_NAME = "Hex Fiend";
+				SWIFT_OBJC_BRIDGING_HEADER = "sources/HexFiend_2-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				WRAPPER_EXTENSION = app;
+			};
+			name = "Debug+UnitTests";
+		};
+		D02225A1146F629E00646C27 /* Debug+UnitTests */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
+				DEAD_CODE_STRIPPING = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				INFOPLIST_FILE = "../helper_subprocess/FortunateSon-Info.plist";
+				INFOPLIST_PREPROCESS = YES;
+				INSTALL_PATH = /usr/local/bin;
+				OTHER_LDFLAGS = (
+					"-sectcreate",
+					__TEXT,
+					__launchd_plist,
+					"../helper_subprocess/FortunateSon-Launchd.plist",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.ridiculousfish.HexFiend.PrivilegedHelper;
+				PRODUCT_NAME = com.ridiculousfish.HexFiend.PrivilegedHelper;
+			};
+			name = "Debug+UnitTests";
+		};
+		D02225A3146F629E00646C27 /* Debug+UnitTests */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				DEAD_CODE_STRIPPING = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				INFOPLIST_FILE = ../sample_code/HexFiendling/Info.plist;
+				INSTALL_PATH = "$(HOME)/Applications";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculousfish.${PRODUCT_NAME:identifier}";
+				PRODUCT_NAME = HexFiendling;
+			};
+			name = "Debug+UnitTests";
+		};
+		D02225A4146F629E00646C27 /* Debug+UnitTests */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEAD_CODE_STRIPPING = YES;
+				PRODUCT_NAME = "Documentation Generation";
+			};
+			name = "Debug+UnitTests";
+		};
+		D039DC1114835A1400364FA6 /* Release+CodeSign */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				BUILD_FOR_MAS = "";
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = NO;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_ENTITLEMENTS = ../configs/HexFiendUnsandbox.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = "NDEBUG=1";
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = YES;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
+				GCC_WARN_ABOUT_POINTER_SIGNEDNESS = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_CHECK_SWITCH_STATEMENTS = YES;
+				GCC_WARN_SHADOW = YES;
+				GCC_WARN_SIGN_COMPARE = YES;
+				GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNKNOWN_PRAGMAS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_LABEL = YES;
+				GCC_WARN_UNUSED_PARAMETER = YES;
+				GCC_WARN_UNUSED_VALUE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INSTALL_PATH = /Applications;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				MACOSX_DEPLOYMENT_TARGET = 10.14.6;
+				OTHER_CFLAGS = "";
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_VERSION = 6.0;
+				WARNING_CFLAGS = (
+					"-W",
+					"-Wall",
+				);
+			};
+			name = "Release+CodeSign";
+		};
+		D039DC1214835A1400364FA6 /* Release+CodeSign */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
+				DEAD_CODE_STRIPPING = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = NO;
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				INFOPLIST_FILE = Info.plist;
+				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-traditional";
+				INFOPLIST_PREFIX_HEADER = ../version.h;
+				INFOPLIST_PREPROCESS = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				OTHER_CFLAGS = (
+					"-fblocks",
+					"$(inherited)",
+				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-framework",
+					Sparkle,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.ridiculousfish.HexFiend;
+				PRODUCT_NAME = "Hex Fiend";
+				SWIFT_OBJC_BRIDGING_HEADER = "sources/HexFiend_2-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+				WRAPPER_EXTENSION = app;
+			};
+			name = "Release+CodeSign";
+		};
+		D039DC1414835A1400364FA6 /* Release+CodeSign */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
+				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
+				DEAD_CODE_STRIPPING = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				INFOPLIST_FILE = "../helper_subprocess/FortunateSon-Info.plist";
+				INFOPLIST_PREPROCESS = YES;
+				INSTALL_PATH = /usr/local/bin;
+				OTHER_LDFLAGS = (
+					"-sectcreate",
+					__TEXT,
+					__launchd_plist,
+					"../helper_subprocess/FortunateSon-Launchd.plist",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.ridiculousfish.HexFiend.PrivilegedHelper;
+				PRODUCT_NAME = com.ridiculousfish.HexFiend.PrivilegedHelper;
+			};
+			name = "Release+CodeSign";
+		};
+		D039DC1614835A1400364FA6 /* Release+CodeSign */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "-";
+				DEAD_CODE_STRIPPING = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				INFOPLIST_FILE = ../sample_code/HexFiendling/Info.plist;
+				INSTALL_PATH = "$(HOME)/Applications";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculousfish.${PRODUCT_NAME:identifier}";
+				PRODUCT_NAME = HexFiendling;
+			};
+			name = "Release+CodeSign";
+		};
+		D039DC1714835A1400364FA6 /* Release+CodeSign */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEAD_CODE_STRIPPING = YES;
+				PRODUCT_NAME = "Documentation Generation";
+			};
+			name = "Release+CodeSign";
+		};
+		D047E31E1022CEFF00EF307B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
+				DEAD_CODE_STRIPPING = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				INFOPLIST_FILE = "../helper_subprocess/FortunateSon-Info.plist";
+				INFOPLIST_PREPROCESS = YES;
+				INSTALL_PATH = /usr/local/bin;
+				OTHER_LDFLAGS = (
+					"-sectcreate",
+					__TEXT,
+					__launchd_plist,
+					"../helper_subprocess/FortunateSon-Launchd.plist",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.ridiculousfish.HexFiend.PrivilegedHelper;
+				PRODUCT_NAME = com.ridiculousfish.HexFiend.PrivilegedHelper;
+			};
+			name = Debug;
+		};
+		D05390281E218CB700F9AAC1 /* Release+MAS */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				BUILD_FOR_MAS = 1;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = NO;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_ENTITLEMENTS = ../configs/HexFiendSandbox.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = "NDEBUG=1";
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = YES;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
+				GCC_WARN_ABOUT_POINTER_SIGNEDNESS = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_CHECK_SWITCH_STATEMENTS = YES;
+				GCC_WARN_SHADOW = YES;
+				GCC_WARN_SIGN_COMPARE = YES;
+				GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNKNOWN_PRAGMAS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_LABEL = YES;
+				GCC_WARN_UNUSED_PARAMETER = YES;
+				GCC_WARN_UNUSED_VALUE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INSTALL_PATH = /Applications;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				MACOSX_DEPLOYMENT_TARGET = 10.14.6;
+				OTHER_CFLAGS = (
+					"-DMacAppStore=1",
+					"-DHF_NO_PRIVILEGED_FILE_OPERATIONS=1",
+				);
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_VERSION = 6.0;
+				WARNING_CFLAGS = (
+					"-W",
+					"-Wall",
+				);
+			};
+			name = "Release+MAS";
+		};
+		D05390291E218CB700F9AAC1 /* Release+MAS */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
+				DEAD_CODE_STRIPPING = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = NO;
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				INFOPLIST_FILE = Info_MAS.plist;
+				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-traditional";
+				INFOPLIST_PREFIX_HEADER = ../version.h;
+				INFOPLIST_PREPROCESS = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				OTHER_CFLAGS = (
+					"-fblocks",
+					"$(inherited)",
+				);
+				OTHER_LDFLAGS = "$(inherited)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.ridiculousfish.HexFiend;
+				PRODUCT_NAME = "Hex Fiend";
+				SWIFT_OBJC_BRIDGING_HEADER = "sources/HexFiend_2-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+				WRAPPER_EXTENSION = app;
+			};
+			name = "Release+MAS";
+		};
+		D053902B1E218CB700F9AAC1 /* Release+MAS */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
+				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
+				DEAD_CODE_STRIPPING = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				INFOPLIST_FILE = "../helper_subprocess/FortunateSon-Info.plist";
+				INFOPLIST_PREPROCESS = YES;
+				INSTALL_PATH = /usr/local/bin;
+				OTHER_LDFLAGS = (
+					"-sectcreate",
+					__TEXT,
+					__launchd_plist,
+					"../helper_subprocess/FortunateSon-Launchd.plist",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.ridiculousfish.HexFiend.PrivilegedHelper;
+				PRODUCT_NAME = com.ridiculousfish.HexFiend.PrivilegedHelper;
+				SKIP_INSTALL = YES;
+			};
+			name = "Release+MAS";
+		};
+		D053902C1E218CB700F9AAC1 /* Release+MAS */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_IDENTITY = "-";
+				DEAD_CODE_STRIPPING = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				INFOPLIST_FILE = ../sample_code/HexFiendling/Info.plist;
+				INSTALL_PATH = "$(HOME)/Applications";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculousfish.${PRODUCT_NAME:identifier}";
+				PRODUCT_NAME = HexFiendling;
+			};
+			name = "Release+MAS";
+		};
+		D053902D1E218CB700F9AAC1 /* Release+MAS */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEAD_CODE_STRIPPING = YES;
+				PRODUCT_NAME = "Documentation Generation";
+			};
+			name = "Release+MAS";
+		};
+		D053902E1E218CB700F9AAC1 /* Release+MAS */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEAD_CODE_STRIPPING = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+					"$(inherited)",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				INFOPLIST_FILE = "../framework/tests/Framework_Tests-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculousfish.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = "Release+MAS";
+		};
+		D053902F1E218CD500F9AAC1 /* Debug+MAS */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				BUILD_FOR_MAS = 1;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = NO;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_ENTITLEMENTS = ../configs/HexFiendSandbox.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = YES;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
+				GCC_WARN_ABOUT_POINTER_SIGNEDNESS = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_CHECK_SWITCH_STATEMENTS = YES;
+				GCC_WARN_SHADOW = YES;
+				GCC_WARN_SIGN_COMPARE = YES;
+				GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNKNOWN_PRAGMAS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_LABEL = YES;
+				GCC_WARN_UNUSED_PARAMETER = YES;
+				GCC_WARN_UNUSED_VALUE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INSTALL_PATH = /Applications;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				MACOSX_DEPLOYMENT_TARGET = 10.14.6;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = (
+					"-DMacAppStore=1",
+					"-DHF_NO_PRIVILEGED_FILE_OPERATIONS=1",
+				);
+				SDKROOT = macosx;
+				SWIFT_VERSION = 6.0;
+				WARNING_CFLAGS = (
+					"-W",
+					"-Wall",
+				);
+			};
+			name = "Debug+MAS";
+		};
+		D05390301E218CD500F9AAC1 /* Debug+MAS */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "-";
+				DEAD_CODE_STRIPPING = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = NO;
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				INFOPLIST_FILE = Info_MAS.plist;
+				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-traditional";
+				INFOPLIST_PREFIX_HEADER = ../version.h;
+				INFOPLIST_PREPROCESS = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				OTHER_CFLAGS = (
+					"-fblocks",
+					"$(inherited)",
+				);
+				OTHER_LDFLAGS = "$(inherited)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.ridiculousfish.HexFiend;
+				PRODUCT_NAME = "Hex Fiend";
+				SWIFT_OBJC_BRIDGING_HEADER = "sources/HexFiend_2-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				WRAPPER_EXTENSION = app;
+			};
+			name = "Debug+MAS";
+		};
+		D05390321E218CD500F9AAC1 /* Debug+MAS */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
+				DEAD_CODE_STRIPPING = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				INFOPLIST_FILE = "../helper_subprocess/FortunateSon-Info.plist";
+				INFOPLIST_PREPROCESS = YES;
+				INSTALL_PATH = /usr/local/bin;
+				OTHER_LDFLAGS = (
+					"-sectcreate",
+					__TEXT,
+					__launchd_plist,
+					"../helper_subprocess/FortunateSon-Launchd.plist",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.ridiculousfish.HexFiend.PrivilegedHelper;
+				PRODUCT_NAME = com.ridiculousfish.HexFiend.PrivilegedHelper;
+				SKIP_INSTALL = YES;
+			};
+			name = "Debug+MAS";
+		};
+		D05390331E218CD500F9AAC1 /* Debug+MAS */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				DEAD_CODE_STRIPPING = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				INFOPLIST_FILE = ../sample_code/HexFiendling/Info.plist;
+				INSTALL_PATH = "$(HOME)/Applications";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculousfish.${PRODUCT_NAME:identifier}";
+				PRODUCT_NAME = HexFiendling;
+			};
+			name = "Debug+MAS";
+		};
+		D05390341E218CD500F9AAC1 /* Debug+MAS */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEAD_CODE_STRIPPING = YES;
+				PRODUCT_NAME = "Documentation Generation";
+			};
+			name = "Debug+MAS";
+		};
+		D05390351E218CD500F9AAC1 /* Debug+MAS */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEAD_CODE_STRIPPING = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+					"$(inherited)",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				INFOPLIST_FILE = "../framework/tests/Framework_Tests-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculousfish.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = "Debug+MAS";
+		};
+		D075E204148196B00010D9AE /* Debug+CodeSign */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				BUILD_FOR_MAS = "";
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = NO;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_ENTITLEMENTS = ../configs/HexFiendUnsandbox.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = YES;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
+				GCC_WARN_ABOUT_POINTER_SIGNEDNESS = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_CHECK_SWITCH_STATEMENTS = YES;
+				GCC_WARN_SHADOW = YES;
+				GCC_WARN_SIGN_COMPARE = YES;
+				GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNKNOWN_PRAGMAS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_LABEL = YES;
+				GCC_WARN_UNUSED_PARAMETER = YES;
+				GCC_WARN_UNUSED_VALUE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INSTALL_PATH = /Applications;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				MACOSX_DEPLOYMENT_TARGET = 10.14.6;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = "";
+				SDKROOT = macosx;
+				SWIFT_VERSION = 6.0;
+				WARNING_CFLAGS = (
+					"-W",
+					"-Wall",
+				);
+			};
+			name = "Debug+CodeSign";
+		};
+		D075E205148196B00010D9AE /* Debug+CodeSign */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "-";
+				DEAD_CODE_STRIPPING = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = NO;
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				INFOPLIST_FILE = Info.plist;
+				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-traditional";
+				INFOPLIST_PREFIX_HEADER = ../version.h;
+				INFOPLIST_PREPROCESS = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				OTHER_CFLAGS = (
+					"-fblocks",
+					"$(inherited)",
+				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-framework",
+					Sparkle,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.ridiculousfish.HexFiend;
+				PRODUCT_NAME = "Hex Fiend";
+				SWIFT_OBJC_BRIDGING_HEADER = "sources/HexFiend_2-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				WRAPPER_EXTENSION = app;
+			};
+			name = "Debug+CodeSign";
+		};
+		D075E208148196B00010D9AE /* Debug+CodeSign */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
+				DEAD_CODE_STRIPPING = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				INFOPLIST_FILE = "../helper_subprocess/FortunateSon-Info.plist";
+				INFOPLIST_PREPROCESS = YES;
+				INSTALL_PATH = /usr/local/bin;
+				OTHER_LDFLAGS = (
+					"-sectcreate",
+					__TEXT,
+					__launchd_plist,
+					"../helper_subprocess/FortunateSon-Launchd.plist",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.ridiculousfish.HexFiend.PrivilegedHelper;
+				PRODUCT_NAME = com.ridiculousfish.HexFiend.PrivilegedHelper;
+			};
+			name = "Debug+CodeSign";
+		};
+		D075E20A148196B00010D9AE /* Debug+CodeSign */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				DEAD_CODE_STRIPPING = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				INFOPLIST_FILE = ../sample_code/HexFiendling/Info.plist;
+				INSTALL_PATH = "$(HOME)/Applications";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ridiculousfish.${PRODUCT_NAME:identifier}";
+				PRODUCT_NAME = HexFiendling;
+			};
+			name = "Debug+CodeSign";
+		};
+		D075E20B148196B00010D9AE /* Debug+CodeSign */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEAD_CODE_STRIPPING = YES;
+				PRODUCT_NAME = "Documentation Generation";
+			};
+			name = "Debug+CodeSign";
+		};
+		D083F7350DBCBD5F00C2B632 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				BUILD_FOR_MAS = "";
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = NO;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_ENTITLEMENTS = ../configs/HexFiendUnsandbox.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = YES;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
+				GCC_WARN_ABOUT_POINTER_SIGNEDNESS = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_CHECK_SWITCH_STATEMENTS = YES;
+				GCC_WARN_SHADOW = YES;
+				GCC_WARN_SIGN_COMPARE = YES;
+				GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNKNOWN_PRAGMAS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_LABEL = YES;
+				GCC_WARN_UNUSED_PARAMETER = YES;
+				GCC_WARN_UNUSED_VALUE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INSTALL_PATH = /Applications;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				MACOSX_DEPLOYMENT_TARGET = 10.14.6;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = "";
+				SDKROOT = macosx;
+				SWIFT_VERSION = 6.0;
+				WARNING_CFLAGS = (
+					"-W",
+					"-Wall",
+				);
+			};
+			name = Debug;
+		};
+		D083F7370DBCBD5F00C2B632 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "-";
+				DEAD_CODE_STRIPPING = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = NO;
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				INFOPLIST_FILE = Info.plist;
+				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-traditional";
+				INFOPLIST_PREFIX_HEADER = ../version.h;
+				INFOPLIST_PREPROCESS = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				OTHER_CFLAGS = (
+					"-fblocks",
+					"$(inherited)",
+				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-framework",
+					Sparkle,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.ridiculousfish.HexFiend;
+				PRODUCT_NAME = "Hex Fiend";
+				SWIFT_OBJC_BRIDGING_HEADER = "sources/HexFiend_2-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		D09B9CF720829B90007640C7 /* Debug+MAS */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "-";
+				DEAD_CODE_STRIPPING = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_NAME = hexf;
+				SKIP_INSTALL = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "../hexf/hexf-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = "Debug+MAS";
+		};
+		D09B9CF820829B90007640C7 /* Release+MAS */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
+				DEAD_CODE_STRIPPING = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_NAME = hexf;
+				SKIP_INSTALL = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "../hexf/hexf-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+			};
+			name = "Release+MAS";
+		};
+		D0F6FE100FFF679300C609F0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEAD_CODE_STRIPPING = YES;
+				PRODUCT_NAME = "Documentation Generation";
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		9408FC0C19DD72DF004F800E /* Build configuration list for PBXNativeTarget "HexFiend_Framework Tests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9408FC0019DD72DF004F800E /* Debug */,
+				9408FC0119DD72DF004F800E /* Debug+CodeSign */,
+				D05390351E218CD500F9AAC1 /* Debug+MAS */,
+				9408FC0219DD72DF004F800E /* Debug+UnitTests */,
+				9408FC0319DD72DF004F800E /* Release */,
+				9408FC0419DD72DF004F800E /* Release+CodeSign */,
+				D053902E1E218CB700F9AAC1 /* Release+MAS */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A50859B42B204C8100325B36 /* Build configuration list for PBXNativeTarget "Hex Fiend Tests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A50859AD2B204C8100325B36 /* Debug */,
+				A50859AE2B204C8100325B36 /* Debug+CodeSign */,
+				A50859AF2B204C8100325B36 /* Debug+MAS */,
+				A50859B02B204C8100325B36 /* Debug+UnitTests */,
+				A50859B12B204C8100325B36 /* Release */,
+				A50859B22B204C8100325B36 /* Release+CodeSign */,
+				A50859B32B204C8100325B36 /* Release+MAS */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A550A71A1F7877F8001C79C7 /* Build configuration list for PBXNativeTarget "hexf" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A550A71B1F7877F8001C79C7 /* Debug */,
+				A550A71C1F7877F8001C79C7 /* Debug+CodeSign */,
+				A550A71D1F7877F8001C79C7 /* Debug+UnitTests */,
+				A550A71E1F7877F8001C79C7 /* Release */,
+				A550A71F1F7877F8001C79C7 /* Release+CodeSign */,
+				D09B9CF720829B90007640C7 /* Debug+MAS */,
+				D09B9CF820829B90007640C7 /* Release+MAS */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C01FCF4A08A954540054247B /* Build configuration list for PBXNativeTarget "HexFiend_2" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D083F7370DBCBD5F00C2B632 /* Debug */,
+				D075E205148196B00010D9AE /* Debug+CodeSign */,
+				D05390301E218CD500F9AAC1 /* Debug+MAS */,
+				D022259E146F629E00646C27 /* Debug+UnitTests */,
+				D0222569146F5D3900646C27 /* Release */,
+				D039DC1214835A1400364FA6 /* Release+CodeSign */,
+				D05390291E218CB700F9AAC1 /* Release+MAS */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C01FCF4E08A954540054247B /* Build configuration list for PBXProject "HexFiend_2" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D083F7350DBCBD5F00C2B632 /* Debug */,
+				D075E204148196B00010D9AE /* Debug+CodeSign */,
+				D053902F1E218CD500F9AAC1 /* Debug+MAS */,
+				D022259D146F629E00646C27 /* Debug+UnitTests */,
+				D0222568146F5D3900646C27 /* Release */,
+				D039DC1114835A1400364FA6 /* Release+CodeSign */,
+				D05390281E218CB700F9AAC1 /* Release+MAS */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D00C15EE0FF09200006D021F /* Build configuration list for PBXNativeTarget "HexFiendling" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D00C15ED0FF09200006D021F /* Debug */,
+				D075E20A148196B00010D9AE /* Debug+CodeSign */,
+				D05390331E218CD500F9AAC1 /* Debug+MAS */,
+				D02225A3146F629E00646C27 /* Debug+UnitTests */,
+				D022256E146F5D3900646C27 /* Release */,
+				D039DC1614835A1400364FA6 /* Release+CodeSign */,
+				D053902C1E218CB700F9AAC1 /* Release+MAS */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D047E32A1022CF1200EF307B /* Build configuration list for PBXNativeTarget "FortunateSon (PrivilegedHelper)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D047E31E1022CEFF00EF307B /* Debug */,
+				D075E208148196B00010D9AE /* Debug+CodeSign */,
+				D05390321E218CD500F9AAC1 /* Debug+MAS */,
+				D02225A1146F629E00646C27 /* Debug+UnitTests */,
+				D022256C146F5D3900646C27 /* Release */,
+				D039DC1414835A1400364FA6 /* Release+CodeSign */,
+				D053902B1E218CB700F9AAC1 /* Release+MAS */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D0F6FE180FFF67AC00C609F0 /* Build configuration list for PBXAggregateTarget "Documentation Generation" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D0F6FE100FFF679300C609F0 /* Debug */,
+				D075E20B148196B00010D9AE /* Debug+CodeSign */,
+				D05390341E218CD500F9AAC1 /* Debug+MAS */,
+				D02225A4146F629E00646C27 /* Debug+UnitTests */,
+				D022256F146F5D3900646C27 /* Release */,
+				D039DC1714835A1400364FA6 /* Release+CodeSign */,
+				D053902D1E218CB700F9AAC1 /* Release+MAS */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		A5884A6F2D870C1F00E02030 /* XCLocalSwiftPackageReference "../../HexFiend" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../HexFiend;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		A54281AF2B413542006DEF81 /* XCRemoteSwiftPackageReference "swift-argument-parser" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-argument-parser.git";
+			requirement = {
+				kind = exactVersion;
+				version = 1.3.0;
+			};
+		};
+		A5A34C1926AD271900506AE7 /* XCRemoteSwiftPackageReference "Sparkle" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sparkle-project/Sparkle";
+			requirement = {
+				kind = exactVersion;
+				version = 1.26.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		A54281B02B413542006DEF81 /* ArgumentParser */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A54281AF2B413542006DEF81 /* XCRemoteSwiftPackageReference "swift-argument-parser" */;
+			productName = ArgumentParser;
+		};
+		A56780ED2D87158400CB1678 /* HexFiend */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A5884A6F2D870C1F00E02030 /* XCLocalSwiftPackageReference "../../HexFiend" */;
+			productName = HexFiend;
+		};
+		A57B5E7A2B49286000FF958B /* HexFiend */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = HexFiend;
+		};
+		A5A34C1A26AD271900506AE7 /* Sparkle */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A5A34C1926AD271900506AE7 /* XCRemoteSwiftPackageReference "Sparkle" */;
+			productName = Sparkle;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 29B97313FDCFA39411CA2CEA /* Project object */;
+}

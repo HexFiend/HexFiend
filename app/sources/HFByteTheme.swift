@@ -6,7 +6,8 @@
 //  Copyright © 2023 ridiculous_fish. All rights reserved.
 //
 
-import Foundation
+import Cocoa
+import HexFiend
 
 private extension NSColor {
     func toRGB() -> NSColor {

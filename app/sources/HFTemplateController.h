@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "HFTemplateNode.h"
-#import <HexFiend/HFStringEncoding.h>
+@import HexFiend;
 
 NS_ASSUME_NONNULL_BEGIN
 

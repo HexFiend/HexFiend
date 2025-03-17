@@ -7,7 +7,7 @@
 //
 
 #import "MinimumVersionRequired.h"
-#import <HexFiend/HFAssert.h>
+@import HexFiend;
 #import "version.h"
 
 #define HF_XSTR(s) HF_STR(s)
