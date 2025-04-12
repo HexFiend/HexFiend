@@ -8,7 +8,8 @@
 
 import Foundation
 
-class Encodings: NSObject {
+@MainActor
+final class Encodings: NSObject {
     private var chooseStringEncoding: ChooseStringEncodingWindowController?
 
     var menuSystemEncodingsNumbers: [NSNumber] {

@@ -6,7 +6,8 @@
 //  Copyright © 2024 ridiculous_fish. All rights reserved.
 //
 
-class ScrollViewRepresenter: HFRepresenter {
+@MainActor
+final class ScrollViewRepresenter: HFRepresenter {
 
     private let hexRep = HFHexTextRepresenter()
     private var documentView: ScrollViewRepresenterDocumentView?

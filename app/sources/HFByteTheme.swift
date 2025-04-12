@@ -107,7 +107,7 @@ extension HFByteTheme {
         return table
     }
     
-    private static var namesToColors: [String: NSColor?] = {
+    private static let namesToColors: [String: NSColor?] = {
         var map: [String: NSColor] = [
             "black": .black.toRGB(),
             "blue": .blue.toRGB(),

@@ -3262,7 +3262,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.ridiculousfish.HexFiend;
 				PRODUCT_NAME = "Hex Fiend";
 				SWIFT_OBJC_BRIDGING_HEADER = "app/sources/HexFiend_2-Bridging-Header.h";
-				SWIFT_VERSION = 5.0;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -3441,7 +3440,6 @@
 				PRODUCT_NAME = "Hex Fiend";
 				SWIFT_OBJC_BRIDGING_HEADER = "app/sources/HexFiend_2-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 5.0;
 				WRAPPER_EXTENSION = app;
 			};
 			name = "Debug+UnitTests";
@@ -3618,7 +3616,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.ridiculousfish.HexFiend;
 				PRODUCT_NAME = "Hex Fiend";
 				SWIFT_OBJC_BRIDGING_HEADER = "app/sources/HexFiend_2-Bridging-Header.h";
-				SWIFT_VERSION = 5.0;
 				WRAPPER_EXTENSION = app;
 			};
 			name = "Release+CodeSign";
@@ -3811,7 +3808,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.ridiculousfish.HexFiend;
 				PRODUCT_NAME = "Hex Fiend";
 				SWIFT_OBJC_BRIDGING_HEADER = "app/sources/HexFiend_2-Bridging-Header.h";
-				SWIFT_VERSION = 5.0;
 				WRAPPER_EXTENSION = app;
 			};
 			name = "Release+MAS";
@@ -4018,7 +4014,6 @@
 				PRODUCT_NAME = "Hex Fiend";
 				SWIFT_OBJC_BRIDGING_HEADER = "app/sources/HexFiend_2-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 5.0;
 				WRAPPER_EXTENSION = app;
 			};
 			name = "Debug+MAS";
@@ -4235,7 +4230,6 @@
 				PRODUCT_NAME = "Hex Fiend";
 				SWIFT_OBJC_BRIDGING_HEADER = "app/sources/HexFiend_2-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 5.0;
 				WRAPPER_EXTENSION = app;
 			};
 			name = "Debug+CodeSign";
@@ -4445,7 +4439,6 @@
 				PRODUCT_NAME = "Hex Fiend";
 				SWIFT_OBJC_BRIDGING_HEADER = "app/sources/HexFiend_2-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 5.0;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
