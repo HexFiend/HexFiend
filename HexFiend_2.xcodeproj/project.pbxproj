@@ -4652,7 +4652,7 @@
 			repositoryURL = "https://github.com/apple/swift-argument-parser.git";
 			requirement = {
 				kind = exactVersion;
-				version = 1.3.0;
+				version = 1.5.0;
 			};
 		};
 		A5A34C1926AD271900506AE7 /* XCRemoteSwiftPackageReference "Sparkle" */ = {
