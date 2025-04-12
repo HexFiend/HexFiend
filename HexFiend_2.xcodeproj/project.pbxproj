@@ -1748,7 +1748,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastSwiftUpdateCheck = 1500;
-				LastUpgradeCheck = 1620;
+				LastUpgradeCheck = 1630;
 				ORGANIZATIONNAME = ridiculous_fish;
 				TargetAttributes = {
 					8D1107260486CEB800E47090 = {
@@ -2547,7 +2547,6 @@
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_OBJC_BRIDGING_HEADER = "Hex Fiend Tests/Hex_Fiend_Tests-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Hex Fiend.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Hex Fiend";
 			};
 			name = Debug;
@@ -2590,7 +2589,6 @@
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_OBJC_BRIDGING_HEADER = "Hex Fiend Tests/Hex_Fiend_Tests-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Hex Fiend.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Hex Fiend";
 			};
 			name = "Debug+CodeSign";
@@ -2633,7 +2631,6 @@
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_OBJC_BRIDGING_HEADER = "Hex Fiend Tests/Hex_Fiend_Tests-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Hex Fiend.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Hex Fiend";
 			};
 			name = "Debug+MAS";
@@ -2676,7 +2673,6 @@
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_OBJC_BRIDGING_HEADER = "Hex Fiend Tests/Hex_Fiend_Tests-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Hex Fiend.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Hex Fiend";
 			};
 			name = "Debug+UnitTests";
@@ -2714,7 +2710,6 @@
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_OBJC_BRIDGING_HEADER = "Hex Fiend Tests/Hex_Fiend_Tests-Bridging-Header.h";
-				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Hex Fiend.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Hex Fiend";
 			};
 			name = Release;
@@ -2752,7 +2747,6 @@
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_OBJC_BRIDGING_HEADER = "Hex Fiend Tests/Hex_Fiend_Tests-Bridging-Header.h";
-				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Hex Fiend.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Hex Fiend";
 			};
 			name = "Release+CodeSign";
@@ -2790,7 +2784,6 @@
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_OBJC_BRIDGING_HEADER = "Hex Fiend Tests/Hex_Fiend_Tests-Bridging-Header.h";
-				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Hex Fiend.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Hex Fiend";
 			};
 			name = "Release+MAS";
@@ -3231,6 +3224,7 @@
 				OTHER_CFLAGS = "";
 				SDKROOT = macosx;
 				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_TREAT_WARNINGS_AS_ERRORS = YES;
 				SWIFT_VERSION = 6.0;
 				WARNING_CFLAGS = (
 					"-W",
@@ -3409,6 +3403,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "";
 				SDKROOT = macosx;
+				SWIFT_TREAT_WARNINGS_AS_ERRORS = YES;
 				SWIFT_VERSION = 6.0;
 				WARNING_CFLAGS = (
 					"-W",
@@ -3585,6 +3580,7 @@
 				OTHER_CFLAGS = "";
 				SDKROOT = macosx;
 				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_TREAT_WARNINGS_AS_ERRORS = YES;
 				SWIFT_VERSION = 6.0;
 				WARNING_CFLAGS = (
 					"-W",
@@ -3781,6 +3777,7 @@
 				);
 				SDKROOT = macosx;
 				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_TREAT_WARNINGS_AS_ERRORS = YES;
 				SWIFT_VERSION = 6.0;
 				WARNING_CFLAGS = (
 					"-W",
@@ -3987,6 +3984,7 @@
 					"-DHF_NO_PRIVILEGED_FILE_OPERATIONS=1",
 				);
 				SDKROOT = macosx;
+				SWIFT_TREAT_WARNINGS_AS_ERRORS = YES;
 				SWIFT_VERSION = 6.0;
 				WARNING_CFLAGS = (
 					"-W",
@@ -4199,6 +4197,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "";
 				SDKROOT = macosx;
+				SWIFT_TREAT_WARNINGS_AS_ERRORS = YES;
 				SWIFT_VERSION = 6.0;
 				WARNING_CFLAGS = (
 					"-W",
@@ -4376,6 +4375,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "";
 				SDKROOT = macosx;
+				SWIFT_TREAT_WARNINGS_AS_ERRORS = YES;
 				SWIFT_VERSION = 6.0;
 				WARNING_CFLAGS = (
 					"-W",
