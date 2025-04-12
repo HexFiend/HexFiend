@@ -20,6 +20,20 @@
                ReferencedContainer = "container:HexFiend_2.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "A50859A62B204C8100325B36"
+               BuildableName = "Hex Fiend Tests.xctest"
+               BlueprintName = "Hex Fiend Tests"
+               ReferencedContainer = "container:HexFiend_2.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
