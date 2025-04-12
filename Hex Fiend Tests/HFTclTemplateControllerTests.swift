@@ -8,7 +8,7 @@
 
 import XCTest
 
-extension HFRange: Equatable {
+extension HFRange: Swift.Equatable {
     public static func == (lhs: HFRange, rhs: HFRange) -> Bool {
         HFRangeEqualsRange(lhs, rhs)
     }
