@@ -6,6 +6,7 @@
 //
 
 #import <HexFiend/HFFrameworkPrefix.h>
+#import <HexFiend/HFFunctions.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -153,7 +154,7 @@ You create an HFController via <tt>[[HFController alloc] init]</tt>.  After that
 */
 //@{ 
 /// Gets the current array of representers attached to this controller.
-@property (readonly, copy) NSArray *representers;
+@property (readonly, copy) NSArray<HFRepresenter *> *representers;
 
 /// Adds a new representer to this controller.
 - (void)addRepresenter:(HFRepresenter *)representer;
@@ -226,7 +227,7 @@ You create an HFController via <tt>[[HFController alloc] init]</tt>.  After that
  No range extends beyond the contentsLength, with the exception of a single zero-length range at the end.
 
  When setting, the setter MUST obey the above criteria. A zero length range when setting or getting represents the cursor position. */
-@property (nonatomic, copy) NSArray *selectedContentsRanges;
+@property (nonatomic, copy) NSArray<HFRangeWrapper *> *selectedContentsRanges;
 
 /*! Selects the entire contents. */
 - (IBAction)selectAll:(id)sender;

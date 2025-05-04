@@ -483,13 +483,13 @@ NSString *HFDescribeByteCountWithPrefixAndSuffix(const char *_Nullable stringPre
 + (HFRangeWrapper *)withRange:(HFRange)range;
 
 /*! Creates an NSArray of HFRangeWrappers for this HFRange. */
-+ (NSArray *)withRanges:(const HFRange *)ranges count:(NSUInteger)count;
++ (NSArray<HFRangeWrapper *> *)withRanges:(const HFRange *)ranges count:(NSUInteger)count;
 
 /*! Given an NSArray of HFRangeWrappers, get all of the HFRanges into a C array. */
-+ (void)getRanges:(HFRange *)ranges fromArray:(NSArray *)array;
++ (void)getRanges:(HFRange *)ranges fromArray:(NSArray<HFRangeWrapper *> *)array;
 
 /*! Given an array of HFRangeWrappers, returns a "cleaned up" array of equivalent ranges.  This new array represents the same indexes, but overlapping ranges will have been merged, and the ranges will be sorted in ascending order. */
-+ (NSArray *)organizeAndMergeRanges:(NSArray *)inputRanges;
++ (NSArray<HFRangeWrapper *> *)organizeAndMergeRanges:(NSArray<HFRangeWrapper *> *)inputRanges;
 
 @end
 

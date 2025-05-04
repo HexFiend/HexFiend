@@ -50,7 +50,7 @@ NS_ASSUME_NONNULL_BEGIN
 */
 //@{
 /// Return the array of representers managed by the receiver. */
-@property (readonly, copy) NSArray *representers;
+@property (readonly, copy) NSArray<HFRepresenter *> *representers;
 
 /*! Adds a new representer to the receiver, triggering relayout. */
 - (void)addRepresenter:(HFRepresenter *)representer;
