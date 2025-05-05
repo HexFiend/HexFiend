@@ -276,6 +276,12 @@ static const CGFloat kShadowWidth = 6;
 }
 
 - (void)scrollWheel:(NSEvent *)scrollEvent {
+    // Defer to super if it's not a vertical scroll or there's nothing to scroll
+    if (scrollEvent.scrollingDeltaY != 0 &&
+        _representer.controller.displayedLineRange.length >= _representer.controller.totalLineCount) {
+        [super scrollWheel:scrollEvent];
+        return;
+    }
     [_representer.controller scrollWithScrollEvent:scrollEvent];
 }
 
