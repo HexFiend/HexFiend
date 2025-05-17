@@ -59,8 +59,7 @@ for presentation to the user.  In the above case, the resulting byte would be
 | uint32_bits  *bit#[,bit#[,...]]* *[label]* | Read an unsigned 32-bit integer, extract and permute the specified bits. |
 | uint64_bits  *bit#[,bit#[,...]]* *[label]* | Read an unsigned 64-bit integer, extract and permute the specified bits. |
 
-The list of bits is ordered big-endian, regardless of mode, such that the returned value's bits are most-significant on the left to least-significant (bit 0) on the right.
-
+While the value to be permuted is affected by endianness (see below), the bit permutation list is always big-endian, with the least-significant output bit on the right.
 
 ## Grouping
 
