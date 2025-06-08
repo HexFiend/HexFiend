@@ -36,6 +36,8 @@
 # procedures defined in this file, but additional "generic" chunks can be
 # defined in this way.
 #
+# Author(s)
+# - Andreas Stahl https://www.github.com/nonsquarepixels
 #
 # .hidden = true;
 
@@ -99,6 +101,11 @@ proc parseAnno {length} {
 }
 
 ###############################################################################
+# entry procedure for parsing of IFF chunks. Reads the chunk header and
+# dispatches to a specialized procedure defined for the chunk id. If no handler
+# procedure is found, a more generic procedure (without FORM type prefix) is 
+# searched for. If that lookup also fails, a warning is printed to the debugger
+# console and the chunks content is marked as untyped range of bytes.
 proc parseChunk {{formType "IFF"}} {
     set needsPadding false
     section "" {
@@ -138,7 +145,8 @@ proc parseChunk {{formType "IFF"}} {
     }
 }
 
-
+###############################################################################
+# Parses IFF chunks until the end of file is reached.
 proc iffMain {} {
     while {![end]} {
         parseChunk

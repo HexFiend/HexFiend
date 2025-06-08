@@ -11,7 +11,7 @@
 # - https://moddingwiki.shikadi.net/wiki/LBM_Format
 #
 # Authors:
-# - Andreas Stahl https://nonsquarepixels.github.com
+# - Andreas Stahl https://www.github.com/nonsquarepixels
 #
 # .types = ( lbm, ilbm, pbm, bbm, brush, anim );
 # .min_version_required = 2.17;

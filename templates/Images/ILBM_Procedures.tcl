@@ -10,7 +10,7 @@
 # - https://moddingwiki.shikadi.net/wiki/LBM_Format
 #
 # Authors:
-# - Andreas Stahl https://nonsquarepixels.github.com
+# - Andreas Stahl https://www.github.com/nonsquarepixels
 #
 # .min_version_required = 2.17;
 # .hidden = true;
@@ -322,7 +322,7 @@ proc parseIlbmCcrt {length} {
 }
 
 ###############################################################################
-# DPaint 2 perspective chunk
+# DPPV: Deluxe Paint perspective chunk version 1.
 proc parseIlbmDppv {length} {
     sectionname "Perspective"
     select "Rotation Type" [int16] 2 {
@@ -349,7 +349,7 @@ proc parseIlbmDppv {length} {
 }
 
 ###############################################################################
-# DPPS: DeluxePaint perspective chunk version 2.
+# DPPS: Deluxe Paint perspective chunk version 2.
 # This is a bit speculative, since there seems to be no documentation for this
 # chunk anywhere online. However, the structure seems to be similar enough to
 # the DPPV chunk, with the rotation angle int16 vector replaced by longfrac.

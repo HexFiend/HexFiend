@@ -7,7 +7,10 @@
 # 2025 Jun 03 | Andreas Stahl | Initial implementation
 #
 # Documentation referenced:
-# EA IFF 85 https://www.martinreddy.net/gfx/2d/IFF.txt
+# - EA IFF 85 https://www.martinreddy.net/gfx/2d/IFF.txt
+#
+# Author(s)
+# - Andreas Stahl https://www.github.com/nonsquarepixels
 #
 # .types = ( iff );
 # .min_version_required = 2.17;
