@@ -2068,7 +2068,9 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
 }
 
 - (void)scrollWheel:(NSEvent *)event {
-    if (self.enclosingScrollView) {
+    // Defer to super if it's not a vertical scroll or there's nothing to scroll
+    if (event.scrollingDeltaY == 0 ||
+        representer.controller.displayedLineRange.length >= representer.controller.totalLineCount) {
         [super scrollWheel:event];
         return;
     }
