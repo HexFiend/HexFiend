@@ -1,6 +1,6 @@
 .DS_Store
-HexFiend_2.xcodeproj/project.xcworkspace/*
-HexFiend_2.xcodeproj/xcuserdata/*
+app/HexFiend_2.xcodeproj/project.xcworkspace/*
+app/HexFiend_2.xcodeproj/xcuserdata/*
 /DerivedData
 /vendor
 app/tcl/build
