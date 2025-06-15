@@ -453,7 +453,7 @@
 		A51D0E7D20F1D01A00B55775 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.0.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		A51D0E8B20F1E56600B55775 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.0.sdk/System/Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
 		A51D0E9020F2A8D200B55775 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.0.sdk/System/Library/Frameworks/CoreText.framework; sourceTree = DEVELOPER_DIR; };
-		A531921B21D585FD006C25D6 /* version.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = version.h; sourceTree = "<group>"; };
+		A531921B21D585FD006C25D6 /* version.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = version.h; path = ../version.h; sourceTree = "<group>"; };
 		A5327E572856EB7500530557 /* LEB128Type.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = LEB128Type.h; path = app/sources/LEB128Type.h; sourceTree = "<group>"; };
 		A5327E582856EB7500530557 /* LEB128Type.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = LEB128Type.m; path = app/sources/LEB128Type.m; sourceTree = "<group>"; };
 		A5327E5A2856F0CC00530557 /* DataInspectorType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DataInspectorType.h; path = app/sources/DataInspectorType.h; sourceTree = "<group>"; };
@@ -930,7 +930,8 @@
 				A50859B52B204D7600325B36 /* Hex_Fiend_Tests-Bridging-Header.h */,
 				A50859A92B204C8100325B36 /* HFTclTemplateControllerTests.swift */,
 			);
-			path = "Hex Fiend Tests";
+			name = "Hex Fiend Tests";
+			path = "../Hex Fiend Tests";
 			sourceTree = "<group>";
 		};
 		A531921C21D58DC1006C25D6 /* Miscellaneous */ = {
@@ -994,7 +995,8 @@
 				001BEF972910F23600BB82B3 /* hexf.swift */,
 				A54281B22B427F62006DEF81 /* hexf-Bridging-Header.h */,
 			);
-			path = hexf;
+			name = hexf;
+			path = ../hexf;
 			sourceTree = "<group>";
 		};
 		A591313721E3064900685B51 /* Data Inspector */ = {
@@ -1082,7 +1084,7 @@
 				A5791D61286181DD0067FC1E /* sampleData.rtf */,
 			);
 			name = HexFiendling;
-			path = sample_code/HexFiendling;
+			path = ../sample_code/HexFiendling;
 			sourceTree = "<group>";
 		};
 		D019B8FB0D83FE8E005789AA /* File Writing */ = {
@@ -1107,7 +1109,7 @@
 				D01D1D701489D1F6008212BB /* munge_header_for_doxy.py */,
 			);
 			name = "Documentation Scripts";
-			path = documentation_tools;
+			path = ../documentation_tools;
 			sourceTree = "<group>";
 		};
 		D01E7C010CDC569F00943F9E /* Resources */ = {
@@ -1238,6 +1240,7 @@
 				FBEA8E7F14A2C10B00C27288 /* fileport.h */,
 			);
 			name = PrivilegedHelper;
+			path = ..;
 			sourceTree = "<group>";
 			tabWidth = 4;
 		};
@@ -1275,7 +1278,8 @@
 				D05390431E2192C000F9AAC1 /* HexFiendUnsandbox.entitlements */,
 				D05390441E2192C000F9AAC1 /* postprocess_for_mas.sh */,
 			);
-			path = configs;
+			name = configs;
+			path = ../configs;
 			sourceTree = "<group>";
 		};
 		D0560B350CDC4248009D2484 /* Framework */ = {
@@ -1300,7 +1304,7 @@
 				9408FC0D19DD7360004F800E /* Tests */,
 			);
 			name = Framework;
-			path = framework;
+			path = ../framework;
 			sourceTree = "<group>";
 		};
 		D0560B380CDC4253009D2484 /* App */ = {
@@ -1320,6 +1324,7 @@
 				29B97317FDCFA39411CA2CEA /* Resources */,
 			);
 			name = App;
+			path = ..;
 			sourceTree = "<group>";
 		};
 		D06D5FE70FA699B8002376EE /* BTree */ = {
@@ -1899,7 +1904,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "'documentation_tools/build_documentation.py'\n";
+			shellScript = "cd .. && 'documentation_tools/build_documentation.py'\n";
 		};
 		D05390401E2192AE00F9AAC1 /* Optionally Postprocess for Mac App Store */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1914,7 +1919,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "${SRCROOT}/configs/postprocess_for_mas.sh\n";
+			shellScript = "${SRCROOT}/../configs/postprocess_for_mas.sh\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -2358,7 +2363,7 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				INFOPLIST_FILE = "framework/tests/Framework_Tests-Info.plist";
+				INFOPLIST_FILE = "../framework/tests/Framework_Tests-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -2395,7 +2400,7 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				INFOPLIST_FILE = "framework/tests/Framework_Tests-Info.plist";
+				INFOPLIST_FILE = "../framework/tests/Framework_Tests-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -2432,7 +2437,7 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				INFOPLIST_FILE = "framework/tests/Framework_Tests-Info.plist";
+				INFOPLIST_FILE = "../framework/tests/Framework_Tests-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -2464,7 +2469,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				INFOPLIST_FILE = "framework/tests/Framework_Tests-Info.plist";
+				INFOPLIST_FILE = "../framework/tests/Framework_Tests-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -2496,7 +2501,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				INFOPLIST_FILE = "framework/tests/Framework_Tests-Info.plist";
+				INFOPLIST_FILE = "../framework/tests/Framework_Tests-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -2545,7 +2550,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_OBJC_BRIDGING_HEADER = "Hex Fiend Tests/Hex_Fiend_Tests-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "../Hex Fiend Tests/Hex_Fiend_Tests-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Hex Fiend.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Hex Fiend";
 			};
@@ -2587,7 +2592,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_OBJC_BRIDGING_HEADER = "Hex Fiend Tests/Hex_Fiend_Tests-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "../Hex Fiend Tests/Hex_Fiend_Tests-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Hex Fiend.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Hex Fiend";
 			};
@@ -2629,7 +2634,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_OBJC_BRIDGING_HEADER = "Hex Fiend Tests/Hex_Fiend_Tests-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "../Hex Fiend Tests/Hex_Fiend_Tests-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Hex Fiend.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Hex Fiend";
 			};
@@ -2671,7 +2676,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_OBJC_BRIDGING_HEADER = "Hex Fiend Tests/Hex_Fiend_Tests-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "../Hex Fiend Tests/Hex_Fiend_Tests-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Hex Fiend.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Hex Fiend";
 			};
@@ -2709,7 +2714,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_OBJC_BRIDGING_HEADER = "Hex Fiend Tests/Hex_Fiend_Tests-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "../Hex Fiend Tests/Hex_Fiend_Tests-Bridging-Header.h";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Hex Fiend.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Hex Fiend";
 			};
 			name = Release;
@@ -2746,7 +2751,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_OBJC_BRIDGING_HEADER = "Hex Fiend Tests/Hex_Fiend_Tests-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "../Hex Fiend Tests/Hex_Fiend_Tests-Bridging-Header.h";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Hex Fiend.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Hex Fiend";
 			};
 			name = "Release+CodeSign";
@@ -2783,7 +2788,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_OBJC_BRIDGING_HEADER = "Hex Fiend Tests/Hex_Fiend_Tests-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "../Hex Fiend Tests/Hex_Fiend_Tests-Bridging-Header.h";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Hex Fiend.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Hex Fiend";
 			};
 			name = "Release+MAS";
@@ -2821,7 +2826,7 @@
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				SWIFT_OBJC_BRIDGING_HEADER = "hexf/hexf-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "../hexf/hexf-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
@@ -2859,7 +2864,7 @@
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				SWIFT_OBJC_BRIDGING_HEADER = "hexf/hexf-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "../hexf/hexf-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = "Debug+CodeSign";
@@ -2897,7 +2902,7 @@
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				SWIFT_OBJC_BRIDGING_HEADER = "hexf/hexf-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "../hexf/hexf-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = "Debug+UnitTests";
@@ -2932,7 +2937,7 @@
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				SWIFT_OBJC_BRIDGING_HEADER = "hexf/hexf-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "../hexf/hexf-Bridging-Header.h";
 			};
 			name = Release;
 		};
@@ -2966,7 +2971,7 @@
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				SWIFT_OBJC_BRIDGING_HEADER = "hexf/hexf-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "../hexf/hexf-Bridging-Header.h";
 			};
 			name = "Release+CodeSign";
 		};
@@ -2978,7 +2983,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				INFOPLIST_FILE = "framework/HexFiend_Framework_iOS-Info.plist";
+				INFOPLIST_FILE = "../framework/HexFiend_Framework_iOS-Info.plist";
 				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-traditional";
 				INFOPLIST_PREFIX_HEADER = version.h;
 				INFOPLIST_PREPROCESS = YES;
@@ -3004,7 +3009,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				INFOPLIST_FILE = "framework/HexFiend_Framework_iOS-Info.plist";
+				INFOPLIST_FILE = "../framework/HexFiend_Framework_iOS-Info.plist";
 				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-traditional";
 				INFOPLIST_PREFIX_HEADER = version.h;
 				INFOPLIST_PREPROCESS = YES;
@@ -3030,7 +3035,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				INFOPLIST_FILE = "framework/HexFiend_Framework_iOS-Info.plist";
+				INFOPLIST_FILE = "../framework/HexFiend_Framework_iOS-Info.plist";
 				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-traditional";
 				INFOPLIST_PREFIX_HEADER = version.h;
 				INFOPLIST_PREPROCESS = YES;
@@ -3055,7 +3060,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				INFOPLIST_FILE = "framework/HexFiend_Framework_iOS-Info.plist";
+				INFOPLIST_FILE = "../framework/HexFiend_Framework_iOS-Info.plist";
 				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-traditional";
 				INFOPLIST_PREFIX_HEADER = version.h;
 				INFOPLIST_PREPROCESS = YES;
@@ -3081,7 +3086,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				INFOPLIST_FILE = "framework/HexFiend_Framework_iOS-Info.plist";
+				INFOPLIST_FILE = "../framework/HexFiend_Framework_iOS-Info.plist";
 				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-traditional";
 				INFOPLIST_PREFIX_HEADER = version.h;
 				INFOPLIST_PREPROCESS = YES;
@@ -3107,7 +3112,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				INFOPLIST_FILE = "framework/HexFiend_Framework_iOS-Info.plist";
+				INFOPLIST_FILE = "../framework/HexFiend_Framework_iOS-Info.plist";
 				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-traditional";
 				INFOPLIST_PREFIX_HEADER = version.h;
 				INFOPLIST_PREPROCESS = YES;
@@ -3133,7 +3138,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				INFOPLIST_FILE = "framework/HexFiend_Framework_iOS-Info.plist";
+				INFOPLIST_FILE = "../framework/HexFiend_Framework_iOS-Info.plist";
 				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-traditional";
 				INFOPLIST_PREFIX_HEADER = version.h;
 				INFOPLIST_PREPROCESS = YES;
@@ -3192,7 +3197,7 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_ENTITLEMENTS = configs/HexFiendUnsandbox.entitlements;
+				CODE_SIGN_ENTITLEMENTS = ../configs/HexFiendUnsandbox.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = YES;
@@ -3243,9 +3248,9 @@
 				DEAD_CODE_STRIPPING = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
-				INFOPLIST_FILE = app/Info.plist;
+				INFOPLIST_FILE = Info.plist;
 				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-traditional";
-				INFOPLIST_PREFIX_HEADER = version.h;
+				INFOPLIST_PREFIX_HEADER = ../version.h;
 				INFOPLIST_PREPROCESS = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3262,7 +3267,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.ridiculousfish.HexFiend;
 				PRODUCT_NAME = "Hex Fiend";
-				SWIFT_OBJC_BRIDGING_HEADER = "app/sources/HexFiend_2-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "sources/HexFiend_2-Bridging-Header.h";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -3279,9 +3284,9 @@
 				ENABLE_MODULE_VERIFIER = YES;
 				FRAMEWORK_VERSION = A;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				INFOPLIST_FILE = "framework/HexFiend_Framework-Info.plist";
+				INFOPLIST_FILE = "../framework/HexFiend_Framework-Info.plist";
 				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-traditional";
-				INFOPLIST_PREFIX_HEADER = version.h;
+				INFOPLIST_PREFIX_HEADER = ../version.h;
 				INFOPLIST_PREPROCESS = YES;
 				INSTALL_PATH = "@loader_path/../Frameworks";
 				LD_DYLIB_INSTALL_NAME = "@loader_path/../Frameworks/HexFiend.framework/Versions/A/HexFiend";
@@ -3306,14 +3311,14 @@
 				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
 				DEAD_CODE_STRIPPING = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				INFOPLIST_FILE = "helper_subprocess/FortunateSon-Info.plist";
+				INFOPLIST_FILE = "../helper_subprocess/FortunateSon-Info.plist";
 				INFOPLIST_PREPROCESS = YES;
 				INSTALL_PATH = /usr/local/bin;
 				OTHER_LDFLAGS = (
 					"-sectcreate",
 					__TEXT,
 					__launchd_plist,
-					"helper_subprocess/FortunateSon-Launchd.plist",
+					"../helper_subprocess/FortunateSon-Launchd.plist",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.ridiculousfish.HexFiend.PrivilegedHelper;
 				PRODUCT_NAME = com.ridiculousfish.HexFiend.PrivilegedHelper;
@@ -3369,7 +3374,7 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_ENTITLEMENTS = configs/HexFiendUnsandbox.entitlements;
+				CODE_SIGN_ENTITLEMENTS = ../configs/HexFiendUnsandbox.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = YES;
@@ -3421,9 +3426,9 @@
 				DEAD_CODE_STRIPPING = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
-				INFOPLIST_FILE = app/Info.plist;
+				INFOPLIST_FILE = Info.plist;
 				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-traditional";
-				INFOPLIST_PREFIX_HEADER = version.h;
+				INFOPLIST_PREFIX_HEADER = ../version.h;
 				INFOPLIST_PREPROCESS = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3440,7 +3445,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.ridiculousfish.HexFiend;
 				PRODUCT_NAME = "Hex Fiend";
-				SWIFT_OBJC_BRIDGING_HEADER = "app/sources/HexFiend_2-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "sources/HexFiend_2-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				WRAPPER_EXTENSION = app;
 			};
@@ -3458,9 +3463,9 @@
 				ENABLE_MODULE_VERIFIER = YES;
 				FRAMEWORK_VERSION = A;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				INFOPLIST_FILE = "framework/HexFiend_Framework-Info.plist";
+				INFOPLIST_FILE = "../framework/HexFiend_Framework-Info.plist";
 				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-traditional";
-				INFOPLIST_PREFIX_HEADER = version.h;
+				INFOPLIST_PREFIX_HEADER = ../version.h;
 				INFOPLIST_PREPROCESS = YES;
 				INSTALL_PATH = "@loader_path/../Frameworks";
 				LD_DYLIB_INSTALL_NAME = "@loader_path/../Frameworks/HexFiend.framework/Versions/A/HexFiend";
@@ -3485,14 +3490,14 @@
 				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
 				DEAD_CODE_STRIPPING = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				INFOPLIST_FILE = "helper_subprocess/FortunateSon-Info.plist";
+				INFOPLIST_FILE = "../helper_subprocess/FortunateSon-Info.plist";
 				INFOPLIST_PREPROCESS = YES;
 				INSTALL_PATH = /usr/local/bin;
 				OTHER_LDFLAGS = (
 					"-sectcreate",
 					__TEXT,
 					__launchd_plist,
-					"helper_subprocess/FortunateSon-Launchd.plist",
+					"../helper_subprocess/FortunateSon-Launchd.plist",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.ridiculousfish.HexFiend.PrivilegedHelper;
 				PRODUCT_NAME = com.ridiculousfish.HexFiend.PrivilegedHelper;
@@ -3548,7 +3553,7 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_ENTITLEMENTS = configs/HexFiendUnsandbox.entitlements;
+				CODE_SIGN_ENTITLEMENTS = ../configs/HexFiendUnsandbox.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = YES;
@@ -3599,9 +3604,9 @@
 				DEAD_CODE_STRIPPING = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
-				INFOPLIST_FILE = app/Info.plist;
+				INFOPLIST_FILE = Info.plist;
 				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-traditional";
-				INFOPLIST_PREFIX_HEADER = version.h;
+				INFOPLIST_PREFIX_HEADER = ../version.h;
 				INFOPLIST_PREPROCESS = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3618,7 +3623,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.ridiculousfish.HexFiend;
 				PRODUCT_NAME = "Hex Fiend";
-				SWIFT_OBJC_BRIDGING_HEADER = "app/sources/HexFiend_2-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "sources/HexFiend_2-Bridging-Header.h";
 				WRAPPER_EXTENSION = app;
 			};
 			name = "Release+CodeSign";
@@ -3635,9 +3640,9 @@
 				ENABLE_MODULE_VERIFIER = YES;
 				FRAMEWORK_VERSION = A;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				INFOPLIST_FILE = "framework/HexFiend_Framework-Info.plist";
+				INFOPLIST_FILE = "../framework/HexFiend_Framework-Info.plist";
 				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-traditional";
-				INFOPLIST_PREFIX_HEADER = version.h;
+				INFOPLIST_PREFIX_HEADER = ../version.h;
 				INFOPLIST_PREPROCESS = YES;
 				INSTALL_PATH = "@loader_path/../Frameworks";
 				LD_DYLIB_INSTALL_NAME = "@loader_path/../Frameworks/HexFiend.framework/Versions/A/HexFiend";
@@ -3662,14 +3667,14 @@
 				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
 				DEAD_CODE_STRIPPING = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				INFOPLIST_FILE = "helper_subprocess/FortunateSon-Info.plist";
+				INFOPLIST_FILE = "../helper_subprocess/FortunateSon-Info.plist";
 				INFOPLIST_PREPROCESS = YES;
 				INSTALL_PATH = /usr/local/bin;
 				OTHER_LDFLAGS = (
 					"-sectcreate",
 					__TEXT,
 					__launchd_plist,
-					"helper_subprocess/FortunateSon-Launchd.plist",
+					"../helper_subprocess/FortunateSon-Launchd.plist",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.ridiculousfish.HexFiend.PrivilegedHelper;
 				PRODUCT_NAME = com.ridiculousfish.HexFiend.PrivilegedHelper;
@@ -3704,14 +3709,14 @@
 				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
 				DEAD_CODE_STRIPPING = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				INFOPLIST_FILE = "helper_subprocess/FortunateSon-Info.plist";
+				INFOPLIST_FILE = "../helper_subprocess/FortunateSon-Info.plist";
 				INFOPLIST_PREPROCESS = YES;
 				INSTALL_PATH = /usr/local/bin;
 				OTHER_LDFLAGS = (
 					"-sectcreate",
 					__TEXT,
 					__launchd_plist,
-					"helper_subprocess/FortunateSon-Launchd.plist",
+					"../helper_subprocess/FortunateSon-Launchd.plist",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.ridiculousfish.HexFiend.PrivilegedHelper;
 				PRODUCT_NAME = com.ridiculousfish.HexFiend.PrivilegedHelper;
@@ -3742,7 +3747,7 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_ENTITLEMENTS = configs/HexFiendSandbox.entitlements;
+				CODE_SIGN_ENTITLEMENTS = ../configs/HexFiendSandbox.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = YES;
@@ -3796,9 +3801,9 @@
 				DEAD_CODE_STRIPPING = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
-				INFOPLIST_FILE = app/Info_MAS.plist;
+				INFOPLIST_FILE = Info_MAS.plist;
 				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-traditional";
-				INFOPLIST_PREFIX_HEADER = version.h;
+				INFOPLIST_PREFIX_HEADER = ../version.h;
 				INFOPLIST_PREPROCESS = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3811,7 +3816,7 @@
 				OTHER_LDFLAGS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = com.ridiculousfish.HexFiend;
 				PRODUCT_NAME = "Hex Fiend";
-				SWIFT_OBJC_BRIDGING_HEADER = "app/sources/HexFiend_2-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "sources/HexFiend_2-Bridging-Header.h";
 				WRAPPER_EXTENSION = app;
 			};
 			name = "Release+MAS";
@@ -3828,9 +3833,9 @@
 				ENABLE_MODULE_VERIFIER = YES;
 				FRAMEWORK_VERSION = A;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				INFOPLIST_FILE = "framework/HexFiend_Framework-Info.plist";
+				INFOPLIST_FILE = "../framework/HexFiend_Framework-Info.plist";
 				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-traditional";
-				INFOPLIST_PREFIX_HEADER = version.h;
+				INFOPLIST_PREFIX_HEADER = ../version.h;
 				INFOPLIST_PREPROCESS = YES;
 				INSTALL_PATH = "@loader_path/../Frameworks";
 				LD_DYLIB_INSTALL_NAME = "@loader_path/../Frameworks/HexFiend.framework/Versions/A/HexFiend";
@@ -3855,14 +3860,14 @@
 				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
 				DEAD_CODE_STRIPPING = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				INFOPLIST_FILE = "helper_subprocess/FortunateSon-Info.plist";
+				INFOPLIST_FILE = "../helper_subprocess/FortunateSon-Info.plist";
 				INFOPLIST_PREPROCESS = YES;
 				INSTALL_PATH = /usr/local/bin;
 				OTHER_LDFLAGS = (
 					"-sectcreate",
 					__TEXT,
 					__launchd_plist,
-					"helper_subprocess/FortunateSon-Launchd.plist",
+					"../helper_subprocess/FortunateSon-Launchd.plist",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.ridiculousfish.HexFiend.PrivilegedHelper;
 				PRODUCT_NAME = com.ridiculousfish.HexFiend.PrivilegedHelper;
@@ -3912,7 +3917,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				INFOPLIST_FILE = "framework/tests/Framework_Tests-Info.plist";
+				INFOPLIST_FILE = "../framework/tests/Framework_Tests-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -3948,7 +3953,7 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_ENTITLEMENTS = configs/HexFiendSandbox.entitlements;
+				CODE_SIGN_ENTITLEMENTS = ../configs/HexFiendSandbox.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = YES;
@@ -4002,9 +4007,9 @@
 				DEAD_CODE_STRIPPING = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
-				INFOPLIST_FILE = app/Info_MAS.plist;
+				INFOPLIST_FILE = Info_MAS.plist;
 				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-traditional";
-				INFOPLIST_PREFIX_HEADER = version.h;
+				INFOPLIST_PREFIX_HEADER = ../version.h;
 				INFOPLIST_PREPROCESS = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -4017,7 +4022,7 @@
 				OTHER_LDFLAGS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = com.ridiculousfish.HexFiend;
 				PRODUCT_NAME = "Hex Fiend";
-				SWIFT_OBJC_BRIDGING_HEADER = "app/sources/HexFiend_2-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "sources/HexFiend_2-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				WRAPPER_EXTENSION = app;
 			};
@@ -4035,9 +4040,9 @@
 				ENABLE_MODULE_VERIFIER = YES;
 				FRAMEWORK_VERSION = A;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				INFOPLIST_FILE = "framework/HexFiend_Framework-Info.plist";
+				INFOPLIST_FILE = "../framework/HexFiend_Framework-Info.plist";
 				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-traditional";
-				INFOPLIST_PREFIX_HEADER = version.h;
+				INFOPLIST_PREFIX_HEADER = ../version.h;
 				INFOPLIST_PREPROCESS = YES;
 				INSTALL_PATH = "@loader_path/../Frameworks";
 				LD_DYLIB_INSTALL_NAME = "@loader_path/../Frameworks/HexFiend.framework/Versions/A/HexFiend";
@@ -4062,14 +4067,14 @@
 				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
 				DEAD_CODE_STRIPPING = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				INFOPLIST_FILE = "helper_subprocess/FortunateSon-Info.plist";
+				INFOPLIST_FILE = "../helper_subprocess/FortunateSon-Info.plist";
 				INFOPLIST_PREPROCESS = YES;
 				INSTALL_PATH = /usr/local/bin;
 				OTHER_LDFLAGS = (
 					"-sectcreate",
 					__TEXT,
 					__launchd_plist,
-					"helper_subprocess/FortunateSon-Launchd.plist",
+					"../helper_subprocess/FortunateSon-Launchd.plist",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.ridiculousfish.HexFiend.PrivilegedHelper;
 				PRODUCT_NAME = com.ridiculousfish.HexFiend.PrivilegedHelper;
@@ -4123,7 +4128,7 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				INFOPLIST_FILE = "framework/tests/Framework_Tests-Info.plist";
+				INFOPLIST_FILE = "../framework/tests/Framework_Tests-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -4164,7 +4169,7 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_ENTITLEMENTS = configs/HexFiendUnsandbox.entitlements;
+				CODE_SIGN_ENTITLEMENTS = ../configs/HexFiendUnsandbox.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = YES;
@@ -4215,9 +4220,9 @@
 				DEAD_CODE_STRIPPING = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
-				INFOPLIST_FILE = app/Info.plist;
+				INFOPLIST_FILE = Info.plist;
 				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-traditional";
-				INFOPLIST_PREFIX_HEADER = version.h;
+				INFOPLIST_PREFIX_HEADER = ../version.h;
 				INFOPLIST_PREPROCESS = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -4234,7 +4239,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.ridiculousfish.HexFiend;
 				PRODUCT_NAME = "Hex Fiend";
-				SWIFT_OBJC_BRIDGING_HEADER = "app/sources/HexFiend_2-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "sources/HexFiend_2-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				WRAPPER_EXTENSION = app;
 			};
@@ -4252,9 +4257,9 @@
 				ENABLE_MODULE_VERIFIER = YES;
 				FRAMEWORK_VERSION = A;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				INFOPLIST_FILE = "framework/HexFiend_Framework-Info.plist";
+				INFOPLIST_FILE = "../framework/HexFiend_Framework-Info.plist";
 				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-traditional";
-				INFOPLIST_PREFIX_HEADER = version.h;
+				INFOPLIST_PREFIX_HEADER = ../version.h;
 				INFOPLIST_PREPROCESS = YES;
 				INSTALL_PATH = "@loader_path/../Frameworks";
 				LD_DYLIB_INSTALL_NAME = "@loader_path/../Frameworks/HexFiend.framework/Versions/A/HexFiend";
@@ -4279,14 +4284,14 @@
 				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
 				DEAD_CODE_STRIPPING = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				INFOPLIST_FILE = "helper_subprocess/FortunateSon-Info.plist";
+				INFOPLIST_FILE = "../helper_subprocess/FortunateSon-Info.plist";
 				INFOPLIST_PREPROCESS = YES;
 				INSTALL_PATH = /usr/local/bin;
 				OTHER_LDFLAGS = (
 					"-sectcreate",
 					__TEXT,
 					__launchd_plist,
-					"helper_subprocess/FortunateSon-Launchd.plist",
+					"../helper_subprocess/FortunateSon-Launchd.plist",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.ridiculousfish.HexFiend.PrivilegedHelper;
 				PRODUCT_NAME = com.ridiculousfish.HexFiend.PrivilegedHelper;
@@ -4342,7 +4347,7 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_ENTITLEMENTS = configs/HexFiendUnsandbox.entitlements;
+				CODE_SIGN_ENTITLEMENTS = ../configs/HexFiendUnsandbox.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = YES;
@@ -4397,9 +4402,9 @@
 				ENABLE_MODULE_VERIFIER = YES;
 				FRAMEWORK_VERSION = A;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				INFOPLIST_FILE = "framework/HexFiend_Framework-Info.plist";
+				INFOPLIST_FILE = "../framework/HexFiend_Framework-Info.plist";
 				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-traditional";
-				INFOPLIST_PREFIX_HEADER = version.h;
+				INFOPLIST_PREFIX_HEADER = ../version.h;
 				INFOPLIST_PREPROCESS = YES;
 				INSTALL_PATH = "@loader_path/../Frameworks";
 				LD_DYLIB_INSTALL_NAME = "@loader_path/../Frameworks/HexFiend.framework/Versions/A/HexFiend";
@@ -4425,9 +4430,9 @@
 				DEAD_CODE_STRIPPING = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
-				INFOPLIST_FILE = app/Info.plist;
+				INFOPLIST_FILE = Info.plist;
 				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-traditional";
-				INFOPLIST_PREFIX_HEADER = version.h;
+				INFOPLIST_PREFIX_HEADER = ../version.h;
 				INFOPLIST_PREPROCESS = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -4444,7 +4449,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.ridiculousfish.HexFiend;
 				PRODUCT_NAME = "Hex Fiend";
-				SWIFT_OBJC_BRIDGING_HEADER = "app/sources/HexFiend_2-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "sources/HexFiend_2-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				WRAPPER_EXTENSION = app;
 			};
@@ -4463,7 +4468,7 @@
 				);
 				PRODUCT_NAME = hexf;
 				SKIP_INSTALL = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "hexf/hexf-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "../hexf/hexf-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = "Debug+MAS";
@@ -4482,7 +4487,7 @@
 				);
 				PRODUCT_NAME = hexf;
 				SKIP_INSTALL = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "hexf/hexf-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "../hexf/hexf-Bridging-Header.h";
 			};
 			name = "Release+MAS";
 		};
