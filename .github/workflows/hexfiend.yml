@@ -5,6 +5,9 @@ on: [push, pull_request]
 jobs:
   build:
     runs-on: macos-15
+    defaults:
+      run:
+        working-directory: app
     steps:
     - uses: actions/checkout@v2
       with:
