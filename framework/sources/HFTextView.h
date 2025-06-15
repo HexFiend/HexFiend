@@ -45,7 +45,7 @@ NS_ASSUME_NONNULL_BEGIN
 /*! Sets the arry of background colors for the receiver. The background colors are used in sequence to draw each row. */
 
 /// The array of background colors for the receiver.
-@property (nonatomic, copy) NSArray *backgroundColors;
+@property (nonatomic, copy) NSArray<HFColor *> *backgroundColors;
 
 /// Whether the receiver draws a border.
 @property (nonatomic) BOOL bordered;

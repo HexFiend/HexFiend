@@ -32,7 +32,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /*! The per-row background colors. Each row is drawn with the next color in turn, cycling back to the beginning when the array is exhausted.  Any empty space is filled with the first color in the array.  If the array is empty, then the background is drawn with \c clearColor.
  */
-@property (nonatomic, copy) NSArray *rowBackgroundColors;
+@property (nonatomic, copy) NSArray<HFColor *> *rowBackgroundColors;
 
 /*! Whether the text view behaves like a text field (YES) or a text view (NO).  Currently this determines whether it draws a focus ring when it is the first responder.
 */
