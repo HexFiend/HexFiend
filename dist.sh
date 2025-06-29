@@ -50,6 +50,7 @@ CONFIG="Release+CodeSign"
 rm -rf "${DERIVED_DATA_PATH}"
 
 xcodebuild \
+	-project app/HexFiend_2.xcodeproj \
 	-scheme "${SCHEME}" \
 	-derivedDataPath "${DERIVED_DATA_PATH}" \
 	"CODE_SIGN_IDENTITY=${CODESIGN}" \
