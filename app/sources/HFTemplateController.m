@@ -167,7 +167,7 @@ static const unsigned long long kMaxCacheSize = 1024 * 1024;
     if (label) {
         NSString *value;
         if (asHex) {
-            value = [NSString stringWithFormat:@"0x%" PRIX64, val];
+            value = [NSString stringWithFormat:@"0x%016" PRIX64, val];
         } else {
             value = [NSString stringWithFormat:@"%" PRIu64, val];
         }
@@ -203,7 +203,7 @@ static const unsigned long long kMaxCacheSize = 1024 * 1024;
     if (label) {
         NSString *value;
         if (asHex) {
-            value = [NSString stringWithFormat:@"0x%" PRIX32, val];
+            value = [NSString stringWithFormat:@"0x%08" PRIX32, val];
         } else {
             value = [NSString stringWithFormat:@"%" PRIu32, val];
         }
@@ -257,7 +257,7 @@ static const unsigned long long kMaxCacheSize = 1024 * 1024;
     if (label) {
         NSString *value;
         if (asHex) {
-            value = [NSString stringWithFormat:@"0x%" PRIX16, val];
+            value = [NSString stringWithFormat:@"0x%04" PRIX16, val];
         } else {
             value = [NSString stringWithFormat:@"%" PRIu16, val];
         }
@@ -290,7 +290,7 @@ static const unsigned long long kMaxCacheSize = 1024 * 1024;
     if (label) {
         NSString *value;
         if (asHex) {
-            value = [NSString stringWithFormat:@"0x%" PRIX8, val];
+            value = [NSString stringWithFormat:@"0x%02" PRIX8, val];
         } else {
             value = [NSString stringWithFormat:@"%" PRIu8, val];
         }
