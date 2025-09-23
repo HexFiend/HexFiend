@@ -94,6 +94,19 @@ NSString * const DataInspectorDidDeleteAllRows = @"DataInspectorDidDeleteAllRows
 }
 
 - (void)initializeView {
+    if (@available(macOS 26, *)) {
+        // Increase width of inspector type column by +4 so text isn't shown truncated
+        
+        NSTableColumn *inspectorTypeColumn = [table tableColumnWithIdentifier:kInspectorTypeColumnIdentifier];
+        
+        inspectorTypeColumn.width = 94;
+        inspectorTypeColumn.minWidth = 94;
+        inspectorTypeColumn.maxWidth = 94;
+        
+        // Increase row height by +2 so popup buttons are not too close together
+        table.rowHeight = 20.0;
+    }
+    
     [self resizeTableViewAfterChangingRowCount];
 }
 
