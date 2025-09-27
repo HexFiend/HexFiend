@@ -40,6 +40,8 @@ static const CGFloat kShadowWidth = 6;
 
 - (BOOL)isFlipped { return YES; }
 
+- (BOOL)clipsToBounds { return YES; }
+
 - (void)getLineNumberFormatString:(char *)outString length:(NSUInteger)length {
     HFLineNumberFormat format = self.lineNumberFormat;
     if (format == HFLineNumberFormatDecimal) {
