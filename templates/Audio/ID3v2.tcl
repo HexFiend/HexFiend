@@ -22,93 +22,237 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+# ID3v2 HexFiend template (v2.2 / v2.3 / v2.4)
+# With footer support, unsynchronisation handling, frames section,
+# and flag/bitfield helpers.
 
-# TODO: footer?
-# TODO: unsynchronise flag? messy todo
-# TODO: redo sections? "Frames" section etc?
-# TODO: flags, bit fields helper?
+requires 0 "49 44 33" ;# "ID3"
 
-proc syncsafeint32 { {name ""} } {
+big_endian
+
+# ---------- global state ----------
+
+set ::id3v2_unsync_tag      0   ;# tag-level unsync (header flag)
+set ::id3v2_footer_flag     0   ;# v2.4 footer present
+set ::id3v2_unsync_current  0   ;# active unsync for current frame's text
+
+# ---------- helpers ----------
+
+proc syncsafe32 {{name ""}} {
     set n [uint32]
-    # syncsafe integer is a number encoded
-    # with 8th bit in each byte set to zero
-    # 0aaaaaaa0bbbbbbb0ccccccc0ddddddd ->
-    # 0000aaaaaaabbbbbbbcccccccddddddd
     set v [expr \
         (($n & 0x7f000000) >> 3) | \
         (($n & 0x007f0000) >> 2) | \
         (($n & 0x00007f00) >> 1) | \
         (($n & 0x0000007f) >> 0) \
     ]
-    if { $name != "" } {
-	    entry $name [format "%d (%d)" $v $n] 4 [expr [pos]-4]
+    if { $name ne "" } {
+        entry $name [format "%d (%d)" $v $n] 4 [expr {[pos] - 4}]
     }
     return $v
 }
 
-proc uint8_dict { name dict {default ""} } {
+proc u8_dict {name dict {default ""}} {
     set n [uint8]
     set v $default
     if { [dict exists $dict $n] } {
         set v [dict get $dict $n]
     }
-    entry $name [format "%s (%d)" $v $n] 1 [expr [pos]-1]
+    entry $name [format "%s (%d)" $v $n] 1 [expr {[pos] - 1}]
     return $n
 }
 
-proc len_to_uint8 { v } {
+proc ascii_maybe {size {name ""}} {
+    if { $size <= 0 } {
+        if { $name ne "" } { entry $name "" }
+        return ""
+    }
+    if { $name ne "" } {
+        return [ascii $size $name]
+    }
+    return [ascii $size]
+}
+
+proc bytes_maybe {size {name ""}} {
+    if { $size <= 0 } {
+        if { $name ne "" } { entry $name "" }
+        return ""
+    }
+    if { $name ne "" } {
+        return [bytes $size $name]
+    }
+    return [bytes $size]
+}
+
+# scan up to max bytes to a 1-byte null terminator
+proc len_to_null8 {max} {
     set i 0
-    while { ![end] } {
+    while { $i < $max } {
+        set b [uint8]
         incr i
-        if { [uint8] == $v } {
-            break
-        }
+        if { $b == 0 } { break }
     }
-    move [expr -$i]
-    return [expr $i]
+    return $i
 }
 
-proc len_to_uint16 { v } {
+# scan up to max bytes to a 2-byte null terminator (UTF-16)
+proc len_to_null16 {max} {
     set i 0
-    while { ![end] } {
+    while { $i < $max } {
+        set w [uint16]
         incr i 2
-        if { [uint16] == $v } {
-            break
-        }
+        if { $w == 0 } { break }
     }
-    move [expr -$i]
-    return [expr $i]
+    return $i
 }
 
-proc ascii_maybe_empty { size {name ""} } {
-    if { $size > 0 } {
-        if { $name != "" } {
-            return [ascii $size $name]
-        } else {
-            return [ascii $size]
-        }
-    } else {
-        if { $name != "" } {
-            entry $name ""
-        }
-        return ""
+proc trim_suffix {suffix s} {
+    set len [string length $suffix]
+    while { [string match "*$suffix" $s] } {
+        set s [string range $s 0 "end-$len"]
     }
+    return $s
 }
 
-proc bytes_maybe_empty { size {name ""} } {
-    if { $size > 0 } {
-        if { $name != "" } {
-            return [bytes $size $name]
-        } else {
-            return [bytes $size]
-        }
-    } else {
-        if { $name != "" } {
-            entry $name
-        }
-        return ""
-    }
+proc enc_iso8859_1 {bytes} {
+    return [encoding convertfrom iso8859-1 [string trimright $bytes "\x00"]]
 }
+
+proc enc_utf8 {bytes} {
+    return [encoding convertfrom utf-8 [string trimright $bytes "\x00"]]
+}
+
+proc enc_utf16 {bytes} {
+    if { [string match "\xff\xfe*" $bytes] } {
+        set bytes [string range $bytes 2 end]
+        binary scan [trim_suffix "\x00\x00" $bytes] s* cps
+    } elseif { [string match "\xfe\xff*" $bytes] } {
+        set bytes [string range $bytes 2 end]
+        binary scan [trim_suffix "\x00\x00" $bytes] S* cps
+    } else {
+        binary scan [trim_suffix "\x00\x00" $bytes] s* cps
+    }
+    return [format [string repeat %c [llength $cps]] {*}$cps]
+}
+
+proc enc_utf16be {bytes} {
+    if { [string match "\xfe\xff*" $bytes] } {
+        set bytes [string range $bytes 2 end]
+    }
+    binary scan [trim_suffix "\x00\x00" $bytes] S* cps
+    return [format [string repeat %c [llength $cps]] {*}$cps]
+}
+
+set ::id3v2_encoding_names [dict create \
+    0 "ISO-8859-1" \
+    1 "UTF-16" \
+    2 "UTF-16BE" \
+    3 "UTF-8" \
+]
+
+set ::id3v2_encoding_null_len [dict create \
+    0 1 \
+    1 2 \
+    2 2 \
+    3 1 \
+]
+
+set ::id3v2_encoding_fns [dict create \
+    0 enc_iso8859_1 \
+    1 enc_utf16 \
+    2 enc_utf16be \
+    3 enc_utf8 \
+]
+
+# unsynchronisation: remove 0x00 after 0xFF
+proc id3v2_unsync {raw} {
+    set out ""
+    set prev ""
+    foreach c [split $raw ""] {
+        if { $prev eq "\xFF" && $c eq "\x00" } {
+            # stuffed 00, skip
+        } else {
+            append out $c
+        }
+        set prev $c
+    }
+    return $out
+}
+
+# generic bitfield/flags entry helper
+# specs: {mask1 label1 mask2 label2 ...}
+proc flags_entry {name value size specs pos} {
+    set names {}
+    foreach {mask label} $specs {
+        if { $value & $mask } {
+            lappend names $label
+        }
+    }
+    entry $name [format "%s (%d)" $names $value] $size $pos
+}
+
+# decode text of known byte length + optional terminator (unsync-aware)
+proc id3v2_text {enc size null_len {name ""}} {
+    set start [pos]
+    set raw   [bytes_maybe $size]
+
+    if { $::id3v2_unsync_current } {
+        set raw [id3v2_unsync $raw]
+    }
+
+    set enc_fn ""
+    if { [dict exists $::id3v2_encoding_fns $enc] } {
+        set enc_fn [dict get $::id3v2_encoding_fns $enc]
+    }
+
+    if { $enc_fn eq "" } {
+        set val [encoding convertfrom iso8859-1 $raw]
+    } else {
+        set val [$enc_fn $raw]
+    }
+
+    # consume null terminator bytes from stream (already accounted for in null_len)
+    if { $null_len > 0 } {
+        bytes_maybe $null_len
+    }
+
+    if { $name ne "" } {
+        entry $name $val [expr {$size + $null_len}] $start
+    }
+    return $val
+}
+
+# read a null-terminated text field within max bytes; optionally return full length
+proc id3v2_text_null {enc max {name ""} {len_var ""}} {
+    upvar $len_var out_len
+
+    set null_len 1
+    if { [dict exists $::id3v2_encoding_null_len $enc] } {
+        set null_len [dict get $::id3v2_encoding_null_len $enc]
+    }
+
+    if { $null_len == 1 } {
+        set bytes_len [len_to_null8 $max]
+    } else {
+        set bytes_len [len_to_null16 $max]
+    }
+
+    if { $bytes_len < $null_len } {
+        set bytes_len 0
+        set null_len  0
+    }
+
+    if { $len_var ne "" } {
+        set out_len $bytes_len
+    }
+
+    set text_len [expr {$bytes_len - $null_len}]
+    if { $text_len < 0 } { set text_len 0 }
+
+    return [id3v2_text $enc $text_len $null_len $name]
+}
+
+# ---------- frame name lookup (modern IDs only, compact) ----------
 
 set id3v2_frame_names [dict create \
     AENC "Audio encryption" \
@@ -272,264 +416,120 @@ set id3v2_frame_names [dict create \
     WXX "User defined URL link frame" \
 ]
 
-# $00   ISO-8859-1 [ISO-8859-1]. Terminated with $00.
-# $01   UTF-16 [UTF-16] encoded Unicode [UNICODE] with BOM. All
-#     strings in the same frame SHALL have the same byteorder.
-#     Terminated with $00 00.
-# $02   UTF-16BE [UTF-16] encoded Unicode [UNICODE] without BOM.
-#     Terminated with $00 00.
-# $03   UTF-8 [UTF-8] encoded Unicode [UNICODE]. Terminated with $00.
-set id3v2_encoding_names [dict create \
-    0 "ISO-8859-1" \
-    1 "UTF-16" \
-    2 "UTF-16BE" \
-    3 "UTF-8" \
-]
+# ---------- frame parsers ----------
 
-set id3v2_encoding_null_lens [dict create \
-    0 1 \
-    1 2 \
-    2 2 \
-    3 1 \
-]
-
-proc encoding_iso8859_1 { bytes } {
-    return [encoding convertfrom iso8859-1 [string trimright $bytes "\x00"]]
-}
-
-proc encoding_utf8 { bytes } {
-    return [encoding convertfrom utf-8 [string trimright $bytes "\x00"]]
-}
-
-proc trim_suffix { suffix s } {
-    set len [string length $suffix]
-    while { [string match "*$suffix" $s] } {
-        set s [string range $s 0 "end-$len"]
-    }
-    return $s
-}
-
-# TODO: some better way of doing this?
-proc encoding_utf16 { bytes } {
-    # strip BOM
-    if { [string match "\xff\xfe*" $bytes] } {
-        set bytes [string range $bytes 2 end]
-    }
-    # s* scan 16bit little endian
-    binary scan [trim_suffix "\x00\x00" $bytes] s* codepoints
-    return [format [string repeat %c [llength $codepoints]] {*}$codepoints]
-}
-
-proc encoding_utf16be { bytes } {
-    # strip BOM
-    if { [string match "\xfe\xff*" $bytes] } {
-        set bytes [string range $bytes 2 end]
-    }
-    # S* scan 16bit big endian
-    binary scan [trim_suffix "\x00\x00" $bytes] S* codepoints
-    return [format [string repeat %c [llength $codepoints]] {*}$codepoints]
-}
-
-set id3v2_encoding_fns [dict create \
-    0 encoding_iso8859_1 \
-    1 encoding_utf16 \
-    2 encoding_utf16be \
-    3 encoding_utf8 \
-]
-
-proc id3v2_text { enc size null_len {name ""} } {
-    global id3v2_encoding_fns
-
-    if { ![dict exists $id3v2_encoding_fns $enc] } {
-        # there seems to be id3v2 tags with invalid encoding, fallback to ascii if so
-        ascii [expr $size+$null_len] $name
-        return
-    }
-    set encodeing_fn [dict get $id3v2_encoding_fns $enc]
-
-    set v [$encodeing_fn [bytes_maybe_empty $size]]
-    # dummy read null
-    if { $null_len > 0 } {
-        bytes $null_len
-    }
-    if { $name != "" } {
-        set entry_size [expr $size+$null_len]
-        if { $entry_size > 0 } {
-            entry $name $v [expr $size+$null_len] [expr [pos]-$size-$null_len]
-        } else {
-            entry $name ""
-        }
-    }
-
-    return $v
-}
-
-proc id3v2_text_null { enc {name ""} {bytes_len_name ""} } {
-    global id3v2_encoding_null_lens
-    upvar $bytes_len_name bytes_len
-
-    # there seems to be id3v2 tags with invalid encoding, fallback to ascii null len
-    set null_len 1
-    if { [dict exists $id3v2_encoding_null_lens $enc] } {
-        set null_len [dict get $id3v2_encoding_null_lens $enc]
-    }
-
-    if { $null_len == 1} {
-        set bytes_len [len_to_uint8 0]
-    } else {
-        set bytes_len [len_to_uint16 0]
-    }
-    set text_len [expr $bytes_len-$null_len]
-
-    set v [id3v2_text $enc $text_len $null_len $name]
-
-    return $v
-}
-
-# Attached picture   "PIC"
-# Frame size         $xx xx xx
-# Text encoding      $xx
-# Image format       $xx xx xx
-# Picture type       $xx
-# Description        <textstring> $00 (00)
-# Picture data       <binary data>
-proc frame_PIC { size } {
-    global id3v2_encoding_names
-    set enc [uint8_dict "Text encoding" $id3v2_encoding_names "Invalid"]
-    # 0 is iso-8869-1
+# PIC (ID3v2.2)
+proc frame_PIC {data_size} {
+    set enc [u8_dict "Text encoding" $::id3v2_encoding_names "Invalid"]
     ascii 3 "Image format"
     uint8 "Picture type"
-    id3v2_text_null $enc "Description" desc_len
-    bytes_maybe_empty [expr $size-1-3-1-$desc_len] "Data"
+    set remaining [expr {$data_size - 1 - 3 - 1}]
+    if { $remaining < 0 } { set remaining 0 }
+    id3v2_text_null $enc $remaining "Description" desc_len
+    set used  $desc_len
+    set left  [expr {$data_size - 1 - 3 - 1 - $used}]
+    if { $left < 0 } { set left 0 }
+    bytes_maybe $left "Data"
 }
 
-# <Header for 'Attached picture', ID: "APIC">
-# Text encoding      $xx
-# MIME type          <text string> $00
-# Picture type       $xx
-# Description        <text string according to encoding> $00 (00)
-# Picture data       <binary data>
-proc frame_APIC { size } {
-    global id3v2_encoding_names
-    set enc [uint8_dict "Text encoding" $id3v2_encoding_names "Invalid"]
-    # 0 is iso-8869-1
-    id3v2_text_null 0 "MIME Type" mime_len
+# APIC (ID3v2.3/2.4)
+proc frame_APIC {data_size} {
+    set enc [u8_dict "Text encoding" $::id3v2_encoding_names "Invalid"]
+    set remaining $data_size
+
+    # MIME: ISO-8859-1, null-terminated
+    set start [pos]
+    set mime_len [len_to_null8 $remaining]
+    move $start
+    ascii_maybe [expr {$mime_len - 1}] "MIME type"
+    uint8 ;# null
+    set remaining [expr {$remaining - $mime_len}]
+
     uint8 "Picture type"
-    id3v2_text_null $enc "Description" desc_len
-    bytes_maybe_empty [expr $size-1-$mime_len-1-$desc_len] "Data"
+    incr remaining -1
+
+    if { $remaining < 0 } { set remaining 0 }
+    id3v2_text_null $enc $remaining "Description" desc_len
+    set remaining [expr {$remaining - $desc_len}]
+    if { $remaining < 0 } { set remaining 0 }
+    bytes_maybe $remaining "Data"
 }
 
-# Unsynced lyrics/text "ULT"
-# Frame size           $xx xx xx
-# Text encoding        $xx
-# Language             $xx xx xx
-# Content descriptor   <textstring> $00 (00)
-# Lyrics/text          <textstring>
-proc frame_ULT { size } { frame_COMM $size }
-
-# <Header for 'Unsynchronised lyrics/text transcription', ID: "USLT">
-# Text encoding        $xx
-# Language             $xx xx xx
-# Content descriptor   <text string according to encoding> $00 (00)
-# Lyrics/text          <full text string according to encoding>
-proc frame_USLT { size } { frame_COMM $size }
-
-# Comment                   "COM"
-# Frame size                $xx xx xx
-# Text encoding             $xx
-# Language                  $xx xx xx
-# Short content description <textstring> $00 (00)
-# The actual text           <textstring>
-proc frame_COM { size } { frame_COMM $size }
-
-# <Header for 'Comment', ID: "COMM">
-# Text encoding          $xx
-# Language               $xx xx xx
-# Short content descrip. <text string according to encoding> $00 (00)
-# The actual text        <full text string according to encoding>
-proc frame_COMM { size } {
-    global id3v2_encoding_names
-    set enc [uint8_dict "Text encoding" $id3v2_encoding_names "Invalid"]
+# COMM / USLT share structure
+proc frame_COMM_like {data_size} {
+    set enc [u8_dict "Text encoding" $::id3v2_encoding_names "Invalid"]
     ascii 3 "Language"
-    id3v2_text_null $enc "Description" desc_len
-    id3v2_text $enc [expr $size-1-3-$desc_len] 0 "Text"
+    set remaining [expr {$data_size - 1 - 3}]
+    if { $remaining < 0 } { set remaining 0 }
+
+    id3v2_text_null $enc $remaining "Description" desc_len
+    set remaining [expr {$remaining - $desc_len}]
+    if { $remaining < 0 } { set remaining 0 }
+
+    id3v2_text $enc $remaining 0 "Text"
 }
 
-# Text information identifier  "T00" - "TZZ" , excluding "TXX",
-#                             described in 4.2.2.
-# Frame size                   $xx xx xx
-# Text encoding                $xx
-# Information                  <textstring>
+proc frame_COMM {data_size} { frame_COMM_like $data_size }
+proc frame_USLT {data_size} { frame_COMM_like $data_size }
 
-# <Header for 'Text information frame', ID: "T000" - "TZZZ",
-# excluding "TXXX" described in 4.2.6.>
-# Text encoding                $xx
-# Information                  <text string(s) according to encoding>
-proc frame_T000 { size } {
-    global id3v2_encoding_names
-    set enc [uint8_dict "Text encoding" $id3v2_encoding_names "Invalid"]
-    id3v2_text $enc [expr $size-1] 0 "Text"
+# "T***" (except TXXX)
+proc frame_T000 {data_size} {
+    set enc [u8_dict "Text encoding" $::id3v2_encoding_names "Invalid"]
+    id3v2_text $enc [expr {$data_size - 1}] 0 "Text"
 }
 
-# User defined...   "TXX"
-# Frame size        $xx xx xx
-# Text encoding     $xx
-# Description       <textstring> $00 (00)
-# Value             <textstring>
+# TXXX
+proc frame_TXXX {data_size} {
+    set enc [u8_dict "Text encoding" $::id3v2_encoding_names "Invalid"]
+    set remaining [expr {$data_size - 1}]
+    if { $remaining < 0 } { set remaining 0 }
 
-# <Header for 'User defined text information frame', ID: "TXXX">
-# Text encoding     $xx
-# Description       <text string according to encoding> $00 (00)
-# Value             <text string according to encoding>
-proc frame_TXXX { size } {
-    global id3v2_encoding_names
-    set enc [uint8_dict "Text encoding" $id3v2_encoding_names "Invalid"]
-    id3v2_text_null $enc "Description" desc_len
-    id3v2_text $enc [expr $size-1-$desc_len] 0 "Value"
+    id3v2_text_null $enc $remaining "Description" desc_len
+    set remaining [expr {$remaining - $desc_len}]
+    if { $remaining < 0 } { set remaining 0 }
+
+    id3v2_text $enc $remaining 0 "Value"
 }
 
-# URL link frame   "W00" - "WZZ" , excluding "WXX"
-#                                 (described in 4.3.2.)
-# Frame size       $xx xx xx
-# URL              <textstring>
-
-# <Header for 'URL link frame', ID: "W000" - "WZZZ", excluding "WXXX"
-# described in 4.3.2.>
-# URL              <text string>
-proc frame_W000 { size } {
-    ascii_maybe_empty $size "URL"
+# "W***" (except WXXX) – URL, ISO-8859-1
+proc frame_W000 {data_size} {
+    ascii_maybe $data_size "URL"
 }
 
-# <Header for 'User defined URL link frame', ID: "WXXX">
-# Text encoding     $xx
-# Description       <text string according to encoding> $00 (00)
-# URL               <text string>
-proc frame_WXXX { size } {
-    global id3v2_encoding_names
-    set enc [uint8_dict "Text encoding" $id3v2_encoding_names "Invalid"]
-    id3v2_text_null $enc "Description" desc_len
-    id3v2_text $enc [expr $size-1-$desc_len] 0 "URL"
+# WXXX – description (encoded) + URL (ISO-8859-1)
+proc frame_WXXX {data_size} {
+    set enc [u8_dict "Text encoding" $::id3v2_encoding_names "Invalid"]
+    set remaining [expr {$data_size - 1}]
+    if { $remaining < 0 } { set remaining 0 }
+
+    id3v2_text_null $enc $remaining "Description" desc_len
+    set remaining [expr {$remaining - $desc_len}]
+    if { $remaining < 0 } { set remaining 0 }
+
+    ascii_maybe $remaining "URL"
 }
 
-# Unique file identifier  "UFI"
-# Frame size              $xx xx xx
-# Owner identifier        <textstring> $00
-# Identifier              <up to 64 bytes binary data>
-proc frame_UFI { size } { frame_PRIV $data_size }
-
-# <Header for 'Private frame', ID: "PRIV">
-# Owner identifier      <text string> $00
-#     The private data      <binary data>
-proc frame_PRIV { size } {
-    # 0 enc is iso-8859-1
-    id3v2_text_null 0 "Owner identifier" owner_id_len
-    bytes_maybe_empty [expr $size-$owner_id_len] "Data"
+# PRIV – owner identifier (ISO-8859-1) + data
+proc frame_PRIV {data_size} {
+    set start [pos]
+    set len [len_to_null8 $data_size]
+    move $start
+    ascii_maybe [expr {$len - 1}] "Owner identifier"
+    uint8 ;# null
+    set left [expr {$data_size - $len}]
+    if { $left < 0 } { set left 0 }
+    bytes_maybe $left "Data"
 }
 
-proc parse_frame { version } {
-    global id3v2_frame_names
+# UFID – same physical layout as PRIV
+proc frame_UFID {data_size} {
+    frame_PRIV $data_size
+}
 
-    # poke ahead to get id for section
+# ---------- frame parsing ----------
+
+proc parse_frame {version} {
+    # look ahead ID
     switch $version {
         2 {
             set id [ascii 3]
@@ -543,121 +543,165 @@ proc parse_frame { version } {
     }
 
     set name ""
-    if { [dict exists $id3v2_frame_names $id] } {
-        set name [dict get $id3v2_frame_names $id]
+    if { [dict exists $::id3v2_frame_names $id] } {
+        set name [dict get $::id3v2_frame_names $id]
     }
 
     section $id {
         sectionvalue $name
 
+        set header_size 0
+        set frame_unsync 0
+
         switch $version {
             2 {
-                # Frame ID   "XXX"
-                # Frame size $xx xx xx
                 set id [ascii 3 "ID"]
                 set data_size [uint24 "Size"]
-                set size [expr $data_size+6]
+                set header_size 6
             }
             3 {
-                # Frame ID   $xx xx xx xx  (four characters)
-                # Size       $xx xx xx xx
-                # Flags      $xx xx
                 set id [ascii 4 "ID"]
                 set data_size [uint32 "Size"]
-                set flags [uint16 "Flags"]
-                set size [expr $data_size+10]
+                uint16 "Flags"
+                set header_size 10
             }
             4 {
-                # Frame ID      $xx xx xx xx  (four characters)
-                # Size      4 * %0xxxxxxx  (synchsafe integer)
-                # Flags         $xx xx
                 set id [ascii 4 "ID"]
-                set data_size [syncsafeint32 "Size"]
-                set flags [uint16]
-                set header_len 10
+                set data_size [syncsafe32 "Size"]
+                set flags_start [pos]
+                set flags_raw [uint16 "Flags raw"]
+                set header_size 10
 
-                set flags_unsync 0x2
-                set flags_data_len 0x1
-                set flags_names []
-                if { $flags & $flags_data_len } {
-                    lappend flags_names "datalen"
-                    syncsafeint32 "Data length indicator"
+                # v2.4 frame flag bits
+                set frame_flag_specs {
+                    0x8000 tag_alter_discard
+                    0x4000 file_alter_discard
+                    0x2000 read_only
+                    0x0040 grouping
+                    0x0008 compressed
+                    0x0004 encrypted
+                    0x0002 unsync
+                    0x0001 datalen
+                }
+                flags_entry "Flags" $flags_raw 2 $frame_flag_specs [expr {$flags_start - 2}]
+
+                if { $flags_raw & 0x0001 } {
+                    # data length indicator present, counted in data_size
+                    syncsafe32 "Data length indicator"
                     incr data_size -4
-                    incr header_len 4
+                    incr header_size 4
                 }
-                if { $flags & $flags_unsync } {
-                    lappend flags_names "unsync"
+                if { $flags_raw & 0x0002 } {
+                    set frame_unsync 1
                 }
-                entry "Flags" [format "%s (%d)" $flags_names $flags] 2 [expr [pos]-2]
-
-                set size [expr $data_size+$header_len]
             }
         }
 
+        # decide if unsync should be applied to this frame's text
+        set ::id3v2_unsync_current 0
+        if { $::id3v2_unsync_tag } {
+            set ::id3v2_unsync_current 1
+        }
+        if { $version == 4 && $frame_unsync } {
+            set ::id3v2_unsync_current 1
+        }
+
         switch -glob $id {
-            TXX -
+            PIC  { frame_PIC  $data_size }
+            APIC { frame_APIC $data_size }
+            COMM { frame_COMM $data_size }
+            USLT { frame_USLT $data_size }
             TXXX { frame_TXXX $data_size }
-            T* { frame_T000 $data_size }
-            WXX -
+            T*   { frame_T000 $data_size }
             WXXX { frame_WXXX $data_size }
-            W* { frame_W000 $data_size }
+            W*   { frame_W000 $data_size }
+            PRIV { frame_PRIV $data_size }
+            UFID { frame_UFID $data_size }
             default {
-                set parse_fn "frame_$id"
-                if { [info procs $parse_fn] != "" } {
-                    $parse_fn $data_size
-                } elseif { $data_size > 0 } {
+                if { $data_size > 0 } {
                     bytes $data_size "Data"
                 }
             }
         }
     }
 
-    return $size
+    return [expr {$data_size + $header_size}]
 }
 
-proc parse_frames { version size } {
-	for { set left $size } { $left > 0 } {} {
-        set padding [uint8]
+proc parse_frames {version size} {
+    set left $size
+    while { $left > 0 } {
+        if { $left <= 0 } { break }
+        set b [uint8]
         move -1
-        if { $padding == 0 } {
+        if { $b == 0 } {
             bytes $left "Padding"
             break
         }
-
-		incr left [expr -[parse_frame $version]]
-	}
+        incr left -[parse_frame $version]
+    }
 }
 
-# ID3v2/file identifier      "ID3"
-# ID3v2 version              $04 00
-# ID3v2 flags                %abcd0000
-# ID3v2 size             4 * %0xxxxxxx (synchsafe integer)
-# Optional:
-# Extended header size   4 * %0xxxxxxx
-# Number of flag bytes       $01
-# Extended Flags             $xx
-proc parse_id3v2 {} {
-    big_endian
+# ---------- footer parsing (ID3v2.4) ----------
 
+proc parse_footer {} {
+    section "Footer" {
+        ascii 3 "Magic"   ;# usually "3DI"
+        uint8 "Version"
+        uint8 "Revision"
+
+        set flags_start [pos]
+        set flags [uint8 "Flags raw"]
+        set header_flag_specs {
+            0x80 unsync
+            0x40 ext_header
+            0x20 experimental
+            0x10 footer
+        }
+        flags_entry "Flags" $flags 1 $header_flag_specs [expr {$flags_start - 1}]
+
+        syncsafe32 "Tag size"
+    }
+}
+
+# ---------- top-level ID3v2 parser ----------
+
+proc parse_id3v2 {} {
     ascii 3 "Magic"
     set version [uint8 "Version"]
     uint8 "Revision"
-    set flags [uint8 "Flags"]
-    # TODO: hmm range not part of section
-    set size [syncsafeint32 "Size"]
-    set ext_size 0
 
+    set flags_start [pos]
+    set flags [uint8 "Flags raw"]
+
+    set header_flag_specs {
+        0x80 unsync
+        0x40 ext_header
+        0x20 experimental
+    }
+    if { $version == 4 } {
+        lappend header_flag_specs 0x10 footer
+    }
+    flags_entry "Flags" $flags 1 $header_flag_specs [expr {$flags_start - 1}]
+
+    set ::id3v2_unsync_tag  [expr {($flags & 0x80) != 0}]
+    set ::id3v2_footer_flag [expr {$version == 4 && ($flags & 0x10)}]
+
+    set tag_size [syncsafe32 "Tag size"] ;# bytes after header
+
+    set ext_total 0
     if { $flags & 0x40 } {
         section "Extended header" {
             switch $version {
                 3 {
-                    set ext_size [uint32 "Size"]
-                    bytes $ext_size "Data"
+                    set ext_data_size [uint32 "Size"]
+                    bytes $ext_data_size "Data"
+                    set ext_total [expr {4 + $ext_data_size}]
                 }
                 4 {
-                    # in v24 synchsafe integer includes itself
-                    set ext_size [syncsafeint32 "Size"]
-                    bytes [expr $ext_size-4] "Data"
+                    set ext_size [syncsafe32 "Size"]
+                    bytes [expr {$ext_size - 4}] "Data"
+                    set ext_total $ext_size
                 }
             }
         }
@@ -667,14 +711,18 @@ proc parse_id3v2 {} {
         2 -
         3 -
         4 {
-            parse_frames $version [expr $size-$ext_size]
+            section "Frames" {
+                parse_frames $version [expr {$tag_size - $ext_total}]
+            }
+
+            if { $version == 4 && $::id3v2_footer_flag } {
+                parse_footer
+            }
         }
         default {
-            bytes $size "Data"
+            bytes $tag_size "Data"
         }
     }
 }
 
-# "ID3"
-requires 0 "49 44 33"
 parse_id3v2
