@@ -110,6 +110,7 @@ You create an HFController via <tt>[[HFController alloc] init]</tt>.  After that
     HFFPRange displayedLineRange;
     NSUInteger bytesPerLine;
     NSUInteger bytesPerColumn;
+    NSUInteger maximumColumns;
     CGFloat lineHeight;
     
     NSUInteger currentPropertyChangeToken;
@@ -249,6 +250,9 @@ You create an HFController via <tt>[[HFController alloc] init]</tt>.  After that
 @property (readonly) NSUInteger maxBytesPerColumn;
 - (BOOL)setBytesPerColumn:(NSUInteger)val;
 - (NSUInteger)bytesPerColumn;
+
+/* Maximum number of columns to display. A value of 0 means unlimited. */
+@property (nonatomic) NSUInteger maximumColumns;
 
 /*! @name Edit Mode
    Determines what mode we're in, read-only, overwrite or insert. */

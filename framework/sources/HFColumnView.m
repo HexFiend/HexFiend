@@ -25,7 +25,7 @@
 }
 
 - (NSColor *)foregroundColor {
-    return [NSColor secondaryLabelColor];
+    return [NSColor labelColor];
 }
 
 - (NSRect)offsetBounds {

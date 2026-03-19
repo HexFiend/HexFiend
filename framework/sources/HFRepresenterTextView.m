@@ -924,13 +924,19 @@ enum LineCoverage_t {
 #endif
 
 - (NSUInteger)bytesPerLine {
-    HFASSERT([self representer] != nil);
-    return [[self representer] bytesPerLine];
+    HFTextRepresenter *rep = [self representer];
+    if (!rep) {
+        return 1;
+    }
+    return [rep bytesPerLine];
 }
 
 - (NSUInteger)bytesPerColumn {
-    HFASSERT([self representer] != nil);
-    return [[self representer] bytesPerColumn];
+    HFTextRepresenter *rep = [self representer];
+    if (!rep) {
+        return 1;
+    }
+    return [rep bytesPerColumn];
 }
 
 - (void)_drawDefaultLineBackgrounds:(CGRect)clip withLineHeight:(CGFloat)lineHeight maxLines:(NSUInteger)maxLines {
@@ -1889,7 +1895,14 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
 
 - (NSUInteger)maximumBytesPerLineForViewWidth:(CGFloat)viewWidth {
     CGFloat availableSpace = (CGFloat)(viewWidth - 2. * [self horizontalContainerInset]);
-    NSUInteger bytesPerColumn = [self _effectiveBytesPerColumn], bytesPerCharacter = [self bytesPerCharacter];    
+    NSUInteger bytesPerColumn = [self _effectiveBytesPerColumn], bytesPerCharacter = [self bytesPerCharacter];
+    NSUInteger maxColumns = self.representer.controller.maximumColumns;
+    if (maxColumns > 0) {
+        if (bytesPerColumn == 0) {
+            return MAX(maxColumns * bytesPerCharacter, bytesPerCharacter);
+        }
+        return MAX(maxColumns * bytesPerColumn, bytesPerColumn);
+    }
     if (bytesPerColumn == 0) {
         /* No columns */
         NSUInteger numChars = (NSUInteger)(availableSpace / [self advancePerCharacter]);

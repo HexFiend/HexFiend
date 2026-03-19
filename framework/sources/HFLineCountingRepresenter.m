@@ -167,7 +167,7 @@ static CGFloat maximumDigitAdvanceForFont(NSFont *font) {
     if (bits & HFControllerDisplayedLineRange) [self updateLineRangeToDraw];
     if (bits & HFControllerBytesPerLine) [self updateBytesPerLine];
     if (bits & (HFControllerFont | HFControllerLineHeight)) [self updateFontAndLineHeight];
-    if (bits & (HFControllerContentLength)) [self updateMinimumViewWidth];
+    if (bits & (HFControllerContentLength | HFControllerBytesPerLine)) [self updateMinimumViewWidth];
 }
 
 - (void)setMinimumDigitCount:(NSUInteger)width {

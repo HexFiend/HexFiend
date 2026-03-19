@@ -85,6 +85,7 @@ static inline Class preferredByteArrayClass(void) {
     [self _sharedInit];
     bytesPerLine = 16;
     bytesPerColumn = 1;
+    maximumColumns = 0;
     _hfflags.editable = YES;
     _hfflags.showcallouts = YES;
     _hfflags.hideNullBytes = NO;
@@ -111,6 +112,7 @@ static inline Class preferredByteArrayClass(void) {
     [coder encodeObject:representers forKey:@"HFRepresenters"];
     [coder encodeInt64:bytesPerLine forKey:@"HFBytesPerLine"];
     [coder encodeInt64:bytesPerColumn forKey:@"HFBytesPerColumn"];
+    [coder encodeInt64:maximumColumns forKey:@"HFMaximumColumns"];
     [coder encodeObject:_font forKey:@"HFFont"];
     [coder encodeDouble:lineHeight forKey:@"HFLineHeight"];
     [coder encodeBool:_hfflags.colorbytes forKey:@"HFColorBytes"];
@@ -129,6 +131,11 @@ static inline Class preferredByteArrayClass(void) {
     [self _sharedInit];
     bytesPerLine = (NSUInteger)[coder decodeInt64ForKey:@"HFBytesPerLine"];
     bytesPerColumn = (NSUInteger)[coder decodeInt64ForKey:@"HFBytesPerColumn"];
+    if ([coder containsValueForKey:@"HFMaximumColumns"]) {
+        maximumColumns = (NSUInteger)[coder decodeInt64ForKey:@"HFMaximumColumns"];
+    } else {
+        maximumColumns = 0;
+    }
     _font = [coder decodeObjectForKey:@"HFFont"];
     lineHeight = (CGFloat)[coder decodeDoubleForKey:@"HFLineHeight"];
     _hfflags.colorbytes = [coder decodeBoolForKey:@"HFColorBytes"];
@@ -363,6 +370,18 @@ static inline Class preferredByteArrayClass(void) {
 
 - (NSUInteger)bytesPerColumn {
     return bytesPerColumn;
+}
+
+- (void)setMaximumColumns:(NSUInteger)val {
+    if (val != maximumColumns) {
+        maximumColumns = val;
+        [self _updateBytesPerLine];
+        [self _updateDisplayedRange];
+    }
+}
+
+- (NSUInteger)maximumColumns {
+    return maximumColumns;
 }
 
 - (void)setInactiveSelectionColorMatchesActive:(BOOL)flag {
@@ -874,11 +893,16 @@ static inline Class preferredByteArrayClass(void) {
 
 - (void)_updateBytesPerLine {
     NSUInteger newBytesPerLine = NSUIntegerMax;
-    for(HFRepresenter* rep in representers) {
-        CGFloat width = [rep.view frame].size.width;
-        NSUInteger repMaxBytesPerLine = [rep maximumBytesPerLineForViewWidth:width];
-        HFASSERT(repMaxBytesPerLine > 0);
-        newBytesPerLine = MIN(repMaxBytesPerLine, newBytesPerLine);
+    if (maximumColumns > 0) {
+        NSUInteger effectiveBytesPerColumn = bytesPerColumn > 0 ? bytesPerColumn : 1;
+        newBytesPerLine = MAX(maximumColumns * effectiveBytesPerColumn, effectiveBytesPerColumn);
+    } else {
+        for(HFRepresenter* rep in representers) {
+            CGFloat width = [rep.view frame].size.width;
+            NSUInteger repMaxBytesPerLine = [rep maximumBytesPerLineForViewWidth:width];
+            HFASSERT(repMaxBytesPerLine > 0);
+            newBytesPerLine = MIN(repMaxBytesPerLine, newBytesPerLine);
+        }
     }
     if (newBytesPerLine != bytesPerLine) {
         HFASSERT(newBytesPerLine > 0);

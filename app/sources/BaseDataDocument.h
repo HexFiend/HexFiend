@@ -27,6 +27,7 @@ extern NSString * const BaseDataDocumentDidChangeStringEncodingNotification;
     HFRepresenter *scrollRepresenter;
     HFRepresenter *textDividerRepresenter;
     HFLayoutRepresenter *layoutRepresenter;
+    NSScrollView *horizontalScrollView;
     DataInspectorRepresenter *dataInspectorRepresenter;
     HFStatusBarRepresenter *statusBarRepresenter;
     HFBinaryTemplateRepresenter *binaryTemplateRepresenter;
@@ -95,6 +96,8 @@ extern NSString * const BaseDataDocumentDidChangeStringEncodingNotification;
 - (IBAction)setReadOnlyMode:sender;
 - (IBAction)modifyByteGrouping:sender;
 - (IBAction)customByteGrouping:(id)sender;
+- (IBAction)setMaximumColumnsFromMenuItem:(id)sender;
+- (IBAction)customMaximumColumns:(id)sender;
 - (IBAction)setLineNumberFormat:(id)sender;
 - (IBAction)setByteThemeFromMenuItem:(NSMenuItem *)sender;
 

@@ -20,6 +20,28 @@ private struct Controller {
         }
     }
 
+    private final class LockedBox<T>: @unchecked Sendable {
+        private let lock = NSLock()
+        private var _value: T
+
+        init(_ value: T) {
+            self._value = value
+        }
+
+        var value: T {
+            get {
+                lock.lock()
+                defer { lock.unlock() }
+                return _value
+            }
+            set {
+                lock.lock()
+                _value = newValue
+                lock.unlock()
+            }
+        }
+    }
+
     private static func standardize(path: String) -> String {
         let url = URL(fileURLWithPath: path)
         return url.path // get absolute path
@@ -37,17 +59,17 @@ private struct Controller {
         if #available(macOS 10.15, *) {
             let config = NSWorkspace.OpenConfiguration()
             config.arguments = args
-            var openError: Error?
+            let openErrorBox = LockedBox<Error?>(nil)
             let semaphore = DispatchSemaphore(value: 0)
             NSWorkspace.shared.openApplication(at: url, configuration: config) { _, error in
-                openError = error
+                openErrorBox.value = error
                 semaphore.signal()
             }
             let result = semaphore.wait(timeout: .now() + .seconds(15))
             if result == .timedOut {
                 throw HexfError("Launch app timeout")
             }
-            if let openError {
+            if let openError = openErrorBox.value {
                 throw HexfError("Launch error: \(openError)")
             }
         } else {

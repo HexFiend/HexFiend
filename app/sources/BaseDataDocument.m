@@ -60,6 +60,35 @@ static inline Class preferredByteArrayClass(void) {
 - (BOOL)tryLiveReload;  //!< Attempt a live reload right now.
 @end
 
+@interface HFHorizontalOnlyScrollView : NSScrollView
+@property (nonatomic, weak) HFController *controller;
+@end
+
+@implementation HFHorizontalOnlyScrollView
+
+- (void)scrollWheel:(NSEvent *)event {
+    if (!self.hasVerticalScroller) {
+        CGFloat deltaX = fabs(event.scrollingDeltaX);
+        CGFloat deltaY = fabs(event.scrollingDeltaY);
+        if (deltaY > 0 && deltaY >= deltaX) {
+            if (self.controller) {
+                [self.controller scrollWithScrollEvent:event];
+            } else {
+                NSResponder *firstResponder = self.window.firstResponder;
+                if (firstResponder && firstResponder != self && [firstResponder respondsToSelector:@selector(scrollWheel:)]) {
+                    [firstResponder scrollWheel:event];
+                } else {
+                    [[self nextResponder] scrollWheel:event];
+                }
+            }
+            return;
+        }
+    }
+    [super scrollWheel:event];
+}
+
+@end
+
 @implementation BaseDataDocument
 {
     BOOL _inLiveResize;
@@ -101,6 +130,7 @@ static inline Class preferredByteArrayClass(void) {
             @"DefaultFontName" : HFDEFAULT_FONT,
             @"DefaultFontSize" : @(HFDEFAULT_FONTSIZE),
             @"BytesPerColumn"  : @4,
+            @"MaximumColumns"  : @0,
             @"DefaultEditMode" : @(HFInsertMode),
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
@@ -146,6 +176,7 @@ static inline Class preferredByteArrayClass(void) {
             @"DefaultFontName" : HFDEFAULT_FONT,
             @"DefaultFontSize" : @(HFDEFAULT_FONTSIZE),
             @"BytesPerColumn" : @4,
+            @"MaximumColumns" : @0,
             @"LineNumberFormat" : @0,
             USERDEFS_KEY_FOR_REP(columnRepresenter) : @NO,
             USERDEFS_KEY_FOR_REP(lineCountingRepresenter) : @YES,
@@ -376,6 +407,9 @@ static inline Class preferredByteArrayClass(void) {
         binaryTemplateRepresenter.viewWidth = binaryTemplateWidth;
         return resultSize;
     }
+    if (controller.maximumColumns > 0) {
+        return frameSize;
+    }
     NSView *layoutView = [layoutRepresenter view];
     NSSize proposedSizeInLayoutCoordinates = [layoutView convertSize:frameSize fromView:nil];
     CGFloat resultingWidthInLayoutCoordinates = [layoutRepresenter minimumViewWidthForLayoutInProposedWidth:proposedSizeInLayoutCoordinates.width];
@@ -399,6 +433,7 @@ static inline Class preferredByteArrayClass(void) {
 {
     [self saveWindowState];
     [self scrollToAnchoredOffset];
+    [self updateHorizontalScrollViewIfNeeded];
 }
 
 - (void)windowDidMove:(NSNotification * __unused)notification
@@ -421,6 +456,7 @@ static inline Class preferredByteArrayClass(void) {
         _resizeBinaryTemplate = NO;
     }
     _inLiveResize = NO;
+    [self updateHorizontalScrollViewIfNeeded];
 }
 
 - (void)updateScrollAnchorOffset {
@@ -482,6 +518,10 @@ static inline Class preferredByteArrayClass(void) {
 
 /* Relayout the window to support the given number of bytes per line */
 - (void)relayoutAndResizeWindowForBytesPerLine:(NSUInteger)bytesPerLine {
+    if (controller.maximumColumns > 0) {
+        [self updateHorizontalScrollContentSize];
+        return;
+    }
     NSWindow *window = [self window];
     NSRect windowFrame = [window frame];
     NSView *layoutView = [layoutRepresenter view];
@@ -489,6 +529,107 @@ static inline Class preferredByteArrayClass(void) {
     CGFloat minWindowWidth = [layoutView convertSize:NSMakeSize(minViewWidth, 1) toView:nil].width;
     windowFrame.size.width = minWindowWidth;
     [window setFrame:windowFrame display:YES];
+}
+
+- (void)sizeWindowToFitFixedColumnsIfNeeded {
+    if (controller.maximumColumns == 0) {
+        return;
+    }
+    NSWindow *window = [self window];
+    if (!window || !layoutRepresenter) {
+        return;
+    }
+    NSView *layoutView = [layoutRepresenter view];
+    const NSUInteger maxColumns = controller.maximumColumns;
+    const NSUInteger cappedColumns = MIN(maxColumns, 32u);
+    const NSUInteger bytesPerColumn = MAX(1u, controller.bytesPerColumn);
+    const NSUInteger bytesPerLine = MAX(1u, cappedColumns * bytesPerColumn);
+    CGFloat minViewWidth = [layoutRepresenter minimumViewWidthForBytesPerLine:bytesPerLine];
+    CGFloat minWindowWidth = [layoutView convertSize:NSMakeSize(minViewWidth, 1) toView:nil].width;
+    NSRect windowFrame = window.frame;
+    windowFrame.size.width = minWindowWidth;
+    [window setFrame:windowFrame display:YES];
+    [self updateHorizontalScrollContentSize];
+}
+
+- (void)updateHorizontalScrollContentSize {
+    if (!horizontalScrollView || !layoutRepresenter) {
+        return;
+    }
+    NSView *layoutView = [layoutRepresenter view];
+    NSClipView *clipView = horizontalScrollView.contentView;
+    NSSize availableSize = clipView.bounds.size;
+    CGFloat contentWidth = [layoutRepresenter minimumViewWidthForBytesPerLine:controller.bytesPerLine];
+    CGFloat docWidth = MAX(availableSize.width, contentWidth);
+    CGFloat currentX = clipView.bounds.origin.x;
+    layoutView.frame = NSMakeRect(0, 0, docWidth, availableSize.height);
+    CGFloat maxX = MAX(0.0, docWidth - availableSize.width);
+    CGFloat clampedX = MIN(currentX, maxX);
+    if (contentWidth <= availableSize.width) {
+        clampedX = 0.0;
+    }
+    if (currentX == 0.0 && clampedX != currentX) {
+        clampedX = 0.0;
+    }
+    if (clampedX != currentX) {
+        [clipView scrollToPoint:NSMakePoint(clampedX, 0)];
+        [horizontalScrollView reflectScrolledClipView:clipView];
+    }
+    horizontalScrollView.hasHorizontalScroller = contentWidth > availableSize.width;
+}
+
+- (void)updateHorizontalScrollViewIfNeeded {
+    if (!containerView || !layoutRepresenter) {
+        return;
+    }
+    if (_inLiveResize) {
+        if (horizontalScrollView) {
+            [self updateHorizontalScrollContentSize];
+        }
+        return;
+    }
+    NSView *layoutView = [layoutRepresenter view];
+    if (controller.maximumColumns > 0) {
+        if (!horizontalScrollView) {
+            horizontalScrollView = [[HFHorizontalOnlyScrollView alloc] initWithFrame:[containerView bounds]];
+            ((HFHorizontalOnlyScrollView *)horizontalScrollView).controller = controller;
+            horizontalScrollView.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
+            horizontalScrollView.borderType = NSNoBorder;
+            horizontalScrollView.drawsBackground = NO;
+            horizontalScrollView.hasVerticalScroller = NO;
+            horizontalScrollView.hasHorizontalScroller = YES;
+            horizontalScrollView.autohidesScrollers = YES;
+            horizontalScrollView.usesPredominantAxisScrolling = YES;
+            [layoutView removeFromSuperview];
+            layoutView.autoresizingMask = NSViewHeightSizable;
+            horizontalScrollView.documentView = layoutView;
+            [containerView addSubview:horizontalScrollView];
+        }
+        [self updateHorizontalScrollContentSize];
+    } else {
+        if (horizontalScrollView) {
+            [horizontalScrollView removeFromSuperview];
+            horizontalScrollView = nil;
+        }
+        layoutView.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
+        layoutView.frame = [containerView bounds];
+        if (layoutView.superview != containerView) {
+            [layoutView removeFromSuperview];
+            [containerView addSubview:layoutView];
+        }
+    }
+}
+
+- (void)refreshLayoutForCurrentColumns {
+    if (!layoutRepresenter) {
+        return;
+    }
+    [layoutRepresenter performLayout];
+    [controller representer:layoutRepresenter changedProperties:HFControllerBytesPerLine];
+    [self updateHorizontalScrollViewIfNeeded];
+    if (controller.maximumColumns > 0) {
+        [self updateHorizontalScrollContentSize];
+    }
 }
 
 /* Shared point for setting up a window, optionally setting a bytes per line */
@@ -505,8 +646,8 @@ static inline Class preferredByteArrayClass(void) {
     
     if (containerView) {
         [layoutView setFrame:[containerView bounds]];
-        [containerView addSubview:layoutView];
     }
+    [self updateHorizontalScrollViewIfNeeded];
     [self applyDefaultRepresentersToDisplay];
     
     if (bplOrZero > 0) {
@@ -522,6 +663,8 @@ static inline Class preferredByteArrayClass(void) {
         }
     }
 
+    [self sizeWindowToFitFixedColumnsIfNeeded];
+
     if ([ud objectForKey:@"WindowOrigin"] && [ud objectForKey:@"WindowHeight"]) {
         NSRect frame = [[self window] frame];
         frame.origin = NSPointFromString([ud objectForKey:@"WindowOrigin"]);
@@ -535,6 +678,7 @@ static inline Class preferredByteArrayClass(void) {
 - (void)windowControllerDidLoadNib:(NSWindowController *)windowController {
     [super windowControllerDidLoadNib:windowController];
     [self setupWindowEnforcingBytesPerLine:0];
+    [self refreshLayoutForCurrentColumns];
 }
 
 - (void)adoptWindowController:(NSWindowController *)windowController fromTransientDocument:(BaseDataDocument *)transientDocument {
@@ -559,6 +703,7 @@ static inline Class preferredByteArrayClass(void) {
 
     /* Set up the window */
     [self setupWindowEnforcingBytesPerLine:oldBPL];
+    [self refreshLayoutForCurrentColumns];
 }
 
 /* When our line counting view needs more space, we increase the size of our window, and also move it left by the same amount so that the other content does not appear to move. */
@@ -706,6 +851,7 @@ static inline Class preferredByteArrayClass(void) {
     [controller setShouldLiveReload:[defs boolForKey:@"LiveReload"]];
     [controller setUndoManager:[self undoManager]];
     [controller setBytesPerColumn:[defs integerForKey:@"BytesPerColumn"]];
+    [controller setMaximumColumns:[defs integerForKey:@"MaximumColumns"]];
     [controller setByteTheme:appDelegate.byteThemes[[defs stringForKey:@"ByteTheme"]]];
     controller.inactiveSelectionColorMatchesActive = [defs boolForKey:@"InactiveSelectionColorMatchesActive"];
     
@@ -834,6 +980,7 @@ static inline Class preferredByteArrayClass(void) {
     if (byteArray) {
         [controller setByteArray:byteArray];
         cleanGenerationCount = [byteArray changeGenerationCount];
+        [self refreshLayoutForCurrentColumns];
         result = YES;
     }
     return result;
@@ -1075,6 +1222,10 @@ static inline Class preferredByteArrayClass(void) {
         [item setState:(NSUInteger)[item tag] == [controller bytesPerColumn]];
         return YES;
     }
+    else if (action == @selector(setMaximumColumnsFromMenuItem:)) {
+        item.state = (controller.maximumColumns == (NSUInteger)item.tag) ? NSControlStateValueOn : NSControlStateValueOff;
+        return YES;
+    }
     else if (action == @selector(setLineNumberFormat:)) {
         item.state = item.tag == (NSInteger)lineCountingRepresenter.lineNumberFormat ? NSControlStateValueOn : NSControlStateValueOff;
         return YES;
@@ -1199,6 +1350,9 @@ static inline Class preferredByteArrayClass(void) {
 
 - (NSView *)bannerAssociateView
 {
+    if (horizontalScrollView) {
+        return horizontalScrollView;
+    }
     return [layoutRepresenter view];
 }
 
@@ -1331,6 +1485,7 @@ static inline Class preferredByteArrayClass(void) {
             }            
             [controller setByteArray:newByteArray];
             cleanGenerationCount = [newByteArray changeGenerationCount];
+            [self refreshLayoutForCurrentColumns];
         }
     }
     
@@ -1871,6 +2026,41 @@ cancelled:;
         [(AppDelegate *)NSApp.delegate buildByteGroupingMenu];
         break;
     }
+}
+
+- (void)applyMaximumColumnsValue:(NSInteger)value {
+    if (value < 0) {
+        NSBeep();
+        return;
+    }
+    controller.maximumColumns = (NSUInteger)value;
+    [[NSUserDefaults standardUserDefaults] setInteger:value forKey:@"MaximumColumns"];
+    [self updateHorizontalScrollViewIfNeeded];
+    if (value == 0) {
+        [self relayoutAndResizeWindowForBytesPerLine:controller.bytesPerLine];
+    } else {
+        [self updateHorizontalScrollContentSize];
+    }
+}
+
+- (IBAction)setMaximumColumnsFromMenuItem:(id)sender {
+    NSMenuItem *item = (NSMenuItem *)sender;
+    [self applyMaximumColumnsValue:item.tag];
+}
+
+- (IBAction)customMaximumColumns:(id __unused)sender {
+    NSString *valueString = HFPromptForValue(NSLocalizedString(@"Enter number of columns", ""));
+    if (!valueString) {
+        return;
+    }
+    NSInteger value = valueString.integerValue;
+    if (value < 0) {
+        NSAlert *alert = [[NSAlert alloc] init];
+        alert.messageText = NSLocalizedString(@"Value cannot be negative.", "");
+        [alert runModal];
+        return;
+    }
+    [self applyMaximumColumnsValue:value];
 }
 
 - (IBAction)setOverwriteMode:sender {

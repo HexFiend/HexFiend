@@ -509,6 +509,45 @@
                                     </items>
                                 </menu>
                             </menuItem>
+                            <menuItem title="Number of Columns" id="Hk8-Ld-X9y">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <menu key="submenu" title="Number of Columns" id="c5N-9e-n2x">
+                                    <items>
+                                        <menuItem title="Automatic" tag="0" id="puz-4P-4G4">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="setMaximumColumnsFromMenuItem:" target="-1" id="6kX-LA-40a"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="Z6L-YU-zKO"/>
+                                        <menuItem title="8" tag="8" id="1ok-WY-92Z">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="setMaximumColumnsFromMenuItem:" target="-1" id="HKr-uG-xSS"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="16" tag="16" id="DgN-Y0-RgM">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="setMaximumColumnsFromMenuItem:" target="-1" id="UBo-y7-8I2"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="32" tag="32" id="c22-UT-2ir">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="setMaximumColumnsFromMenuItem:" target="-1" id="mJc-5s-6c0"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="0cC-qs-X1U"/>
+                                        <menuItem title="Custom…" id="YzL-1W-9xB">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="customMaximumColumns:" target="-1" id="y3f-sd-4Gv"/>
+                                            </connections>
+                                        </menuItem>
+                                    </items>
+                                </menu>
+                            </menuItem>
                             <menuItem title="Hide Null Bytes" id="tEd-cL-IlH">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
