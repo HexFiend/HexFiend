@@ -37,7 +37,7 @@ private struct Controller {
         if #available(macOS 10.15, *) {
             let config = NSWorkspace.OpenConfiguration()
             config.arguments = args
-            var openError: Error?
+            nonisolated(unsafe) var openError: Error?
             let semaphore = DispatchSemaphore(value: 0)
             NSWorkspace.shared.openApplication(at: url, configuration: config) { _, error in
                 openError = error
