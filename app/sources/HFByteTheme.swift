@@ -10,8 +10,8 @@ import Foundation
 
 private extension NSColor {
     func toRGB() -> NSColor {
-        guard let rgb = usingType(.componentBased) else {
-            fatalError("Can't convert color to calibratedRGB")
+        guard let rgb = usingColorSpace(.sRGB) else {
+            fatalError("Can't convert color to sRGB")
         }
         return rgb
     }
@@ -64,8 +64,8 @@ extension HFByteTheme {
     
     private static func colorTableFromDict(_ dict: NSDictionary) -> [HFByteThemeColor] {
         var table = [HFByteThemeColor](repeating: .init(), count: 256)
-        var custom: [[String: String]] = []
-        if let customDict = dict["custom"] as? [[String: String]] {
+        var custom: [[String: Any]] = []
+        if let customDict = dict["custom"] as? [[String: Any]] {
             custom = customDict
         }
     mainLoop: for b in 0..<table.count {
