@@ -28,14 +28,14 @@ proc marker_name {value} {
         0xCD { return "Differential sequential DCT" }
         0xCE { return "Differential progressive DCT" }
         0xCF { return "Differential lossless (sequential)" }
-        0xD0 { return "Restart with modulo 8 count "0"" }
-        0xD1 { return "Restart with modulo 8 count "1"" }
-        0xD2 { return "Restart with modulo 8 count "2"" }
-        0xD3 { return "Restart with modulo 8 count "3"" }
-        0xD4 { return "Restart with modulo 8 count "4"" }
-        0xD5 { return "Restart with modulo 8 count "5"" }
-        0xD6 { return "Restart with modulo 8 count "6"" }
-        0xD7 { return "Restart with modulo 8 count "7"" }
+        0xD0 { return {Restart with modulo 8 count "0"} }
+        0xD1 { return {Restart with modulo 8 count "1"} }
+        0xD2 { return {Restart with modulo 8 count "2"} }
+        0xD3 { return {Restart with modulo 8 count "3"} }
+        0xD4 { return {Restart with modulo 8 count "4"} }
+        0xD5 { return {Restart with modulo 8 count "5"} }
+        0xD6 { return {Restart with modulo 8 count "6"} }
+        0xD7 { return {Restart with modulo 8 count "7"} }
         0xD8 { return "Start of image" }
         0xD9 { return "End of image" }
         0xDA { return "Start of scan" }
@@ -69,7 +69,12 @@ proc find_next {} {
     set start [pos]
     while {![end]} {
         if { [uint8] != 255 } continue
-        if { [uint8] > 0 } break
+        set marker [uint8]
+        # 0xFF 0x00 is byte-stuffing inside entropy-coded data
+        if { $marker == 0 } continue
+        # 0xFFD0..0xFFD7 are restart markers embedded in scan data
+        if { $marker >= 0xD0 && $marker <= 0xD7 } continue
+        break
     }
     set result [expr [pos] - $start - 2]
     goto $start
@@ -78,6 +83,7 @@ proc find_next {} {
 
 proc marker_app0 {} {
     set len [uint16 "Length"]
+    set seg_end [expr [pos] + $len - 2]
     set identifier [cstr "utf8" "Identifier"]
     set thumb_size 0
     if {$identifier == "JFIF"} {
@@ -92,12 +98,25 @@ proc marker_app0 {} {
         if {$thumb_size > 0} {
             bytes $thumb_size "Thumbnail Data"
         }
+        # Apple iPhones append a 4-byte "AMPF" tag here to flag that the
+        # file contains Multi-Picture Format data later in the stream.
+        if {[expr $seg_end - [pos]] >= 4} {
+            set tag_pos [pos]
+            set tag [ascii 4]
+            goto $tag_pos
+            if {$tag == "AMPF"} {
+                ascii 4 "Apple MPF marker"
+            }
+        }
     } elseif {$identifier == "JFXX"} {
         set tt [uint8 "Thumbnail Type"]
         if {$len > 3} {
             set thumb_size [expr $len - 3]
             bytes $thumb_size "Thumbnail Data"
         }
+    }
+    if {[pos] < $seg_end} {
+        bytes [expr $seg_end - [pos]] "Extra"
     }
     sectionvalue [human_size $thumb_size]
 }
