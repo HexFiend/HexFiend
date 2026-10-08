@@ -1,6 +1,7 @@
 ####################################################################################################
 # Executables/Mach-O.tcl
 # 2021 Jul 14 | fosterbrereton | Initial implementation
+# 2026 Oct 08 | mikerich88     | Minor fixes/changes
 ####################################################################################################
 
 hf_min_version_required 2.15
@@ -252,11 +253,18 @@ proc lc_segment_section_64 {main_offset count} {
                 set cur_size 0
                 section "literals" {
                     while {$cur_size < $size} {
+                        # Peek at the next byte and skip nulls and line feeds.
+                        set peek [uint8]
+                        if {$peek == 0 || $peek == 0x0A} {
+                            incr cur_size
+                            continue
+                        }
+                        move -1
                         set cur_string [cstr "ascii" "\[ $count \]"]
                         set cur_string_len [expr [string length $cur_string] + 1]
                         set cur_size [expr $cur_size + $cur_string_len]
                         incr count
-                        if {$count >= 5000} {
+                        if {$count >= 50000} {
                             entry "" "(remainder of strings elided)"
                             break
                         }
